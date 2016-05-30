@@ -1,0 +1,2 @@
+peewee
+git+https://git2.weizzz.com:84/microservice/eaglet.git
