@@ -7,7 +7,7 @@ import logging
 DEBUG = True
 PROJECT_HOME = os.path.dirname(os.path.abspath(__file__))
 
-MODE = 'develop'
+MODE = 'debug'
 SERVICE_NAME = 'zeus'
 DEV_SERVER_MULTITHREADING = True
 
@@ -17,7 +17,7 @@ DATABASES = {
         'NAME': 'weapp',
         'USER': 'weapp',
         'PASSWORD': 'weizoom',
-        'HOST': 'db.weapp.com',
+        'HOST': 'db.zeus.com',
         'PORT': '',
         'CONN_MAX_AGE': 100
     },
@@ -26,7 +26,7 @@ DATABASES = {
         'NAME': 'weapp',
         'USER': 'weapp',
         'PASSWORD': 'weizoom',
-        'HOST': 'db.weapp.com',
+        'HOST': 'db.zeus.com',
         'PORT': '',
         'CONN_MAX_AGE': 100
     }

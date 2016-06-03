@@ -24,12 +24,7 @@ class AOrderList(api_resource.ApiResource):
         订单列表
         """
         accout_type = args['account_type']
-
-        product_ids = args['product_ids'].split(",")
-        order_id = args.get('order_id', "")
-        start_time = args.get('start_time', "")
-        end_time = args.get('end', "")
-        order_status = args.get('status', "")
+        product_ids = args['product_ids']
 
         relations = OrderProductRelation.get_for_product({
             'product_ids': product_ids
@@ -49,9 +44,22 @@ class AOrderList(api_resource.ApiResource):
 
 
         # TODO筛选
+        order_id = args.get('order_id', "")
+        start_time = args.get('start_time', "")
+        end_time = args.get('end_time', "")
+        order_status = args.get('status', "")
+        if order_id:
+            orders = filter(lambda order: order.order_id == order_id, orders)
+        if order_status:
+            orders = filter(lambda order: order.status == order_status, orders)
+        if start_time and end_time:
+            orders = filter(lambda order: order.created_at >= start_time and order.created_at <= end_time, orders)
+
 
         #分页
-        pageinfo, orders = paginator.paginate(orders, 1, 2)
+        cur_page = args.get('page', 1)
+        count_per_page = args.get('count_per_page', 10)
+        pageinfo, orders = paginator.paginate(orders, cur_page, count_per_page)
 
         if accout_type:
             order_webapp_ids = [order.webapp_id for order in orders]
