@@ -24,7 +24,7 @@ class AOrderList(api_resource.ApiResource):
         订单列表
         """
         accout_type = args['account_type']
-        product_ids = args['product_ids']
+        product_ids = args['product_ids'].split("_")
 
         relations = OrderProductRelation.get_for_product({
             'product_ids': product_ids
