@@ -23,6 +23,10 @@ class AOrderDetail(api_resource.ApiResource):
         订单详情
         """
         order = Order.from_id({'id': args['order_id']})
+        if not order:
+            return {
+                'order': {}
+            }
         order_data = order.to_dict()
         order_has_product_relations = OrderProductRelation.get_for_order({'order_ids': [order.id]})
 

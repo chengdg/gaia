@@ -78,8 +78,10 @@ class Order(business_model.Model):
     @staticmethod
     @param_required(['id'])
     def from_id(args):
-        order_db_model = mall_models.Order.get(id=args['id'])
-        order = Order(order_db_model)
+        order_db_model = mall_models.Order.select().dj_where(id=args['id'])
+        if order_db_model.count() == 0:
+            return None
+        order = Order(order_db_model.first())
         order.ship_area = regional_util.get_str_value_by_string_ids(order_db_model.area)
         return order
 
