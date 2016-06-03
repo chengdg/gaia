@@ -40,7 +40,7 @@ server {
     }
     
     location / {
-        proxy_pass http://127.0.0.1:8001;
+        proxy_pass http://127.0.0.1:8002;
     }
     
     error_page   500 502 503 504  /50x.html;
