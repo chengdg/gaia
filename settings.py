@@ -9,30 +9,31 @@ PROJECT_HOME = os.path.dirname(os.path.abspath(__file__))
 
 MODE = 'develop'
 SERVICE_NAME = 'zeus'
+DEV_SERVER_MULTITHREADING = True
 
 DATABASES = {
     'default': {
         'ENGINE': 'mysql+retry',
-        'NAME': '',
-        'USER': '',                      
-        'PASSWORD': '',                  
-        'HOST': 'db.zeus_service.com',
+        'NAME': 'weapp',
+        'USER': 'weapp',
+        'PASSWORD': 'weizoom',
+        'HOST': 'db.weapp.com',
         'PORT': '',
         'CONN_MAX_AGE': 100
     },
     'watchdog': {
         'ENGINE': 'mysql+retry',
         'NAME': 'weapp',
-        'USER': 'weapp',                      
-        'PASSWORD': 'weizoom',                  
-        'HOST': 'db.operation.com',
+        'USER': 'weapp',
+        'PASSWORD': 'weizoom',
+        'HOST': 'db.weapp.com',
         'PORT': '',
         'CONN_MAX_AGE': 100
     }
 }
 
 
-MIDDLEWARES = [    
+MIDDLEWARES = [
     'eaglet.middlewares.debug_middleware.QueryMonitorMiddleware',
     'eaglet.middlewares.debug_middleware.RedisMiddleware',
 
@@ -55,8 +56,8 @@ if MODE == 'develop':
     ENABLE_SQL_LOG = False
 
     logging.basicConfig(
-        format='[%(asctime)s] %(name)s %(levelname)s %(message)s', 
-        datefmt="%Y-%m-%d %H:%M:%S", 
+        format='[%(asctime)s] %(name)s %(levelname)s %(message)s',
+        datefmt="%Y-%m-%d %H:%M:%S",
         level=logging.INFO
     )
 else:
@@ -72,8 +73,8 @@ else:
     ENABLE_SQL_LOG = False
 
     logging.basicConfig(
-        format='[%(asctime)s] %(name)s %(levelname)s %(message)s', 
-        datefmt="%Y-%m-%d %H:%M:%S", 
+        format='[%(asctime)s] %(name)s %(levelname)s %(message)s',
+        datefmt="%Y-%m-%d %H:%M:%S",
         level=logging.INFO
     )
 
@@ -103,7 +104,7 @@ INSTALLED_TASKS = [
     #'resource.member.tasks',
     # 'core.watchdog.tasks',
     'wapi.tasks',
-    
+
     # 'services.example_service.tasks.example_log_service',
     # 'services.order_notify_mail_service.task.notify_order_mail',
     # 'services.record_member_pv_service.task.record_member_pv',
