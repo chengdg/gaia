@@ -43,11 +43,15 @@ class AOrderList(api_resource.ApiResource):
                 order_id2relation[r.order_id] = [r]
 
 
-        # TODO筛选
+        # 筛选
         order_id = args.get('order_id', "")
         start_time = args.get('start_time', "")
         end_time = args.get('end_time', "")
         order_status = args.get('status', "")
+        if accout_type == "yunying":
+            # 运营账户筛选已发货的订单
+            orders = filter(lambda order: order.status == 4, orders)
+
         if order_id:
             orders = filter(lambda order: order.order_id == order_id, orders)
         if order_status:
