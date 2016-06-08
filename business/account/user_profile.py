@@ -57,5 +57,24 @@ class UserProfile(business_model.Model):
         for profile_model in user_profiles_models:
             user_profile = UserProfile(profile_model)
             user_profiles.append(user_profile)
-
         return user_profiles
+
+    @staticmethod
+    @param_required(['webapp_id'])
+    def from_webapp_id(args):
+        profile_model= account_models.UserProfile.get(webapp_id=args['webapp_id'])
+        user_profile = UserProfile(profile_model)
+        return user_profile
+
+    @staticmethod
+    @param_required(['user_id'])
+    def from_user_id(args):
+        profile_model= account_models.UserProfile.get(user_id=args['user_id'])
+        user_profile = UserProfile(profile_model)
+        return user_profile
+
+    @property
+    def username(self):
+        return self.context['db_model'].user.username
+    
+       

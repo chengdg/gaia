@@ -96,5 +96,28 @@ class Order(business_model.Model):
             order = Order(order_model)
             order.ship_area = regional_util.get_str_value_by_string_ids(order_model.area)
             orders.append(order)
-
         return orders
+
+    @staticmethod
+    @param_required(['origin_id'])
+    def from_origin_id(args):
+        order_db_models = mall_models.Order.select().dj_where(origin_order_id=args['origin_id'])
+        orders = []
+        for order_model in order_db_models:
+            order = Order(order_model)
+            order.ship_area = regional_util.get_str_value_by_string_ids(order_model.area)
+            orders.append(order)
+        return orders
+
+    @staticmethod
+    @param_required(['order_id'])
+    def from_order_id(args):
+        # order_db_model = mall_models.Order.select().dj_where(id=args['id'])
+        if mall_models.Order.select().dj_where(order_id=args['order_id']).count() == 0:
+            return None
+        order_db_model = mall_models.Order.select().dj_where(order_id=args['order_id']).first()
+        order = Order(order_db_model)
+        order.ship_area = regional_util.get_str_value_by_string_ids(order_db_model.area)
+        return order
+
+
