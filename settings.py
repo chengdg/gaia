@@ -10,7 +10,7 @@ PROJECT_HOME = os.path.dirname(os.path.abspath(__file__))
 MODE = 'debug'
 SERVICE_NAME = 'zeus'
 DEV_SERVER_MULTITHREADING = True
-
+DOMAIN = "dev.weapp.com"
 DATABASES = {
     'default': {
         'ENGINE': 'mysql+retry',

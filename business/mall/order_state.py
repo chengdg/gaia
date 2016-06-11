@@ -10,6 +10,8 @@ from util import regional_util
 from business.mall.order import Order
 from business.mall.supplier import Supplier
 from business.account.user_profile import UserProfile
+from business.mall.express.express_service import ExpressService
+import sys
 
 FATHER_ORDER = 1
 CHILD_ORDER = 2
@@ -24,6 +26,15 @@ class OrderState(Order):
     def __init__(self, model):
         Order.__init__(self, model)
 
+    @staticmethod
+    @param_required(['id'])
+    def from_id(args):
+        order_db_model = mall_models.Order.select().dj_where(id=args['id'])
+        if order_db_model.count() == 0:
+            return None
+        order = OrderState(order_db_model.first())
+        #order.ship_area = regional_util.get_str_value_by_string_ids(order_db_model.area)
+        return order
 
     @staticmethod
     @param_required(['order_id'])
@@ -34,6 +45,18 @@ class OrderState(Order):
         order = OrderState(order_db_model.first())
         #order.ship_area = regional_util.get_str_value_by_string_ids(order_db_model.area)
         return order
+
+    @staticmethod
+    @param_required(['origin_id'])
+    def from_origin_id(args):
+        print ">>>>1>>"*6,sys._getframe().f_code
+        order_db_models = mall_models.Order.select().dj_where(origin_order_id=args['origin_id'])
+        orders = []
+        for order_model in order_db_models:
+            order = OrderState(order_model)
+            order.ship_area = regional_util.get_str_value_by_string_ids(order_model.area)
+            orders.append(order)
+        return orders
 
     def record_status_log(self, operator_name, from_status, to_status):
         try:
@@ -53,7 +76,7 @@ class OrderState(Order):
             记录操作日志，未来数据量增大使用异步（celery）方式
         """
         order_id = self.order_id
-        if type == OrderState.FATHER_ORDER:
+        if type == FATHER_ORDER:
             if self.origin_order_id > 0:
                 origin_order = Order.from_id({
                     "id":self.origin_order_id
@@ -71,14 +94,46 @@ class OrderState(Order):
                     action = '%s - %s' % (action, user_profile.store_name)
                 order_id = origin_order.order_id
             
-        elif type == OrderState.CHILD_ORDER:
-            if Order.select().dj_where(origin_order_id=self.id).count() == 1:
+        elif type == CHILD_ORDER:
+            if mall_models.Order.select().dj_where(origin_order_id=self.id).count() == 1:
                 child_order = Order.from_origin_id({
-                    "origin_order_id":self.id
+                    "origin_id":self.id
                     })
                 order_id = child_order.order_id
 
         mall_models.OrderOperationLog.create(order_id=order_id, action=action, operator=operator_name)
+
+    def __send_template_message(self):
+        pass
+
+    def __send_order_email(self):
+        pass
+
+    def __send_request_to_kuaidi(self):
+        """
+        向快递100发送订阅请求
+        """
+        
+        # if settings.IS_UNDER_BDD:
+        #     # BDD 暂时不测试快递100信息
+        #     return
+
+        is_success = ExpressService(self).get_express_poll()
+        # print u'------------ send_request_to_kuaidi order.status:{}'.format(order.status)
+        # express_configs = ExpressServiceConfig.objects.filter(value=1)
+        # if express_configs.count() > 0:
+        #     express_config = express_configs[0]
+        #     if express_config.name == u"快递鸟":
+        #         from tools.express.kdniao_express_poll import KdniaoExpressPoll
+        #         is_success = KdniaoExpressPoll(order).get_express_poll()
+        #     elif express_config.name == u"快递100":
+        #         from tools.express.express_poll import ExpressPoll
+        #         is_success = ExpressPoll(order).get_express_poll()
+        # else:
+        #     from tools.express.express_poll import ExpressPoll
+        #     is_success = ExpressPoll(order).get_express_poll()
+        # print u'----------- send_request_to_kuaidi: {}'.format(is_success)
+
 
     def update_express(self, express_company_name,express_number, operator_name=u'我', leader_name=u'', is_100 = True):
         order = self
@@ -91,6 +146,9 @@ class OrderState(Order):
         order_params['status'] = target_status
         order_params['is_100'] = is_100
         #order = Order.objects.get(id=order_id)
+        self.express_company_name = express_company_name
+        self.express_number = express_number
+
         mall_models.Order.update(**order_params).dj_where(id=self.id).execute()
         #TODO
         # try:
@@ -117,11 +175,12 @@ class OrderState(Order):
                 origin_order.record_operation_log(operator_name, action, OrderState.FATHER_ORDER)
         else:
             #当前订单为父订单，并且只有一个子订单，则同步更新子订单
+            #TODO order对象增加获取子订单数量函数
             if mall_models.Order.select().dj_where(origin_order_id=order.id).count() == 1:
                 child_order = OrderState.from_origin_id({
                     "origin_id": order.id
                     })
-
+                #TODOOrderState增加修改update方法
                 mall_models.Order.update(**order_params).dj_where(origin_order_id=order.id).execute()
                  #处理操作日志
                 child_order.record_operation_log(operator_name, action,OrderState.CHILD_ORDER)
@@ -153,7 +212,7 @@ class OrderState(Order):
         #子订单
         if self.origin_order_id == -1:
             child_orders = OrderState.from_origin_id({
-                "origin_order_id":self.id
+                "origin_id":self.id
             })
             if len(child_orders) > 1:
                 return False, u'不能对当前订单发货'
@@ -195,7 +254,7 @@ class OrderState(Order):
                     origin_order.record_operation_log(operator_name, action, FATHER_ORDER)
         elif self.origin_order_id == -1:
             child_order = child_orders[0]
-            mall_models.Order.update(status=target_status).dj_where(id=child_order.id).execute()
+            mall_models.Order.update(**order_params).dj_where(id=child_order.id).execute()
             child_order.record_status_log(operator_name, child_order.status, target_status)
             child_order.record_operation_log(operator_name, action, CHILD_ORDER)
 
@@ -217,6 +276,8 @@ class OrderState(Order):
                 1.快递接口访问（快递100或者是快递鸟接口访问）
                 2.发送邮件
         """
+        if is_100:
+            self.__send_request_to_kuaidi()
        # if is_100:
        #      mall_signals.post_ship_send_request_to_kuaidi.send(sender=Order, order=order)
        #  from webapp.handlers import event_handler_util
@@ -225,3 +286,11 @@ class OrderState(Order):
        #  event_handler_util.handle(event_data, 'send_order_email')
 
         return True, ''
+
+    
+    def cancel(self):
+        pass
+    def refund(self):
+        pass
+    def finish(self):
+        pass

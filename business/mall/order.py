@@ -24,7 +24,7 @@ class Order(business_model.Model):
 
         'ship_name',
         'ship_tel',
-        'ship_area',
+       # 'ship_area',
         'ship_address',
         'bill_type',
         'bill',
@@ -82,7 +82,7 @@ class Order(business_model.Model):
         if order_db_model.count() == 0:
             return None
         order = Order(order_db_model.first())
-        order.ship_area = regional_util.get_str_value_by_string_ids(order_db_model.area)
+        #order.ship_area = regional_util.get_str_value_by_string_ids(order_db_model.area)
         return order
 
     @staticmethod
@@ -94,7 +94,7 @@ class Order(business_model.Model):
 
         for order_model in order_models:
             order = Order(order_model)
-            order.ship_area = regional_util.get_str_value_by_string_ids(order_model.area)
+            #order.ship_area = regional_util.get_str_value_by_string_ids(order_model.area)
             orders.append(order)
         return orders
 
@@ -105,7 +105,7 @@ class Order(business_model.Model):
         orders = []
         for order_model in order_db_models:
             order = Order(order_model)
-            order.ship_area = regional_util.get_str_value_by_string_ids(order_model.area)
+            #order.ship_area = regional_util.get_str_value_by_string_ids(order_model.area)
             orders.append(order)
         return orders
 
@@ -117,7 +117,12 @@ class Order(business_model.Model):
             return None
         order_db_model = mall_models.Order.select().dj_where(order_id=args['order_id']).first()
         order = Order(order_db_model)
-        order.ship_area = regional_util.get_str_value_by_string_ids(order_db_model.area)
+        #order.ship_area = regional_util.get_str_value_by_string_ids(order_db_model.area)
         return order
 
+    @property
+    def ship_area(self):
+        db_model = self.context['db_model']
+        return regional_util.get_str_value_by_string_ids(db_model.area)
+    
 
