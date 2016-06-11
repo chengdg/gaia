@@ -105,20 +105,20 @@ class KdniaoExpressPoll(object):
 		verified_result = ''
 		try:
 			verified_result = post(KdniaoExpressConfig.req_url, param_str)
-			watchdog_info(u"发送快递鸟 订阅请求 url: {},/n param_data: {}, /n response: {}".format(
+			watchdog.info(u"发送快递鸟 订阅请求 url: {},/n param_data: {}, /n response: {}".format(
 				KdniaoExpressConfig.req_url, 
 				param_str,
-				verified_result.decode('utf-8')), type=self.express_config.watchdog_type)
+				verified_result.decode('utf-8')), self.express_config.watchdog_type)
 		except:
-			watchdog_error(u'发送快递鸟 订阅请求 失败，url:{},data:{},原因:{}'.format(KdniaoExpressConfig.req_url,
+			watchdog.error(u'发送快递鸟 订阅请求 失败，url:{},data:{},原因:{}'.format(KdniaoExpressConfig.req_url,
 				param_str,
-				unicode_full_stack()), type=self.express_config.watchdog_type)
+				unicode_full_stack()), self.express_config.watchdog_type)
 
 		return verified_result
 
 	def _is_poll_by_order(self):
 		try:
-			pushs = ExpressHasOrderPushStatus.objects.filter(
+			pushs = ExpressHasOrderPushStatus.select().dj_where(
 					# order_id = self.order_id,
 					express_company_name = self.order.express_company_name,
 					express_number = self.order.express_number
@@ -144,11 +144,11 @@ class KdniaoExpressPoll(object):
 
 			return False
 		except:
-			watchdog.error(u'快递鸟tool_express_has_order_push_status表异常，获取订单信息，express_company_name:{}，express_number:{}'.format(self.order.express_company_name, self.order.express_number), self.express_config.watchdog_type)
+			watchdog.error(u'快递鸟tool_express_has_order_push_status表异常，获取订单信息，express_company_name:{}，express_number:{}'.format(self.order.express_company_name, self.order.express_number))
 			return False
 
 	def _save_poll_order_id(self):
-		pushs = ExpressHasOrderPushStatus.objects.filter(
+		pushs = ExpressHasOrderPushStatus.select().dj_where(
 			express_company_name = self.order.express_company_name,
 			express_number = self.order.express_number
 		)
@@ -157,7 +157,7 @@ class KdniaoExpressPoll(object):
 			return pushs[0]
 
 		else:
-			express = ExpressHasOrderPushStatus.objects.create(
+			express = ExpressHasOrderPushStatus.create(
 				order_id = -1,
 				status = EXPRESS_PULL_NOT_STATUS,
 				express_company_name = self.order.express_company_name,
@@ -201,5 +201,5 @@ class KdniaoExpressPoll(object):
 				self.express.save()
 				watchdog.error(u'发送快递鸟 订阅请求存在问题，url:{},订单id:{},原因:{}'.format(KdniaoExpressConfig.req_url,
 					self.order_id,
-					data.get('Reason')), type=self.express_config.watchdog_type)
+					data.get('Reason')))
 			return False

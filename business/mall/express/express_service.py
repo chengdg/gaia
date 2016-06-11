@@ -35,12 +35,12 @@ class ExpressService(business_model.Model):
         if model:
             self.context['db_model'] = model
             self._init_slot_from_model(model)
-            if self.name == u"快递鸟":
-                self.express_poll = KdniaoExpressPoll(order).get_express_poll()
-            elif self.name == u"快递100":
-                self.express_poll = ExpressPoll(order)
+            #if self.name == u"快递鸟":
+            self.express_poll = KdniaoExpressPoll(order)
+            #elif self.name == u"快递100":
+             #   self.express_poll = ExpressPoll(order)
         else:
-            self.express_poll = ExpressPoll(order)
+            self.express_poll = KdniaoExpressPoll(order)
 
     def get_express_poll(self):
         return self.express_poll.get_express_poll()
