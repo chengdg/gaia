@@ -7,6 +7,7 @@ from db.mall import models as mall_models
 from util import regional_util
 
 from business.mall.order_products import OrderProducts
+from business.mall.express import util as express_util
 
 
 class Order(business_model.Model):
@@ -151,6 +152,12 @@ class Order(business_model.Model):
             self.context['products'] = products
 
         return products
+
+
+    @property
+    def formated_express_company_name(self):
+        return  u'%s快递' % express_util.get_name_by_value(self.express_company_name) if self.express_company_name  else ''
+    
 
     
     

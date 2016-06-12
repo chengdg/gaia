@@ -14,6 +14,7 @@ from business.mall.supplier import Supplier
 from business.account.user_profile import UserProfile
 from business.mall.express.express_service import ExpressService
 from business.market_tools.template_message.order_template_message_service import OrderTemplageMessageService
+from business.mall.order_email_service import OrderEmilService
 
 
 FATHER_ORDER = 1
@@ -106,12 +107,18 @@ class OrderState(Order):
             "webapp_id": self.webapp_id,
             "send_point": template_message_models.PAY_DELIVER_NOTIFY
             })
-        print order_template_message_service,"<<<<<<<<<<<<<<"
         if order_template_message_service:
             order_template_message_service.send_order_templage_message(self.order_id)
 
-    def __send_order_email(self):
-        pass
+    def __send_order_email(self, status=None):
+        if not status:
+            status = self.status
+        
+        email_service = OrderEmilService.from_status({
+            "webapp_id": self.webapp_id,
+            "status": status
+            })
+        email_service.send_message(self.order_id)
 
     def __send_request_to_kuaidi(self):
         """
@@ -137,17 +144,6 @@ class OrderState(Order):
         self.express_number = express_number
 
         mall_models.Order.update(**order_params).dj_where(id=self.id).execute()
-        #TODO
-        # try:
-        #     if express_company_name and express_number:
-        #         order.express_company_name = express_company_name
-        #         order.express_number = express_number
-        #         order.leader_name = leader_name
-        #         #TODO 发货模版消息
-        #         #template_message_api.send_order_template_message(order.webapp_id, order.id, template_message_model.PAY_DELIVER_NOTIFY)
-        # except:
-        #     alert_message = u"ship_order 发送模板消息失败, cause:\n{}".format(unicode_full_stack())
-        #     watchdog.error(alert_message)
         
         action = u'修改发货信息'
 
@@ -181,7 +177,7 @@ class OrderState(Order):
         if is_100:
             self.__send_request_to_kuaidi()
 
-        self.__send_order_email()
+        self.__send_order_email(target_status)
 
         return True, ''
 
@@ -258,18 +254,6 @@ class OrderState(Order):
             child_order.record_operation_log(operator_name, action, CHILD_ORDER)
 
         
-        # TODO 发货模版消息
-        # try:
-        #     if express_company_name and express_number:
-        #         order.express_company_name = express_company_name
-        #         order.express_number = express_number
-        #         order.leader_name = leader_name
-                
-        #         template_message_api.send_order_template_message(order.webapp_id, order.id, template_message_model.PAY_DELIVER_NOTIFY)
-        # except:
-        #     alert_message = u"ship_order 发送模板消息失败, cause:\n{}".format(unicode_full_stack())
-        #     watchdog.error(alert_message)
-
         """
             TODO加入到celery tasks:
                 1.快递接口访问（快递100或者是快递鸟接口访问）

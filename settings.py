@@ -126,3 +126,7 @@ CTYPT_INFO = {
 COMPONENT_INFO = {
     'app_id' : 'wx9b89fe19768a02d2',
 }
+
+MAIL_NOTIFY_USERNAME = u'noreply@notice.weizoom.com'
+MAIL_NOTIFY_PASSWORD = u'Weizoom2015'
+MAIL_NOTIFY_ACCOUNT_SMTP = u'smtp.dm.aliyun.com'
