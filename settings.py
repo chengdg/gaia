@@ -10,7 +10,7 @@ PROJECT_HOME = os.path.dirname(os.path.abspath(__file__))
 MODE = 'debug'
 SERVICE_NAME = 'zeus'
 DEV_SERVER_MULTITHREADING = True
-
+DOMAIN = "dev.weapp.com"
 DATABASES = {
     'default': {
         'ENGINE': 'mysql+retry',
@@ -60,6 +60,8 @@ if MODE == 'develop':
         datefmt="%Y-%m-%d %H:%M:%S",
         level=logging.INFO
     )
+    WEAPP_HOST = "http://dev.weapp.com/"
+    H5_HOST = "http://h5.weapp.com/"
 else:
     # 真实环境暂时关闭
     #WAPI_LOGGER_ENABLED = False
@@ -77,7 +79,8 @@ else:
         datefmt="%Y-%m-%d %H:%M:%S",
         level=logging.INFO
     )
-
+    WEAPP_HOST = "http://weapp.weizoom.com/"
+    H5_HOST = "http://mall.weizoom.com/"
 
 #缓存相关配置
 REDIS_HOST = 'redis.weapp.com'
@@ -123,3 +126,7 @@ CTYPT_INFO = {
 COMPONENT_INFO = {
     'app_id' : 'wx9b89fe19768a02d2',
 }
+
+MAIL_NOTIFY_USERNAME = u'noreply@notice.weizoom.com'
+MAIL_NOTIFY_PASSWORD = u'Weizoom2015'
+MAIL_NOTIFY_ACCOUNT_SMTP = u'smtp.dm.aliyun.com'

@@ -97,7 +97,7 @@ def closing_iterator_wrapper(iterable, close):
 #         super(ClientHandler, self).__init__(*args, **kwargs)
 
 #     def __call__(self, environ):
-#         from django.conf import settings
+#         import settings
 
 #         # Set up middleware if needed. We couldn't do this earlier, because
 #         # settings weren't available.
