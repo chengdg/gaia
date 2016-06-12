@@ -1,17 +1,20 @@
 # -*- coding: utf-8 -*-
 
+import sys
 from eaglet.decorator import param_required
 from eaglet.core import api_resource
 from eaglet.core import watchdog
 from eaglet.core.exceptionutil import unicode_full_stack
 from business import model as business_model
 from db.mall import models as mall_models
+from db.market_tools.template_message import models as template_message_models
 from util import regional_util
 from business.mall.order import Order
 from business.mall.supplier import Supplier
 from business.account.user_profile import UserProfile
 from business.mall.express.express_service import ExpressService
-import sys
+from business.market_tools.template_message.order_template_message_service import OrderTemplageMessageService
+
 
 FATHER_ORDER = 1
 CHILD_ORDER = 2
@@ -21,7 +24,6 @@ class OrderState(Order):
     """
     OrderState对象 只涉及状态
     """
-    
 
     def __init__(self, model):
         Order.__init__(self, model)
@@ -33,7 +35,6 @@ class OrderState(Order):
         if order_db_model.count() == 0:
             return None
         order = OrderState(order_db_model.first())
-        #order.ship_area = regional_util.get_str_value_by_string_ids(order_db_model.area)
         return order
 
     @staticmethod
@@ -43,18 +44,15 @@ class OrderState(Order):
         if order_db_model.count() == 0:
             return None
         order = OrderState(order_db_model.first())
-        #order.ship_area = regional_util.get_str_value_by_string_ids(order_db_model.area)
         return order
 
     @staticmethod
     @param_required(['origin_id'])
     def from_origin_id(args):
-        print ">>>>1>>"*6,sys._getframe().f_code
         order_db_models = mall_models.Order.select().dj_where(origin_order_id=args['origin_id'])
         orders = []
         for order_model in order_db_models:
             order = OrderState(order_model)
-            order.ship_area = regional_util.get_str_value_by_string_ids(order_model.area)
             orders.append(order)
         return orders
 
@@ -104,7 +102,13 @@ class OrderState(Order):
         mall_models.OrderOperationLog.create(order_id=order_id, action=action, operator=operator_name)
 
     def __send_ship_template_message(self):
-        pass
+        order_template_message_service = OrderTemplageMessageService.from_webapp_id({
+            "webapp_id": self.webapp_id,
+            "send_point": template_message_models.PAY_DELIVER_NOTIFY
+            })
+        print order_template_message_service,"<<<<<<<<<<<<<<"
+        if order_template_message_service:
+            order_template_message_service.send_order_templage_message(self.order_id)
 
     def __send_order_email(self):
         pass

@@ -6,6 +6,8 @@ from business import model as business_model
 from db.mall import models as mall_models
 from util import regional_util
 
+from business.mall.order_products import OrderProducts
+
 
 class Order(business_model.Model):
     """
@@ -124,5 +126,32 @@ class Order(business_model.Model):
     def ship_area(self):
         db_model = self.context['db_model']
         return regional_util.get_str_value_by_string_ids(db_model.area)
+
+    @property
+    def products(self):
+        """
+        订单中的商品，包含商品的信息
+        """
+        products = self.context.get('products', None)
+        if not products:
+            #try:
+            products = OrderProducts.get_for_order({
+                #'webapp_owner': self.context['webapp_owner'],
+                #'webapp_user': self.context['webapp_user'],
+                'order': self,
+            }).products
+            # except:
+            #     import sys
+            #     a, b, c = sys.exc_info()
+            #     print a
+            #     print b
+            #     import traceback
+            #     traceback.print_tb(c)
+
+            self.context['products'] = products
+
+        return products
+
+    
     
 

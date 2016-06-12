@@ -49,11 +49,11 @@ class OrderProducts(business_model.Model):
         '''
         # 订单和商品的关系
         order_product_relations = mall_models.OrderHasProduct.select().dj_where(order=order.id)
-        order_product_ids = [r.product_id for r in order_product_relations]
+        # order_product_ids = [r.product_id for r in order_product_relations]
 
-        # 订单和促销的关系
-        order_promotion_relations = mall_models.OrderHasPromotion.select().dj_where(order=order.order_id)
-        id2promotion = dict([(r.id, r)for r in order_promotion_relations])
+        # # 订单和促销的关系
+        # order_promotion_relations = mall_models.OrderHasPromotion.select().dj_where(order=order.order_id)
+        # id2promotion = dict([(r.id, r)for r in order_promotion_relations])
 
         products = []
         pricecut_id = None
@@ -91,5 +91,5 @@ class OrderProducts(business_model.Model):
             # TODO 有关商品供货商的信息
 
 
-
+        print ">>>>S>SS>S>S>S>S>S>",products
         self.products = products

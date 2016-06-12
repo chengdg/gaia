@@ -1,18 +1,18 @@
 # # -*- coding: utf-8 -*-
 
-# import os
-# import json
+import os
+import json
 # from models import ExpressDetail, ExpressHasOrderPushStatus, EXPRESS_TYPE
 # from watchdog.utils import watchdog_fatal
 # from core.exceptionutil import full_stack
 
-# ########################################################################
-# # get_express_company_json: 获得快递公司信息, 读取json文件
-# ########################################################################
-# def get_express_company_json():
-# 	file = open("tools/express/express_company.json", 'rb')
-# 	data_json = json.load(file)
-# 	return data_json
+########################################################################
+# get_express_company_json: 获得快递公司信息, 读取json文件
+########################################################################
+def get_express_company_json():
+	file = open("business/mall/express/express_company.json", 'rb')
+	data_json = json.load(file)
+	return data_json
 
 
 
@@ -31,19 +31,19 @@
 # 	return ''
 
 
-# ########################################################################
-# # get_name_by_value: 根据快递公司value，获取快递公司名称
-# ########################################################################
-# def get_name_by_value(value):
-# 	if not value:
-# 		return ''
+########################################################################
+# get_name_by_value: 根据快递公司value，获取快递公司名称
+########################################################################
+def get_name_by_value(value):
+	if not value:
+		return ''
 		
-# 	data_json = get_express_company_json()
-# 	for item in data_json:
-# 		if item['value'] == value:
-# 			return item['name']
+	data_json = get_express_company_json()
+	for item in data_json:
+		if item['value'] == value:
+			return item['name']
 
-# 	return value
+	return value
 
 
 # ########################################################################

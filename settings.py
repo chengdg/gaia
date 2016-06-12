@@ -60,6 +60,8 @@ if MODE == 'develop':
         datefmt="%Y-%m-%d %H:%M:%S",
         level=logging.INFO
     )
+    WEAPP_HOST = "http://dev.weapp.com/"
+    H5_HOST = "http://h5.weapp.com/"
 else:
     # 真实环境暂时关闭
     #WAPI_LOGGER_ENABLED = False
@@ -77,7 +79,8 @@ else:
         datefmt="%Y-%m-%d %H:%M:%S",
         level=logging.INFO
     )
-
+    WEAPP_HOST = "http://weapp.weizoom.com/"
+    H5_HOST = "http://mall.weizoom.com/"
 
 #缓存相关配置
 REDIS_HOST = 'redis.weapp.com'
