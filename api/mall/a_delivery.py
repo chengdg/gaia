@@ -8,7 +8,6 @@ from business.mall.order_product_relation import OrderProductRelation
 from business.mall.order import Order
 from business.mall.order_state import OrderState
 from business.tools.express_detail import ExpressDetail
-from db.mall import models as mall_models
 
 class ADelivery(api_resource.ApiResource):
     """
@@ -27,22 +26,22 @@ class ADelivery(api_resource.ApiResource):
         express_number =args.get('express_number')
 
         leader_name = args.get('leader_name', '')
-        is_100 = False if str(args.get('is_100', '0')) == "0" else True
+        #is_100 = False if str(args.get('is_100', '0')) == "0" else True
         operator_name = args.get('operator_name', '')
 
         order = OrderState.from_order_id({'order_id': args['order_id']})
         if not order:
             return {
-                'result': 'FALUT',
+                'result': 'FAILED',
                 'msg': u"订单不存在"
             }
         
-        result, msg = order.ship_order(express_company_name, express_number, operator_name, leader_name, is_100)
+        result, msg = order.ship(express_company_name, express_number, operator_name, leader_name)
 
         if result:
             result = "SUCCESS"
         else:
-            result = "FALUT"
+            result = "FAILED"
         return {
             'result': result,
             'msg': msg
@@ -55,7 +54,7 @@ class ADelivery(api_resource.ApiResource):
         express_number =args.get('express_number')
 
         leader_name = args.get('leader_name', '')
-        is_100 = False if str(args.get('is_100', '0')) == "0" else True
+        #is_100 = False if str(args.get('is_100', '0')) == "0" else True
         operator_name = args.get('operator_name', '')
         is_update_express = args.get("is_update_express", "0")
 
@@ -66,7 +65,7 @@ class ADelivery(api_resource.ApiResource):
                 'msg': u"订单不存在"
             }
         
-        result, msg = order.update_express(express_company_name, express_number, operator_name, leader_name, is_100)
+        result, msg = order.update_ship(express_company_name, express_number, operator_name, leader_name)
         
         if result:
             result = "SUCCESS"
@@ -74,5 +73,5 @@ class ADelivery(api_resource.ApiResource):
             result = "FALUT"
         return {
             'result': result,
-            'msg': order.id
+            'msg': msg
         }

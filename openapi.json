@@ -1,85 +1,157 @@
 {
-	"swagger": "2.0",
-	"info": {
-		"description": "API描述文档",
-		"version": "1.0.0",
-		"title": "Python Service",
-		"termsOfService": "http://swagger.io/terms/",
-		"contact": {
-			"email": "someone@weizoom.com"
-		},
-		"license": {
-			"name": "Apache 2.0",
-			"url": "http://www.apache.org/licenses/LICENSE-2.0.html"
-		}
-	},
-	"host": "a03:8092",
-	"basePath": "/",
-	"tags": [{
-		"name": "demo",
-		"description": "演示接口",
-		"externalDocs": {
-			"description": "详细描述文档",
-			"url": "http://swagger.io"
-		}
-	}],
-	"schemes": [
-		"http"
-	],
-	"paths": {
-		"/demo/data": {
-			"get": {
-				"tags": [
-					"demo"
-				],
-				"summary": "服务演示数据",
-				"description": "",
-				"consumes": [
-					"application/x-www-form-urlencoded"
-				],
-				"produces": [
-					"application/json"
-				],
-				"parameters": [{
-					"in": "body",
-					"name": "id",
-					"description": "ID",
-					"required": true
-				}],
-				"responses": {
-					"200": {
-						"description": "data response",
-						"schema": {
-							"$ref": "#/definitions/DemoData"
-						}
-					},
-					"405": {
-						"description": "Invalid input"
-					}
-				}
-			}
-		}
-	},
-	"definitions": {
-		"DemoData": {
-			"type": "object",
-			"properties": {
-				"id": {
-					"type": "integer",
-					"format": "int64"
-				},
-				"age": {
-					"type": "integer",
-					"format": "int64"
-				},
-				"name": {
-					"type": "string"
-				}
-			}
-		}
-	},
-	"externalDocs": {
-		"description": "Python-base API描述文档",
-		"url": "http://swagger.io"
-	}
+    "swagger": "2.0",
+    "info": {
+        "version": "0.0.0",
+        "title": "zeus API doc"
+    },
+    "paths": {
+        "/mall/delivery/": {
+            "put": {
+                "description": "订单发货\n",
+                "parameters": [
+                    {
+                        "name": "order_id",
+                        "in": "query",
+                        "description": "订单编号",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "express_company_name",
+                        "in": "query",
+                        "description": "快递名称",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "express_number",
+                        "in": "query",
+                        "description": "快递编号",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "leader_name",
+                        "in": "query",
+                        "description": "负责人",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "operator_name",
+                        "in": "query",
+                        "description": "操作人",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string",
+                                            "description": "信息描述"
+                                        },
+                                        "result": {
+                                            "type": "string",
+                                            "description": "SUCCESS or FAILED"
+                                        }
+                                    }
+                                },
+                                "errMsg": {
+                                    "type": "string"
+                                },
+                                "innerErrMsg": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "订单发货信息修改\n",
+                "parameters": [
+                    {
+                        "name": "order_id",
+                        "in": "query",
+                        "description": "订单编号",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "express_company_name",
+                        "in": "query",
+                        "description": "快递名称",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "express_number",
+                        "in": "query",
+                        "description": "快递编号",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "leader_name",
+                        "in": "query",
+                        "description": "负责人",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "operator_name",
+                        "in": "query",
+                        "description": "操作人",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string",
+                                            "description": "信息描述"
+                                        },
+                                        "result": {
+                                            "type": "string",
+                                            "description": "SUCCESS or FAILED"
+                                        }
+                                    }
+                                },
+                                "errMsg": {
+                                    "type": "string"
+                                },
+                                "innerErrMsg": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
