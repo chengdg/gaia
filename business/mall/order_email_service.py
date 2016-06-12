@@ -2,6 +2,7 @@
 
 from eaglet.decorator import param_required
 from eaglet.core import api_resource
+from eaglet.core import watchdog
 from eaglet.core.sendmail import sendmail
 from business import model as business_model
 from business.mall.order import Order
