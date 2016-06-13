@@ -20,7 +20,7 @@ class Order(business_model.Model):
         'payment_time',
         'final_price',
         'product_price',
-        'edit_money',
+        'product_count',
 
         'ship_name',
         'ship_tel',
@@ -40,6 +40,7 @@ class Order(business_model.Model):
         'origin_order_id',
         'express_company_name',
         'express_number',
+        'express_details',
         'customer_message',
         'promotion_saved_money',
 
@@ -50,6 +51,7 @@ class Order(business_model.Model):
         'integral_each_yuan',
         'webapp_id',
         'webapp_user_id',
+        'member_id',
         'member_grade_id',
         'member_grade_discount',
         'buyer_name',
@@ -98,3 +100,160 @@ class Order(business_model.Model):
             orders.append(order)
 
         return orders
+
+    @staticmethod
+    @param_required(['order_id'])
+    def from_order_id(args):
+        order_db_model = mall_models.Order.select().dj_where(order_id=args['order_id'])
+        if order_db_model.count() == 0:
+            return None
+        order = Order(order_db_model.first())
+        return order
+
+    # @property
+    # def real_has_sub_order(self):
+    #     """
+    #     [property] 真正的该订单是否有子订单
+    #     """
+    #     return self.origin_order_id == -1
+
+    # @property
+    # def is_sub_order(self):
+    #     """
+    #     [property] 该订单是否是子订单
+    #     """
+    #     return self.origin_order_id > 0
+
+    # def has_multi_sub_order(self):
+    #     """
+    #     [property] 该订单是否有超过一个子订单
+    #     """
+    #     return self.has_sub_order and len(self.get_sub_order_ids()) > 1
+
+    # def get_sub_order_ids(self):
+    #     if self.real_has_sub_order:
+    #         orders = mall_models.Order.select().dj_where(origin_order_id=self.id)
+    #         sub_order_ids = [order.order_id for order in orders]
+    #         return sub_order_ids
+    #     else:
+    #         return []
+
+    # def sub_orders(self):
+    #     """
+    #     拆单后的子订单信息
+    #     """
+    #     pass
+
+    # def latest_express_detail(self):
+    #     """
+    #     [property] 订单的最新物流详情
+    #     """
+    #     details = self.express_details
+    #     if details:
+    #         return details[-1].to_dict()
+    #     return None
+
+    @property
+    def is_group_buy(self):
+        if not self.context.get('_is_group_buy'):
+            self.context['_is_group_buy'] = bool(mall_models.OrderHasGroup.select().dj_where(order_id=self.order_id).first())
+
+        return self.context['_is_group_buy']
+
+    @is_group_buy.setter
+    def is_group_buy(self, value):
+        self.context['_is_group_buy'] = value
+
+
+    # @property
+    # def products(self):
+    #     """
+    #     订单中的商品，包含商品的信息
+    #     """
+    #     products = self.context.get('products', None)
+    #     if not products:
+    #         try:
+    #             products = OrderProducts.get_for_order({
+    #                 'webapp_owner': self.context['webapp_owner'],
+    #                 'webapp_user': self.context['webapp_user'],
+    #                 'order': self,
+    #             }).products
+    #         except:
+    #             import sys
+    #             a, b, c = sys.exc_info()
+    #             print a
+    #             print b
+    #             import traceback
+    #             traceback.print_tb(c)
+
+    #         self.context['products'] = products
+
+    #     return products
+
+    # @products.setter
+    # def products(self, products):
+    #     self.context['products'] = products
+
+    # @property
+    # def product_groups(self):
+    #     return self.context['product_groups']
+
+    # @product_groups.setter
+    # def product_groups(self, product_groups):
+    #     self.context['product_groups'] = product_groups
+
+    # @property
+    # def express_details(self):
+    #     """
+    #     [property] 订单的物流详情列表
+
+    #     @return ExpressDetail对象list
+
+    #     @see Weapp的`weapp/mall/models.py`中的`get_express_details()`
+    #     """
+    #     # 为了兼容有order.id的方式
+    #     db_details = express_models.ExpressDetail.select().dj_where(order_id=self.id).order_by(-express_models.ExpressDetail.display_index)
+    #     if db_details.count() > 0:
+    #         details = [ExpressDetail(detail) for detail in db_details]
+    #         #return list(details)
+    #         return details
+
+    #     logging.info("express_company_name:{}, express_number:{}".format(self.express_company_name, self.express_number))
+    #     expresses = express_models.ExpressHasOrderPushStatus.select().dj_where(
+    #             express_company_name = self.express_company_name,
+    #             express_number = self.express_number
+    #         )
+    #     if expresses.count() == 0:
+    #         logging.info("No proper ExpressHasOrderPushStatus records.")
+    #         return []
+
+    #     try:
+    #         express = expresses[0]
+    #         logging.info("express: {}".format(express.id))
+    #         db_details = express_models.ExpressDetail.select().dj_where(express_id=express.id).order_by(-express_models.ExpressDetail.display_index)
+    #         details = [ExpressDetail(detail) for detail in db_details]
+    #     except Exception as e:
+    #         logging.error(u'获取快递详情失败，order_id={}, case:{}'.format(self.id, str(e)))
+    #         details = []
+    #     return details
+
+    # def order_group_info(self):
+    #     order_has_group = mall_models.OrderHasGroup.select().dj_where(order_id=self.order_id).first()
+    #     activity_url = ''
+    #     if order_has_group:
+    #         order_group_info = order_has_group.to_dict()
+    #         if self.status == mall_models.ORDER_STATUS_NOT:
+    #             activity_url = 'http://' + settings.WEAPP_DOMAIN + '/m/apps/group/m_group/?webapp_owner_id=' + str(self.context['webapp_owner'].id) + '&id=' + order_group_info['activity_id']
+    #         else:
+    #             url = GroupBuyOPENAPI['get_group_url']
+    #             data = {
+    #                 'woid': self.context['webapp_owner'].id,
+    #                 'group_id': order_group_info['group_id']
+    #             }
+    #             is_success, group_url_info = microservice_consume(url=url,data=data)
+    #             if is_success:
+    #                 activity_url = 'http://' + settings.WEAPP_DOMAIN + group_url_info['group_url']
+    #         order_group_info['activity_url'] = activity_url
+    #         return order_group_info
+    #     else:
+    #         return {}
