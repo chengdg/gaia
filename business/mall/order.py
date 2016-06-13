@@ -36,6 +36,7 @@ class Order(business_model.Model):
         'integral',
         'integral_money',
         'coupon_money',
+        'edit_money',
 
         'coupon_id',
         'raw_status',
@@ -124,6 +125,46 @@ class Order(business_model.Model):
         #order.ship_area = regional_util.get_str_value_by_string_ids(order_db_model.area)
         return order
 
+    @property
+    def is_group_buy(self):
+        if not self.context.get('_is_group_buy'):
+            self.context['_is_group_buy'] = bool(mall_models.OrderHasGroup.select().dj_where(order_id=self.order_id).first())
+
+        return self.context['_is_group_buy']
+
+    @is_group_buy.setter
+    def is_group_buy(self, value):
+        self.context['_is_group_buy'] = value
+
+    @property
+    def number(self):
+        self.context['_number'] = 0
+        self.context['_total_price'] = 0.0
+        relations = mall_models.OrderHasProduct.select().dj_where(order_id=self.id)
+        for relation in relations:
+            self.context['_number'] += relation.number
+            self.context['_total_price'] += relation.total_price
+        return self.context['_number']
+
+    @property
+    def pay_interface_name(self):
+        self.context['_pay_interface_name'] = mall_models.PAYTYPE2NAME.get(self.pay_interface_type, u'')
+        return self.context['_pay_interface_name']
+
+    @property
+    def total_price(self):
+        return self.context['_total_price']
+
+    @property
+    def pay_money(self):
+        self.context['_pay_money'] = self.final_price + self.weizoom_card_money
+
+    @property
+    def save_money(self):
+        self.context['_save_money'] = self.context['_total_price'] + self.postage - (self.final_price + self.weizoom_card_money)
+
+
+
     # @property
     # def real_has_sub_order(self):
     #     """
@@ -167,16 +208,6 @@ class Order(business_model.Model):
     #         return details[-1].to_dict()
     #     return None
 
-    @property
-    def is_group_buy(self):
-        if not self.context.get('_is_group_buy'):
-            self.context['_is_group_buy'] = bool(mall_models.OrderHasGroup.select().dj_where(order_id=self.order_id).first())
-
-        return self.context['_is_group_buy']
-
-    @is_group_buy.setter
-    def is_group_buy(self, value):
-        self.context['_is_group_buy'] = value
 
 
     # @property

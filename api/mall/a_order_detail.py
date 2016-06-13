@@ -6,6 +6,10 @@ from eaglet.decorator import param_required
 
 from business.mall.order import Order
 from business.mall.order_product_relation import OrderProductRelation
+from business.mall.coupon.coupon import Coupon
+from business.mall.coupon.coupon_rule import CouponRule
+from business.mall.promotion.promotion import Promotion
+from business.mall.promotion.product_has_promotion import ProductHasPromotion
 from db.mall import models as mall_models
 
 class AOrderDetail(api_resource.ApiResource):
@@ -19,13 +23,32 @@ class AOrderDetail(api_resource.ApiResource):
     @param_required(['order_id'])
     def get(args):
         order = Order.from_order_id({'order_id': args['order_id']})
-
         if not order:
             return {"order": None}
+        products = order.products
 
-
-        # 订单商品
         # 商品的积分和优惠券信息
+        for product in products:
+            if 'integral_count' in product and product['integral_count'] > 0:
+                order.integral = None
+
+        coupon = Coupon.get_coupon_by_id({'id': order.coupon_id})
+        if coupon:
+            coupon_rule = CouponRule.from_id({'id': coupon.coupon_rule_id})
+            coupon.limit_product = coupon_rule.limit_product
+
+            coupon_promotion = Promotion.from_detail_id({'detail_id': coupon_rule.id})
+            product_has_promotion = ProductHasPromotion.from_promotion_id({'promotion_id': coupon_promotion.id})
+            coupon_product_id = -1
+            if len(product_has_promotion) > 0:
+                coupon_product_id = product_has_promotion[0].product_id
+
+            for product in order.products:
+                if coupon.product_id == product['id']:
+                    product['has_coupon'] = True
+                    break
+
+
         # 订单的团购
         # 订单的详细信息
         # 子订单
@@ -35,14 +58,31 @@ class AOrderDetail(api_resource.ApiResource):
 
     @staticmethod
     def to_dict(order):
-        order_dict = order.to_dict('latest_express_detail', 'products', 'is_group_buy', 'order_group_info')
+        order_dict = order.to_dict(
+            'latest_express_detail',
+            'products',
+            'is_group_buy',
+            'order_group_info',
+            'number',
+            'ship_area',
+            'pay_interface_name',
+            'save_money',
+            'pay_money',
+            'total_price',
+            'action'
+            )
         api_keys = [
+            "number",
             "buyer_name",
             "coupon_money",
             "integral",
             "ship_area",
             "member_grade_id",
             "edit_money",
+            "total_price",
+            "save_money",
+            "pay_money",
+            "action",
             "id",
             "pay_interface_name",
             "ship_name",

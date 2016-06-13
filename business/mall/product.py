@@ -74,7 +74,7 @@ class Product(business_model.Model):
     @param_required(['product_ids'])
     def from_ids(args):
         product_models = mall_models.Product.select().dj_where(id__in=args['product_ids'])
-        prodcts = []
+        products = []
         for model in product_models:
             products.append(Product(model))
         return products
