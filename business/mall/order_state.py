@@ -20,7 +20,7 @@ from business.account.integral import Integral
 from business.member.webapp_user import WebAppUser
 from business.member.member_spread import MemberSpread
 
-from services.order_notify_mall_service.task import service_send_order_email
+from services.order_notify_mail_service.task import service_send_order_email
 from services.shiped_order_template_message_service.task import service_send_shiped_order_template_message
 from services.express_service.task import service_express
 

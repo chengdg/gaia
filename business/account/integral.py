@@ -192,21 +192,21 @@ class Integral(business_model.Model):
 		member = webapp_user.member
 		integral_strategy = member_models.IntegralStrategySttings.select().dj_where(webapp_id=member.webapp_id).first()
 		order = mall_models.Order.get(id=order_id)
-		print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.3',order_id
+		# print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.3',order_id
 		#try:
 		mall_order_from_shared = mall_models.MallOrderFromSharedRecord.select().dj_where(order_id=order_id).first()
-		print "aaaa>>>>>>>>",mall_order_from_shared
+		# print "aaaa>>>>>>>>",mall_order_from_shared
 		if mall_order_from_shared:
 			fmt = mall_order_from_shared.fmt
 		else:
 			fmt = None
 		#except:
 		#	fmt = None
-		print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.4 fmt:',fmt
+		#print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.4 fmt:',fmt
 		
 
 		if member and order:
-			print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.5 fmt:',fmt
+			#print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.5 fmt:',fmt
 			if member.token != fmt:
 				try:
 					followed_member = member_models.Member.get(token=fmt)
@@ -219,9 +219,9 @@ class Integral(business_model.Model):
 
 			# if not integral_strategy:
 			# 	integral_strategy_settings = member_models.IntegralStrategySttings.get(webapp_id=webapp_owner.webapp_id)
-			print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.46fmt:',integral_strategy
+			#print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.46fmt:',integral_strategy
 			if integral_strategy:
-				print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.7:'
+				#print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.7:'
 				increase_count = integral_strategy.buy_via_shared_url_increase_count_for_author
 				#给好友奖励（分享链接购买）
 
