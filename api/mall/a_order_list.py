@@ -8,8 +8,6 @@ from business.mall.order_product_relation import OrderProductRelation
 from business.mall.order import Order
 from business.mall.order_items import OrderItems
 from business.account.user_profile import UserProfile
-from core import paginator
-
 
 class AOrderList(api_resource.ApiResource):
     """

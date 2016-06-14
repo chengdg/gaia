@@ -60,11 +60,21 @@ class AOrderDetail(api_resource.ApiResource):
         child_orders = order.child_order
         order_status_logs = OrderStatusLogInfo.from_order({'order': order}).logs
         order_operation_logs = OrderOperationLogInfo.from_order({'order': order, 'child_orders': child_orders})
+        order_action = Order.action(
+            order,
+            is_detail_page=True,
+            is_group_buying=order.is_group_buy,
+            multi_child_orders=True if len(child_orders) > 1 else False)
         order_info = AOrderDetail.to_dict(order)
+        order_info['action'] = order_action
         order_info['products'] = group_products
 
         child_orders_data = {}
         for child_order in child_orders:
+            order_action = Order.action(
+            child_order,
+            is_detail_page=True,
+            is_group_buying=child_order.is_group_buy)
             child_order = child_order.to_dict(
                 'express_details',
                 'is_group_buy',
@@ -77,10 +87,11 @@ class AOrderDetail(api_resource.ApiResource):
                 'action',
                 'is_sub',
                 'has_sub_order')
+            child_order['action'] = order_action
             key = "%d-%d" % (child_order['supplier'], child_order['supplier_user_id'])
             if key in child_orders_data: child_orders_data[key].append(child_order)
             else: child_orders_data[key] = [child_order]
-
+        print order_status_logs
         return {
             "order": order_info,
             "child_orders": child_orders_data,

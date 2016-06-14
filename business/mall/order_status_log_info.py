@@ -79,13 +79,13 @@ class OrderStatusLogInfo(business_model.Model):
 
             log = {}
             log['status'] = u'已发货'
-            log['created_at'] = log_models.dj_where(to_status=mall_models.ORDER_STATUS_PAYED_SHIPED).first() if log_models.dj_where(to_status=mall_models.ORDER_STATUS_PAYED_SHIPED).count()>0 else ''
+            log['created_at'] = log_models.dj_where(to_status=mall_models.ORDER_STATUS_PAYED_SHIPED).first().created_at if log_models.dj_where(to_status=mall_models.ORDER_STATUS_PAYED_SHIPED).count()>0 else ''
             log['is_current'] = is_current[1]
             logs.append(log)
 
             log = {}
             log['status'] = u'交易完成'
-            log['created_at'] = log_models.dj_where(to_status=mall_models.ORDER_STATUS_SUCCESSED).first() if log_models.dj_where(to_status=mall_models.ORDER_STATUS_SUCCESSED).count()>0 else ''
+            log['created_at'] = log_models.dj_where(to_status=mall_models.ORDER_STATUS_SUCCESSED).first().created_at if log_models.dj_where(to_status=mall_models.ORDER_STATUS_SUCCESSED).count()>0 else ''
             log['is_current'] = is_current[2]
             logs.append(log)
 

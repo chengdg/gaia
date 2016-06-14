@@ -192,37 +192,6 @@ class Order(business_model.Model):
 
         return child_orders
 
-    # @property
-    # def real_has_sub_order(self):
-    #     """
-    #     [property] 真正的该订单是否有子订单
-    #     """
-    #     return self.origin_order_id == -1
-
-    # @property
-    # def is_sub_order(self):
-    #     """
-    #     [property] 该订单是否是子订单
-    #     """
-    #     return self.origin_order_id > 0
-
-    # def has_multi_sub_order(self):
-    #     """
-    #     [property] 该订单是否有超过一个子订单
-    #     """
-    #     return self.has_sub_order and len(self.get_sub_order_ids()) > 1
-
-    # def get_sub_order_ids(self):
-    #     if self.real_has_sub_order:
-    #         orders = mall_models.Order.select().dj_where(origin_order_id=self.id)
-    #         sub_order_ids = [order.order_id for order in orders]
-    #         return sub_order_ids
-    #     else:
-    #         return []
-
-
-
-
     @property
     def express_details(self):
         """
@@ -296,16 +265,14 @@ class Order(business_model.Model):
     def formated_express_company_name(self):
         return  u'%s快递' % express_util.get_name_by_value(self.express_company_name) if self.express_company_name  else ''
 
-    @property
-    def action(self):
-        # TODO 后期把下面参数加到order的属性当中
-        order = self
-        is_refund=False
-        is_detail_page=False
-        is_list_parent=False
-        mall_type=0
-        multi_child_orders=False
-        is_group_buying=False
+    @staticmethod
+    def action(order,
+        is_refund=False,
+        is_detail_page=False,
+        is_list_parent=False,
+        mall_type=0,
+        multi_child_orders=False,
+        is_group_buying=False):
 
         result = []
         if not is_refund:
@@ -383,7 +350,6 @@ class Order(business_model.Model):
 
         if multi_child_orders:
             result = filter(lambda x: x not in able_actions_for_list_parent, result)
-        self.context['_action'] = result
         return result
 
     def child_order_count(self):
