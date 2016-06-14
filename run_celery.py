@@ -25,6 +25,26 @@ from eaglet.core.service.celery import task
 from json import dumps,loads
 import logging
 
+TASK_ACCEPTED = 0 
+TASK_SUCCESS  = 1 
+TASK_REVOKED  = 2 
+TASK_RETRY    = 3 
+TASK_TIMEOUT  = 4 
+TASK_FAILURE  = 5 
+TASK_ERROR    = 6 
+TASK_UNKNOWN  = 9 
+
+TASK_STATUS = (
+    (TASK_UNKNOWN, '未注册'),
+    (TASK_ACCEPTED, '排号'),
+    (TASK_REVOKED, '取消'),
+    (TASK_ERROR, '错误'),
+    (TASK_SUCCESS, '成功'),
+    (TASK_TIMEOUT, '超时'),
+    (TASK_RETRY, '重试'),
+    (TASK_FAILURE, '失败'),
+)
+
 # jz 2015-11-24
 #from db.svsmon.models import Svsmon,  TASK_ACCEPTED, TASK_REVOKED, TASK_ERROR, TASK_SUCCESS, TASK_TIMEOUT, TASK_RETRY, TASK_FAILURE, TASK_UNKNOWN
 #from django.core.mail import send_mail
@@ -159,11 +179,11 @@ class CeleryTaskMonitor(logging.Filter):
 
     def revoked(self, r):
         task, tid = r.args
-        #self.on_reallog(r, tid, TASK_REVOKED)
+        self.on_reallog(r, tid, TASK_REVOKED)
 
     def on_error(self, r):
         tid, r.task = r.args.get('id'), r.args.get('name')
-        #self.on_reallog(r, tid, TASK_ERROR)
+        self.on_reallog(r, tid, TASK_ERROR)
 
     def on_accepted(self, r):
         r.levelno = logging.INFO
@@ -185,19 +205,19 @@ class CeleryTaskMonitor(logging.Filter):
     def on_success(self, r):
         tid = r.args.get('id')
         r.msg = 'Task [%(id)s] succeeded in %(runtime)ss: %(return_value)s'
-        #self.on_reallog(r, tid, TASK_SUCCESS)
+        self.on_reallog(r, tid, TASK_SUCCESS)
 
     def on_timeout(self, r):
         timeout, task, tid = r.args
-        #self.on_reallog(r, tid, TASK_TIMEOUT)
+        self.on_reallog(r, tid, TASK_TIMEOUT)
 
     def on_retry(self, r):
         tid, name, exc = r.args
-        #self.on_reallog(r, tid, TASK_RETRY)
+        self.on_reallog(r, tid, TASK_RETRY)
 
     def on_failure(self, r):
         tid = r.args['id']
-        #self.on_reallog(r, tid, TASK_FAILURE)
+        self.on_reallog(r, tid, TASK_FAILURE)
 
     def on_reallog(self, r, tid, status):
         if CeleryTaskMonitor.pairs.has_key(tid):
