@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
-from core import paginator
+from eaglet.core import paginator
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
 

@@ -73,9 +73,9 @@ class ExpressPoll(object):
 
 	def _get_api(self):
 		if self.express:
-			return self.express_config.callback_url.format(settings.DOMAIN, self.express.id)
+			return self.express_config.callback_url.format(settings.WEAPP_DOMAIN, self.express.id)
 
-		return self.express_config.callback_url.format(settings.DOMAIN, '-99')
+		return self.express_config.callback_url.format(settings.WEAPP_DOMAIN, '-99')
 		# return self.express_config.callback_url.format('docker.test.gaoliqi.com', self.order_id)
 
 	def _poll_response(self):

@@ -10,7 +10,7 @@ PROJECT_HOME = os.path.dirname(os.path.abspath(__file__))
 MODE = 'develop'
 SERVICE_NAME = 'zeus'
 DEV_SERVER_MULTITHREADING = True
-DOMAIN = "dev.weapp.com"
+WEAPP_DOMAIN = "dev.weapp.com"
 DATABASES = {
     'default': {
         'ENGINE': 'mysql+retry',
@@ -36,7 +36,7 @@ DATABASES = {
 MIDDLEWARES = [
     'eaglet.middlewares.debug_middleware.QueryMonitorMiddleware',
     'eaglet.middlewares.debug_middleware.RedisMiddleware',
-
+    'eaglet.middlewares.zipkin_middleware.ZipkinMiddleware'
     #账号信息中间件
     #'middleware.webapp_account_middleware.WebAppAccountMiddleware',
 ]
