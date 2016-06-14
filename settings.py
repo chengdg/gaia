@@ -7,10 +7,10 @@ import logging
 DEBUG = True
 PROJECT_HOME = os.path.dirname(os.path.abspath(__file__))
 
-MODE = 'debug'
+MODE = 'develop'
 SERVICE_NAME = 'zeus'
 DEV_SERVER_MULTITHREADING = True
-DOMAIN = "dev.weapp.com"
+WEAPP_DOMAIN = "dev.weapp.com"
 DATABASES = {
     'default': {
         'ENGINE': 'mysql+retry',
@@ -36,7 +36,7 @@ DATABASES = {
 MIDDLEWARES = [
     'eaglet.middlewares.debug_middleware.QueryMonitorMiddleware',
     'eaglet.middlewares.debug_middleware.RedisMiddleware',
-
+    'eaglet.middlewares.zipkin_middleware.ZipkinMiddleware'
     #账号信息中间件
     #'middleware.webapp_account_middleware.WebAppAccountMiddleware',
 ]
@@ -107,7 +107,9 @@ INSTALLED_TASKS = [
     #'resource.member.tasks',
     # 'core.watchdog.tasks',
     'wapi.tasks',
-
+    'services.order_notify_mail_service.task.service_send_order_email',
+    'services.shiped_order_template_message_service.task.service_send_shiped_order_template_message',
+    
     # 'services.example_service.tasks.example_log_service',
     # 'services.order_notify_mail_service.task.notify_order_mail',
     # 'services.record_member_pv_service.task.record_member_pv',

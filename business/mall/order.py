@@ -383,6 +383,10 @@ class Order(business_model.Model):
 
         if multi_child_orders:
             result = filter(lambda x: x not in able_actions_for_list_parent, result)
-
         self.context['_action'] = result
         return result
+
+    def child_order_count(self):
+        if self.origin_order_id <= 0:
+            return mall_models.Order.select().dj_where(origin_order_id=self.id).count()
+        return 0

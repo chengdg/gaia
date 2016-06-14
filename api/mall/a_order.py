@@ -22,14 +22,27 @@ class AOrder(api_resource.ApiResource):
     #     下单接口
 
     #     @param id 商
-    @param_required(['order_id', "action", "operation_name"])
+    @param_required(['order_id', "action", "operator_name"])
     def post(args):
         order_id = args['order_id']
         action = args['action']
-        operation_name = args["operation_name"]
+        operator_name = args["operator_name"]
 
         order = OrderState.from_order_id({
             "order_id": order_id
             })
-        if action == "finish":
-            order.finish(operation_name)
+        if order:
+            if action == "finish":
+                result, msg = order.finish(operator_name)
+            else:
+                result, msg = False, 'no action'
+        else:
+            result, msg = False, 'error order_id'
+        if result:
+            result = "SUCCESS"
+        else:
+            result = "FAILED"
+        return {
+            'result': result,
+            'msg': msg
+        }

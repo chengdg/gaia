@@ -1,7 +1,7 @@
 {
     "swagger": "2.0",
     "info": {
-        "version": "0.0.0",
+        "version": "0.0.1",
         "title": "zeus API doc"
     },
     "paths": {
@@ -107,6 +107,67 @@
                         "name": "leader_name",
                         "in": "query",
                         "description": "负责人",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "operator_name",
+                        "in": "query",
+                        "description": "操作人",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string",
+                                            "description": "信息描述"
+                                        },
+                                        "result": {
+                                            "type": "string",
+                                            "description": "SUCCESS or FAILED"
+                                        }
+                                    }
+                                },
+                                "errMsg": {
+                                    "type": "string"
+                                },
+                                "innerErrMsg": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/mall/order/": {
+            "post": {
+                "description": "修改订单状态（目前仅支持完成）",
+                "parameters": [
+                    {
+                        "name": "order_id",
+                        "in": "query",
+                        "description": "订单编号",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "action",
+                        "in": "query",
+                        "description": "动作（finish,cancel,refund）",
                         "required": true,
                         "type": "string"
                     },

@@ -299,18 +299,18 @@ class MemberClickedUrl(models.Model):
         verbose_name_plural = '会员url点击记录'
 
 
-class MallOrderFromSharedRecord(models.Model):        
-    """
-    add by bert 记录通过分享链接下单 订单号和分享者信息
-    """
-    order_id = models.IntegerField()
-    fmt = models.CharField(default='', max_length=255)
-    created_at = models.DateTimeField(auto_now_add=True)  # 添加时间
+# class MallOrderFromSharedRecord(models.Model):        
+#     """
+#     add by bert 记录通过分享链接下单 订单号和分享者信息
+#     """
+#     order_id = models.IntegerField()
+#     fmt = models.CharField(default='', max_length=255)
+#     created_at = models.DateTimeField(auto_now_add=True)  # 添加时间
     
-    class Meta:
-        verbose_name = "通过分享链接订单"
-        verbose_name_plural = "通过分享链接订单"
-        db_table = "mall_order_from_shared_record"
+#     class Meta:
+#         verbose_name = "通过分享链接订单"
+#         verbose_name_plural = "通过分享链接订单"
+#         db_table = "mall_order_from_shared_record"
 
 
 FIRST_SUBSCRIBE = u'首次关注'

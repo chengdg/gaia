@@ -4,7 +4,7 @@ from db.account import models as account_models
 #import resource
 from business.account.webapp_owner import WebAppOwner
 #from business.account.member import Member
-#from business.account.webapp_user import WebAppUser
+#from business.member.webapp_user import WebAppUser
 from business.account.system_account import SystemAccount
 #from services.record_member_pv_service.task import record_member_pv
 from wapi.user.access_token import AccessToken

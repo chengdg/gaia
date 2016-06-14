@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
-
+from eaglet.core import paginator
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
 
@@ -8,7 +8,7 @@ from business.mall.order_product_relation import OrderProductRelation
 from business.mall.order import Order
 from business.mall.order_items import OrderItems
 from business.account.user_profile import UserProfile
-from core import paginator
+
 
 
 class AOrderList(api_resource.ApiResource):

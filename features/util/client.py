@@ -673,7 +673,7 @@ class Client(RequestFactory):
             cookie_data = {
                 'max-age': None,
                 'path': '/',
-                'domain': settings.SESSION_COOKIE_DOMAIN,
+                'WEAPP_DOMAIN': settings.SESSION_COOKIE_WEAPP_DOMAIN,
                 'secure': settings.SESSION_COOKIE_SECURE or None,
                 'expires': None,
             }

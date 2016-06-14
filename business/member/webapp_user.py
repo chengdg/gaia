@@ -24,7 +24,7 @@ from business.member.member import Member
 import settings
 from eaglet.decorator import cached_context_property
 from util import regional_util
-#from business.account.member_order_info import MemberOrderInfo
+from business.member.member_order_info import MemberOrderInfo
 from business.member.social_account import SocialAccount
 
 from business.mall.coupon.coupon import Coupon
@@ -41,25 +41,24 @@ class WebAppUser(business_model.Model):
         'has_purchased'
     )
 
-    # @staticmethod
-    # @param_required(['webapp_owner', 'member_id'])
-    # def from_member_id(args):
-    #     """
-    #     工厂方法，根据webapp user model获取WebAppUser业务对象
+    @staticmethod
+    @param_required(['member_id'])
+    def from_member_id(args):
+        """
+        工厂方法，根据webapp user model获取WebAppUser业务对象
 
-    #     @param[in] webapp_owner
-    #     @param[in] member_id member_id
+        @param[in] member_id member_id
 
-    #     @return WebAppUser业务对象
-    #     """
-    #     webapp_owner = args['webapp_owner']
-    #     member_id = args['member_id']
-    #     #try:
-    #     model = member_models.WebAppUser.select().dj_where(webapp_id=webapp_owner.webapp_id, member_id=member_id).first()
-    #     webapp_user = WebAppUser(webapp_owner, model)
-    #     return webapp_user
-    #     # except:
-    #     #   return None
+        @return WebAppUser业务对象
+        """
+        # webapp_owner = args['webapp_owner']
+        member_id = args['member_id']
+        #try:
+        model = member_models.WebAppUser.select().dj_where(member_id=member_id).first()
+        webapp_user = WebAppUser(model)
+        return webapp_user
+        # except:
+        #   return None
 
     @staticmethod
     @param_required(['id'])
@@ -285,44 +284,44 @@ class WebAppUser(business_model.Model):
         if not self.has_purchased:
             member_models.WebAppUser.update(has_purchased=True).dj_where(id=self.id).execute()
 
-    # @cached_context_property
-    # def __order_info(self):
-    #     """
-    #     [property] 与webapp user对应的订单信息(MemberOrderInfo)对象
-    #     """
-    #     member_order_info = MemberOrderInfo.get_for_webapp_user({
-    #         'webapp_user': self
-    #     })
+    @cached_context_property
+    def __order_info(self):
+        """
+        [property] 与webapp user对应的订单信息(MemberOrderInfo)对象
+        """
+        member_order_info = MemberOrderInfo.get_for_webapp_user({
+            'webapp_user': self
+        })
 
-    #     return member_order_info
+        return member_order_info
 
-    # @property
-    # def history_order_count(self):
-    #     """
-    #     [property] webapp user总订单数
-    #     """
-    #     return self.__order_info.history_order_count
+    @property
+    def history_order_count(self):
+        """
+        [property] webapp user总订单数
+        """
+        return self.__order_info.history_order_count
 
-    # @property
-    # def not_payed_order_count(self):
-    #     """
-    #     [property] webapp user待支付订单数
-    #     """
-    #     return self.__order_info.not_payed_order_count
+    @property
+    def not_payed_order_count(self):
+        """
+        [property] webapp user待支付订单数
+        """
+        return self.__order_info.not_payed_order_count
 
-    # @property
-    # def not_ship_order_count(self):
-    #     """
-    #     [property] webapp user待发货订单数
-    #     """
-    #     return self.__order_info.not_ship_order_count
+    @property
+    def not_ship_order_count(self):
+        """
+        [property] webapp user待发货订单数
+        """
+        return self.__order_info.not_ship_order_count
     
-    # @property
-    # def shiped_order_count(self):
-    #     """
-    #     [property] webapp user待收获订单数
-    #     """
-    #     return self.__order_info.shiped_order_count
+    @property
+    def shiped_order_count(self):
+        """
+        [property] webapp user待收获订单数
+        """
+        return self.__order_info.shiped_order_count
 
     # @property
     # def review_count(self):
@@ -331,12 +330,12 @@ class WebAppUser(business_model.Model):
     #     """
     #     return self.__order_info.review_count
 
-    # @property
-    # def finished_order_count(self):
-    #     """
-    #     [property] webapp user已完成状态订单单数
-    #     """
-    #     return self.__order_info.finished_count
+    @property
+    def finished_order_count(self):
+        """
+        [property] webapp user已完成状态订单单数
+        """
+        return self.__order_info.finished_count
 
     def to_dict(self, *extras):
         data = {}
@@ -502,7 +501,7 @@ class WebAppUser(business_model.Model):
         cache_util.delete_cache(key)
 
         # 清除后台订单计数角标缓存
-        from core.cache.utils import r
+        from eaglet.core.cache.utils import r
         key_for_weapp_order_list = 'webapp_unread_order_count_{wa:%s}' % self.member.webapp_id
         # cache_util.delete_cache(key_for_weapp_order_list)
         r.delete(':1:' + key_for_weapp_order_list)
@@ -608,6 +607,7 @@ class WebAppUser(business_model.Model):
         @param order_payment_time:
         @return:
         """
+        print ">>>>>>>>update_pay_info=1",money, order_payment_time
         self.set_purchased()
         pay_money = None
         if money > 0:
@@ -622,6 +622,8 @@ class WebAppUser(business_model.Model):
                 member.unit_price = 0
             member.save()
             pay_money = member.pay_money
+
+            member_models.Member.update().dj_where(id=self.member.id)
         self.update_member_grade(pay_money)
         self.cleanup_cache()
 
@@ -630,9 +632,16 @@ class WebAppUser(business_model.Model):
             pay_money = self.member.pay_money
 
         finished_order_count = self.finished_order_count
-        webapp_owner = self.context['webapp_owner']
-        grades = sorted(filter(lambda x: x.is_auto_upgrade and x.id > self.grade.id, webapp_owner.member_grades))
-        is_all_conditions = webapp_owner.integral_strategy_settings.is_all_conditions
+        #webapp_owner = self.context['webapp_owner']
+        grades = member_models.MemberGrade.select().dj_where(webapp_id=self.member.webapp_id)
+        #grades = sorted(filter(lambda x: x.is_auto_upgrade and x.id > self.grade.id, webapp_owner.member_grades))
+        try:
+            integral_strategy_settings = member_models.IntegralStrategySttings.get(webapp_id=self.member.webapp_id)
+            is_all_conditions = integral_strategy_settings.is_all_conditions
+        except:
+            is_all_conditions = None
+        
+        
 
         new_grade = None
         for grade in grades:
