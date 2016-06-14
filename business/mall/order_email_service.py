@@ -16,7 +16,7 @@ from db.mall import models as mall_models
 
 
 
-class OrderEmilService(business_model.Model):
+class OrderEmailService(business_model.Model):
     """
     订单emailService
     """
@@ -47,7 +47,7 @@ class OrderEmilService(business_model.Model):
 
         notify_setting = account_models.UserOrderNotifySettings.select().dj_where(user_id=user_profile.user_id, status=args['status']).first()
         if notify_setting:
-            notify_setting = OrderEmilService(notify_setting)
+            notify_setting = OrderEmailService(notify_setting)
         else:
             notify_setting = None
         return notify_setting

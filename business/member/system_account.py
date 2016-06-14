@@ -28,7 +28,7 @@
 # from business import model as business_model
 # from business.account.social_account import SocialAccount
 # from business.account.member import Member
-# from business.account.webapp_user import WebAppUser
+# from business.member.webapp_user import WebAppUser
 
 
 # class SystemAccount(business_model.Model):

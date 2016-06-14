@@ -7,14 +7,22 @@ from eaglet.core import watchdog
 from eaglet.core.exceptionutil import unicode_full_stack
 from business import model as business_model
 from db.mall import models as mall_models
-from db.market_tools.template_message import models as template_message_models
+from db.mall import promotion_models 
+
 from util import regional_util
 from business.mall.order import Order
 from business.mall.supplier import Supplier
 from business.account.user_profile import UserProfile
-from business.mall.express.express_service import ExpressService
-from business.market_tools.template_message.order_template_message_service import OrderTemplageMessageService
-from business.mall.order_email_service import OrderEmilService
+# from business.mall.express.express_service import ExpressService
+# from business.market_tools.template_message.order_template_message_service import OrderTemplageMessageService
+
+from business.account.integral import Integral
+from business.member.webapp_user import WebAppUser
+from business.member.member_spread import MemberSpread
+
+from services.order_notify_mall_service.task import service_send_order_email
+from services.shiped_order_template_message_service.task import service_send_shiped_order_template_message
+from services.express_service.task import service_express
 
 
 FATHER_ORDER = 1
@@ -41,10 +49,11 @@ class OrderState(Order):
     @staticmethod
     @param_required(['order_id'])
     def from_order_id(args):
-        order_db_model = mall_models.Order.select().dj_where(order_id=args['order_id'])
-        if order_db_model.count() == 0:
+        order_db_model = mall_models.Order.select().dj_where(order_id=args['order_id']).first()
+        print order_db_model,"<<<<<<<<<<<"
+        if not order_db_model:
             return None
-        order = OrderState(order_db_model.first())
+        order = OrderState(order_db_model)
         return order
 
     @staticmethod
@@ -97,35 +106,35 @@ class OrderState(Order):
             if mall_models.Order.select().dj_where(origin_order_id=self.id).count() == 1:
                 child_order = Order.from_origin_id({
                     "origin_id":self.id
-                    })
+                    })[0]
                 order_id = child_order.order_id
 
         mall_models.OrderOperationLog.create(order_id=order_id, action=action, operator=operator_name)
 
     def __send_ship_template_message(self):
-        order_template_message_service = OrderTemplageMessageService.from_webapp_id({
-            "webapp_id": self.webapp_id,
-            "send_point": template_message_models.PAY_DELIVER_NOTIFY
-            })
-        if order_template_message_service:
-            order_template_message_service.send_order_templage_message(self.order_id)
+
+        service_send_shiped_order_template_message.delay(self.order_id, self.webapp_id)
+        # order_template_message_service = OrderTemplageMessageService.from_webapp_id({
+        #     "webapp_id": self.webapp_id,
+        #     "send_point": template_message_models.PAY_DELIVER_NOTIFY
+        #     })
+        # if order_template_message_service:
+        #     order_template_message_service.send_order_templage_message(self.order_id)
 
     def __send_order_email(self, status=None):
         if not status:
             status = self.status
+        #使用celery
+        service_send_order_email.delay(self.order_id, self.webapp_id, status)
         
-        email_service = OrderEmilService.from_status({
-            "webapp_id": self.webapp_id,
-            "status": status
-            })
-        email_service.send_message(self.order_id)
 
     def __send_request_to_kuaidi(self):
         """
         向快递服务商发送订阅请求
         """
         #TODO  修改参数指定具体参数 不直接传递order对象
-        is_success = ExpressService(self).get_express_poll()
+        service_express.delay(self.order_id)
+        #is_success = ExpressService(self).get_express_poll()
        
 
 
@@ -264,12 +273,6 @@ class OrderState(Order):
             self.__send_request_to_kuaidi()
 
         self.__send_order_email()
-       # if is_100:
-       #      mall_signals.post_ship_send_request_to_kuaidi.send(sender=Order, order=order)
-       #  from webapp.handlers import event_handler_util
-       #  from utils import json_util
-       #  event_data = {'order':json.dumps(Order.objects.get(id=order_id).to_dict(),cls=json_util.DateEncoder)}
-       #  event_handler_util.handle(event_data, 'send_order_email')
 
         return True, ''
 
@@ -278,76 +281,95 @@ class OrderState(Order):
         pass
     def refund(self):
         pass
-    def finish(self, operation_name):
-        action_msg = '完成'
-        target_status = ORDER_STATUS_SUCCESSED
-        actions = action.split('-')
-        if operation_name:
-            operation_name = u'{} {}'.format(operation_name, (actions[1] if len(actions) > 1 else ''))
+    def finish(self, operator_name):
+        target_status = mall_models.ORDER_STATUS_SUCCESSED
+
+        if self.status == target_status:
+            return False, "order finished"
+
+        if self.status != mall_models.ORDER_STATUS_PAYED_SHIPED:
+            return False, "can not finish order not in shiped"
+
+        if self.origin_order_id == -1:
+            child_order_count = self.child_order_count
+            if child_order_count > 1:
+                return False, "can not finish order "
         else:
-            operation_name = actions[1] if len(actions) > 1 else ''
+            child_order_count = 0
+
+
+        action = '完成'
+        
+        # if operation_name:
+        #     operation_name = u'{} {}'.format(operation_name, (actions[1] if len(actions) > 1 else ''))
+        # else:
+        #     operation_name = actions[1] if len(actions) > 1 else ''
+
+        mall_models.Order.update(status=target_status).dj_where(id=self.id).execute()
+        self.record_status_log(operator_name, self.status, target_status)
+        self.record_operation_log(operator_name, action)
+            
         #更新红包引入消费金额的数据 by Eugene
-        #TODO bert
-        # if order.coupon_id and promotion_models.RedEnvelopeParticipences.objects.filter(coupon_id=order.coupon_id, introduced_by__gt=0).count() > 0:
-        #     red_envelope2member = promotion_models.RedEnvelopeParticipences.objects.get(coupon_id=order.coupon_id)
-        #     relation = promotion_models.RedEnvelopeParticipences.objects.filter(
-        #         red_envelope_rule_id=red_envelope2member.red_envelope_rule_id,
-        #         red_envelope_relation_id=red_envelope2member.red_envelope_relation_id,
-        #         member_id=red_envelope2member.introduced_by
-        #     )
-        #     relation.update(introduce_sales_number = F('introduce_sales_number') + order.final_price + order.postage)
-        try:
-        # TODO 返还用户积分
-            from modules.member import integral
-            if expired_status < ORDER_STATUS_SUCCESSED and int(target_status) == ORDER_STATUS_SUCCESSED \
-                    and expired_status != ORDER_STATUS_CANCEL and order.origin_order_id <= 0:
-                if MallOrderFromSharedRecord.objects.filter(order_id=order.id).count() > 0:
-                    order_record = MallOrderFromSharedRecord.objects.filter(order_id=order.id)[0]
-                    fmt = order_record.fmt
-                else:
-                    order_record = None
-                    fmt = None
-                integral.increase_after_payed_finsh(fmt, order)
-                if order_record and order_record.url and order_record.is_updated == False:
-                    from modules.member.models import MemberSharedUrlInfo, Member
-                    followed_member = Member.objects.get(token=fmt)
-                    MemberSharedUrlInfo.objects.filter(shared_url=order_record.url, member_id=followed_member.id).update(leadto_buy_count=F('leadto_buy_count')+1)
-                    order_record.is_updated = True
-                    order_record.save()
-                    #print '>>>>>.aaaaaaaaaaaaaaaaaaaaaaaaffffff>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
-        except:
-            notify_message = u"订单状态为已完成时为贡献者增加积分，cause:\n{}".format(unicode_full_stack())
-            watchdog_error(notify_message)
-        from webapp.handlers import event_handler_util
-        from utils import json_util
-        event_data = {'order':json.dumps(Order.objects.get(id=order_id).to_dict(),cls=json_util.DateEncoder)}
-        event_handler_util.handle(event_data, 'send_order_email')
-        # try:
-        #   mall_util.email_order(order=Order.objects.get(id=order_id))
-        # except :
-        #   notify_message = u"订单状态改变时发邮件失败，cause:\n{}".format(unicode_full_stack())
-        #   watchdog_alert(notify_message)
+        if self.coupon_id and promotion_models.RedEnvelopeParticipences.select().dj_where(coupon_id=self.coupon_id, introduced_by__gt=0).count() > 0:
+            red_envelope2member = promotion_models.RedEnvelopeParticipences.get(coupon_id=self.coupon_id)
+            relation = promotion_models.RedEnvelopeParticipences.update(promotion_models.RedEnvelopeParticipences.introduce_sales_number + self.final_price + self.postage).dj_where(
+                red_envelope_rule_id=red_envelope2member.red_envelope_rule_id,
+                red_envelope_relation_id=red_envelope2member.red_envelope_relation_id,
+                member_id=red_envelope2member.introduced_by
+            ).execute()
 
-        if order.origin_order_id > 0 and target_status in [ORDER_STATUS_PAYED_SHIPED, ORDER_STATUS_SUCCESSED, ORDER_STATUS_REFUNDING, ORDER_STATUS_REFUNDED]:
-            # 如果更新子订单，更新父订单状态
-            set_origin_order_status(order, user, action, request)
+        origin_order_id = 0
+        
+        if self.origin_order_id > 0:
+            #所有子订单
+            child_orders = Order.from_origin_id({
+                "origin_id": self.origin_order_id
+                })
+
+            #主订单
+            origin_order = OrderState.from_id({
+                "id": self.origin_order_id
+            })
+
+            children_order_status = [order.status for order in child_orders]
+
+            if origin_order.status != min(children_order_status):
+                #所有子订单全部发货更新父订单
+                if min(children_order_status) == target_status: #and len(children_order_status) > 1:
+                    mall_models.Order.update(status=target_status).dj_where(id=origin_order.id).execute()
+
+                    origin_order.record_status_log(operator_name, origin_order.status, target_status)
+                    origin_order.record_operation_log(operator_name, action, FATHER_ORDER)
+
+                    origin_order_id = origin_order.id
+                   
         else:
-            # 如果更新父订单，更新子订单状态
-            #更新会员的消费、消费次数、消费单价
-            try:
-                update_user_paymoney(order.webapp_user_id)
-            except:
-                pass
-            # from mall.order.util import set_children_order_status
-            # set_children_order_status(order, target_status)
+            #当前为主订单
+            if child_order_count > 0:
+                child_orders = OrderState.from_origin_id({
+                    "origin_id": self.origin_order_id
+                    })
+                mall_models.Order.update(status=target_status).dj_where(origin_order_id=self.id).execute()
+                for child_order in child_orders:
+                    child_order.record_status_log(operator_name, child_order.status, target_status)
+                    child_order.record_operation_log(operator_name, action, CHILD_ORDER)
+            origin_order_id = self.id
 
-            child_orders = Order.objects.filter(origin_order_id=order.id)
-            if child_orders.count() == 1 or (child_orders.count() > 1 and target_status in [ORDER_STATUS_SUCCESSED, ORDER_STATUS_REFUNDING, ORDER_STATUS_CANCEL]):
-                child_orders.update(status=target_status)
-            if request and request.user_profile.webapp_type and child_orders.count() == 1:
-                for child in child_orders:
-                    record_status_log(child.order_id, operation_name, child.status, target_status)
-                    record_operation_log(child.order_id, operation_name, action_msg, child)
-            if target_status in [ORDER_STATUS_SUCCESSED, ORDER_STATUS_REFUNDING, ORDER_STATUS_CANCEL]:
-                auto_update_grade(webapp_user_id=order.webapp_user_id)
-            pass
+        if origin_order_id:
+            webapp_user = WebAppUser.from_id({
+                "id": self.webapp_user_id
+                })
+            webapp_user.update_pay_info(float(self.final_price) + float(self.weizoom_card_money), self.payment_time)
+            MemberSpread.process_order_from_spread({
+                'order_id': origin_order_id,
+                'webapp_user': webapp_user
+                })
+
+            # 订单完成后会员积分处理
+            Integral.increase_after_order_payed_finsh({
+                'webapp_user': webapp_user,
+                'order_id': origin_order_id
+            })
+
+        self.__send_order_email()
+        return True, ''

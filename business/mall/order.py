@@ -159,6 +159,12 @@ class Order(business_model.Model):
         return  u'%s快递' % express_util.get_name_by_value(self.express_company_name) if self.express_company_name  else ''
     
 
+    @property
+    def child_order_count(self):
+        if self.origin_order_id <= 0:
+            return mall_models.Order.select().dj_where(origin_order_id=self.id).count()
+        return 0
+    
     
     
 
