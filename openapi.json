@@ -20,21 +20,21 @@
                         "name": "express_company_name",
                         "in": "query",
                         "description": "快递名称",
-                        "required": true,
+                        "required": false,
                         "type": "string"
                     },
                     {
                         "name": "express_number",
                         "in": "query",
                         "description": "快递编号",
-                        "required": true,
+                        "required": false,
                         "type": "string"
                     },
                     {
                         "name": "leader_name",
                         "in": "query",
                         "description": "负责人",
-                        "required": true,
+                        "required": false,
                         "type": "string"
                     },
                     {
