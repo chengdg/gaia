@@ -13,10 +13,10 @@ class AOrderList(api_resource.ApiResource):
     """
     订单列表
     """
-    app = 'panda'
+    app = 'mall'
     resource = 'order_list'
 
-    @param_required(['product_ids', 'account_type'])
+    @param_required(['product_ids'])
     def get(args):
         """
         订单列表
@@ -28,7 +28,7 @@ class AOrderList(api_resource.ApiResource):
             'product_ids': product_ids
         })
 
-        order_ids = [r.order_id for r in relations]
+        order_ids = [r.order_id for r in relations if r.order.origin_order_id > 0]
         orders = Order.from_ids({
             'ids': order_ids
         })

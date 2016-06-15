@@ -84,6 +84,7 @@ class OrderProducts(business_model.Model):
         # 当前促销买赠商品
         temp_premium_products = []
         for relation in order_product_relations:
+            order.product_count += relation.number
             product = id2product[relation.product_id]
             product.fill_specific_model(relation.product_model_name)
 
@@ -105,22 +106,6 @@ class OrderProducts(business_model.Model):
                 'purchase_price': relation.purchase_price
 
             }
-
-            # TODO更换供货商的名称
-
-            # 给商品添加单品积分的信息
-            try:
-                integral_product_info = str(product.id) + '-' + product.model_name
-                product_info['integral_money'] = product2integral[integral_product_info].integral_money
-                product_info['integral_count'] = product2integral[integral_product_info].integral_count
-            except:
-                product_info['integral_money'] = 0
-                product_info['integral_count'] = 0
-
-            # TODO商品供货商名称
-            if product.supplier: product_info['supplier_store_name'] = id2supplier_name[product.supplier]
-            elif product.supplier_user_id: product_info['supplier_store_name'] = id2store_name[product.supplier_user_id]
-            else: product_info['supplier_store_name'] = ''
 
             # 处理商品促销
             promotion_relation = id2promotion.get(relation.promotion_id, None)
@@ -162,7 +147,6 @@ class OrderProducts(business_model.Model):
                                     'noline': 1,
                                     'supplier': product.supplier,
                                     'supplier_user_id': product.supplier_user_id,
-                                    'supplier_store_name': product_info.get('supplier_store_name', ''),
                                     'user_code':product.user_code
                                 })
                 else:
@@ -179,13 +163,5 @@ class OrderProducts(business_model.Model):
             if len(temp_premium_products) > 0:
                 # 最后一个促销有赠品
                 products.extend(temp_premium_products)
-
-        for product in products:
-            product['supplier_length'] = supplier_ids.count(product['supplier'])
-            product['supplier_user_length'] = supplier_user_ids.count(product['supplier_user_id'])
-
-        def __sorted_by_supplier(s):
-            return (s['supplier'], s['supplier_user_id'])
-        sorted(products, key=__sorted_by_supplier)  # 相同supplier排到一起
 
         self.products = products

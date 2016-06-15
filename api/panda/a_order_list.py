@@ -34,7 +34,7 @@ class AOrderList(api_resource.ApiResource):
         orders = Order.from_ids({
             'ids': order_ids
         })
-
+        orders = filter(lambda order: order.origin_order_id > 0, orders)
         order_id2relation = {}
         for r in relations:
             if r.order_id in order_id2relation:

@@ -30,12 +30,6 @@ class AOrderDetail(api_resource.ApiResource):
         products = order.products
 
         group_products = {}
-        supplier_info = {}
-        for product in products:
-            key = "%d-%d" % (product['supplier'], product['supplier_user_id'])
-            if key in group_products: group_products[key].append(product)
-            else: group_products[key] = [product]
-            if key not in supplier_info: supplier_info[key] = product['supplier_store_name']
 
         # 商品的积分和优惠券信息
         for product in products:
@@ -57,116 +51,10 @@ class AOrderDetail(api_resource.ApiResource):
                 if coupon.product_id == product['id']:
                     product['has_coupon'] = True
                     break
-        child_orders = order.child_order
-        order_status_logs = OrderStatusLogInfo.from_order({'order': order}).logs
-        order_operation_logs = OrderOperationLogInfo.from_order({'order': order, 'child_orders': child_orders})
-        order_action = Order.action(
-            order,
-            is_detail_page=True,
-            is_group_buying=order.is_group_buy,
-            multi_child_orders=True if len(child_orders) > 1 else False)
-        order_info = AOrderDetail.to_dict(order)
-        order_info['action'] = order_action
-        order_info['products'] = group_products
 
-        child_orders_data = {}
-        for child_order in child_orders:
-            order_action = Order.action(
-            child_order,
-            is_detail_page=True,
-            is_group_buying=child_order.is_group_buy)
-            child_order = child_order.to_dict(
-                'express_details',
-                'is_group_buy',
-                'number',
-                'ship_area',
-                'pay_interface_name',
-                'save_money',
-                'pay_money',
-                'total_price',
-                'action',
-                'is_sub',
-                'has_sub_order')
-            child_order['action'] = order_action
-            key = "%d-%d" % (child_order['supplier'], child_order['supplier_user_id'])
-            if key in child_orders_data: child_orders_data[key].append(child_order)
-            else: child_orders_data[key] = [child_order]
-        print order_status_logs
-        return {
-            "order": order_info,
-            "child_orders": child_orders_data,
-            "order_status_logs": order_status_logs,
-            "order_operation_logs": order_operation_logs,
-            "supplier_info": supplier_info
-        }
+        #order_status_logs = OrderStatusLogInfo.from_order({'order': order}).logs
+        #order_operation_logs = OrderOperationLogInfo.from_order({'order': order, 'child_orders': child_orders})
 
-    @staticmethod
-    def to_dict(order):
-        order_dict = order.to_dict(
-            'express_details',
-            'is_group_buy',
-            'number',
-            'ship_area',
-            'pay_interface_name',
-            'save_money',
-            'pay_money',
-            'total_price',
-            'action',
-            'is_sub',
-            'has_sub_order'
-            )
-        api_keys = [
-            "number",
-            "buyer_name",
-            "coupon_money",
-            "integral",
-            "ship_area",
-            "member_grade_id",
-            "edit_money",
-            "total_price",
-            "save_money",
-            "pay_money",
-            "action",
-            "id",
-            "is_sub",
-            "pay_interface_name",
-            "ship_name",
-            "has_sub_order",
-            "product_price",
-            "member_grade_discount",
-            "supplier",
-            "express_details",
-            "type",
-            "integral_each_yuan",
-            "final_price",
-            "status",
-            "postage",
-            "ship_address",
-            "pay_interface_type",
-            "order_id",
-            "integral_money",
-            "ship_tel",
-            "origin_order_id",
-            "coupon_id",
-            "customer_message",
-            "webapp_id",
-            "promotion_saved_money",
-            "express_number",
-            "webapp_user_id",
-            "products",
-            "status_text",
-            "created_at",
-            "weizoom_card_money",
-            "red_envelope",
-            "red_envelope_created",
-            "bill_type",
-            "bill",
-            "delivery_time",
-            "is_group_buy"
-        ]
-
-        data = {}
-        for key in api_keys:
-            data[key] = order_dict.get(key)
-        return data
-
+        order_info = order.to_dict('express_details', 'ship_area')
+        order_info['product'] = products
+        return order_info
