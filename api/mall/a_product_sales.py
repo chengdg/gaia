@@ -15,4 +15,8 @@ class AProductSales(api_resource.ApiResource):
     @param_required(['product_ids'])
     def get(args):
         product_ids = args.get('product_ids').split("_")
-        return ProductSales.from_ids({'product_ids': product_ids})
+        sales = ProductSales.from_ids({'product_ids': product_ids})
+        product_sales = {}
+        for sale in sales:
+            product_sales[sale.product_id] = sale.sales
+        return product_sales
