@@ -163,7 +163,8 @@ class KdniaoExpressPoll(object):
 				express_company_name = self.order.express_company_name,
 				express_number = self.order.express_number,
 				service_type = KDNIAO,
-				webapp_id = self.webapp_id
+				webapp_id = self.webapp_id,
+				abort_receive_message = ""
 
 			)
 			return express
