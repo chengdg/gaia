@@ -57,4 +57,4 @@ class AOrderDetail(api_resource.ApiResource):
 
         order_info = order.to_dict('express_details', 'ship_area')
         order_info['product'] = products
-        return order_info
+        return {'order': order_info}

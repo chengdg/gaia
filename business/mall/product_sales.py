@@ -10,7 +10,7 @@ class ProductSales(business_model.Model):
         'sales'
     )
 
-    def __init(self):
+    def __init__(self, model):
         business_model.Model.__init__(self)
 
         self.context['db_model'] = model
