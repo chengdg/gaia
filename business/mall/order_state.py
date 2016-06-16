@@ -175,7 +175,7 @@ class OrderState(Order):
                 #TODOOrderState增加修改update方法
                 mall_models.Order.update(**order_params).dj_where(origin_order_id=order.id).execute()
                  #处理操作日志
-                child_order.record_operation_log(operator_name, action,OrderState.CHILD_ORDER)
+                child_order.record_operation_log(operator_name, action,CHILD_ORDER)
 
         """
             TODO加入到celery tasks:
