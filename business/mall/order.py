@@ -10,7 +10,7 @@ from util import regional_util
 
 from business.mall.order_products import OrderProducts
 from business.mall.express import util as express_util
-
+from business.tools.express_detail import ExpressDetail
 
 class Order(business_model.Model):
     """
@@ -151,7 +151,8 @@ class Order(business_model.Model):
         # 为了兼容有order.id的方式
         db_details = express_models.ExpressDetail.select().dj_where(order_id=self.id).order_by(-express_models.ExpressDetail.display_index)
         if db_details.count() > 0:
-            details = [ExpressDetail(detail) for detail in db_details]
+            detail_models = [ExpressDetail(detail) for detail in db_details]
+            details = [{'ftime': model.ftime, 'context': model.context} for model in models]
             #return list(details)
             return details
 
@@ -168,7 +169,8 @@ class Order(business_model.Model):
             express = expresses[0]
             logging.info("express: {}".format(express.id))
             db_details = express_models.ExpressDetail.select().dj_where(express_id=express.id).order_by(-express_models.ExpressDetail.display_index)
-            details = [ExpressDetail(detail) for detail in db_details]
+            detail_models = [ExpressDetail(detail) for detail in db_details]
+            details = [{'ftime': model.ftime, 'context': model.context} for model in models]
         except Exception as e:
             logging.error(u'获取快递详情失败，order_id={}, case:{}'.format(self.id, str(e)))
             details = []
