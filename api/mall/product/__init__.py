@@ -1,1 +1,2 @@
-import product_property
+import a_product_property
+import a_product_model_property

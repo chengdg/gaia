@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from eaglet.decorator import param_required
+
 from business import model as business_model
 from db.mall import models as mall_models
 
@@ -63,12 +64,34 @@ class ProductPropertyTemplate(business_model.Model):
                                                               name=mall_model.name,
                                                               )
 
-        for template_property in mall_model.properties:
-            mall_models.TemplateProperty.create(owner=mall_model.owner_id,
-                                                template=template,
-                                                name=template_property['name'],
-                                                value=template_property['value'])
+        ProductPropertyTemplate.bulk_create_template_property(dict(properties=mall_model.properties,
+                                                                   template_id=template.id,
+                                                                   owner_id=mall_model.owner_id,))
         return '', 'Success'
+
+    @staticmethod
+    @param_required(['template_id', 'owner_id', 'properties'])
+    def bulk_create_template_property(args):
+        """
+        批量插入,模板属性
+        template_id --　模板id
+        owner_id -- 用户id
+        properties -- 属性[dict(name='', value=''), ]
+        """
+        data_resource = []
+        properties = args.get('properties')
+        owner_id = args.get('owner_id')
+        template_id = args.get('template_id')
+        for template_property in properties:
+            data_resource.append(dict(owner=owner_id,
+                                      template=template_id,
+                                      name=template_property['name'],
+                                      value=template_property['value']))
+
+        if data_resource:
+            mall_models.TemplateProperty.insert_many(data_resource).execute()
+
+        return True
 
     @staticmethod
     @param_required(['template_id', 'title', 'new_properties', 'update_properties', 'deleted_ids', 'owner_id'])
@@ -84,18 +107,28 @@ class ProductPropertyTemplate(business_model.Model):
         update_properties = args.get('update_properties')
         deleted_ids = args.get('deleted_ids')
         mall_models.ProductPropertyTemplate.update(name=title).dj_where(id=template_id).execute()
-        for new_property in new_properties:
-            mall_models.TemplateProperty.create(template=template_id,
-                                                owner=owner_id,
-                                                name=new_property.get('name'),
-                                                value=new_property.get('value')
-                                                )
+
+        ProductPropertyTemplate.bulk_create_template_property(dict(properties=new_properties,
+                                                                   template_id=template_id,
+                                                                   owner_id=owner_id, ))
+
         for update_property in update_properties:
             mall_models.TemplateProperty.update(name=update_property.get('name'),
                                                 value=update_property.get('value'))\
                 .dj_where(id=update_property.get('id')).execute()
-        # TODO in操作
-        # mall_models.TemplateProperty.delete().where(id << deleted_ids)
+        #
+        mall_models.TemplateProperty.delete().dj_where(id__in=deleted_ids).execute()
+        return '', 'Success'
+
+    @staticmethod
+    @param_required(['id'])
+    def delete_from_id(args):
+        """
+        删除商品属性模板
+        """
+        template_id = args.get('id')
+        mall_models.TemplateProperty.delete().dj_where(template=template_id).execute()
+        mall_models.ProductPropertyTemplate.delete().dj_where(id=template_id).execute()
         return '', 'Success'
 
     def to_dict(self, *extras, **kwargs):

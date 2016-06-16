@@ -4,7 +4,6 @@ import json
 
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
-
 from business.mall.product_property import ProductPropertyTemplate
 
 
@@ -77,6 +76,18 @@ class AProductPropertyTemplate(api_resource.ApiResource):
                                                         new_properties=new_properties,
                                                         update_properties=update_properties,
                                                         deleted_ids=deleted_ids))
+        return {
+            'result': result,
+            'msg': ''
+        }
+
+    @param_required(['id'])
+    def delete(self):
+        """
+        删除单个模板
+        """
+        template_id = self.get('id')
+        result, msg = ProductPropertyTemplate.delete_from_id(dict(id=template_id))
         return {
             'result': result,
             'msg': ''
