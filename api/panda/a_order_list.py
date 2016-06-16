@@ -33,8 +33,8 @@ class AOrderList(api_resource.ApiResource):
         orders = filter(lambda order: order.origin_order_id > 0, orders)
         orders = AOrderList.search_orders(orders, args)
         #分页
-        cur_page = args.get('page', 1)
-        count_per_page = args.get('count_per_page', 10)
+        cur_page = int(args.get('page', '1'))
+        count_per_page = int(args.get('count_per_page', '10'))
         pageinfo, orders = paginator.paginate(orders, cur_page, count_per_page)
 
         return {
