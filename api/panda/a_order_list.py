@@ -49,11 +49,14 @@ class AOrderList(api_resource.ApiResource):
         start_time = args.get('start_time', "")
         end_time = args.get('end_time', "")
         order_status = args.get('status', "")
+        webapp_id = args.get('webapp_id', "")
 
         if order_id:
             orders = filter(lambda order: order.order_id == order_id, orders)
         if order_status:
             orders = filter(lambda order: order.status == int(order_status), orders)
+        if webapp_id:
+            orders = filter(lambda order: order.webapp_id == webapp_id, orders)
         if start_time and end_time:
-            orders = filter(lambda order: order.created_at >= start_time and order.created_at <= end_time, orders)
+            orders = filter(lambda order: order.created_at.strftime('%Y-%m-%d %H:%M:%S') >= start_time and order.created_at.strftime('%Y-%m-%d %H:%M:%S') <= end_time, orders)
         return orders
