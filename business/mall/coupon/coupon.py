@@ -22,6 +22,7 @@ class Coupon(business_model.Model):
 		'status',
 		'display_status',
 		'coupon_id',
+		'limit_product',
 		'limit_product_id',  # 多商品券的限制商品id列表
 		'provided_time',
 		'start_time',
@@ -90,6 +91,20 @@ class Coupon(business_model.Model):
 
 		coupon_db_models = list(promotion_models.Coupon.select().dj_where(member_id=webapp_user.member.id).order_by(promotion_models.Coupon.provided_time.desc()))
 		return Coupon.__create_coupons(coupon_db_models)
+
+	@staticmethod
+	@param_required(['id'])
+	def get_coupon_by_id(args):
+		"""
+		根据优惠券id获取优惠券
+		"""
+		if args['id'] == 0:
+			return None
+		coupon_db_models = promotion_models.Coupon.select().dj_where(id=args['id'])
+		if coupon_db_models.count() == 0:
+			return coupon_db_models.first()
+		return None
+
 
 	@staticmethod
 	@param_required(['db_model'])

@@ -76,5 +76,12 @@ class UserProfile(business_model.Model):
     @property
     def username(self):
         return self.context['db_model'].user.username
-    
-       
+
+    @staticmethod
+    @param_required(['user_ids'])
+    def get_user_id_2_store_name(args):
+        profile_models = account_models.UserProfile.select().dj_where(user_id__in=args['user_ids'])
+        user_id2store_name = {}
+        for model in profile_models:
+            user_id2store_name[model.user_id] = model.store_name
+        return user_id2store_name

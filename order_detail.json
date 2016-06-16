@@ -1,0 +1,314 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "0.0.0",
+        "title": "zeus API doc"
+    },
+    "paths": {
+        "/mall/order_detail/": {
+            "get": {
+                "description": "订单详情\n",
+                "parameters": [
+                    {
+                        "name": "order_id",
+                        "in": "query",
+                        "description": "订单编号",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "properties": {
+                                        "order": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "int32",
+                                                    "description": "订单ID号"
+                                                },
+                                                "order_id": {
+                                                    "type": "string",
+                                                    "description": "订单编号"
+                                                },
+                                                "total_purchase_price": {
+                                                    "type": "float",
+                                                    "description": "订单采购总金额"
+                                                },
+                                                "buyer_name": {
+                                                    "type": "string",
+                                                    "description": "购买人的姓名"
+                                                },
+                                                "express_company_name": {
+                                                    "type": "string",
+                                                    "description": "物流名称"
+                                                },
+                                                "coupon_money": {
+                                                    "type": "string",
+                                                    "description": "优惠券金额"
+                                                },
+                                                "integral": {
+                                                    "type": "int32",
+                                                    "description": "订单积分"
+                                                },
+                                                "weizoom_card_money": {
+                                                    "type": "float",
+                                                    "description": "微众卡金额"
+                                                },
+                                                "coupon_id": {
+                                                    "type": "int32",
+                                                    "description": "优惠券ID"
+                                                },
+                                                "member_grade_id": {
+                                                    "type": "int32",
+                                                    "description": "会员等级ID"
+                                                },
+                                                "raw_status": {
+                                                    "type": "string",
+                                                    "description": "未知"
+                                                },
+                                                "supplier_user_id": {
+                                                    "type": "int32",
+                                                    "description": "供货商user_id"
+                                                },
+                                                "product_count": {
+                                                    "type": "int32",
+                                                    "description": "订单商品总数"
+                                                },
+                                                "express_details": [
+                                                    {
+                                                        "name": "ftime",
+                                                        "description": "物流生成时间",
+                                                        "type": "string"
+                                                    },
+                                                    {
+                                                        "name": "context",
+                                                        "description": "物流详情",
+                                                        "type": "string"
+                                                    }
+                                                ],
+                                                "ship_name": {
+                                                    "type": "string",
+                                                    "description": "收货人姓名"
+                                                },
+                                                "leader_name": {
+                                                    "type": "string",
+                                                    "description": "操作人姓名"
+                                                },
+                                                "product_price": {
+                                                    "type": "float",
+                                                    "description": "商品总价"
+                                                },
+                                                "member_grade_discount": {
+                                                    "type": "int32",
+                                                    "string": "会员折扣百分比"
+                                                },
+                                                "supplier": {
+                                                    "type": "int32",
+                                                    "description": "供货商ID"
+                                                },
+                                                "type": {
+                                                    "type": "string",
+                                                    "description": "订单类型吧（不知道是干什么的）"
+                                                },
+                                                "integral_each_yuan": {
+                                                    "type": "int32",
+                                                    "description": "每个记分兑换多少元"
+                                                },
+                                                "final_price": {
+                                                    "type": "float",
+                                                    "description": "订单支付金额"
+                                                },
+                                                "status": {
+                                                    "type": "int32",
+                                                    "description": "订单的状态"
+                                                },
+                                                "postage": {
+                                                    "type": "float",
+                                                    "description": "运费"
+                                                },
+                                                "product": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "count": {
+                                                            "type": "int32",
+                                                            "description": "商品的数量"
+                                                        },
+                                                        "total_price": {
+                                                            "type": "float",
+                                                            "description": "商品总价"
+                                                        },
+                                                        "is_deleted": {
+                                                            "type": "boolean",
+                                                            "description": "商品是否被删除"
+                                                        },
+                                                        "physical_unit": {
+                                                            "type": "string",
+                                                            "description": "商品计量单位"
+                                                        },
+                                                        "grade_discounted_money": {
+                                                            "type": "float",
+                                                            "description": "会员折扣金额"
+                                                        },
+                                                        "price": {
+                                                            "type": "float",
+                                                            "description": "商品的单价"
+                                                        },
+                                                        "user_code": {
+                                                            "type": "string",
+                                                            "description": "商品条码"
+                                                        },
+                                                        "purchase_price": {
+                                                            "type": "float",
+                                                            "description": "商品的采购价"
+                                                        },
+                                                        "custom_model_properties": {
+                                                            "type": "string",
+                                                            "description": "规格属性"
+                                                        },
+                                                        "thumbnails_url": {
+                                                            "type": "string",
+                                                            "description": "商品缩略图地址"
+                                                        },
+                                                        "product_model_name": {
+                                                            "type": "string",
+                                                            "description": "商品的规格名称"
+                                                        },
+                                                        "supplier_user_id": {
+                                                            "type": "int32",
+                                                            "description": "供货商user_id"
+                                                        },
+                                                        "supplier": {
+                                                            "type": "int32",
+                                                            "description": "供货商ID"
+                                                        },
+                                                        "promotion": {
+                                                            "type": "string",
+                                                            "description": "商品促销信息"
+                                                        },
+                                                        "id": {
+                                                            "type": "int32",
+                                                            "description": "商品的ID"
+                                                        },
+                                                        "name": {
+                                                            "type": "string",
+                                                            "description": "商品名称"
+                                                        }
+                                                    }
+                                                },
+                                                "ship_address": {
+                                                    "type": "string",
+                                                    "description": "收获地址"
+                                                },
+                                                "pay_interface_type": {
+                                                    "type": " int32",
+                                                    "description": "支付方式的码"
+                                                },
+                                                "bill_type": {
+                                                    "type": "int32",
+                                                    "description": "订单发票类型"
+                                                },
+                                                "is_first_order": {
+                                                    "type": "boolean",
+                                                    "description": "是否是首单"
+                                                },
+                                                "integral_money": {
+                                                    "type": "float",
+                                                    "description": "积分金额"
+                                                },
+                                                "ship_tel": {
+                                                    "type": "string",
+                                                    "description": "收货人电话"
+                                                },
+                                                "origin_order_id": {
+                                                    "type": "int32",
+                                                    "description": "母订单的ID"
+                                                },
+                                                "ship_area": {
+                                                    "type": "string",
+                                                    "description": "订单的收获区域"
+                                                },
+                                                "customer_message": {
+                                                    "type": "string",
+                                                    "description": "买家留言"
+                                                },
+                                                "webapp_id": {
+                                                    "type": "int32",
+                                                    "description": "webapp_id"
+                                                },
+                                                "delivery_time": {
+                                                    "type": "string",
+                                                    "description": "配送时间"
+                                                },
+                                                "payment_time": {
+                                                    "type": "string",
+                                                    "description": "支付时间"
+                                                },
+                                                "promotion_saved_money": {
+                                                    "type": "float",
+                                                    "description": "优惠金额"
+                                                },
+                                                "express_number": {
+                                                    "type": "string",
+                                                    "description": "物流单号"
+                                                },
+                                                "bill": {
+                                                    "type": "string",
+                                                    "description": "发票详情"
+                                                },
+                                                "update_at": {
+                                                    "type": "string",
+                                                    "description": "订单更新时间"
+                                                },
+                                                "member_id": {
+                                                    "type": "int32",
+                                                    "description": "下单会员ID（暂缺）"
+                                                },
+                                                "webapp_user_id": {
+                                                    "type": "int32",
+                                                    "description": "下单会员webapp_user_id"
+                                                },
+                                                "edit_money": {
+                                                    "type": "float",
+                                                    "description": "商家优惠金额"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "description": "下单时间"
+                                                }
+                                            }
+                                        },
+                                        "msg": {
+                                            "type": "string",
+                                            "description": "信息描述"
+                                        },
+                                        "result": {
+                                            "type": "string",
+                                            "description": "SUCCESS or FAILED"
+                                        }
+                                    }
+                                },
+                                "errMsg": {
+                                    "type": "string"
+                                },
+                                "innerErrMsg": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
