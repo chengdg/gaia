@@ -85,3 +85,12 @@ class UserProfile(business_model.Model):
         for model in profile_models:
             user_id2store_name[model.user_id] = model.store_name
         return user_id2store_name
+
+    @staticmethod
+    @param_required(['webapp_ids'])
+    def get_webapp_id_2_store_name(args):
+        profile_models = account_models.UserProfile.select().dj_where(webapp_id__in=args['webapp_ids'])
+        user_id2store_name = {}
+        for model in profile_models:
+            user_id2store_name[model.user_id] = model.store_name
+        return user_id2store_name
