@@ -171,7 +171,7 @@ class OrderState(Order):
             if mall_models.Order.select().dj_where(origin_order_id=order.id).count() == 1:
                 child_order = OrderState.from_origin_id({
                     "origin_id": order.id
-                    })
+                    })[0]
                 #TODOOrderState增加修改update方法
                 mall_models.Order.update(**order_params).dj_where(origin_order_id=order.id).execute()
                  #处理操作日志
