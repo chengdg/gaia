@@ -7,6 +7,7 @@ from eaglet.decorator import param_required
 from business.mall.order_product_relation import OrderProductRelation
 from business.mall.order import Order
 from business.mall.order_items import OrderItems
+from business.mall.product import Product
 from business.account.user_profile import UserProfile
 
 class AOrderList(api_resource.ApiResource):
@@ -37,8 +38,39 @@ class AOrderList(api_resource.ApiResource):
         count_per_page = int(args.get('count_per_page', '10'))
         pageinfo, orders = paginator.paginate(orders, cur_page, count_per_page)
 
+        order_ids = [order.id for order in orders]
+        relations = filter(lambda relation: relation.order_id in order_ids, relations)
+        product_ids = [relation.product_id for relation in relations]
+        products = Product.from_ids({'product_ids': product_ids})
+        id2product = dict(([product.id, product] for product in products))
+        order_id2product_info = {}
+        for relation in relations:
+            if relation.order_id in order_id2product_info:
+                order_id2product_info[relation.order_id].append({
+                                        'id': relation.product_id,
+                                        'count': relation.number,
+                                        'price': relation.price,
+                                        'total_price': relation.total_price,
+                                        'purchase_price': relation.purchase_price,
+                                        'weight': id2product[relation.product_id].weight
+                                    })
+            else:
+                order_id2product_info[relation.order_id] = [{
+                                        'id': relation.product_id,
+                                        'count': relation.number,
+                                        'price': relation.price,
+                                        'total_price': relation.total_price,
+                                        'purchase_price': relation.purchase_price,
+                                        'weight': id2product[relation.product_id].weight
+                                    }]
+        order_infos = []
+        for order in orders:
+            order_info = order.to_dict()
+            order_info['products'] = order_id2product_info[order.id]
+            order_infos.append(order_info)
+
         return {
-            'orders': [order.to_dict('products') for order in orders],
+            'orders': order_infos,
             'pageinfo': pageinfo.to_dict()
         }
 
