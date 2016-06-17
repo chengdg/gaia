@@ -213,6 +213,53 @@
                     }
                 }
             }
+        },
+        "/mall/product_sales/": {
+            "get": {
+                "description": "获取商品销量",
+                "parameters": [
+                    {
+                        "name": "product_ids",
+                        "in": "query",
+                        "description": "商品ID号",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string",
+                                            "description": "信息描述"
+                                        },
+                                        "result": {
+                                            "type": "string",
+                                            "description": "SUCCESS or FAILED"
+                                        }
+                                    }
+                                },
+                                "errMsg": {
+                                    "type": "string"
+                                },
+                                "innerErrMsg": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

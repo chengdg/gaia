@@ -103,8 +103,8 @@ class OrderProducts(business_model.Model):
                 'supplier': product.supplier,
                 'supplier_user_id': product.supplier_user_id,
                 'user_code':product.user_code,
-                'purchase_price': relation.purchase_price
-
+                'purchase_price': relation.purchase_price,
+                'weight': product.weight
             }
 
             # 处理商品促销
