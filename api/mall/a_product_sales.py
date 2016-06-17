@@ -16,7 +16,10 @@ class AProductSales(api_resource.ApiResource):
     def get(args):
         product_ids = args.get('product_ids').split("_")
         sales = ProductSales.from_ids({'product_ids': product_ids})
-        product_sales = {}
+        product_sales = []
         for sale in sales:
-            product_sales[sale.product_id] = sale.sales
-        return product_sales
+            product_sales.append({
+                    'product_id': sale.product_id,
+                    'sales': sale.sales
+                })
+        return {'product_sales': product_sales}

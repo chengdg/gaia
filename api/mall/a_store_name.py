@@ -18,4 +18,4 @@ class AStoreName(api_resource.ApiResource):
         webapp_id2store_name = []
         if webapp_ids:
             webapp_id2store_name = UserProfile.get_webapp_id_2_store_name({'webapp_ids': webapp_ids})
-        return {'webapp_id2store_name': webapp_id2store_name}
+        return {'store_names': webapp_id2store_name}
