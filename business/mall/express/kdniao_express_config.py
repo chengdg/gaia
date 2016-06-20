@@ -20,7 +20,7 @@ class KdniaoExpressConfig(object):
 	req_url="http://api.kdniao.cc/Ebusiness/EbusinessOrderHandle.aspx"
 
 	# api_url = "http://www.kuaidi100.com/poll"
-	# # api_url = "http://{}/tools/api/express/test_kuaidi_poll/?code=1".format(settings.DOMAIN)
+	# # api_url = "http://{}/tools/api/express/test_kuaidi_poll/?code=1".format(settings.WEAPP_DOMAIN)
 
 	# 参数格式
 	schema = "json"

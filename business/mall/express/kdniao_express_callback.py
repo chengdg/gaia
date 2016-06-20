@@ -24,7 +24,7 @@ class KdniaoCallbackHandle(object):
 		请求类型:POST
 		字符集:utf-8
 
-	url:http://{}/tools/api/express/kdniao/callback/".format(settings.DOMAIN)
+	url:http://{}/tools/api/express/kdniao/callback/".format(settings.WEAPP_DOMAIN)
 	参数：查看快递鸟接口技术文档
 	
 	测试接口:

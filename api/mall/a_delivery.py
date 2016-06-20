@@ -16,14 +16,14 @@ class ADelivery(api_resource.ApiResource):
     app = 'mall'
     resource = 'delivery'
 
-    @param_required(['order_id', 'express_company_name', 'express_number'])
+    @param_required(['order_id'])
     def put(args):
         """
         订单详情
         """
         order_id = args.get('order_id')
-        express_company_name = args.get('express_company_name')
-        express_number =args.get('express_number')
+        express_company_name = args.get('express_company_name', '')
+        express_number =args.get('express_number', '')
 
         leader_name = args.get('leader_name', '')
         #is_100 = False if str(args.get('is_100', '0')) == "0" else True

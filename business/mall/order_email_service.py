@@ -89,7 +89,7 @@ class OrderEmailService(business_model.Model):
             product_name = product_name+product['name']+','
 
             # if product['thumbnails_url'].find('http') < 0:
-            #     pic = "http://%s%s" % (settings.DOMAIN, pic)
+            #     pic = "http://%s%s" % (settings.WEAPP_DOMAIN, pic)
             pic_address = pic_address+"<img src='%s' width='170px' height='200px'></img>" % (product['thumbnails_url'])
 
         buy_count = buy_count[:-1]

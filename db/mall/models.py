@@ -297,11 +297,61 @@ class MemberProductWishlist(models.Model):
         db_table = 'mall_member_product_wishlist'
 
 
+ORDER_PAY_ACTION = {
+    'name': u'支付',
+    'action': 'pay',
+    'class_name': 'xa-pay',
+    'button_class': 'btn-success'
+}
+ORDER_SHIP_ACTION = {
+    'name': u'发货',
+    'action': 'ship',
+    'class_name': 'xa-order-delivery',
+    'button_class': 'btn-danger'
+}
+ORDER_FINISH_ACTION = {
+    'name': u'标记完成',
+    'action': 'finish',
+    'class_name': 'xa-finish',
+    'button_class': 'btn-success'
+}
+ORDER_CANCEL_ACTION = {
+    'name': u'取消订单',
+    'action': 'cancel',
+    'class_name': 'xa-cancelOrder',
+    'button_class': 'btn-danger'
+}
+ORDER_REFUNDIND_ACTION = {
+    'name': u'申请退款',
+    'action': 'return_pay',
+    'class_name': 'xa-refund',
+    'button_class': 'btn-danger'
+}
+ORDER_UPDATE_PRICE_ACTION = {
+    'name': u'修改价格',
+    'action': 'update_price',
+    'class_name': 'xa-update-price',
+    'button_class': 'btn-danger'
+}
+ORDER_UPDATE_EXPREDSS_ACTION = {
+    'name': u'修改物流',
+    'action': 'update_express',
+    'class_name': 'xa-order-delivery',
+    'button_class': 'btn-danger'
+}
+ORDER_REFUND_SUCCESS_ACTION = {
+    'name': u'退款成功',
+    'action': 'return_success',
+    'class_name': 'xa-refundSuccess',
+    'button_class': 'btn-danger'
+}
+
 PAY_INTERFACE_ALIPAY = 0
 PAY_INTERFACE_TENPAY = 1
 PAY_INTERFACE_WEIXIN_PAY = 2
 PAY_INTERFACE_COD = 9
 PAY_INTERFACE_PREFERENCE = 10
+PAY_INTERFACE_BEST_PAY = 11
 PAY_INTERFACE_WEIZOOM_COIN = 3
 
 PAYTYPE2LOGO = {

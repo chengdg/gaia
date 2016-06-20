@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
+import logging
 
 from eaglet.decorator import param_required
 from eaglet.core import api_resource
 from business import model as business_model
 from db.mall import models as mall_models
+from db.express import models as express_models
 from util import regional_util
 
 from business.mall.order_products import OrderProducts
 from business.mall.express import util as express_util
-
+from business.tools.express_detail import ExpressDetail
 
 class Order(business_model.Model):
     """
@@ -23,7 +25,7 @@ class Order(business_model.Model):
         'payment_time',
         'final_price',
         'product_price',
-        'edit_money',
+        'product_count',
 
         'ship_name',
         'ship_tel',
@@ -36,6 +38,7 @@ class Order(business_model.Model):
         'integral',
         'integral_money',
         'coupon_money',
+        'edit_money',
 
         'coupon_id',
         'raw_status',
@@ -48,11 +51,13 @@ class Order(business_model.Model):
 
         'created_at',
         'update_at',
+        'leader_name',
 
         'supplier',
         'integral_each_yuan',
         'webapp_id',
         'webapp_user_id',
+        'member_id',
         'member_grade_id',
         'member_grade_discount',
         'buyer_name',
@@ -69,6 +74,7 @@ class Order(business_model.Model):
 
         self.context['db_model'] = model
         if model:
+            model.product_count = 0
             self._init_slot_from_model(model)
 
     @staticmethod
@@ -115,13 +121,60 @@ class Order(business_model.Model):
     @staticmethod
     @param_required(['order_id'])
     def from_order_id(args):
-        # order_db_model = mall_models.Order.select().dj_where(id=args['id'])
         if mall_models.Order.select().dj_where(order_id=args['order_id']).count() == 0:
             return None
         order_db_model = mall_models.Order.select().dj_where(order_id=args['order_id']).first()
         order = Order(order_db_model)
         #order.ship_area = regional_util.get_str_value_by_string_ids(order_db_model.area)
         return order
+
+    @property
+    def is_group_buy(self):
+        if not self.context.get('_is_group_buy'):
+            self.context['_is_group_buy'] = bool(mall_models.OrderHasGroup.select().dj_where(order_id=self.order_id).first())
+
+        return self.context['_is_group_buy']
+
+    @is_group_buy.setter
+    def is_group_buy(self, value):
+        self.context['_is_group_buy'] = value
+
+    @property
+    def express_details(self):
+        """
+        [property] 订单的物流详情列表
+
+        @return ExpressDetail对象list
+
+        @see Weapp的`weapp/mall/models.py`中的`get_express_details()`
+        """
+        # 为了兼容有order.id的方式
+        db_details = express_models.ExpressDetail.select().dj_where(order_id=self.id).order_by(-express_models.ExpressDetail.display_index)
+        if db_details.count() > 0:
+            detail_models = [ExpressDetail(detail) for detail in db_details]
+            details = [{'ftime': model.ftime, 'context': model.context} for model in models]
+            #return list(details)
+            return details
+
+        logging.info("express_company_name:{}, express_number:{}".format(self.express_company_name, self.express_number))
+        expresses = express_models.ExpressHasOrderPushStatus.select().dj_where(
+                express_company_name = self.express_company_name,
+                express_number = self.express_number
+            )
+        if expresses.count() == 0:
+            logging.info("No proper ExpressHasOrderPushStatus records.")
+            return []
+
+        try:
+            express = expresses[0]
+            logging.info("express: {}".format(express.id))
+            db_details = express_models.ExpressDetail.select().dj_where(express_id=express.id).order_by(-express_models.ExpressDetail.display_index)
+            detail_models = [ExpressDetail(detail) for detail in db_details]
+            details = [{'ftime': model.ftime, 'context': model.context} for model in models]
+        except Exception as e:
+            logging.error(u'获取快递详情失败，order_id={}, case:{}'.format(self.id, str(e)))
+            details = []
+        return details
 
     @property
     def ship_area(self):
@@ -157,14 +210,8 @@ class Order(business_model.Model):
     @property
     def formated_express_company_name(self):
         return  u'%s快递' % express_util.get_name_by_value(self.express_company_name) if self.express_company_name  else ''
-    
 
-    @property
     def child_order_count(self):
         if self.origin_order_id <= 0:
             return mall_models.Order.select().dj_where(origin_order_id=self.id).count()
         return 0
-    
-    
-    
-

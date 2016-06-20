@@ -63,7 +63,7 @@
 # 		express = express_models.ExpressHasOrderPushStatus.get_by_order(order)
 # 		order_id = express.id
 
-# 	api_url = "http://{}/tools/api/express/kuaidi/callback/?callbackid={}&version={}".format(settings.DOMAIN, order_id, version)
+# 	api_url = "http://{}/tools/api/express/kuaidi/callback/?callbackid={}&version={}".format(settings.WEAPP_DOMAIN, order_id, version)
 # 	# 快递信息
 # 	param_json = {
 # 		"status":"polling",
@@ -200,7 +200,7 @@
 
 # def test_kdniao_push_data(request):	
 # 	#例子www.xxxx.aspx?RequestData=xxxxxx(
-# 	api_url = "http://{}/tools/api/express/kdniao/callback/".format(settings.DOMAIN)
+# 	api_url = "http://{}/tools/api/express/kdniao/callback/".format(settings.WEAPP_DOMAIN)
 # 	express_ids = request.GET.get("express_ids","").split(",")
 # 	# 快递信息
 # 	param_json = {

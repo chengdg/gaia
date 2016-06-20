@@ -10,12 +10,12 @@ from business.mall.order_items import OrderItems
 from business.mall.product import Product
 from business.account.user_profile import UserProfile
 
-class AOrderList(api_resource.ApiResource):
+class AOrderExport(api_resource.ApiResource):
     """
-    订单列表
+    订单导出
     """
     app = 'panda'
-    resource = 'order_list'
+    resource = 'order_export'
 
     @param_required(['product_ids'])
     def get(args):
@@ -32,11 +32,7 @@ class AOrderList(api_resource.ApiResource):
             'ids': order_ids
         })
         orders = filter(lambda order: order.origin_order_id > 0, orders)
-        orders = AOrderList.search_orders(orders, args)
-        #分页
-        cur_page = int(args.get('page', '1'))
-        count_per_page = int(args.get('count_per_page', '10'))
-        pageinfo, orders = paginator.paginate(orders, cur_page, count_per_page)
+        orders = AOrderExport.search_orders(orders, args)
 
         order_ids = [order.id for order in orders]
         relations = filter(lambda relation: relation.order_id in order_ids, relations)
@@ -71,7 +67,6 @@ class AOrderList(api_resource.ApiResource):
 
         return {
             'orders': order_infos,
-            'pageinfo': pageinfo.to_dict()
         }
 
     @staticmethod

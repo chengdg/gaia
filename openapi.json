@@ -20,21 +20,21 @@
                         "name": "express_company_name",
                         "in": "query",
                         "description": "快递名称",
-                        "required": true,
+                        "required": false,
                         "type": "string"
                     },
                     {
                         "name": "express_number",
                         "in": "query",
                         "description": "快递编号",
-                        "required": true,
+                        "required": false,
                         "type": "string"
                     },
                     {
                         "name": "leader_name",
                         "in": "query",
                         "description": "负责人",
-                        "required": true,
+                        "required": false,
                         "type": "string"
                     },
                     {
@@ -175,6 +175,53 @@
                         "name": "operator_name",
                         "in": "query",
                         "description": "操作人",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string",
+                                            "description": "信息描述"
+                                        },
+                                        "result": {
+                                            "type": "string",
+                                            "description": "SUCCESS or FAILED"
+                                        }
+                                    }
+                                },
+                                "errMsg": {
+                                    "type": "string"
+                                },
+                                "innerErrMsg": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/mall/product_sales/": {
+            "get": {
+                "description": "获取商品销量",
+                "parameters": [
+                    {
+                        "name": "product_ids",
+                        "in": "query",
+                        "description": "商品ID号",
                         "required": true,
                         "type": "string"
                     }

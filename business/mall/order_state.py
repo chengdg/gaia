@@ -20,7 +20,7 @@ from business.account.integral import Integral
 from business.member.webapp_user import WebAppUser
 from business.member.member_spread import MemberSpread
 
-from services.order_notify_mall_service.task import service_send_order_email
+from services.order_notify_mail_service.task import service_send_order_email
 from services.shiped_order_template_message_service.task import service_send_shiped_order_template_message
 from services.express_service.task import service_express
 
@@ -171,11 +171,11 @@ class OrderState(Order):
             if mall_models.Order.select().dj_where(origin_order_id=order.id).count() == 1:
                 child_order = OrderState.from_origin_id({
                     "origin_id": order.id
-                    })
+                    })[0]
                 #TODOOrderState增加修改update方法
                 mall_models.Order.update(**order_params).dj_where(origin_order_id=order.id).execute()
                  #处理操作日志
-                child_order.record_operation_log(operator_name, action,OrderState.CHILD_ORDER)
+                child_order.record_operation_log(operator_name, action,CHILD_ORDER)
 
         """
             TODO加入到celery tasks:

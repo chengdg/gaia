@@ -10,7 +10,7 @@ PROJECT_HOME = os.path.dirname(os.path.abspath(__file__))
 MODE = 'develop'
 SERVICE_NAME = 'zeus'
 DEV_SERVER_MULTITHREADING = True
-DOMAIN = "dev.weapp.com"
+WEAPP_DOMAIN = "dev.weapp.com"
 DATABASES = {
     'default': {
         'ENGINE': 'mysql+retry',
@@ -36,7 +36,7 @@ DATABASES = {
 MIDDLEWARES = [
     'eaglet.middlewares.debug_middleware.QueryMonitorMiddleware',
     'eaglet.middlewares.debug_middleware.RedisMiddleware',
-
+    'eaglet.middlewares.zipkin_middleware.ZipkinMiddleware'
     #账号信息中间件
     #'middleware.webapp_account_middleware.WebAppAccountMiddleware',
 ]
@@ -55,11 +55,6 @@ if MODE == 'develop':
     EVENT_DISPATCHER = 'local'
     ENABLE_SQL_LOG = False
 
-    logging.basicConfig(
-        format='[%(asctime)s] %(name)s %(levelname)s %(message)s',
-        datefmt="%Y-%m-%d %H:%M:%S",
-        level=logging.INFO
-    )
     WEAPP_HOST = "http://dev.weapp.com/"
     H5_HOST = "http://h5.weapp.com/"
 else:
@@ -73,12 +68,6 @@ else:
     IMAGE_HOST = 'http://dev.weapp.com'
     PAY_HOST = 'api.weapp.com'
     ENABLE_SQL_LOG = False
-
-    logging.basicConfig(
-        format='[%(asctime)s] %(name)s %(levelname)s %(message)s',
-        datefmt="%Y-%m-%d %H:%M:%S",
-        level=logging.INFO
-    )
     WEAPP_HOST = "http://weapp.weizoom.com/"
     H5_HOST = "http://mall.weizoom.com/"
 
@@ -101,19 +90,12 @@ IS_UNDER_BDD = False
 # 是否开启TaskQueue(基于Celery)
 TASKQUEUE_ENABLED = True
 
-
 # Celery for Falcon
 INSTALLED_TASKS = [
-    #'resource.member.tasks',
-    # 'core.watchdog.tasks',
     'wapi.tasks',
     'services.order_notify_mail_service.task.service_send_order_email',
     'services.shiped_order_template_message_service.task.service_send_shiped_order_template_message',
-    
-    # 'services.example_service.tasks.example_log_service',
-    # 'services.order_notify_mail_service.task.notify_order_mail',
-    # 'services.record_member_pv_service.task.record_member_pv',
-    # 'services.update_member_from_weixin.task.update_member_info',
+    'services.express_service.task.service_express',
 ]
 
 #redis celery相关

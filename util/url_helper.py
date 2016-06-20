@@ -59,7 +59,7 @@ def remove_querystr_filed_from_request_url(request, remove_filed):
 			return path
 
 
-def complete_get_request_url(protocol, domain, url_path, param_dict={}):
+def complete_get_request_url(protocol, DOMAIN, url_path, param_dict={}):
 	query_str_parts = []
 	for key, value in param_dict.items():
 		query_str_part = "{}={}".format(key, urllib.quote(value))
@@ -71,9 +71,9 @@ def complete_get_request_url(protocol, domain, url_path, param_dict={}):
 		url_path = '/' + url_path
 
 	if len(query_str) > 0:
-		return "{}://{}{}?{}".format(protocol, domain, url_path, query_str)
+		return "{}://{}{}?{}".format(protocol, DOMAIN, url_path, query_str)
 	else:
-		return "{}://{}{}".format(protocol, domain, url_path)
+		return "{}://{}{}".format(protocol, DOMAIN, url_path)
 
 
 def remove_querystr_filed_from_request_path(orig_full_path, remove_filed):

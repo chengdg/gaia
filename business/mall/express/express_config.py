@@ -16,10 +16,10 @@ class ExpressConfig(object):
 
 	# 快递100订阅请求地址
 	api_url = "http://www.kuaidi100.com/poll"
-	# api_url = "http://{}/tools/api/express/test_kuaidi_poll/?code=1".format(settings.DOMAIN)
+	# api_url = "http://{}/tools/api/express/test_kuaidi_poll/?code=1".format(settings.WEAPP_DOMAIN)
 	def get_api_url(self):
 		# if settings.MODE == 'develop' or settings.MODE == 'test':
-		# 	return "http://{}/tools/api/express/test_kuaidi_poll/?code=1".format(settings.DOMAIN)
+		# 	return "http://{}/tools/api/express/test_kuaidi_poll/?code=1".format(settings.WEAPP_DOMAIN)
 		# else:
 		return self.api_url
 
