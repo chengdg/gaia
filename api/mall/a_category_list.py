@@ -20,7 +20,8 @@ class ACategoryList(api_resource.ApiResource):
         @param category_ids:分组id列表
         
         """
-        category_ids = [category_id for category_id in args['category_ids'].split(',') if category_id]
+        # 由于在zeus测试平台，不能传列表，现由'1,2,3,4,5'这种方式处理
+        category_ids = [category_id.strip() for category_id in args['category_ids'].strip().split(',') if category_id]
         print '00077&&&&&&&&&&&&&&&.................',args, category_ids
         if 'all' in category_ids and len(category_ids) == 1:
             category_ids = list()
