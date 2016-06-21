@@ -4,6 +4,7 @@ import json
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
 
+from core import paginator
 from business.mall.categories import Categories
 
 class ACategoryList(api_resource.ApiResource):
@@ -28,5 +29,28 @@ class ACategoryList(api_resource.ApiResource):
         elif 'all' in category_ids and len(category_ids) > 1:
             category_ids.remove('all')
         args.update({'category_ids': category_ids})
-        categories = Categories.get_for_category(args)
-        return categories
+        category_objs = Categories.get_for_category(args)
+        # 分页
+        page_info = dict(
+            page=int(args['page']) if 'page' in args else 1,
+            count_per_page=int(args['count_per_page']) if 'count_per_page' in args else 10
+            )
+        return ACategoryList.get_pageinfo_paginator(category_objs, is_paginator=not args['category_ids'], **page_info)
+
+    def get_pageinfo_paginator(category_models, is_paginator=False, **kwargs):
+        """
+        分页管理
+        """
+        if is_paginator:
+            cur_page = kwargs.get('page')
+            count_per_page = kwargs.get('count_per_page')
+            query_string = kwargs.get('query_string', None)
+            pageinfo, categories = paginator.paginate(category_models, cur_page, count_per_page, query_string=query_string) 
+            return {
+                'categories': categories,
+                'pageinfo': pageinfo.to_dict(),                
+            }
+        else:
+           return {
+                'categories': category_models,          
+           }
