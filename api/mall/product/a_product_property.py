@@ -4,6 +4,8 @@ import json
 
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
+
+from business.mall.factory.product_property_factory import ProductPropertyFactory
 from business.mall.product_property import ProductPropertyTemplate
 
 
@@ -35,7 +37,7 @@ class AProductPropertyTemplate(api_resource.ApiResource):
         product_property.name = title
         product_property.properties = properties
 
-        result, msg = ProductPropertyTemplate.create(product_property)
+        result, msg = ProductPropertyFactory.create(product_property)
 
         return {
             'result': result,
@@ -47,10 +49,11 @@ class AProductPropertyTemplate(api_resource.ApiResource):
         """
         根据id，获取单个属性模板
         """
-        templates = ProductPropertyTemplate.from_id(dict(id=self['id']))
+        template = ProductPropertyTemplate.from_id(dict(id=self['id']))
+
         return {
-            'result': templates,
-            'msg': ''
+            'entry': template,
+            'properties': template.properties
         }
 
     @param_required(['id', 'owner_id', 'newProperties', 'updateProperties', 'deletedIds'])
@@ -60,9 +63,9 @@ class AProductPropertyTemplate(api_resource.ApiResource):
         owner_id: 用户ｉｄ
         id: 属性模板id
         title: 属性模板标题
-        newProperties: 属性模板中需要新建的property信息的json字符串
-        updateProperties: 属性模板中需要更新的property信息的json字符串
-        deletedIds: 属性模板中需要删除的property的id数据的json字符串
+        newProperties: 属性模板中需要新建的property信息的json字符串[{name:name, value:value}]
+        updateProperties: 属性模板中需要更新的property信息的json字符串[{name:name, value:value, id:id}]
+        deletedIds: 属性模板中需要删除的property的id数据的json字符串["id"]
         """
         owner_id = self['owner_id']
         template_id = self['id']
@@ -70,15 +73,16 @@ class AProductPropertyTemplate(api_resource.ApiResource):
         new_properties = json.loads(self['newProperties']) if self['newProperties'] else []
         update_properties = json.loads(self['updateProperties']) if self['updateProperties'] else []
         deleted_ids = json.loads(self['deletedIds']) if self['deletedIds'] else []
-        result, msg = ProductPropertyTemplate.save(dict(owner_id=owner_id,
-                                                        template_id=template_id,
-                                                        title=title,
-                                                        new_properties=new_properties,
-                                                        update_properties=update_properties,
-                                                        deleted_ids=deleted_ids))
+
+        result, msg = ProductPropertyFactory.save({'owner_id': owner_id,
+                                                   'template_id': template_id,
+                                                   'new_properties': new_properties,
+                                                   'update_properties': update_properties,
+                                                   'deleted_ids': deleted_ids,
+                                                   'title': title})
         return {
             'result': result,
-            'msg': ''
+            'msg': msg
         }
 
     @param_required(['id'])
@@ -87,10 +91,10 @@ class AProductPropertyTemplate(api_resource.ApiResource):
         删除单个模板
         """
         template_id = self.get('id')
-        result, msg = ProductPropertyTemplate.delete_from_id(dict(id=template_id))
+        result, msg = ProductPropertyFactory.delete_from_id({"id": template_id})
         return {
-            'result': result,
-            'msg': ''
+            "result": result,
+            "msg": msg
         }
 
 
@@ -108,6 +112,5 @@ class APropertyTemplateList(api_resource.ApiResource):
         """
         templates = ProductPropertyTemplate.from_owner_id(dict(owner_id=self['owner_id']))
         return {
-            'result': templates,
-            'msg': ''
+            "entries": templates
         }

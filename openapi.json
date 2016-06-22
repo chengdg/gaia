@@ -1,7 +1,7 @@
 {
     "swagger": "2.0",
     "info": {
-        "version": "0.0.1",
+        "version": "0.0.0",
         "title": "zeus API doc"
     },
     "paths": {
@@ -260,6 +260,955 @@
                     }
                 }
             }
+        },
+        "/mall/product_property_template/": {
+            "get": {
+                "description": "根据id，获取单个属性模板",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "模板id号",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "properties": {
+
+                                        "entry":{
+                                          "type": "object",
+                                          "properties": {
+                                            "id": {
+                                              "type": "integer",
+                                              "format": "int32"
+                                            },
+                                            "name": {
+                                              "type": "string",
+                                              "description": "模板title名"
+                                            },
+                                            "owner_id": {
+                                              "type": "integer",
+                                              "format": "int32",
+                                              "description": "用户id"
+                                            }
+
+                                          }
+                                        },
+                                        "properties": {
+                                          "type": "object",
+                                          "description": "属性集合",
+                                          "properties": {
+                                            "name": {
+                                              "type": "string",
+                                              "description": "模板属性的名字"
+                                            },
+                                            "value": {
+                                              "type": "string",
+                                              "description": "模板属性的值"
+                                            },
+                                            "id": {
+                                              "type": "integer",
+                                              "description": "模板属性的id"
+                                            }
+                                          }
+                                        }
+                                    }
+                                },
+                                "errMsg": {
+                                    "type": "string"
+                                },
+                                "innerErrMsg": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+
+              "description": "删除单个模板",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "模板id号",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string",
+                                            "description": "信息描述"
+                                        },
+                                        "result": {
+                                            "type": "string",
+                                            "description": "SUCCESS or FAILED"
+                                        }
+
+                                    }
+                                },
+                                "errMsg": {
+                                    "type": "string"
+                                },
+                                "innerErrMsg": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+
+            },
+            "post": {
+
+              "description": "更新单个模板",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "模板id号",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "owner_id",
+                        "in": "query",
+                        "description": "用户ID,比如当前登录用户的ID",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "newProperties",
+                        "in": "formData",
+                        "description": "模板新增的属性,格式大概[{name:name, value:value}]",
+                        "required": true,
+                        "type": "string"
+
+                    },
+                    {
+                        "name": "updateProperties",
+                        "in": "query",
+                        "description": "模板更新属性,[{name:name, value:value, id:id}]",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "deletedIds",
+                        "in": "query",
+                        "description": "用户ID,比如当前登录用户的ID,[id,id]",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string",
+                                            "description": "信息描述"
+                                        },
+                                        "result": {
+                                            "type": "string",
+                                            "description": "SUCCESS or FAILED"
+                                        }
+
+                                    }
+                                },
+                                "errMsg": {
+                                    "type": "string"
+                                },
+                                "innerErrMsg": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+
+            },
+            "put": {
+
+              "description": "添加单个模板",
+                "parameters": [
+                    {
+                        "name": "owner_id",
+                        "in": "query",
+                        "description": "用户ID,比如当前登录用户的ID",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "title",
+                        "in": "query",
+                        "description": "模板的title(名字)",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "properties",
+                        "in": "formData",
+                        "description": "模板属性,格式大概[{name:name, value:value}]",
+                        "required": true,
+                        "type": "string"
+
+                    }
+
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string",
+                                            "description": "信息描述"
+                                        },
+                                        "result": {
+                                            "type": "string",
+                                            "description": "SUCCESS or FAILED"
+                                        }
+
+                                    }
+                                },
+                                "errMsg": {
+                                    "type": "string"
+                                },
+                                "innerErrMsg": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+
+        },
+        "/mall/template_list": {
+          "get": {
+                "description": "商品属性模板列表",
+                "parameters": [
+                    {
+                        "name": "owner_id",
+                        "in": "query",
+                        "description": "拥有者id，用户id",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "properties": {
+                                        "entries": {
+                                            "type": "array",
+                                            "description": "模板集合",
+                                            "items":{
+                                                "type": "object",
+                                                "properties": {
+                                                   "entry":{
+                                                      "type": "object",
+                                                      "properties": {
+                                                        "id": {
+                                                          "type": "integer",
+                                                          "description": "模板id"
+
+                                                        },
+                                                        "name": {
+                                                          "type": "string",
+                                                          "description": "模板title"
+                                                        },
+                                                        "owner_id": {
+                                                          "type": "integer",
+                                                          "description": "用户id"
+
+                                                        }
+                                                      }
+                                                    },
+                                                    "properties": {
+                                                      "type": "array",
+                                                      "items":{
+                                                        "type": "object",
+                                                        "properties":{
+                                                          "id": {
+                                                            "type": "integer",
+                                                            "description": "属性id"
+                                                          },
+                                                          "name": {
+                                                            "type": "string",
+                                                            "description": "属性名称"
+                                                          },
+                                                          "value": {
+                                                            "type": "string",
+                                                            "description": "属性值"
+                                                          }
+                                                        }
+                                                      },
+                                                      "description": "模板的属性"
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                    }
+                                },
+                                "errMsg": {
+                                    "type": "string"
+                                },
+                                "innerErrMsg": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/mall/product_model_property/": {
+            "get": {
+                "description": "根据id，获取获取单个规格",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "模板id号",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "properties": {
+
+                                        "entry":{
+                                          "type": "object",
+                                          "properties": {
+                                            "id": {
+                                              "type": "integer",
+                                              "format": "int32",
+                                              "description": "规格id"
+                                            },
+                                            "name": {
+                                              "type": "string",
+                                              "description": "规格名"
+                                            },
+                                            "owner_id": {
+                                              "type": "integer",
+                                              "format": "int32",
+                                              "description": "用户id"
+                                            }
+
+                                          }
+                                        },
+                                        "properties": {
+                                            "type": "array",
+                                            "description": "属性集合",
+                                            "items":{
+                                                "type": "object",
+                                                "properties": {
+                                                   "id": {
+                                                      "type": "integer",
+                                                      "description": "规格属性id"
+
+                                                    },
+
+                                                    "name": {
+                                                      "type": "string",
+                                                      "description": "规格属性的名称"
+                                                    },
+                                                    "pic_url": {
+                                                      "type": "string",
+                                                      "description": "图片地址"
+
+                                                    }
+
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "errMsg": {
+                                    "type": "string"
+                                },
+                                "innerErrMsg": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+
+              "description": "删除单个规格",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "规格id号",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string",
+                                            "description": "信息描述"
+                                        },
+                                        "result": {
+                                            "type": "string",
+                                            "description": "SUCCESS or FAILED"
+                                        }
+
+                                    }
+                                },
+                                "errMsg": {
+                                    "type": "string"
+                                },
+                                "innerErrMsg": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+
+            },
+            "post": {
+
+              "description": "更新单个规格",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "规格id号",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "规格名称,可以为空，但是必须传递",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "type",
+                        "in": "formData",
+                        "description": "可以为空，但是必须传递，默认是0(text)类型,1:图片类型",
+                        "required": true,
+                        "type": "integer"
+
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string",
+                                            "description": "信息描述"
+                                        },
+                                        "result": {
+                                            "type": "string",
+                                            "description": "SUCCESS or FAILED"
+                                        }
+
+                                    }
+                                },
+                                "errMsg": {
+                                    "type": "string"
+                                },
+                                "innerErrMsg": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+
+            },
+            "put": {
+
+              "description": "商品规格属性",
+                "parameters": [
+                    {
+                        "name": "owner_id",
+                        "in": "query",
+                        "description": "用户ID,比如当前登录用户的ID",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "规格名称,可以为空，但是必须传递",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "type",
+                        "in": "formData",
+                        "description": "可以为空，但是必须传递，默认是0(text)类型,1:图片类型",
+                        "required": true,
+                        "type": "integer"
+
+                    }
+
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string",
+                                            "description": "信息描述"
+                                        },
+                                        "result": {
+                                            "type": "string",
+                                            "description": "SUCCESS or FAILED"
+                                        }
+
+                                    }
+                                },
+                                "errMsg": {
+                                    "type": "string"
+                                },
+                                "innerErrMsg": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+
+        },
+        "/mall/product_model_property_list": {
+          "get": {
+                "description": "商品规格列表",
+                "parameters": [
+                    {
+                        "name": "owner_id",
+                        "in": "query",
+                        "description": "拥有者id，用户id",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "properties": {
+                                        "entries": {
+                                            "type": "array",
+                                            "description": "规格集合",
+                                            "items":{
+                                                "type": "object",
+                                                "properties": {
+                                                    "entry":{
+                                                      "type": "object",
+                                                      "properties": {
+                                                        "id": {
+                                                          "type": "integer",
+                                                          "description": "规格id"
+
+                                                        },
+                                                        "type": {
+                                                          "type": "integer",
+                                                          "description": "规格类型"
+
+                                                        },
+                                                        "name": {
+                                                          "type": "string",
+                                                          "description": "规格的名称"
+                                                        },
+                                                        "owner_id": {
+                                                          "type": "integer",
+                                                          "description": "用户id"
+
+                                                        }
+                                                      }
+                                                    },
+                                                    "properties": {
+                                                      "type": "array",
+                                                      "items":{
+                                                        "type": "object",
+                                                        "properties": {
+                                                          "id": {
+                                                            "type": "integer",
+                                                            "description": "规格属性id"
+
+                                                          },
+                                                          "name": {
+                                                            "type": "string",
+                                                            "description": "规格属性名称"
+
+                                                          },
+                                                          "pic_url": {
+                                                            "type": "string",
+                                                            "description": "属性的图片地址"
+                                                          }
+                                                        }
+                                                      },
+                                                      "description": "规格的属性集合"
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                    }
+                                },
+                                "errMsg": {
+                                    "type": "string"
+                                },
+                                "innerErrMsg": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/mall/model_property_value/": {
+            "get": {
+                "description": "根据id，获取商品规格的属性",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "规格的属性的id号",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "properties": {
+
+                                        "entry":{
+                                          "type": "object",
+                                          "properties": {
+                                            "id": {
+                                              "type": "integer",
+                                              "format": "int32",
+                                              "description": "属性id"
+                                            },
+                                            "name": {
+                                              "type": "string",
+                                              "description": "属性名"
+                                            },
+                                            "pic_url": {
+                                              "type": "string",
+                                              "format": "int32",
+                                              "description": "属性的图片地址"
+                                            }
+
+                                          }
+                                        }
+                                    }
+                                },
+                                "errMsg": {
+                                    "type": "string"
+                                },
+                                "innerErrMsg": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+
+              "description": "删除单个规格属性",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "规格属性id号",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string",
+                                            "description": "信息描述"
+                                        },
+                                        "result": {
+                                            "type": "string",
+                                            "description": "SUCCESS or FAILED"
+                                        }
+
+                                    }
+                                },
+                                "errMsg": {
+                                    "type": "string"
+                                },
+                                "innerErrMsg": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+
+            },
+            "post": {
+
+              "description": "更新单个规格属性",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "规格id号",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "规格名称,可以为空，但是必须传递",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "pic_url",
+                        "in": "formData",
+                        "description": "规格值的图片地址()",
+                        "required": true,
+                        "type": "integer"
+
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string",
+                                            "description": "信息描述"
+                                        },
+                                        "result": {
+                                            "type": "string",
+                                            "description": "SUCCESS or FAILED"
+                                        }
+
+                                    }
+                                },
+                                "errMsg": {
+                                    "type": "string"
+                                },
+                                "innerErrMsg": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+
+            },
+            "put": {
+
+              "description": "商品规格的属性",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "规格id",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "规格名称,可以为空，但是必须传递",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "pic_url",
+                        "in": "formData",
+                        "description": "规格值的图片地址()",
+                        "required": true,
+                        "type": "integer"
+
+                    }
+
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string",
+                                            "description": "信息描述"
+                                        },
+                                        "result": {
+                                            "type": "string",
+                                            "description": "SUCCESS or FAILED"
+                                        }
+
+                                    }
+                                },
+                                "errMsg": {
+                                    "type": "string"
+                                },
+                                "innerErrMsg": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+
         }
     }
 }

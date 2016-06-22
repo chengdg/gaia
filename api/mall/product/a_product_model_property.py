@@ -5,6 +5,8 @@ from eaglet.decorator import param_required
 
 from business.mall.product_model_property import ProductModelProperty
 from business.mall.product_model_property import ProductModelPropertyValue
+from business.mall.factory.product_model_property_factory import ProductModelPropertyFactory, \
+    ProductModelPropertyValueFactory
 
 
 class AProductModelProperty(api_resource.ApiResource):
@@ -20,7 +22,7 @@ class AProductModelProperty(api_resource.ApiResource):
         """
         添加规格
         owner_id -- 用户id
-        type -- 规格类型　可以为空，但是必须传递，默认是text类型
+        type -- 规格类型　可以为空，但是必须传递，默认是0(text)类型,1:图片类型
         name -- 规格名　可以为空，但是必须传递
         """
         owner_id = self['owner_id']
@@ -32,15 +34,18 @@ class AProductModelProperty(api_resource.ApiResource):
         resource_model.type = model_type
         resource_model.name = name
 
-        result, msg = ProductModelProperty.create(resource_model)
-        return dict(result=result, msg=msg)
+        result, msg = ProductModelPropertyFactory.create(resource_model)
+        return {
+            'result': result,
+            'msg': msg
+        }
 
     @param_required(['type', 'name', 'id'])
     def post(self):
         """
         更新规格
         id -- 规格ｉｄ
-        type -- 规格类型　可以为空，但是必须传递，默认是text类型(0)
+        type -- 规格类型　可以为空，但是必须传递，默认是0(text)类型,1:图片类型
         name -- 规格名　可以为空，但是必须传递
         """
 
@@ -53,22 +58,49 @@ class AProductModelProperty(api_resource.ApiResource):
         resource_model.name = name
         resource_model.id = model_id
 
-        result, msg = ProductModelProperty.save(dict(resource_model=resource_model))
-        return dict(result=result, msg=msg)
+        result, msg = ProductModelPropertyFactory.save({"resource_model": resource_model})
+        return {
+            'result': result,
+            'msg': msg
+        }
 
     @param_required(['id'])
     def get(self):
         """
-        获取单个模板
+        获取单个规格
         """
         model_id = self['id']
-        result, msg = ProductModelProperty.from_id(dict(id=model_id))
-        return dict(result=result, msg=msg)
+        entry = ProductModelProperty.from_id(dict(id=model_id))
+        return {
+            "entry": entry,
+            'properties': entry.properties
+        }
 
     @param_required(['id'])
     def delete(self):
-        result, msg = ProductModelProperty.delete_from_id(dict(id=self['id']))
-        return dict(result=result, msg=msg)
+        result, msg = ProductModelPropertyFactory.delete_from_id(dict(id=self['id']))
+        return {
+            'result': result,
+            'msg': msg
+        }
+
+
+class AProductModelPropertyList(api_resource.ApiResource):
+    """
+    商品规格列表
+    """
+    app = 'mall'
+    resource = 'product_model_property_list'
+
+    @param_required(['owner_id'])
+    def get(self):
+        """
+        规格列表
+        """
+        result = ProductModelProperty.from_owner_id({"owner_id": self['owner_id']})
+        return {
+            'entries': result
+        }
 
 
 class AProductModelPropertyValue(api_resource.ApiResource):
@@ -95,8 +127,11 @@ class AProductModelPropertyValue(api_resource.ApiResource):
         resource_model.name = name
         resource_model.pic_url = pic_url
 
-        result, msg = ProductModelPropertyValue.create(resource_model)
-        return dict(result=result, msg=msg)
+        result, msg = ProductModelPropertyValueFactory.create(resource_model)
+        return {
+            'result': result,
+            'msg': msg
+        }
 
     @param_required(['id', 'name', 'pic_url'])
     def post(self):
@@ -115,21 +150,29 @@ class AProductModelPropertyValue(api_resource.ApiResource):
         resource_model.name = name
         resource_model.pic_url = pic_url
 
-        result, msg = ProductModelPropertyValue.save(resource_model)
-        return dict(result=result, msg=msg)
+        result, msg = ProductModelPropertyValueFactory.save(resource_model)
+        return {
+            'result': result,
+            'msg': msg
+        }
 
     @param_required(['id'])
     def get(self):
         """
         id -- 规格属性id
         """
-        result, msg = ProductModelPropertyValue.from_id(dict(id=self['id']))
-        return dict(result=result, msg=msg)
+        entry = ProductModelPropertyValue.from_id({'id': self['id']})
+        return {
+            'entry': entry
+        }
 
     @param_required(['id'])
     def delete(self):
         """
         id -- 规格属性id
         """
-        result, msg = ProductModelPropertyValue.delete_from_id(dict(id=self['id']))
-        return dict(result=result, msg=msg)
+        result, msg = ProductModelPropertyValueFactory.delete_from_id({'id': self['id']})
+        return {
+            'result': result,
+            'msg': msg
+        }
