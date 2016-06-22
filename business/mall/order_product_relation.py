@@ -41,7 +41,7 @@ class OrderProductRelation(business_model.Model):
             mall_models.OrderHasProduct.product.in_(args['product_ids'])
         )
         relations = []
-        for relation_model in list(relation_models):
+        for relation_model in relation_models:
             relation = OrderProductRelation(relation_model)
             relations.append(relation)
         return relations
@@ -53,7 +53,7 @@ class OrderProductRelation(business_model.Model):
             mall_models.OrderHasProduct.order.in_(args['order_ids'])
         )
         relations = []
-        for relation_model in list(relation_models):
+        for relation_model in relation_models:
             relation = OrderProductRelation(relation_model)
             relations.append(relation)
         return relations
