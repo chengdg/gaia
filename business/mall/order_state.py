@@ -7,7 +7,7 @@ from eaglet.core import watchdog
 from eaglet.core.exceptionutil import unicode_full_stack
 from business import model as business_model
 from db.mall import models as mall_models
-from db.mall import promotion_models 
+from db.mall import promotion_models
 
 from util import regional_util
 from business.mall.order import Order
@@ -50,7 +50,6 @@ class OrderState(Order):
     @param_required(['order_id'])
     def from_order_id(args):
         order_db_model = mall_models.Order.select().dj_where(order_id=args['order_id']).first()
-        print order_db_model,"<<<<<<<<<<<"
         if not order_db_model:
             return None
         order = OrderState(order_db_model)
@@ -101,7 +100,7 @@ class OrderState(Order):
                         })
                     action = '%s - %s' % (action, user_profile.store_name)
                 order_id = origin_order.order_id
-            
+
         elif type == CHILD_ORDER:
             if mall_models.Order.select().dj_where(origin_order_id=self.id).count() == 1:
                 child_order = Order.from_origin_id({
@@ -126,7 +125,7 @@ class OrderState(Order):
             status = self.status
         #使用celery
         service_send_order_email.delay(self.order_id, self.webapp_id, status)
-        
+
 
     def __send_request_to_kuaidi(self):
         """
@@ -135,7 +134,7 @@ class OrderState(Order):
         #TODO  修改参数指定具体参数 不直接传递order对象
         service_express.delay(self.order_id)
         #is_success = ExpressService(self).get_express_poll()
-       
+
 
 
     def update_ship(self, express_company_name,express_number, operator_name=u'我', leader_name=u'', is_100 = True):
@@ -153,7 +152,7 @@ class OrderState(Order):
         self.express_number = express_number
 
         mall_models.Order.update(**order_params).dj_where(id=self.id).execute()
-        
+
         action = u'修改发货信息'
 
         if order.origin_order_id > 0:
@@ -163,7 +162,7 @@ class OrderState(Order):
                     "id": order.origin_order_id
                     })
 
-                Order.update(**order_params).dj_where(id=order.origin_order_id).execute()                    
+                Order.update(**order_params).dj_where(id=order.origin_order_id).execute()
                 origin_order.record_operation_log(operator_name, action, OrderState.FATHER_ORDER)
         else:
             #当前订单为父订单，并且只有一个子订单，则同步更新子订单
@@ -212,7 +211,7 @@ class OrderState(Order):
         如果订单id、快递公司名称或运单号任一为None，直接返回False
 
         如果订单id、快递公司名称或运单号任一长度为0返回False
-        """ 
+        """
         #子订单
         if self.origin_order_id == -1:
             child_orders = OrderState.from_origin_id({
@@ -220,6 +219,13 @@ class OrderState(Order):
             })
             if len(child_orders) > 1:
                 return False, u'不能对当前订单发货'
+
+
+
+
+
+
+
 
         if self.status == mall_models.ORDER_STATUS_PAYED_SHIPED:
             return False, u'订单状态已经改变'
@@ -237,7 +243,7 @@ class OrderState(Order):
         mall_models.Order.update(**order_params).dj_where(id=self.id).execute()
         self.record_status_log(operator_name, self.status, target_status)
         self.record_operation_log(operator_name, action)
-        
+
         #处理子订单和包含子订单的主订单
         if self.origin_order_id > 0:
             child_orders = Order.from_origin_id({
@@ -262,7 +268,7 @@ class OrderState(Order):
             child_order.record_status_log(operator_name, child_order.status, target_status)
             child_order.record_operation_log(operator_name, action, CHILD_ORDER)
 
-        
+
         """
             TODO加入到celery tasks:
                 1.快递接口访问（快递100或者是快递鸟接口访问）
@@ -276,7 +282,7 @@ class OrderState(Order):
 
         return True, ''
 
-    
+
     def cancel(self):
         pass
     def refund(self):
@@ -299,7 +305,7 @@ class OrderState(Order):
 
 
         action = '完成'
-        
+
         # if operation_name:
         #     operation_name = u'{} {}'.format(operation_name, (actions[1] if len(actions) > 1 else ''))
         # else:
@@ -308,7 +314,7 @@ class OrderState(Order):
         mall_models.Order.update(status=target_status).dj_where(id=self.id).execute()
         self.record_status_log(operator_name, self.status, target_status)
         self.record_operation_log(operator_name, action)
-            
+
         #更新红包引入消费金额的数据 by Eugene
         if self.coupon_id and promotion_models.RedEnvelopeParticipences.select().dj_where(coupon_id=self.coupon_id, introduced_by__gt=0).count() > 0:
             red_envelope2member = promotion_models.RedEnvelopeParticipences.get(coupon_id=self.coupon_id)
@@ -319,7 +325,7 @@ class OrderState(Order):
             ).execute()
 
         origin_order_id = 0
-        
+
         if self.origin_order_id > 0:
             #所有子订单
             child_orders = Order.from_origin_id({
@@ -342,7 +348,7 @@ class OrderState(Order):
                     origin_order.record_operation_log(operator_name, action, FATHER_ORDER)
 
                     origin_order_id = origin_order.id
-                   
+
         else:
             #当前为主订单
             if child_order_count > 0:
