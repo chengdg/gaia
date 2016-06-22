@@ -7,8 +7,9 @@ from eaglet.core import api_resource
 from business import model as business_model
 from db.mall import models as mall_models
 
-
 from business.mall.product import Product
+from business.mall.category_factory import CategoryFactory
+
 
 class Categories(business_model.Model):
     """
@@ -22,17 +23,12 @@ class Categories(business_model.Model):
         'product_count',
         'display_index',
         'created_at',
-        'products'
     )
-    def __init__(self, model, product_ids=[]):
+    def __init__(self, model):
         business_model.Model.__init__(self)
 
         self.context['db_model'] = model
         if model:
-            if product_ids:
-                model.products = CategoryHasProduct.post_category_has_product({'product_ids': product_ids, 'category_obj': model})
-            else:
-                model.products = CategoryHasProduct.get_category_has_product({'db_model': model})
             self._init_slot_from_model(model)
 
     @staticmethod
@@ -53,17 +49,39 @@ class Categories(business_model.Model):
         '''
         创建商品分组
         '''
-        opt = dict(
-            owner=args['owner'],
-            name=args['name'],
-            product_count=len(args['product_ids'])
-        )
-        obj, created = mall_models.ProductCategory.get_or_create(**opt)
-        # created is True or False  
-        # If an object is found, get_or_create() returns a tuple of that object and False. 
-        # If multiple objects are found, get_or_create raises MultipleObjectsReturned. 
-        # If an object is not found, get_or_create() will instantiate and save a new object, returning a tuple of the new object and True
-        return Categories(obj, product_ids=args['product_ids'])
+        category_factory_obj = CategoryFactory.post_category(args)
+        category_obj = category_factory_obj.create()
+        return Categories(category_obj)
+
+    @property
+    def __get_model(self):
+        return self.context['db_model']
+
+    @staticmethod
+    @param_required(['category_id'])
+    def get_for_category_by_id(args):
+        '''
+        获取单个分组信息
+        '''
+        obj = mall_models.ProductCategory.select().dj_where(id=args['category_id'])
+        return Categories(obj.first())
+
+    @staticmethod
+    @param_required(['category_id'])
+    def delete_for_category_by_id(args):
+        '''
+            删除指定分组
+        '''
+        obj = mall_models.ProductCategory.get(id=args['category_id'])
+        mall_models.CategoryHasProduct.delete().dj_where(category=obj).execute()
+        return obj.delete_instance()
+
+    @property
+    def products(self):
+        category_model = self.context['db_model']
+        relations = mall_models.CategoryHasProduct.filter(category=category_model)
+        product_ids = [relation.product_id for relation in relations]
+        return Product.from_ids({'product_ids': product_ids})
 
 
 class CategoryHasProduct(business_model.Model):
@@ -81,27 +99,3 @@ class CategoryHasProduct(business_model.Model):
         if model:
             self._init_slot_from_model(model)
 
-    @staticmethod
-    @param_required(['db_model'])
-    def get_category_has_product(args):
-        model = args['db_model']
-        relations = mall_models.CategoryHasProduct.filter(category=model)
-        product_ids = [relation.product_id for relation in relations]
-        return Product.from_ids({'product_ids': product_ids})
-
-    @staticmethod
-    @param_required(['product_ids', 'category_obj'])
-    def post_category_has_product(args):
-        '''
-        创建分组中商品关系对象
-        #  还可以优化,使用批处理
-        '''
-        products = list()
-        for product_id in args['product_ids']:
-            opt =dict(
-                product=mall_models.Product.get(id=product_id),
-                category=args['category_obj']
-            )
-            obj, created = mall_models.CategoryHasProduct.get_or_create(**opt)
-            products.append(Product(mall_models.Product(obj)))
-        return products

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
+import pdb
 
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
@@ -35,7 +36,8 @@ class ACategoryList(api_resource.ApiResource):
             page=int(args['page']) if 'page' in args else 1,
             count_per_page=int(args['count_per_page']) if 'count_per_page' in args else 10
             )
-        return ACategoryList.get_pageinfo_paginator(category_objs, is_paginator=not args['category_ids'], **page_info)
+        category_list = ACategoryList.get_pageinfo_paginator(category_objs, is_paginator=not args['category_ids'], **page_info)
+        return category_list
 
     def get_pageinfo_paginator(category_models, is_paginator=False, **kwargs):
         """
