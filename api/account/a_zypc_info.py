@@ -11,7 +11,7 @@ class AZypcInfo(api_resource.ApiResource):
     获取自营平台相关的信息
     """
     app = 'account'
-    resource = 'zypc_info'
+    resource = 'zypt_info'
 
     @param_required(['mall_type'])
     def get(args):
