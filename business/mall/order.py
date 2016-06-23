@@ -119,6 +119,17 @@ class Order(business_model.Model):
         return orders
 
     @staticmethod
+    @param_required(['order_ids'])
+    def from_order_ids(args):
+        orders = []
+        order_models = mall_models.Order.select().dj_where(order_id__in=args['order_ids'])
+
+        for order_model in order_models:
+            order = Order(order_model)
+            orders.append(order)
+        return orders
+
+    @staticmethod
     @param_required(['order_id'])
     def from_order_id(args):
         if mall_models.Order.select().dj_where(order_id=args['order_id']).count() == 0:
