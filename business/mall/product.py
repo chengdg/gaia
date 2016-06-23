@@ -7,6 +7,7 @@ from business import model as business_model
 class Product(business_model.Model):
     __slots__ = (
         'id',
+        'owner_id',
         'name',
         'physical_unit',
         'price',
@@ -56,6 +57,11 @@ class Product(business_model.Model):
         self.context['db_model'] = model
         if model:
             self._init_slot_from_model(model)
+
+    @staticmethod
+    def empty_product():
+        product = Product()
+        return product
 
     @staticmethod
     @param_required(['db_model'])
