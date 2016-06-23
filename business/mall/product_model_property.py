@@ -62,13 +62,51 @@ class ProductModelProperty(business_model.Model):
     def properties(self):
         """
         """
-        if self.id:
+        properties = self.context.get('properties', None)
+        if not properties and self.id:
             return ProductModelPropertyValue.from_model_id({'model_id': self.id})
-        return self.properties
+        return properties
 
     @properties.setter
     def properties(self, value):
-        self.properties = value
+        self.context['properties'] = value
+
+    def update(self):
+        """
+        更新
+
+        """
+
+        # default 0(text)
+        model_type = mall_models.PRODUCT_MODEL_PROPERTY_TYPE_TEXT
+        if self.type == 'image':
+            model_type = mall_models.PRODUCT_MODEL_PROPERTY_TYPE_IMAGE
+        change_rows = mall_models.ProductModelProperty.update(name=self.name,
+                                                              type=model_type).dj_where(id=self.id) \
+            .execute()
+        return change_rows
+
+    def save(self):
+        """
+        新增
+
+        """
+
+        # default 0(text)
+        model_type = mall_models.PRODUCT_MODEL_PROPERTY_TYPE_TEXT
+        if self['type'] == 'image':
+            model_type = mall_models.PRODUCT_MODEL_PROPERTY_TYPE_IMAGE
+        product_model = mall_models.ProductModelProperty.create(name=self.name,
+                                                                type=model_type,
+                                                                owner=self.owner_id)
+        return product_model if product_model else None
+
+    @staticmethod
+    @param_required(['id'])
+    def delete_from_id(args):
+        change_rows = mall_models.ProductModelProperty.update(is_deleted=True) \
+            .dj_where(id=args.get('id')).execute()
+        return change_rows
 
 
 class ProductModelPropertyValue(business_model.Model):
@@ -113,3 +151,22 @@ class ProductModelPropertyValue(business_model.Model):
         values = mall_models.ProductModelPropertyValue.select().dj_where(property=args['model_id'])
         result = [ProductModelPropertyValue(value) for value in values]
         return result
+
+    def save(self, model_id):
+        value_model = mall_models.ProductModelPropertyValue.create(property=model_id,
+                                                                   name=self.name,
+                                                                   pic_url=self.pic_url)
+        return value_model if value_model else None
+
+    def update(self):
+        change_rows = mall_models.ProductModelPropertyValue.update(name=self.name,
+                                                                   pic_url=self.pic_url) \
+            .dj_where(id=self.id).execute()
+        return change_rows
+
+    @staticmethod
+    @param_required(['id'])
+    def delete_from_id(args):
+        change_rows = mall_models.ProductModelPropertyValue.update(is_deleted=True) \
+            .dj_where(id=args['id']).execute()
+        return change_rows

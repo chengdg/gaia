@@ -4,6 +4,8 @@ import json
 
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
+from eaglet.core import watchdog
+from eaglet.core.exceptionutil import unicode_full_stack
 
 from business.mall.factory.product_property_factory import ProductPropertyFactory
 from business.mall.product_property import ProductPropertyTemplate
@@ -27,21 +29,19 @@ class AProductPropertyTemplate(api_resource.ApiResource):
         """
         owner_id = self['owner_id']
         title = self['title']
-        properties = self['properties']
-        if not isinstance(properties, dict):
-            properties = json.loads(properties)
 
-        product_property = ProductPropertyTemplate(None)
-        # 领域模型对象变量名和model保持一致
-        product_property.owner_id = owner_id
-        product_property.name = title
-        product_property.properties = properties
+        properties = json.loads(self['properties'])
 
-        result, msg = ProductPropertyFactory.create(product_property)
+        factory = ProductPropertyFactory.create()
+        template = factory.save({
+            'owner_id': owner_id,
+            'title': title,
+            'properties': properties
+        })
 
         return {
-            'result': result,
-            'msg': msg
+            'template': template.to_dict(),
+            'properties': template.properties
         }
 
     @param_required(['id'])
@@ -52,7 +52,7 @@ class AProductPropertyTemplate(api_resource.ApiResource):
         template = ProductPropertyTemplate.from_id(dict(id=self['id']))
 
         return {
-            'entry': template,
+            'template': template.to_dict(),
             'properties': template.properties
         }
 
@@ -73,17 +73,19 @@ class AProductPropertyTemplate(api_resource.ApiResource):
         new_properties = json.loads(self['newProperties']) if self['newProperties'] else []
         update_properties = json.loads(self['updateProperties']) if self['updateProperties'] else []
         deleted_ids = json.loads(self['deletedIds']) if self['deletedIds'] else []
+        try:
+            template = ProductPropertyTemplate(None)
+            template.owner_id = owner_id
+            template.id = template_id
+            template.name = title
 
-        result, msg = ProductPropertyFactory.save({'owner_id': owner_id,
-                                                   'template_id': template_id,
-                                                   'new_properties': new_properties,
-                                                   'update_properties': update_properties,
-                                                   'deleted_ids': deleted_ids,
-                                                   'title': title})
-        return {
-            'result': result,
-            'msg': msg
-        }
+            change_rows = template.update(new_properties=new_properties, update_properties=update_properties,
+                                          deleted_ids=deleted_ids)
+            return {"change_rows": change_rows}
+        except:
+            msg = unicode_full_stack()
+            watchdog.error(msg)
+            return {"change_rows": 0}
 
     @param_required(['id'])
     def delete(self):
@@ -91,11 +93,13 @@ class AProductPropertyTemplate(api_resource.ApiResource):
         删除单个模板
         """
         template_id = self.get('id')
-        result, msg = ProductPropertyFactory.delete_from_id({"id": template_id})
-        return {
-            "result": result,
-            "msg": msg
-        }
+        try:
+            change_rows = ProductPropertyTemplate.delete_from_id({"id": template_id})
+            return {"change_rows": change_rows}
+        except:
+            msg = unicode_full_stack()
+            watchdog.error(msg)
+            return {"change_rows": 0}
 
 
 class APropertyTemplateList(api_resource.ApiResource):
@@ -110,7 +114,7 @@ class APropertyTemplateList(api_resource.ApiResource):
         """
         根据用户id，获取所有的属性模板
         """
-        templates = ProductPropertyTemplate.from_owner_id(dict(owner_id=self['owner_id']))
+        templates = ProductPropertyTemplate.from_owner_id({'owner_id': self['owner_id']})
         return {
-            "entries": templates
+            "templates": templates
         }

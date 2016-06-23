@@ -2,6 +2,8 @@
 
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
+from eaglet.core import watchdog
+from eaglet.core.exceptionutil import unicode_full_stack
 
 from business.mall.product_model_property import ProductModelProperty
 from business.mall.product_model_property import ProductModelPropertyValue
@@ -22,30 +24,32 @@ class AProductModelProperty(api_resource.ApiResource):
         """
         添加规格
         owner_id -- 用户id
-        type -- 规格类型　可以为空，但是必须传递，默认是0(text)类型,1:图片类型
+        type -- 规格类型　可以为空，但是必须传递，默认是text(text)类型,image:图片类型
         name -- 规格名　可以为空，但是必须传递
         """
         owner_id = self['owner_id']
         model_type = self['type']
         name = self['name']
 
-        resource_model = ProductModelProperty(None)
-        resource_model.owner_id = owner_id
-        resource_model.type = model_type
-        resource_model.name = name
-
-        result, msg = ProductModelPropertyFactory.create(resource_model)
-        return {
-            'result': result,
-            'msg': msg
-        }
+        factory = ProductModelPropertyFactory.create()
+        try:
+            product_model = factory.save({"owner_id": owner_id,
+                                          "type": model_type,
+                                          "name": name})
+            return {"product_model": product_model.to_dict()}
+        except:
+            msg = unicode_full_stack()
+            watchdog.error(msg)
+            return {
+                "product_model": None
+            }
 
     @param_required(['type', 'name', 'id'])
     def post(self):
         """
         更新规格
         id -- 规格ｉｄ
-        type -- 规格类型　可以为空，但是必须传递，默认是0(text)类型,1:图片类型
+        type -- 规格类型　可以为空，但是必须传递，默认是text(text)类型,image:图片类型
         name -- 规格名　可以为空，但是必须传递
         """
 
@@ -57,12 +61,17 @@ class AProductModelProperty(api_resource.ApiResource):
         resource_model.type = model_type
         resource_model.name = name
         resource_model.id = model_id
-
-        result, msg = ProductModelPropertyFactory.save({"resource_model": resource_model})
-        return {
-            'result': result,
-            'msg': msg
-        }
+        try:
+            change_rows = resource_model.update()
+            return {
+                'change_rows': change_rows
+            }
+        except:
+            msg = unicode_full_stack()
+            watchdog.error(msg)
+            return {
+                'change_rows': 0
+            }
 
     @param_required(['id'])
     def get(self):
@@ -70,19 +79,21 @@ class AProductModelProperty(api_resource.ApiResource):
         获取单个规格
         """
         model_id = self['id']
-        entry = ProductModelProperty.from_id(dict(id=model_id))
+        product_model = ProductModelProperty.from_id(dict(id=model_id))
         return {
-            "entry": entry,
-            'properties': entry.properties
+            "product_model": product_model.to_dict(),
+            'properties': product_model.properties
         }
 
     @param_required(['id'])
     def delete(self):
-        result, msg = ProductModelPropertyFactory.delete_from_id(dict(id=self['id']))
-        return {
-            'result': result,
-            'msg': msg
-        }
+        try:
+            change_rows = ProductModelProperty.delete_from_id({"id": self['id']})
+            return {'change_rows': change_rows}
+        except:
+            msg = unicode_full_stack()
+            watchdog.error(msg)
+            return {'change_rows': 0}
 
 
 class AProductModelPropertyList(api_resource.ApiResource):
@@ -99,7 +110,7 @@ class AProductModelPropertyList(api_resource.ApiResource):
         """
         result = ProductModelProperty.from_owner_id({"owner_id": self['owner_id']})
         return {
-            'entries': result
+            'product_models': result
         }
 
 
@@ -122,16 +133,20 @@ class AProductModelPropertyValue(api_resource.ApiResource):
         name = self['name']
         pic_url = self['pic_url']
 
-        resource_model = ProductModelPropertyValue(None)
-        resource_model.id = model_id
-        resource_model.name = name
-        resource_model.pic_url = pic_url
-
-        result, msg = ProductModelPropertyValueFactory.create(resource_model)
-        return {
-            'result': result,
-            'msg': msg
-        }
+        factory = ProductModelPropertyValueFactory.create()
+        try:
+            model_property = factory.save({"model_id": model_id,
+                                           "name": name,
+                                           "pic_url": pic_url})
+            return {
+                'property_value': model_property.to_dict()
+            }
+        except:
+            msg = unicode_full_stack()
+            watchdog.error(msg)
+            return {
+                'property_value': None
+            }
 
     @param_required(['id', 'name', 'pic_url'])
     def post(self):
@@ -149,21 +164,22 @@ class AProductModelPropertyValue(api_resource.ApiResource):
         resource_model.id = model_id
         resource_model.name = name
         resource_model.pic_url = pic_url
-
-        result, msg = ProductModelPropertyValueFactory.save(resource_model)
-        return {
-            'result': result,
-            'msg': msg
-        }
+        try:
+            change_rows = ProductModelPropertyValue.update(resource_model)
+            return {"change_rows": change_rows}
+        except:
+            msg = unicode_full_stack()
+            watchdog.error(msg)
+            return {"change_rows": 0}
 
     @param_required(['id'])
     def get(self):
         """
         id -- 规格属性id
         """
-        entry = ProductModelPropertyValue.from_id({'id': self['id']})
+        product_model = ProductModelPropertyValue.from_id({'id': self['id']})
         return {
-            'entry': entry
+            'product_model': product_model.to_dict()
         }
 
     @param_required(['id'])
@@ -171,8 +187,11 @@ class AProductModelPropertyValue(api_resource.ApiResource):
         """
         id -- 规格属性id
         """
-        result, msg = ProductModelPropertyValueFactory.delete_from_id({'id': self['id']})
-        return {
-            'result': result,
-            'msg': msg
-        }
+        model_property = ProductModelPropertyValue(None)
+        try:
+            change_rows = model_property.delete_from_id({'id': self['id']})
+            return {"change_rows": change_rows}
+        except:
+            msg = unicode_full_stack()
+            watchdog.error(msg)
+            return {"change_rows": 0}

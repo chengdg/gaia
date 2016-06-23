@@ -1,70 +1,36 @@
 # -*- coding: utf-8 -*-
 
 from eaglet.decorator import param_required
-from eaglet.core import watchdog
 
 from business import model as business_model
 from db.mall import models as mall_models
-from eaglet.core.exceptionutil import unicode_full_stack
+from business.mall.product_model_property import ProductModelPropertyValue, ProductModelProperty
 
 
 class ProductModelPropertyFactory(business_model.Model):
     """
     商品属性规格工厂类
     """
-    def __init__(self, model):
+    def __init__(self):
         super(ProductModelPropertyFactory, self).__init__()
-        if model:
-            self._init_slot_from_model(model)
 
     @staticmethod
-    def create(resource_model):
+    def create():
+        return ProductModelPropertyFactory()
+
+    @staticmethod
+    @param_required(['owner_id', 'type', 'name'])
+    def save(args):
         """
         创造新规格
         """
-        model_types = [mall_models.PRODUCT_MODEL_PROPERTY_TYPE_TEXT, mall_models.PRODUCT_MODEL_PROPERTY_TYPE_IMAGE]
-        model_type = resource_model.type \
-            if resource_model.type and int(resource_model.type) in model_types \
-            else mall_models.PRODUCT_MODEL_PROPERTY_TYPE_TEXT
-        try:
-            mall_models.ProductModelProperty.create(name=resource_model.name,
-                                                    owner=resource_model.owner_id,
-                                                    type=model_type)
-            return 'SUCCESS', ''
-        except:
-            msg = unicode_full_stack()
-            watchdog.error(msg)
-            return 'FAILED', ''
 
-    @staticmethod
-    @param_required(['resource_model'])
-    def save(args):
-        """
-        更新
-
-        """
-
-        resource_model = args.get('resource_model')
-        model_types = [mall_models.PRODUCT_MODEL_PROPERTY_TYPE_TEXT, mall_models.PRODUCT_MODEL_PROPERTY_TYPE_IMAGE]
-        model_type = resource_model.type if resource_model.type and int(resource_model.type) in model_types \
-            else mall_models.PRODUCT_MODEL_PROPERTY_TYPE_TEXT
-        try:
-            mall_models.ProductModelProperty.update(name=resource_model.name,
-                                                    type=model_type).dj_where(id=resource_model.id) \
-                .execute()
-        except:
-            return 'FAILED', ''
-        return "SUCCESS", ''
-
-    @staticmethod
-    @param_required(['id'])
-    def delete_from_id(args):
-        try:
-            mall_models.ProductModelProperty.update(is_deleted=True) \
-                .dj_where(id=args.get('id')).execute()
-        except:
-            return 'FAILED', ''
-        return "SUCCESS", ''
+        model_property = ProductModelProperty(None)
+        model_property.owner_id = args['owner_id']
+        model_property.type = args['type']
+        model_property.name = args['name']
+        rs_model = model_property.save()
+        return rs_model
 
 
 class ProductModelPropertyValueFactory(business_model.Model):
@@ -72,50 +38,21 @@ class ProductModelPropertyValueFactory(business_model.Model):
 
     """
 
-    def __init__(self, model):
+    def __init__(self):
         super(ProductModelPropertyValueFactory, self).__init__()
-        if model:
-            self._init_slot_from_model(model)
 
     @staticmethod
-    def create(resource_model):
+    def create():
         """
         创建
         """
-        try:
-            mall_models.ProductModelPropertyValue.create(property=resource_model.id,
-                                                         name=resource_model.name,
-                                                         pic_url=resource_model.pic_url)
-
-        except:
-            msg = unicode_full_stack()
-            watchdog.error(msg)
-            return 'FAILED', ''
-        return 'SUCCESS', ''
+        return ProductModelPropertyValueFactory()
 
     @staticmethod
-    def save(resource_model):
-        """
-        更新
-        """
-        try:
-            mall_models.ProductModelPropertyValue.update(name=resource_model.name,
-                                                         pic_url=resource_model.pic_url) \
-                .dj_where(id=resource_model.id).execute()
-        except:
-            msg = unicode_full_stack()
-            watchdog.error(msg)
-            return 'FAILED', ''
-        return "SUCCESS", ''
-
-    @staticmethod
-    @param_required(['id'])
-    def delete_from_id(args):
-        try:
-            mall_models.ProductModelPropertyValue.update(is_deleted=True) \
-                .dj_where(id=args.get('id')).execute()
-        except:
-            msg = unicode_full_stack()
-            watchdog.error(msg)
-            return 'FAILED', ''
-        return "SUCCESS", ''
+    @param_required(["model_id", 'name', 'pic_url'])
+    def save(args):
+        model_property_value = ProductModelPropertyValue(None)
+        model_property_value.name = args['name']
+        model_property_value.pic_url = args['pic_url']
+        rs = model_property_value.save(model_id=args['model_id'])
+        return rs

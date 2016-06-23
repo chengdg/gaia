@@ -52,7 +52,7 @@ class ProductPropertyTemplate(business_model.Model):
             _model = ProductPropertyTemplate.from_model({'db_model': template})
 
             # 使用from_model将数据取回到领域模型
-            result.append({'entry': _model,
+            result.append({'template': _model,
                            'properties': _model.properties})
 
         return result
@@ -62,18 +62,95 @@ class ProductPropertyTemplate(business_model.Model):
         """
 
         """
-
-        if self.id:
+        properties = self.context.get('properties', None)
+        if not properties and self.id:
             return ProductTemplateProperty.from_template_id({"template_id": self.id})
 
-        return self.properties
+        return properties
 
     @properties.setter
     def properties(self, properties):
         """
 
         """
-        self.properties = properties
+        self.context['properties'] = properties
+
+    def save(self):
+        """
+        添加
+
+        """
+
+        template = mall_models.ProductPropertyTemplate.create(owner=self.owner_id,
+                                                              name=self.name,
+                                                              )
+        ProductPropertyTemplate.bulk_create_template_property({'properties': self.properties,
+                                                               'template_id': template.id,
+                                                               'owner_id': self.owner_id})
+        return ProductPropertyTemplate(template) if template else None
+
+    def update(self, new_properties, update_properties, deleted_ids):
+        """
+        生产
+
+        """
+
+        change_rows = mall_models.ProductPropertyTemplate.update(name=self.name).dj_where(id=self.id).execute()
+        #
+        if change_rows > 0:
+            if new_properties:
+                # dict(properties=new_properties,
+                #      template_id=template_id,
+                #      owner_id=owner_id, )
+                ProductPropertyTemplate.bulk_create_template_property({"properties": new_properties,
+                                                                       "template_id": self.id,
+                                                                       "owner_id": self.owner_id})
+            if update_properties:
+                for update_property in update_properties:
+                    mall_models.TemplateProperty.update(name=update_property.get('name'),
+                                                        value=update_property.get('value')) \
+                        .dj_where(id=update_property.get('id')).execute()
+            #
+            if deleted_ids:
+                mall_models.TemplateProperty.delete().dj_where(id__in=deleted_ids).execute()
+            return change_rows
+        return 0
+
+    @staticmethod
+    @param_required(['template_id', 'owner_id', 'properties'])
+    def bulk_create_template_property(args):
+        """
+        批量插入,模板属性
+        template_id --　模板id
+        owner_id -- 用户id
+        properties -- 属性[dict(name='', value=''), ]
+        """
+        data_resource = []
+        properties = args.get('properties')
+        owner_id = args.get('owner_id')
+        template_id = args.get('template_id')
+        for template_property in properties:
+            data_resource.append(dict(owner=owner_id,
+                                      template=template_id,
+                                      name=template_property['name'],
+                                      value=template_property['value']))
+
+        if data_resource:
+            mall_models.TemplateProperty.insert_many(data_resource).execute()
+
+    @staticmethod
+    @param_required(['id'])
+    def delete_from_id(args):
+        """
+        删除商品属性模板
+        """
+        template_id = args.get('id')
+        rs = mall_models.TemplateProperty.delete().dj_where(template=template_id).execute()
+        if rs > 0:
+
+            mall_models.ProductPropertyTemplate.delete().dj_where(id=template_id).execute()
+            return rs
+        return 0
 
 
 class ProductTemplateProperty(business_model.Model):
@@ -87,7 +164,7 @@ class ProductTemplateProperty(business_model.Model):
     )
 
     def __init__(self, model):
-        business_model.Model.__init__(self)
+        super(ProductTemplateProperty, self).__init__()
         self.context['db_model'] = model
         if model:
             model.product_count = 0
