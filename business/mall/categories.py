@@ -8,7 +8,6 @@ from business import model as business_model
 from db.mall import models as mall_models
 
 from business.mall.product import Product
-from business.mall.category_factory import CategoryFactory
 
 
 class Categories(business_model.Model):
@@ -32,43 +31,53 @@ class Categories(business_model.Model):
             self._init_slot_from_model(model)
 
     @staticmethod
-    @param_required(['owner'])
+    @param_required(['owner_id'])
     def  get_for_category(args):
         '''
         分组管理列表
         '''
-        filter_params = {'owner': args['owner'] }
+        filter_params = {'owner': args['owner_id'] }
         if args['category_ids']:
             filter_params.update({'id__in': args['category_ids']})
         categories = mall_models.ProductCategory.filter(**filter_params) 
         return [Categories(category) for category in categories]
 
     @staticmethod
-    @param_required(['name', 'owner', 'product_ids'])
-    def  post_for_category(args):
-        '''
-        创建商品分组
-        '''
-        category_factory_obj = CategoryFactory.post_category(args)
-        category_obj = category_factory_obj.create()
-        return Categories(category_obj)
-
-    @property
-    def __get_model(self):
-        return self.context['db_model']
+    @param_required(['category_id', 'params'])
+    def put_category(args):
+        mall_models.ProductCategory.update(**args['params']).dj_where(id=args['category_id']).execute()
+        return Categories(mall_models.ProductCategory.get(id=args['category_id']))
 
     @staticmethod
     @param_required(['category_id'])
-    def get_for_category_by_id(args):
+    def from_id(args):
         '''
         获取单个分组信息
         '''
         obj = mall_models.ProductCategory.select().dj_where(id=args['category_id'])
-        return Categories(obj.first())
+        if obj.first():
+            return Categories(obj.first())
+        else:
+            return None
+
+    @staticmethod
+    @param_required(['owner_id', 'name'])
+    def save(args):
+        opt = {
+            'owner': args['owner_id'],
+            'name': args['name']
+        }
+        # created is True or False  
+        # If an object is found, get_or_create() returns a tuple of that object and False. 
+        # If multiple objects are found, get_or_create raises MultipleObjectsReturned. 
+        # If an object is not found, get_or_create() will instantiate and save a new object, returning a tuple of the new object and True
+        # try:
+        obj, created = mall_models.ProductCategory.get_or_create(**opt)
+        return Categories(obj)
 
     @staticmethod
     @param_required(['category_id'])
-    def delete_for_category_by_id(args):
+    def delete_from_id(args):
         '''
             删除指定分组
         '''
@@ -98,4 +107,9 @@ class CategoryHasProduct(business_model.Model):
         self.context['db_model'] = model
         if model:
             self._init_slot_from_model(model)
+
+    @staticmethod
+    @param_required()
+    def get_category_has_product(args):
+        pass
 
