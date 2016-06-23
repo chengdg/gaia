@@ -10,7 +10,7 @@ from db.mall import models as mall_models
 from business.mall.product import Product
 
 
-class Categories(business_model.Model):
+class Category(business_model.Model):
     """
     商品分组
     """
@@ -31,6 +31,11 @@ class Categories(business_model.Model):
             self._init_slot_from_model(model)
 
     @staticmethod
+    def empty_category(model=None):
+         category = Category(model)
+         return category
+
+    @staticmethod
     @param_required(['owner_id'])
     def  get_for_category(args):
         '''
@@ -40,13 +45,10 @@ class Categories(business_model.Model):
         if args['category_ids']:
             filter_params.update({'id__in': args['category_ids']})
         categories = mall_models.ProductCategory.filter(**filter_params) 
-        return [Categories(category) for category in categories]
+        return [Category(category) for category in categories]
 
-    @staticmethod
-    @param_required(['category_id', 'params'])
-    def put_category(args):
-        mall_models.ProductCategory.update(**args['params']).dj_where(id=args['category_id']).execute()
-        return Categories(mall_models.ProductCategory.get(id=args['category_id']))
+    def update(self, category_id ,name):
+       mall_models.ProductCategory.update(name=name).dj_where(id=category_id).execute()
 
     @staticmethod
     @param_required(['category_id'])
@@ -56,16 +58,14 @@ class Categories(business_model.Model):
         '''
         obj = mall_models.ProductCategory.select().dj_where(id=args['category_id'])
         if obj.first():
-            return Categories(obj.first())
+            return Category(obj.first())
         else:
             return None
 
-    @staticmethod
-    @param_required(['owner_id', 'name'])
-    def save(args):
+    def save(self, owner_id, name):
         opt = {
-            'owner': args['owner_id'],
-            'name': args['name']
+            'owner': owner_id,
+            'name': name
         }
         # created is True or False  
         # If an object is found, get_or_create() returns a tuple of that object and False. 
@@ -73,16 +73,15 @@ class Categories(business_model.Model):
         # If an object is not found, get_or_create() will instantiate and save a new object, returning a tuple of the new object and True
         # try:
         obj, created = mall_models.ProductCategory.get_or_create(**opt)
-        return Categories(obj)
+        return Category(obj)
 
-    @staticmethod
-    @param_required(['category_id'])
-    def delete_from_id(args):
+    def delete_from_id(self, category_id):
         '''
             删除指定分组
         '''
-        obj = mall_models.ProductCategory.get(id=args['category_id'])
-        mall_models.CategoryHasProduct.delete().dj_where(category=obj).execute()
+        obj = mall_models.ProductCategory.get(id=category_id)
+        if obj.product_count != 0:
+            mall_models.CategoryHasProduct.delete().dj_where(category=obj).execute()
         return obj.delete_instance()
 
     @property

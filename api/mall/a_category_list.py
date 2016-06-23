@@ -6,7 +6,7 @@ from eaglet.core import api_resource
 from eaglet.decorator import param_required
 
 from core import paginator
-from business.mall.categories import Categories
+from business.mall.category import Category
 
 class ACategoryList(api_resource.ApiResource):
     """
@@ -30,8 +30,7 @@ class ACategoryList(api_resource.ApiResource):
         elif 'all' in category_ids and len(category_ids) > 1:
             category_ids.remove('all')
         args.update({'category_ids': category_ids})
-        category_objs = Categories.get_for_category(args)
-
+        category_objs = Category.get_for_category(args)
 
         # 分页
         page_info = {

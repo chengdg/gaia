@@ -6,7 +6,7 @@ from eaglet.core import api_resource
 from business import model as business_model
 from db.mall import models as mall_models
 
-from business.mall.categories import Categories
+from business.mall.category import Category
 
 class CategoryFactory(business_model.Model):
     '''
@@ -24,8 +24,9 @@ class CategoryFactory(business_model.Model):
         return category_factory_obj
 
     def save(self, owner_id, name):
-        category = Categories.save({'owner_id': owner_id, 'name': name})
-        return category
+        category = Category.empty_category()
+        category_model =category.save(owner_id, name)
+        return category_model
 
 class CategoryHasProductFactory(business_model.Model):
     '''
