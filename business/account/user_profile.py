@@ -52,7 +52,18 @@ class UserProfile(business_model.Model):
     @param_required(['webapp_ids'])
     def from_webapp_ids(args):
         user_profiles = []
-        user_profiles_models = list(account_models.UserProfile.select().dj_where(webapp_id__in=args['webapp_ids']))
+        user_profiles_models = account_models.UserProfile.select().dj_where(webapp_id__in=args['webapp_ids'])
+
+        for profile_model in user_profiles_models:
+            user_profile = UserProfile(profile_model)
+            user_profiles.append(user_profile)
+        return user_profiles
+
+    @staticmethod
+    @param_required(['mall_type'])
+    def from_mall_type(args):
+        user_profiles = []
+        user_profiles_models = account_models.UserProfile.select().dj_where(webapp_type=args['mall_type'])
 
         for profile_model in user_profiles_models:
             user_profile = UserProfile(profile_model)
