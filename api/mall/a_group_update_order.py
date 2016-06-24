@@ -24,26 +24,26 @@ class AGroupUpdateOrder(api_resource.ApiResource):
         is_test = args.get('is_test', True)
 
         if status == 'success':
-            group_status = GROUP_STATUS_OK
-            order_status = ORDER_STATUS_NOT
+            group_status = mall_models.GROUP_STATUS_OK
+            order_status = mall_models.ORDER_STATUS_NOT
         elif status == 'failure':
-            group_status = GROUP_STATUS_failure
-            order_status = ORDER_STATUS_PAYED_NOT_SHIP
+            group_status = mall_models.GROUP_STATUS_failure
+            order_status = mall_models.ORDER_STATUS_PAYED_NOT_SHIP
 
         OrderHasGroup.update(group_id, group_status)
         order_ids = OrderHasGroup.get_group_order_ids({'group_id': group_id})
         orders = OrderState.from_order_ids({'order_ids': order_ids})
-        if order_status == ORDER_STATUS_PAYED_NOT_SHIP:
-            orders = filter(lambda order: order.status in [ORDER_STATUS_PAYED_NOT_SHIP, ORDER_STATUS_NOT], orders)
+        if order_status == mall_models.ORDER_STATUS_PAYED_NOT_SHIP:
+            orders = filter(lambda order: order.status in [mall_models.ORDER_STATUS_PAYED_NOT_SHIP, mall_models.ORDER_STATUS_NOT], orders)
         else:
             orders = filter(lambda order: order.status == order_status, orders)
         msg = ""
         for order in orders:
             msg = ""
-            if order_status == ORDER_STATUS_NOT:
+            if order_status == mall_models.ORDER_STATUS_NOT:
                 msg = order.cancel()
-            elif order_status == ORDER_STATUS_PAYED_NOT_SHIP:
-                if order.pay_interface_type == PAY_INTERFACE_WEIXIN_PAY and order.status >= ORDER_STATUS_PAYED_NOT_SHIP:
+            elif order_status == mall_models.ORDER_STATUS_PAYED_NOT_SHIP:
+                if order.pay_interface_type == mall_models.PAY_INTERFACE_WEIXIN_PAY and order.status >= mall_models.ORDER_STATUS_PAYED_NOT_SHIP:
                     if is_test:
                         order.refund()
                         order.updat_status(mall_models.ORDER_STATUS_GROUP_REFUNDING)
