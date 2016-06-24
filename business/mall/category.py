@@ -96,8 +96,12 @@ class CategoryHasProduct(business_model.Model):
     '''
     分组领域中商品值对象
     '''
-    __slots__ = (
-        'products'
+    __slots__ =  (
+        'id',
+        'product_id',
+        'category_id',
+        'display_index',
+        'created_at'
     )
 
     def __init__(self, model):
@@ -108,7 +112,39 @@ class CategoryHasProduct(business_model.Model):
             self._init_slot_from_model(model)
 
     @staticmethod
-    @param_required()
-    def get_category_has_product(args):
-        pass
+    def empty_cateogry_has_product(model=None):
+        category_has_product_obj = CategoryHasProduct(model)
+        return category_has_product_obj
+
+    @staticmethod
+    @param_required(['category_has_product_id'])
+    def from_id(args):
+        category_has_product_obj = mall_models.CategoryHasProduct.select().dj_where(id=args['category_has_product_id'])
+        if category_has_product_obj.first():
+            return CategoryHasProduct(category_has_product_obj.first())
+        else:
+            return None
+
+    def save(self, category_obj, product_obj):
+            opt = {
+                'product': product_obj.context['db_model'],
+                'category': category_obj.context['db_model']
+            }
+           # created is True or False  
+            # If an object is found, get_or_create() returns a tuple of that object and False. 
+            # If multiple objects are found, get_or_create raises MultipleObjectsReturned. 
+            # If an object is not found, get_or_create() will instantiate and save a new object, returning a tuple of the new object and True
+            obj, created = mall_models.CategoryHasProduct.get_or_create(**opt)
+            return CategoryHasProduct(obj)
+
+    @property
+    def category(self):
+        category_has_product_obj = self.context['db_model']
+        return category_has_product_obj.category
+
+    @property
+    def product(self):
+        category_has_product_obj = self.context['db_model']
+        return category_has_product_obj.product
+
 

@@ -42,6 +42,7 @@ class ACategoryList(api_resource.ApiResource):
             page_info.update({'is_display_products': args['is_display_products']})
         return  ACategoryList.get_pageinfo_paginator(category_objs, is_paginator=not args['category_ids'], **page_info)
 
+    @staticmethod
     def get_pageinfo_paginator(category_models, is_paginator=False, **kwargs):
         """
         分页管理
@@ -57,26 +58,25 @@ class ACategoryList(api_resource.ApiResource):
                 'pageinfo': pageinfo.to_dict(),                
             }
             if is_display_products:
-                category_has_product_list = []
-                for category in categories:
-                    category_obj = category.to_dict()
-                    category_obj.update({
-                        'products': [product.to_dict() for product in category.products]
-                        }) 
-                    category_has_product_list.append(category_obj)
-                ret.update({'categories': category_has_product_list})
+                display_products = ACategoryList.category_display_products(categories)
+                ret.update({'categories': display_products})
             return ret
         else:
             ret = {
                 'categories': [category_model.to_dict() for category_model in category_models]          
             }
             if is_display_products:
-                category_has_product_list = []
-                for category in category_models:
-                    category_obj = category.to_dict()
-                    category_obj.update({
-                        'products': [product.to_dict() for product in category.products]
-                        }) 
-                    category_has_product_list.append(category_obj)
-                ret.update({'categories': category_has_product_list})
+                display_products = ACategoryList.category_display_products(category_models)
+                ret.update({'categories': display_products})
             return ret
+
+        @staticmethod
+        def category_display_products(categpories):
+            category_has_product_list = []
+            for category in categories:
+                category_obj = category.to_dict()
+                category_obj.update({
+                    'products': [product.to_dict() for product in category.products]
+                }) 
+                category_has_product_list.append(category_obj)
+            return category_has_product_list

@@ -6,7 +6,8 @@ from eaglet.decorator import param_required
 from eaglet.core import watchdog
 
 from business.mall.category import Category
-from business.mall.category_factory import CategoryFactory
+from business.mall.category_factory import CategoryFactory, CategoryHasProductFactory
+from business.mall.product import Product
 
 class ACategory(api_resource.ApiResource):
     app = 'mall'
@@ -15,9 +16,6 @@ class ACategory(api_resource.ApiResource):
     @param_required(['name', 'owner_id'])
     def post(args):
         # print 'post++++++++++====category.....', args
-        #由于在zeus测试平台，不能传列表，现由'1,2,3,4,5'这种方式处理
-        product_ids = [product_id.strip() for product_id in args.get('product_ids', '').strip().split(',') if product_id]
-        args.update(dict(product_ids=product_ids))
         '''
         创建商品分组,  利用工厂类@生成器
         '''
