@@ -378,7 +378,7 @@ class OrderState(Order):
             URL = 'http://pay/refund/weixin/api/order/refund/'
 
         args = {
-            'order_id': order.order_id,
+            'order_id': self.order_id,
             'auth_key': KEY,
             'from_where': 'weapp'
         }
