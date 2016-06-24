@@ -22,6 +22,7 @@ class Product(business_model.Model):
         'shelve_type',
         'shelve_start_time',
         'shelve_end_time',
+        'min_limit',
         'stock_type',
         'stocks',
         'is_deleted',
@@ -60,7 +61,7 @@ class Product(business_model.Model):
 
     @staticmethod
     def empty_product():
-        product = Product()
+        product = Product(None)
         return product
 
     @staticmethod

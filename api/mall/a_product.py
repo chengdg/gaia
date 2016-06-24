@@ -16,4 +16,4 @@ class AProduct(api_resource.ApiResource):
     @param_required([])
     def put(args):
         product_factory = ProductFactory.get()
-        return product_factory.create_product(args)
+        product_model = product_factory.create_product(args)
