@@ -4,9 +4,10 @@ import json
 
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
-from db.mall.models import *
+from db.mall import models as mall_models
 from business.mall.order_has_group import OrderHasGroup
 from business.mall.order import Order
+from business.mall.order_state import OrderState
 
 class AGroupUpdateOrder(api_resource.ApiResource):
     """
@@ -15,10 +16,12 @@ class AGroupUpdateOrder(api_resource.ApiResource):
     app = "mall"
     resource = "group_update_order"
 
-    @param_required(['group_id', 'status'])
+    @param_required(['group_id', 'status', 'operator_name'])
     def post(args):
         status = args['status']
         group_id = args['group_id']
+        operator_name = args.get('operator_name', "")
+        is_test = args.get('is_test', False)
 
         if status == 'success':
             group_status = GROUP_STATUS_OK
@@ -29,7 +32,7 @@ class AGroupUpdateOrder(api_resource.ApiResource):
 
         OrderHasGroup.update(group_id, group_status)
         order_ids = OrderHasGroup.get_group_order_ids({'group_id': group_id})
-        orders = Order.from_order_ids({'order_ids': order_ids})
+        orders = OrderState.from_order_ids({'order_ids': order_ids})
         if order_status == ORDER_STATUS_PAYED_NOT_SHIP:
             orders = filter(lambda order: order.status in [ORDER_STATUS_PAYED_NOT_SHIP, ORDER_STATUS_NOT], orders)
         else:
@@ -41,7 +44,12 @@ class AGroupUpdateOrder(api_resource.ApiResource):
                 msg = order.cancel()
             elif order_status == ORDER_STATUS_PAYED_NOT_SHIP:
                 if order.pay_interface_type == PAY_INTERFACE_WEIXIN_PAY and order.status >= ORDER_STATUS_PAYED_NOT_SHIP:
-                    msg = order.return_money()
+                    if is_test:
+                        order.refund()
+                        order.updat_status(mall_models.ORDER_STATUS_GROUP_REFUNDING)
+                    else:
+                        order.refund()
+                        order.return_money()
                 else:
                     msg = order.cancel()
         return {"msg": msg}

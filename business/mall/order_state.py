@@ -53,11 +53,18 @@ class OrderState(Order):
     @param_required(['order_id'])
     def from_order_id(args):
         order_db_model = mall_models.Order.select().dj_where(order_id=args['order_id']).first()
-        print order_db_model,"<<<<<<<<<<<"
         if not order_db_model:
             return None
         order = OrderState(order_db_model)
         return order
+    @staticmethod
+    @param_required(['order_ids'])
+    def from_order_ids(args):
+        order_db_models = mall_models.Order.select().dj_where(order_id__in=args['order_ids'])
+        orders = []
+        for model in order_db_models:
+            orders.append(OrderState(model))
+        return orders
 
     @staticmethod
     @param_required(['origin_id'])
@@ -280,7 +287,7 @@ class OrderState(Order):
         return True, ''
 
 
-    def cancel(self, operator_name):
+    def cancel(self, operator_name=''):
         """
         目前只支持团购业务中的取消订单
         @param operator_name:
@@ -330,7 +337,7 @@ class OrderState(Order):
         self.__send_order_email()
 
 
-    def refund(self,operator_name):
+    def refund(self,operator_name=''):
         """
         目前只支持团购业务中的退款完成订单
         @param operator_name:
@@ -504,6 +511,11 @@ class OrderState(Order):
 
         self.__send_order_email()
         return True, ''
+
+    def updat_status(self, status):
+        mall_models.Order.update(
+            status=status
+        ).dj_where(id=self.id).execute()
 
     def __return_wzcard(self):
         WZCard.refund_for_order(self)
