@@ -47,9 +47,12 @@ class Category(business_model.Model):
         categories = mall_models.ProductCategory.filter(**filter_params) 
         return [Category(category) for category in categories]
 
-    def update(self, category_id ,name):
+    def update_name(self, category_id ,name):
        mall_models.ProductCategory.update(name=name).dj_where(id=category_id).execute()
 
+    def update_product_count(self, category_id, product_count):
+        mall_models.ProductCategory.update(product_count=product_count).dj_where(id=category_id).execute()
+        
     @staticmethod
     @param_required(['category_id'])
     def from_id(args):

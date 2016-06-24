@@ -31,7 +31,7 @@ class ACategory(api_resource.ApiResource):
         category_obj = Category.from_id({'category_id': args['category_id']})
         if category_obj:
             try:
-                category_obj.update(args['category_id'], args['name'])
+                category_obj.update_name(args['category_id'], args['name'])
                 return 'success'
             except Exception, e:
                  watchdog.error(message=e)

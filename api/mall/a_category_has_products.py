@@ -38,7 +38,10 @@ class ACategoryHasProducts(api_resource.ApiResource):
                 # TODO 创建分组商品   @工厂生成器
                 try:
                     category_has_product_obj = CategoryHasProductFactory.create()
-                    category_has_product_obj.save(product_ids, category_obj)
+                    category_has_products = category_has_product_obj.save(product_ids, category_obj)
+                    product_count = len(category_has_products)
+                    # TODO 更新分组的内容--产品个数
+                    category_obj.update_product_count(args['category_id'], product_count)
                 except Exception, e:
                     watchdog.error(message=str(e))
                 return 'success'
