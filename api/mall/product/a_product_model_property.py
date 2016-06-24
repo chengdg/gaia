@@ -139,13 +139,13 @@ class AProductModelPropertyValue(api_resource.ApiResource):
                                            "name": name,
                                            "pic_url": pic_url})
             return {
-                'property_value': model_property.to_dict()
+                'product_model_value': model_property.to_dict()
             }
         except:
             msg = unicode_full_stack()
             watchdog.error(msg)
             return {
-                'property_value': None
+                'product_model_value': None
             }
 
     @param_required(['id', 'name', 'pic_url'])
@@ -179,7 +179,7 @@ class AProductModelPropertyValue(api_resource.ApiResource):
         """
         product_model = ProductModelPropertyValue.from_id({'id': self['id']})
         return {
-            'product_model': product_model.to_dict()
+            'product_model_value': product_model.to_dict()
         }
 
     @param_required(['id'])

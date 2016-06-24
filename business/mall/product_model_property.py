@@ -54,7 +54,7 @@ class ProductModelProperty(business_model.Model):
         result = []
         for template in templates:
             _model = ProductModelProperty.from_model({'db_model': template})
-            result.append({'entry': _model,
+            result.append({'product_model': _model,
                            'properties': _model.properties})
         return result
 
@@ -94,12 +94,12 @@ class ProductModelProperty(business_model.Model):
 
         # default 0(text)
         model_type = mall_models.PRODUCT_MODEL_PROPERTY_TYPE_TEXT
-        if self['type'] == 'image':
+        if self.type == 'image':
             model_type = mall_models.PRODUCT_MODEL_PROPERTY_TYPE_IMAGE
         product_model = mall_models.ProductModelProperty.create(name=self.name,
                                                                 type=model_type,
                                                                 owner=self.owner_id)
-        return product_model if product_model else None
+        return ProductModelProperty(product_model) if product_model else None
 
     @staticmethod
     @param_required(['id'])
@@ -156,7 +156,7 @@ class ProductModelPropertyValue(business_model.Model):
         value_model = mall_models.ProductModelPropertyValue.create(property=model_id,
                                                                    name=self.name,
                                                                    pic_url=self.pic_url)
-        return value_model if value_model else None
+        return ProductModelPropertyValue(value_model) if value_model else None
 
     def update(self):
         change_rows = mall_models.ProductModelPropertyValue.update(name=self.name,

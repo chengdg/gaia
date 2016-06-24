@@ -97,24 +97,22 @@ class ProductPropertyTemplate(business_model.Model):
 
         change_rows = mall_models.ProductPropertyTemplate.update(name=self.name).dj_where(id=self.id).execute()
         #
-        if change_rows > 0:
-            if new_properties:
-                # dict(properties=new_properties,
-                #      template_id=template_id,
-                #      owner_id=owner_id, )
-                ProductPropertyTemplate.bulk_create_template_property({"properties": new_properties,
-                                                                       "template_id": self.id,
-                                                                       "owner_id": self.owner_id})
-            if update_properties:
-                for update_property in update_properties:
-                    mall_models.TemplateProperty.update(name=update_property.get('name'),
-                                                        value=update_property.get('value')) \
-                        .dj_where(id=update_property.get('id')).execute()
-            #
-            if deleted_ids:
-                mall_models.TemplateProperty.delete().dj_where(id__in=deleted_ids).execute()
-            return change_rows
-        return 0
+        if new_properties:
+            # dict(properties=new_properties,
+            #      template_id=template_id,
+            #      owner_id=owner_id, )
+            change_rows += ProductPropertyTemplate.bulk_create_template_property({"properties": new_properties,
+                                                                                  "template_id": self.id,
+                                                                                  "owner_id": self.owner_id})
+        if update_properties:
+            for update_property in update_properties:
+                change_rows += mall_models.TemplateProperty.update(name=update_property.get('name'),
+                                                                   value=update_property.get('value')) \
+                    .dj_where(id=update_property.get('id')).execute()
+        #
+        if deleted_ids:
+            change_rows += mall_models.TemplateProperty.delete().dj_where(id__in=deleted_ids).execute()
+        return change_rows
 
     @staticmethod
     @param_required(['template_id', 'owner_id', 'properties'])
@@ -136,7 +134,7 @@ class ProductPropertyTemplate(business_model.Model):
                                       value=template_property['value']))
 
         if data_resource:
-            mall_models.TemplateProperty.insert_many(data_resource).execute()
+            return mall_models.TemplateProperty.insert_many(data_resource).execute()
 
     @staticmethod
     @param_required(['id'])
