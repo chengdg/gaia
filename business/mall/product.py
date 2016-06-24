@@ -67,9 +67,12 @@ class Product(business_model.Model):
     @staticmethod
     @param_required(['product_id'])
     def from_id(args):
-        product_db_model = mall_models.Product.get(id=args['product_id'])
-        return Product(product_db_model)
-
+        product_db_model = mall_models.Product.select().dj_where(id=args['product_id']).first()
+        if product_db_model:
+            return Product(product_db_model)
+        else:
+            return None
+            
     @staticmethod
     @param_required(['product_ids'])
     def from_ids(args):
