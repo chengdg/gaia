@@ -7,6 +7,7 @@ from eaglet.core import api_resource
 from eaglet.core import watchdog
 from eaglet.core.exceptionutil import unicode_full_stack
 from business import model as business_model
+from business.mall.wzcard import WZCard
 from db.mall import models as mall_models
 from db.mall import promotion_models
 
@@ -278,8 +279,82 @@ class OrderState(Order):
         return True, ''
 
 
-    def cancel(self):
-        pass
+    def cancel(self, operator_name):
+        """
+        目前只支持团购业务中的取消订单
+        @param operator_name:
+        @return:
+        """
+
+        # todo
+        assert not self.is_sub_order
+
+        target_status = mall_models.ORDER_STATUS_CANCEL
+        action = '取消订单'
+
+        # 检查操作
+
+        # 返回优惠券
+
+        # 返回微众卡
+        if self.weizoom_card_money:
+            WZCard.refund_for_order(self)
+
+
+        # 记录操作日志、更改状态
+
+        # 当前为主订单
+        self.record_status_log(operator_name, self.status, target_status)
+        self.record_operation_log(operator_name, action, CHILD_ORDER)
+        mall_models.Order.update(status=target_status).dj_where(id=self.id).execute()
+
+        if self.child_order_count > 0:
+            child_orders = OrderState.from_origin_id({
+                "origin_id": self.origin_order_id
+            })
+            mall_models.Order.update(status=target_status).dj_where(origin_order_id=self.id).execute()
+            for child_order in child_orders:
+                child_order.record_status_log(operator_name, child_order.status, target_status)
+                child_order.record_operation_log(operator_name, action, CHILD_ORDER)
+
+
+        # 返回商品库存、销量
+        self.__restore_product()
+
+
+        # 返回订单积分
+
+        # 处理首单标记
+
+        # 处理子订单、母订单
+
+        self.__send_order_email()
+
+
+    def __restore_product(self):
+        products = self.products
+
+        for product in products:
+            models = mall_models.ProductModel.objects.filter(product_id=product['id'],
+                                                             name=product['product_model_name'])
+            # 该商品有此规格，并且库存是有限，进入修改商品的数量
+            if models.count() > 0 and models[0].stock_type == mall_models.PRODUCT_STOCK_TYPE_LIMIT:
+                product_model = models[0]
+                product_model.stocks = product_model.stocks + product['count']
+                product_model.save()
+            # product sales update
+            if self.status < mall_models.ORDER_STATUS_PAYED_SUCCESSED or (
+                        product.get('promotion', None) and product['promotion'].get('type', '').find(
+                        'premium_product') > 0):
+                # 订单未支付或者是赠品商品, 不需要回退销量数据
+                continue
+            productsales = mall_models.ProductSales.select().dj_where(product_id=product.get('id'))
+
+            if productsales:
+                mall_models.ProductSales.update(sales=mall_models.ProductSales - product['count']).dj_where(product_id=product.get('id')).execute()
+
+
+
     def refund(self):
         pass
 

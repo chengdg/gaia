@@ -226,3 +226,7 @@ class Order(business_model.Model):
         if self.origin_order_id <= 0:
             return mall_models.Order.select().dj_where(origin_order_id=self.id).count()
         return 0
+
+    @property
+    def is_sub_order(self):
+        return self.order_id > 0
