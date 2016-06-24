@@ -16,7 +16,7 @@ class AGroupUpdateOrder(api_resource.ApiResource):
     app = "mall"
     resource = "group_update_order"
 
-    @param_required(['group_id', 'status', 'operator_name'])
+    @param_required(['group_id', 'status'])
     def post(args):
         status = args['status']
         group_id = args['group_id']
