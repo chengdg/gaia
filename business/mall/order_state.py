@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-
+import json
+import logging
 import sys
 import requests
 from eaglet.decorator import param_required
@@ -298,8 +299,7 @@ class OrderState(Order):
 
         # 返回微众卡
         if self.weizoom_card_money:
-            WZCard.refund_for_order(self)
-
+            self.__return_wzcard()
 
         # 记录操作日志、更改状态
 
@@ -317,7 +317,6 @@ class OrderState(Order):
                 child_order.record_status_log(operator_name, child_order.status, target_status)
                 child_order.record_operation_log(operator_name, action, CHILD_ORDER)
 
-
         # 返回商品库存、销量
         self.__restore_product()
 
@@ -331,32 +330,37 @@ class OrderState(Order):
         self.__send_order_email()
 
 
-    def __restore_product(self):
-        products = self.products
+    def refund(self,operator_name):
+        """
+        目前只支持团购业务中的退款完成订单
+        @param operator_name:
+        @return:
+        """
+        assert not self.is_sub_order
+        target_status = mall_models.ORDER_STATUS_REFUNDED
+        action = '退款完成'
 
-        for product in products:
-            models = mall_models.ProductModel.objects.filter(product_id=product['id'],
-                                                             name=product['product_model_name'])
-            # 该商品有此规格，并且库存是有限，进入修改商品的数量
-            if models.count() > 0 and models[0].stock_type == mall_models.PRODUCT_STOCK_TYPE_LIMIT:
-                product_model = models[0]
-                product_model.stocks = product_model.stocks + product['count']
-                product_model.save()
-            # product sales update
-            if self.status < mall_models.ORDER_STATUS_PAYED_SUCCESSED or (
-                        product.get('promotion', None) and product['promotion'].get('type', '').find(
-                        'premium_product') > 0):
-                # 订单未支付或者是赠品商品, 不需要回退销量数据
-                continue
-            productsales = mall_models.ProductSales.select().dj_where(product_id=product.get('id'))
+        # 记录操作日志、更改状态
 
-            if productsales:
-                mall_models.ProductSales.update(sales=mall_models.ProductSales - product['count']).dj_where(product_id=product.get('id')).execute()
+        # 当前为主订单
+        self.record_status_log(operator_name, self.status, target_status)
+        self.record_operation_log(operator_name, action, CHILD_ORDER)
+        mall_models.Order.update(status=target_status).dj_where(id=self.id).execute()
 
+        if self.child_order_count > 0:
+            child_orders = OrderState.from_origin_id({
+                "origin_id": self.origin_order_id
+            })
+            mall_models.Order.update(status=target_status).dj_where(origin_order_id=self.id).execute()
+            for child_order in child_orders:
+                child_order.record_status_log(operator_name, child_order.status, target_status)
+                child_order.record_operation_log(operator_name, action, CHILD_ORDER)
 
+        # 返回商品库存、销量
+        self.__restore_product()
 
-    def refund(self):
-        pass
+        # 返回微众卡
+        self.__return_wzcard()
 
 
     def return_money(self):
@@ -500,3 +504,29 @@ class OrderState(Order):
 
         self.__send_order_email()
         return True, ''
+
+    def __return_wzcard(self):
+        WZCard.refund_for_order(self)
+
+    def __restore_product(self):
+        products = self.products
+
+        for product in products:
+            models = mall_models.ProductModel.objects.filter(product_id=product['id'],
+                                                             name=product['product_model_name'])
+            # 该商品有此规格，并且库存是有限，进入修改商品的数量
+            if models.count() > 0 and models[0].stock_type == mall_models.PRODUCT_STOCK_TYPE_LIMIT:
+                product_model = models[0]
+                product_model.stocks = product_model.stocks + product['count']
+                product_model.save()
+            # product sales update
+            if self.status < mall_models.ORDER_STATUS_PAYED_SUCCESSED or (
+                        product.get('promotion', None) and product['promotion'].get('type', '').find(
+                        'premium_product') > 0):
+                # 订单未支付或者是赠品商品, 不需要回退销量数据
+                continue
+            productsales = mall_models.ProductSales.select().dj_where(product_id=product.get('id'))
+
+            if productsales:
+                mall_models.ProductSales.update(sales=mall_models.ProductSales - product['count']).dj_where(
+                    product_id=product.get('id')).execute()
