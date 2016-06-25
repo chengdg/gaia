@@ -61,7 +61,7 @@ class AOrderExport(api_resource.ApiResource):
                                     }]
         order_infos = []
         for order in orders:
-            order_info = order.to_dict()
+            order_info = order.to_dict('ship_area')
             order_info['products'] = order_id2product_info[order.id]
             order_infos.append(order_info)
 
