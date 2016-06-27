@@ -21,7 +21,7 @@ class AGroupUpdateOrder(api_resource.ApiResource):
         status = args['status']
         group_id = args['group_id']
         operator_name = args.get('operator_name', "")
-        is_test = args.get('is_test', True)
+        is_test = int(args.get('is_test', 0)) == 1
 
         if status == 'success':
             group_status = mall_models.GROUP_STATUS_OK
