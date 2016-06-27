@@ -37,7 +37,7 @@ class WZCard(business_model.Model):
 		watchdog.info(message=msg, log_type='business_log')
 
 		resp = Resource.use('card_apiserver').delete({
-			'resource': 'delete',
+			'resource': 'card.trade',
 			'data': data
 		})
 

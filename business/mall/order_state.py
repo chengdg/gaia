@@ -325,6 +325,7 @@ class OrderState(Order):
                 child_order.record_operation_log(operator_name, action, CHILD_ORDER)
 
         # 返回商品库存、销量
+
         self.__restore_product()
 
 
@@ -524,7 +525,7 @@ class OrderState(Order):
         products = self.products
 
         for product in products:
-            models = mall_models.ProductModel.objects.filter(product_id=product['id'],
+            models = mall_models.ProductModel.select().dj_where(product_id=product['id'],
                                                              name=product['product_model_name'])
             # 该商品有此规格，并且库存是有限，进入修改商品的数量
             if models.count() > 0 and models[0].stock_type == mall_models.PRODUCT_STOCK_TYPE_LIMIT:

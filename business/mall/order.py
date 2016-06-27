@@ -229,4 +229,4 @@ class Order(business_model.Model):
 
     @property
     def is_sub_order(self):
-        return self.order_id > 0
+        return self.origin_order_id > 0
