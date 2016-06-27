@@ -368,7 +368,8 @@ class OrderState(Order):
         self.__restore_product()
 
         # 返回微众卡
-        self.__return_wzcard()
+        if self.weizoom_card_money:
+            self.__return_wzcard()
 
 
     def return_money(self):
@@ -541,5 +542,12 @@ class OrderState(Order):
             productsales = mall_models.ProductSales.select().dj_where(product_id=product.get('id'))
 
             if productsales:
-                mall_models.ProductSales.update(sales=mall_models.ProductSales - product['count']).dj_where(
-                    product_id=product.get('id')).execute()
+                try:
+                    mall_models.ProductSales.update(sales=mall_models.ProductSales.sales - product['count']).dj_where(
+                        product_id=product.get('id')).execute()
+                except BaseException as e:
+                    watchdog.alert({
+                        'uuid': 'return_stock_and_sales_in_zeus',
+                        'traceback': unicode_full_stack(),
+                        'product_id':product.get('id')
+                    })
