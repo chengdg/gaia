@@ -31,7 +31,10 @@ class AOrderExportBySupplier(api_resource.ApiResource):
         orders = AOrderExportBySupplier.search_orders(orders, args)
 
         order_ids = [order.id for order in orders]
-        relations = OrderProductRelation.get_for_order({'order_ids': order_ids})
+        if order_ids:
+            relations = OrderProductRelation.get_for_order({'order_ids': order_ids})
+        else:
+            relations = []
         product_ids = [relation.product_id for relation in relations]
         products = Product.from_ids({'product_ids': product_ids})
         id2product = dict(([product.id, product] for product in products))
