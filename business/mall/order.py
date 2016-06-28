@@ -128,6 +128,17 @@ class Order(business_model.Model):
         #order.ship_area = regional_util.get_str_value_by_string_ids(order_db_model.area)
         return order
 
+    @staticmethod
+    @param_required(['supplier_ids'])
+    def from_suppliers(args):
+        order_db_models = mall_models.Order.select().dj_where(supplier__in=args['supplier_ids'])
+        orders = []
+        for order_model in order_db_models:
+            order = Order(order_model)
+            orders.append(order)
+        return orders
+
+
     @property
     def is_group_buy(self):
         if not self.context.get('_is_group_buy'):
