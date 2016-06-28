@@ -26,7 +26,7 @@ from business.member.member_spread import MemberSpread
 from services.order_notify_mail_service.task import service_send_order_email
 from services.shiped_order_template_message_service.task import service_send_shiped_order_template_message
 from services.express_service.task import service_express
-
+import settings
 
 FATHER_ORDER = 1
 CHILD_ORDER = 2
@@ -409,17 +409,17 @@ class OrderState(Order):
                     response = json.loads(r.text)
                 except:
                     logging.info(u"订单退款异常,\n{}".format(unicode_full_stack()))
-                    watchdog_error(u"订单退款异常,\n{}".format(unicode_full_stack()))
+                    watchdog.alert(u"订单退款异常,\n{}".format(unicode_full_stack()))
         if response['data'].get('is_success', ''):
             self.refund()
             mall_models.Order.update(
                 status=mall_models.ORDER_STATUS_GROUP_REFUNDING
                 ).dj_where(id=self.id).execute()
-            return u"订单%s通知退款成功" % order.order_id
+            return u"订单%s通知退款成功" % self.order_id
         else:
-            logging.info(u"订单%s通知退款失败" % order.order_id)
-            watchdog_error(u"订单%s通知退款失败" % order.order_id)
-            return u"订单%s通知退款失败" % order.order_id
+            logging.info(u"订单%s通知退款失败" % self.order_id)
+            watchdog.alert(u"订单%s通知退款失败" % self.order_id)
+            return u"订单%s通知退款失败" % self.order_id
 
     def finish(self, operator_name):
         target_status = mall_models.ORDER_STATUS_SUCCESSED
