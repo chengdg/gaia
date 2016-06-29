@@ -52,17 +52,73 @@ class ACategoryHasProducts(api_resource.ApiResource):
             watchdog.error(message=msg)
             return msg           
 
-    @param_required(['category_has_product_id'])
+    @param_required(['category_id', 'product_id'])
     def get(args):
-        category_has_product_obj = CategoryHasProduct.from_id({'category_has_product_id': args['category_has_product_id']})
-        if category_has_product_obj:
-            category_has_product_dict = category_has_product_obj.to_dict()
-            category_has_product_dict.update({
-                'category': category_has_product_obj.category.to_dict(),
-                'product': category_has_product_obj.product.to_dict()
-            })
-            return category_has_product_dict
+        if args.get('category_has_product_id', None):
+            category_has_product_obj = CategoryHasProduct.from_id({'category_has_product_id': args['category_has_product_id']})
+            if category_has_product_obj:
+                category_has_product_dict = category_has_product_obj.to_dict()
+                category_has_product_dict.update({
+                    'category': category_has_product_obj.category.to_dict(),
+                    'product': category_has_product_obj.product.to_dict()
+                })
+                return category_has_product_dict
+            else:
+                msg = u'{}不存在'.format(args['category_has_product_id'])
+                watchdog.error(message=msg)
+                return msg
         else:
-            msg = u'{}不存在'.format(args['category_has_product_id'])
+            category_obj = Category.from_id({'category_id': args['category_id']})
+            if not category_obj:
+                msg = u'{}不存在'.format(args['category_id'])
+                watchdog.error(message=msg)
+                return msg 
+            product_obj = Product.from_id({'product_id': args['product_id']})     
+            if not product_obj:
+                msg = u'{}不存在'.format(args['product_id'])
+                watchdog.error(message=msg)
+                return msg 
+
+            category_has_product_obj= CategoryHasProduct.from_category_id_and_product_id({'category_id': args['category_id'], 'product_id': args['product_id']})
+            if category_has_product_obj:
+                return {
+                    'category_has_product': category_has_product_obj.to_dict()
+                }
+            else:
+                msg = u'分组{0},商品{1}没有关联关系'.format(args['category_id'], args['product_id'])
+                watchdog.error(message=msg)
+                return msg       
+
+    @param_required(['category_id', 'product_id'])
+    def delete(args):
+        category_obj = Category.from_id({'category_id': args['category_id']})
+        if not category_obj:
+            msg = u'{}不存在'.format(args['category_id'])
             watchdog.error(message=msg)
-            return msg
+            return msg 
+        product_obj = Product.from_id({'product_id': args['product_id']})     
+        if not product_obj:
+            msg = u'{}不存在'.format(args['product_id'])
+            watchdog.error(message=msg)
+            return msg 
+        category_has_product_obj= CategoryHasProduct.from_category_id_and_product_id({'category_id': args['category_id'], 'product_id': args['product_id']})
+        if category_has_product_obj:
+            action_count = category_has_product_obj.delete_from_id(category_has_product_obj.to_dict()['id'])
+            return {
+                'influences': action_count
+            }
+    @param_required(['category_id', 'product_id', 'position'])
+    def put(args):
+        category_obj = Category.from_id({'category_id': args['category_id']})
+        if not category_obj:
+            msg = u'{}不存在'.format(args['category_id'])
+            watchdog.error(message=msg)
+            return msg 
+        product_obj = Product.from_id({'product_id': args['product_id']})     
+        if not product_obj:
+            msg = u'{}不存在'.format(args['product_id'])
+            watchdog.error(message=msg)
+            return msg 
+        category_has_product_obj= CategoryHasProduct.from_category_id_and_product_id({'category_id': args['category_id'], 'product_id': args['product_id']})
+        if category_has_product_obj: 
+            category_has_product_obj.update_position(args['category_id'], args['product_id'], args['position'])

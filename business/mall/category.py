@@ -140,6 +140,22 @@ class CategoryHasProduct(business_model.Model):
             obj, created = mall_models.CategoryHasProduct.get_or_create(**opt)
             return CategoryHasProduct(obj)
 
+    def delete_from_id(self, category_has_product_id):
+        category_has_product_obj = mall_models.CategoryHasProduct.get(id=category_has_product_id)
+        return category_has_product_obj.delete_instance()
+
+    @staticmethod
+    @param_required(['category_id', 'product_id'])
+    def  from_category_id_and_product_id(args):
+        category_has_product_obj = mall_models.CategoryHasProduct.select().dj_where(category_id=args['category_id'], product_id=args['product_id'])
+        if category_has_product_obj.first():
+            return CategoryHasProduct(category_has_product_obj.first())
+        else:
+            return None
+
+    def update_position(self, category_id ,product_id, position):
+       mall_models.CategoryHasProduct.update(display_index=position).dj_where(product_id=product_id, category_id=category_id).execute()
+
     @property
     def category(self):
         category_has_product_obj = self.context['db_model']

@@ -70,4 +70,5 @@ class ACategory(api_resource.ApiResource):
             return {
                 'influences': action_count
             }
+    
 
