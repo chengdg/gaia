@@ -287,7 +287,7 @@ class OrderState(Order):
         return True, ''
 
 
-    def cancel(self, operator_name=''):
+    def cancel(self, operator_name=u'系统'):
         """
         目前只支持团购业务中的取消订单
         @param operator_name:
@@ -314,12 +314,11 @@ class OrderState(Order):
         self.record_status_log(operator_name, self.status, target_status)
         self.record_operation_log(operator_name, action, CHILD_ORDER)
         mall_models.Order.update(status=target_status).dj_where(id=self.id).execute()
-
+        print 'cancel', self.child_order_count
         if self.child_order_count > 0:
             child_orders = OrderState.from_origin_id({
                 "origin_id": self.origin_order_id
             })
-            mall_models.Order.update(status=target_status).dj_where(origin_order_id=self.id).execute()
             for child_order in child_orders:
                 child_order.record_status_log(operator_name, child_order.status, target_status)
                 child_order.record_operation_log(operator_name, action, CHILD_ORDER)
@@ -336,9 +335,30 @@ class OrderState(Order):
         # 处理子订单、母订单
 
         self.__send_order_email()
+        return u"订单%s取消成功！" % self.order_id
 
+    def refunding(self, operator_name=u'系统'):
+        """
+        申请订单退款
+        """
+        target_status = mall_models.ORDER_STATUS_REFUNDING
+        action = '退款中'
 
-    def refund(self,operator_name=''):
+        self.record_status_log(operator_name, self.status, target_status)
+        self.record_operation_log(operator_name, action, CHILD_ORDER)
+        mall_models.Order.update(status=target_status).dj_where(id=self.id).execute()
+        print 'refunding', self.child_order_count
+        if self.child_order_count > 0:
+            child_orders = OrderState.from_origin_id({
+                "origin_id": self.origin_order_id
+            })
+            for child_order in child_orders:
+                child_order.record_status_log(operator_name, child_order.status, target_status)
+                child_order.record_operation_log(operator_name, action, CHILD_ORDER)
+
+        return u"订单%s正在退款！" % self.order_id
+
+    def refund(self, operator_name=u'系统'):
         """
         目前只支持团购业务中的退款完成订单
         @param operator_name:
@@ -354,12 +374,11 @@ class OrderState(Order):
         self.record_status_log(operator_name, self.status, target_status)
         self.record_operation_log(operator_name, action, CHILD_ORDER)
         mall_models.Order.update(status=target_status).dj_where(id=self.id).execute()
-
+        print 'refund', self.child_order_count
         if self.child_order_count > 0:
             child_orders = OrderState.from_origin_id({
                 "origin_id": self.origin_order_id
             })
-            mall_models.Order.update(status=target_status).dj_where(origin_order_id=self.id).execute()
             for child_order in child_orders:
                 child_order.record_status_log(operator_name, child_order.status, target_status)
                 child_order.record_operation_log(operator_name, action, CHILD_ORDER)
@@ -370,7 +389,7 @@ class OrderState(Order):
         # 返回微众卡
         if self.weizoom_card_money:
             self.__return_wzcard()
-
+        return u"订单%s退款完成！" % self.order_id
 
     def return_money(self):
         KEY = 'MjExOWYwMzM5M2E4NmYwNWU4ZjI5OTI1YWFmM2RiMTg='

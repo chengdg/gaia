@@ -37,19 +37,21 @@ class AGroupUpdateOrder(api_resource.ApiResource):
             orders = filter(lambda order: order.status in [mall_models.ORDER_STATUS_PAYED_NOT_SHIP, mall_models.ORDER_STATUS_NOT], orders)
         else:
             orders = filter(lambda order: order.status == order_status, orders)
-        msg = ""
+        msg = []
         for order in orders:
-            msg = ""
+            info = ""
             if order_status == mall_models.ORDER_STATUS_NOT:
-                msg = order.cancel()
+                info = order.cancel()
             elif order_status == mall_models.ORDER_STATUS_PAYED_NOT_SHIP:
                 if order.pay_interface_type == mall_models.PAY_INTERFACE_WEIXIN_PAY and order.status >= mall_models.ORDER_STATUS_PAYED_NOT_SHIP:
                     if is_test:
-                        order.refund()
+                        info = order.refunding()
                         order.updat_status(mall_models.ORDER_STATUS_GROUP_REFUNDING)
                     else:
-                        order.refund()
-                        order.return_money()
+                        order.refunding()
+                        info = order.return_money()
+                        order.updat_status(mall_models.ORDER_STATUS_GROUP_REFUNDING)
                 else:
-                    msg = order.cancel()
+                    info = order.cancel()
+            msg.append(info)
         return {"msg": msg}
