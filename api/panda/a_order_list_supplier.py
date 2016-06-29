@@ -74,6 +74,63 @@ class AOrderListBySupplier(api_resource.ApiResource):
             'pageinfo': pageinfo.to_dict()
         }
 
+    @param_required(['supplier_ids'])
+    def post(args):
+        """
+        订单列表
+        """
+        supplier_ids = args['supplier_ids'].split("_")
+        supplier_ids = [id for id in supplier_ids if id]
+
+        orders = Order.from_suppliers({
+                'supplier_ids': supplier_ids
+            })
+
+        orders = AOrderListBySupplier.search_orders(orders, args)
+        #分页
+        cur_page = int(args.get('page', '1'))
+        count_per_page = int(args.get('count_per_page', '10'))
+        pageinfo, orders = paginator.paginate(orders, cur_page, count_per_page)
+
+        order_ids = [order.id for order in orders]
+        if order_ids:
+            relations = OrderProductRelation.get_for_order({'order_ids': order_ids})
+        else:
+            relations = []
+        product_ids = [relation.product_id for relation in relations]
+        products = Product.from_ids({'product_ids': product_ids})
+        id2product = dict(([product.id, product] for product in products))
+        order_id2product_info = {}
+        for relation in relations:
+            if relation.order_id in order_id2product_info:
+                order_id2product_info[relation.order_id].append({
+                                        'id': relation.product_id,
+                                        'count': relation.number,
+                                        'price': relation.price,
+                                        'total_price': relation.total_price,
+                                        'purchase_price': relation.purchase_price,
+                                        'weight': id2product[relation.product_id].weight
+                                    })
+            else:
+                order_id2product_info[relation.order_id] = [{
+                                        'id': relation.product_id,
+                                        'count': relation.number,
+                                        'price': relation.price,
+                                        'total_price': relation.total_price,
+                                        'purchase_price': relation.purchase_price,
+                                        'weight': id2product[relation.product_id].weight
+                                    }]
+        order_infos = []
+        for order in orders:
+            order_info = order.to_dict()
+            order_info['products'] = order_id2product_info[order.id]
+            order_infos.append(order_info)
+
+        return {
+            'orders': order_infos,
+            'pageinfo': pageinfo.to_dict()
+        }
+
     @staticmethod
     def search_orders(orders=None, args={}):
         # 筛选
