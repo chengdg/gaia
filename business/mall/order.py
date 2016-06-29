@@ -119,6 +119,17 @@ class Order(business_model.Model):
         return orders
 
     @staticmethod
+    @param_required(['order_ids'])
+    def from_order_ids(args):
+        orders = []
+        order_models = mall_models.Order.select().dj_where(order_id__in=args['order_ids'])
+
+        for order_model in order_models:
+            order = Order(order_model)
+            orders.append(order)
+        return orders
+
+    @staticmethod
     @param_required(['order_id'])
     def from_order_id(args):
         if mall_models.Order.select().dj_where(order_id=args['order_id']).count() == 0:
@@ -222,7 +233,12 @@ class Order(business_model.Model):
     def formated_express_company_name(self):
         return  u'%s快递' % express_util.get_name_by_value(self.express_company_name) if self.express_company_name  else ''
 
+    @property
     def child_order_count(self):
-        if self.origin_order_id <= 0:
+        if self.origin_order_id < 0:
             return mall_models.Order.select().dj_where(origin_order_id=self.id).count()
         return 0
+
+    @property
+    def is_sub_order(self):
+        return self.origin_order_id > 0

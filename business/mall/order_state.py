@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
-
+import json
+import logging
 import sys
+import requests
 from eaglet.decorator import param_required
 from eaglet.core import api_resource
 from eaglet.core import watchdog
 from eaglet.core.exceptionutil import unicode_full_stack
 from business import model as business_model
+from business.mall.wzcard import WZCard
 from db.mall import models as mall_models
 from db.mall import promotion_models
 
@@ -23,7 +26,7 @@ from business.member.member_spread import MemberSpread
 from services.order_notify_mail_service.task import service_send_order_email
 from services.shiped_order_template_message_service.task import service_send_shiped_order_template_message
 from services.express_service.task import service_express
-
+import settings
 
 FATHER_ORDER = 1
 CHILD_ORDER = 2
@@ -54,6 +57,14 @@ class OrderState(Order):
             return None
         order = OrderState(order_db_model)
         return order
+    @staticmethod
+    @param_required(['order_ids'])
+    def from_order_ids(args):
+        order_db_models = mall_models.Order.select().dj_where(order_id__in=args['order_ids'])
+        orders = []
+        for model in order_db_models:
+            orders.append(OrderState(model))
+        return orders
 
     @staticmethod
     @param_required(['origin_id'])
@@ -283,10 +294,159 @@ class OrderState(Order):
         return True, ''
 
 
-    def cancel(self):
-        pass
-    def refund(self):
-        pass
+    def cancel(self, operator_name=u'系统'):
+        """
+        目前只支持团购业务中的取消订单
+        @param operator_name:
+        @return:
+        """
+
+        # todo
+        assert not self.is_sub_order
+
+        target_status = mall_models.ORDER_STATUS_CANCEL
+        action = '取消订单'
+
+        # 检查操作
+
+        # 返回优惠券
+
+        # 返回微众卡
+        if self.weizoom_card_money:
+            self.__return_wzcard()
+
+        # 记录操作日志、更改状态
+
+        # 当前为主订单
+        self.record_status_log(operator_name, self.status, target_status)
+        self.record_operation_log(operator_name, action, CHILD_ORDER)
+        mall_models.Order.update(status=target_status).dj_where(id=self.id).execute()
+        print 'cancel', self.child_order_count
+        if self.child_order_count > 0:
+            child_orders = OrderState.from_origin_id({
+                "origin_id": self.origin_order_id
+            })
+            for child_order in child_orders:
+                child_order.record_status_log(operator_name, child_order.status, target_status)
+                child_order.record_operation_log(operator_name, action, CHILD_ORDER)
+
+        # 返回商品库存、销量
+
+        self.__restore_product()
+
+
+        # 返回订单积分
+
+        # 处理首单标记
+
+        # 处理子订单、母订单
+
+        self.__send_order_email()
+        return u"订单%s取消成功！" % self.order_id
+
+    def refunding(self, operator_name=u'系统'):
+        """
+        申请订单退款
+        """
+        target_status = mall_models.ORDER_STATUS_REFUNDING
+        action = '退款中'
+
+        self.record_status_log(operator_name, self.status, target_status)
+        self.record_operation_log(operator_name, action, CHILD_ORDER)
+        mall_models.Order.update(status=target_status).dj_where(id=self.id).execute()
+        print 'refunding', self.child_order_count
+        if self.child_order_count > 0:
+            child_orders = OrderState.from_origin_id({
+                "origin_id": self.origin_order_id
+            })
+            for child_order in child_orders:
+                child_order.record_status_log(operator_name, child_order.status, target_status)
+                child_order.record_operation_log(operator_name, action, CHILD_ORDER)
+
+        return u"订单%s正在退款！" % self.order_id
+
+    def refund(self, operator_name=u'系统'):
+        """
+        目前只支持团购业务中的退款完成订单
+        @param operator_name:
+        @return:
+        """
+        assert not self.is_sub_order
+        target_status = mall_models.ORDER_STATUS_REFUNDED
+        action = '退款完成'
+
+        # 记录操作日志、更改状态
+
+        # 当前为主订单
+        self.record_status_log(operator_name, self.status, target_status)
+        self.record_operation_log(operator_name, action, CHILD_ORDER)
+        mall_models.Order.update(status=target_status).dj_where(id=self.id).execute()
+        print 'refund', self.child_order_count
+        if self.child_order_count > 0:
+            child_orders = OrderState.from_origin_id({
+                "origin_id": self.origin_order_id
+            })
+            for child_order in child_orders:
+                child_order.record_status_log(operator_name, child_order.status, target_status)
+                child_order.record_operation_log(operator_name, action, CHILD_ORDER)
+
+        # 返回商品库存、销量
+        self.__restore_product()
+
+        # 返回微众卡
+        if self.weizoom_card_money:
+            self.__return_wzcard()
+        return u"订单%s退款完成！" % self.order_id
+
+    def return_money(self):
+        KEY = 'MjExOWYwMzM5M2E4NmYwNWU4ZjI5OTI1YWFmM2RiMTg='
+        if settings.MODE in ['develop', 'test']:
+            URL = 'http://paytest/refund/weixin/api/order/refund/'
+        else:
+            URL = 'http://pay/refund/weixin/api/order/refund/'
+
+        args = {
+            'order_id': self.order_id,
+            'auth_key': KEY,
+            'from_where': 'weapp'
+        }
+        response = dict()
+        try:
+            logging.info("url:%s" % URL)
+            logging.info("args:%s" % str(args))
+            r = requests.get(URL, params=args)
+            response = json.loads(r.text)
+            if not response['data'].get('is_success', ''):
+                r = requests.get(URL, params=args)
+                response = json.loads(r.text)
+                if not response['data'].get('is_success', ''):
+                    r = requests.get(URL, params=args)
+                    response = json.loads(r.text)
+        except:
+            try:
+                r = requests.get(URL, params=args)
+                response = json.loads(r.text)
+                if not response['data'].get('is_success', ''):
+                    r = requests.get(URL, params=args)
+                    response = json.loads(r.text)
+            except:
+                try:
+                    r = requests.get(URL, params=args)
+                    response = json.loads(r.text)
+                except:
+                    logging.info(u"订单退款异常,\n{}".format(unicode_full_stack()))
+                    watchdog.alert(u"订单退款异常,\n{}".format(unicode_full_stack()))
+        if response['data'].get('is_success', ''):
+            self.refund()
+            mall_models.Order.update(
+                status=mall_models.ORDER_STATUS_GROUP_REFUNDING
+                ).dj_where(id=self.id).execute()
+            return u"订单%s通知退款成功" % self.order_id
+        else:
+            logging.info(u"订单%s通知退款失败" % self.order_id)
+            watchdog.alert(u"订单%s通知退款失败" % self.order_id)
+            return u"订单%s通知退款失败" % self.order_id
+
     def finish(self, operator_name):
         target_status = mall_models.ORDER_STATUS_SUCCESSED
 
@@ -379,3 +539,41 @@ class OrderState(Order):
 
         self.__send_order_email()
         return True, ''
+
+    def updat_status(self, status):
+        mall_models.Order.update(
+            status=status
+        ).dj_where(id=self.id).execute()
+
+    def __return_wzcard(self):
+        WZCard.refund_for_order(self)
+
+    def __restore_product(self):
+        products = self.products
+
+        for product in products:
+            models = mall_models.ProductModel.select().dj_where(product_id=product['id'],
+                                                             name=product['product_model_name'])
+            # 该商品有此规格，并且库存是有限，进入修改商品的数量
+            if models.count() > 0 and models[0].stock_type == mall_models.PRODUCT_STOCK_TYPE_LIMIT:
+                product_model = models[0]
+                product_model.stocks = product_model.stocks + product['count']
+                product_model.save()
+            # product sales update
+            if self.status < mall_models.ORDER_STATUS_PAYED_SUCCESSED or (
+                        product.get('promotion', None) and product['promotion'].get('type', '').find(
+                        'premium_product') > 0):
+                # 订单未支付或者是赠品商品, 不需要回退销量数据
+                continue
+            productsales = mall_models.ProductSales.select().dj_where(product_id=product.get('id'))
+
+            if productsales:
+                try:
+                    mall_models.ProductSales.update(sales=mall_models.ProductSales.sales - product['count']).dj_where(
+                        product_id=product.get('id')).execute()
+                except BaseException as e:
+                    watchdog.alert({
+                        'uuid': 'return_stock_and_sales_in_zeus',
+                        'traceback': unicode_full_stack(),
+                        'product_id':product.get('id')
+                    })
