@@ -401,7 +401,7 @@ class OrderState(Order):
     def return_money(self):
         KEY = 'MjExOWYwMzM5M2E4NmYwNWU4ZjI5OTI1YWFmM2RiMTg='
         if settings.MODE in ['develop', 'test']:
-            URL = 'http://paytest/refund/weixin/api/order/refund/'
+            URL = 'http://pay.weapp.com/refund/weixin/api/order/refund/'
         else:
             URL = 'http://pay/refund/weixin/api/order/refund/'
 
@@ -436,6 +436,7 @@ class OrderState(Order):
                 except:
                     logging.info(u"订单退款异常,\n{}".format(unicode_full_stack()))
                     watchdog.alert(u"订单退款异常,\n{}".format(unicode_full_stack()))
+                    return u"订单%s通知退退款异常" % self.order_id
         if response['data'].get('is_success', ''):
             self.refund()
             mall_models.Order.update(
