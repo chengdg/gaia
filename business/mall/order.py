@@ -173,8 +173,7 @@ class Order(business_model.Model):
         # 为了兼容有order.id的方式
         db_details = express_models.ExpressDetail.select().dj_where(order_id=self.id).order_by(-express_models.ExpressDetail.display_index)
         if db_details.count() > 0:
-            detail_models = [ExpressDetail(detail) for detail in db_details]
-            details = [{'ftime': model.ftime, 'context': model.context} for model in models]
+            details = [{'ftime': model.ftime, 'context': model.context} for model in db_details]
             #return list(details)
             return details
 
@@ -191,8 +190,7 @@ class Order(business_model.Model):
             express = expresses[0]
             logging.info("express: {}".format(express.id))
             db_details = express_models.ExpressDetail.select().dj_where(express_id=express.id).order_by(-express_models.ExpressDetail.display_index)
-            detail_models = [ExpressDetail(detail) for detail in db_details]
-            details = [{'ftime': model.ftime, 'context': model.context} for model in models]
+            details = [{'ftime': model.ftime, 'context': model.context} for model in db_details]
         except Exception as e:
             logging.error(u'获取快递详情失败，order_id={}, case:{}'.format(self.id, str(e)))
             details = []
