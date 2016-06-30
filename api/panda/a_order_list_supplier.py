@@ -66,6 +66,8 @@ class AOrderListBySupplier(api_resource.ApiResource):
         order_infos = []
         for order in orders:
             order_info = order.to_dict()
+            if not order_id2product_info.has_key(order.id):
+                continue
             order_info['products'] = order_id2product_info[order.id]
             order_infos.append(order_info)
 
@@ -123,6 +125,8 @@ class AOrderListBySupplier(api_resource.ApiResource):
         order_infos = []
         for order in orders:
             order_info = order.to_dict()
+            if not order_id2product_info.has_key(order.id):
+                continue
             order_info['products'] = order_id2product_info[order.id]
             order_infos.append(order_info)
 
