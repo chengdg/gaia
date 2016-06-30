@@ -5,7 +5,7 @@ from eaglet.core import api_resource
 from eaglet.decorator import param_required
 from eaglet.core import watchdog
 
-from business.mall.category import Category
+from business.mall.category import Category, CategoryHasProduct
 from business.mall.category_factory import CategoryFactory, CategoryHasProductFactory
 from business.mall.product import Product
 
@@ -65,6 +65,8 @@ class ACategory(api_resource.ApiResource):
     def delete(args):
         # print 'delete_=================category;;;;;;;;;;;', args
         category_obj = Category.from_id({'category_id': args['category_id']})
+        if  category_obj.products:  # 分组内有商品
+            CategoryHasProduct.empty_cateogry_has_product().delete_from_model(category_obj)
         if category_obj:
             action_count = category_obj.delete_from_id(args['category_id'])
             return {

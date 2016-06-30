@@ -18,10 +18,10 @@ class ACategoryHasProducts(api_resource.ApiResource):
         #由于在zeus测试平台，不能传列表，现由'1,2,3,4,5'这种方式处理
         product_ids = [product_id.strip() for product_id in args.get('product_ids', '').strip().split(',') if product_id]
         args.update(dict(product_ids=product_ids))
-        if not product_ids:
-            msg = u'商品列表不能为空'
-            watchdog.error(message=msg)
-            return msg           
+        # if not product_ids:
+        #     msg = u'商品列表不能为空'
+        #     watchdog.error(message=msg)
+        #     return msg           
         category_obj = Category.from_id({'category_id': args['category_id']})
         if category_obj:
             flag = False

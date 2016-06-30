@@ -91,8 +91,11 @@ class Category(business_model.Model):
     def products(self):
         category_model = self.context['db_model']
         relations = mall_models.CategoryHasProduct.filter(category=category_model)
-        product_ids = [relation.product_id for relation in relations]
-        return Product.from_ids({'product_ids': product_ids})
+        if relations:
+            product_ids = [relation.product_id for relation in relations]
+            return Product.from_ids({'product_ids': product_ids})
+        else:
+            return None
 
 
 class CategoryHasProduct(business_model.Model):
@@ -143,6 +146,9 @@ class CategoryHasProduct(business_model.Model):
     def delete_from_id(self, category_has_product_id):
         category_has_product_obj = mall_models.CategoryHasProduct.get(id=category_has_product_id)
         return category_has_product_obj.delete_instance()
+
+    def delete_from_model(self, category_obj):
+        mall_models.CategoryHasProduct.get(category=category_obj.context['db_model']).delete_instance()
 
     @staticmethod
     @param_required(['category_id', 'product_id'])
