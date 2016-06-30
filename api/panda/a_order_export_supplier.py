@@ -28,8 +28,8 @@ class AOrderExportBySupplier(api_resource.ApiResource):
         orders = Order.from_suppliers({
                 'supplier_ids': supplier_ids
             })
+        orders = AOrderExportBySupplier.filter_group_order(orders)
         orders = AOrderExportBySupplier.search_orders(orders, args)
-
         order_ids = [order.id for order in orders]
         if order_ids:
             relations = OrderProductRelation.get_for_order({'order_ids': order_ids})
@@ -81,6 +81,7 @@ class AOrderExportBySupplier(api_resource.ApiResource):
         orders = Order.from_suppliers({
                 'supplier_ids': supplier_ids
             })
+        orders = AOrderExportBySupplier.filter_group_order(orders)
         orders = AOrderExportBySupplier.search_orders(orders, args)
 
         order_ids = [order.id for order in orders]
@@ -140,4 +141,30 @@ class AOrderExportBySupplier(api_resource.ApiResource):
             orders = filter(lambda order: order.webapp_id == webapp_id, orders)
         if start_time and end_time:
             orders = filter(lambda order: order.created_at.strftime('%Y-%m-%d %H:%M:%S') >= start_time and order.created_at.strftime('%Y-%m-%d %H:%M:%S') <= end_time, orders)
+        return orders
+
+    @staticmethod
+    def filter_group_order(orders=None):
+        """
+        去除团购不显示的订单
+        """
+        group_relations = OrderHasGroup.from_order_ids({
+                                'order_ids': [order.order_id for order in orders]
+                            })
+        group_order_ids = [r.order_id for r in group_relations]
+        order_id2group_relation = dict([(r.order_id, r) for r in group_relations])
+        filter_order_ids = []
+        for order in orders:
+            if order.status == mall_models.ORDER_STATUS_NOT and order.order_id in group_order_ids:
+                filter_order_ids.append(order.order_id)
+            if order.status == mall_models.ORDER_STATUS_PAYED_NOT_SHIP \
+            and order.order_id in group_order_ids \
+            and order_id2group_relation[order.order_id].group_status in [mall_models.GROUP_STATUS_ON, mall_models.GROUP_STATUS_failure]:
+                filter_order_ids.append(order.order_id)
+            if order.status == mall_models.ORDER_STATUS_CANCEL \
+            and order.order_id in group_order_ids \
+            and order_id2group_relation[order.order_id].group_status in [mall_models.GROUP_STATUS_OK, mall_models.GROUP_STATUS_failure]:
+                filter_order_ids.append(order.order_id)
+
+        orders = filter(lambda order: order.order_id not in filter_order_ids, orders)
         return orders

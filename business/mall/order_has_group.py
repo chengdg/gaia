@@ -57,6 +57,19 @@ class OrderHasGroup(business_model.Model):
         return [r.order_id for r in relations]
 
     @staticmethod
+    @param_required(['order_ids'])
+    def from_order_ids(args):
+        """
+        更具订单获取团购订单对象
+        """
+        order_has_group_models = mall_models.OrderHasGroup.select().dj_where(
+                                    order_id__in=args['order_ids'])
+        relations = []
+        for model in order_has_group_models:
+            relations.append(OrderHasGroup(model))
+        return relations
+
+    @staticmethod
     def update(group_id, status):
         mall_models.OrderHasGroup.update(
                 group_status=status
