@@ -9,6 +9,7 @@ from business.mall.order import Order
 from business.mall.order_items import OrderItems
 from business.mall.product import Product
 from business.mall.order_has_group import OrderHasGroup
+from db.mall import models as mall_models
 from business.account.user_profile import UserProfile
 
 class AOrderExportBySupplier(api_resource.ApiResource):
