@@ -143,7 +143,9 @@ class AProductTemplateProperty(api_resource.ApiResource):
         template_id = self['template_id']
         properties = ProductTemplateProperty.from_template_id({"template_id": template_id})
         result = [pro.to_dict() for pro in properties]
-        return result
+        return {
+            'properties': result
+        }
 
     @param_required(['template_id', 'properties', 'owner_id'])
     def put(self):
