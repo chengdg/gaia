@@ -39,8 +39,8 @@ class AProductPropertyTemplate(api_resource.ApiResource):
             # 'properties': properties
         })
         result = template.to_dict()
-        properties = [pro.to_dict() for pro in template.properties]
-        result.update({"properties": properties})
+        # properties = [pro.to_dict() for pro in template.properties]
+        # result.update({"properties": properties})
         return result
 
     @param_required(['id'])
@@ -167,7 +167,9 @@ class AProductTemplateProperty(api_resource.ApiResource):
                                    'value': properties[0]['value'],
                                    'owner_id': owner_id
                                    })
-                return rs.to_dict()
+                return {
+                    "properties": [rs.to_dict()]
+                }
             except:
                 msg = unicode_full_stack()
                 watchdog.error(msg)
@@ -183,7 +185,7 @@ class AProductTemplateProperty(api_resource.ApiResource):
                 results = [pro.to_dict() for pro in rs]
 
                 return {
-                    "results": results
+                    "properties": results
                 }
             except:
                 msg = unicode_full_stack()
