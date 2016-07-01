@@ -33,7 +33,9 @@ class ProductModelProperty(business_model.Model):
         if product_model_property:
 
             # 使用from_model将数据取回到领域模型
-            return ProductModelProperty(product_model_property)
+            _model = ProductModelProperty(product_model_property)
+            _model.type = 'text' if _model.type == mall_models.PRODUCT_MODEL_PROPERTY_TYPE_TEXT else 'image'
+            return _model
         return None
 
     @staticmethod
@@ -41,6 +43,8 @@ class ProductModelProperty(business_model.Model):
     def from_model(args):
         model = args['db_model']
         product_model_property = ProductModelProperty(model)
+        product_model_property.type = 'text' \
+            if product_model_property.type == mall_models.PRODUCT_MODEL_PROPERTY_TYPE_TEXT else 'image'
         return product_model_property
 
     @staticmethod
@@ -53,7 +57,8 @@ class ProductModelProperty(business_model.Model):
                                                                        is_deleted=False)
         result = []
         for template in templates:
-            _model = ProductModelProperty.from_model({'db_model': template})
+            _model = ProductModelProperty(template)
+            _model.type = 'text' if _model.type == mall_models.PRODUCT_MODEL_PROPERTY_TYPE_TEXT else 'image'
             result.append({'product_model': _model,
                            'properties': _model.properties})
         return result
@@ -99,13 +104,19 @@ class ProductModelProperty(business_model.Model):
         product_model = mall_models.ProductModelProperty.create(name=self.name,
                                                                 type=model_type,
                                                                 owner=self.owner_id)
-        return ProductModelProperty(product_model) if product_model else None
+        if product_model:
+            _model = ProductModelProperty(product_model)
+            _model.type = 'text' if _model.type == mall_models.PRODUCT_MODEL_PROPERTY_TYPE_TEXT else 'image'
+            return _model
+        return None
 
     @staticmethod
     @param_required(['id'])
     def delete_from_id(args):
         change_rows = mall_models.ProductModelProperty.update(is_deleted=True) \
             .dj_where(id=args.get('id')).execute()
+        mall_models.ProductModelPropertyValue.update(is_deleted=True) \
+            .dj_where(property=args['id']).execute()
         return change_rows
 
 

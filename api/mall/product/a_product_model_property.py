@@ -19,17 +19,17 @@ class AProductModelProperty(api_resource.ApiResource):
     app = 'mall'
     resource = 'product_model_property'
 
-    @param_required(['owner_id', 'type', 'name'])
+    @param_required(['owner_id', 'type'])
     def put(self):
         """
         添加规格
         owner_id -- 用户id
         type -- 规格类型　可以为空，但是必须传递，默认是text(text)类型,image:图片类型
-        name -- 规格名　可以为空，但是必须传递
+        name -- 规格名　
         """
         owner_id = self['owner_id']
         model_type = self['type']
-        name = self['name']
+        name = self.get('name', "")
 
         factory = ProductModelPropertyFactory.create()
         try:
@@ -44,17 +44,17 @@ class AProductModelProperty(api_resource.ApiResource):
                 "product_model": None
             }
 
-    @param_required(['type', 'name', 'id'])
+    @param_required(['type', 'id'])
     def post(self):
         """
         更新规格
         id -- 规格ｉｄ
         type -- 规格类型　可以为空，但是必须传递，默认是text(text)类型,image:图片类型
-        name -- 规格名　可以为空，但是必须传递
+        name -- 规格名　
         """
 
         model_type = self['type']
-        name = self['name']
+        name = self.get('name', '')
         model_id = self['id']
 
         resource_model = ProductModelProperty(None)
@@ -70,7 +70,7 @@ class AProductModelProperty(api_resource.ApiResource):
             msg = unicode_full_stack()
             watchdog.error(msg)
             return {
-                'change_rows': 0
+                'change_rows': -1
             }
 
     @param_required(['id'])
@@ -79,7 +79,7 @@ class AProductModelProperty(api_resource.ApiResource):
         获取单个规格
         """
         model_id = self['id']
-        product_model = ProductModelProperty.from_id(dict(id=model_id))
+        product_model = ProductModelProperty.from_id({'id': model_id})
         return {
             "product_model": product_model.to_dict(),
             'properties': product_model.properties
@@ -93,7 +93,7 @@ class AProductModelProperty(api_resource.ApiResource):
         except:
             msg = unicode_full_stack()
             watchdog.error(msg)
-            return {'change_rows': 0}
+            return {'change_rows': -1}
 
 
 class AProductModelPropertyList(api_resource.ApiResource):
@@ -121,17 +121,17 @@ class AProductModelPropertyValue(api_resource.ApiResource):
     app = 'mall'
     resource = 'model_property_value'
 
-    @param_required(['id', 'name', 'pic_url'])
+    @param_required(['id', 'name'])
     def put(self):
         """
         添加
         id -- 规格id
         name -- 规格值的名字
-        pic_url -- 规格值的图片地址()
+        pic_url -- 规格值的图片地址(非必须)
         """
         model_id = self['id']
         name = self['name']
-        pic_url = self['pic_url']
+        pic_url = self.get('pic_url', '')
 
         factory = ProductModelPropertyValueFactory.create()
         try:
@@ -148,29 +148,29 @@ class AProductModelPropertyValue(api_resource.ApiResource):
                 'product_model_value': None
             }
 
-    @param_required(['id', 'name', 'pic_url'])
+    @param_required(['id', 'name'])
     def post(self):
         """
         更新
         id -- 属性值id
         name -- 规格值的名字
-        pic_url -- 规格值的图片地址()
+        pic_url -- 规格值的图片地址(非必须)
         """
         model_id = self['id']
         name = self['name']
-        pic_url = self['pic_url']
+        pic_url = self.get('pic_url', '')
 
         resource_model = ProductModelPropertyValue(None)
         resource_model.id = model_id
         resource_model.name = name
         resource_model.pic_url = pic_url
         try:
-            change_rows = ProductModelPropertyValue.update(resource_model)
+            change_rows = resource_model.update()
             return {"change_rows": change_rows}
         except:
             msg = unicode_full_stack()
             watchdog.error(msg)
-            return {"change_rows": 0}
+            return {"change_rows": -1}
 
     @param_required(['id'])
     def get(self):
@@ -194,4 +194,4 @@ class AProductModelPropertyValue(api_resource.ApiResource):
         except:
             msg = unicode_full_stack()
             watchdog.error(msg)
-            return {"change_rows": 0}
+            return {"change_rows": -1}

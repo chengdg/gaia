@@ -59,7 +59,6 @@ class AProductPropertyTemplate(api_resource.ApiResource):
     def post(self):
         """
         更新
-        owner_id: 用户ｉｄ
         id: 属性模板id
         title: 属性模板标题
         """
@@ -115,18 +114,6 @@ class APropertyTemplateList(api_resource.ApiResource):
             "templates": result
         }
 
-    @param_required(['template_id'])
-    def api_get(self):
-        """
-        根据模板id获取所有的该模板的所有属性
-        """
-        template_id = self['template_id']
-        properties = ProductTemplateProperty.from_template_id({"template_id": template_id})
-        result = [pro.to_dict for pro in properties]
-        return {
-            'properties': result
-        }
-
 
 class AProductTemplateProperty(api_resource.ApiResource):
     """
@@ -143,7 +130,9 @@ class AProductTemplateProperty(api_resource.ApiResource):
         template_id = self['template_id']
         properties = ProductTemplateProperty.from_template_id({"template_id": template_id})
         result = [pro.to_dict() for pro in properties]
-        return result
+        return {
+            'properties': result
+        }
 
     @param_required(['template_id', 'properties', 'owner_id'])
     def put(self):
@@ -180,7 +169,9 @@ class AProductTemplateProperty(api_resource.ApiResource):
                 })
                 results = [pro.to_dict() for pro in rs]
 
-                return results
+                return {
+                    "results": results
+                }
             except:
                 msg = unicode_full_stack()
                 watchdog.error(msg)
