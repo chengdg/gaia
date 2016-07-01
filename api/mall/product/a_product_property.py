@@ -182,7 +182,9 @@ class AProductTemplateProperty(api_resource.ApiResource):
                 })
                 results = [pro.to_dict() for pro in rs]
 
-                return results
+                return {
+                    "results": results
+                }
             except:
                 msg = unicode_full_stack()
                 watchdog.error(msg)
