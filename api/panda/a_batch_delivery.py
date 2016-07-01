@@ -25,6 +25,10 @@ class ABatchDelivery(api_resource.ApiResource):
         response_data = []
         for data in datas:
             if data['order_id'] in order_id2order:
+                express_company_name = data['express_company_name']
+                express_number = data['express_number']
+                operator_name = ''
+                leader_name = ''
                 result, msg = order.ship(express_company_name, express_number, operator_name, leader_name)
                 response_data.append({
                         'order_id': data['order_id'],
