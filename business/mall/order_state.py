@@ -231,13 +231,6 @@ class OrderState(Order):
             if len(child_orders) > 1:
                 return False, u'不能对当前订单发货'
 
-
-
-
-
-
-
-
         if self.status == mall_models.ORDER_STATUS_PAYED_SHIPED:
             return False, u'订单状态已经改变'
 
