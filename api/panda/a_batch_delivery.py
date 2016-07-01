@@ -21,7 +21,7 @@ class ABatchDelivery(api_resource.ApiResource):
         datas = json.loads(args['datas'])
         order_ids = [data['order_id'] for data in datas]
         orders = OrderState.from_order_ids({'order_ids': order_ids})
-        order_id2order = dict([(order.order_id, order_id) for order in orders])
+        order_id2order = dict([(order.order_id, order) for order in orders])
         response_data = []
         for data in datas:
             if data['order_id'] in order_id2order:
