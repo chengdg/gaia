@@ -2,6 +2,7 @@
 
 from eaglet.decorator import param_required
 from eaglet.core import api_resource
+
 from business import model as business_model
 from db.account import models as account_models
 
@@ -108,3 +109,20 @@ class UserProfile(business_model.Model):
                     'store_name': model.store_name
                 })
         return user_id2store_name
+
+    @staticmethod
+    @param_required(['page', 'page_count'])
+    def from_page(args):
+        """
+        分页获取商户列表
+        """
+        page = args['page']
+        page_count = args['page_count']
+        users = account_models.UserProfile.select().dj_where(is_active=True)
+        counts = users.count()
+        page_users = users.paginate(int(page), int(page_count))
+        result = [UserProfile(user) for user in page_users]
+        return {
+            'users': result,
+            'counts': counts
+        }
