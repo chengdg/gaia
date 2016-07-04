@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+__author__ = 'charles'
 
 from eaglet.decorator import param_required
 
