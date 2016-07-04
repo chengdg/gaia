@@ -206,4 +206,5 @@ class AOrderListBySupplier(api_resource.ApiResource):
                 filter_order_ids.append(order.order_id)
 
         orders = filter(lambda order: order.order_id not in filter_order_ids, orders)
+        orders = sorted(orders, key = lambda order: order.id, reverse=True)
         return orders

@@ -259,13 +259,16 @@ class OrderState(Order):
 
             children_order_status = [order.status for order in child_orders]
 
-            if origin_order.status != min(children_order_status):
-                #所有子订单全部发货更新父订单
-                if min(children_order_status) == target_status: #and len(children_order_status) > 1:
-                    mall_models.Order.update(status=target_status).dj_where(id=origin_order.id).execute()
-                    #mall_models.Order.update(**order_params).dj_where(id=origin_order.id).execute()
-                    origin_order.record_status_log(operator_name, origin_order.status, target_status)
-                    origin_order.record_operation_log(operator_name, action, FATHER_ORDER)
+            if len(child_orders) == 1: #只有一个供货商的话，自订单和母订单是同步的
+                mall_models.Order.update(**order_params).dj_where(id=origin_order.id).execute()
+            else:
+                if origin_order.status != min(children_order_status):
+                    #所有子订单全部发货更新父订单
+                    if min(children_order_status) == target_status: #and len(children_order_status) > 1:
+                        mall_models.Order.update(status=target_status).dj_where(id=origin_order.id).execute()
+                        #mall_models.Order.update(**order_params).dj_where(id=origin_order.id).execute()
+                        origin_order.record_status_log(operator_name, origin_order.status, target_status)
+                        origin_order.record_operation_log(operator_name, action, FATHER_ORDER)
         elif self.origin_order_id == -1:
             child_order = child_orders[0]
             mall_models.Order.update(**order_params).dj_where(id=child_order.id).execute()
