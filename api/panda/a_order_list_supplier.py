@@ -42,6 +42,7 @@ class AOrderListBySupplier(api_resource.ApiResource):
             orders = Order.from_ids({
                 'ids': order_ids
             })
+            orders = filter(lambda order: order.origin_order_id > 0, orders)
 
         orders = AOrderListBySupplier.filter_group_order(orders)
         orders = AOrderListBySupplier.search_orders(orders, args)
@@ -114,6 +115,7 @@ class AOrderListBySupplier(api_resource.ApiResource):
             orders = Order.from_ids({
                 'ids': order_ids
             })
+            orders = filter(lambda order: order.origin_order_id > 0, orders)
 
         orders = AOrderListBySupplier.filter_group_order(orders)
         orders = AOrderListBySupplier.search_orders(orders, args)

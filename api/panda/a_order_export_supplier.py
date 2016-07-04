@@ -42,6 +42,7 @@ class AOrderExportBySupplier(api_resource.ApiResource):
             orders = Order.from_ids({
                 'ids': order_ids
             })
+            orders = filter(lambda order: order.origin_order_id > 0, orders)
         orders = AOrderExportBySupplier.filter_group_order(orders)
         orders = AOrderExportBySupplier.search_orders(orders, args)
         order_ids = [order.id for order in orders]
@@ -107,6 +108,7 @@ class AOrderExportBySupplier(api_resource.ApiResource):
             orders = Order.from_ids({
                 'ids': order_ids
             })
+            orders = filter(lambda order: order.origin_order_id > 0, orders)
         orders = AOrderExportBySupplier.filter_group_order(orders)
         orders = AOrderExportBySupplier.search_orders(orders, args)
 
@@ -193,4 +195,5 @@ class AOrderExportBySupplier(api_resource.ApiResource):
                 filter_order_ids.append(order.order_id)
 
         orders = filter(lambda order: order.order_id not in filter_order_ids, orders)
+        orders = sorted(orders, key = lambda order: order.id, reverse=True)
         return orders
