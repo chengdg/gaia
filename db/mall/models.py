@@ -7,6 +7,7 @@ from eaglet.core.db import models
 from db.account.models import User, UserProfile
 from eaglet.core import watchdog
 import settings
+from business.mall.express import util as express_util
 
 DEFAULT_DATETIME = datetime.strptime('2000-01-01', '%Y-%m-%d')
 

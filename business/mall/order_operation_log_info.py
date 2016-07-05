@@ -26,6 +26,11 @@ class OrderOperationLogInfo(business_model.Model):
             self._init_slot_from_model(model)
 
     @staticmethod
+    def empty_order_operation_log_info(model=None):
+        order_operation_log_info = OrderOperationLogInfo(model)
+        return order_operation_log_info
+
+    @staticmethod
     @param_required(['order', 'child_orders'])
     def from_order(args):
         order = args['order']
@@ -48,3 +53,26 @@ class OrderOperationLogInfo(business_model.Model):
                     log['leader_name'] = child_order.leader_name
         logs.append(log)
         return logs
+
+    @staticmethod
+    @param_required(['order_id'])
+    def from_order_id(args):
+        order_operation_logs = mall_models.OrderOperationLog.select().dj_where(order_id=args['order_id'])
+        return [OrderOperationLogInfo(order_operation_log) for order_operation_log in order_operation_logs]
+
+    def get_orders_operation(self, orders, start_time=None, end_time=None, action=None):
+        print start_time, end_time, action
+        if start_time and end_time and action:
+            order_operation_logs = mall_models.OrderOperationLog.filter(created_at__gte=start_time, created_at__lt=end_time, action=action)
+            order_ids_in_delivery_intervale = [x.order_id for x in order_operation_logs]
+            return order_ids_in_delivery_intervale
+        else:
+            return None
+
+    def  from_order_id_action(self, order_id, action):
+        order_operation_logs = mall_models.OrderOperationLog.select().dj_where(order_id=order_id, action=action)
+        if order_operation_logs.first():
+            return OrderOperationLogInfo(order_operation_logs.first())
+        else:
+            return None
+

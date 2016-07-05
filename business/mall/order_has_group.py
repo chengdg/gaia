@@ -74,3 +74,12 @@ class OrderHasGroup(business_model.Model):
         mall_models.OrderHasGroup.update(
                 group_status=status
             ).dj_where(group_id=group_id).execute()
+
+    @staticmethod
+    @param_required(['webapp_id'])
+    def from_webapp_id(args):
+        order_has_groups = mall_models.OrderHasGroup.select().dj_where(webapp_id=args['webapp_id'])
+        if order_has_groups.count() !=0:
+            return [x  for x in order_has_groups]
+        else:
+            return None

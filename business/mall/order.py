@@ -6,11 +6,13 @@ from eaglet.core import api_resource
 from business import model as business_model
 from db.mall import models as mall_models
 from db.express import models as express_models
+from db.account import models as account_models
 from util import regional_util
 
 from business.mall.order_products import OrderProducts
 from business.mall.express import util as express_util
 from business.tools.express_detail import ExpressDetail
+from business.mall.order_operation_log_info import OrderOperationLogInfo
 
 class Order(business_model.Model):
     """
@@ -88,67 +90,128 @@ class Order(business_model.Model):
     @param_required(['id'])
     def from_id(args):
         order_db_model = mall_models.Order.select().dj_where(id=args['id'])
-        if order_db_model.count() == 0:
+        if order_db_model.first():
+            return Order(order_db_model.first())
+        else:
             return None
-        order = Order(order_db_model.first())
-        #order.ship_area = regional_util.get_str_value_by_string_ids(order_db_model.area)
-        return order
 
     @staticmethod
     @param_required(['ids'])
     def from_ids(args):
-        orders = []
         order_models = list(mall_models.Order.select().dj_where(id__in=args['ids']))
         order_models.sort(lambda x,y: cmp(y.id, x.id))
-
-        for order_model in order_models:
-            order = Order(order_model)
-            #order.ship_area = regional_util.get_str_value_by_string_ids(order_model.area)
-            orders.append(order)
-        return orders
+        return [Order(order_model) for order_model in order_models]
 
     @staticmethod
     @param_required(['origin_id'])
     def from_origin_id(args):
         order_db_models = mall_models.Order.select().dj_where(origin_order_id=args['origin_id'])
-        orders = []
-        for order_model in order_db_models:
-            order = Order(order_model)
-            #order.ship_area = regional_util.get_str_value_by_string_ids(order_model.area)
-            orders.append(order)
-        return orders
+        return [Order(order_model) for order_model in order_db_models]
 
     @staticmethod
     @param_required(['order_ids'])
     def from_order_ids(args):
-        orders = []
         order_models = mall_models.Order.select().dj_where(order_id__in=args['order_ids'])
-
-        for order_model in order_models:
-            order = Order(order_model)
-            orders.append(order)
-        return orders
+        return [Order(order_model) for order_model in order_models]
 
     @staticmethod
     @param_required(['order_id'])
     def from_order_id(args):
-        if mall_models.Order.select().dj_where(order_id=args['order_id']).count() == 0:
-            return None
         order_db_model = mall_models.Order.select().dj_where(order_id=args['order_id']).first()
-        order = Order(order_db_model)
-        #order.ship_area = regional_util.get_str_value_by_string_ids(order_db_model.area)
-        return order
+        if order_db_model:
+            return Order(order_db_model)
+        else:
+            return None
 
     @staticmethod
-    @param_required(['supplier_ids'])
+    @param_required(['supplier_ids']) #供货商
     def from_suppliers(args):
         order_db_models = mall_models.Order.select().dj_where(supplier__in=args['supplier_ids'])
-        orders = []
-        for order_model in order_db_models:
-            order = Order(order_model)
-            orders.append(order)
-        return orders
+        return [Order(order_model) for order_model in order_db_models]
 
+    @staticmethod
+    @param_required(['owner_id'])  #商品所属账号的user id ,获取此用户下所有订单列表
+    def from_owner_id(args):
+        user_db_model = account_models.User.select().dj_where(id=args['owner_id']).first()
+        if user_db_model:
+            userprofile_obj = account_models.UserProfile.select().dj_where(user=user_db_model).first()
+            if userprofile_obj:
+                orders = mall_models.Order.select().dj_where(webapp_id=userprofile_obj.webapp_id)
+                if orders.count() != 0:
+
+                    return [Order(order) for order in orders], orders
+                return None, None
+            else:
+                return None, None
+        else:
+            return None, None
+
+    @staticmethod
+    def from_filter_params(args):      # 获取订单列表时用到，不要随便用
+        print 'filter_--------====================', args
+        filter_params = args['db_filter_params']
+        orders_select_query = args['orders_select_query']
+        special_filter_param = args['special_filter_param']
+        filter_datetime_param = args['filter_datetime_param']
+        other_params = args['other_params']
+        order_list = []
+        if filter_datetime_param:
+            date_interval_type = filter_datetime_param['date_interval_type']
+            if  date_interval_type == '1':  # 下单时间
+                filter_params.update({
+                    'created_at__gte': filter_datetime_param['_begin'], 
+                    'created_at__lt': filter_datetime_param['_end']})
+            elif date_interval_type == '2':  # 付款时间
+                filter_params.update({
+                    'payment_time__gte': filter_datetime_param['_begin'], 
+                    'payment_time__lt': filter_datetime_param['_end']}) 
+            elif  date_interval_type == '3': # 发货时间
+                order_operation_log_info = OrderOperationLogInfo.empty_order_operation_log_info()
+                orders_operation_log_info_ids = order_operation_log_info.get_orders_operation(orders_select_query, start_time=filter_datetime_param['_begin'], end_time=filter_datetime_param['_end'], action="订单发货")
+                if not orders_operation_log_info_ids:
+                    orders_operation_log_info_ids.append('')
+                filter_params.update({'order_id__in': orders_operation_log_info_ids})
+
+            elif  date_interval_type == '4': # 退款时间
+                pass
+            elif date_interval_type == '5': #退款完成时间
+                pass
+            elif date_interval_type == '6': # 订单完成时间
+                pass
+            elif date_interval_type == '7': # 订单取消时间
+                pass
+            else:
+                pass
+
+        elif 'is_used_weizoom_card' in special_filter_param:
+                if special_filter_param['is_used_weizoom_card']:
+                    # orders_select_query = orders_select_query.where(mall_models.Order.weizoom_card_money>0)
+                    filter_params.update({'weizoom_card_money__gt': 0})
+                else:
+                    special_filter_param.pop('is_used_weizoom_card')
+        print filter_params
+        orders = orders_select_query.filter(**filter_params) if len(filter_params) != 0 else orders_select_query
+        if 'sort_attr' in other_params:
+            if '-' in other_params['sort_attr']:
+                orders = orders.order_by(mall_models.Order.created_at.desc())
+        if orders.count() != 0:
+            for order in orders:
+                order_obj = Order(order)
+                flag = False
+                if 'product_name' in special_filter_param:
+                    for product in order_obj.products:
+                        if  special_filter_param['product_name'] in product['name']:
+                            flag = True
+                            break
+                if flag:
+                    order_list.append(order_obj)
+
+                if not special_filter_param:
+                    order_list.append(order_obj)
+
+            return order_list
+        else:
+            return None
 
     @property
     def is_group_buy(self):
@@ -160,6 +223,10 @@ class Order(business_model.Model):
     @is_group_buy.setter
     def is_group_buy(self, value):
         self.context['_is_group_buy'] = value
+
+    @property
+    def is_used_weizoom_card(self):
+        return float(self.context['db_model'].weizoom_card_money) > 0
 
     @property
     def express_details(self):
@@ -242,3 +309,33 @@ class Order(business_model.Model):
     @property
     def is_sub_order(self):
         return self.origin_order_id > 0
+
+    def get_order_actions(self):
+        pass
+
+    def order_handle_filter(self, action=None):
+        order_operation_log_info = OrderOperationLogInfo.empty_order_operation_log_info()
+        order_operation_log_info_obj = order_operation_log_info.from_order_id_action(self.context['db_model'].order_id, action)
+        return order_operation_log_info_obj       
+
+    @property
+    def order_cancel(self):
+        return self.order_handle_filter(action='取消订单')
+
+    @property
+    def order_refound_time(self):
+        return self.order_handle_filter(action='退款')
+
+    @property
+    def order_refound_finish_time(self):
+        return self.order_handle_filter(action='退款完成')
+
+    @property
+    def  fackorders(self):
+        fackorders = mall_models.Order.select().dj_where(origin_order_id=self.context['db_model'].id)
+        if fackorders.count() != 0:
+            return [Order(order) for order in fackorders]
+        else:
+            return None
+
+
