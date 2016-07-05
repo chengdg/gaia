@@ -23,8 +23,16 @@ class ABatchDelivery(api_resource.ApiResource):
         orders = OrderState.from_order_ids({'order_ids': order_ids})
         order_id2order = dict([(order.order_id, order) for order in orders])
         response_data = []
+        ship_order_ids = []
         for data in datas:
             if data['order_id'] in order_id2order:
+                if data['order_id'] in ship_order_ids:
+                    response_data.append({
+                        'order_id': data['order_id'],
+                        'result': False,
+                        'msg': u'不能对当前订单发货'
+                    })
+                    continue
                 express_company_name = data['express_company_name']
                 express_number = data['express_number']
                 operator_name = ''
@@ -35,6 +43,7 @@ class ABatchDelivery(api_resource.ApiResource):
                         'result': result,
                         'msg': msg
                     })
+                ship_order_ids.append(data['order_id'])
             else:
                 response_data.append({
                         'order_id': data['order_id'],
