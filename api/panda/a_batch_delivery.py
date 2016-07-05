@@ -29,7 +29,7 @@ class ABatchDelivery(api_resource.ApiResource):
                 express_number = data['express_number']
                 operator_name = ''
                 leader_name = ''
-                result, msg = order.ship(express_company_name, express_number, operator_name, leader_name)
+                result, msg = order_id2order[data['order_id']].ship(express_company_name, express_number, operator_name, leader_name)
                 response_data.append({
                         'order_id': data['order_id'],
                         'result': result,
