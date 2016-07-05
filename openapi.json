@@ -569,6 +569,80 @@
               }
             }
           }
+        },
+        "/mall/user_list": {
+          "get": {
+                "description": "商户列表",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "需要第几页的数据，默认第一页",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "page_count",
+                        "in": "query",
+                        "description": "每一页需要多少个商户数据，默认15条",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "properties": {
+                                        "users": {
+                                            "type": "array",
+                                            "description": "商户集合",
+                                            "items":{
+                                                "type": "object",
+                                                "properties": {
+                                                   "user_id": {
+                                                      "type": "integer",
+                                                      "description": "商户的user_id"
+
+                                                    },
+                                                    "webapp_id": {
+                                                      "type": "string",
+                                                      "description": "商户的weapp_id"
+                                                    },
+                                                    "store_name": {
+                                                      "type": "string",
+                                                      "description": "商户的商店名"
+
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "counts":{
+                                          "type": "integer",
+                                          "description": "总共有多少个有效的商户"
+                                        }
+
+                                    }
+                                },
+                                "errMsg": {
+                                    "type": "string"
+                                },
+                                "innerErrMsg": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
