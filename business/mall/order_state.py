@@ -192,10 +192,10 @@ class OrderState(Order):
                 1.快递接口访问（快递100或者是快递鸟接口访问）
                 2.发送邮件
         """
-        self.__send_ship_template_message()
         if is_100:
             self.__send_request_to_kuaidi()
 
+        self.__send_ship_template_message()
         self.__send_order_email(target_status)
 
         return True, ''
@@ -281,10 +281,10 @@ class OrderState(Order):
                 1.快递接口访问（快递100或者是快递鸟接口访问）
                 2.发送邮件
         """
-        self.__send_ship_template_message()
         if is_100:
             self.__send_request_to_kuaidi()
 
+        self.__send_ship_template_message()
         self.__send_order_email()
 
         return True, ''
