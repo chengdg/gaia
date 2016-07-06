@@ -89,9 +89,9 @@ class AOrderList(api_resource.ApiResource):
         order_list, order_select_query = Order.from_owner_id({'owner_id': args['owner_id']})
         # print order_list, order_select_query
 
-        # if not order_list or  not order_select_query:
-        #     msg = u'owner_id={0} 没有订单'.format(args['owner_id'])
-        #     order_list = []
+        if not order_list or  not order_select_query:
+            msg = u'owner_id={0} 没有订单'.format(args['owner_id'])
+            order_list = []
         if filter_param or special_filter_param or filter_datetime_param:   # 筛选
             # filter_param['owner_id'] = args['owner_id']
             # TODO 过滤各种可能性
