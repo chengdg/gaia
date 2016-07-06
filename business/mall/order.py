@@ -13,6 +13,7 @@ from business.mall.order_products import OrderProducts
 from business.mall.express import util as express_util
 from business.tools.express_detail import ExpressDetail
 from business.mall.order_operation_log_info import OrderOperationLogInfo
+from business.mall.order_status_log_info import OrderStatusLogInfo
 
 class Order(business_model.Model):
     """
@@ -171,16 +172,7 @@ class Order(business_model.Model):
                 if not orders_operation_log_info_ids:
                     orders_operation_log_info_ids.append('')
                 filter_params.update({'order_id__in': orders_operation_log_info_ids})
-            elif  date_interval_type == '4': # 退款时间
-                pass
-            elif date_interval_type == '5': #退款完成时间
-                pass
-            elif date_interval_type == '6': # 订单完成时间
-                pass
-            elif date_interval_type == '7': # 订单取消时间
-                pass
-            else:
-                pass
+
 
         elif 'is_used_weizoom_card' in special_filter_param:
                 if special_filter_param['is_used_weizoom_card']:
@@ -189,13 +181,32 @@ class Order(business_model.Model):
                 else:
                     special_filter_param.pop('is_used_weizoom_card')
         print filter_params
-        # try:
         if not orders_select_query:
             return []
         orders = orders_select_query.filter(**filter_params).order_by('-created_at') if len(filter_params) != 0 else orders_select_query
-        if 'sort_attr' in other_params:
-            if '-' in other_params['sort_attr']:
-                orders = orders.order_by(mall_models.Order.created_at.desc())
+        def order_status_log(to_status, start_time, end_time):
+            o_d = []
+            for order in orders:
+                order_status_log_infos = mall_models.OrderStatusLog.select().dj_where(order_id=order.order_id, 
+                        to_status=to_status, 
+                        created_at__gte=start_time, 
+                        created_at__lt=end_time)
+                if  order_status_log_infos.count() != 0:
+                    o_d.append(Order(order))
+            return o_d
+
+        if filter_datetime_param:
+            date_interval_type = filter_datetime_param['date_interval_type']
+            if  date_interval_type == '4': # 退款时间
+                return order_status_log(mall_models.ORDER_STATUS_REFUNDING, filter_datetime_param['_begin'], filter_datetime_param['_end'])
+            elif date_interval_type == '5': #退款完成时间
+                return order_status_log(mall_models.ORDER_STATUS_REFUNDED, filter_datetime_param['_begin'], filter_datetime_param['_end'])
+            elif date_interval_type == '6': # 订单完成时间
+                return order_status_log(mall_models.ORDER_STATUS_SUCCESSED, filter_datetime_param['_begin'], filter_datetime_param['_end'])
+            elif date_interval_type == '7': # 订单取消时间
+                return order_status_log(mall_models.ORDER_STATUS_CANCEL, filter_datetime_param['_begin'], filter_datetime_param['_end'])
+            else:
+                pass                   
         if orders.count() != 0:
             for order in orders:
                 order_obj = Order(order)
@@ -207,7 +218,6 @@ class Order(business_model.Model):
                             break
                 if flag:
                     order_list.append(order_obj)
-
                 if not special_filter_param:
                     order_list.append(order_obj)
             return order_list
@@ -322,6 +332,11 @@ class Order(business_model.Model):
     @property
     def order_refound_finish_time(self):
         return self.order_handle_filter(action='退款完成')
+
+    @property
+    def order_finish_time(self):
+        order_status_log_info = OrderStatusLogInfo(self)
+        print order_status_log_info
 
     @property
     def  fackorders(self):

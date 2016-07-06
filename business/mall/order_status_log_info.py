@@ -15,7 +15,6 @@ class OrderStatusLogInfo(business_model.Model):
 
     def __init__(self, order):
         business_model.Model.__init__(self)
-
         if order:
             self.logs = self.__create_order_log(order)
         else:

@@ -89,6 +89,8 @@ class AOrderList(api_resource.ApiResource):
         order_list, order_select_query = Order.from_owner_id({'owner_id': args['owner_id']})
         # print order_list, order_select_query
 
+        # import pdb
+        # pdb.set_trace()
         if not order_list and  not order_select_query:
             msg = u'owner_id={0} 没有订单'.format(args['owner_id'])
             order_list = []
