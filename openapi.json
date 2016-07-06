@@ -322,28 +322,28 @@
               {
                   "name": "responsible_person",
                   "in": "query",
-                  "description": “负责人",
+                  "description": "负责人",
                   "required": true,
                   "type": "string"
               },
               {
                 "name": "supplier_tel",
                 "in": "query",
-                "description": “供货商电话",
+                "description": "供货商电话",
                 "required": true,
                 "type": "string"
               },
               {
                 "name": "supplier_address",
                 "in": "query",
-                "description": “供货商地址",
+                "description": "供货商地址",
                 "required": true,
                 "type": "string"
               },
               {
                 "name": "remark",
                 "in": "query",
-                "description": “备注",
+                "description": "备注",
                 "required": false,
                 "type": "string"
               }
@@ -621,6 +621,10 @@
                                                       "type": "string",
                                                       "description": "商户的商店名"
 
+                                                    },
+                                                    "user_name":{
+                                                      "type": "string",
+                                                      "description": "商户的用户名"
                                                     }
                                                 }
                                             }

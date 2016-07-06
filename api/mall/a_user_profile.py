@@ -16,7 +16,7 @@ class AUserProfileList(api_resource.ApiResource):
     """
 
     app = 'mall'
-    resource = 'user_profile_list'
+    resource = 'user_list'
 
     @param_required(['page', 'page_count'])
     def get(self):
@@ -37,7 +37,8 @@ class AUserProfileList(api_resource.ApiResource):
         for user in data.get('users'):
             temp = {'user_id': user.user_id,
                     'webapp_id': user.webapp_id,
-                    'store_name': user.store_name}
+                    'store_name': user.store_name,
+                    'user_name': user.username}
             result.append(temp)
         return {
             'users': result,
