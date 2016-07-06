@@ -344,6 +344,16 @@ class Order(business_model.Model):
         return self.context['db_model'].get_str_area
 
     @property
+    def get_pay_money(self):
+        # 订单总额order.final_price + order.weizoom_card_money
+        return self.final_price + self.weizoom_card_money
+
+    @property
+    def get_save_money(self):
+        # 优惠金额
+        return '0'
+
+    @property
     def get_order_actions(self):
         '''
         所有action:

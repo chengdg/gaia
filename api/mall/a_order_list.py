@@ -120,8 +120,8 @@ class AOrderList(api_resource.ApiResource):
                 'refound_time':  order.order_refound_time, #退款时间
                 'refound_finish_time': order.order_refound_finish_time, #退款完成时间
                 'finish_time':  '', #订单完成时间
-                'save_money': '',# 优惠金额
-                'pay_money': '', # 订单总额order.final_price + order.weizoom_card_money
+                'save_money': order.get_save_money,# 优惠金额
+                'pay_money': order.get_pay_money, # 订单总额order.final_price + order.weizoom_card_money
                 'parent_action': '', # 主订单可操作行为
                 'groups':  groups, #group
                 'member_is_subscribed': '', # 会员是否关注
