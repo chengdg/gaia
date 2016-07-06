@@ -351,7 +351,7 @@ class Order(business_model.Model):
     @property
     def get_save_money(self):
         # 优惠金额
-        return '0'
+        return 0
 
     @property
     def get_order_actions(self):

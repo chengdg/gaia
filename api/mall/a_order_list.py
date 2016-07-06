@@ -91,7 +91,7 @@ class AOrderList(api_resource.ApiResource):
 
         if not order_list or  not order_select_query:
             msg = u'owner_id={0} 不存在'.format(args['owner_id'])
-            return msg
+            return {}
         if filter_param or special_filter_param or filter_datetime_param:   # 筛选
             # filter_param['owner_id'] = args['owner_id']
             # TODO 过滤各种可能性
@@ -111,7 +111,7 @@ class AOrderList(api_resource.ApiResource):
                 'total_price': order.context['db_model'].get_total_price(),
                 'come': order.context['db_model'].order_source,
                 'pay_interface_name': order.context['db_model'].get_pay_interface_name,
-                'order_status': order.context['db_model'].get_status_text(),
+                'order_status': order.get_status_text,
                 'express_number': order.context['db_model'].express_number,
                 'remark': order.context['db_model'].remark,
                 'pay_time': order.context['db_model'].payment_time,
@@ -120,8 +120,8 @@ class AOrderList(api_resource.ApiResource):
                 'refound_time':  order.order_refound_time, #退款时间
                 'refound_finish_time': order.order_refound_finish_time, #退款完成时间
                 'finish_time':  '', #订单完成时间
-                'save_money': order.get_save_money,# 优惠金额
-                'pay_money': order.get_pay_money, # 订单总额order.final_price + order.weizoom_card_money
+                'save_money': float('%.2f' % order.get_save_money),# 优惠金额
+                'pay_money': float('%.2f' % order.get_pay_money), # 订单总额order.final_price + order.weizoom_card_money
                 'parent_action': '', # 主订单可操作行为
                 'groups':  groups, #group
                 'member_is_subscribed': '', # 会员是否关注
