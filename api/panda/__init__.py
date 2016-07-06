@@ -5,3 +5,4 @@ import a_order_detail
 import a_order_export
 import a_order_list_supplier
 import a_order_export_supplier
+import a_batch_delivery

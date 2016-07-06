@@ -26,10 +26,23 @@ class AOrderExportBySupplier(api_resource.ApiResource):
         """
         supplier_ids = args['supplier_ids'].split("_")
         supplier_ids = [id for id in supplier_ids if id]
+        product_ids = args.get('product_ids', "")
+        product_ids = product_ids.split("_") if product_ids else []
+        product_ids = [id for id in product_ids if id]
 
-        orders = Order.from_suppliers({
-                'supplier_ids': supplier_ids
+        if supplier_ids:
+            orders = Order.from_suppliers({
+                    'supplier_ids': supplier_ids
+                })
+        if product_ids:
+            relations = OrderProductRelation.get_for_product({
+                'product_ids': product_ids
             })
+            order_ids = [relation.order_id for relation in relations]
+            orders = Order.from_ids({
+                'ids': order_ids
+            })
+            orders = filter(lambda order: order.origin_order_id > 0, orders)
         orders = AOrderExportBySupplier.filter_group_order(orders)
         orders = AOrderExportBySupplier.search_orders(orders, args)
         order_ids = [order.id for order in orders]
@@ -79,10 +92,23 @@ class AOrderExportBySupplier(api_resource.ApiResource):
         """
         supplier_ids = args['supplier_ids'].split("_")
         supplier_ids = [id for id in supplier_ids if id]
+        product_ids = args.get('product_ids', "")
+        product_ids = product_ids.split("_") if product_ids else []
+        product_ids = [id for id in product_ids if id]
 
-        orders = Order.from_suppliers({
-                'supplier_ids': supplier_ids
+        if supplier_ids:
+            orders = Order.from_suppliers({
+                    'supplier_ids': supplier_ids
+                })
+        if product_ids:
+            relations = OrderProductRelation.get_for_product({
+                'product_ids': product_ids
             })
+            order_ids = [relation.order_id for relation in relations]
+            orders = Order.from_ids({
+                'ids': order_ids
+            })
+            orders = filter(lambda order: order.origin_order_id > 0, orders)
         orders = AOrderExportBySupplier.filter_group_order(orders)
         orders = AOrderExportBySupplier.search_orders(orders, args)
 
@@ -169,4 +195,5 @@ class AOrderExportBySupplier(api_resource.ApiResource):
                 filter_order_ids.append(order.order_id)
 
         orders = filter(lambda order: order.order_id not in filter_order_ids, orders)
+        orders = sorted(orders, key = lambda order: order.id, reverse=True)
         return orders

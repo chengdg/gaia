@@ -9,6 +9,7 @@ from business.mall.order import Order
 from business.mall.order_items import OrderItems
 from business.mall.product import Product
 from business.mall.order_has_group import OrderHasGroup
+from business.mall.product_model_property_value import ProductModelPropertyValue
 from db.mall import models as mall_models
 from business.account.user_profile import UserProfile
 
@@ -26,10 +27,24 @@ class AOrderListBySupplier(api_resource.ApiResource):
         """
         supplier_ids = args['supplier_ids'].split("_")
         supplier_ids = [id for id in supplier_ids if id]
+        product_ids = args.get('product_ids', "")
+        product_ids = product_ids.split("_") if product_ids else []
+        product_ids = [id for id in product_ids if id]
 
-        orders = Order.from_suppliers({
-                'supplier_ids': supplier_ids
+        if supplier_ids:
+            orders = Order.from_suppliers({
+                    'supplier_ids': supplier_ids
+                })
+        if product_ids:
+            relations = OrderProductRelation.get_for_product({
+                'product_ids': product_ids
             })
+            order_ids = [relation.order_id for relation in relations]
+            orders = Order.from_ids({
+                'ids': order_ids
+            })
+            orders = filter(lambda order: order.origin_order_id > 0, orders)
+
         orders = AOrderListBySupplier.filter_group_order(orders)
         orders = AOrderListBySupplier.search_orders(orders, args)
         #分页
@@ -46,7 +61,28 @@ class AOrderListBySupplier(api_resource.ApiResource):
         products = Product.from_ids({'product_ids': product_ids})
         id2product = dict(([product.id, product] for product in products))
         order_id2product_info = {}
+        #商品规格
+        product_model_names = [relation.product_model_name for relation in relations if relation.product_model_name != 'standard']
+        model_value_ids = []
+        model_property_ids = []
+        for product_model_name in product_model_names:
+            for model_name in product_model_name.split('_'):
+                model_value_ids.append(int(model_name.split(':')[1]))
+                model_property_ids.append(int(model_name.split(':')[0]))
+
+        product_property_values = ProductModelPropertyValue.from_ids_and_property_ids({
+                'ids': model_value_ids,
+                'property_ids': model_property_ids
+            })
+        product_model_value2name = dict([('%d:%d' % (product_property_value.property_id, product_property_value.id), product_property_value.name) for product_property_value in product_property_values])
+
         for relation in relations:
+            product_model_name = relation.product_model_name
+            model_names = []
+            if product_model_name != 'standard':
+                for model_name in product_model_name.split('_'):
+                    model_names.append(product_model_value2name[model_name])
+
             if relation.order_id in order_id2product_info:
                 order_id2product_info[relation.order_id].append({
                                         'id': relation.product_id,
@@ -54,7 +90,8 @@ class AOrderListBySupplier(api_resource.ApiResource):
                                         'price': relation.price,
                                         'total_price': relation.total_price,
                                         'purchase_price': relation.purchase_price,
-                                        'weight': id2product[relation.product_id].weight
+                                        'weight': id2product[relation.product_id].weight,
+                                        'model_names': model_names
                                     })
             else:
                 order_id2product_info[relation.order_id] = [{
@@ -63,7 +100,8 @@ class AOrderListBySupplier(api_resource.ApiResource):
                                         'price': relation.price,
                                         'total_price': relation.total_price,
                                         'purchase_price': relation.purchase_price,
-                                        'weight': id2product[relation.product_id].weight
+                                        'weight': id2product[relation.product_id].weight,
+                                        'model_names': model_names
                                     }]
         order_infos = []
         for order in orders:
@@ -85,10 +123,24 @@ class AOrderListBySupplier(api_resource.ApiResource):
         """
         supplier_ids = args['supplier_ids'].split("_")
         supplier_ids = [id for id in supplier_ids if id]
+        product_ids = args.get('product_ids', "")
+        product_ids = product_ids.split("_") if product_ids else []
+        product_ids = [id for id in product_ids if id]
 
-        orders = Order.from_suppliers({
-                'supplier_ids': supplier_ids
+        if supplier_ids:
+            orders = Order.from_suppliers({
+                    'supplier_ids': supplier_ids
+                })
+        if product_ids:
+            relations = OrderProductRelation.get_for_product({
+                'product_ids': product_ids
             })
+            order_ids = [relation.order_id for relation in relations]
+            orders = Order.from_ids({
+                'ids': order_ids
+            })
+            orders = filter(lambda order: order.origin_order_id > 0, orders)
+
         orders = AOrderListBySupplier.filter_group_order(orders)
         orders = AOrderListBySupplier.search_orders(orders, args)
         #分页
@@ -105,7 +157,27 @@ class AOrderListBySupplier(api_resource.ApiResource):
         products = Product.from_ids({'product_ids': product_ids})
         id2product = dict(([product.id, product] for product in products))
         order_id2product_info = {}
+        #商品规格
+        product_model_names = [relation.product_model_name for relation in relations if relation.product_model_name != 'standard']
+        model_value_ids = []
+        model_property_ids = []
+        for product_model_name in product_model_names:
+            for model_name in product_model_name.split('_'):
+                model_value_ids.append(int(model_name.split(':')[1]))
+                model_property_ids.append(int(model_name.split(':')[0]))
+
+        product_property_values = ProductModelPropertyValue.from_ids_and_property_ids({
+                'ids': model_value_ids,
+                'property_ids': model_property_ids
+            })
+        product_model_value2name = dict([('%d:%d' % (product_property_value.property_id, product_property_value.id), product_property_value.name) for product_property_value in product_property_values])
+
         for relation in relations:
+            product_model_name = relation.product_model_name
+            model_names = []
+            if product_model_name != 'standard':
+                for model_name in product_model_name.split('_'):
+                    model_names.append(product_model_value2name[model_name])
             if relation.order_id in order_id2product_info:
                 order_id2product_info[relation.order_id].append({
                                         'id': relation.product_id,
@@ -113,7 +185,8 @@ class AOrderListBySupplier(api_resource.ApiResource):
                                         'price': relation.price,
                                         'total_price': relation.total_price,
                                         'purchase_price': relation.purchase_price,
-                                        'weight': id2product[relation.product_id].weight
+                                        'weight': id2product[relation.product_id].weight,
+                                        'model_names': model_names
                                     })
             else:
                 order_id2product_info[relation.order_id] = [{
@@ -122,7 +195,8 @@ class AOrderListBySupplier(api_resource.ApiResource):
                                         'price': relation.price,
                                         'total_price': relation.total_price,
                                         'purchase_price': relation.purchase_price,
-                                        'weight': id2product[relation.product_id].weight
+                                        'weight': id2product[relation.product_id].weight,
+                                        'model_names': model_names
                                     }]
         order_infos = []
         for order in orders:
@@ -180,4 +254,5 @@ class AOrderListBySupplier(api_resource.ApiResource):
                 filter_order_ids.append(order.order_id)
 
         orders = filter(lambda order: order.order_id not in filter_order_ids, orders)
+        orders = sorted(orders, key = lambda order: order.id, reverse=True)
         return orders
