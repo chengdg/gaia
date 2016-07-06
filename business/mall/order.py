@@ -189,6 +189,9 @@ class Order(business_model.Model):
                 else:
                     special_filter_param.pop('is_used_weizoom_card')
         print filter_params
+        # try:
+        if not orders_select_query:
+            return []
         orders = orders_select_query.filter(**filter_params).order_by('-created_at') if len(filter_params) != 0 else orders_select_query
         if 'sort_attr' in other_params:
             if '-' in other_params['sort_attr']:
