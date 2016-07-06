@@ -160,16 +160,6 @@ class AOrderList(api_resource.ApiResource):
             group_order_ids = [r.order_id for r in group_order_relations]
         else:
             group_order_ids = []
-        print  group_order_ids
-        actions =  [
-                {
-                  'action': 'pay',
-                  'class_name': 'xa-pay',
-                  'name': u'\u652f\u4ed8',
-                  'button_class': 'btn-success'
-                },
-
-        ]
        # 微众系列子订单
         if order.is_has_fackorder: #有子订单
             pass
