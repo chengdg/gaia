@@ -140,11 +140,11 @@ class Order(business_model.Model):
                 if orders.count() != 0:
 
                     return [Order(order) for order in orders], orders
-                return None, None
+                return [], None
             else:
-                return None, None
+                return [], None
         else:
-            return None, None
+            return [], None
 
     @staticmethod
     def from_filter_params(args):      # 获取订单列表时用到，不要随便用
@@ -189,7 +189,7 @@ class Order(business_model.Model):
                 else:
                     special_filter_param.pop('is_used_weizoom_card')
         print filter_params
-        orders = orders_select_query.filter(**filter_params) if len(filter_params) != 0 else orders_select_query
+        orders = orders_select_query.filter(**filter_params).order_by('-created_at') if len(filter_params) != 0 else orders_select_query
         if 'sort_attr' in other_params:
             if '-' in other_params['sort_attr']:
                 orders = orders.order_by(mall_models.Order.created_at.desc())
