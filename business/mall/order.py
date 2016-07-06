@@ -171,7 +171,6 @@ class Order(business_model.Model):
                 if not orders_operation_log_info_ids:
                     orders_operation_log_info_ids.append('')
                 filter_params.update({'order_id__in': orders_operation_log_info_ids})
-
             elif  date_interval_type == '4': # 退款时间
                 pass
             elif date_interval_type == '5': #退款完成时间
@@ -208,7 +207,6 @@ class Order(business_model.Model):
 
                 if not special_filter_param:
                     order_list.append(order_obj)
-
             return order_list
         else:
             return None
@@ -278,11 +276,7 @@ class Order(business_model.Model):
         products = self.context.get('products', None)
         if not products:
             #try:
-            products = OrderProducts.get_for_order({
-                #'webapp_owner': self.context['webapp_owner'],
-                #'webapp_user': self.context['webapp_user'],
-                'order': self,
-            }).products
+            products = OrderProducts.get_for_order({'order': self }).products
             # except:
             #     import sys
             #     a, b, c = sys.exc_info()
@@ -290,7 +284,6 @@ class Order(business_model.Model):
             #     print b
             #     import traceback
             #     traceback.print_tb(c)
-
             self.context['products'] = products
 
         return products
@@ -309,9 +302,6 @@ class Order(business_model.Model):
     @property
     def is_sub_order(self):
         return self.origin_order_id > 0
-
-    def get_order_actions(self):
-        pass
 
     def order_handle_filter(self, action=None):
         order_operation_log_info = OrderOperationLogInfo.empty_order_operation_log_info()
@@ -337,5 +327,134 @@ class Order(business_model.Model):
             return [Order(order) for order in fackorders]
         else:
             return None
+
+    @property
+    def is_fackorder(self):
+        return self.context['db_model'].is_sub_order
+    @property
+    def is_has_fackorder(self):
+        return self.context['db_model'].has_sub_order
+
+    @property
+    def get_status_text(self):
+        return self.context['db_model'].get_status_text()
+
+    @property
+    def get_str_area(self):
+        return self.context['db_model'].get_str_area
+
+    @property
+    def get_order_actions(self):
+        '''
+        所有action:
+        ORDER_PAY_ACTION
+        ORDER_SHIP_ACTION
+        ORDER_FINISH_ACTION
+        ORDER_CANCEL_ACTION
+        ORDER_REFUNDIND_ACTION
+        ORDER_UPDATE_PRICE_ACTION
+        ORDER_UPDATE_EXPREDSS_ACTION
+        ORDER_REFUND_SUCCESS_ACTION
+        '''
+        ORDER_PAY_ACTION = {
+            'name': u'支付',
+            'action': 'pay',
+            'class_name': 'xa-pay',
+            'button_class': 'btn-success'
+        }
+        ORDER_SHIP_ACTION = {
+            'name': u'发货',
+            'action': 'ship',
+            'class_name': 'xa-order-delivery',
+            'button_class': 'btn-danger'
+        }
+        ORDER_FINISH_ACTION = {
+            'name': u'标记完成',
+            'action': 'finish',
+            'class_name': 'xa-finish',
+            'button_class': 'btn-success'
+        }
+        ORDER_CANCEL_ACTION = {
+            'name': u'取消订单',
+            'action': 'cancel',
+            'class_name': 'xa-cancelOrder',
+            'button_class': 'btn-danger'
+        }
+        ORDER_REFUNDIND_ACTION = {
+            'name': u'申请退款',
+            'action': 'return_pay',
+            'class_name': 'xa-refund',
+            'button_class': 'btn-danger'
+        }
+        ORDER_UPDATE_PRICE_ACTION = {
+            'name': u'修改价格',
+            'action': 'update_price',
+            'class_name': 'xa-update-price',
+            'button_class': 'btn-danger'
+        }
+        ORDER_UPDATE_EXPREDSS_ACTION = {
+            'name': u'修改物流',
+            'action': 'update_express',
+            'class_name': 'xa-order-delivery',
+            'button_class': 'btn-danger'
+        }
+        ORDER_REFUND_SUCCESS_ACTION = {
+            'name': u'退款成功',
+            'action': 'return_success',
+            'class_name': 'xa-refundSuccess',
+            'button_class': 'btn-danger'
+        }
+        PAY_INTERFACE_ALIPAY = mall_models.PAY_INTERFACE_ALIPAY
+        PAY_INTERFACE_TENPAY = mall_models.PAY_INTERFACE_TENPAY
+        PAY_INTERFACE_WEIXIN_PAY = mall_models.PAY_INTERFACE_WEIXIN_PAY
+        PAY_INTERFACE_COD = mall_models.PAY_INTERFACE_COD
+        PAY_INTERFACE_PREFERENCE = mall_models.PAY_INTERFACE_PREFERENCE
+        PAY_INTERFACE_BEST_PAY = mall_models.PAY_INTERFACE_BEST_PAY
+        PAY_INTERFACE_WEIZOOM_COIN = mall_models.PAY_INTERFACE_WEIZOOM_COIN
+
+        result = []
+        order = self.context['db_model']
+        status = order.status
+        if status == mall_models.ORDER_STATUS_NOT:
+            result = [ORDER_PAY_ACTION, ORDER_UPDATE_PRICE_ACTION, ORDER_CANCEL_ACTION]
+        elif status == mall_models.ORDER_STATUS_PAYED_NOT_SHIP:
+            if order.pay_interface_type in [PAY_INTERFACE_ALIPAY, PAY_INTERFACE_TENPAY, PAY_INTERFACE_WEIXIN_PAY, PAY_INTERFACE_BEST_PAY]:
+                result = [ORDER_SHIP_ACTION, ORDER_REFUNDIND_ACTION]
+            else:
+                result = [ORDER_SHIP_ACTION, ORDER_CANCEL_ACTION]
+        elif status == mall_models.ORDER_STATUS_PAYED_SHIPED:
+            actions = []
+            if order.pay_interface_type in [PAY_INTERFACE_ALIPAY, PAY_INTERFACE_TENPAY, PAY_INTERFACE_WEIXIN_PAY, PAY_INTERFACE_BEST_PAY]:
+                if order.express_company_name:
+                    actions = [ORDER_FINISH_ACTION, ORDER_UPDATE_EXPREDSS_ACTION, ORDER_REFUNDIND_ACTION]
+                else:
+                    actions = [ORDER_FINISH_ACTION, ORDER_REFUNDIND_ACTION]
+            else:
+                if order.express_company_name:
+                    actions = [ORDER_FINISH_ACTION, ORDER_UPDATE_EXPREDSS_ACTION, ORDER_CANCEL_ACTION]
+                else:
+                    actions = [ORDER_FINISH_ACTION, ORDER_CANCEL_ACTION]
+            result = actions
+        elif status == mall_models.ORDER_STATUS_PAYED_NOT_SHIP:
+            if order.pay_interface_type in [PAY_INTERFACE_ALIPAY, PAY_INTERFACE_TENPAY, PAY_INTERFACE_WEIXIN_PAY, PAY_INTERFACE_BEST_PAY]:
+                if order.express_company_name:
+                    result = [ORDER_REFUNDIND_ACTION, ORDER_UPDATE_EXPREDSS_ACTION]
+                else:
+                    result = [ORDER_REFUNDIND_ACTION]
+            else:
+                result = [ORDER_SHIP_ACTION, ORDER_CANCEL_ACTION]
+        elif status == mall_models.ORDER_STATUS_SUCCESSED:
+            if order.pay_interface_type in [PAY_INTERFACE_ALIPAY, PAY_INTERFACE_TENPAY, PAY_INTERFACE_WEIXIN_PAY, PAY_INTERFACE_BEST_PAY,
+                                            PAY_INTERFACE_COD]:
+                result = [ORDER_REFUNDIND_ACTION]
+            else:
+                result = [ORDER_CANCEL_ACTION]
+        # 团购订单去除订单取消，订单退款
+        if self.is_group_buy:
+            result = filter(lambda x: x not in [ORDER_CANCEL_ACTION, ORDER_REFUNDIND_ACTION], result)
+        return result
+
+
+
 
 

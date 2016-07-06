@@ -171,56 +171,30 @@ class AOrderList(api_resource.ApiResource):
 
         ]
        # 微众系列子订单
-        # fackorder_sons = order.fackorders
-        # if fackorder_sons:
-        #     for fackorder in fackorder_sons:
-        #         group_order = {
-        #             'id': fackorder.id,
-        #             'status': fackorder.context['db_model'].get_status_text,
-        #             "order_status": fackorder.status,
-        #             'express_company_name': fackorder.express_company_name,
-        #             'express_number': fackorder.express_number,
-        #             'leader_name': fackorder.leader_name,
-        #             'type': fackorder.type,
-        #             'actions': actions,
+        if order.is_has_fackorder: #有子订单
+            pass
+        else:
+            # import pdb
+            # pdb.set_trace()
 
-        #         }
-        #         if fackorder.supplier:
-        #             group = {
-        #                 'id': fackorder.supplier,
-        #                 'fackorder': group_order,
-        #                 "products": filter(lambda p: p['supplier'] == fackorder.supplier , order.products)
-        #             }
-        #         groups.append(group)
-        # else:
-        #     group_order = {
-        #         'id': order.id,
-        #         'status': order.context['db_model'].get_status_text(),
-        #         'order_status': order.status,
-        #         'express_company_name': order.express_company_name,
-        #         'express_number': order.express_number,
-        #         'leader_name': order.leader_name,
-        #         'type': order.type,
-        #         'actions': actions,                
-        #     }
-        #     # if order.supplier:
-        #     group = {
-        #         'id': order.supplier,
-        #         'fackorder': group_order,
-        #         "products": filter(lambda p: p['supplier'] == order.supplier , order.products)
-        #     }
-        #     groups.append(group)
-        group = {
-            'fackorder': {
-              'status': u'\u5f85\u652f\u4ed8',
-              'express_company_name': u'',
-              'express_number': u'',
-              'actions':actions,
-              'leader_name': u'',
-              'order_status': 0L,
-              'id': 65L
-            },
-            'products': order.products
-        }
-        groups.append(group)
+            group_order = {
+                'id': order.id,
+                'status': order.get_status_text,
+                'order_status': order.status,
+                'express_company_name': order.express_company_name,
+                'express_number': order.express_number,
+                'leader_name': order.leader_name,
+                'type': order.type,
+                 'actions': order.get_order_actions, 
+            } 
+            if order.supplier:
+                pass
+            else:
+                group = {
+                    'id': order.supplier,
+                    'fackorder': group_order,
+                    "products": order.products
+                }
+            groups.append(group)
         return groups
+
