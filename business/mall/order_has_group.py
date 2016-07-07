@@ -89,5 +89,5 @@ class OrderHasGroup(business_model.Model):
        order_has_group = mall_models.OrderHasGroup.select().dj_where(order_id=order_id).first()
        if order_has_group:
             return OrderHasGroup(order_has_group)
-        else:
+       else:
             return None
