@@ -83,3 +83,11 @@ class OrderHasGroup(business_model.Model):
             return [x  for x in order_has_groups]
         else:
             return None
+
+
+    def from_order_id(self, order_id):
+       order_has_group = mall_models.OrderHasGroup.select().dj_where(order_id=order_id).first()
+       if order_has_group:
+            return OrderHasGroup(order_has_group)
+        else:
+            return None

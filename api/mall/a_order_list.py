@@ -2,7 +2,7 @@
 import json
 from datetime import datetime
 
-from eaglet.core import api_resource, paginator
+from eaglet.core import api_resource, paginator, watchdog
 from eaglet.decorator import param_required
 
 from business.mall.order_product_relation import OrderProductRelation
@@ -93,6 +93,7 @@ class AOrderList(api_resource.ApiResource):
         # pdb.set_trace()
         if not order_list and  not order_select_query:
             msg = u'owner_id={0} 没有订单'.format(args['owner_id'])
+            watchdog.info(message=msg)
             order_list = []
         if filter_param or special_filter_param or filter_datetime_param:   # 筛选
             # filter_param['owner_id'] = args['owner_id']
@@ -104,7 +105,7 @@ class AOrderList(api_resource.ApiResource):
         count_per_page = int(args.get('count_per_page', 10))
         pageinfo, order_list = paginator.paginate(order_list, cur_page, count_per_page, query_string=args.get('query_string', ''))
         orders = []
-        for order in order_list:
+        for order in order_list[::-1]:
             order_obj = order.to_dict()
             # import pdb
             # pdb.set_trace()
@@ -121,13 +122,17 @@ class AOrderList(api_resource.ApiResource):
                 'cancel': order.order_cancel , # 取消订单时间
                 'refound_time':  order.order_refound_time, #退款时间
                 'refound_finish_time': order.order_refound_finish_time, #退款完成时间
-                'finish_time':  '', #订单完成时间
+                'finish_time':  order.order_finish_time, #订单完成时间
                 'save_money': float('%.2f' % order.get_save_money),# 优惠金额
                 'pay_money': float('%.2f' % order.get_pay_money), # 订单总额order.final_price + order.weizoom_card_money
                 'parent_action': '', # 主订单可操作行为
                 'groups':  groups, #group
-                'member_is_subscribed': '', # 会员是否关注
+                'member_is_subscribed': order.order_2_member.is_subscribed if order.order_2_member else 0, # 会员是否关注
+                'member_id': order.order_2_member.id if order.order_2_member else None,
+                'member_grade_id': order.order_2_member.grade.id if order.order_2_member else None,
             }
+            # import pdb
+            # pdb.set_trace()
             order_obj.update(rets)
             orders.append(order_obj)
         return {

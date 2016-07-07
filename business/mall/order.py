@@ -7,6 +7,7 @@ from business import model as business_model
 from db.mall import models as mall_models
 from db.express import models as express_models
 from db.account import models as account_models
+from db.member import models as member_models
 from util import regional_util
 
 from business.mall.order_products import OrderProducts
@@ -60,11 +61,9 @@ class Order(business_model.Model):
         'integral_each_yuan',
         'webapp_id',
         'webapp_user_id',
-        'member_id',
-        'member_grade_id',
+
         'member_grade_discount',
         'buyer_name',
-
         'weizoom_card_money',
         'delivery_time', # 配送时间字符串
         'is_first_order',
@@ -172,8 +171,6 @@ class Order(business_model.Model):
                 if not orders_operation_log_info_ids:
                     orders_operation_log_info_ids.append('')
                 filter_params.update({'order_id__in': orders_operation_log_info_ids})
-
-
         elif 'is_used_weizoom_card' in special_filter_param:
                 if special_filter_param['is_used_weizoom_card']:
                     # orders_select_query = orders_select_query.where(mall_models.Order.weizoom_card_money>0)
@@ -184,6 +181,7 @@ class Order(business_model.Model):
         if not orders_select_query:
             return []
         orders = orders_select_query.filter(**filter_params).order_by('-created_at') if len(filter_params) != 0 else orders_select_query
+        
         def order_status_log(to_status, start_time, end_time):
             o_d = []
             for order in orders:
@@ -238,6 +236,18 @@ class Order(business_model.Model):
     @property
     def is_used_weizoom_card(self):
         return float(self.context['db_model'].weizoom_card_money) > 0
+
+
+
+    @property
+    def order_2_member(self):
+        model = self.context['db_model']
+        member = member_models.WebAppUser.select().dj_where(id=model.webapp_user_id).first()
+        if member and member.member_id:
+            member_obj = member_models.Member.select().dj_where(id=member.member_id).first()
+            if member_obj:
+                return member_obj
+        return False
 
     @property
     def express_details(self):
@@ -335,8 +345,10 @@ class Order(business_model.Model):
 
     @property
     def order_finish_time(self):
-        order_status_log_info = OrderStatusLogInfo(self)
-        print order_status_log_info
+        order_status_log_info = mall_models.OrderStatusLog.select().dj_where(order_id=self.order_id,  to_status=mall_models.ORDER_STATUS_SUCCESSED)
+        if order_status_log_info.first():
+            return order_status_log_info.first().created_at
+        return ''
 
     @property
     def  fackorders(self):
