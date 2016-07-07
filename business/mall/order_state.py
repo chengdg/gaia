@@ -174,7 +174,7 @@ class OrderState(Order):
                     })
 
                 mall_models.Order.update(**order_params).dj_where(id=order.origin_order_id).execute()
-                origin_order.record_operation_log(operator_name, action, OrderState.FATHER_ORDER)
+                origin_order.record_operation_log(operator_name, action, FATHER_ORDER)
         else:
             #当前订单为父订单，并且只有一个子订单，则同步更新子订单
             #TODO order对象增加获取子订单数量函数
