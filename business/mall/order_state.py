@@ -173,7 +173,7 @@ class OrderState(Order):
                     "id": order.origin_order_id
                     })
 
-                Order.update(**order_params).dj_where(id=order.origin_order_id).execute()
+                mall_models.Order.update(**order_params).dj_where(id=order.origin_order_id).execute()
                 origin_order.record_operation_log(operator_name, action, OrderState.FATHER_ORDER)
         else:
             #当前订单为父订单，并且只有一个子订单，则同步更新子订单
