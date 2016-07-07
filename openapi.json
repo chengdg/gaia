@@ -322,28 +322,28 @@
               {
                   "name": "responsible_person",
                   "in": "query",
-                  "description": "负责人",
+                  "description": “负责人",
                   "required": true,
                   "type": "string"
               },
               {
                 "name": "supplier_tel",
                 "in": "query",
-                "description": "供货商电话",
+                "description": “供货商电话",
                 "required": true,
                 "type": "string"
               },
               {
                 "name": "supplier_address",
                 "in": "query",
-                "description": "供货商地址",
+                "description": “供货商地址",
                 "required": true,
                 "type": "string"
               },
               {
                 "name": "remark",
                 "in": "query",
-                "description": "备注",
+                "description": “备注",
                 "required": false,
                 "type": "string"
               }
@@ -621,10 +621,6 @@
                                                       "type": "string",
                                                       "description": "商户的商店名"
 
-                                                    },
-                                                    "user_name":{
-                                                      "type": "string",
-                                                      "description": "商户的用户名"
                                                     }
                                                 }
                                             }
@@ -647,6 +643,334 @@
                     }
                 }
             }
+        },
+         "/mall/order_list/": {
+            "get": {
+                "description": "获取订单列表",
+                "parameters": [
+                    {
+                        "name": "owner_id",
+                        "in": "query",
+                        "description": "商品所属账号的user id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "cur_page",
+                        "in": "query",
+                        "description": "分页器当前请求页",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "count_per_page",
+                        "in": "query",
+                        "description": "分页器每页显示数量",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "ship_name",
+                        "in": "query",
+                        "description": "发货地址",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "ship_tel",
+                        "in": "query",
+                        "description": "收货电话",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "product_name",
+                        "in": "query",
+                        "description": "商品名称",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "pay_type",
+                        "in": "query",
+                        "description": "支付方式：参考weapp.mall.models.PAYTYPE2NAME",
+                        "required": false,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "express_number",
+                        "in": "query",
+                        "description": "快递号",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "source",
+                        "in": "query",
+                        "description": "订单来源：1:商城；0本店",
+                        "required": false,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "订单状态：  0  待支付：已下单，未付款  \n1  已取消：取消订单(回退销量)  \n 2  已支付：已下单，已付款，已不存此状态  \n3  待发货：已付款，未发货  \n4  已发货：已付款，已发货  \n5  已完成：为已完成状态  \n6  退款中  \n7  退款完成(回退销量)   \n8  团购退款（没有退款完成按钮）  \n9  团购退款完成",
+                        "required": false,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "is_used_weizoom_card",
+                        "in": "query",
+                        "description": "是否使用微众卡",
+                        "required": false,
+                        "type": "boolean"
+                    },
+                    {
+                        "name": "date_interval",
+                        "in": "query",
+                        "description": "查询时间：2014-10-07|2014-10-08，注：使用‘|’区分，该参数和date_interval_type结合使用",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "date_interval_type",
+                        "in": "query",
+                        "description": "时间类型：1 下单时间 2 付款时间 3 发货时间 4 退款时间 5 退款完成时间 6 订单完成时间 7 订单取消时间",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "is_first_order",
+                        "in": "query",
+                        "description": "是否首单",
+                        "required": false,
+                        "type": "boolean"
+                    },
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "description": "订单类型：  \n object : 普通商品  \n integral: 积分商品  \n virtual: 第三方虚拟商品 (目前仅微众商城有此类)  \n delivery: 套餐商品  \n wzcard: 微众电子卡订单  \n thanks_card: 贺卡订单 ",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "supplier_type",
+                        "in": "query",
+                        "description": "订单供货商类型（仅自营平台具有供货商功能）：  \n 0 : 同步供货商  \n 1: 自建供货商  \n ",
+                        "required": false,
+                        "type": "integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "properties": {
+                                        "orders": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/Order"
+                                            }
+                                        }
+                                    }
+                                },
+                                "errMsg": {
+                                    "type": "string"
+                                },
+                                "innerErrMsg": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
+    },
+    "definitions": {
+        "Order": {
+            "type": "object",
+            "properties": {
+                "order_id": {
+                    "type": "string",
+                    "description": "订单编号."
+                },
+                "status": {
+                    "type": "string",
+                    "description": "订单状态"
+                },
+                "total_price": {
+                    "type": "string",
+                    "description": "订单金额（实付金额RMB）."
+                },
+                "ship_name": {
+                    "type": "string",
+                    "description": "收货人"
+                },
+                "ship_address": {
+                    "type": "string",
+                    "description": "收获地址"
+                },
+                "ship_tel": {
+                    "type": "string",
+                    "description": "收获电话"
+                },
+                "bill_type": {
+                    "type": "string",
+                    "description": "发票类型"
+                },
+                "bill": {
+                    "type": "string",
+                    "description": "发票信息"
+                },
+                "buyer_name": {
+                    "type": "string",
+                    "description": "购买人"
+                },
+                "product_count": {
+                    "type": "string",
+                    "description": "购买商品数量"
+                },
+                "payment_time": {
+                    "type": "string",
+                    "description": "支付时间"
+                },
+                "member_id": {
+                    "type": "string",
+                    "description": "会员id"
+                },
+                "member_is_subscribed": {
+                    "type": "boolean",
+                    "description": "会员是否关注"
+                },
+                "come": {
+                    "type": "string",
+                    "description": "订单来源：weizoom_mall：微众商城；mine_mall：本店"
+                },
+                "type": {
+                    "type": "string",
+                    "description": "订单类型"
+                },
+                "integral": {
+                    "type": "string",
+                    "description": "订单使用积分"
+                },
+                "pay_interface_type": {
+                    "type": "string",
+                    "description": "支付类型"
+                },
+                "pay_interface_name": {
+                    "type": "string",
+                    "description": "支付方式"
+                },
+                "order_status": {
+                    "type": "string",
+                    "description": "订单状态"
+                },
+                "express_company_name": {
+                    "type": "string",
+                    "description": "快递名称"
+                },
+                "express_number": {
+                    "type": "string",
+                    "description": "快递号"
+                },
+                "leader_name": {
+                    "type": "string",
+                    "description": "负责人"
+                },
+                "remark": {
+                    "type": "string",
+                    "description": "订单备注"
+                },
+                "postage": {
+                    "type": "string",
+                    "description": "快递费"
+                },
+                "created_at": {
+                    "type": "string",
+                    "description": "订单创建时间"
+                },
+                "delivery_time": {
+                    "type": "string",
+                    "description": "发货时间"
+                },
+                "pay_time": {
+                    "type": "string",
+                    "description": "付款时间"
+                },
+                "cancel_time": {
+                    "type": "string",
+                    "description": "取消订单时间"
+                },
+                "refound_time": {
+                    "type": "string",
+                    "description": "退款时间"
+                },
+                "refound_finish_time": {
+                    "type": "string",
+                    "description": "退款完成时间"
+                },
+                "finish_time": {
+                    "type": "string",
+                    "description": "订单完成时间"
+                },
+                "save_money": {
+                    "type": "string",
+                    "description": "优惠金额"
+                },
+                "weizoom_card_money": {
+                    "type": "string",
+                    "description": "微众卡金额"
+                },
+                "pay_money": {
+                    "type": "string",
+                    "description": "订单总额order.final_price + order.weizoom_card_money"
+                },
+                "edit_money": {
+                    "type": "string",
+                    "description": "修改后金额"
+                },
+                "is_first_order": {
+                    "type": "boolean",
+                    "description": "是否首单"
+                },
+                "supplier_user_id": {
+                    "type": "string",
+                    "description": "供货商id"
+                },
+                "total_purchase_price": {
+                    "type": "string",
+                    "description": "采购价"
+                },
+                "is_group_buying": {
+                    "type": "boolean",
+                    "description": "是否团购订单"
+                },
+                "parent_action": {
+                    "type": "array",
+                    "description": "主订单可操作行为",
+                    "items": {
+                        "$ref": "#/definitions/Actions"
+                    }
+                },
+                "groups": {
+                    "type": "array",
+                    "description": "group",
+                    "items": {
+                        "$ref": "#/definitions/Actions"
+                    }
+                }
+            }
+        },
+        "Actions": {}
     }
 }
