@@ -16,7 +16,7 @@ from db.mall import models as mall_models
 
 class AOrderDetail(api_resource.ApiResource):
     """
-    订单列表
+    订单详情
     """
 
     app = 'mall'
