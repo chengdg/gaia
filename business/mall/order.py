@@ -329,7 +329,10 @@ class Order(business_model.Model):
     def order_handle_filter(self, action=None):
         order_operation_log_info = OrderOperationLogInfo.empty_order_operation_log_info()
         order_operation_log_info_obj = order_operation_log_info.from_order_id_action(self.context['db_model'].order_id, action)
-        return order_operation_log_info_obj       
+        if order_operation_log_info_obj:
+            return order_operation_log_info_obj.created_at
+        else:
+            return None
 
     @property
     def order_cancel(self):
@@ -347,6 +350,10 @@ class Order(business_model.Model):
     def order_finish_time(self):
         order_status_log_info = mall_models.OrderStatusLog.select().dj_where(order_id=self.order_id,  to_status=mall_models.ORDER_STATUS_SUCCESSED)
         if order_status_log_info.first():
+            # import pdb
+            # pdb.set_trace()
+            print '------------------------------------'
+            print self.order_id
             return order_status_log_info.first().created_at
         return ''
 
@@ -489,6 +496,8 @@ class Order(business_model.Model):
                 result = [ORDER_REFUNDIND_ACTION]
             else:
                 result = [ORDER_CANCEL_ACTION]
+        # elif status == mall_models.ORDER_STATUS_REFUNDING:
+        #     result = [ORDER_REFUND_SUCCESS_ACTION]
         # 团购订单去除订单取消，订单退款
         if self.is_group_buy:
             result = filter(lambda x: x not in [ORDER_CANCEL_ACTION, ORDER_REFUNDIND_ACTION], result)
