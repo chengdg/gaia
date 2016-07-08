@@ -29,3 +29,13 @@ class AProductStatus(api_resource.ApiResource):
                     'is_deleted': product.is_deleted
                 })
         return {'product_status': product_status}
+
+    @param_required(['product_ids'])
+    def post(args):
+        product_ids = args['product_ids'].split("_")
+        product_ids = [id for id in product_ids if id]
+
+        products = Product.from_ids({'product_ids': product_ids})
+        id2created_at = dict([(product.id, product.created_at) for product in products])
+
+        return id2created_at
