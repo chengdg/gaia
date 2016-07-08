@@ -23,9 +23,9 @@ class AGroupUpdateOrder(api_resource.ApiResource):
             'group_id':args['group_id'],
             'status':args['status']
         },"ONLINE")
-        return 500,{
-            'reason':'stop'
-        }
+        # return 500,{
+        #     'reason':'stop'
+        # }
 
         status = args['status']
         group_id = args['group_id']
