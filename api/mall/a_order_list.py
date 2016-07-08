@@ -81,6 +81,11 @@ class AOrderList(api_resource.ApiResource):
                     special_filter_param[key] = args[key]
                 elif key == 'sort_attr':
                     other_params[key] = args[key]
+                elif key == 'supplier_type':
+                    if int(args[key])  == 0: 
+                        filter_param['origin_order_id__gt'] = 0
+                    else:
+                        filter_param['origin_order_id__eq'] = 0
                 else:
                     filter_param[key] = args[key]
         # print filter_param
@@ -110,6 +115,8 @@ class AOrderList(api_resource.ApiResource):
             # import pdb
             # pdb.set_trace()
             groups = AOrderList.get_order_groups(order)
+            parent_action = order.get_order_actions if len(groups) > 1 else None
+
             rets = {
                 'total_price': order.context['db_model'].get_total_price(),
                 'come': order.context['db_model'].order_source,
@@ -125,7 +132,7 @@ class AOrderList(api_resource.ApiResource):
                 'finish_time':  order.order_finish_time, #订单完成时间
                 'save_money': float('%.2f' % order.get_save_money),# 优惠金额
                 'pay_money': float('%.2f' % order.get_pay_money), # 订单总额order.final_price + order.weizoom_card_money
-                'parent_action': '', # 主订单可操作行为
+                'parent_action': parent_action, # 主订单可操作行为
                 'groups':  groups, #group
                 'member_is_subscribed': order.order_2_member.is_subscribed if order.order_2_member else 0, # 会员是否关注
                 'member_id': order.order_2_member.id if order.order_2_member else None,
@@ -136,8 +143,8 @@ class AOrderList(api_resource.ApiResource):
             order_obj.update(rets)
             orders.append(order_obj)
         return {
-            'orders': orders,
             'pageinfo': pageinfo.to_dict(),
+            'orders': orders,
         }
 
     @staticmethod
@@ -168,12 +175,31 @@ class AOrderList(api_resource.ApiResource):
         else:
             group_order_ids = []
        # 微众系列子订单
+        import pdb
+        pdb.set_trace()
         if order.is_has_fackorder: #有子订单
-            pass
-        else:
-            # import pdb
-            # pdb.set_trace()
+            for fackorder in order.fackorders:
+                group_order = {
+                    'id': fackorder.id,
+                    'status': fackorder.get_status_text,
+                    "order_status": fackorder.status,
+                    'express_company_name': fackorder.express_company_name,
+                    'express_number': fackorder.express_number,
+                    'leader_name': fackorder.leader_name,
+                    'type': fackorder.type,
+                    'actions': fackorder.get_order_actions,
+                }
+                if fackorder.supplier_user_id:
+                    group = {
+                        'supplier_user_id': fackorder.supplier_user_id,
+                        "fackorder": group_order,
+                        "products": fackorder.products
+                    }
+                groups.append(group)
 
+        else:
+            import pdb
+            pdb.set_trace()
             group_order = {
                 'id': order.id,
                 'status': order.get_status_text,
@@ -184,14 +210,21 @@ class AOrderList(api_resource.ApiResource):
                 'type': order.type,
                  'actions': order.get_order_actions, 
             } 
-            if order.supplier:
-                pass
-            else:
-                group = {
-                    'id': order.supplier,
-                    'fackorder': group_order,
-                    "products": order.products
-                }
+            group = {
+                'id': order.supplier,
+                'fackorder': group_order,
+                "products": order.products
+            }
+            if order.supplier_user_id:
+                # import pdb
+                # pdb.set_trace()
+                fackorder = order.fackorders
+                if fackorder and len(fackorder) == 1:
+                    group = {
+                        "supplier_user_id": fackorder.supplier_user_id,
+                        "fackorder": group_order,
+                         "products": fackorder.products
+                    }
             groups.append(group)
         return groups
 
