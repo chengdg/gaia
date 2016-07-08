@@ -8,6 +8,7 @@ from db.mall import models as mall_models
 from business.mall.order_has_group import OrderHasGroup
 from business.mall.order import Order
 from business.mall.order_state import OrderState
+from eaglet.core import watchdog
 
 class AGroupUpdateOrder(api_resource.ApiResource):
     """
@@ -18,9 +19,14 @@ class AGroupUpdateOrder(api_resource.ApiResource):
 
     @param_required(['group_id', 'status'])
     def post(args):
+        watchdog.alert({
+            'group_id':args['group_id'],
+            'status':args['status']
+        },"ONLINE")
         return 500,{
             'reason':'stop'
         }
+
         status = args['status']
         group_id = args['group_id']
         operator_name = args.get('operator_name', "")
