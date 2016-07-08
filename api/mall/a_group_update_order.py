@@ -19,13 +19,15 @@ class AGroupUpdateOrder(api_resource.ApiResource):
 
     @param_required(['group_id', 'status'])
     def post(args):
-        watchdog.alert({
-            'group_id':args['group_id'],
-            'status':args['status']
-        },"ONLINE")
-        return 500,{
-            'reason':'stop'
-        }
+        # watchdog.alert({
+        #     'group_id':args['group_id'],
+        #     'status':args['status'],
+        #     'xid':'xx'
+        # },"ONLINE")
+        print('-----------xx',args['group_id'],args['status'])
+        # return 500,{
+        #     'reason':'stop'
+        # }
 
         status = args['status']
         group_id = args['group_id']
