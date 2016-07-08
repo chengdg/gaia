@@ -19,6 +19,7 @@ class AGroupUpdateOrder(api_resource.ApiResource):
 
     @param_required(['group_id', 'status'])
     def post(args):
+        print('------online',args['group_id'])
         watchdog.alert({
             'order_id':args['group_id'],
             'xid':'begin'
@@ -57,6 +58,7 @@ class AGroupUpdateOrder(api_resource.ApiResource):
                         info = order.return_money()
                         order.updat_status(mall_models.ORDER_STATUS_GROUP_REFUNDING)
                 else:
+                    print('--------online cancel',order.order_id)
                     watchdog.alert({
                         'order_id':order.order_id,
                         'group_id':group_id,
