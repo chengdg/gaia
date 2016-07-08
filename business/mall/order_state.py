@@ -308,7 +308,15 @@ class OrderState(Order):
         # 返回优惠券
 
         # 返回微众卡
+        watchdog.alert({
+            'order_id':self.order_id,
+            'xid':'cancel1'
+        })
         if self.weizoom_card_money:
+            watchdog.alert({
+                'order_id': self.order_id,
+                'xid': 'cancel2'
+            })
             self.__return_wzcard()
 
         # 记录操作日志、更改状态

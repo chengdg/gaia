@@ -3,6 +3,7 @@
 import json
 
 from eaglet.core import api_resource
+from eaglet.core import watchdog
 from eaglet.decorator import param_required
 from db.mall import models as mall_models
 from business.mall.order_has_group import OrderHasGroup
@@ -18,9 +19,7 @@ class AGroupUpdateOrder(api_resource.ApiResource):
 
     @param_required(['group_id', 'status'])
     def post(args):
-        return 500,{
-            'reason':'stop'
-        }
+
         status = args['status']
         group_id = args['group_id']
         operator_name = args.get('operator_name', "")
@@ -55,6 +54,11 @@ class AGroupUpdateOrder(api_resource.ApiResource):
                         info = order.return_money()
                         order.updat_status(mall_models.ORDER_STATUS_GROUP_REFUNDING)
                 else:
+                    watchdog.alert({
+                        'order_id':order.order_id,
+                        'group_id':group_id,
+                        'xid':'group_update_order'
+                    })
                     info = order.cancel()
             msg.append(info)
         return {"msg": msg}
