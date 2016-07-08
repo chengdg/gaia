@@ -173,6 +173,8 @@ class AOrderExportBySupplier(api_resource.ApiResource):
             orders = filter(lambda order: order.webapp_id == webapp_id, orders)
         if start_time and end_time:
             orders = filter(lambda order: order.created_at.strftime('%Y-%m-%d %H:%M:%S') >= start_time and order.created_at.strftime('%Y-%m-%d %H:%M:%S') <= end_time, orders)
+
+        orders = filter(lambda order: (order.status in [3,4,5,6,7]) or (order.status == 1 and order.payment_time.strftime('%Y-%m-%d %H:%M:%S') > "2000-01-01 00:00:00"), orders)
         return orders
 
     @staticmethod
