@@ -125,6 +125,8 @@ class AOrderExportBySupplier(api_resource.ApiResource):
             if relation.order_id in order_id2product_info:
                 order_id2product_info[relation.order_id].append({
                                         'id': relation.product_id,
+                                        'name': id2product[relation.product_id].name,
+                                        'thumbnails_url': id2product[relation.product_id].thumbnails_url,
                                         'count': relation.number,
                                         'price': relation.price,
                                         'total_price': relation.total_price,
@@ -134,6 +136,8 @@ class AOrderExportBySupplier(api_resource.ApiResource):
             else:
                 order_id2product_info[relation.order_id] = [{
                                         'id': relation.product_id,
+                                        'name': id2product[relation.product_id].name,
+                                        'thumbnails_url': id2product[relation.product_id].thumbnails_url,
                                         'count': relation.number,
                                         'price': relation.price,
                                         'total_price': relation.total_price,
