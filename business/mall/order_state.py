@@ -78,6 +78,10 @@ class OrderState(Order):
 
     def record_status_log(self, operator_name, from_status, to_status):
         try:
+            watchdog.alert({
+                'xid':'record_status_log',
+                'order_id':self.order_id
+            },'ONLINE')
             mall_models.OrderStatusLog.create(
                 order_id = self.order_id,
                 from_status = from_status,
@@ -311,7 +315,7 @@ class OrderState(Order):
         watchdog.alert({
             'order_id':self.order_id,
             'xid':'cancel1'
-        })
+        },'ONLINE')
         if self.weizoom_card_money:
             watchdog.alert({
                 'order_id': self.order_id,

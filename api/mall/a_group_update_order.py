@@ -58,7 +58,7 @@ class AGroupUpdateOrder(api_resource.ApiResource):
                         'order_id':order.order_id,
                         'group_id':group_id,
                         'xid':'group_update_order'
-                    })
+                    },'ONLINE')
                     info = order.cancel()
             msg.append(info)
         return {"msg": msg}
