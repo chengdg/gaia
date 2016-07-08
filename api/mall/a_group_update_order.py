@@ -18,6 +18,9 @@ class AGroupUpdateOrder(api_resource.ApiResource):
 
     @param_required(['group_id', 'status'])
     def post(args):
+        return 500,{
+            'reason':'stop'
+        }
         status = args['status']
         group_id = args['group_id']
         operator_name = args.get('operator_name', "")
