@@ -34,6 +34,8 @@ class AOrder(api_resource.ApiResource):
         if order:
             if action == "finish":
                 result, msg = order.finish(operator_name)
+            elif action == "cancel":
+                result, msg = order.cancel(operator_name)
             else:
                 result, msg = False, 'no action'
         else:
