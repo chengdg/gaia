@@ -95,6 +95,7 @@ class OrderState(Order):
         """
         order_id = self.order_id
         if type == FATHER_ORDER:
+            # 通过子订单更新对应母订单的信息（为什么是FATHER_ORDER）
             if self.origin_order_id > 0:
                 origin_order = Order.from_id({
                     "id":self.origin_order_id
@@ -113,6 +114,7 @@ class OrderState(Order):
                 order_id = origin_order.order_id
 
         elif type == CHILD_ORDER:
+            # 通过母订单更新子订单的信息
             if mall_models.Order.select().dj_where(origin_order_id=self.id).count() == 1:
                 child_order = Order.from_origin_id({
                     "origin_id":self.id
@@ -261,14 +263,13 @@ class OrderState(Order):
 
             if len(child_orders) == 1: #只有一个供货商的话，自订单和母订单是同步的
                 mall_models.Order.update(**order_params).dj_where(id=origin_order.id).execute()
-            else:
-                if origin_order.status != min(children_order_status):
-                    #所有子订单全部发货更新父订单
-                    if min(children_order_status) == target_status: #and len(children_order_status) > 1:
-                        mall_models.Order.update(status=target_status).dj_where(id=origin_order.id).execute()
-                        #mall_models.Order.update(**order_params).dj_where(id=origin_order.id).execute()
-                        origin_order.record_status_log(operator_name, origin_order.status, target_status)
-                        origin_order.record_operation_log(operator_name, action, FATHER_ORDER)
+            if origin_order.status != min(children_order_status):
+                #所有子订单全部发货更新父订单
+                if min(children_order_status) == target_status: #and len(children_order_status) > 1:
+                    mall_models.Order.update(status=target_status).dj_where(id=origin_order.id).execute()
+                    #mall_models.Order.update(**order_params).dj_where(id=origin_order.id).execute()
+                    origin_order.record_status_log(operator_name, origin_order.status, target_status)
+                    origin_order.record_operation_log(operator_name, action, FATHER_ORDER)
         elif self.origin_order_id == -1:
             child_order = child_orders[0]
             mall_models.Order.update(**order_params).dj_where(id=child_order.id).execute()
@@ -315,16 +316,16 @@ class OrderState(Order):
 
         # 当前为主订单
         self.record_status_log(operator_name, self.status, target_status)
-        self.record_operation_log(operator_name, action, CHILD_ORDER)
+        self.record_operation_log(operator_name, action)
         mall_models.Order.update(status=target_status).dj_where(id=self.id).execute()
-        print 'cancel', self.child_order_count
         if self.child_order_count > 0:
+            mall_models.Order.update(status=target_status).dj_where(origin_order_id=self.id).execute()
             child_orders = OrderState.from_origin_id({
-                "origin_id": self.origin_order_id
+                "origin_id": self.id
             })
             for child_order in child_orders:
                 child_order.record_status_log(operator_name, child_order.status, target_status)
-                child_order.record_operation_log(operator_name, action, CHILD_ORDER)
+                child_order.record_operation_log(operator_name, action)
 
         # 返回商品库存、销量
 
@@ -338,7 +339,7 @@ class OrderState(Order):
         # 处理子订单、母订单
 
         self.__send_order_email()
-        return u"订单%s取消成功！" % self.order_id
+        return True, u"订单%s取消成功！" % self.order_id
 
     def refunding(self, operator_name=u'系统'):
         """
@@ -348,18 +349,19 @@ class OrderState(Order):
         action = '退款中'
 
         self.record_status_log(operator_name, self.status, target_status)
-        self.record_operation_log(operator_name, action, CHILD_ORDER)
+        self.record_operation_log(operator_name, action)
         mall_models.Order.update(status=target_status).dj_where(id=self.id).execute()
         print 'refunding', self.child_order_count
         if self.child_order_count > 0:
+            mall_models.Order.update(status=target_status).dj_where(origin_order_id=self.id).execute()
             child_orders = OrderState.from_origin_id({
-                "origin_id": self.origin_order_id
+                "origin_id": self.id
             })
             for child_order in child_orders:
                 child_order.record_status_log(operator_name, child_order.status, target_status)
-                child_order.record_operation_log(operator_name, action, CHILD_ORDER)
+                child_order.record_operation_log(operator_name, action)
 
-        return u"订单%s正在退款！" % self.order_id
+        return True, u"订单%s正在退款！" % self.order_id
 
     def refund(self, operator_name=u'系统'):
         """
@@ -375,16 +377,17 @@ class OrderState(Order):
 
         # 当前为主订单
         self.record_status_log(operator_name, self.status, target_status)
-        self.record_operation_log(operator_name, action, CHILD_ORDER)
+        self.record_operation_log(operator_name, action)
         mall_models.Order.update(status=target_status).dj_where(id=self.id).execute()
         print 'refund', self.child_order_count
         if self.child_order_count > 0:
+            mall_models.Order.update(status=target_status).dj_where(origin_order_id=self.id).execute()
             child_orders = OrderState.from_origin_id({
-                "origin_id": self.origin_order_id
+                "origin_id": self.id
             })
             for child_order in child_orders:
                 child_order.record_status_log(operator_name, child_order.status, target_status)
-                child_order.record_operation_log(operator_name, action, CHILD_ORDER)
+                child_order.record_operation_log(operator_name, action)
 
         # 返回商品库存、销量
         self.__restore_product()
