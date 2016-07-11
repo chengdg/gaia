@@ -175,8 +175,8 @@ class AOrderList(api_resource.ApiResource):
         else:
             group_order_ids = []
        # 微众系列子订单
-        import pdb
-        pdb.set_trace()
+        # import pdb
+        # pdb.set_trace()
         if order.is_has_fackorder: #有子订单
             for fackorder in order.fackorders:
                 group_order = {
@@ -195,11 +195,17 @@ class AOrderList(api_resource.ApiResource):
                         "fackorder": group_order,
                         "products": fackorder.products
                     }
+                if fackorder.supplier:
+                    group = {
+                        'id': fackorder.supplier_user_id,
+                        "fackorder": group_order,
+                        "products": fackorder.products
+                    }              
                 groups.append(group)
 
         else:
-            import pdb
-            pdb.set_trace()
+            # import pdb
+            # pdb.set_trace()
             group_order = {
                 'id': order.id,
                 'status': order.get_status_text,
@@ -225,6 +231,12 @@ class AOrderList(api_resource.ApiResource):
                         "fackorder": group_order,
                          "products": fackorder.products
                     }
+            if fackorder.supplier:
+                group = {
+                    "id": fackorder.supplier,
+                    "fackorder": group_order,
+                    "products": filter(lambda p: p['supplier'] == fackorder.supplier , products)
+                }                
             groups.append(group)
         return groups
 

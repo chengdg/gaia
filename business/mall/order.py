@@ -420,11 +420,24 @@ class Order(business_model.Model):
         PAY_INTERFACE_PREFERENCE = mall_models.PAY_INTERFACE_PREFERENCE
         PAY_INTERFACE_BEST_PAY = mall_models.PAY_INTERFACE_BEST_PAY
         PAY_INTERFACE_WEIZOOM_COIN = mall_models.PAY_INTERFACE_WEIZOOM_COIN
-
-        result = []
+        mall_type = 0
+        is_list_parent = False
+        multi_child_orders = False
         order = self.context['db_model']
         status = order.status
+        # 平台类型, 商户　平台
+        userprofile_obj = account_models.UserProfile.select().dj_where(webapp_id=order.webapp_id).first()
+        if userprofile_obj:
+            mall_type = userprofile_obj.webapp_type
+        if self.is_group_buy:
+            is_list_parent = True
+        if len(self.fackorders) > 1 or status > mall_models.ORDER_STATUS_CANCEL:
+            multi_child_orders = True
+
+        result = []
         is_refund = True if status in [mall_models.ORDER_STATUS_REFUNDING, mall_models.ORDER_STATUS_GROUP_REFUNDING] else False    # TODO 需要判断
+        # import pdb
+        # pdb.set_trace()
 
         if not is_refund:
             if status == mall_models.ORDER_STATUS_NOT:
@@ -461,6 +474,8 @@ class Order(business_model.Model):
                     result = [ORDER_REFUNDIND_ACTION]
                 else:
                     result = [ORDER_CANCEL_ACTION]
+                # import pdb
+                # pdb.set_trace()
         elif is_refund:
             if status == mall_models.ORDER_STATUS_REFUNDING:
                 result = [ORDER_REFUND_SUCCESS_ACTION]
@@ -469,6 +484,34 @@ class Order(business_model.Model):
         # 团购订单去除订单取消，订单退款
         if self.is_group_buy:
             result = filter(lambda x: x not in [ORDER_CANCEL_ACTION, ORDER_REFUNDIND_ACTION], result)
+        # 订单列表页子订单
+        able_actions_for_sub_order = [ORDER_SHIP_ACTION, ORDER_UPDATE_EXPREDSS_ACTION, ORDER_FINISH_ACTION]
+
+        # 订单详情页有子订单
+        able_actions_for_detail_order_has_sub = [ORDER_PAY_ACTION, ORDER_SHIP_ACTION, ORDER_UPDATE_EXPREDSS_ACTION,
+                                                 ORDER_FINISH_ACTION]
+
+        # 订单列表页有子订单的父母订单
+        able_actions_for_list_parent = [ORDER_CANCEL_ACTION, ORDER_REFUNDIND_ACTION, ORDER_REFUND_SUCCESS_ACTION]
+
+        # 同步订单操作
+        sync_order_actions = [ORDER_PAY_ACTION, ORDER_UPDATE_PRICE_ACTION, ORDER_SHIP_ACTION, ORDER_UPDATE_EXPREDSS_ACTION, ORDER_FINISH_ACTION]
+        # 订单被同步后查看
+        if not mall_type and order.supplier_user_id:
+            result = filter(lambda x: x in sync_order_actions, result)
+        if not mall_type:
+            if (order.supplier or order.supplier_user_id) and is_detail_page:
+                result = filter(lambda x: x in able_actions_for_detail_order_has_sub, result)
+        if is_list_parent:
+            result = filter(lambda x: x in able_actions_for_list_parent, result)
+
+        # 团购订单去除订单取消，订单退款
+        if self.is_group_buy:
+            result = filter(lambda x: x not in [ORDER_CANCEL_ACTION, ORDER_REFUNDIND_ACTION], result)
+
+        if multi_child_orders:
+            result = filter(lambda x: x not in able_actions_for_list_parent, result)
+
         return result
 
 
