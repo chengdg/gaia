@@ -54,12 +54,14 @@ class AGroupUpdateOrder(api_resource.ApiResource):
                 if order.pay_interface_type == mall_models.PAY_INTERFACE_WEIXIN_PAY and order.status >= mall_models.ORDER_STATUS_PAYED_NOT_SHIP:
                     if is_test:
                         result, msg = order.refunding()
-                        order.updat_status(mall_models.ORDER_STATUS_GROUP_REFUNDING)
+                        if result:
+                            order.updat_status(mall_models.ORDER_STATUS_GROUP_REFUNDING)
                     else:
                         result, msg = order.refunding()
                         if result:
                             result, msg = order.return_money()
-                            order.updat_status(mall_models.ORDER_STATUS_GROUP_REFUNDING)
+                            if result:
+                                order.updat_status(mall_models.ORDER_STATUS_GROUP_REFUNDING)
                 else:
                     result, msg = order.cancel()
             order_msg.append({
