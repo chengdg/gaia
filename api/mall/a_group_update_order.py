@@ -43,24 +43,29 @@ class AGroupUpdateOrder(api_resource.ApiResource):
         order_ids = OrderHasGroup.get_group_order_ids({'group_id': group_id})
         orders = OrderState.from_order_ids({'order_ids': order_ids})
         if order_status == mall_models.ORDER_STATUS_PAYED_NOT_SHIP:
-            orders = filter(lambda order: order.status in [mall_models.ORDER_STATUS_PAYED_NOT_SHIP, mall_models.ORDER_STATUS_NOT], orders)
+            orders = filter(lambda order: order.status in [mall_models.ORDER_STATUS_PAYED_NOT_SHIP, mall_models.ORDER_STATUS_NOT] and order.origin_order_id <= 0, orders)
         else:
-            orders = filter(lambda order: order.status == order_status, orders)
-        msg = []
+            orders = filter(lambda order: order.status == order_status and order.origin_order_id <= 0, orders)
+        order_msg = []
         for order in orders:
-            info = ""
             if order_status == mall_models.ORDER_STATUS_NOT:
-                info = order.cancel()
+                result, msg = order.cancel()
             elif order_status == mall_models.ORDER_STATUS_PAYED_NOT_SHIP:
                 if order.pay_interface_type == mall_models.PAY_INTERFACE_WEIXIN_PAY and order.status >= mall_models.ORDER_STATUS_PAYED_NOT_SHIP:
                     if is_test:
-                        info = order.refunding()
+                        result, msg = order.refunding()
                         order.updat_status(mall_models.ORDER_STATUS_GROUP_REFUNDING)
                     else:
-                        order.refunding()
-                        info = order.return_money()
-                        order.updat_status(mall_models.ORDER_STATUS_GROUP_REFUNDING)
+                        result, msg = order.refunding()
+                        if result:
+                            result, msg = order.return_money()
+                            order.updat_status(mall_models.ORDER_STATUS_GROUP_REFUNDING)
                 else:
-                    info = order.cancel()
-            msg.append(info)
-        return {"msg": msg}
+                    result, msg = order.cancel()
+            order_msg.append({
+                    order.order_id: {
+                        'result': result,
+                        'msg': msg
+                    }
+                })
+        return {"msg": order_msg}

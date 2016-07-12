@@ -435,17 +435,13 @@ class OrderState(Order):
                 except:
                     logging.info(u"订单退款异常,\n{}".format(unicode_full_stack()))
                     watchdog.alert(u"订单退款异常,\n{}".format(unicode_full_stack()))
-                    return u"订单%s通知退退款异常" % self.order_id
+                    return False, u"订单%s通知退退款异常" % self.order_id
         if response['data'].get('is_success', ''):
-            self.refund()
-            mall_models.Order.update(
-                status=mall_models.ORDER_STATUS_GROUP_REFUNDING
-                ).dj_where(id=self.id).execute()
-            return u"订单%s通知退款成功" % self.order_id
+            return True, u"订单%s通知退款成功" % self.order_id
         else:
             logging.info(u"订单%s通知退款失败" % self.order_id)
             watchdog.alert(u"订单%s通知退款失败" % self.order_id)
-            return u"订单%s通知退款失败" % self.order_id
+            return False, u"订单%s通知退款失败" % self.order_id
 
     def finish(self, operator_name):
         target_status = mall_models.ORDER_STATUS_SUCCESSED
