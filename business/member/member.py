@@ -12,6 +12,7 @@ from datetime import datetime
 from eaglet.decorator import param_required
 
 from db.member import models as member_models
+from db.account import models as account_models
 
 import settings
 from eaglet.core import watchdog
@@ -33,7 +34,7 @@ class Member(business_model.Model):
         'username_hexstr',
         #'webapp_user',
         'is_subscribed',
-        'created',
+        'created_at',
         'token',
         'webapp_id',
         'pay_money',
@@ -74,12 +75,13 @@ class Member(business_model.Model):
         member_id = args['id']
         #try:
         member_db_model = member_models.Member.get(id=member_id)
-        return Member.from_model({
-            #'webapp_owner': webapp_owner,
-            'model': member_db_model
-        })
-        # except:
-        #     return None
+        if member_db_model:
+            return Member.from_model({
+                #'webapp_owner': webapp_owner,
+                'model': member_db_model
+            })
+        else:
+            return None
 
     # @staticmethod
     # @param_required(['webapp_owner', 'token'])
@@ -241,6 +243,14 @@ class Member(business_model.Model):
         return self.__info.name
 
     @property
+    def member_webapp_manager(self):
+        '''
+        店铺所有者
+        '''
+        account_user_profile = account_models.UserProfile.get(webapp_id=self.webapp_id)
+        return account_models.User.get(id=account_user_profile.manager_id)
+
+    @property
     def is_binded(self):
         """
         [property] 会员是否进行了绑定
@@ -364,3 +374,15 @@ class Member(business_model.Model):
                 return u'%s...' % output_str
         except:
             return self.username_for_html[:10]
+
+    @property
+    def get_db_model(self):
+        return self.context['db_model']
+
+    def update_member_integral(self,member_id, integral_count):
+        member = member_models.Member.select().dj_where(id=member_id).first()
+        if member:
+            integral_count += member.integral
+            return member.update(integral=integral_count).dj_where(id=member_id).execute()
+        else:
+            return None

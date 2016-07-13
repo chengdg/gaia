@@ -53,12 +53,12 @@ class WebAppUser(business_model.Model):
         """
         # webapp_owner = args['webapp_owner']
         member_id = args['member_id']
-        #try:
         model = member_models.WebAppUser.select().dj_where(member_id=member_id).first()
-        webapp_user = WebAppUser(model)
-        return webapp_user
-        # except:
-        #   return None
+        if model:
+            webapp_user = WebAppUser(model)
+            return webapp_user
+        else:
+          return None
 
     @staticmethod
     @param_required(['id'])
