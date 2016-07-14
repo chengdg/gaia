@@ -3,6 +3,9 @@ from eaglet.decorator import param_required
 
 from db.mall import models as mall_models
 from business import model as business_model
+from settings import PRODUCT_POOL_WEAPP_ID
+from business.account.user_profile import UserProfile
+
 
 class Product(business_model.Model):
     __slots__ = (
@@ -46,14 +49,13 @@ class Product(business_model.Model):
         'is_delivery',
         'buy_in_supplier',
 
-        'model',
-        'model_name',
         'is_model_deleted',
-        'custom_model_properties'
+        'custom_model_properties',
+        'model_type',
     )
 
     def __init__(self, model):
-        business_model.Model.__init__(self)
+        super(Product, self).__init__()
 
         self.context['db_model'] = model
         if model:
@@ -121,3 +123,115 @@ class Product(business_model.Model):
             product.custom_model_properties.sort(lambda x, y: cmp(x['id'], y['id']))
         else:
             product.custom_model_properties = None
+
+    @property
+    def models(self):
+        """
+
+        """
+        models = self.context.get('models', None)
+        if not models and self.id:
+            # return ProductTemplateProperty.from_template_id({"template_id": self.id})
+            pass
+        return models
+
+    @models.setter
+    def models(self, models):
+        """
+
+        """
+        self.context['models'] = models
+
+    def save(self, panda_product_id):
+        owner = UserProfile.from_webapp_id({'webapp_id': PRODUCT_POOL_WEAPP_ID})
+        product = mall_models.Product.create(
+            owner=owner.user_id,
+            name=self.name,
+            supplier=self.supplier,
+            detail=self.detail,
+            pic_url='',
+            introduction='',
+            thumbnails_url=self.thumbnails_url,
+            price=self.price,
+            weight=self.weight,
+            stock_type=0 if self.stock_type == 'unbound' else 1,
+            stocks=self.stocks if self.stocks else 0,
+            purchase_price=self.purchase_price
+
+        )
+        mall_models.PandaProductToProduct.create(
+            owner=owner.user_id,
+            panda_product_id=panda_product_id,
+            weapp_product=product.id,
+        )
+        new_product = Product(product)
+        if self.model_type == 'single':
+            product_model = ProductModel(None)
+            product_model.owner_id = owner.user_id
+            product_model.product_id = product.id
+            # 非定制规格
+            product_model.is_standard = True
+            product_model.stock_type = self.stock_type
+            product_model.stocks = self.stocks
+            product_model.price = self.price
+            product_model.weight = self.weight
+            new_product_model = product_model.save()
+            # 用来设置规格信息
+
+            new_product.models = [new_product_model]
+
+        else:
+            # 多个规格（定制）
+            pass
+        # 处理论播图
+        # TODO 处理论播图
+        return new_product
+
+
+class ProductModel(business_model.Model):
+
+    __slots__ = (
+        'id',
+        'owner_id',
+        'product_id',
+        'name',
+        'is_standard',
+        'price',
+        'stock_type',
+        'stocks',
+        'weight'
+    )
+
+    def __init__(self, model):
+        super(ProductModel, self).__init__()
+        self.context['db_model'] = model
+        if model:
+            self._init_slot_from_model(model)
+
+    def save(self):
+        product_model = mall_models.ProductModel.create(
+            owner=self.owner_id,
+            product=self.product_id,
+            name=self.name if self.name else '',
+            is_standard=self.is_standard,
+            price=self.price,
+            stock_type=0 if self.stock_type == 'unbound' else 1,
+            stocks=self.stocks if self.stocks else 0,
+            weight=self.weight
+        )
+        return ProductModel(product_model)
+
+
+class ProductSwipeImage(business_model.Model):
+    __slots__ = ()
+
+    def __init__(self, model):
+        super(ProductSwipeImage, self).__init__()
+        self.context['db_model'] = model
+        if model:
+            self._init_slot_from_model(model)
+        # mall_models.ProductSwipeImage
+        #     product = product,
+        #     url = swipe_image['url'],
+        #     width = swipe_image['width'],
+        #     height = swipe_image['height']

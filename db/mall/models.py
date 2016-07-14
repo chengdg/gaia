@@ -1482,3 +1482,18 @@ class ProductSearchRecord(models.Model):
         verbose_name = "商品搜索记录"
         verbose_name_plural = "商品搜索记录"
         db_table = "mall_product_search_record"
+
+
+class PandaProductToProduct(models.Model):
+	"""
+	panda同步过来的商品中间关系
+	"""
+	panda_product_id = models.IntegerField()
+	weapp_product = models.ForeignKey(Product)
+	is_deleted = models.BooleanField(default=False)
+	created_at = models.DateTimeField(auto_now_add=True)  # 添加时间
+
+	class Meta(object):
+		verbose_name = "panda同步过来的商品中间关系"
+		verbose_name_plural = "panda同步过来的商品中间关系"
+		db_table = "panda_product_to_product"

@@ -114,3 +114,6 @@ COMPONENT_INFO = {
 MAIL_NOTIFY_USERNAME = u'noreply@notice.weizoom.com'
 MAIL_NOTIFY_PASSWORD = u'Weizoom2015'
 MAIL_NOTIFY_ACCOUNT_SMTP = u'smtp.dm.aliyun.com'
+
+# 固定商品池的weapp_id
+PRODUCT_POOL_WEAPP_ID = 3183
