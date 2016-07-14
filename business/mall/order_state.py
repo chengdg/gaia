@@ -509,12 +509,12 @@ class OrderState(Order):
             #当前为主订单
             if child_order_count > 0:
                 child_orders = OrderState.from_origin_id({
-                    "origin_id": self.origin_order_id
+                    "origin_id": self.id
                     })
                 mall_models.Order.update(status=target_status).dj_where(origin_order_id=self.id).execute()
                 for child_order in child_orders:
                     child_order.record_status_log(operator_name, child_order.status, target_status)
-                    child_order.record_operation_log(operator_name, action, CHILD_ORDER)
+                    child_order.record_operation_log(operator_name, action)
             origin_order_id = self.id
 
         if origin_order_id:
