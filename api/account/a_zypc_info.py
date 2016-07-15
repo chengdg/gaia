@@ -6,6 +6,7 @@ from eaglet.decorator import param_required
 
 from business.account.user_profile import UserProfile
 
+
 class AZypcInfo(api_resource.ApiResource):
     """
     获取自营平台相关的信息

@@ -8,6 +8,7 @@ class Supplier(business_model.Model):
     __slots__ = (
         'id',
         'name',
+        'owner_id',
         'responsible_person',
         'supplier_tel',
         'supplier_address',
@@ -53,3 +54,15 @@ class Supplier(business_model.Model):
         for model in supplier_db_models:
             id2supplier_name[model.id] = model.name
         return id2supplier_name
+
+    def save(self):
+        """
+        """
+        # 'name', 'responsible_person', 'supplier_tel', 'supplier_address', 'remark'
+        new_model = mall_models.Supplier.create(owner=self.owner_id,
+                                                name=self.name,
+                                                responsible_person=self.responsible_person,
+                                                supplier_tel=self.supplier_tel,
+                                                supplier_address=self.supplier_address,
+                                                remark=self.remark)
+        return Supplier(new_model)

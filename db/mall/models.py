@@ -1484,16 +1484,34 @@ class ProductSearchRecord(models.Model):
         db_table = "mall_product_search_record"
 
 
-class PandaProductToProduct(models.Model):
-	"""
-	panda同步过来的商品中间关系
-	"""
-	panda_product_id = models.IntegerField()
-	weapp_product = models.ForeignKey(Product)
-	is_deleted = models.BooleanField(default=False)
+PP_STATUS_OFF = 0 #商品下架(待售)
+PP_STATUS_ON = 1 #商品上架
+PP_STATUS_DELETE = -1 #商品删除 不在当前供应商显示
+PP_STATUS_ON_POOL = 2 #商品在商品池中显示
+
+class ProductPool(models.Model):
+	woid = models.IntegerField() #自营平台woid
+	product_id = models.IntegerField() #商品管理上传的商品id
+	status = models.IntegerField(default=PP_STATUS_ON_POOL) #商品状态
+	display_index = models.IntegerField(default=0, blank=True)  # 显示的排序
 	created_at = models.DateTimeField(auto_now_add=True)  # 添加时间
 
 	class Meta(object):
-		verbose_name = "panda同步过来的商品中间关系"
-		verbose_name_plural = "panda同步过来的商品中间关系"
-		db_table = "panda_product_to_product"
+		verbose_name = "商品池商品"
+		verbose_name_plural = "商品池商品"
+		db_table = "product_pool"
+
+
+class PandaProductToProduct(models.Model):
+    """
+    panda同步过来的商品中间关系
+    """
+    panda_product_id = models.IntegerField()
+    weapp_product = models.ForeignKey(Product)
+    created_at = models.DateTimeField(auto_now_add=True)  # 添加时间
+
+    class Meta(object):
+            verbose_name = "panda同步过来的商品中间关系"
+            verbose_name_plural = "panda同步过来的商品中间关系"
+            db_table = "panda_product_to_product"
+

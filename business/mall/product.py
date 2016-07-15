@@ -3,8 +3,7 @@ from eaglet.decorator import param_required
 
 from db.mall import models as mall_models
 from business import model as business_model
-from settings import PRODUCT_POOL_WEAPP_ID
-from business.account.user_profile import UserProfile
+from settings import PRODUCT_POOL_USER_ID
 
 
 class Product(business_model.Model):
@@ -52,6 +51,7 @@ class Product(business_model.Model):
         'is_model_deleted',
         'custom_model_properties',
         'model_type',
+        'swipe_images',
     )
 
     def __init__(self, model):
@@ -78,6 +78,15 @@ class Product(business_model.Model):
     def from_id(args):
         product_db_model = mall_models.Product.get(id=args['product_id'])
         return Product(product_db_model)
+
+    @staticmethod
+    @param_required(['product_id'])
+    def from_panda_product_id(args):
+        panda_product = mall_models.PandaProductToProduct.select()\
+            .dj_where(panda_product_id=args['product_id']).first()
+        if panda_product:
+            product_db_model = mall_models.Product.get(id=panda_product.weapp_product_id)
+            return Product(product_db_model)
 
     @staticmethod
     @param_required(['product_ids'])
@@ -143,9 +152,9 @@ class Product(business_model.Model):
         self.context['models'] = models
 
     def save(self, panda_product_id):
-        owner = UserProfile.from_webapp_id({'webapp_id': PRODUCT_POOL_WEAPP_ID})
+        owner_id = PRODUCT_POOL_USER_ID
         product = mall_models.Product.create(
-            owner=owner.user_id,
+            owner=owner_id,
             name=self.name,
             supplier=self.supplier,
             detail=self.detail,
@@ -154,38 +163,41 @@ class Product(business_model.Model):
             thumbnails_url=self.thumbnails_url,
             price=self.price,
             weight=self.weight,
-            stock_type=0 if self.stock_type == 'unbound' else 1,
-            stocks=self.stocks if self.stocks else 0,
+            stock_type=self.stock_type,
             purchase_price=self.purchase_price
 
         )
         mall_models.PandaProductToProduct.create(
-            owner=owner.user_id,
-            panda_product_id=panda_product_id,
+            panda_product_id=int(panda_product_id),
             weapp_product=product.id,
         )
         new_product = Product(product)
-        if self.model_type == 'single':
-            product_model = ProductModel(None)
-            product_model.owner_id = owner.user_id
-            product_model.product_id = product.id
-            # 非定制规格
-            product_model.is_standard = True
-            product_model.stock_type = self.stock_type
-            product_model.stocks = self.stocks
-            product_model.price = self.price
-            product_model.weight = self.weight
-            new_product_model = product_model.save()
-            # 用来设置规格信息
 
-            new_product.models = [new_product_model]
-
-        else:
-            # 多个规格（定制）
-            pass
-        # 处理论播图
-        # TODO 处理论播图
         return new_product
+
+    def update(self):
+        """
+
+        """
+        change_rows = mall_models.Product.update(name=self.name,
+                                                 stock_type=self.stock_type,
+                                                 purchase_price=self.purchase_price,
+                                                 detail=self.detail,
+                                                 price=self.price,
+                                                 weight=self.weight,
+                                                 thumbnails_url=self.thumbnails_url
+                                                 ).dj_where(id=self.id).execute()
+        return change_rows
+
+    def delete(self):
+        """
+        主要更新商品为已删除，然后关联关系需要更新不可见
+        """
+        #
+        change_rows = mall_models.Product.update(is_deleted=True).dj_where(id=self.id).execute()
+        if change_rows > 0:
+            ProductPool.delete_from_product({'product_id': self.id})
+        return change_rows
 
 
 class ProductModel(business_model.Model):
@@ -209,17 +221,33 @@ class ProductModel(business_model.Model):
             self._init_slot_from_model(model)
 
     def save(self):
+        # 标准规格
         product_model = mall_models.ProductModel.create(
             owner=self.owner_id,
             product=self.product_id,
-            name=self.name if self.name else '',
+            name='standard',
             is_standard=self.is_standard,
             price=self.price,
-            stock_type=0 if self.stock_type == 'unbound' else 1,
-            stocks=self.stocks if self.stocks else 0,
+            stock_type=self.stock_type,
+            stocks=self.stocks,
             weight=self.weight
         )
         return ProductModel(product_model)
+
+    @staticmethod
+    @param_required(['product_id', 'model_type'])
+    def from_product_id(args):
+        if args['model_type']:
+            product_model = mall_models.ProductModel.select().dj_where(product_id=args['product_id'],
+                                                                       name='standard',
+                                                                       is_deleted=False).first()
+            return ProductModel(product_model)
+
+    def update(self):
+        mall_models.ProductModel.update(price=self.price,
+                                        stock_type=self.stock_type,
+                                        stocks=self.stocks,
+                                        weight=self.weight).dj_where(id=self.id,).execute()
 
 
 class ProductSwipeImage(business_model.Model):
@@ -235,3 +263,88 @@ class ProductSwipeImage(business_model.Model):
         #     url = swipe_image['url'],
         #     width = swipe_image['width'],
         #     height = swipe_image['height']
+
+    @staticmethod
+    @param_required(['images'])
+    def save_many(args):
+        """
+
+        """
+        mall_models.ProductSwipeImage.insert_many(args.get('images')).execute()
+
+    @staticmethod
+    @param_required(['swipe_images', 'product_id'])
+    def update_product_many(args):
+        """
+        更新用户的多个信息
+        """
+        mall_models.ProductSwipeImage.delete().dj_where(product=args['product_id']).execute()
+        images = [dict(product=args['product_id'],
+                       url=image.get('url'),
+                       width=100,
+                       height=100) for image in args['swipe_images']]
+
+        # for image in self.swipe_images:
+
+        ProductSwipeImage.save_many({'images': images})
+
+
+class ProductPool(business_model.Model):
+    """
+    新商品池业务逻辑对象
+    """
+    __slots__ = (
+        # user_id
+        'woid',
+        'product_id',
+        'status'
+    )
+
+    def __init__(self):
+        super(ProductPool, self).__init__()
+
+    @staticmethod
+    def save_many(pool):
+        """
+
+        """
+        mall_models.ProductPool.insert_many(pool).execute()
+
+    @staticmethod
+    @param_required(['product_id', 'accounts'])
+    def update_many(args):
+        """
+        accounts 需要显示的用户id列表(user_id)
+        """
+        product_pool = mall_models.ProductPool.select().dj_where(product_id=args.get('product_id'))
+        # account_ids = [account.id for account in product_pool]
+        woids = [str(account.woid) for account in product_pool]
+        # 需要某个商户更新成不可件的
+        off_woids = list(set(woids) - set(args.get('accounts')))
+        # 需要某个商户下架的数据
+        need_add = list(set(args.get('accounts')) - set(woids))
+
+        # 需要新增到某个商户的
+        pool = [dict(woid=account,
+                     product_id=args.get('product_id'),
+                     status=mall_models.PP_STATUS_ON_POOL) for account in need_add]
+
+        if pool:
+            ProductPool.save_many(pool)
+        need_delete_ids = [p.id for p in product_pool if str(p.woid) in off_woids]
+        mall_models.ProductPool.update(status=mall_models.PP_STATUS_DELETE)\
+            .dj_where(id__in=need_delete_ids).execute()
+        # 将不可见的因该更新成可见的进行更新
+        mall_models.ProductPool.update(status=mall_models.PP_STATUS_ON_POOL) \
+            .dj_where(product_id=args.get('product_id'),
+                      status=mall_models.PP_STATUS_DELETE,
+                      woid__in=args.get('accounts')).execute()
+
+    @staticmethod
+    @param_required(['product_id'])
+    def delete_from_product(args):
+        """
+        因为同步商品删除，此处需要更新
+        """
+        mall_models.ProductPool.update(status=mall_models.PP_STATUS_DELETE)\
+            .dj_where(product_id=args['product_id']).execute()

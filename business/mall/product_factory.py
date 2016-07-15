@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 import json
+
 from business import model as business_model
-from business.mall.product import Product
+from business.mall.product import Product, ProductModel, ProductSwipeImage, ProductPool
+from db.mall import models as mall_models
 
 
 class ProductFactory(business_model.Model):
@@ -18,6 +20,7 @@ class ProductFactory(business_model.Model):
         """
 
         """
+        accounts = json.loads(args.get('accounts'))
         name = args.get('name', '')
         supplier = args.get('supplier', '')
         model_type = args.get('model_type', 'single')
@@ -26,6 +29,9 @@ class ProductFactory(business_model.Model):
         # pic_url = args.get('pic_url')
         purchase_price = args.get('purchase_price')
         promotion_title = args.get('promotion_title')
+        swipe_images = json.loads(args.get('images'))
+        # 0无限
+        stock_type = 0 if args.get('stock_type') == 'unbound' else 1
 
         product = Product(None)
         product.name = name
@@ -35,22 +41,55 @@ class ProductFactory(business_model.Model):
         product.model_type = model_type
         product.purchase_price = purchase_price
         product.promotion_title = promotion_title
-        product.thumbnails_url = json.loads(args.get('images'))[0].get('url')
-
+        product.thumbnails_url = swipe_images[0].get('url')
+        product.swipe_images = swipe_images
         # 保存商品规格信息
         if 'single' == model_type:
             product.price = args.get('price', '')
 
             product.purchase_price = args.get('purchase_price', '')
             product.weight = args.get('weight', '')
-            product.stock_type = args.get('stock_type')
-            product.stocks = args.get('stocks')
+            product.stock_type = stock_type
+            # product.stocks = args.get('stocks')
 
         else:
             # 多规格
             # product.models = json.loads(args.get('model_info', ''))
             pass
-        return product.save(panda_product_id=args.get('product_id'))
+        new_product = product.save(panda_product_id=args.get('product_id'))
+        if model_type == 'single':
+            product_model = ProductModel(None)
+            product_model.owner_id = new_product.owner_id
+            product_model.product_id = new_product.id
+            # 非定制规格
+            product_model.is_standard = True
+            product_model.stock_type = new_product.stock_type
+            product_model.stocks = args.get('stocks') if args.get('stocks') else 0
+            product_model.price = new_product.price
+            product_model.weight = new_product.weight
+            new_product_model = product_model.save()
+            # 用来设置规格信息
+
+            new_product.models = [new_product_model]
+
+        else:
+            # 多个规格（定制）
+            pass
+        # 处理论播图
+        # TODO 处理论播图的大小暂时无法同步（panda)中无此2字段。
+        images = [dict(product=new_product.id,
+                       url=image.get('url'),
+                       width=100,
+                       height=100) for image in product.swipe_images]
+        # for image in self.swipe_images:
+
+        ProductSwipeImage.save_many({'images': images})
+        # 处理商品在哪个自营平台显示
+        pool = [dict(woid=account,
+                     product_id=new_product.id,
+                     status=mall_models.PP_STATUS_ON_POOL) for account in accounts]
+        ProductPool.save_many(pool)
+        return new_product
 
     @staticmethod
     def create():
