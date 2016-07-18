@@ -193,6 +193,7 @@ PRODUCT_TYPE2TEXT = {
     PRODUCT_INTEGRAL_TYPE: u'积分商品'
 }
 MAX_INDEX = 2**16 - 1
+MAX_DISPLAY_INDEX = 9999
 
 class Product(models.Model):
     """
@@ -210,7 +211,7 @@ class Product(models.Model):
     pic_url = models.CharField(max_length=1024)  # 商品图
     detail = models.TextField(default='')  # 商品详情
     remark = models.TextField(default='')  # 备注
-    display_index = models.IntegerField(default=0)  # 显示的排序
+    display_index = models.IntegerField(default=MAX_DISPLAY_INDEX)  # 显示的排序
     created_at = models.DateTimeField(auto_now_add=True)  # 添加时间
     shelve_type = models.IntegerField(default=PRODUCT_SHELVE_TYPE_OFF)  # 0:下架（待售） 1:上架（在售） 2:回收站
     shelve_start_time = models.CharField(max_length=50, null=True)  # 定时上架:上架时间
