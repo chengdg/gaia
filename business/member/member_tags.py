@@ -10,6 +10,7 @@ class MemberTag(business_model.Model):
     设置会员分组
     '''
     __slots__ = (
+        'id',
         'webapp_id',
         'name',
         'created_at'
@@ -23,7 +24,7 @@ class MemberTag(business_model.Model):
             self._init_slot_from_model(model)
 
     @staticmethod
-    def empty_member_tags(self, model=None):
+    def empty_member_tags(model=None):
         return MemberTag(model)
 
     def update_member_tag_name(self, member_tag_id, name):
@@ -39,11 +40,25 @@ class MemberTag(business_model.Model):
         }
         member_tag = member_models.MemberTag.create(**opt)
         return MemberTag(member_tag)
+
     @staticmethod
     @param_required(['member_tag_id'])
     def from_id(args):
-        member_tag = member_models.MemberTag.select().dj_where(id=member_tag_id).first()
+        member_tag = member_models.MemberTag.select().dj_where(id=args['member_tag_id']).first()
         if member_tag:
             return MemberTag(member_tag)
         else:
             return None
+
+    @staticmethod
+    @param_required(['webapp_id'])
+    def from_webapp_id(args):
+        '''
+        通过weapp_id找未分组对象
+        '''
+        member_tag = member_models.MemberTag.select().dj_where(webapp_id=args['webapp_id'], name='未分组').first()
+        if member_tag:
+            return MemberTag(member_tag)
+        else:
+            return None
+

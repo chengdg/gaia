@@ -9,8 +9,6 @@ class MemberHasTag(business_model.Model):
     会员分组
     '''
     __slots__ = (
-        'member',
-        'member_tag'
     )
 
     def __init__(self,model):
@@ -21,7 +19,7 @@ class MemberHasTag(business_model.Model):
             self._init_slot_from_model(model)
 
     @staticmethod
-    def empty_member_has_tag(self, model=None)
+    def empty_member_has_tag(model=None):
         return MemberHasTag(model)
 
     @property
@@ -34,8 +32,15 @@ class MemberHasTag(business_model.Model):
 
     def create(self, member, member_tag):
         opt = {
-            'member': member,
-            'member_tag': member_tag
+            'member': member.context['db_model'],
+            'member_tag': member_tag.context['db_model']
         }
-        member_has_tag = member_models.MemberHasTag.create(**opt)
+        member_has_tag = member_models.MemberHasTag.get_or_create(**opt)
         return MemberHasTag(member_has_tag)
+
+    @staticmethod
+    @param_required(['member'])
+    def delete_member_has_tags(args):
+        member_has_tag = member_models.MemberHasTag.delete().dj_where(member=args['member'].context['db_model']).execute()
+        return member_has_tag
+

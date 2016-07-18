@@ -2,7 +2,10 @@
 
 from eaglet.decorator import param_required
 from db.member import models as member_models
-from business.member.member_tag import  MemberTag
+from business.member.member_tags import  MemberTag
+from business import model as business_model
+from db.account import models as account_models
+
 
 
 class MemberTagFactory(business_model.Model):
@@ -17,12 +20,8 @@ class MemberTagFactory(business_model.Model):
 
     @staticmethod
     @param_required(['webapp_id', 'name'])
-     def save(args):
+    def save(args):
         '''
         '''
         member_tag = MemberTag.empty_member_tags()
-        opt = {
-            'webapp_id': webapp_id,
-            'name': name
-        }
-        return member_tag.create(opt)
+        return member_tag.create(args['webapp_id'], args['name'])
