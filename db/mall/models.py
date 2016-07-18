@@ -1502,16 +1502,29 @@ class ProductPool(models.Model):
 		db_table = "product_pool"
 
 
-class PandaProductToProduct(models.Model):
+class PandaHasProductRelation(models.Model):
     """
     panda同步过来的商品中间关系
     """
     panda_product_id = models.IntegerField()
-    weapp_product = models.ForeignKey(Product)
+    weapp_product_id = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)  # 添加时间
 
     class Meta(object):
             verbose_name = "panda同步过来的商品中间关系"
             verbose_name_plural = "panda同步过来的商品中间关系"
-            db_table = "panda_product_to_product"
+            db_table = "panda_has_product_relation"
 
+
+class ProductLimitPurchasePrice(models.Model):
+    """
+    8000商品限时结算价格
+    """
+    product_id = models.IntegerField(),
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
+
+    class Meta:
+        verbose_name = "商品池商品"
+        verbose_name_plural = "商品池商品"
+        db_table = "product_limit_purchase_price"

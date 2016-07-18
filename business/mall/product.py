@@ -82,7 +82,7 @@ class Product(business_model.Model):
     @staticmethod
     @param_required(['product_id'])
     def from_panda_product_id(args):
-        panda_product = mall_models.PandaProductToProduct.select()\
+        panda_product = mall_models.PandaHasProductRelation.select()\
             .dj_where(panda_product_id=args['product_id']).first()
         if panda_product:
             product_db_model = mall_models.Product.get(id=panda_product.weapp_product_id)
@@ -164,12 +164,13 @@ class Product(business_model.Model):
             price=self.price,
             weight=self.weight,
             stock_type=self.stock_type,
-            purchase_price=self.purchase_price
+            purchase_price=self.purchase_price,
+            promotion_title=self.promotion_title
 
         )
-        mall_models.PandaProductToProduct.create(
+        mall_models.PandaHasProductRelation.create(
             panda_product_id=int(panda_product_id),
-            weapp_product=product.id,
+            weapp_product_id=product.id,
         )
         new_product = Product(product)
 
@@ -318,7 +319,7 @@ class ProductPool(business_model.Model):
         """
         product_pool = mall_models.ProductPool.select().dj_where(product_id=args.get('product_id'))
         # account_ids = [account.id for account in product_pool]
-        woids = [str(account.woid) for account in product_pool]
+        woids = list(set([str(account.woid) for account in product_pool]))
         # 需要某个商户更新成不可件的
         off_woids = list(set(woids) - set(args.get('accounts')))
         # 需要某个商户下架的数据

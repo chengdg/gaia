@@ -62,7 +62,7 @@ class AProduct(api_resource.ApiResource):
     def post(self):
         """
         更新同步的商品（添加商品）
-        product_id -- panda系统商品的id
+        product_id -- Weapp系统商品的id
         model_type -- 规格类型 single： 默认单规格,
                         ;custom: 定制规格（此时必须传递规格信息参数）
         --------------非必须------------------
@@ -96,8 +96,9 @@ class AProduct(api_resource.ApiResource):
         price = self.get('price', None)
         weight = self.get('weight', None)
         model_info = self.get('model_info', None)
+        promotion_title = self.get('promotion_title')
 
-        product = Product.from_panda_product_id({'product_id': product_id})
+        product = Product.from_id({'product_id': product_id})
         product.name = name if name else product.name
         product.supplier = supplier if supplier else product.supplier
         product.stock_type = stock_type if stock_type else product.stock_type
@@ -107,6 +108,7 @@ class AProduct(api_resource.ApiResource):
         product.detail = detail if detail else product.detail
         product.price = price if price else product.price
         product.weight = weight if weight else product.weight
+        product.promotion_title = promotion_title if promotion_title else product.promotion_title
 
         if swipe_images:
             swipe_images = json.loads(swipe_images)
