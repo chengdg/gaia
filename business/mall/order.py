@@ -14,6 +14,8 @@ from business.mall.express import util as express_util
 from business.tools.express_detail import ExpressDetail
 from business.mall.order_operation_log_info import OrderOperationLogInfo
 from business.mall.order_status_log_info import OrderStatusLogInfo
+from business.account.user_profile import UserProfile
+
 
 class Order(business_model.Model):
     """
@@ -70,6 +72,9 @@ class Order(business_model.Model):
         'is_first_order',
         'supplier_user_id',
         'total_purchase_price',
+        'owner_id',
+        'store_name'
+
     )
 
     def __init__(self, model):
@@ -480,12 +485,68 @@ class Order(business_model.Model):
             result = filter(lambda x: x not in [ORDER_CANCEL_ACTION, ORDER_REFUNDIND_ACTION], result)
         return result
 
-    def search(self, product_ids=None, page=1, per_count_count=15, supplier_ids=None, from_mall=None,
-               order_create_start=None, order_create_end=None, order_status=None):
+    @staticmethod
+    def search(product_ids=None, page=1, per_count_page=15, supplier_ids=None, from_mall=None,
+               order_create_start=None, order_create_end=None, order_status=None, order_id=None):
         """
         根据不同条件搜索订单
         """
-        orders = mall_models.Order.select().dj_where()
+        # 获取带运营平台的账户
+        if order_id:
+            orders = mall_models.Order.select().dj_where(order_id)
+            results = [Order(order) for order in orders]
+        # for o in results:
+        #     o.owner_id = webapp_to_user_id.get(o.webapp_id)
+        #     o.store_name = user_to_store_name.get(o.webapp_id)
+            return results, 1
+        if not product_ids:
+            user_profile = UserProfile.from_webapp_type({'webapp_type': 2})
+            if not user_profile:
+                return None
+            owner_id = user_profile[0].user_id
+            # 商品池（新的池）的所有商品
+            pool_products = mall_models.Product.select().dj_where(is_deleted=False,
+                                                                  owner=owner_id)
+            if supplier_ids:
+                pool_products = pool_products.dj_where(supplier__in=supplier_ids)
+            if from_mall:
+                # 某个自营平台的商品订单
+                temp_user_profile = UserProfile.from_webapp_id({'webapp_id': from_mall})
+                product_pool = mall_models.ProductPool.select().dj_where(woid=temp_user_profile.user_id)
+                mall_product_ids = [pro.product_id for pro in product_pool]
+                pool_products = pool_products.dj_where(id__in=mall_product_ids)
+            product_ids = [p.id for p in pool_products]
 
+        order_products = mall_models.OrderHasProduct.select().dj_where(product_id__in=product_ids)
+        order_ids = [o.order_id for o in order_products]
+        orders = mall_models.Order.select().dj_where(id__in=order_ids)
+        if order_status:
+            orders = orders.dj_where(status=order_status)
+        if order_create_start:
+            orders = orders.dj_where(created_at__gte=order_create_start)
+        if order_create_start:
+            orders = orders.dj_where(created_at__lte=order_create_end)
+        orders = orders.dj_where(origin_order_id__lte=0)
+        # 获取所有自营平台的user_id和webapp_id的映射关系
+        # TODO 优化成通用接口
+        user_profiles = UserProfile.from_mall_type({'mall_type': 1})
+        keys = [user.webapp_id for user in user_profiles]
+        values = [user.user_id for user in user_profiles]
+        store_names = [user.store_name for user in user_profiles]
+        webapp_to_user_id = dict(zip(keys, values))
+        user_id_to_webapp = dict(zip(values, keys))
+        user_to_store_name = dict(zip(keys, store_names))
+        if from_mall:
 
+            orders = orders.dj_where(webapp_id=from_mall)
+        count = orders.count()
+        orders = orders.paginate(int(page), paginate_by=int(per_count_page))
 
+        # 补充订单的一些其他数据
+        # for o in orders:
+        #     pass
+        results = [Order(order) for order in orders]
+        for o in results:
+            o.owner_id = webapp_to_user_id.get(o.webapp_id)
+            o.store_name = user_to_store_name.get(o.webapp_id)
+        return results, count

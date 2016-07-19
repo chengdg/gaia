@@ -131,19 +131,34 @@ class AOrderList(api_resource.ApiResource):
         ----------------option--------
         product_ids -- 云上通的商品id集合（panda已经处理过映射关系）[id,id]
         supplier_ids -- 云上通的供货商id(panda已经处理过映射关系）[id,id]
-        from_mall -- 哪个自营平台（自营平台id,已经通过配置拿到了云上通对应的id)
+        from_mall -- 哪个自营平台（自营平台id,已经通过配置拿到了云上通对应的webapp_id)
         order_create_start -- 下单时间区间start
         order_create_end -- 下单时间区间end
         order_status -- 订单状态
+        order_id -- 订单号
         """
         page = self.get('page', 1)
         per_count_page = self.get('per_count_page', 15)
 
-        product_ids = self.get('product_ids')
-        supplier_ids = self.get('supplier_ids')
-        from_mall = self.get('from_mall')
-        order_create_start = self.get('order_create_start')
-        order_create_end = self.get('order_create_end')
+        product_ids = json.loads(self.get('product_ids')) if self.get('product_ids') else []
+        supplier_ids = json.loads(self.get('supplier_ids')) if self.get('supplier_ids') else []
+        from_mall = self.get('from_mall', None)
+        order_create_start = self.get('order_create_start', '')
+        order_create_end = self.get('order_create_end', '')
         order_status = self.get('order_status')
+        order_id = self.get('order_id', '')
 
-        Order.from_product_ids()
+        results, count = Order.search(page=page, per_count_page=per_count_page, product_ids=product_ids,
+                                      supplier_ids=supplier_ids, from_mall=from_mall,
+                                      order_create_end=order_create_end,
+                                      order_create_start=order_create_start, order_status=order_status,
+                                      order_id=order_id)
+        orders = []
+        for rs in results:
+            temp = rs.to_dict()
+            temp.update({'products': rs.products})
+            orders.append(temp)
+        return {
+            'orders': orders,
+            'count': count
+        }

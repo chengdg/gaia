@@ -52,6 +52,8 @@ class Product(business_model.Model):
         'custom_model_properties',
         'model_type',
         'swipe_images',
+        'model_name',
+        'model'
     )
 
     def __init__(self, model):
