@@ -2,8 +2,8 @@
 from eaglet.decorator import param_required
 
 from db.mall import models as mall_models
+from business.account.user_profile import UserProfile
 from business import model as business_model
-from settings import PRODUCT_POOL_USER_ID
 
 
 class Product(business_model.Model):
@@ -152,7 +152,11 @@ class Product(business_model.Model):
         self.context['models'] = models
 
     def save(self, panda_product_id):
-        owner_id = PRODUCT_POOL_USER_ID
+
+        user_profile = UserProfile.from_webapp_type({'webapp_type': 2})
+        if not user_profile:
+            return None
+        owner_id = user_profile[0].user_id
         product = mall_models.Product.create(
             owner=owner_id,
             name=self.name,

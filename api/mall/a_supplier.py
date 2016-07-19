@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
-import json
 
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
 from business.mall.supplier_factory import SupplierFactory
-from settings import PRODUCT_POOL_USER_ID
+from business.account.user_profile import UserProfile
 
 
 class ASupplier(api_resource.ApiResource):
@@ -16,7 +15,10 @@ class ASupplier(api_resource.ApiResource):
 
     @param_required(['name', 'responsible_person', 'supplier_tel', 'supplier_address'])
     def put(args):
-        owner_id = PRODUCT_POOL_USER_ID
+        user_profile = UserProfile.from_webapp_type({'webapp_type': 2})
+        if not user_profile:
+            return None
+        owner_id = user_profile[0].user_id
         name = args['name']
         responsible_person = args['responsible_person']
         supplier_tel = args['supplier_tel']

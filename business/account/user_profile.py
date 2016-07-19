@@ -126,3 +126,14 @@ class UserProfile(business_model.Model):
             'users': result,
             'counts': counts
         }
+
+    @staticmethod
+    @param_required(['webapp_type'])
+    def from_webapp_type(args):
+        user_profiles = []
+        user_profiles_models = account_models.UserProfile.select().dj_where(webapp_type=args['webapp_type'])
+
+        for profile_model in user_profiles_models:
+            user_profile = UserProfile(profile_model)
+            user_profiles.append(user_profile)
+        return user_profiles

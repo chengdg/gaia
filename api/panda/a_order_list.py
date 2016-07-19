@@ -122,3 +122,28 @@ class AOrderList(api_resource.ApiResource):
         orders = filter(lambda order: order.order_id not in filter_order_ids, orders)
         orders = sorted(orders, key = lambda order: order.id, reverse=True)
         return orders
+
+    @param_required(['page', 'per_count_page'])
+    def post(self):
+        """
+        page -- 页码
+        per_count_page -- 一页多少记录
+        ----------------option--------
+        product_ids -- 云上通的商品id集合（panda已经处理过映射关系）[id,id]
+        supplier_ids -- 云上通的供货商id(panda已经处理过映射关系）[id,id]
+        from_mall -- 哪个自营平台（自营平台id,已经通过配置拿到了云上通对应的id)
+        order_create_start -- 下单时间区间start
+        order_create_end -- 下单时间区间end
+        order_status -- 订单状态
+        """
+        page = self.get('page', 1)
+        per_count_page = self.get('per_count_page', 15)
+
+        product_ids = self.get('product_ids')
+        supplier_ids = self.get('supplier_ids')
+        from_mall = self.get('from_mall')
+        order_create_start = self.get('order_create_start')
+        order_create_end = self.get('order_create_end')
+        order_status = self.get('order_status')
+
+        Order.from_product_ids()

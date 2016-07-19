@@ -480,7 +480,12 @@ class Order(business_model.Model):
             result = filter(lambda x: x not in [ORDER_CANCEL_ACTION, ORDER_REFUNDIND_ACTION], result)
         return result
 
-
+    def search(self, product_ids=None, page=1, per_count_count=15, supplier_ids=None, from_mall=None,
+               order_create_start=None, order_create_end=None, order_status=None):
+        """
+        根据不同条件搜索订单
+        """
+        orders = mall_models.Order.select().dj_where()
 
 
 
