@@ -24,13 +24,13 @@ class AMemberHasTags(api_resource.ApiResource):
         print '-===========================', args
         member = Member.from_id({'id': args['member_id']})
         if  not args.get('member_tag_ids', None)  and member:
-            member_tag_obj = MemberTag.from_webapp_id({'webapp_id': member.webapp_id})
-            args['member_tag_ids'] = '{}'.format(member_tag_obj.id) 
+            member_tag_default_obj = MemberTag.from_webapp_id({'webapp_id': member.webapp_id})
+            args['member_tag_ids'] = '{}'.format(member_tag_default_obj[0].id) 
         # import pdb
         # pdb.set_trace()
         member_tags = []
         for member_tag_id in filter(lambda x: x, args['member_tag_ids'].split(',')):
-            member_tag = MemberTag.from_id({'member_tag_id': member_tag_id})
+            member_tag = MemberTag.from_id({'id': member_tag_id})
             if not member_tag:
                 return {
                     'msg': u'会员分组 {} 不存在'.format(member_tag_id)

@@ -16,29 +16,34 @@ class AMemberTags(api_resource.ApiResource):
     """
     app = 'member'
     resource = 'member_tags'
+    
+    @param_required([])
+    def get(args):
+        if args.get('id', None) and args.get('webapp_id', None):
+            opt = {'id':args['id'], 'webapp_id': args['webapp_id']}
+            member_tags = MemberTag.from_webapp_id(opt)
+        elif args.get('id', None):
+            opt = {'id': args['id']}
+            member_tags = MemberTag.from_id(opt)
+        else:
+            opt = {'webapp_id': args['webapp_id']}
+            member_tags = MemberTag.from_webapp_id(opt)
+        return {
+            'member_tags': member_tags
+        }
 
-    @param_required(['member_tag_ids', 'name'])
+    @param_required(['id', 'webapp_id','name'])
     def put(args):
         '''
             更新分组名称
         '''
-        member_tag_ids = filter( lambda c: c, args['member_tag_ids'].split(','))
-        try:
-            id_values = json.loads(args['name'])
-        except :
-            id_values = {}
-            for x in member_tag_ids:
-                id_values[x] = args['name']
-        count = 0
-        for member_tag_id in member_tag_ids:
-            member_tag = MemberTag.from_id({'member_tag_id': member_tag_id})
-            if not member_tag:
-                return {
-                    'msg': u'会员分组id {} 不存在'.format(member_tag_id)
-                }
-            else:
-                count += member_tag.update_member_tag_name(member_tag_id, id_values[member_tag_id])
-        return {
+        member_tag = MemberTag.from_id({'id': args['id']})
+        if not member_tag:
+            return {
+                'msg': u'会员分组id {} 不存在'.format(args['id'])
+            } 
+        count = member_tag.update_member_tag_name(args['id'],args['webapp_id'], args['name'])
+       return {
             'count': count
         }
     @param_required(['webapp_id','name'])
@@ -46,20 +51,13 @@ class AMemberTags(api_resource.ApiResource):
         '''
         创建会员分组
         '''
-        # user_profile = UserProfile.from_user_id({'user_id':args['owner_id']})
-        # if user_profile:
-        print 'args===============================', args
-        params = {'webapp_id': args['webapp_id'], 'name': args['name']}
-        member_tags = []
-        if args.get('id', None):
-            id_values = json.loads(args['name'])
-            for member_tag_id in filter(lambda x: x, args['id'].split(',')):
-                params.update({'id': member_tag_id, 'name': id_values[member_tag_id]})
-                member_tags.append(MemberTagFactory.save(params))
+        if 'id' in args:
+            opt = {'id': args['id'],'webapp_id': args['webapp_id'], 'name': args['name']}
         else:
-                member_tags.append(MemberTagFactory.save(params))
+            opt = {'webapp_id': args['webapp_id'], 'name': args['name']}
+        member_tag = MemberTagFactory.save(opt)
         return {
-            'member_tags': member_tags
+            'member_tag': member_tag
         }
 
     @param_required(['webapp_id' ,'member_tag_ids'])
@@ -67,10 +65,11 @@ class AMemberTags(api_resource.ApiResource):
         '''
         删除会员分组
         '''
-        member_tag_ids = filter(lambda x: x, args['member_tag_ids'].split(','))
+        print '========================',args
+        member_tag_ids = [int(c) for c in filter(lambda x: int(x)!=0, args['member_tag_ids'].split(','))]
         delete_member_tags = []
         for member_tag_id in member_tag_ids:
-            member_tag = MemberTag.from_id({'member_tag_id': member_tag_id})
+            member_tag = MemberTag.from_id({'id': member_tag_id})
             if not member_tag:
                 return {
                     'msg': u'会员分组id{}不存在'.format(member_tag_id)
@@ -82,10 +81,11 @@ class AMemberTags(api_resource.ApiResource):
         member_has_tag_instance = MemberHasTag.empty_member_has_tag()
         if members_in_member_has_tags:
             member_has_tag_instance.delete_from_ids([ member_has_tag.id for member_has_tag in members_in_member_has_tags])
+        member_tag = MemberTag.empty_member_tags()
         count = member_tag.delete_from_ids(member_tag_ids)
         for m in members_in_member_has_tags:
             if len(MemberHasTag.from_member({'member': m.member}))==0:
-                MemberHasTagFactory.save({'member': m.member, 'member_tag': member_tag_default_obj})
+                MemberHasTagFactory.save({'member': m.member, 'member_tag': member_tag_default_obj[0]})
         return {
             'count': count
         }
