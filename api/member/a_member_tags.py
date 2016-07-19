@@ -19,6 +19,9 @@ class AMemberTags(api_resource.ApiResource):
     
     @param_required([])
     def get(args):
+        ''''
+
+        '''
         if args.get('id', None) and args.get('webapp_id', None):
             opt = {'id':args['id'], 'webapp_id': args['webapp_id']}
             member_tags = MemberTag.from_webapp_id(opt)
@@ -43,7 +46,7 @@ class AMemberTags(api_resource.ApiResource):
                 'msg': u'会员分组id {} 不存在'.format(args['id'])
             } 
         count = member_tag.update_member_tag_name(args['id'],args['webapp_id'], args['name'])
-       return {
+        return {
             'count': count
         }
     @param_required(['webapp_id','name'])
