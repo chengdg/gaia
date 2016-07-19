@@ -323,12 +323,12 @@ class ProductPool(business_model.Model):
         accounts 需要显示的用户id列表(user_id)
         """
         product_pool = mall_models.ProductPool.select().dj_where(product_id=args.get('product_id'))
-        # account_ids = [account.id for account in product_pool]
+        accounts = [str(account) for account in args.get('accounts')]
         woids = list(set([str(account.woid) for account in product_pool]))
         # 需要某个商户更新成不可件的
-        off_woids = list(set(woids) - set(args.get('accounts')))
-        # 需要某个商户下架的数据
-        need_add = list(set(args.get('accounts')) - set(woids))
+        off_woids = list(set(woids) - set(accounts))
+        # 需要添加的映射
+        need_add = list(set(accounts) - set(woids))
 
         # 需要新增到某个商户的
         pool = [dict(woid=account,
