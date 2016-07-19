@@ -96,7 +96,7 @@ class AProduct(api_resource.ApiResource):
         price = self.get('price', None)
         weight = self.get('weight', None)
         model_info = self.get('model_info', None)
-        promotion_title = self.get('promotion_title')
+        promotion_title = self.get('promotion_title', '')
 
         product = Product.from_id({'product_id': product_id})
         product.name = name if name else product.name

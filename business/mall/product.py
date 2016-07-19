@@ -169,7 +169,7 @@ class Product(business_model.Model):
             weight=self.weight,
             stock_type=self.stock_type,
             purchase_price=self.purchase_price,
-            promotion_title=self.promotion_title
+            promotion_title=self.promotion_title if self.promotion_title else ''
 
         )
         mall_models.PandaHasProductRelation.create(
@@ -190,6 +190,7 @@ class Product(business_model.Model):
                                                  detail=self.detail,
                                                  price=self.price,
                                                  weight=self.weight,
+                                                 promotion_title=self.promotion_title,
                                                  thumbnails_url=self.thumbnails_url
                                                  ).dj_where(id=self.id).execute()
         return change_rows
