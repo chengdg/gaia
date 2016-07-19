@@ -1159,6 +1159,119 @@
                     }
                 }
             }
+        },
+        "/member/member_tags/": {
+            "put": {
+                "summary": "更新分组名称",
+                "description": "更新分组名称",
+                "parameters": [
+                    {
+                        "name": "member_tag_ids",
+                        "in": "query",
+                        "required": true,
+                        "type": "string",
+                        "description": "会员分组id"
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "required": true,
+                        "type": "string",
+                        "description": "新的分组名称"
+                    }
+                ],
+                "tags": [
+                    "member_tags"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "count": {
+                                    "type": "number",
+                                    "description": "更新成功数量"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "创建会员分组",
+                "description": "创建会员分组",
+                "parameters": [
+                    {
+                        "name": "webapp_id",
+                        "in": "query",
+                        "required": true,
+                        "type": "string",
+                        "description": "商铺id"
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "required": true,
+                        "type": "string",
+                        "description": "分组名称"
+                    }
+                ],
+                "tags": [
+                    "member_tags"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "count": {
+                                    "type": "number",
+                                    "description": "成功数量"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "summary": "删除会员分组",
+                "description": "删除会员分组",
+                "parameters": [
+                    {
+                        "name": "webapp_id",
+                        "in": "query",
+                        "required": true,
+                        "type": "string",
+                        "description": "商铺id"
+                    },
+                    {
+                        "name": "member_tag_ids",
+                        "in": "query",
+                        "required": true,
+                        "type": "string",
+                        "description": "分组ids"
+                    }
+                ],
+                "tags": [
+                    "member_tags"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "count": {
+                                    "type": "number",
+                                    "description": "成功数量"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {

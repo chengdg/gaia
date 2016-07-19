@@ -33,11 +33,13 @@ class MemberTag(business_model.Model):
         '''
         return member_models.MemberTag.update(name=name).dj_where(id=member_tag_id).execute()
 
-    def create(self, webapp_id, name):
+    def create(self, webapp_id, name, id=None):
         opt = {
             'webapp_id': webapp_id,
             'name': name
         }
+        if id:
+            opt.update({'id': id})
         member_tag = member_models.MemberTag.create(**opt)
         return MemberTag(member_tag)
 
@@ -61,4 +63,11 @@ class MemberTag(business_model.Model):
             return MemberTag(member_tag)
         else:
             return None
+
+    def delete_from_ids(self, member_tag_ids):
+        '''
+        通过会员分组id删除分组
+        '''
+        return member_models.MemberTag.delete().dj_where(id__in=member_tag_ids).execute()
+
 

@@ -24,4 +24,7 @@ class MemberTagFactory(business_model.Model):
         '''
         '''
         member_tag = MemberTag.empty_member_tags()
-        return member_tag.create(args['webapp_id'], args['name'])
+        if args.get('id', None):
+            return member_tag.create(args['webapp_id'], args['name'], args['id'])
+        else:
+            return member_tag.create(args['webapp_id'], args['name'])
