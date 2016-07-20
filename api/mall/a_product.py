@@ -145,4 +145,15 @@ class AProduct(api_resource.ApiResource):
         """
         product_id = self['weapp_product_id']
         product = Product.from_id({'product_id': product_id})
-        product.delete()
+        try:
+            change_rows = product.delete()
+            return {
+                'change_rows': change_rows
+            }
+        except:
+            msg = unicode_full_stack()
+            watchdog.error(msg)
+            return {
+                'change_rows': -1
+            }
+
