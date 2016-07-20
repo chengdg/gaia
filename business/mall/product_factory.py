@@ -41,7 +41,10 @@ class ProductFactory(business_model.Model):
         product.model_type = model_type
         product.purchase_price = purchase_price
         product.promotion_title = promotion_title
-        product.thumbnails_url = swipe_images[0].get('url') if swipe_images else ''
+        thumbnails_url = swipe_images[0].get('url') if swipe_images else ''
+        if not thumbnails_url.startswith('http'):
+            thumbnails_url = 'http://chaozhi.weizoom.com' + thumbnails_url
+        product.thumbnails_url = thumbnails_url
         product.swipe_images = swipe_images
         # 保存商品规格信息
         if 'single' == model_type:
