@@ -526,7 +526,6 @@ class Order(business_model.Model):
             orders = orders.dj_where(created_at__gte=order_create_start)
         if order_create_start:
             orders = orders.dj_where(created_at__lte=order_create_end)
-        orders = orders.dj_where(origin_order_id__lte=0)
         # 获取所有自营平台的user_id和webapp_id的映射关系
         # TODO 优化成通用接口
         user_profiles = UserProfile.from_mall_type({'mall_type': 1})
@@ -539,6 +538,12 @@ class Order(business_model.Model):
         if from_mall:
 
             orders = orders.dj_where(webapp_id=from_mall)
+        # 我们不展示母订单，只展示子订单，或者普通订单 >=0（0表示普通订单）
+        orders = orders.dj_where(origin_order_id__gte=0)
+        # if supplier_ids:
+        #     # 区分拆单问题
+        #
+        #     pass
         count = orders.count()
         orders = orders.paginate(int(page), paginate_by=int(per_count_page))
 

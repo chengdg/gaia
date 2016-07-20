@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import json
 
 from eaglet.decorator import param_required
 from business import model as business_model
@@ -22,7 +23,7 @@ class OrderHasPromotion(business_model.Model):
         'integral_count'
     )
 
-    def __init__(self):
+    def __init__(self, model):
         business_model.Model.__init__(self)
 
         self.context['db_model'] = model
