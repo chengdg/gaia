@@ -33,7 +33,7 @@ class Member(business_model.Model):
         'username_hexstr',
         #'webapp_user',
         'is_subscribed',
-        'created',
+        'created_at',
         'token',
         'webapp_id',
         'pay_money',
