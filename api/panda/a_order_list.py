@@ -131,7 +131,7 @@ class AOrderList(api_resource.ApiResource):
         ----------------option--------
         product_ids -- 云上通的商品id集合（panda已经处理过映射关系）[id,id]
         supplier_ids -- 云上通的供货商id(panda已经处理过映射关系）[id,id]
-        from_mall -- 哪个自营平台（自营平台id,已经通过配置拿到了云上通对应的webapp_id)
+        from_mall -- 哪个自营平台（自营平台id,user_id)
         order_create_start -- 下单时间区间start
         order_create_end -- 下单时间区间end
         order_status -- 订单状态

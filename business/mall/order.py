@@ -511,8 +511,8 @@ class Order(business_model.Model):
                 pool_products = pool_products.dj_where(supplier__in=supplier_ids)
             if from_mall:
                 # 某个自营平台的商品订单
-                temp_user_profile = UserProfile.from_webapp_id({'webapp_id': from_mall})
-                product_pool = mall_models.ProductPool.select().dj_where(woid=temp_user_profile.user_id)
+                # temp_user_profile = UserProfile.from_user_id({'user_id': int(from_mall)})
+                product_pool = mall_models.ProductPool.select().dj_where(woid=from_mall)
                 mall_product_ids = [pro.product_id for pro in product_pool]
                 pool_products = pool_products.dj_where(id__in=mall_product_ids)
             product_ids = [p.id for p in pool_products]
@@ -536,8 +536,8 @@ class Order(business_model.Model):
         user_id_to_webapp = dict(zip(values, keys))
         user_to_store_name = dict(zip(keys, store_names))
         if from_mall:
-
-            orders = orders.dj_where(webapp_id=from_mall)
+            temp_user_profile = UserProfile.from_user_id({'user_id': int(from_mall)})
+            orders = orders.dj_where(webapp_id=temp_user_profile.webapp_id)
         # 我们不展示母订单，只展示子订单，或者普通订单 >=0（0表示普通订单）
         orders = orders.dj_where(origin_order_id__gte=0)
         # if supplier_ids:

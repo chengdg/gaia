@@ -81,7 +81,7 @@ class UserProfile(business_model.Model):
     @staticmethod
     @param_required(['user_id'])
     def from_user_id(args):
-        profile_model= account_models.UserProfile.get(user_id=args['user_id'])
+        profile_model= account_models.UserProfile.get(user=args['user_id'])
         user_profile = UserProfile(profile_model)
         return user_profile
 
