@@ -41,7 +41,7 @@ class ProductFactory(business_model.Model):
         product.model_type = model_type
         product.purchase_price = purchase_price
         product.promotion_title = promotion_title
-        product.thumbnails_url = swipe_images[0].get('url')
+        product.thumbnails_url = swipe_images[0].get('url') if swipe_images else ''
         product.swipe_images = swipe_images
         # 保存商品规格信息
         if 'single' == model_type:
@@ -77,14 +77,15 @@ class ProductFactory(business_model.Model):
             pass
         # 处理论播图
         # TODO 处理论播图的大小暂时无法同步（panda)中无此2字段。
-        images = [dict(product=new_product.id,
-                       url=image.get('url'),
-                       width=100,
-                       height=100) for image in product.swipe_images]
-        # for image in self.swipe_images:
+        if product.swipe_images:
+            images = [dict(product=new_product.id,
+                           url=image.get('url'),
+                           width=100,
+                           height=100) for image in product.swipe_images]
+            # for image in self.swipe_images:
 
-        ProductSwipeImage.save_many({'images': images})
-        # 处理商品在哪个自营平台显示
+            ProductSwipeImage.save_many({'images': images})
+            # 处理商品在哪个自营平台显示
         pool = [dict(woid=account,
                      product_id=new_product.id,
                      status=mall_models.PP_STATUS_ON_POOL) for account in accounts]
