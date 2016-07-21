@@ -81,10 +81,16 @@ class ProductFactory(business_model.Model):
         # 处理论播图
         # TODO 处理论播图的大小暂时无法同步（panda)中无此2字段。
         if product.swipe_images:
-            images = [dict(product=new_product.id,
-                           url=image.get('url'),
-                           width=100,
-                           height=100) for image in product.swipe_images]
+            images = []
+            for image in product.swipe_images:
+                url = image.get('url')
+                if not url.startswith('http'):
+                    url = 'http://chaozhi.weizoom.com' + url
+                images.append(dict(product=new_product.id,
+                                   url=url,
+                                   width=100,
+                                   height=100))
+
             # for image in self.swipe_images:
 
             ProductSwipeImage.save_many({'images': images})

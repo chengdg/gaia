@@ -287,10 +287,19 @@ class ProductSwipeImage(business_model.Model):
         更新用户的多个信息
         """
         mall_models.ProductSwipeImage.delete().dj_where(product=args['product_id']).execute()
-        images = [dict(product=args['product_id'],
-                       url=image.get('url'),
-                       width=100,
-                       height=100) for image in args['swipe_images']]
+        images = []
+        for image in args['swipe_images']:
+            url = image.get('url')
+            if not url.startswith('http'):
+                url = 'http://chaozhi.weizoom.com' + url
+            images.append(dict(product=args['product_id'],
+                               url=url,
+                               width=100,
+                               height=100))
+        # images = [dict(product=args['product_id'],
+        #                url=image.get('url'),
+        #                width=100,
+        #                height=100) for image in args['swipe_images']]
 
         # for image in self.swipe_images:
 
