@@ -165,12 +165,12 @@ class Order(business_model.Model):
             date_interval_type = filter_datetime_param['date_interval_type']
             if  date_interval_type == '1':  # 下单时间
                 filter_params.update({
-                    'created_at__gte': filter_datetime_param['_begin'], 
+                    'created_at__gte': filter_datetime_param['_begin'],
                     'created_at__lt': filter_datetime_param['_end']})
             elif date_interval_type == '2':  # 付款时间
                 filter_params.update({
-                    'payment_time__gte': filter_datetime_param['_begin'], 
-                    'payment_time__lt': filter_datetime_param['_end']}) 
+                    'payment_time__gte': filter_datetime_param['_begin'],
+                    'payment_time__lt': filter_datetime_param['_end']})
             elif  date_interval_type == '3': # 发货时间
                 order_operation_log_info = OrderOperationLogInfo.empty_order_operation_log_info()
                 orders_operation_log_info_ids = order_operation_log_info.get_orders_operation(orders_select_query, start_time=filter_datetime_param['_begin'], end_time=filter_datetime_param['_end'], action="订单发货")
@@ -192,9 +192,9 @@ class Order(business_model.Model):
         def order_status_log(to_status, start_time, end_time):
             o_d = []
             for order in orders:
-                order_status_log_infos = mall_models.OrderStatusLog.select().dj_where(order_id=order.order_id, 
-                        to_status=to_status, 
-                        created_at__gte=start_time, 
+                order_status_log_infos = mall_models.OrderStatusLog.select().dj_where(order_id=order.order_id,
+                        to_status=to_status,
+                        created_at__gte=start_time,
                         created_at__lt=end_time)
                 if  order_status_log_infos.count() != 0:
                     o_d.append(Order(order))
@@ -211,7 +211,7 @@ class Order(business_model.Model):
             elif date_interval_type == '7': # 订单取消时间
                 return order_status_log(mall_models.ORDER_STATUS_CANCEL, filter_datetime_param['_begin'], filter_datetime_param['_end'])
             else:
-                pass                   
+                pass
         if orders.count() != 0:
             for order in orders:
                 order_obj = Order(order)
@@ -322,7 +322,7 @@ class Order(business_model.Model):
     def order_handle_filter(self, action=None):
         order_operation_log_info = OrderOperationLogInfo.empty_order_operation_log_info()
         order_operation_log_info_obj = order_operation_log_info.from_order_id_action(self.context['db_model'].order_id, action)
-        return order_operation_log_info_obj       
+        return order_operation_log_info_obj
 
     @property
     def order_cancel(self):
@@ -493,12 +493,12 @@ class Order(business_model.Model):
         """
         # 获取带运营平台的账户
         if order_id:
-            orders = mall_models.Order.select().dj_where(order_id)
+            orders = mall_models.Order.select().dj_where(order_id=order_id)
             results = [Order(order) for order in orders]
         # for o in results:
         #     o.owner_id = webapp_to_user_id.get(o.webapp_id)
         #     o.store_name = user_to_store_name.get(o.webapp_id)
-            return results, 1
+            return results, len(results)
         if not product_ids:
             user_profile = UserProfile.from_webapp_type({'webapp_type': 2})
             if not user_profile:
@@ -540,7 +540,7 @@ class Order(business_model.Model):
             orders = orders.dj_where(webapp_id=temp_user_profile.webapp_id)
         # 我们不展示母订单，只展示子订单，或者普通订单 >=0（0表示普通订单）
         orders = orders.dj_where(origin_order_id__gte=0)
-        orders = orders.order_by('-create_at')
+        orders = orders.order_by('-created_at')
         # if supplier_ids:
         #     # 区分拆单问题
         #

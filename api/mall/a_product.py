@@ -112,7 +112,11 @@ class AProduct(api_resource.ApiResource):
 
         if swipe_images:
             swipe_images = json.loads(swipe_images)
-            product.thumbnails_url = swipe_images[0].get('url')
+            thumbnails_url = swipe_images[0].get('url')
+            if not thumbnails_url.startswith('http'):
+                thumbnails_url = 'http://chaozhi.weizoom.com' + thumbnails_url
+            product.thumbnails_url = thumbnails_url
+            # product.thumbnails_url = swipe_images[0].get('url')
 
         product.update()
         # 更新规格
