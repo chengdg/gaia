@@ -87,7 +87,7 @@ class AProduct(api_resource.ApiResource):
         model_type = self.get('model_type')
         stock_type = self.get('stock_type', None)
         if stock_type:
-            stock_type = 1 if stock_type == 'limit' else 0
+            stock_type = 0 if stock_type == 'unbound' else 1
         swipe_images = self.get('swipe_images', None)
         purchase_price = self.get('purchase_price', None)
         stocks = self.get('stocks', None)
@@ -101,7 +101,8 @@ class AProduct(api_resource.ApiResource):
         product = Product.from_id({'product_id': product_id})
         product.name = name if name else product.name
         product.supplier = supplier if supplier else product.supplier
-        product.stock_type = stock_type if stock_type else product.stock_type
+        if stock_type is not None:
+            product.stock_type = stock_type
         # product.swipe_images = swipe_images if swipe_images else product.swipe_images
         product.purchase_price = purchase_price if purchase_price else product.purchase_price
         # product.stocks = stocks if stocks else product.stocks
@@ -125,7 +126,7 @@ class AProduct(api_resource.ApiResource):
             product_model = ProductModel.from_product_id({'product_id': product.id,
                                                           'model_type': 'single'})
             product_model.price = price if price else product_model.price
-            product_model.stock_type = stock_type if stock_type else product_model.stock_type
+            product_model.stock_type = product.stock_type
             product_model.stocks = stocks if stocks else product_model.stocks
             product_model.weight = weight if weight else product_model.weight
             product_model.update()
