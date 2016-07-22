@@ -28,7 +28,7 @@ class Supplier(business_model.Model):
     @param_required(['db_model'])
     def from_model(args):
         model = args['db_model']
-        product = Product(model)
+        product = Supplier(model)
         return product
 
     @staticmethod
@@ -39,7 +39,7 @@ class Supplier(business_model.Model):
 
     @staticmethod
     @param_required(['ids'])
-    def from_id(args):
+    def from_ids(args):
         supplier_db_models = mall_models.Supplier.select.dj_where(id__in=args['ids'])
         suppliers = []
         for model in supplier_db_models:
@@ -66,3 +66,9 @@ class Supplier(business_model.Model):
                                                 supplier_address=self.supplier_address,
                                                 remark=self.remark)
         return Supplier(new_model)
+
+    def update(self):
+        change_rows = mall_models.Supplier.update(name=self.name,
+                                                  remark=self.remark).dj_where(id=self.id).execute()
+        return change_rows
+

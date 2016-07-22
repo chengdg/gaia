@@ -2,6 +2,10 @@
 
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
+from eaglet.core import watchdog
+from eaglet.core.exceptionutil import unicode_full_stack
+
+from business.mall.supplier import Supplier
 from business.mall.supplier_factory import SupplierFactory
 from business.account.user_profile import UserProfile
 
@@ -34,3 +38,29 @@ class ASupplier(api_resource.ApiResource):
                                  'remark': remark
                                  })
         return supplier.to_dict()
+
+    @param_required(['supplier_id', 'name'])
+    def post(self):
+        """
+
+        """
+        supplier_id = self.get('supplier_id')
+
+        name = self.get('name')
+        remark = self.get('remark', '')
+        supplier = Supplier.from_id({'id': supplier_id})
+        supplier.name = name
+        supplier.remark = remark
+        try:
+            change_rows = supplier.update()
+            return {
+                'change_rows': change_rows
+            }
+        except:
+            msg = unicode_full_stack
+            watchdog.error(msg)
+            return {
+                'change_rows': -1
+            }
+
+
