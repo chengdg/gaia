@@ -13,3 +13,4 @@ import a_sync_product
 import a_group_update_order
 import a_user_profile
 import a_product_status
+import product
