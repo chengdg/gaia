@@ -607,6 +607,7 @@ class ProductModel(models.Model):
     is_standard = models.BooleanField(default=True)  # 是否是标准规格
     price = models.FloatField(default=0.0)  # 商品价格
     market_price = models.FloatField(default=0.0)  # 商品市场价格
+    purchase_price = models.FloatField(default=0.0)  # 商品结算价格
     weight = models.FloatField(default=0.0)  # 重量
     stock_type = models.IntegerField(default=PRODUCT_STOCK_TYPE_UNLIMIT)  # 0:无限 1:有限
     stocks = models.IntegerField(default=0)  # 有限：数量
