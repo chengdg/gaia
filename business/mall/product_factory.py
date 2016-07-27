@@ -50,7 +50,7 @@ class ProductFactory(business_model.Model):
         if 'single' == model_type:
             product.price = args.get('price', purchase_price)
 
-            product.purchase_price = args.get('purchase_price', '')
+            product.purchase_price = purchase_price
             product.weight = args.get('weight', '')
             product.stock_type = stock_type
             # product.stocks = args.get('stocks')
@@ -77,6 +77,7 @@ class ProductFactory(business_model.Model):
             product_model.weight = new_product.weight
             product_model.name = 'standard'
             product_model.is_deleted = False
+            product_model.purchase_price = new_product.purchase_price
             new_product_model = product_model.save()
             # 用来设置规格信息
 
@@ -100,6 +101,7 @@ class ProductFactory(business_model.Model):
                 stand_product_model.weight = new_product.weight
                 stand_product_model.name = 'standard'
                 stand_product_model.is_deleted = True
+                stand_product_model.purchase_price = purchase_price
                 many_models = []
                 for model_info in models_info:
                     # 多规格

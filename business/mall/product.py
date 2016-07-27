@@ -243,6 +243,7 @@ class ProductModel(business_model.Model):
             price=self.price,
             stock_type=self.stock_type,
             stocks=self.stocks,
+            purchase_price=self.purchase_price,
             is_deleted=self.is_deleted,
             weight=self.weight
         )
@@ -256,20 +257,6 @@ class ProductModel(business_model.Model):
                                                                        name='standard',
                                                                        is_deleted=False).first()
             return ProductModel(product_model)
-
-    def update(self, models_info=None):
-        if self.name == 'standard':
-            # 更新成单规格
-            mall_models.ProductModel.update(price=self.price,
-                                            stock_type=self.stock_type,
-                                            stocks=self.stocks,
-                                            weight=self.weight,
-                                            is_deleted=False).dj_where(id=self.id,).execute()
-
-            mall_models.ProductModel.update(is_deleted=True).dj_where(name!='standard').execute()
-        else:
-            # 更新成多规格
-            pass
 
     @staticmethod
     @param_required(['models'])
@@ -319,6 +306,7 @@ class ProductModel(business_model.Model):
                                                     stock_type=temp_model.stock_type,
                                                     stocks=temp_model.stocks,
                                                     weight=temp_model.weight,
+                                                    purchase_price=temp_model.purchase_price,
                                                     is_deleted=False)\
                         .dj_where(name=temp_model.name,
                                   product_id=temp_model.product_id).execute()

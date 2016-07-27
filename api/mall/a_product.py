@@ -131,6 +131,7 @@ class AProduct(api_resource.ApiResource):
             stand_product_model.stocks = stocks if stocks else product.stocks
             stand_product_model.price = product.price
             stand_product_model.weight = product.weight
+            stand_product_model.purchase_price = product.purchase_price
             stand_product_model.name = 'standard'
             stand_product_model.is_deleted = True
             many_models.append(stand_product_model)
