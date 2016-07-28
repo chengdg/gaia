@@ -4,6 +4,8 @@ from eaglet.decorator import param_required
 from db.mall import models as mall_models
 from business.account.user_profile import UserProfile
 from business import model as business_model
+from eaglet.core import watchdog
+from eaglet.core.exceptionutil import unicode_full_stack
 
 
 class Product(business_model.Model):
@@ -171,6 +173,7 @@ class Product(business_model.Model):
             weight=self.weight,
             stock_type=self.stock_type,
             purchase_price=self.purchase_price,
+            stocks=0,
             promotion_title=self.promotion_title if self.promotion_title else ''
 
         )
@@ -207,6 +210,18 @@ class Product(business_model.Model):
             ProductPool.delete_from_product({'product_id': self.id})
         return change_rows
 
+    @staticmethod
+    @param_required(['product_ids'])
+    def check_product_shelve_on(args):
+        """
+        获取已经上架的产品
+        """
+        product_ids = args.get('product_ids')
+        pools = mall_models.ProductPool.select().dj_where(product_id__in=product_ids,
+                                                          status=mall_models.PP_STATUS_ON)
+        on_product_ids = [pool.product_id for pool in pools]
+        return list(set(on_product_ids))
+
 
 class ProductModel(business_model.Model):
 
@@ -219,7 +234,9 @@ class ProductModel(business_model.Model):
         'price',
         'stock_type',
         'stocks',
-        'weight'
+        'weight',
+        'is_deleted',
+        'purchase_price'
     )
 
     def __init__(self, model):
@@ -233,11 +250,13 @@ class ProductModel(business_model.Model):
         product_model = mall_models.ProductModel.create(
             owner=self.owner_id,
             product=self.product_id,
-            name='standard',
+            name=self.name,
             is_standard=self.is_standard,
             price=self.price,
             stock_type=self.stock_type,
             stocks=self.stocks,
+            purchase_price=self.purchase_price,
+            is_deleted=self.is_deleted,
             weight=self.weight
         )
         return ProductModel(product_model)
@@ -251,12 +270,74 @@ class ProductModel(business_model.Model):
                                                                        is_deleted=False).first()
             return ProductModel(product_model)
 
-    def update(self):
-        mall_models.ProductModel.update(price=self.price,
-                                        stock_type=self.stock_type,
-                                        stocks=self.stocks,
-                                        weight=self.weight).dj_where(id=self.id,).execute()
+    @staticmethod
+    @param_required(['models'])
+    def save_many(args):
+        """
+        保存多个
+        """
+        bulk_create = []
+        models = args.get('models')
+        bulk_create = [dict(owner=temp_model.owner_id,
+                            product=temp_model.product_id,
+                            name=temp_model.name,
+                            is_standard=temp_model.is_standard,
+                            price=temp_model.price,
+                            stock_type=temp_model.stock_type,
+                            stocks=temp_model.stocks,
+                            is_deleted=temp_model.is_deleted,
+                            weight=temp_model.weight,
+                            purchase_price=temp_model.purchase_price) for temp_model in models]
 
+        mall_models.ProductModel.insert_many(bulk_create).execute()
+
+    @staticmethod
+    @param_required(['models', 'product_id'])
+    def update_many_models(args):
+        """
+        更新成多规格
+        """
+        models = args.get('models')
+        if not models:
+            return None
+
+        # 已经有的规格,直接更新,否则添加
+        # model_names = mall_models.ProductModel.select().dj_where(product_id=args.get('product_id'))
+        # names = [model_name.name for model_name in model_names]
+        # 需要新增的规格
+        need_add = []
+        try:
+            # 如果是true说明是多规格商品,否则是单规格商品
+            need_update_stand = True
+            # 先暂时将所有的规格更新成已经删除
+            mall_models.ProductModel.update(is_deleted=True).dj_where(product_id=args.get('product_id')).execute()
+            for temp_model in models:
+                if mall_models.ProductModel.select().dj_where(name=temp_model.name,
+                                                              product_id=temp_model.product_id).count() > 0:
+                    mall_models.ProductModel.update(price=temp_model.price,
+                                                    stock_type=temp_model.stock_type,
+                                                    stocks=temp_model.stocks,
+                                                    weight=temp_model.weight,
+                                                    purchase_price=temp_model.purchase_price,
+                                                    is_deleted=False)\
+                        .dj_where(name=temp_model.name,
+                                  product_id=temp_model.product_id).execute()
+                    if temp_model.name == 'standard':
+                        need_update_stand = False
+                else:
+                    need_add.append(temp_model)
+
+
+            if need_add:
+                ProductModel.save_many({'models': need_add})
+            if need_update_stand:
+                mall_models.ProductModel.update(is_deleted=True).dj_where(product_id=args.get('product_id'),
+                                                                          name='standard').execute()
+            return 'SUCCESS'
+        except:
+            msg = unicode_full_stack()
+            watchdog.error(msg)
+            return None
 
 class ProductSwipeImage(business_model.Model):
     __slots__ = ()

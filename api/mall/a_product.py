@@ -53,7 +53,6 @@ class AProduct(api_resource.ApiResource):
         except:
             msg = unicode_full_stack()
             watchdog.error(msg)
-            print msg
             return {
                 'product': None
             }
@@ -92,10 +91,9 @@ class AProduct(api_resource.ApiResource):
         purchase_price = self.get('purchase_price', None)
         stocks = self.get('stocks', None)
         accounts = self.get('accounts', None)
-        detail = self.get('detail', None)
-        price = self.get('price', None)
-        weight = self.get('weight', None)
-        model_info = self.get('model_info', None)
+        detail = self.get('detail', '')
+        price = self.get('price', purchase_price)
+        weight = self.get('weight', 0)
         promotion_title = self.get('promotion_title', '')
 
         product = Product.from_id({'product_id': product_id})
@@ -105,7 +103,7 @@ class AProduct(api_resource.ApiResource):
             product.stock_type = stock_type
         # product.swipe_images = swipe_images if swipe_images else product.swipe_images
         product.purchase_price = purchase_price if purchase_price else product.purchase_price
-        # product.stocks = stocks if stocks else product.stocks
+        product.stocks = stocks if stocks else product.stocks
         product.detail = detail if detail else product.detail
         product.price = price if price else product.price
         product.weight = weight if weight else product.weight
@@ -121,17 +119,49 @@ class AProduct(api_resource.ApiResource):
 
         product.update()
         # 更新规格
+        many_models = []
+        models_info = self.get('model_info', '')
         if model_type == 'single':
-            # TODO 目前只有单规格
-            product_model = ProductModel.from_product_id({'product_id': product.id,
-                                                          'model_type': 'single'})
-            product_model.price = price if price else product_model.price
-            product_model.stock_type = product.stock_type
-            product_model.stocks = stocks if stocks else product_model.stocks
-            product_model.weight = weight if weight else product_model.weight
-            product_model.update()
-        else:
-            pass
+            # 创建标准规格
+            stand_product_model = ProductModel(None)
+            stand_product_model.owner_id = product.owner_id
+            stand_product_model.product_id = product.id
+            stand_product_model.is_standard = True
+            stand_product_model.stock_type = product.stock_type
+            stand_product_model.stocks = stocks if stocks else product.stocks
+            stand_product_model.price = product.price
+            stand_product_model.weight = product.weight
+            stand_product_model.purchase_price = product.purchase_price
+            stand_product_model.name = 'standard'
+            stand_product_model.is_deleted = True
+            many_models.append(stand_product_model)
+        if models_info:
+            models_info = json.loads(models_info)
+
+            for model_info in models_info:
+                # 多规格
+                name = model_info.get('name')
+                purchase_price = model_info.get('purchase_price', 0)
+                price = model_info.get('price', 0)
+                stock_type = 0 if model_info.get('stock_type') == 'unbound' else 1
+                stocks = model_info.get('stocks') if model_info.get('stocks') else 0
+                weight = model_info.get('weight')
+                product_model = ProductModel(None)
+                product_model.owner_id = product.owner_id
+                product_model.product_id = product.id
+                product_model.name = name
+                product_model.purchase_price = purchase_price
+                product_model.stock_type = stock_type
+                product_model.stocks = stocks
+                product_model.weight = weight
+                product_model.price = price
+                product_model.is_standard = False
+                product_model.is_deleted = False
+                many_models.append(product_model)
+
+        ProductModel.update_many_models({'models': many_models,
+                                            'product_id': product.id,
+                                         })
         if swipe_images:
             # 论播图
             ProductSwipeImage.update_product_many({'swipe_images': swipe_images,

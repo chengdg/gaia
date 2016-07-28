@@ -20,13 +20,15 @@ class AProductStatus(api_resource.ApiResource):
     def get(args):
         product_ids = args['product_ids'].split("_")
         product_ids = [id for id in product_ids if id]
-
+        # product_ids = json.loads(product_ids)
         products = Product.from_ids({'product_ids': product_ids})
+        on_product_ids = Product.check_product_shelve_on({'product_ids': product_ids})
         product_status = []
         for product in products:
             product_status.append({
                     'product_id': product.id,
-                    'is_deleted': product.is_deleted
+                    'is_deleted': product.is_deleted,
+                    'status': 'on' if product.id in on_product_ids else 'off'
                 })
         return {'product_status': product_status}
 

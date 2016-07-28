@@ -3,8 +3,8 @@
 from eaglet.decorator import param_required
 
 from business import model as business_model
-from db.mall import models as mall_models
 from business.mall.product_model_property import ProductModelPropertyValue, ProductModelProperty
+from business.account.user_profile import UserProfile
 
 
 class ProductModelPropertyFactory(business_model.Model):
@@ -24,9 +24,18 @@ class ProductModelPropertyFactory(business_model.Model):
         """
         创造新规格
         """
-
+        owner_id = args['owner_id']
+        try:
+            owner_id = int(owner_id)
+        except:
+            # 获取mall_type = 2的平台
+            user_profiles = UserProfile.from_webapp_type({'webapp_type': 2})
+            if user_profiles:
+                owner_id = user_profiles[0].user_id
+            else:
+                return None
         model_property = ProductModelProperty(None)
-        model_property.owner_id = args['owner_id']
+        model_property.owner_id = owner_id
         model_property.type = args['type']
         model_property.name = args['name']
         rs_model = model_property.save()
