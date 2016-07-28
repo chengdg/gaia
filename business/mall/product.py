@@ -210,6 +210,18 @@ class Product(business_model.Model):
             ProductPool.delete_from_product({'product_id': self.id})
         return change_rows
 
+    @staticmethod
+    @param_required(['product_ids'])
+    def check_product_shelve_on(args):
+        """
+        获取已经上架的产品
+        """
+        product_ids = args.get('product_ids')
+        pools = mall_models.ProductPool.select().dj_where(product_id__in=product_ids,
+                                                          status=mall_models.PP_STATUS_ON)
+        on_product_ids = [pool.product_id for pool in pools]
+        return list(set(on_product_ids))
+
 
 class ProductModel(business_model.Model):
 
