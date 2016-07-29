@@ -133,14 +133,17 @@ class AProduct(api_resource.ApiResource):
             stand_product_model.weight = product.weight
             stand_product_model.purchase_price = product.purchase_price
             stand_product_model.name = 'standard'
-            stand_product_model.is_deleted = True
+            stand_product_model.is_deleted = False
             many_models.append(stand_product_model)
+        can_not_update = False
         if models_info:
             models_info = json.loads(models_info)
 
             for model_info in models_info:
                 # 多规格
                 name = model_info.get('name')
+                if not name:
+                    can_not_update = True
                 purchase_price = model_info.get('purchase_price', 0)
                 price = model_info.get('price', 0)
                 stock_type = 0 if model_info.get('stock_type') == 'unbound' else 1
@@ -156,21 +159,34 @@ class AProduct(api_resource.ApiResource):
                 product_model.weight = weight
                 product_model.price = price
                 product_model.is_standard = False
-                product_model.is_deleted = False
+                product_model.is_deleted = model_info.get('is_deleted')
                 many_models.append(product_model)
-
-        ProductModel.update_many_models({'models': many_models,
-                                            'product_id': product.id,
-                                         })
-        if swipe_images:
-            # 论播图
-            ProductSwipeImage.update_product_many({'swipe_images': swipe_images,
-                                                   'product_id': product.id})
-        # 商品关联关系更新 主要是，可能更新的商家变化
-        if accounts:
-            accounts = json.loads(accounts)
-            ProductPool.update_many({'product_id': product.id,
-                                     'accounts': accounts})
+        if can_not_update:
+            return {
+                'success': False
+            }
+        try:
+            ProductModel.update_many_models({'models': many_models,
+                                             'product_id': product.id,
+                                             })
+            if swipe_images:
+                # 论播图
+                ProductSwipeImage.update_product_many({'swipe_images': swipe_images,
+                                                       'product_id': product.id})
+            # 商品关联关系更新 主要是，可能更新的商家变化
+            if accounts:
+                accounts = json.loads(accounts)
+                ProductPool.update_many({'product_id': product.id,
+                                         'accounts': accounts})
+            return {
+                'success': True
+            }
+        except:
+            msg = unicode_full_stack()
+            watchdog.error(msg)
+            return {
+                'success': False
+            }
 
     @param_required(['weapp_product_id'])
     def delete(self):

@@ -319,7 +319,7 @@ class ProductModel(business_model.Model):
                                                     stocks=temp_model.stocks,
                                                     weight=temp_model.weight,
                                                     purchase_price=temp_model.purchase_price,
-                                                    is_deleted=False)\
+                                                    is_deleted=temp_model.is_deleted)\
                         .dj_where(name=temp_model.name,
                                   product_id=temp_model.product_id).execute()
                     if temp_model.name == 'standard':

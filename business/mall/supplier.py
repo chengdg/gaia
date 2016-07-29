@@ -69,6 +69,10 @@ class Supplier(business_model.Model):
 
     def update(self):
         change_rows = mall_models.Supplier.update(name=self.name,
-                                                  remark=self.remark).dj_where(id=self.id).execute()
+                                                  remark=self.remark,
+                                                  responsible_person=self.responsible_person,
+                                                  supplier_tel=self.supplier_tel,
+                                                  supplier_address=self.supplier_address,
+                                                  ).dj_where(id=self.id).execute()
         return change_rows
 
