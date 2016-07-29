@@ -47,10 +47,14 @@ class ASupplier(api_resource.ApiResource):
         supplier_id = self.get('supplier_id')
 
         name = self.get('name')
+        supplier_tel = self.get('supplier_tel', '')
+        supplier_address = self.get('supplier_address', '')
         remark = self.get('remark', '')
         supplier = Supplier.from_id({'id': supplier_id})
         supplier.name = name
+        supplier.supplier_tel = supplier_tel
         supplier.remark = remark
+        supplier.supplier_address = supplier_address
         try:
             change_rows = supplier.update()
             return {
