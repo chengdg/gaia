@@ -6,6 +6,7 @@ from business.account.user_profile import UserProfile
 from business import model as business_model
 from eaglet.core import watchdog
 from eaglet.core.exceptionutil import unicode_full_stack
+from settings import PANDA_IMAGE_DOMAIN
 
 
 class Product(business_model.Model):
@@ -372,7 +373,7 @@ class ProductSwipeImage(business_model.Model):
         for image in args['swipe_images']:
             url = image.get('url')
             if not url.startswith('http'):
-                url = 'http://chaozhi.weizoom.com' + url
+                url = PANDA_IMAGE_DOMAIN + url
             images.append(dict(product=args['product_id'],
                                url=url,
                                width=100,

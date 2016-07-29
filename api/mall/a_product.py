@@ -9,6 +9,7 @@ from eaglet.core.exceptionutil import unicode_full_stack
 
 from business.mall.product_factory import ProductFactory
 from business.mall.product import Product, ProductModel, ProductSwipeImage, ProductPool
+from settings import PANDA_IMAGE_DOMAIN
 
 
 class AProduct(api_resource.ApiResource):
@@ -113,7 +114,7 @@ class AProduct(api_resource.ApiResource):
             swipe_images = json.loads(swipe_images)
             thumbnails_url = swipe_images[0].get('url')
             if not thumbnails_url.startswith('http'):
-                thumbnails_url = 'http://chaozhi.weizoom.com' + thumbnails_url
+                thumbnails_url = PANDA_IMAGE_DOMAIN + thumbnails_url
             product.thumbnails_url = thumbnails_url
             # product.thumbnails_url = swipe_images[0].get('url')
 
@@ -142,7 +143,7 @@ class AProduct(api_resource.ApiResource):
             for model_info in models_info:
                 # 多规格
                 name = model_info.get('name')
-                if not name:
+                if not name or name == 'standard':
                     can_not_update = True
                 purchase_price = model_info.get('purchase_price', 0)
                 price = model_info.get('price', 0)
