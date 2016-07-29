@@ -106,6 +106,8 @@ class ProductFactory(business_model.Model):
                 for model_info in models_info:
                     # 多规格
                     name = model_info.get('name')
+                    if not name:
+                        continue
                     purchase_price = model_info.get('purchase_price', 0)
                     price = model_info.get('price', 0)
                     stock_type = 0 if model_info.get('stock_type') == 'unbound' else 1
