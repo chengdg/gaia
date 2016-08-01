@@ -4,6 +4,7 @@ import json
 from business import model as business_model
 from business.mall.product import Product, ProductModel, ProductSwipeImage, ProductPool
 from db.mall import models as mall_models
+from settings import PANDA_IMAGE_DOMAIN
 
 
 class ProductFactory(business_model.Model):
@@ -43,7 +44,7 @@ class ProductFactory(business_model.Model):
         product.promotion_title = promotion_title
         thumbnails_url = swipe_images[0].get('url') if swipe_images else ''
         if not thumbnails_url.startswith('http'):
-            thumbnails_url = 'http://chaozhi.weizoom.com' + thumbnails_url
+            thumbnails_url = PANDA_IMAGE_DOMAIN + thumbnails_url
         product.thumbnails_url = thumbnails_url
         product.swipe_images = swipe_images
         # 保存商品规格信息
@@ -106,6 +107,8 @@ class ProductFactory(business_model.Model):
                 for model_info in models_info:
                     # 多规格
                     name = model_info.get('name')
+                    if not name or name == 'standard':
+                        continue
                     purchase_price = model_info.get('purchase_price', 0)
                     price = model_info.get('price', 0)
                     stock_type = 0 if model_info.get('stock_type') == 'unbound' else 1
@@ -133,7 +136,7 @@ class ProductFactory(business_model.Model):
             for image in product.swipe_images:
                 url = image.get('url')
                 if not url.startswith('http'):
-                    url = 'http://chaozhi.weizoom.com' + url
+                    url = PANDA_IMAGE_DOMAIN + url
                 images.append(dict(product=new_product.id,
                                    url=url,
                                    width=100,
