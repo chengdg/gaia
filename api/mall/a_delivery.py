@@ -47,10 +47,10 @@ class ADelivery(api_resource.ApiResource):
             'msg': msg
         }
 
-    @param_required(['order_id', 'express_company_name'])
+    @param_required(['order_id'])
     def post(args):
         order_id = args.get('order_id')
-        express_company_name = args.get('express_company_name')
+        express_company_name = args.get('express_company_name', '')
         express_number =args.get('express_number', '')
 
         leader_name = args.get('leader_name', '')
