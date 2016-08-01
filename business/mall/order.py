@@ -260,7 +260,7 @@ class Order(business_model.Model):
             #return list(details)
             return details
 
-        logging.info("express_company_name:{}, express_number:{}".format(self.express_company_name, self.express_number))
+        logging.info(u"express_company_name:{}, express_number:{}".format(self.express_company_name, self.express_number))
         expresses = express_models.ExpressHasOrderPushStatus.select().dj_where(
                 express_company_name = self.express_company_name,
                 express_number = self.express_number
