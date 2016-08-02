@@ -57,11 +57,10 @@ class AGroupUpdateOrder(api_resource.ApiResource):
                         if result:
                             order.updat_status(mall_models.ORDER_STATUS_GROUP_REFUNDING)
                     else:
-                        result, msg = order.refunding()
+                        result, msg = order.return_money()
                         if result:
-                            result, msg = order.return_money()
-                            if result:
-                                order.updat_status(mall_models.ORDER_STATUS_GROUP_REFUNDING)
+                            result, msg = order.refunding()
+                            order.updat_status(mall_models.ORDER_STATUS_GROUP_REFUNDING)
                 else:
                     result, msg = order.cancel()
             order_msg.append({
