@@ -154,7 +154,8 @@ class OrderState(Order):
         order = self
         target_status = mall_models.ORDER_STATUS_PAYED_SHIPED
         order_params = dict()
-        express_number = express_number.replace(' ','')  #快递100服务器过滤空格,快递鸟不过滤空格
+        if express_number:
+            express_number = express_number.replace(' ','')  #快递100服务器过滤空格,快递鸟不过滤空格
         order_params['express_company_name'] = express_company_name
         order_params['express_number'] = express_number
         order_params['leader_name'] = leader_name

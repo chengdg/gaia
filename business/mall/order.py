@@ -260,7 +260,7 @@ class Order(business_model.Model):
             #return list(details)
             return details
 
-        logging.info("express_company_name:{}, express_number:{}".format(self.express_company_name, self.express_number))
+        logging.info(u"express_company_name:{}, express_number:{}".format(self.express_company_name, self.express_number))
         expresses = express_models.ExpressHasOrderPushStatus.select().dj_where(
                 express_company_name = self.express_company_name,
                 express_number = self.express_number
@@ -540,7 +540,7 @@ class Order(business_model.Model):
             orders = orders.dj_where(webapp_id=temp_user_profile.webapp_id)
         # 我们不展示母订单，只展示子订单，或者普通订单 >=0（0表示普通订单）
         orders = orders.dj_where(origin_order_id__gte=0)
-        orders = orders.order_by('-created_at')
+        orders = orders.order_by(mall_models.Order.created_at.desc())
         # if supplier_ids:
         #     # 区分拆单问题
         #
