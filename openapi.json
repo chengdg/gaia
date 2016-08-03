@@ -7,6 +7,7 @@
     "paths": {
         "/mall/delivery/": {
             "put": {
+                "summary": "订单发货",
                 "description": "订单发货\n",
                 "parameters": [
                     {
@@ -45,9 +46,6 @@
                         "type": "string"
                     }
                 ],
-                "tags": [
-                    "delivery"
-                ],
                 "responses": {
                     "200": {
                         "description": "Successful response",
@@ -83,6 +81,7 @@
                 }
             },
             "post": {
+                "summary": "订单发货信息修改",
                 "description": "订单发货信息修改\n",
                 "parameters": [
                     {
@@ -158,6 +157,7 @@
         },
         "/mall/order/": {
             "post": {
+                "summary": "修改订单状态（目前仅支持完成）",
                 "description": "修改订单状态（目前仅支持完成）",
                 "parameters": [
                     {
@@ -181,9 +181,6 @@
                         "required": true,
                         "type": "string"
                     }
-                ],
-                "tags": [
-                    "order"
                 ],
                 "responses": {
                     "200": {
@@ -222,6 +219,7 @@
         },
         "/mall/product_sales/": {
             "get": {
+                "summary": "获取商品销量",
                 "description": "获取商品销量",
                 "parameters": [
                     {
@@ -231,9 +229,6 @@
                         "required": true,
                         "type": "string"
                     }
-                ],
-                "tags": [
-                    "product_sales"
                 ],
                 "responses": {
                     "200": {
@@ -265,11 +260,9 @@
         },
         "/account/zypt_info/": {
             "get": {
+                "summary": "获取自营平台的信息",
                 "description": "获取自营平台的信息",
                 "parameters": [],
-                "tags": [
-                    "zypt_info"
-                ],
                 "responses": {
                     "200": {
                         "description": "Successful response",
@@ -311,6 +304,7 @@
         },
         "/mall/supplier/": {
             "put": {
+                "summary": "添加供货商",
                 "description": "添加供货商",
                 "parameters": [
                     {
@@ -356,9 +350,6 @@
                         "type": "string"
                     }
                 ],
-                "tags": [
-                    "supplier"
-                ],
                 "responses": {
                     "200": {
                         "description": "Successful response",
@@ -396,6 +387,7 @@
         },
         "/mall/product/": {
             "put": {
+                "summary": "创建商品",
                 "description": "创建商品",
                 "parameters": [
                     {
@@ -574,9 +566,6 @@
                         "type": "string"
                     }
                 ],
-                "tags": [
-                    "product"
-                ],
                 "responses": {
                     "200": {
                         "description": "Successful response"
@@ -586,6 +575,7 @@
         },
         "/mall/user_list/": {
             "get": {
+                "summary": "商户列表",
                 "description": "商户列表",
                 "parameters": [
                     {
@@ -602,9 +592,6 @@
                         "required": true,
                         "type": "integer"
                     }
-                ],
-                "tags": [
-                    "user_list"
                 ],
                 "responses": {
                     "200": {
@@ -660,6 +647,7 @@
         },
         "/mall/order_list/": {
             "get": {
+                "summary": "获取订单列表",
                 "description": "获取订单列表",
                 "parameters": [
                     {
@@ -775,9 +763,6 @@
                         "type": "integer"
                     }
                 ],
-                "tags": [
-                    "order_list"
-                ],
                 "responses": {
                     "200": {
                         "description": "Successful response",
@@ -813,6 +798,7 @@
         },
         "/mall/category_list": {
             "get": {
+                "summary": "获取分组列表",
                 "description": "获取分组列表\n",
                 "parameters": [
                     {
@@ -849,9 +835,6 @@
                         "format": "1 or 0",
                         "description": "是否展示分组中的商品"
                     }
-                ],
-                "tags": [
-                    "category_list"
                 ],
                 "produces": [
                     "application/json"
@@ -894,9 +877,6 @@
                         "type": "string",
                         "format": "1 or 0"
                     }
-                ],
-                "tags": [
-                    "category"
                 ],
                 "responses": {
                     "200": {
@@ -1001,9 +981,6 @@
                         "description": "分组与商品关系id"
                     }
                 ],
-                "tags": [
-                    "category_has_product"
-                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1058,9 +1035,6 @@
                         "description": "积分"
                     }
                 ],
-                "tags": [
-                    "member_integral"
-                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1103,9 +1077,6 @@
                         "description": "原因"
                     }
                 ],
-                "tags": [
-                    "member_integral_log"
-                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1141,9 +1112,6 @@
                         "description": "分组列表"
                     }
                 ],
-                "tags": [
-                    "member_has_tag"
-                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1177,9 +1145,6 @@
                         "type": "string",
                         "description": "店铺id"
                     }
-                ],
-                "tags": [
-                    "member_tags"
                 ],
                 "responses": {
                     "200": {
@@ -1217,9 +1182,6 @@
                         "description": "新的分组名称"
                     }
                 ],
-                "tags": [
-                    "member_tags"
-                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1253,9 +1215,6 @@
                         "type": "string",
                         "description": "分组名称"
                     }
-                ],
-                "tags": [
-                    "member_tags"
                 ],
                 "responses": {
                     "200": {
@@ -1291,9 +1250,6 @@
                         "description": "分组ids"
                     }
                 ],
-                "tags": [
-                    "member_tags"
-                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1321,9 +1277,6 @@
                         "type": "string",
                         "description": "会员id"
                     }
-                ],
-                "tags": [
-                    "member_openid"
                 ],
                 "responses": {
                     "200": {
