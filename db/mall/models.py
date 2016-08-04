@@ -1529,3 +1529,86 @@ class ProductLimitPurchasePrice(models.Model):
         verbose_name = "商品池商品"
         verbose_name_plural = "商品池商品"
         db_table = "product_limit_purchase_price"
+
+
+########################################################################
+# Workspace: 一个工作空间，可包含多个Project
+########################################################################
+class Workspace(models.Model):
+    owner = models.ForeignKey(User)
+    name = models.CharField(max_length=50)  # 名字
+    inner_name = models.CharField(max_length=50)  # 内部名字
+    data_backend = models.CharField(max_length=50)  # 数据源
+    source_workspace_id = models.IntegerField(default=0)  # 源workspace的id
+    template_project_id = models.IntegerField(default=0)  # 模板project的id
+    template_name = models.CharField(max_length=125, default='default')  # 首页模板名
+    backend_template_name = models.CharField(max_length=125, default='default')  # 非首页模板名
+    is_deleted = models.BooleanField(default=False)  # 是否已删除
+    created_at = models.DateTimeField(auto_now_add=True)  # 添加时间
+    display_index = models.IntegerField(default=1)  # 显示排序
+
+    @staticmethod
+    def get_market_tool_workspace(owner, market_tool_name):
+        '''market_tool_name的格式为: market_tool:vote'''
+        workspace = Workspace()
+        workspace.owner = owner
+        workspace.data_backend = market_tool_name
+        return workspace
+
+    @staticmethod
+    def get_app_workspace(owner, app_name):
+        '''app的格式为: app:app1'''
+        workspace = Workspace()
+        workspace.owner = owner
+        workspace.data_backend = app_name
+        return workspace
+
+    class Meta(object):
+        db_table = 'webapp_workspace'
+        verbose_name = 'APP'
+        verbose_name_plural = 'APP'
+
+
+class Project(models.Model):
+	"""
+	Project: 一个项目，可包含多个Page
+	"""
+	owner = models.ForeignKey(User)
+	workspace = models.ForeignKey(Workspace)
+	name = models.CharField(max_length=50) #项目名
+	inner_name = models.CharField(max_length=50) #内部名字
+	type = models.CharField(max_length=50) #项目类型
+	css = models.TextField() #css内容
+	pagestore = models.CharField(max_length=50, default='mongo') #使用的pagestore类型
+	source_project_id = models.IntegerField(default=0) #源project的id
+	datasource_project_id = models.IntegerField(default=0) #提供数据源的project
+	template_project_id = models.IntegerField(default=0) #模板project的id
+	is_enable = models.BooleanField(default=False) #是否开启模板项目
+	cover_name = models.CharField(default='', max_length=50) #封面图片名
+	site_title = models.CharField(default='', max_length=50) #模板项目名
+	is_active = models.BooleanField(default=False) #是否启用该微页面
+	created_at = models.DateTimeField(auto_now_add=True) #添加时间
+
+	@staticmethod
+	def get_market_tool_project(owner, market_tool_name):
+		'''market_tool_name的格式为: market_tool:vote'''
+		project = Project()
+		project.id = '%s:%d' % (market_tool_name, owner.id)
+		project.owner = owner
+		project.type = 'market_tool'
+		return project
+
+	@staticmethod
+	def get_app_project(owner, app_name):
+		'''app_name的格式为: apps:vote'''
+		project = Project()
+		project.id = '%s:%d' % (app_name, owner.id)
+		project.owner = owner
+		project.type = 'app'
+		return project
+
+	class Meta(object):
+		db_table = 'webapp_project'
+		verbose_name = '项目'
+		verbose_name_plural = '项目'
+

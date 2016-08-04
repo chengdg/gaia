@@ -7,6 +7,7 @@ from business import model as business_model
 from eaglet.core import watchdog
 from eaglet.core.exceptionutil import unicode_full_stack
 from settings import PANDA_IMAGE_DOMAIN
+from util.redis_util import clear_sync_product_cache
 
 
 class Product(business_model.Model):
@@ -199,6 +200,13 @@ class Product(business_model.Model):
                                                  promotion_title=self.promotion_title,
                                                  thumbnails_url=self.thumbnails_url
                                                  ).dj_where(id=self.id).execute()
+        # 清理缓存
+        try:
+
+            clear_sync_product_cache.delay(product_id=self.id)
+        except:
+            msg = unicode_full_stack()
+            watchdog.error(msg)
         return change_rows
 
     def delete(self):
