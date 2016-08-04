@@ -207,6 +207,7 @@ class Product(business_model.Model):
         except:
             msg = unicode_full_stack()
             watchdog.error(msg)
+            # print msg
         return change_rows
 
     def delete(self):

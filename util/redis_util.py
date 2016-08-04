@@ -32,7 +32,7 @@ def clear_sync_product_cache(product_id=None):
 	weapp_owner_ids = [pool.woid for pool in pools]
 	for weapp_owner_id in weapp_owner_ids:
 
-		key = 'webapp_product_detail_{wo:%s}_{pid:%s}' % (weapp_owner_id, product_id)
+		key = settings.REDIS_CACHE_KEY + 'webapp_product_detail_{wo:%s}_{pid:%s}' % (weapp_owner_id, product_id)
 		py_redis.delete(key)
 		update_product_list_cache(webapp_owner_id=weapp_owner_id)
 		purge_webapp_page_from_varnish_cache(weapp_owner_id, product_id)
@@ -45,7 +45,7 @@ def update_product_list_cache(webapp_owner_id):
 	@return:
 	"""
 	# 先清缓存,以防异步任务失败
-	key = 'webapp_products_categories_{wo:%s}' % webapp_owner_id
+	key = settings.REDIS_CACHE_KEY + 'webapp_products_categories_{wo:%s}' % webapp_owner_id
 	api_key = 'api' + key
 	py_redis.delete(key)
 	py_redis.delete(api_key)
