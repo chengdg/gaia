@@ -1392,9 +1392,9 @@
                 }
             }
         },
-         "/mall/product_property_template/": {
+        "/mall/product_property_template/": {
             "get": {
-                "description": "根据id，获取单个属性模板",
+                "summary": "根据id，获取单个属性模板",
                 "parameters": [
                     {
                         "name": "id",
@@ -1403,6 +1403,9 @@
                         "required": true,
                         "type": "string"
                     }
+                ],
+                "tags": [
+                    "product"
                 ],
                 "responses": {
                     "200": {
@@ -1417,56 +1420,53 @@
                                 "data": {
                                     "type": "object",
                                     "properties": {
-
                                         "template": {
-                                          "type": "object",
-                                          "description": "属性集合",
-                                          "properties": {
-                                            "name": {
-                                              "type": "string",
-                                              "description": "模板名字"
-                                            },
-                                            "owner_id": {
-                                              "type": "integer",
-                                              "description": "模板所属id"
-                                            },
-                                            "id": {
-                                              "type": "integer",
-                                              "description": "模板的id"
+                                            "type": "object",
+                                            "description": "属性集合",
+                                            "properties": {
+                                                "name": {
+                                                    "type": "string",
+                                                    "description": "模板名字"
+                                                },
+                                                "owner_id": {
+                                                    "type": "integer",
+                                                    "description": "模板所属id"
+                                                },
+                                                "id": {
+                                                    "type": "integer",
+                                                    "description": "模板的id"
+                                                }
                                             }
-                                          }
                                         },
                                         "properties": {
                                             "type": "array",
-                                            "items":{
-                                              "type": "object",
-                                              "properties":{
-                                                "id": {
-                                                  "type": "integer",
-                                                  "description": "属性id"
-                                                },
-                                                "name": {
-                                                  "type": "string",
-                                                  "description": "属性名称"
-                                                },
-                                                "value": {
-                                                  "type": "string",
-                                                  "description": "属性值"
-                                                },
-                                                "owner_id": {
-                                                  "type": "integer",
-                                                  "description": "用户id"
-
-                                                },
-                                                 "template_id": {
-                                                  "type": "integer",
-                                                  "description": "模板id"
-
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "description": "属性id"
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "description": "属性名称"
+                                                    },
+                                                    "value": {
+                                                        "type": "string",
+                                                        "description": "属性值"
+                                                    },
+                                                    "owner_id": {
+                                                        "type": "integer",
+                                                        "description": "用户id"
+                                                    },
+                                                    "template_id": {
+                                                        "type": "integer",
+                                                        "description": "模板id"
+                                                    }
                                                 }
-                                              }
                                             },
                                             "description": "模板的属性"
-                                          }
+                                        }
                                     }
                                 },
                                 "errMsg": {
@@ -1481,8 +1481,7 @@
                 }
             },
             "delete": {
-
-              "description": "删除单个模板",
+                "summary": "删除单个模板",
                 "parameters": [
                     {
                         "name": "id",
@@ -1491,6 +1490,9 @@
                         "required": true,
                         "type": "string"
                     }
+                ],
+                "tags": [
+                    "product"
                 ],
                 "responses": {
                     "200": {
@@ -1509,8 +1511,6 @@
                                             "type": "integer",
                                             "description": "受影响数量，0不一定是失败，可能是更新前后一致-1表示失败"
                                         }
-
-
                                     }
                                 },
                                 "errMsg": {
@@ -1523,11 +1523,9 @@
                         }
                     }
                 }
-
             },
             "post": {
-
-              "description": "更新单个模板",
+                "summary": "更新单个模板",
                 "parameters": [
                     {
                         "name": "id",
@@ -1543,7 +1541,9 @@
                         "required": true,
                         "type": "string"
                     }
-
+                ],
+                "tags": [
+                    "product"
                 ],
                 "responses": {
                     "200": {
@@ -1562,7 +1562,6 @@
                                             "type": "integer",
                                             "description": "受影响条数,0不一定是失败，可能是更新前后一致-1表示失败"
                                         }
-
                                     }
                                 },
                                 "errMsg": {
@@ -1575,11 +1574,9 @@
                         }
                     }
                 }
-
             },
             "put": {
-
-              "description": "添加单个模板",
+                "summary": "添加单个模板",
                 "parameters": [
                     {
                         "name": "owner_id",
@@ -1595,7 +1592,9 @@
                         "required": true,
                         "type": "string"
                     }
-
+                ],
+                "tags": [
+                    "product"
                 ],
                 "responses": {
                     "200": {
@@ -1610,20 +1609,19 @@
                                 "data": {
                                     "type": "object",
                                     "properties": {
-                                      "id": {
-                                          "type": "integer",
-                                          "format": "int32"
+                                        "id": {
+                                            "type": "integer",
+                                            "format": "int32"
                                         },
                                         "name": {
-                                          "type": "string",
-                                          "description": "模板title名"
+                                            "type": "string",
+                                            "description": "模板title名"
                                         },
                                         "owner_id": {
-                                          "type": "integer",
-                                          "format": "int32",
-                                          "description": "用户id"
+                                            "type": "integer",
+                                            "format": "int32",
+                                            "description": "用户id"
                                         }
-
                                     }
                                 },
                                 "errMsg": {
@@ -1636,13 +1634,11 @@
                         }
                     }
                 }
-
             }
-
         },
         "/mall/template_list": {
-          "get": {
-                "description": "商品属性模板列表",
+            "get": {
+                "summary": "商品属性模板列表",
                 "parameters": [
                     {
                         "name": "owner_id",
@@ -1651,6 +1647,9 @@
                         "required": true,
                         "type": "integer"
                     }
+                ],
+                "tags": [
+                    "template"
                 ],
                 "responses": {
                     "200": {
@@ -1668,58 +1667,53 @@
                                         "templates": {
                                             "type": "array",
                                             "description": "模板集合",
-                                            "items":{
+                                            "items": {
                                                 "type": "object",
                                                 "properties": {
-                                                   "id": {
-                                                      "type": "integer",
-                                                      "description": "模板id"
-
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "description": "模板id"
                                                     },
                                                     "name": {
-                                                      "type": "string",
-                                                      "description": "模板title"
+                                                        "type": "string",
+                                                        "description": "模板title"
                                                     },
                                                     "owner_id": {
-                                                      "type": "integer",
-                                                      "description": "用户id"
-
+                                                        "type": "integer",
+                                                        "description": "用户id"
                                                     },
                                                     "properties": {
-                                                      "type": "array",
-                                                      "items":{
-                                                        "type": "object",
-                                                        "properties":{
-                                                          "id": {
-                                                            "type": "integer",
-                                                            "description": "属性id"
-                                                          },
-                                                          "name": {
-                                                            "type": "string",
-                                                            "description": "属性名称"
-                                                          },
-                                                          "value": {
-                                                            "type": "string",
-                                                            "description": "属性值"
-                                                          },
-                                                          "owner_id": {
-                                                            "type": "integer",
-                                                            "description": "用户id"
-
-                                                          },
-                                                           "template_id": {
-                                                            "type": "integer",
-                                                            "description": "模板id"
-
-                                                          }
-                                                        }
-                                                      },
-                                                      "description": "模板的属性"
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "id": {
+                                                                    "type": "integer",
+                                                                    "description": "属性id"
+                                                                },
+                                                                "name": {
+                                                                    "type": "string",
+                                                                    "description": "属性名称"
+                                                                },
+                                                                "value": {
+                                                                    "type": "string",
+                                                                    "description": "属性值"
+                                                                },
+                                                                "owner_id": {
+                                                                    "type": "integer",
+                                                                    "description": "用户id"
+                                                                },
+                                                                "template_id": {
+                                                                    "type": "integer",
+                                                                    "description": "模板id"
+                                                                }
+                                                            }
+                                                        },
+                                                        "description": "模板的属性"
                                                     }
                                                 }
                                             }
                                         }
-
                                     }
                                 },
                                 "errMsg": {
@@ -1736,7 +1730,7 @@
         },
         "/mall/template_property/": {
             "get": {
-                "description": "根据模板id获取所有的该模板的所有属性",
+                "summary": "根据模板id获取所有的该模板的所有属性",
                 "parameters": [
                     {
                         "name": "id",
@@ -1745,6 +1739,9 @@
                         "required": true,
                         "type": "integer"
                     }
+                ],
+                "tags": [
+                    "template"
                 ],
                 "responses": {
                     "200": {
@@ -1759,40 +1756,32 @@
                                 "data": {
                                     "type": "object",
                                     "properties": {
-
-
                                         "properties": {
                                             "type": "array",
                                             "description": "集合",
-                                            "items":{
+                                            "items": {
                                                 "type": "object",
                                                 "properties": {
-                                                   "id": {
-                                                      "type": "integer",
-                                                      "description": "属性id"
-
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "description": "属性id"
                                                     },
-
                                                     "name": {
-                                                      "type": "string",
-                                                      "description": "属性的名称"
+                                                        "type": "string",
+                                                        "description": "属性的名称"
                                                     },
                                                     "template_id": {
-                                                      "type": "integer",
-                                                      "description": "模板id"
-
+                                                        "type": "integer",
+                                                        "description": "模板id"
                                                     },
                                                     "value": {
-                                                      "type": "string",
-                                                      "description": "属性值"
-
+                                                        "type": "string",
+                                                        "description": "属性值"
                                                     },
                                                     "owner_id": {
-                                                      "type": "integer",
-                                                      "description": "用户id"
-
+                                                        "type": "integer",
+                                                        "description": "用户id"
                                                     }
-
                                                 }
                                             }
                                         }
@@ -1810,8 +1799,7 @@
                 }
             },
             "delete": {
-
-              "description": "删除模板的属性",
+                "summary": "删除模板的属性",
                 "parameters": [
                     {
                         "name": "ids",
@@ -1820,6 +1808,9 @@
                         "required": true,
                         "type": "string"
                     }
+                ],
+                "tags": [
+                    "template"
                 ],
                 "responses": {
                     "200": {
@@ -1838,7 +1829,6 @@
                                             "type": "integer",
                                             "description": "影响行数-1表示失败"
                                         }
-
                                     }
                                 },
                                 "errMsg": {
@@ -1851,22 +1841,20 @@
                         }
                     }
                 }
-
             },
             "post": {
-
-              "description": "更新属性",
+                "summary": "更新属性",
                 "parameters": [
-
-
                     {
                         "name": "properties",
                         "in": "formData",
                         "description": "[{name: name, value: value, id:id},]",
                         "required": true,
                         "type": "string"
-
                     }
+                ],
+                "tags": [
+                    "template"
                 ],
                 "responses": {
                     "200": {
@@ -1885,7 +1873,6 @@
                                             "type": "integer",
                                             "description": "受影响行数-1表示失败"
                                         }
-
                                     }
                                 },
                                 "errMsg": {
@@ -1898,11 +1885,9 @@
                         }
                     }
                 }
-
             },
             "put": {
-
-              "description": "添加模板属性",
+                "summary": "添加模板属性",
                 "parameters": [
                     {
                         "name": "owner_id",
@@ -1924,9 +1909,10 @@
                         "description": "[{name: name, value: value},]",
                         "required": true,
                         "type": "integer"
-
                     }
-
+                ],
+                "tags": [
+                    "template"
                 ],
                 "responses": {
                     "200": {
@@ -1944,39 +1930,32 @@
                                         "properties": {
                                             "type": "array",
                                             "description": "集合",
-                                            "items":{
+                                            "items": {
                                                 "type": "object",
                                                 "properties": {
-                                                   "id": {
-                                                      "type": "integer",
-                                                      "description": "属性id"
-
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "description": "属性id"
                                                     },
-
                                                     "name": {
-                                                      "type": "string",
-                                                      "description": "属性的名称"
+                                                        "type": "string",
+                                                        "description": "属性的名称"
                                                     },
                                                     "template_id": {
-                                                      "type": "integer",
-                                                      "description": "模板id"
-
+                                                        "type": "integer",
+                                                        "description": "模板id"
                                                     },
                                                     "value": {
-                                                      "type": "string",
-                                                      "description": "属性值"
-
+                                                        "type": "string",
+                                                        "description": "属性值"
                                                     },
                                                     "owner_id": {
-                                                      "type": "integer",
-                                                      "description": "用户id"
-
+                                                        "type": "integer",
+                                                        "description": "用户id"
                                                     }
-
                                                 }
                                             }
                                         }
-
                                     }
                                 },
                                 "errMsg": {
@@ -1989,13 +1968,11 @@
                         }
                     }
                 }
-
             }
-
         },
         "/mall/product_model_property/": {
             "get": {
-                "description": "根据id，获取获取单个规格",
+                "summary": "根据id，获取获取单个规格",
                 "parameters": [
                     {
                         "name": "id",
@@ -2004,6 +1981,9 @@
                         "required": true,
                         "type": "integer"
                     }
+                ],
+                "tags": [
+                    "product"
                 ],
                 "responses": {
                     "200": {
@@ -2018,54 +1998,48 @@
                                 "data": {
                                     "type": "object",
                                     "properties": {
-
-                                        "product_model":{
-                                          "type": "object",
-                                          "properties": {
-                                            "id": {
-                                              "type": "integer",
-                                              "format": "int32",
-                                              "description": "规格id"
-                                            },
-                                            "name": {
-                                              "type": "string",
-                                              "description": "规格名"
-                                            },
-                                            "owner_id": {
-                                              "type": "integer",
-                                              "format": "int32",
-                                              "description": "用户id"
-                                            },
-                                            "type": {
-                                              "type": "integer",
-                                              "format": "int32",
-                                              "description": "规格类型，0text,1image"
+                                        "product_model": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "format": "int32",
+                                                    "description": "规格id"
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "description": "规格名"
+                                                },
+                                                "owner_id": {
+                                                    "type": "integer",
+                                                    "format": "int32",
+                                                    "description": "用户id"
+                                                },
+                                                "type": {
+                                                    "type": "integer",
+                                                    "format": "int32",
+                                                    "description": "规格类型，0text,1image"
+                                                }
                                             }
-
-                                          }
                                         },
                                         "properties": {
                                             "type": "array",
                                             "description": "属性集合",
-                                            "items":{
+                                            "items": {
                                                 "type": "object",
                                                 "properties": {
-                                                   "id": {
-                                                      "type": "integer",
-                                                      "description": "规格属性id"
-
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "description": "规格属性id"
                                                     },
-
                                                     "name": {
-                                                      "type": "string",
-                                                      "description": "规格属性的名称"
+                                                        "type": "string",
+                                                        "description": "规格属性的名称"
                                                     },
                                                     "pic_url": {
-                                                      "type": "string",
-                                                      "description": "图片地址"
-
+                                                        "type": "string",
+                                                        "description": "图片地址"
                                                     }
-
                                                 }
                                             }
                                         }
@@ -2083,8 +2057,7 @@
                 }
             },
             "delete": {
-
-              "description": "删除单个规格",
+                "summary": "删除单个规格",
                 "parameters": [
                     {
                         "name": "id",
@@ -2093,6 +2066,9 @@
                         "required": true,
                         "type": "string"
                     }
+                ],
+                "tags": [
+                    "product"
                 ],
                 "responses": {
                     "200": {
@@ -2111,7 +2087,6 @@
                                             "type": "integer",
                                             "description": "信息描述"
                                         }
-
                                     }
                                 },
                                 "errMsg": {
@@ -2124,11 +2099,9 @@
                         }
                     }
                 }
-
             },
             "post": {
-
-              "description": "更新单个规格",
+                "summary": "更新单个规格",
                 "parameters": [
                     {
                         "name": "id",
@@ -2150,8 +2123,10 @@
                         "description": "choices: text, image默认是text(text)类型,image:图片类型",
                         "required": true,
                         "type": "string"
-
                     }
+                ],
+                "tags": [
+                    "product"
                 ],
                 "responses": {
                     "200": {
@@ -2170,7 +2145,6 @@
                                             "type": "integer",
                                             "description": "受影响行数"
                                         }
-
                                     }
                                 },
                                 "errMsg": {
@@ -2183,11 +2157,9 @@
                         }
                     }
                 }
-
             },
             "put": {
-
-              "description": "商品规格属性",
+                "summary": "商品规格属性",
                 "parameters": [
                     {
                         "name": "owner_id",
@@ -2209,9 +2181,10 @@
                         "description": "choices: text, image默认是text(text)类型,image:图片类型",
                         "required": true,
                         "type": "string"
-
                     }
-
+                ],
+                "tags": [
+                    "product"
                 ],
                 "responses": {
                     "200": {
@@ -2226,32 +2199,30 @@
                                 "data": {
                                     "type": "object",
                                     "properties": {
-                                        "product_model":{
-                                          "type": "object",
-                                          "properties": {
-                                            "id": {
-                                              "type": "integer",
-                                              "format": "int32",
-                                              "description": "规格id"
-                                            },
-                                            "name": {
-                                              "type": "string",
-                                              "description": "规格名"
-                                            },
-                                            "owner_id": {
-                                              "type": "integer",
-                                              "format": "int32",
-                                              "description": "用户id"
-                                            },
-                                            "type": {
-                                              "type": "integer",
-                                              "format": "int32",
-                                              "description": "规格类型，0text,1image"
+                                        "product_model": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "format": "int32",
+                                                    "description": "规格id"
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "description": "规格名"
+                                                },
+                                                "owner_id": {
+                                                    "type": "integer",
+                                                    "format": "int32",
+                                                    "description": "用户id"
+                                                },
+                                                "type": {
+                                                    "type": "integer",
+                                                    "format": "int32",
+                                                    "description": "规格类型，0text,1image"
+                                                }
                                             }
-
-                                          }
                                         }
-
                                     }
                                 },
                                 "errMsg": {
@@ -2264,13 +2235,11 @@
                         }
                     }
                 }
-
             }
-
         },
         "/mall/product_model_property_list": {
-          "get": {
-                "description": "商品规格列表",
+            "get": {
+                "summary": "商品规格列表",
                 "parameters": [
                     {
                         "name": "owner_id",
@@ -2279,6 +2248,9 @@
                         "required": true,
                         "type": "integer"
                     }
+                ],
+                "tags": [
+                    "product"
                 ],
                 "responses": {
                     "200": {
@@ -2296,60 +2268,54 @@
                                         "product_models": {
                                             "type": "array",
                                             "description": "规格集合",
-                                            "items":{
+                                            "items": {
                                                 "type": "object",
                                                 "properties": {
-                                                    "product_model":{
-                                                      "type": "object",
-                                                      "properties": {
-                                                        "id": {
-                                                          "type": "integer",
-                                                          "description": "规格id"
-
-                                                        },
-                                                        "type": {
-                                                          "type": "integer",
-                                                          "description": "规格类型"
-
-                                                        },
-                                                        "name": {
-                                                          "type": "string",
-                                                          "description": "规格的名称"
-                                                        },
-                                                        "owner_id": {
-                                                          "type": "integer",
-                                                          "description": "用户id"
-
-                                                        }
-                                                      }
-                                                    },
-                                                    "properties": {
-                                                      "type": "array",
-                                                      "items":{
+                                                    "product_model": {
                                                         "type": "object",
                                                         "properties": {
-                                                          "id": {
-                                                            "type": "integer",
-                                                            "description": "规格属性id"
-
-                                                          },
-                                                          "name": {
-                                                            "type": "string",
-                                                            "description": "规格属性名称"
-
-                                                          },
-                                                          "pic_url": {
-                                                            "type": "string",
-                                                            "description": "属性的图片地址"
-                                                          }
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "description": "规格id"
+                                                            },
+                                                            "type": {
+                                                                "type": "integer",
+                                                                "description": "规格类型"
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "description": "规格的名称"
+                                                            },
+                                                            "owner_id": {
+                                                                "type": "integer",
+                                                                "description": "用户id"
+                                                            }
                                                         }
-                                                      },
-                                                      "description": "规格的属性集合"
+                                                    },
+                                                    "properties": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "id": {
+                                                                    "type": "integer",
+                                                                    "description": "规格属性id"
+                                                                },
+                                                                "name": {
+                                                                    "type": "string",
+                                                                    "description": "规格属性名称"
+                                                                },
+                                                                "pic_url": {
+                                                                    "type": "string",
+                                                                    "description": "属性的图片地址"
+                                                                }
+                                                            }
+                                                        },
+                                                        "description": "规格的属性集合"
                                                     }
                                                 }
                                             }
                                         }
-
                                     }
                                 },
                                 "errMsg": {
@@ -2366,7 +2332,7 @@
         },
         "/mall/model_property_value/": {
             "get": {
-                "description": "根据id，获取商品规格的属性",
+                "summary": "根据id，获取商品规格的属性",
                 "parameters": [
                     {
                         "name": "id",
@@ -2375,6 +2341,9 @@
                         "required": true,
                         "type": "integer"
                     }
+                ],
+                "tags": [
+                    "model"
                 ],
                 "responses": {
                     "200": {
@@ -2389,26 +2358,24 @@
                                 "data": {
                                     "type": "object",
                                     "properties": {
-
-                                        "product_model_value":{
-                                          "type": "object",
-                                          "properties": {
-                                            "id": {
-                                              "type": "integer",
-                                              "format": "int32",
-                                              "description": "属性id"
-                                            },
-                                            "name": {
-                                              "type": "string",
-                                              "description": "属性名"
-                                            },
-                                            "pic_url": {
-                                              "type": "string",
-                                              "format": "int32",
-                                              "description": "属性的图片地址"
+                                        "product_model_value": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "format": "int32",
+                                                    "description": "属性id"
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "description": "属性名"
+                                                },
+                                                "pic_url": {
+                                                    "type": "string",
+                                                    "format": "int32",
+                                                    "description": "属性的图片地址"
+                                                }
                                             }
-
-                                          }
                                         }
                                     }
                                 },
@@ -2424,8 +2391,7 @@
                 }
             },
             "delete": {
-
-              "description": "删除单个规格属性",
+                "summary": "删除单个规格属性",
                 "parameters": [
                     {
                         "name": "id",
@@ -2434,6 +2400,9 @@
                         "required": true,
                         "type": "string"
                     }
+                ],
+                "tags": [
+                    "model"
                 ],
                 "responses": {
                     "200": {
@@ -2452,7 +2421,6 @@
                                             "type": "integer",
                                             "description": "受影响行数"
                                         }
-
                                     }
                                 },
                                 "errMsg": {
@@ -2465,11 +2433,9 @@
                         }
                     }
                 }
-
             },
             "post": {
-
-              "description": "更新单个规格属性",
+                "summary": "更新单个规格属性",
                 "parameters": [
                     {
                         "name": "id",
@@ -2491,8 +2457,10 @@
                         "description": "规格值的图片地址()",
                         "required": false,
                         "type": "integer"
-
                     }
+                ],
+                "tags": [
+                    "model"
                 ],
                 "responses": {
                     "200": {
@@ -2511,7 +2479,6 @@
                                             "type": "integer",
                                             "description": "受影响的行数"
                                         }
-
                                     }
                                 },
                                 "errMsg": {
@@ -2524,11 +2491,9 @@
                         }
                     }
                 }
-
             },
             "put": {
-
-              "description": "商品规格的属性",
+                "summary": "商品规格的属性",
                 "parameters": [
                     {
                         "name": "id",
@@ -2550,9 +2515,10 @@
                         "description": "规格值的图片地址()",
                         "required": false,
                         "type": "integer"
-
                     }
-
+                ],
+                "tags": [
+                    "model"
                 ],
                 "responses": {
                     "200": {
@@ -2567,27 +2533,25 @@
                                 "data": {
                                     "type": "object",
                                     "properties": {
-                                        "product_model_value":{
-                                          "type": "object",
-                                          "properties": {
-                                            "id": {
-                                              "type": "integer",
-                                              "format": "int32",
-                                              "description": "属性id"
-                                            },
-                                            "name": {
-                                              "type": "string",
-                                              "description": "属性名"
-                                            },
-                                            "pic_url": {
-                                              "type": "string",
-                                              "format": "int32",
-                                              "description": "属性的图片地址"
+                                        "product_model_value": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "format": "int32",
+                                                    "description": "属性id"
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "description": "属性名"
+                                                },
+                                                "pic_url": {
+                                                    "type": "string",
+                                                    "format": "int32",
+                                                    "description": "属性的图片地址"
+                                                }
                                             }
-
-                                          }
                                         }
-
                                     }
                                 },
                                 "errMsg": {
@@ -2600,9 +2564,7 @@
                         }
                     }
                 }
-
             }
-
         }
     },
     "definitions": {
