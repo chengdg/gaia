@@ -7,6 +7,7 @@ from business import model as business_model
 from eaglet.core import watchdog
 from eaglet.core.exceptionutil import unicode_full_stack
 from settings import PANDA_IMAGE_DOMAIN
+from util.redis_util import clear_sync_product_cache
 
 
 class Product(business_model.Model):
@@ -199,6 +200,14 @@ class Product(business_model.Model):
                                                  promotion_title=self.promotion_title,
                                                  thumbnails_url=self.thumbnails_url
                                                  ).dj_where(id=self.id).execute()
+        # 清理缓存
+        try:
+
+            clear_sync_product_cache.delay(product_id=self.id)
+        except:
+            msg = unicode_full_stack()
+            watchdog.error(msg)
+            # print msg
         return change_rows
 
     def delete(self):
@@ -263,13 +272,27 @@ class ProductModel(business_model.Model):
         return ProductModel(product_model)
 
     @staticmethod
-    @param_required(['product_id', 'model_type'])
+    @param_required(['product_id'])
     def from_product_id(args):
-        if args['model_type']:
-            product_model = mall_models.ProductModel.select().dj_where(product_id=args['product_id'],
-                                                                       name='standard',
-                                                                       is_deleted=False).first()
-            return ProductModel(product_model)
+        product_models = mall_models.ProductModel.select().dj_where(product_id=args['product_id'],
+                                                                    is_deleted=False)
+
+        return [ProductModel(product_model) for product_model in product_models]
+
+    @staticmethod
+    @param_required(['product_id', 'name'])
+    def from_product_id_name(args):
+        product_model = mall_models.ProductModel.select().dj_where(product_id=args['product_id'],
+                                                                    is_deleted=False,
+                                                                    name=args.get('name')).first()
+
+        return ProductModel(product_model)
+
+    def update(self):
+
+        change_rows = mall_models.ProductModel.update(stock_type=self.stock_type,
+                                        stocks=self.stocks).dj_where(id=self.id).execute()
+        return  change_rows
 
     @staticmethod
     @param_required(['models'])
@@ -339,6 +362,7 @@ class ProductModel(business_model.Model):
             msg = unicode_full_stack()
             watchdog.error(msg)
             return None
+
 
 class ProductSwipeImage(business_model.Model):
     __slots__ = ()

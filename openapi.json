@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 {
     "swagger": "2.0",
     "info": {
@@ -8,6 +7,7 @@
     "paths": {
         "/mall/delivery/": {
             "put": {
+                "summary": "订单发货",
                 "description": "订单发货\n",
                 "parameters": [
                     {
@@ -84,6 +84,7 @@
                 }
             },
             "post": {
+                "summary": "订单发货信息修改",
                 "description": "订单发货信息修改\n",
                 "parameters": [
                     {
@@ -122,6 +123,9 @@
                         "type": "string"
                     }
                 ],
+                "tags": [
+                    "delivery"
+                ],
                 "responses": {
                     "200": {
                         "description": "Successful response",
@@ -159,6 +163,7 @@
         },
         "/mall/order/": {
             "post": {
+                "summary": "修改订单状态（目前仅支持完成）",
                 "description": "修改订单状态（目前仅支持完成）",
                 "parameters": [
                     {
@@ -223,6 +228,7 @@
         },
         "/mall/product_sales/": {
             "get": {
+                "summary": "获取商品销量",
                 "description": "获取商品销量",
                 "parameters": [
                     {
@@ -234,7 +240,7 @@
                     }
                 ],
                 "tags": [
-                    "product_sales"
+                    "product"
                 ],
                 "responses": {
                     "200": {
@@ -266,10 +272,11 @@
         },
         "/account/zypt_info/": {
             "get": {
+                "summary": "获取自营平台的信息",
                 "description": "获取自营平台的信息",
                 "parameters": [],
                 "tags": [
-                    "zypt_info"
+                    "zypt"
                 ],
                 "responses": {
                     "200": {
@@ -312,6 +319,7 @@
         },
         "/mall/supplier/": {
             "put": {
+                "summary": "添加供货商",
                 "description": "添加供货商",
                 "parameters": [
                     {
@@ -397,6 +405,7 @@
         },
         "/mall/product/": {
             "put": {
+                "summary": "添加供货商",
                 "description": "创建商品",
                 "parameters": [
                     {
@@ -587,6 +596,7 @@
         },
         "/mall/user_list/": {
             "get": {
+                "summary": "商户列表",
                 "description": "商户列表",
                 "parameters": [
                     {
@@ -605,7 +615,7 @@
                     }
                 ],
                 "tags": [
-                    "user_list"
+                    "user"
                 ],
                 "responses": {
                     "200": {
@@ -661,6 +671,7 @@
         },
         "/mall/order_list/": {
             "get": {
+                "summary": "获取订单列表",
                 "description": "获取订单列表",
                 "parameters": [
                     {
@@ -777,7 +788,7 @@
                     }
                 ],
                 "tags": [
-                    "order_list"
+                    "order"
                 ],
                 "responses": {
                     "200": {
@@ -814,6 +825,7 @@
         },
         "/mall/category_list": {
             "get": {
+                "summary": "获取分组列表",
                 "description": "获取分组列表\n",
                 "parameters": [
                     {
@@ -852,7 +864,7 @@
                     }
                 ],
                 "tags": [
-                    "category_list"
+                    "category"
                 ],
                 "produces": [
                     "application/json"
@@ -927,6 +939,9 @@
                         "description": "分组的名称"
                     }
                 ],
+                "tags": [
+                    "category"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -950,6 +965,9 @@
                         "type": "string",
                         "description": "删除指定id"
                     }
+                ],
+                "tags": [
+                    "category"
                 ],
                 "responses": {
                     "200": {
@@ -976,6 +994,9 @@
                         "description": "创建名称"
                     }
                 ],
+                "tags": [
+                    "category"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -1000,10 +1021,20 @@
                         "required": true,
                         "type": "string",
                         "description": "分组与商品关系id"
+                    },
+                    {
+                        "name": "product_id",
+                        "in": "query",
+                        "type": "string"
+                    },
+                    {
+                        "name": "category_id",
+                        "in": "query",
+                        "type": "string"
                     }
                 ],
                 "tags": [
-                    "category_has_product"
+                    "category"
                 ],
                 "responses": {
                     "200": {
@@ -1031,6 +1062,9 @@
                         "required": true,
                         "format": "1,24,3"
                     }
+                ],
+                "tags": [
+                    "category"
                 ],
                 "responses": {
                     "200": {
@@ -1060,7 +1094,7 @@
                     }
                 ],
                 "tags": [
-                    "member_integral"
+                    "member"
                 ],
                 "responses": {
                     "200": {
@@ -1102,10 +1136,32 @@
                         "type": "string",
                         "in": "query",
                         "description": "原因"
+                    },
+                    {
+                        "name": "webapp_user_id",
+                        "type": "number",
+                        "in": "query"
+                    },
+                    {
+                        "name": "event_type",
+                        "in": "query",
+                        "type": "string",
+                        "description": "引起积分变化事件类型"
+                    },
+                    {
+                        "name": "current_integral",
+                        "in": "query",
+                        "type": "string",
+                        "description": "当前积分"
+                    },
+                    {
+                        "name": "manager",
+                        "in": "query",
+                        "type": "string"
                     }
                 ],
                 "tags": [
-                    "member_integral_log"
+                    "member"
                 ],
                 "responses": {
                     "200": {
@@ -1143,7 +1199,7 @@
                     }
                 ],
                 "tags": [
-                    "member_has_tag"
+                    "member"
                 ],
                 "responses": {
                     "200": {
@@ -1180,7 +1236,7 @@
                     }
                 ],
                 "tags": [
-                    "member_tags"
+                    "member"
                 ],
                 "responses": {
                     "200": {
@@ -1219,7 +1275,7 @@
                     }
                 ],
                 "tags": [
-                    "member_tags"
+                    "member"
                 ],
                 "responses": {
                     "200": {
@@ -1256,7 +1312,7 @@
                     }
                 ],
                 "tags": [
-                    "member_tags"
+                    "member"
                 ],
                 "responses": {
                     "200": {
@@ -1293,7 +1349,7 @@
                     }
                 ],
                 "tags": [
-                    "member_tags"
+                    "member"
                 ],
                 "responses": {
                     "200": {
@@ -1324,7 +1380,7 @@
                     }
                 ],
                 "tags": [
-                    "member_openid"
+                    "member"
                 ],
                 "responses": {
                     "200": {
@@ -1335,711 +1391,8 @@
                     }
                 }
             }
-        }
-    },
-    "definitions": {
-        "Order": {
-            "type": "object",
-            "properties": {
-                "order_id": {
-                    "type": "string",
-                    "description": "订单编号."
-                },
-                "status": {
-                    "type": "string",
-                    "description": "订单状态"
-                },
-                "total_price": {
-                    "type": "string",
-                    "description": "订单金额（实付金额RMB）."
-                },
-                "ship_name": {
-                    "type": "string",
-                    "description": "收货人"
-                },
-                "ship_address": {
-                    "type": "string",
-                    "description": "收获地址"
-                },
-                "ship_tel": {
-                    "type": "string",
-                    "description": "收获电话"
-                },
-                "bill_type": {
-                    "type": "string",
-                    "description": "发票类型"
-                },
-                "bill": {
-                    "type": "string",
-                    "description": "发票信息"
-                },
-                "buyer_name": {
-                    "type": "string",
-                    "description": "购买人"
-                },
-                "product_count": {
-                    "type": "string",
-                    "description": "购买商品数量"
-                },
-                "payment_time": {
-                    "type": "string",
-                    "description": "支付时间"
-                },
-                "member_id": {
-                    "type": "string",
-                    "description": "会员id"
-                },
-                "member_is_subscribed": {
-                    "type": "boolean",
-                    "description": "会员是否关注"
-                },
-                "come": {
-                    "type": "string",
-                    "description": "订单来源：weizoom_mall：微众商城；mine_mall：本店"
-                },
-                "type": {
-                    "type": "string",
-                    "description": "订单类型"
-                },
-                "integral": {
-                    "type": "string",
-                    "description": "订单使用积分"
-                },
-                "pay_interface_type": {
-                    "type": "string",
-                    "description": "支付类型"
-                },
-                "pay_interface_name": {
-                    "type": "string",
-                    "description": "支付方式"
-                },
-                "order_status": {
-                    "type": "string",
-                    "description": "订单状态"
-                },
-                "express_company_name": {
-                    "type": "string",
-                    "description": "快递名称"
-                },
-                "express_number": {
-                    "type": "string",
-                    "description": "快递号"
-                },
-                "leader_name": {
-                    "type": "string",
-                    "description": "负责人"
-                },
-                "remark": {
-                    "type": "string",
-                    "description": "订单备注"
-                },
-                "postage": {
-                    "type": "string",
-                    "description": "快递费"
-                },
-                "created_at": {
-                    "type": "string",
-                    "description": "订单创建时间"
-                },
-                "delivery_time": {
-                    "type": "string",
-                    "description": "发货时间"
-                },
-                "pay_time": {
-                    "type": "string",
-                    "description": "付款时间"
-                },
-                "cancel_time": {
-                    "type": "string",
-                    "description": "取消订单时间"
-                },
-                "refound_time": {
-                    "type": "string",
-                    "description": "退款时间"
-                },
-                "refound_finish_time": {
-                    "type": "string",
-                    "description": "退款完成时间"
-                },
-                "finish_time": {
-                    "type": "string",
-                    "description": "订单完成时间"
-                },
-                "save_money": {
-                    "type": "string",
-                    "description": "优惠金额"
-                },
-                "weizoom_card_money": {
-                    "type": "string",
-                    "description": "微众卡金额"
-                },
-                "pay_money": {
-                    "type": "string",
-                    "description": "订单总额order.final_price + order.weizoom_card_money"
-                },
-                "edit_money": {
-                    "type": "string",
-                    "description": "修改后金额"
-                },
-                "is_first_order": {
-                    "type": "boolean",
-                    "description": "是否首单"
-                },
-                "supplier_user_id": {
-                    "type": "string",
-                    "description": "供货商id"
-                },
-                "total_purchase_price": {
-                    "type": "string",
-                    "description": "采购价"
-                },
-                "is_group_buying": {
-                    "type": "boolean",
-                    "description": "是否团购订单"
-                },
-                "parent_action": {
-                    "type": "array",
-                    "description": "主订单可操作行为",
-                    "items": {
-                        "$ref": "#/definitions/Actions"
-                    }
-                },
-                "groups": {
-                    "type": "array",
-                    "description": "group",
-                    "items": {
-                        "$ref": "#/definitions/Actions"
-                    }
-                }
-            }
         },
-        "Member_tag": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "number",
-                    "description": "会员分组id"
-                },
-                "webapp_id": {
-                    "type": "number",
-                    "description": "店铺id"
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "Category": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "number",
-                    "description": "数据库生成的ID"
-                },
-                "owner_id": {
-                    "type": "number",
-                    "description": "创立者"
-                },
-                "name": {
-                    "type": "string",
-                    "description": "分组名称"
-                },
-                "pic_url": {
-                    "type": "string",
-                    "description": "分组中商品路径"
-                },
-                "product_count": {
-                    "type": "number",
-                    "description": "分组中商品的数量"
-                },
-                "display_index": {
-                    "type": "number",
-                    "description": "展示顺序"
-                },
-                "created_at": {
-                    "type": "string",
-                    "description": "创建时间"
-                }
-            }
-        },
-        "CategoryHasProduct": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "number",
-                    "description": "数据库生成的ID"
-                },
-                "product_id": {
-                    "type": "number",
-                    "description": "商品id"
-                },
-                "category_id": {
-                    "type": "number",
-                    "description": "分组id"
-                },
-                "display_index": {
-                    "type": "number"
-                },
-                "created_at": {
-                    "type": "string",
-                    "description": "创建记录时间"
-                },
-                "category": {
-                    "items": {
-                        "$ref": "#/definitions/Category"
-                    }
-                },
-                "product": {
-                    "items": {
-                        "$ref": "#/definitions/Product"
-                    }
-                }
-            }
-        },
-        "Product": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "number",
-                    "description": "数据库生成的商品ID"
-                },
-                "owner_id": {
-                    "type": "number",
-                    "description": "创立者"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "physical_unit": {
-                    "type": "string"
-                },
-                "price": {
-                    "type": "number",
-                    "format": "double"
-                },
-                "introduction": {
-                    "type": "string"
-                },
-                "weight": {
-                    "type": "number",
-                    "format": "double"
-                },
-                "thumbnails_url": {
-                    "type": "string"
-                },
-                "pic_url": {
-                    "type": "string"
-                },
-                "detail": {
-                    "type": "string"
-                },
-                "remark": {
-                    "type": "string"
-                },
-                "display_index": {
-                    "type": "number"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "shelve_type": {
-                    "type": "number"
-                },
-                "shelve_start_time": {
-                    "type": "string"
-                },
-                "shelve_end_time": {
-                    "type": "string"
-                },
-                "stock_type": {
-                    "type": "number"
-                },
-                "stocks": {
-                    "type": "number"
-                },
-                "is_deleted": {
-                    "type": "number"
-                },
-                "is_support_make_thanks_card": {
-                    "type": "number"
-                },
-                "type": {
-                    "type": "string"
-                },
-                "update_time": {
-                    "type": "string"
-                },
-                "postage_id": {
-                    "type": "number"
-                },
-                "is_use_online_pay_interface": {
-                    "type": "number"
-                },
-                "is_use_cod_pay_interface": {
-                    "type": "number"
-                },
-                "promotion_title": {
-                    "type": "string"
-                },
-                "user_code": {
-                    "type": "string"
-                },
-                "bar_code": {
-                    "type": "string"
-                },
-                "unified_postage_money": {
-                    "type": "number"
-                },
-                "postage_type": {
-                    "type": "string"
-                },
-                "weshop_sync": {
-                    "type": "number"
-                },
-                "weshop_status": {
-                    "type": "number"
-                },
-                "is_member_product": {
-                    "type": "number"
-                },
-                "supplier": {
-                    "type": "number"
-                },
-                "supplier_user_id": {
-                    "type": "number"
-                },
-                "purchase_price": {
-                    "type": "number"
-                },
-                "is_enable_bill": {
-                    "type": "number"
-                },
-                "is_delivery": {
-                    "type": "number"
-                },
-                "buy_in_supplier": {
-                    "type": "number"
-                }
-            }
-        },
-        "Member": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "number",
-                    "description": "会员id"
-                },
-                "grade_id": {
-                    "type": "string",
-                    "description": "会员等级id"
-                },
-                "username": {
-                    "type": "string"
-                },
-                "is_subscribed": {
-                    "type": "string",
-                    "description": "是否关注"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "token": {
-                    "type": "string"
-                },
-                "webapp_id": {
-                    "type": "string",
-                    "description": "商铺id"
-                },
-                "pay_money": {
-                    "type": "number"
-                },
-                "update_time": {
-                    "type": "string",
-                    "description": "更新时间"
-                },
-                "status": {
-                    "type": "string",
-                    "description": "会员状态"
-                },
-                "integral": {
-                    "type": "number",
-                    "description": "会员积分"
-                },
-                "openid": {
-                    "type": "string"
-                },
-                "grade": {
-                    "type": "object"
-                }
-            }
-        },
-        "Actions": {}
-    }
-=======
-{
-    "swagger": "2.0",
-    "info": {
-        "version": "0.0.0",
-        "title": "zeus API doc"
-    },
-    "paths": {
-        "/mall/delivery/": {
-            "put": {
-                "description": "订单发货\n",
-                "parameters": [
-                    {
-                        "name": "order_id",
-                        "in": "query",
-                        "description": "订单编号",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "name": "express_company_name",
-                        "in": "query",
-                        "description": "快递名称",
-                        "required": false,
-                        "type": "string"
-                    },
-                    {
-                        "name": "express_number",
-                        "in": "query",
-                        "description": "快递编号",
-                        "required": false,
-                        "type": "string"
-                    },
-                    {
-                        "name": "leader_name",
-                        "in": "query",
-                        "description": "负责人",
-                        "required": false,
-                        "type": "string"
-                    },
-                    {
-                        "name": "operator_name",
-                        "in": "query",
-                        "description": "操作人",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful response",
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "code": {
-                                    "type": "integer",
-                                    "format": "int32"
-                                },
-                                "data": {
-                                    "type": "object",
-                                    "properties": {
-                                        "msg": {
-                                            "type": "string",
-                                            "description": "信息描述"
-                                        },
-                                        "result": {
-                                            "type": "string",
-                                            "description": "SUCCESS or FAILED"
-                                        }
-                                    }
-                                },
-                                "errMsg": {
-                                    "type": "string"
-                                },
-                                "innerErrMsg": {
-                                    "type": "string"
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "post": {
-                "description": "订单发货信息修改\n",
-                "parameters": [
-                    {
-                        "name": "order_id",
-                        "in": "query",
-                        "description": "订单编号",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "name": "express_company_name",
-                        "in": "query",
-                        "description": "快递名称",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "name": "express_number",
-                        "in": "query",
-                        "description": "快递编号",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "name": "leader_name",
-                        "in": "query",
-                        "description": "负责人",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "name": "operator_name",
-                        "in": "query",
-                        "description": "操作人",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful response",
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "code": {
-                                    "type": "integer",
-                                    "format": "int32"
-                                },
-                                "data": {
-                                    "type": "object",
-                                    "properties": {
-                                        "msg": {
-                                            "type": "string",
-                                            "description": "信息描述"
-                                        },
-                                        "result": {
-                                            "type": "string",
-                                            "description": "SUCCESS or FAILED"
-                                        }
-                                    }
-                                },
-                                "errMsg": {
-                                    "type": "string"
-                                },
-                                "innerErrMsg": {
-                                    "type": "string"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/mall/order/": {
-            "post": {
-                "description": "修改订单状态（目前仅支持完成）",
-                "parameters": [
-                    {
-                        "name": "order_id",
-                        "in": "query",
-                        "description": "订单编号",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "name": "action",
-                        "in": "query",
-                        "description": "动作（finish,cancel,refund）",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "name": "operator_name",
-                        "in": "query",
-                        "description": "操作人",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful response",
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "code": {
-                                    "type": "integer",
-                                    "format": "int32"
-                                },
-                                "data": {
-                                    "type": "object",
-                                    "properties": {
-                                        "msg": {
-                                            "type": "string",
-                                            "description": "信息描述"
-                                        },
-                                        "result": {
-                                            "type": "string",
-                                            "description": "SUCCESS or FAILED"
-                                        }
-                                    }
-                                },
-                                "errMsg": {
-                                    "type": "string"
-                                },
-                                "innerErrMsg": {
-                                    "type": "string"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/mall/product_sales/": {
-            "get": {
-                "description": "获取商品销量",
-                "parameters": [
-                    {
-                        "name": "product_ids",
-                        "in": "query",
-                        "description": "商品ID号",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful response",
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "code": {
-                                    "type": "integer",
-                                    "format": "int32"
-                                },
-                                "data": {
-                                    "type": "object",
-                                    "properties": {
-                                        "msg": {
-                                            "type": "string",
-                                            "description": "信息描述"
-                                        },
-                                        "result": {
-                                            "type": "string",
-                                            "description": "SUCCESS or FAILED"
-                                        }
-                                    }
-                                },
-                                "errMsg": {
-                                    "type": "string"
-                                },
-                                "innerErrMsg": {
-                                    "type": "string"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/mall/product_property_template/": {
+         "/mall/product_property_template/": {
             "get": {
                 "description": "根据id，获取单个属性模板",
                 "parameters": [
@@ -2837,9 +2190,9 @@
               "description": "商品规格属性",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "owner_id",
                         "in": "query",
-                        "description": "规格id号",
+                        "description": "owner_id",
                         "required": true,
                         "type": "integer"
                     },
@@ -3251,6 +2604,443 @@
             }
 
         }
+    },
+    "definitions": {
+        "Order": {
+            "type": "object",
+            "properties": {
+                "order_id": {
+                    "type": "string",
+                    "description": "订单编号."
+                },
+                "status": {
+                    "type": "string",
+                    "description": "订单状态"
+                },
+                "total_price": {
+                    "type": "string",
+                    "description": "订单金额（实付金额RMB）."
+                },
+                "ship_name": {
+                    "type": "string",
+                    "description": "收货人"
+                },
+                "ship_address": {
+                    "type": "string",
+                    "description": "收获地址"
+                },
+                "ship_tel": {
+                    "type": "string",
+                    "description": "收获电话"
+                },
+                "bill_type": {
+                    "type": "string",
+                    "description": "发票类型"
+                },
+                "bill": {
+                    "type": "string",
+                    "description": "发票信息"
+                },
+                "buyer_name": {
+                    "type": "string",
+                    "description": "购买人"
+                },
+                "product_count": {
+                    "type": "string",
+                    "description": "购买商品数量"
+                },
+                "payment_time": {
+                    "type": "string",
+                    "description": "支付时间"
+                },
+                "member_id": {
+                    "type": "string",
+                    "description": "会员id"
+                },
+                "member_is_subscribed": {
+                    "type": "boolean",
+                    "description": "会员是否关注"
+                },
+                "come": {
+                    "type": "string",
+                    "description": "订单来源：weizoom_mall：微众商城；mine_mall：本店"
+                },
+                "type": {
+                    "type": "string",
+                    "description": "订单类型"
+                },
+                "integral": {
+                    "type": "string",
+                    "description": "订单使用积分"
+                },
+                "pay_interface_type": {
+                    "type": "string",
+                    "description": "支付类型"
+                },
+                "pay_interface_name": {
+                    "type": "string",
+                    "description": "支付方式"
+                },
+                "order_status": {
+                    "type": "string",
+                    "description": "订单状态"
+                },
+                "express_company_name": {
+                    "type": "string",
+                    "description": "快递名称"
+                },
+                "express_number": {
+                    "type": "string",
+                    "description": "快递号"
+                },
+                "leader_name": {
+                    "type": "string",
+                    "description": "负责人"
+                },
+                "remark": {
+                    "type": "string",
+                    "description": "订单备注"
+                },
+                "postage": {
+                    "type": "string",
+                    "description": "快递费"
+                },
+                "created_at": {
+                    "type": "string",
+                    "description": "订单创建时间"
+                },
+                "delivery_time": {
+                    "type": "string",
+                    "description": "发货时间"
+                },
+                "pay_time": {
+                    "type": "string",
+                    "description": "付款时间"
+                },
+                "cancel_time": {
+                    "type": "string",
+                    "description": "取消订单时间"
+                },
+                "refound_time": {
+                    "type": "string",
+                    "description": "退款时间"
+                },
+                "refound_finish_time": {
+                    "type": "string",
+                    "description": "退款完成时间"
+                },
+                "finish_time": {
+                    "type": "string",
+                    "description": "订单完成时间"
+                },
+                "save_money": {
+                    "type": "string",
+                    "description": "优惠金额"
+                },
+                "weizoom_card_money": {
+                    "type": "string",
+                    "description": "微众卡金额"
+                },
+                "pay_money": {
+                    "type": "string",
+                    "description": "订单总额order.final_price + order.weizoom_card_money"
+                },
+                "edit_money": {
+                    "type": "string",
+                    "description": "修改后金额"
+                },
+                "is_first_order": {
+                    "type": "boolean",
+                    "description": "是否首单"
+                },
+                "supplier_user_id": {
+                    "type": "string",
+                    "description": "供货商id"
+                },
+                "total_purchase_price": {
+                    "type": "string",
+                    "description": "采购价"
+                },
+                "is_group_buying": {
+                    "type": "boolean",
+                    "description": "是否团购订单"
+                },
+                "parent_action": {
+                    "type": "array",
+                    "description": "主订单可操作行为",
+                    "items": {
+                        "$ref": "#/definitions/Actions"
+                    }
+                },
+                "groups": {
+                    "type": "array",
+                    "description": "group",
+                    "items": {
+                        "$ref": "#/definitions/Actions"
+                    }
+                }
+            }
+        },
+        "Member_tag": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "number",
+                    "description": "会员分组id"
+                },
+                "webapp_id": {
+                    "type": "number",
+                    "description": "店铺id"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "Category": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "number",
+                    "description": "数据库生成的ID"
+                },
+                "owner_id": {
+                    "type": "number",
+                    "description": "创立者"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "分组名称"
+                },
+                "pic_url": {
+                    "type": "string",
+                    "description": "分组中商品路径"
+                },
+                "product_count": {
+                    "type": "number",
+                    "description": "分组中商品的数量"
+                },
+                "display_index": {
+                    "type": "number",
+                    "description": "展示顺序"
+                },
+                "created_at": {
+                    "type": "string",
+                    "description": "创建时间"
+                }
+            }
+        },
+        "CategoryHasProduct": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "number",
+                    "description": "数据库生成的ID"
+                },
+                "product_id": {
+                    "type": "number",
+                    "description": "商品id"
+                },
+                "category_id": {
+                    "type": "number",
+                    "description": "分组id"
+                },
+                "display_index": {
+                    "type": "number"
+                },
+                "created_at": {
+                    "type": "string",
+                    "description": "创建记录时间"
+                },
+                "category": {
+                    "items": {
+                        "$ref": "#/definitions/Category"
+                    }
+                },
+                "product": {
+                    "items": {
+                        "$ref": "#/definitions/Product"
+                    }
+                }
+            }
+        },
+        "Product": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "number",
+                    "description": "数据库生成的商品ID"
+                },
+                "owner_id": {
+                    "type": "number",
+                    "description": "创立者"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "physical_unit": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number",
+                    "format": "double"
+                },
+                "introduction": {
+                    "type": "string"
+                },
+                "weight": {
+                    "type": "number",
+                    "format": "double"
+                },
+                "thumbnails_url": {
+                    "type": "string"
+                },
+                "pic_url": {
+                    "type": "string"
+                },
+                "detail": {
+                    "type": "string"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "display_index": {
+                    "type": "number"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "shelve_type": {
+                    "type": "number"
+                },
+                "shelve_start_time": {
+                    "type": "string"
+                },
+                "shelve_end_time": {
+                    "type": "string"
+                },
+                "stock_type": {
+                    "type": "number"
+                },
+                "stocks": {
+                    "type": "number"
+                },
+                "is_deleted": {
+                    "type": "number"
+                },
+                "is_support_make_thanks_card": {
+                    "type": "number"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "update_time": {
+                    "type": "string"
+                },
+                "postage_id": {
+                    "type": "number"
+                },
+                "is_use_online_pay_interface": {
+                    "type": "number"
+                },
+                "is_use_cod_pay_interface": {
+                    "type": "number"
+                },
+                "promotion_title": {
+                    "type": "string"
+                },
+                "user_code": {
+                    "type": "string"
+                },
+                "bar_code": {
+                    "type": "string"
+                },
+                "unified_postage_money": {
+                    "type": "number"
+                },
+                "postage_type": {
+                    "type": "string"
+                },
+                "weshop_sync": {
+                    "type": "number"
+                },
+                "weshop_status": {
+                    "type": "number"
+                },
+                "is_member_product": {
+                    "type": "number"
+                },
+                "supplier": {
+                    "type": "number"
+                },
+                "supplier_user_id": {
+                    "type": "number"
+                },
+                "purchase_price": {
+                    "type": "number"
+                },
+                "is_enable_bill": {
+                    "type": "number"
+                },
+                "is_delivery": {
+                    "type": "number"
+                },
+                "buy_in_supplier": {
+                    "type": "number"
+                }
+            }
+        },
+        "Member": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "number",
+                    "description": "会员id"
+                },
+                "grade_id": {
+                    "type": "string",
+                    "description": "会员等级id"
+                },
+                "username": {
+                    "type": "string"
+                },
+                "is_subscribed": {
+                    "type": "string",
+                    "description": "是否关注"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "token": {
+                    "type": "string"
+                },
+                "webapp_id": {
+                    "type": "string",
+                    "description": "商铺id"
+                },
+                "pay_money": {
+                    "type": "number"
+                },
+                "update_time": {
+                    "type": "string",
+                    "description": "更新时间"
+                },
+                "status": {
+                    "type": "string",
+                    "description": "会员状态"
+                },
+                "integral": {
+                    "type": "number",
+                    "description": "会员积分"
+                },
+                "openid": {
+                    "type": "string"
+                },
+                "grade": {
+                    "type": "object"
+                }
+            }
+        },
+        "Actions": {}
     }
->>>>>>> f_zeus_10091
 }

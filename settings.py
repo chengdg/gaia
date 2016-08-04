@@ -116,3 +116,19 @@ MAIL_NOTIFY_PASSWORD = u'Weizoom2015'
 MAIL_NOTIFY_ACCOUNT_SMTP = u'smtp.dm.aliyun.com'
 
 PANDA_IMAGE_DOMAIN = 'http://chaozhi.weizoom.com'
+
+# settings for WAPI Logger
+if MODE == 'develop' or MODE == 'test':
+
+    EN_VARNISH = False
+    #WAPI_ACCESS_TOKEN_REQUIRED = True
+else:
+
+    EN_VARNISH = True
+
+if 'develop' == MODE:
+    DOMAIN = 'dev.weapp.com'
+elif 'test' == MODE:
+    DOMAIN = 'testweapp.weizoom.com'
+else:
+    DOMAIN = 'weapp.weizoom.com'
