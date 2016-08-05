@@ -7,9 +7,16 @@
 pip install -U "peewee==2.6.4"
 ```
 
+安装Python包：
+```
+pip install \
+  six \
+  falcon
+```
+
 安装插件：
 ```
-pip install git+https://git2.weizzz.com:84/microservice/eaglet.git
+pip install -U git+https://git2.weizzz.com:84/microservice/eaglet.git
 ```
 
 生成API文档：
@@ -24,8 +31,6 @@ bootprint swaggger openapi.yaml html
 1. 在hosts文件中添加如下域名
 ```
 127.0.0.1 api.zeus.com
-```
-```
 127.0.0.1 db.zeus.com
 ```
 2. 编辑Nginx的`nginx.conf`文件，添加如下配置
