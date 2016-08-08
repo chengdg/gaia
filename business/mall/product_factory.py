@@ -243,30 +243,59 @@ class ProductFactory(business_model.Model):
         return (standard_model, custom_models)
 
     def __save_product(self, product):
-        product_model = mall_models.Product.create(
-            owner=product.owner_id,
-            name=product.name,
-            promotion_title=product.promotion_title,
-            introduction=product.introduction,
-            thumbnails_url=product.thumbnails_url,
-            pic_url=product.pic_url,
-            price=product.price,
-            user_code=product.user_code,
-            bar_code=product.bar_code,
-            is_member_product=product.is_member_product,
-            purchase_price=product.purchase_price,
-            supplier=product.supplier,
-            weight=product.weight,
-            stock_type=product.stock_type,
-            stocks=product.min_limit,
-            postage_type=product.postage_type,
-            unified_postage_money=product.unified_postage_money,
-            is_use_cod_pay_interface=product.is_use_cod_pay_interface,
-            is_use_online_pay_interface=product.is_use_online_pay_interface,
-            is_enable_bill=product.is_enable_bill,
-            is_delivery=product.is_delivery,
-            detail=product.detail
-        )
+
+        if product.id:
+            product_model = mall_models.Product.update(owner=product.owner_id,
+                                       name=product.name,
+                                       promotion_title=product.promotion_title,
+                                       introduction=product.introduction,
+                                       thumbnails_url=product.thumbnails_url,
+                                       pic_url=product.pic_url,
+                                       price=product.price,
+                                       user_code=product.user_code,
+                                       bar_code=product.bar_code,
+                                       is_member_product=product.is_member_product,
+                                       purchase_price=product.purchase_price,
+                                       supplier=product.supplier,
+                                       weight=product.weight,
+                                       stock_type=product.stock_type,
+                                       stocks=product.min_limit,
+                                       postage_type=product.postage_type,
+                                       unified_postage_money=product.unified_postage_money,
+                                       is_use_cod_pay_interface=product.is_use_cod_pay_interface,
+                                       is_use_online_pay_interface=product.is_use_online_pay_interface,
+                                       is_enable_bill=product.is_enable_bill,
+                                       is_delivery=product.is_delivery,
+                                       detail=product.detail
+                                       ).dj_where(id=product.id).execute()
+            # todo 优化掉
+            product_model = mall_models.Product.select().dj_where(id=product.id).first()
+
+        else:
+            product_model = mall_models.Product.create(
+                owner=product.owner_id,
+                name=product.name,
+                promotion_title=product.promotion_title,
+                introduction=product.introduction,
+                thumbnails_url=product.thumbnails_url,
+                pic_url=product.pic_url,
+                price=product.price,
+                user_code=product.user_code,
+                bar_code=product.bar_code,
+                is_member_product=product.is_member_product,
+                purchase_price=product.purchase_price,
+                supplier=product.supplier,
+                weight=product.weight,
+                stock_type=product.stock_type,
+                stocks=product.min_limit,
+                postage_type=product.postage_type,
+                unified_postage_money=product.unified_postage_money,
+                is_use_cod_pay_interface=product.is_use_cod_pay_interface,
+                is_use_online_pay_interface=product.is_use_online_pay_interface,
+                is_enable_bill=product.is_enable_bill,
+                is_delivery=product.is_delivery,
+                detail=product.detail
+            )
         return product_model
 
     def __save_product_model(self, standard_model, custom_models, product_model):
@@ -347,6 +376,13 @@ class ProductFactory(business_model.Model):
 
     def create_product(self, product_data):
         product = Product.empty_product()
+        return self.__save_db(product, product_data)
+
+    def update_product(self, id, product_data):
+        product = Product.from_id({'product_id': id})
+        return self.__save_db(product, product_data)
+
+    def __save_db(self, product, product_data):
         # 商品信息
         product = self.__init_product(product, product_data)
         # 保存商品
@@ -361,4 +397,6 @@ class ProductFactory(business_model.Model):
         self.__save_product_category(product_model, product_data)
         # 商品属性
         self.__save_product_property(product_model, product_data)
+
+        # todo 处理缓存
         return product_model
