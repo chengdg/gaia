@@ -33,12 +33,8 @@ class AProduct(api_resource.ApiResource):
 
     @param_required([])
     def post(args):
-        try:
-            product_factory = ProductFactory.create()
-            id = args['id']
-            product_factory.update_product(id, args)
-        except:
-            print(unicode_full_stack())
+        product_factory = ProductFactory.create()
+        product_factory.update_product(args['id'], args)
 
         return {}
 
