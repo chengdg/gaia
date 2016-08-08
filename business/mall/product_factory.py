@@ -166,6 +166,14 @@ class ProductFactory(business_model.Model):
     def create():
         return ProductFactory()
 
+    def create_product(self, product_data):
+        product = Product.empty_product()
+        return self.__save_db(product, product_data)
+
+    def update_product(self, id, product_data):
+        product = Product.from_id({'product_id': id})
+        return self.__save_db(product, product_data)
+
     def __init_product(self, product, product_data):
         product.owner_id = product_data.get('owner_id', '')
         product.name = product_data.get('name', '')
@@ -373,14 +381,6 @@ class ProductFactory(business_model.Model):
                 name=property['name'],
                 value=property['value']
             )
-
-    def create_product(self, product_data):
-        product = Product.empty_product()
-        return self.__save_db(product, product_data)
-
-    def update_product(self, id, product_data):
-        product = Product.from_id({'product_id': id})
-        return self.__save_db(product, product_data)
 
     def __save_db(self, product, product_data):
         # 商品信息
