@@ -21,5 +21,17 @@ class AProduct(api_resource.ApiResource):
 
     @param_required([])
     def put(args):
-        product_factory = ProductFactory.get()
-        return product_factory.create_product(args)
+        """
+        创建商品
+        @return:
+        """
+        product_factory = ProductFactory.create()
+        product_factory.create_product(args)
+        return {}
+
+
+
+    @param_required([])
+    def post(args):
+        pass
+
