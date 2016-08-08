@@ -96,6 +96,7 @@ INSTALLED_TASKS = [
     'services.order_notify_mail_service.task.service_send_order_email',
     'services.shiped_order_template_message_service.task.service_send_shiped_order_template_message',
     'services.express_service.task.service_express',
+    'services.product_service.task.clear_sync_product_cache',
 ]
 
 #redis celery相关

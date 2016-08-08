@@ -7,14 +7,10 @@ import urllib2
 from db.mall import models as webapp_models
 from django.conf import settings
 from celery import task
-import redis
-from celery import task
+from eaglet.core.cache.utils import delete_cache
 import settings
 
 from business.account.user_profile import UserProfile
-
-
-py_redis = redis.Redis(settings.REDIS_HOST, settings.REDIS_PORT, settings.REDIS_CACHES_DB)
 
 
 @task(name='clear synced product cache')
@@ -33,7 +29,7 @@ def clear_sync_product_cache(product_id=None):
 	for weapp_owner_id in weapp_owner_ids:
 
 		key = settings.REDIS_CACHE_KEY + 'webapp_product_detail_{wo:%s}_{pid:%s}' % (weapp_owner_id, product_id)
-		py_redis.delete(key)
+		delete_cache(key)
 		update_product_list_cache(webapp_owner_id=weapp_owner_id)
 		purge_webapp_page_from_varnish_cache(weapp_owner_id, product_id)
 
@@ -47,8 +43,8 @@ def update_product_list_cache(webapp_owner_id):
 	# 先清缓存,以防异步任务失败
 	key = settings.REDIS_CACHE_KEY + 'webapp_products_categories_{wo:%s}' % webapp_owner_id
 	api_key = 'api' + key
-	py_redis.delete(key)
-	py_redis.delete(api_key)
+	delete_cache(key)
+	delete_cache(api_key)
 
 
 def request_url(url2method):
