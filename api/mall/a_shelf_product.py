@@ -14,32 +14,13 @@ from settings import PANDA_IMAGE_DOMAIN
 
 class AProduct(api_resource.ApiResource):
     """
-    商品
+    商品上架状态处理
     """
+
     app = "mall"
     resource = "product"
 
-    @param_required([])
-    def put(args):
-        """
-        创建商品
-        @return:
-        """
-        product_factory = ProductFactory.create()
-        product_factory.create_product(args)
-        return {}
-
-
-
-    @param_required([])
-    def post(args):
-        product_factory = ProductFactory.create()
-        product_factory.update_product(args['id'], args)
-
-        return {}
-
     @param_required(['ids'])
     def delete(args):
-
-        pids= args['ids'].split(',')
-
+        pass
+        

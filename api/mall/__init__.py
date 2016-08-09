@@ -15,3 +15,4 @@ import a_user_profile
 import a_product_status
 import product
 import a_config
+import a_postage_config
