@@ -8,7 +8,7 @@ from business.mall.postage_config import PostageConfig
 
 class APostageConfig(api_resource.ApiResource):
     """
-    订单
+    运费模板
     """
     app = 'mall'
     resource = 'postage_config'

@@ -33,7 +33,7 @@ class PostageConfig(business_model.Model):
         self.config = config
 
     @staticmethod
-    @param_required(['id'])
+    @param_required(['id', 'owner_id'])
     def get(args):
         id = args['id']
         owner_id = args['owner_id']
@@ -236,3 +236,32 @@ class PostageConfig(business_model.Model):
                     )
             ids_to_be_delete = existed_free_config_ids - free_config_ids
             mall_models.FreePostageConfig.delete().dj_where(id__in=ids_to_be_delete).execute()
+
+
+
+    @staticmethod
+    @param_required(['owner_id'])
+    def get_list(args):
+        """
+        运费模板列表
+        """
+        owner_id = args['owner_id']
+
+        postage_configs = [config for config in mall_models.PostageConfig.select().dj_where(owner=owner_id) if not config.is_deleted]
+
+        # todo 验证下面这些奇奇怪怪的代码有用么。。。
+        config_ids = []
+        id2config = {}
+        for config in postage_configs:
+            config.special_configs = []
+            id2config[config.id] = config
+            if config.is_enable_special_config:
+                config_ids.append(config.id)
+
+        for special_config in mall_models.SpecialPostageConfig.select().dj_where(postage_config_id__in=config_ids):
+            config_id = special_config.postage_config_id
+            id2config[config_id].special_configs.append(special_config)
+
+        postage_configs = map(lambda x: x.to_dict(), postage_configs)
+
+        return {'postage_configs': postage_configs}
