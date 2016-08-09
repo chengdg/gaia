@@ -22,7 +22,8 @@ class APostageConfig(api_resource.ApiResource):
 
         return {
             'special_configs': postage_config.special_configs,
-            'free_configs': postage_config.free_configs
+            'free_configs': postage_config.free_configs,
+            'postage_config': postage_config.config
         }
 
     @param_required([])

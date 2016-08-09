@@ -19,16 +19,18 @@ class PostageConfig(business_model.Model):
         'id',
         'special_configs',
         'free_configs',
-        'owner_id'
+        'owner_id',
+        'config'
     )
 
-    def __init__(self, owner_id, id, special_configs, free_configs):
+    def __init__(self, owner_id, id, special_configs, free_configs, config):
         business_model.Model.__init__(self)
 
         self.id = id,
         self.owner_id = owner_id,
         self.special_configs = special_configs
         self.free_configs = free_configs
+        self.config = config
 
     @staticmethod
     @param_required(['id'])
@@ -43,7 +45,7 @@ class PostageConfig(business_model.Model):
         free_configs = map(lambda x: x.to_dict(),
                            mall_models.FreePostageConfig.select().dj_where(postage_config=postage_config))
 
-        return PostageConfig(owner_id,id, special_configs, free_configs)
+        return PostageConfig(owner_id,id, special_configs, free_configs, postage_config.to_dict())
     
     @staticmethod
     @param_required([])
