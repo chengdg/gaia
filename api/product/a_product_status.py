@@ -13,7 +13,7 @@ class AProductStatus(api_resource.ApiResource):
     """
     获取商品的状态
     """
-    app = "mall"
+    app = "product"
     resource = "product_status"
 
     @param_required(['product_ids'])

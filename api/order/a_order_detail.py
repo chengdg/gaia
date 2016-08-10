@@ -19,7 +19,7 @@ class AOrderDetail(api_resource.ApiResource):
     订单详情
     """
 
-    app = 'mall'
+    app = 'order'
     resource = 'order_detail'
 
     @param_required(['order_id'])

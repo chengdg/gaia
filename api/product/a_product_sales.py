@@ -9,7 +9,7 @@ class AProductSales(api_resource.ApiResource):
     """
     商品的销量
     """
-    app = 'mall'
+    app = 'product'
     resource = 'product_sales'
 
     @param_required(['product_ids'])

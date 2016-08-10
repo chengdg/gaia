@@ -15,7 +15,7 @@ class AOrderList(api_resource.ApiResource):
     """
     订单列表
     """
-    app = 'mall'
+    app = 'order'
     resource = 'order_list'
 
     @param_required(['owner_id', 'cur_page', 'count_per_page'])

@@ -5,3 +5,5 @@ import mall
 import panda
 import account
 import member
+import order
+import product

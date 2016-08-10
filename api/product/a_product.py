@@ -16,7 +16,7 @@ class AProduct(api_resource.ApiResource):
     """
     商品
     """
-    app = "mall"
+    app = "product"
     resource = "product"
 
     @param_required([])

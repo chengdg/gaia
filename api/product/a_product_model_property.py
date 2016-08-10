@@ -17,7 +17,7 @@ class AProductModelProperty(api_resource.ApiResource):
     商品规格属性
     """
 
-    app = 'mall'
+    app = 'product'
     resource = 'product_model_property'
 
     @param_required(['owner_id', 'type'])
@@ -101,7 +101,7 @@ class AProductModelPropertyList(api_resource.ApiResource):
     """
     商品规格列表
     """
-    app = 'mall'
+    app = 'product'
     resource = 'product_model_property_list'
 
     @param_required(['owner_id'])
@@ -119,7 +119,7 @@ class AProductModelPropertyValue(api_resource.ApiResource):
     """
     商品规格的属性
     """
-    app = 'mall'
+    app = 'product'
     resource = 'model_property_value'
 
     @param_required(['id', 'name'])

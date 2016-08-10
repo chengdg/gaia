@@ -13,7 +13,7 @@ class AOrder(api_resource.ApiResource):
     """
     订单
     """
-    app = 'mall'
+    app = 'order'
     resource = 'order'
 
     # @param_required(['ship_name', 'ship_address', 'ship_tel', 'order_type', 'xa-choseInterfaces'])

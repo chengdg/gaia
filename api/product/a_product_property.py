@@ -17,7 +17,7 @@ class AProductPropertyTemplate(api_resource.ApiResource):
     商品属性模板管理
     """
 
-    app = 'mall'
+    app = 'product'
     resource = 'product_property_template'
 
     @param_required(['owner_id', 'title'])
@@ -94,7 +94,7 @@ class APropertyTemplateList(api_resource.ApiResource):
     """
     商品属性模板列表
     """
-    app = 'mall'
+    app = 'product'
     resource = 'template_list'
 
     @param_required(['owner_id'])
@@ -119,7 +119,7 @@ class AProductTemplateProperty(api_resource.ApiResource):
     """
     商品模板的属性
     """
-    app = 'mall'
+    app = 'product'
     resource = 'template_property'
 
     @param_required(['template_id'])

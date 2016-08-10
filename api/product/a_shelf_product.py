@@ -17,7 +17,7 @@ class AProduct(api_resource.ApiResource):
     商品上架状态处理
     """
 
-    app = "mall"
+    app = "product"
     resource = "product"
 
     @param_required(['ids'])

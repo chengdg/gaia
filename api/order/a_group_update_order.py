@@ -14,7 +14,7 @@ class AGroupUpdateOrder(api_resource.ApiResource):
     """
     团购状态改变处理对应的订单
     """
-    app = "mall"
+    app = "order"
     resource = "group_update_order"
 
     @param_required(['group_id', 'status'])
