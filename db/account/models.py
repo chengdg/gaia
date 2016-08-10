@@ -106,3 +106,33 @@ class UserOrderNotifySettings(models.Model):
 
 	class Meta(object):
 		db_table = 'user_order_notify_setting'
+
+
+
+class ZeusApp(models.Model):
+	"""
+	【Zeus用】ZeusApp
+	"""
+	name = models.CharField(max_length=20, db_index=True)
+	app_key = models.CharField(max_length=50, unique=True)
+	app_secret = models.CharField(max_length=50)
+	is_deleted = models.BooleanField(default=False)
+
+	class Meta(object):
+		db_table = "zeus_app"
+
+
+class AccessToken(models.Model):
+	"""
+	【Zeus用】存储access token （Weapp不应访问此库）
+	"""
+	access_token = models.CharField(max_length=50, unique=True) # unique implies the creation of an index
+	corp_id = models.CharField(max_length=50, default='')
+	used_count = models.IntegerField(default=0) # 使用过次数
+	created_at = models.DateTimeField(auto_now_add=True)
+	expire_time = models.DateTimeField() # 失效时间
+	app = models.ForeignKey(ZeusApp)
+	is_active = models.BooleanField(default=True)
+
+	class Meta(object):
+		db_table = "zeus_access_token"
