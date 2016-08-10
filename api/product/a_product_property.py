@@ -1,6 +1,8 @@
+# -*- coding: utf-8 -*-
+
 # 使用a_property_template和a_property_template_list
 #
-#  -*- coding: utf-8 -*-
+#  
 # __author__ = "charles"
 #
 # import json
