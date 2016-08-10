@@ -8,7 +8,7 @@ from db.mall import models as mall_models
 
 class ProductPropertyTemplate(business_model.Model):
     """
-    商品的属性管理
+    商品属性模板,包含其中属性的处理
     """
 
     __slots__ = (
@@ -73,6 +73,63 @@ class ProductPropertyTemplate(business_model.Model):
 
         """
         self.context['properties'] = properties
+
+    @staticmethod
+    @param_required(['owner_id','title', 'newProperties'])
+    def create(args):
+        """
+        创建属性模板
+        @param args:
+        @return:
+        """
+        owner_id = args['owner_id']
+        template = mall_models.ProductPropertyTemplate.create(
+            owner=owner_id,
+            name=args['title']
+        )
+
+        # 创建新的property
+        for property in args['new_properties']:
+            if property['id'] < 0:
+                # 需要新建property
+                mall_models.TemplateProperty.create(
+                    owner=owner_id,
+                    template=template,
+                    name=property['name'],
+                    value=property['value']
+                )
+
+    @staticmethod
+    @param_required(['owner_id', 'template_id', 'title', 'newProperties', 'updateProperties', 'deletedIds'])
+    def modify(args):
+        owner_id = args['owner_id']
+        template_id = args['template_id']
+
+        mall_models.ProductPropertyTemplate.objects.filter(
+            id=template_id
+        ).update(name=args['title'])
+
+        # 创建新的property
+        for property in args['new_properties']:
+            if property['id'] < 0:
+                # 需要新建property
+                mall_models.TemplateProperty.create(
+                    owner=owner_id,
+                    template_id=template_id,
+                    name=property['name'],
+                    value=property['value']
+                )
+
+        # 更新已有的property
+        for property in args['update_properteis']:
+            mall_models.TemplateProperty.update(
+                name=property['name'],
+                value=property['value']
+            ).dj_where(id=property['id'])
+        # 删除property
+        mall_models.TemplateProperty.dj_where(
+            id__in=args['deleted_property_ids']
+        ).delete()
 
     def save(self):
         """
