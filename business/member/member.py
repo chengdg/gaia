@@ -5,23 +5,24 @@
 
 import re
 import json
-from bs4 import BeautifulSoup
 import math
+import logging
+from bs4 import BeautifulSoup
 from datetime import datetime
 
 from eaglet.decorator import param_required
-
-from db.member import models as member_models
-
-import settings
+from eaglet.decorator import cached_context_property
+from eaglet.utils.string_util import hex_to_byte, byte_to_hex
 from eaglet.core import watchdog
 from eaglet.core.cache import utils as cache_util
-from util import emojicons_util
 
+import settings
+from util import emojicons_util
+from db.member import models as member_models
 from business import model as business_model
-from eaglet.decorator import cached_context_property
-import logging
-from eaglet.utils.string_util import hex_to_byte, byte_to_hex
+from business.member.member_has_tag import MemberHasTag
+
+
 
 class Member(business_model.Model):
     """
@@ -38,7 +39,28 @@ class Member(business_model.Model):
         'webapp_id',
         'pay_money',
         'update_time',
-        'status'
+        'status',
+        'experience',
+        'remarks_name',
+        'remarks_extra',
+        'last_visit_time',
+        'session_id',
+        'is_subscribed',
+        'friend_count',
+        'factor',
+        'source',
+        'integral',
+        'update_time',
+        'pay_times',
+        'last_pay_time',
+        'unit_price',
+        'city',
+        'province',
+        'country',
+        'sex',
+        'purchase_frequency',
+        'cancel_subscribe_time',
+        'fans_count'
     )
 
     @staticmethod
@@ -65,12 +87,12 @@ class Member(business_model.Model):
     @param_required(['id'])
     def from_id(args):
         """
-        工厂对象，根据member id获取Member业务对象
+                工厂对象，根据member id获取Member业务对象
 
-        @param[in] id: 会员的id
+                @param[in] id: 会员的id
 
-        @return Member业务对象
-        """
+                @return Member业务对象
+                """
         member_id = args['id']
         #try:
         member_db_model = member_models.Member.get(id=member_id)
@@ -80,6 +102,23 @@ class Member(business_model.Model):
         })
         # except:
         #     return None
+
+    @staticmethod
+    @param_required(['webapp_id'])
+    def from_webapp_id(args):
+        """
+            工厂对象，根据 webapp_id 获取Member业务对象列表
+
+            @param[in] webapp_id: 渠道的webapp_id
+
+            @return: Member业务对象卸料
+        """
+        webapp_id = args['webapp_id']
+        member_db_models = member_models.Member.select().dj_where(webapp_id=webapp_id)
+        members = []
+        for model in member_db_models:
+            members.append(Member(model))
+        return members
 
     # @staticmethod
     # @param_required(['webapp_owner', 'token'])
@@ -131,6 +170,8 @@ class Member(business_model.Model):
 
         #self.context['webapp_owner'] = webapp_owner
         self.context['db_model'] = model
+        if model:
+            self._init_slot_from_model(model)
 
     @cached_context_property
     def __grade(self):
@@ -171,6 +212,33 @@ class Member(business_model.Model):
         """
         return self.__grade
 
+    @property
+    def grade_name(self):
+        """
+        [property] 会员等级名称
+        """
+        return self.__grade.name
+
+    @cached_context_property
+    def __tags(self):
+        """
+        [property] 会员分组信息
+        """
+        member_model = self.context['db_model']
+
+        if not member_model:
+            return None
+        member_tags = MemberHasTag.get_member_tags({'member_id': member_model.id})
+        return member_tags
+
+
+    @property
+    def tags(self):
+        """
+        [property] 会员分组信息列表
+        """
+        return self.__tags
+
     @cached_context_property
     def __info(self):
         """
@@ -208,7 +276,7 @@ class Member(business_model.Model):
         """
 
         return self.__info.phone
-    
+
     @cached_context_property
     def phone_number(self):
         """
@@ -279,14 +347,14 @@ class Member(business_model.Model):
     #         'usable_integral_or_conpon' : integral_strategy_settings.usable_integral_or_conpon
     #     }
 
-    @property
-    def integral(self):
-        """
-        [property] 会员积分数值
-        """
-        member_model = self.context['db_model']
-
-        return member_model.integral
+    # @property
+    # def integral(self):
+    #     """
+    #     [property] 会员积分数值
+    #     """
+    #     member_model = self.context['db_model']
+    #
+    #     return member_model.integral
 
     @cached_context_property
     def username_for_html(self):
@@ -296,7 +364,7 @@ class Member(business_model.Model):
         if (self.username_hexstr is not None) and (len(self.username_hexstr) > 0):
             username = emojicons_util.encode_emojicons_for_html(self.username_hexstr, is_hex_str=True)
         else:
-            username = emojicons_util.encode_emojicons_for_html(self.username)      
+            username = emojicons_util.encode_emojicons_for_html(self.username)
 
         try:
             username.decode('utf-8')
