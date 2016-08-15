@@ -15,13 +15,17 @@ class ProductPool(business_model.Model):
 	新商品池业务逻辑对象
 	"""
 	__slots__ = (
-
-		'owner_id'
+		'owner_id',
 	)
 
 	def __init__(self, owner_id):
-		super(ProductPool, self).__init__()
-		self.owner_id = owner_id
+		try:
+			super(ProductPool, self).__init__()
+			self.owner_id = owner_id
+		except BaseException as e:
+			print e
+			print('********')
+			print('--', unicode_full_stack())
 
 	@staticmethod
 	@param_required(['owner_id'])
@@ -29,8 +33,15 @@ class ProductPool(business_model.Model):
 		return ProductPool(args['owner_id'])
 
 	def push(self, product):
+		if self.is_has_product(product.id):
+			return False, u'{}已存在于{}的商品池'.format(product.id, self.owner_id)
 		mall_models.ProductPool.create(product_id=product.id, woid=self.owner_id)
+		return True, ''
 
+	def pop(self, product):
+		is_success = mall_models.ProductPool.delete().dj_where(product_id=product.id, woid=self.owner_id).execute()
+		print('---',is_success)
+		return is_success
 
-	def is_has_product(self,product_id):
-		pass
+	def is_has_product(self, product_id):
+		return mall_models.ProductPool.select().dj_where(product_id=product_id, woid=self.owner_id).count() > 0
