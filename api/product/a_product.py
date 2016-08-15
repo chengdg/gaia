@@ -59,13 +59,14 @@ class AProduct(api_resource.ApiResource):
 			# 商品属性数据
 			'properties': args['properties', '[]']
 		}
-
+		product_factory = ProductFactory.get()
+		product_factory.create_product(args['owner_id'],product_data)
 
 		return {}
 
 	@param_required([])
 	def post(args):
-		product_factory = ProductFactory.create()
+		product_factory = ProductFactory.get()
 		product_factory.update_product(args['id'], args)
 
 		return {}
