@@ -97,6 +97,9 @@ CANCEL_ORDER = 4  # 已取消
 
 
 class UserOrderNotifySettings(models.Model):
+	"""
+	发送订单邮件信息配置
+	"""
 	user = models.ForeignKey(User)
 	emails = models.TextField(default='')  # '|'分割
 	black_member_ids = models.TextField(default='')  # '|'分割，会员id
