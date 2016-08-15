@@ -12,17 +12,6 @@ class ProductFactory(business_model.Model):
     """
     商品工厂类
     """
-    __slots__ = (
-        )
-
-    @staticmethod
-    @param_required([])
-    def get(args):
-        """
-		工厂方法，创建ProductFactory对象
-		"""
-        product_factory = ProductFactory()
-        return product_factory
 
     def __init__(self):
         super(ProductFactory, self).__init__()
@@ -163,12 +152,17 @@ class ProductFactory(business_model.Model):
         return new_product
 
     @staticmethod
-    def create():
+    @param_required([])
+    def get():
         return ProductFactory()
 
-    def create_product(self, product_data):
+    def create_product(self, owner_id, product_data):
         product = Product.empty_product()
-        return self.__save_db(product, product_data)
+        product_model = self.__save_db(product, product_data)
+        product = Product.from_model({"db_model": product_model})
+        pool = ProductPool.get({'owner_id': owner_id})
+        pool.push(product)
+
 
     def update_product(self, id, product_data):
         product = Product.from_id({'product_id': id})

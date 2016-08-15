@@ -2565,7 +2565,200 @@
                     }
                 }
             }
+        },
+
+        "/product/product":{
+            "put": {
+                "summary": "创建商品",
+                "description": "创建商品,且放入该owner的商品池中",
+                "parameters": [
+                    {
+                        "name": "owner_id",
+                        "in": "query",
+                        "description": "商品所属账号的user id",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "商品名称",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "supplier",
+                        "in": "query",
+                        "description": "商品供货商id",
+                        "required": false,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "purchase_price",
+                        "in": "query",
+                        "description": "商品采购价",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "promotion_title",
+                        "in": "query",
+                        "description": "商品促销标题",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "user_code",
+                        "in": "query",
+                        "description": "商品编码",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "bar_code",
+                        "in": "query",
+                        "description": "商品条码",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "product_category",
+                        "in": "query",
+                        "description": "将商品放入的分组当中",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "min_limit",
+                        "in": "query",
+                        "description": "限购数量",
+                        "required": false,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "is_member_product",
+                        "in": "query",
+                        "description": "是否参与会员折扣",
+                        "required": false,
+                        "type": "boolean"
+                    },
+                    {
+                        "name": "customModels",
+                        "in": "query",
+                        "description": "定制规格json字符窜",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "is_use_custom_model",
+                        "in": "query",
+                        "description": "商品是否使用订制规格",
+                        "required": true,
+                        "type": "boolean"
+                    },
+                    {
+                        "name": "price",
+                        "in": "query",
+                        "description": "商品单价",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "weight",
+                        "in": "query",
+                        "description": "商品重量",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "stock_type",
+                        "in": "query",
+                        "description": "库存类型（有限或者无限）",
+                        "required": true,
+                        "type": "boolean"
+                    },
+                    {
+                        "name": "stocks",
+                        "in": "query",
+                        "description": "库存值",
+                        "required": false,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "swipe_images",
+                        "in": "query",
+                        "description": "商品图片（json字符串）",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "postage_type",
+                        "in": "query",
+                        "description": "运费类型",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "unified_postage_money",
+                        "in": "query",
+                        "description": "统一运费金额",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "is_enable_cod_pay_interface",
+                        "in": "query",
+                        "description": "是否支持货到付款",
+                        "required": false,
+                        "type": "boolean"
+                    },
+                    {
+                        "name": "is_use_online_pay_interface",
+                        "in": "query",
+                        "description": "是否支持在线支付",
+                        "required": false,
+                        "type": "boolean"
+                    },
+                    {
+                        "name": "is_enable_bill",
+                        "in": "query",
+                        "description": "是否支持开发票",
+                        "required": false,
+                        "type": "boolean"
+                    },
+                    {
+                        "name": "is_delivery",
+                        "in": "query",
+                        "description": "是否支持配送时间",
+                        "required": false,
+                        "type": "boolean"
+                    },
+                    {
+                        "name": "properties",
+                        "in": "query",
+                        "description": "商品属性（json）",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "detail",
+                        "in": "query",
+                        "description": "商品详情",
+                        "required": false,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response"
+                    }
+                }
+            }
         }
+
     },
     "definitions": {
         "Order": {

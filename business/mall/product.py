@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from eaglet.decorator import param_required
 
+from business.mall.product_pool import ProductPool
 from db.mall import models as mall_models
 from business.account.user_profile import UserProfile
 from business import model as business_model
@@ -157,35 +158,35 @@ class Product(business_model.Model):
         """
         self.context['models'] = models
 
-    def save(self, panda_product_id):
-
-        user_profile = UserProfile.from_webapp_type({'webapp_type': 2})
-        if not user_profile:
-            return None
-        owner_id = user_profile[0].user_id
-        product = mall_models.Product.create(
-            owner=owner_id,
-            name=self.name,
-            supplier=self.supplier,
-            detail=self.detail,
-            pic_url='',
-            introduction='',
-            thumbnails_url=self.thumbnails_url,
-            price=self.price,
-            weight=self.weight,
-            stock_type=self.stock_type,
-            purchase_price=self.purchase_price,
-            stocks=0,
-            promotion_title=self.promotion_title if self.promotion_title else ''
-
-        )
-        mall_models.PandaHasProductRelation.create(
-            panda_product_id=int(panda_product_id),
-            weapp_product_id=product.id,
-        )
-        new_product = Product(product)
-
-        return new_product
+    # def save(self, panda_product_id):
+    #
+    #     user_profile = UserProfile.from_webapp_type({'webapp_type': 2})
+    #     if not user_profile:
+    #         return None
+    #     owner_id = user_profile[0].user_id
+    #     product = mall_models.Product.create(
+    #         owner=owner_id,
+    #         name=self.name,
+    #         supplier=self.supplier,
+    #         detail=self.detail,
+    #         pic_url='',
+    #         introduction='',
+    #         thumbnails_url=self.thumbnails_url,
+    #         price=self.price,
+    #         weight=self.weight,
+    #         stock_type=self.stock_type,
+    #         purchase_price=self.purchase_price,
+    #         stocks=0,
+    #         promotion_title=self.promotion_title if self.promotion_title else ''
+    #
+    #     )
+    #     mall_models.PandaHasProductRelation.create(
+    #         panda_product_id=int(panda_product_id),
+    #         weapp_product_id=product.id,
+    #     )
+    #     new_product = Product(product)
+    #
+    #     return new_product
 
     def update(self):
         """
@@ -231,6 +232,40 @@ class Product(business_model.Model):
                                                           status=mall_models.PP_STATUS_ON)
         on_product_ids = [pool.product_id for pool in pools]
         return list(set(on_product_ids))
+
+    @staticmethod
+    @param_required(['product_id', 'owner_id'])
+    def get_from_id(args):
+        product_id = args['product_id']
+        owner_id = args['owner_id']
+
+        is_in_owner_pool = ProductPool.get({'owner_id': owner_id})
+        if not is_in_owner_pool:
+            return None
+        db_model = mall_models.Product.select().dj_where(id=product_id, owenr_id= owner_id).first()
+        product = Product(db_model)
+
+
+    @staticmethod
+    def __fill_details(owner_id, products, options):
+        """填充各种细节信息
+
+		此方法会根据options中的各种填充选项，填充相应的细节信息
+
+		@param[in] products: Product业务对象集合
+		@param[in] options: 填充选项
+			with_price: 填充价格信息
+			with_product_model: 填充所有商品规格信息
+			with_product_promotion: 填充商品促销信息
+			with_image: 填充商品轮播图信息
+			with_property: 填充商品属性信息
+			with_selected_category: 填充选中的分类信息
+			with_all_category: 填充所有商品分类详情
+			with_sales: 填充商品销售详情
+		"""
+        pass
+
+
 
 
 class ProductModel(business_model.Model):
@@ -412,62 +447,4 @@ class ProductSwipeImage(business_model.Model):
         ProductSwipeImage.save_many({'images': images})
 
 
-class ProductPool(business_model.Model):
-    """
-    新商品池业务逻辑对象
-    """
-    __slots__ = (
-        # user_id
-        'woid',
-        'product_id',
-        'status'
-    )
 
-    def __init__(self):
-        super(ProductPool, self).__init__()
-
-    @staticmethod
-    def save_many(pool):
-        """
-
-        """
-        mall_models.ProductPool.insert_many(pool).execute()
-
-    @staticmethod
-    @param_required(['product_id', 'accounts'])
-    def update_many(args):
-        """
-        accounts 需要显示的用户id列表(user_id)
-        """
-        product_pool = mall_models.ProductPool.select().dj_where(product_id=args.get('product_id'))
-        accounts = [str(account) for account in args.get('accounts')]
-        woids = list(set([str(account.woid) for account in product_pool]))
-        # 需要某个商户更新成不可件的
-        off_woids = list(set(woids) - set(accounts))
-        # 需要添加的映射
-        need_add = list(set(accounts) - set(woids))
-
-        # 需要新增到某个商户的
-        pool = [dict(woid=account,
-                     product_id=args.get('product_id'),
-                     status=mall_models.PP_STATUS_ON_POOL) for account in need_add]
-
-        if pool:
-            ProductPool.save_many(pool)
-        need_delete_ids = [p.id for p in product_pool if str(p.woid) in off_woids]
-        mall_models.ProductPool.update(status=mall_models.PP_STATUS_DELETE)\
-            .dj_where(id__in=need_delete_ids).execute()
-        # 将不可见的因该更新成可见的进行更新
-        mall_models.ProductPool.update(status=mall_models.PP_STATUS_ON_POOL) \
-            .dj_where(product_id=args.get('product_id'),
-                      status=mall_models.PP_STATUS_DELETE,
-                      woid__in=args.get('accounts')).execute()
-
-    @staticmethod
-    @param_required(['product_id'])
-    def delete_from_product(args):
-        """
-        因为同步商品删除，此处需要更新
-        """
-        mall_models.ProductPool.update(status=mall_models.PP_STATUS_DELETE)\
-            .dj_where(product_id=args['product_id']).execute()
