@@ -97,9 +97,9 @@ class ProductConfig(business_model.Model):
 
 		# 商品分组
 		if product_id:
+			product_config.categories = product.categories
+		else:
 			product_config.categories = map(lambda x: x.to_dict(),
 			                                mall_models.ProductCategory.select().dj_where(owner_id=owner_id))
-		else:
-			product_config.categories = product.categories
 
 		return product_config
