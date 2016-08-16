@@ -152,7 +152,6 @@ class ProductFactory(business_model.Model):
         return new_product
 
     @staticmethod
-    @param_required([])
     def get():
         return ProductFactory()
 
