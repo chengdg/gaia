@@ -19,11 +19,14 @@ class AProductConfig(api_resource.ApiResource):
 		# 确定支付接口配置
 		owner_id = args['owner_id']
 		product_id = args.get('product_id', None)
-		if product_id:
-			product_config = ProductConfig.get({'owner_id': owner_id, 'product_id':product_id})
-			return product_config.to_dict()
-		else:
-			product_config = ProductConfig.get({'owner_id': owner_id})
-			return product_config.to_dict()
 
+		product_config = ProductConfig.get({'owner_id': owner_id, 'product_id': product_id})
 
+		return {
+			'postage_config_info': product_config.postage_config_info,
+			'property_templates': product_config.property_templates,
+			'pay_interface_config': product_config.pay_interface_config,
+			'mall_type': product_config.mall_type,
+			'is_bill': product_config.is_bill,
+			'store_name': product_config.store_name
+		}

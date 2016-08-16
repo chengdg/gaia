@@ -2757,6 +2757,72 @@
                     }
                 }
             }
+        },
+        "/product/product_config":{
+            "get":{
+                "summary": "商品配置,适用于创建商品和商品详情页面",
+                "parameters":
+                [
+                    {
+                        "name": "owner_id",
+                        "in": "query",
+                        "description": "owner_id",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "product_id",
+                        "in": "query",
+                        "description": "商品id",
+                        "required": false,
+                        "type": "string"
+                    }
+                ],
+                "tags": ["product"],
+                "response":{
+                    "description":"商品配置数据",
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "code": {
+                                "type": "integer",
+                                "format": "int32"
+                            },
+                            "data": {
+                                "type": "object",
+                                "properties": {
+                                    "postage_config_info": {
+                                        "type": "integer",
+                                        "description": "运费配置信息"
+                                    },
+                                    "property_templates": {
+                                        "description":"属性模板信息"
+                                    },
+                                    "pay_interface_config": {
+                                        "description": "支付方式信息"
+                                    },
+                                    "is_bill":{
+                                        "description": "是否可以开启发票功能"
+                                    },
+                                    "store_name":{
+                                        "description":"商户名称"
+                                    }
+
+                                }
+                                }
+                            },
+                            "errMsg": {
+                                "type": "string"
+                            },
+                            "innerErrMsg": {
+                                "type": "string"
+                            }
+                        }
+
+
+
+                }
+            }
         }
 
     },

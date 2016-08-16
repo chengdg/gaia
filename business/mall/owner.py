@@ -29,5 +29,5 @@ class Owner(business_model.Model):
 
 		self.id = owner_id
 		self.username = _user.username
-		self.mall_type = _user_profile.mall_type
+		self.mall_type = _user_profile.webapp_type
 		self.store_name = _user_profile.store_name

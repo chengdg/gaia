@@ -20,12 +20,14 @@ class ProductConfig(business_model.Model):
 		'owner_id',
 		'postage_config_info',
 		'property_templates',
-		'pay_interface_config'
-
+		'pay_interface_config',
+		'mall_type',
+		'is_bill',
+		'store_name'
 	)
 
 	@staticmethod
-	@param_required(['owner_id'])
+	@param_required(['owner_id', 'product_id'])
 	def get(args):
 		owner_id = args['owner_id']
 		product_config = ProductConfig()
@@ -71,6 +73,7 @@ class ProductConfig(business_model.Model):
 
 		# mall_type
 		product_config.mall_type = owner.mall_type
+		product_config.is_bill = False if owner.mall_type else True
 		product_config.store_name = owner.store_name
 
 		# 商品分组
