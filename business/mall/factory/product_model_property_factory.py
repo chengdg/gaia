@@ -3,8 +3,9 @@
 from eaglet.decorator import param_required
 
 from business import model as business_model
-from business.mall.product_model_property import ProductModelPropertyValue, ProductModelProperty
 from business.account.user_profile import UserProfile
+from business.product.product_model_property import ProductModelProperty
+from business.product.product_model_property_value import  ProductModelPropertyValue
 
 
 class ProductModelPropertyFactory(business_model.Model):
