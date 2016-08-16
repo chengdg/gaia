@@ -2,6 +2,7 @@
 from eaglet.decorator import param_required
 
 from business.mall.owner import Owner
+from business.mall.product import Product
 from business.mall.product_property import ProductPropertyTemplate
 from db.mall import models as mall_models
 from business.account.user_profile import UserProfile
@@ -23,15 +24,33 @@ class ProductConfig(business_model.Model):
 		'pay_interface_config',
 		'mall_type',
 		'is_bill',
-		'store_name'
+		'store_name',
+		'product',
+		'categories'
 	)
 
 	@staticmethod
 	@param_required(['owner_id', 'product_id'])
 	def get(args):
 		owner_id = args['owner_id']
+		product_id = args['product_id']
+
 		product_config = ProductConfig()
 		owner = Owner(owner_id)
+
+		# 商品数据
+		if product_id:
+			product = Product.get_from_id({"product_id": product_id, 'owner_id': owner_id})
+			Product.fill_details(owner_id, [product], {
+				'with_product_model': True,  # todo
+				'with_image': True,
+				'with_property': True,
+				'with_model_property_info': True,
+				'with_all_category': True,
+			})
+			product_config.product = product.to_dict()
+		else:
+			product_config.product = {}
 
 		# 支付方式
 		pay_interface_config = {
@@ -77,4 +96,10 @@ class ProductConfig(business_model.Model):
 		product_config.store_name = owner.store_name
 
 		# 商品分组
+		if product_id:
+			product_config.categories = map(lambda x: x.to_dict(),
+			                                mall_models.ProductCategory.select().dj_where(owner_id=owner_id))
+		else:
+			product_config.categories = product.categories
+
 		return product_config
