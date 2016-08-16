@@ -20,10 +20,10 @@ class AProductConfig(api_resource.ApiResource):
 		owner_id = args['owner_id']
 		product_id = args.get('product_id', None)
 		if product_id:
-			return {}
+			product_config = ProductConfig.get({'owner_id': owner_id, 'product_id':product_id})
+			return product_config.to_dict()
 		else:
 			product_config = ProductConfig.get({'owner_id': owner_id})
-			return {
-				'product_config': product_config.to_dict()
-			}
+			return product_config.to_dict()
+
 

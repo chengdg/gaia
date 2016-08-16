@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from eaglet.decorator import param_required
 
+from business.mall.owner import Owner
 from business.mall.product_property import ProductPropertyTemplate
 from db.mall import models as mall_models
 from business.account.user_profile import UserProfile
@@ -23,12 +24,12 @@ class ProductConfig(business_model.Model):
 
 	)
 
-
 	@staticmethod
 	@param_required(['owner_id'])
 	def get(args):
 		owner_id = args['owner_id']
 		product_config = ProductConfig()
+		owner = Owner(owner_id)
 
 		# 支付方式
 		pay_interface_config = {
@@ -60,10 +61,7 @@ class ProductConfig(business_model.Model):
 
 		product_config.postage_config_info = postage_config_info
 
-
 		# 属性模板
-		# property_templates = mall_models.ProductPropertyTemplate.select().dj_where(
-		# 	owner=owner_id)
 		property_templates = ProductPropertyTemplate.from_owner_id({'owner_id': owner_id})
 		product_config.property_templates = map(lambda x: x.to_dict(), property_templates)
 
@@ -72,9 +70,8 @@ class ProductConfig(business_model.Model):
 		# 	postage_config_info['is_use_system_postage_config'] = True
 
 		# mall_type
+		product_config.mall_type = owner.mall_type
+		product_config.store_name = owner.store_name
 
 		# 商品分组
-
-
 		return product_config
-
