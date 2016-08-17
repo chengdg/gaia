@@ -67,8 +67,10 @@ class ProductConfig(business_model.Model):
 			elif pay_interface.type == mall_models.PAY_INTERFACE_WEIZOOM_COIN:
 				pass
 			else:
+				_dict = pay_interface.to_dict()
+				_dict['name'] = mall_models.PAYTYPE2NAME[_dict['type']]
 				pay_interface_config['online_pay_interfaces'].append(
-					pay_interface.to_dict())
+					_dict)
 
 		product_config.pay_interface_config = pay_interface_config
 
