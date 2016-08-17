@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from eaglet.decorator import param_required
+from eaglet.utils.resource_client import Resource
 
 from business.mall.product_pool import ProductPool
 from db.mall import models as mall_models
@@ -60,7 +61,9 @@ class Product(business_model.Model):
         'model_name',
         'model',
         'categories',
-        'properties'
+        'properties',
+
+        'group_buy_info'
     )
 
     def __init__(self, model):
@@ -266,6 +269,7 @@ class Product(business_model.Model):
 			with_selected_category: 填充选中的分类信息
 			with_all_category: 填充所有商品分类详情
 			with_sales: 填充商品销售详情
+			with_group_buy_info: 填充团购信息
 		"""
 
         if options.get('with_selected_category', False):
@@ -285,6 +289,39 @@ class Product(business_model.Model):
 
         if options.get('with_property', False):
             Product.__fill_property_detail(owner_id, products)
+
+        if options.get('with_group_buy_info', False):
+            Product.__fill_group_buy_info(owner_id, products)
+
+
+
+    @staticmethod
+    def __fill_group_buy_info(owner_id, products):
+
+        product_ids = [str(p.id) for p in products]
+
+        params = {
+            'woid': owner_id,
+            'pids': "_".join(product_ids)
+        }
+
+        resp = Resource.use('marketapp_apiserver').get({
+            'resource': 'group.group_buy_products',
+            'data': params
+        })
+
+        product2group_info = {}
+        if resp and resp['code'] == 200:
+            product_group_infos = resp['data']['pid2is_in_group_buy']
+
+            for product_group in product_group_infos:
+                product2group_info[product_group["pid"]] = product_group["is_in_group_buy"]
+
+        for product in products:
+            product.group_buy_info = {
+                'is_in_group_buy': product2group_info.get(product.id, False)
+            }
+
 
     @staticmethod
     def __fill_image_detail(products):

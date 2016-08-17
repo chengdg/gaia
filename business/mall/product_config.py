@@ -47,6 +47,7 @@ class ProductConfig(business_model.Model):
 				'with_property': True,
 				'with_model_property_info': True,
 				'with_all_category': True,
+				'with_group_buy_info': True
 			})
 			product_config.product = product.to_dict()
 		else:
