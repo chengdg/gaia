@@ -4,6 +4,7 @@ from eaglet.utils.resource_client import Resource
 
 from business.mall.product_pool import ProductPool
 from db.mall import models as mall_models
+from db.account import models as account_models
 from business.account.user_profile import UserProfile
 from business import model as business_model
 from eaglet.core import watchdog
@@ -63,7 +64,20 @@ class Product(business_model.Model):
         'categories',
         'properties',
 
-        'group_buy_info'
+        'group_buy_info',
+        'sales',
+
+        'display_price',
+        'display_price_range',
+
+        # 多规格相关
+        'system_model_properties',
+        'models',
+        '_is_use_custom_model',
+        'standard_model',
+        'current_used_model',
+        'custom_models'
+
     )
 
     def __init__(self, model):
@@ -146,7 +160,7 @@ class Product(business_model.Model):
             product.custom_model_properties = None
 
     @property
-    def models(self):
+    def db_models(self):
         """
 
         """
@@ -156,8 +170,8 @@ class Product(business_model.Model):
             pass
         return models
 
-    @models.setter
-    def models(self, models):
+    @db_models.setter
+    def db_models(self, models):
         """
 
         """
@@ -294,6 +308,47 @@ class Product(business_model.Model):
             Product.__fill_group_buy_info(owner_id, products)
 
 
+        # todo 优化
+        id2property = None
+        id2propertyvalue = None
+        is_enable_model_property_info = options.get(
+            'with_model_property_info',
+            False)
+        if is_enable_model_property_info:
+            # 获取model property，为后续使用做准备
+            # properties = list(
+            # 	ProductModelProperty.objects.filter(
+            # 		owner=webapp_owner))
+
+            pool_weapp_profile = account_models.UserProfile.select().dj_where(webapp_type=2).first()
+            if pool_weapp_profile:
+                properties = mall_models.ProductModelProperty.select().where(
+                    (mall_models.ProductModelProperty.owner==owner_id) | (mall_models.ProductModelProperty.owner==pool_weapp_profile.user_id))
+            else:
+                # TODO bert prodcut_pool 增加默认商品规格 owner
+                properties = mall_models.ProductModelProperty.select().dj_where(
+                    owner=owner_id)
+            property_ids = [property.id for property in properties]
+            id2property = dict([(str(property.id), property)
+                                for property in properties])
+            id2propertyvalue = {}
+            for value in mall_models.ProductModelPropertyValue.select().dj_where(property_id__in=property_ids):
+                id = '%d:%d' % (value.property_id, value.id)
+                id2propertyvalue[id] = value
+
+        product_ids = [product.id for product in products]
+
+
+        if options.get('with_product_model', False):
+            Product.__fill_model_detail(
+                owner_id,
+                products,
+                product_ids,
+                id2property,
+                id2propertyvalue,
+                is_enable_model_property_info)
+
+
 
     @staticmethod
     def __fill_group_buy_info(owner_id, products):
@@ -379,6 +434,168 @@ class Product(business_model.Model):
                  "value": property.value}
                 for property in mall_models.ProductProperty.
                     select().dj_where(product_id=product.id)]
+
+    @staticmethod
+    def __fill_model_detail(owner_id, products, product_ids, id2property, id2propertyvalue,
+                            is_enable_model_property_info):
+        _id2property = {}
+        _id2propertyvalue = {}
+        if is_enable_model_property_info:
+            for id, property in id2property.items():
+                _id2property[id] = {
+                    "id": property.id,
+                    "name": property.name,
+                    "values": []
+                }
+
+            for id, value in id2propertyvalue.items():
+                _property_id, _value_id = id.split(':')
+                _property = _id2property[_property_id]
+                data = {
+                    'propertyId': _property['id'],
+                    'propertyName': _property['name'],
+                    "id": value.id,
+                    "name": value.name,
+                    "image": value.pic_url,
+                    "is_belong_product": False
+                }
+                _id2propertyvalue[id] = data
+                _property['values'].append(data)
+
+        # 获取所有models
+        product2models = {}
+        for model in mall_models.ProductModel.select().dj_where(product_id__in=product_ids):
+            if model.is_deleted:
+                # model被删除，跳过
+                continue
+
+            model_dict = {
+                "id": model.id,
+                "name": model.name,
+                "price": '%.2f' % model.price,
+                "weight": model.weight,
+                "stock_type": model.stock_type,
+                "stocks": model.stocks if model.stock_type == mall_models.PRODUCT_STOCK_TYPE_LIMIT else u'无限',
+                "user_code": model.user_code,
+                "market_price": '%.2f' % model.market_price,
+                "gross_profit": '%.2f' % (model.price - model.purchase_price)}
+
+            '''
+			获取model关联的property信息
+				model.property_values = [{
+					'propertyId': 1,
+					'propertyName': '颜色',
+					'id': 1,
+					'value': '红'
+				}, {
+					'propertyId': 2,
+					'propertyName': '尺寸',
+					'id': 3,
+					'value': 'S'
+				}]
+
+				model.property2value = {
+					'颜色': '红',
+					'尺寸': 'S'
+				}
+			'''
+            if is_enable_model_property_info and model.name != 'standard':
+                ids = model.name.split('_')
+                property_values = []
+                property2value = {}
+                for id in ids:
+                    # id的格式为${property_id}:${value_id}
+                    _property_id, _value_id = id.split(':')
+                    _property = _id2property[_property_id]
+                    _value = _id2propertyvalue[id]
+                    property2value[_property['name']] = {
+                        'id': _value['id'],
+                        'name': _value['name']
+                    }
+                    property_values.append({
+                        'propertyId': _property['id'],
+                        'propertyName': _property['name'],
+                        'id': _value['id'],
+                        'name': _value['name']
+                    })
+                    _value['is_belong_product'] = True
+                model_dict['property_values'] = property_values
+                model_dict['property2value'] = property2value
+
+            product_id = model.product_id
+            if product_id in product2models:
+                models = product2models[product_id]
+            else:
+                models = {
+                    'standard_model': None,
+                    'custom_models': [],
+                    'is_use_custom_model': False}
+                product2models[product_id] = models
+
+            if model.name == 'standard':
+                models['standard_model'] = model_dict
+            else:
+                models['is_use_custom_model'] = True
+                models['custom_models'].append(model_dict)
+
+        # 为每个product确定显示信息
+        for product in products:
+            product.sales = -1  # 实现sales逻辑
+            product.system_model_properties = _id2property.values()
+            product_id = product.id
+            if product_id in product2models:
+                models = product2models[product.id]
+                product.models = [models['standard_model']]
+                if models['is_use_custom_model']:
+                    product._is_use_custom_model = True
+                    product.custom_models = models['custom_models']
+                    product.standard_model = models['standard_model']
+                    custom_models = models['custom_models']
+                    product.models.extend(custom_models)
+                    if len(custom_models) == 1:
+                        target_model = custom_models[0]
+                        # 格式: X.00
+                        display_price_range = target_model['price']
+                    else:
+                        # 列表页部分显示商品的最小价格那个model的信息
+                        custom_models.sort(lambda x, y: cmp(float(x['price']), float(y['price'])))
+                        target_model = custom_models[0]
+                        low_price = target_model['price']
+                        high_price = custom_models[-1]['price']
+                        if low_price == high_price:
+                            # 格式: X.00
+                            display_price_range = low_price
+                        else:
+                            # 更改 格式: X.00 @延昊南
+                            low_price = low_price
+                            high_price = high_price
+                            display_price_range = '%s ~ %s' % (low_price, high_price)
+                else:
+                    product._is_use_custom_model = False
+                    target_model = models['standard_model']
+                    product.standard_model = target_model
+                    display_price_range = target_model['price']
+
+                product.current_used_model = target_model
+                product.display_price = target_model['price']
+                product.display_price_range = display_price_range
+                product.user_code = target_model['user_code']
+                product.stock_type = target_model['stock_type']
+                product.min_limit = product.stocks
+                product.stocks = u'无限' if target_model[
+                                              'stock_type'] == mall_models.PRODUCT_STOCK_TYPE_UNLIMIT else target_model['stocks']
+            else:
+                # 所有规格都已经被删除
+                product._is_use_custom_model = False
+                product.current_used_model = {}
+                product.display_price = product.price
+                product.display_price_range = product.price
+                product.user_code = product.user_code
+                product.stock_type = mall_models.PRODUCT_STOCK_TYPE_LIMIT
+                product.stocks = 0
+                product.min_limit = 0
+                product.standard_model = {}
+                product.models = []
 
 
 class ProductModel(business_model.Model):
