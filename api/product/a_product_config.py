@@ -28,5 +28,7 @@ class AProductConfig(api_resource.ApiResource):
 			'pay_interface_config': product_config.pay_interface_config,
 			'mall_type': product_config.mall_type,
 			'is_bill': product_config.is_bill,
-			'store_name': product_config.store_name
+			'store_name': product_config.store_name,
+			'product': product_config.product,
+			'categories': product_config.categories
 		}

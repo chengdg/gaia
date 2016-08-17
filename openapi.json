@@ -2806,6 +2806,12 @@
                                     },
                                     "store_name":{
                                         "description":"商户名称"
+                                    },
+                                    "product":{
+                                        "description": "商品信息"
+                                    },
+                                    "categories":{
+                                        "description": "分组列表"
                                     }
 
                                 }

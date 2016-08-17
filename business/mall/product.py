@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from eaglet.decorator import param_required
+from eaglet.utils.resource_client import Resource
 
 from business.mall.product_pool import ProductPool
 from db.mall import models as mall_models
@@ -58,7 +59,11 @@ class Product(business_model.Model):
         'model_type',
         'swipe_images',
         'model_name',
-        'model'
+        'model',
+        'categories',
+        'properties',
+
+        'group_buy_info'
     )
 
     def __init__(self, model):
@@ -240,18 +245,20 @@ class Product(business_model.Model):
         owner_id = args['owner_id']
 
         is_in_owner_pool = ProductPool.get({'owner_id': owner_id})
-        if not is_in_owner_pool:
-            return None
-        db_model = mall_models.Product.select().dj_where(id=product_id, owenr_id= owner_id).first()
+        # todo 临时关闭
+        # if not is_in_owner_pool:
+        #     return None
+        db_model = mall_models.Product.select().dj_where(id=product_id).first()
         product = Product(db_model)
-
+        return product
 
     @staticmethod
-    def __fill_details(owner_id, products, options):
+    def fill_details(owner_id, products, options):
         """填充各种细节信息
 
 		此方法会根据options中的各种填充选项，填充相应的细节信息
 
+        @param owner_id: owner_id
 		@param[in] products: Product业务对象集合
 		@param[in] options: 填充选项
 			with_price: 填充价格信息
@@ -262,10 +269,116 @@ class Product(business_model.Model):
 			with_selected_category: 填充选中的分类信息
 			with_all_category: 填充所有商品分类详情
 			with_sales: 填充商品销售详情
+			with_group_buy_info: 填充团购信息
 		"""
-        pass
+
+        if options.get('with_selected_category', False):
+            Product.__fill_category_detail(
+                owner_id,
+                products,
+                True)
+
+        if options.get('with_all_category', False):
+            Product.__fill_category_detail(
+                owner_id,
+                products,
+                False)
+
+        if options.get('with_image', False):
+            Product.__fill_image_detail(products)
+
+        if options.get('with_property', False):
+            Product.__fill_property_detail(owner_id, products)
+
+        if options.get('with_group_buy_info', False):
+            Product.__fill_group_buy_info(owner_id, products)
 
 
+
+    @staticmethod
+    def __fill_group_buy_info(owner_id, products):
+
+        product_ids = [str(p.id) for p in products]
+
+        params = {
+            'woid': owner_id,
+            'pids': "_".join(product_ids)
+        }
+
+        resp = Resource.use('marketapp_apiserver').get({
+            'resource': 'group.group_buy_products',
+            'data': params
+        })
+
+        product2group_info = {}
+        if resp and resp['code'] == 200:
+            product_group_infos = resp['data']['pid2is_in_group_buy']
+
+            for product_group in product_group_infos:
+                product2group_info[product_group["pid"]] = product_group["is_in_group_buy"]
+
+        for product in products:
+            product.group_buy_info = {
+                'is_in_group_buy': product2group_info.get(product.id, False)
+            }
+
+
+    @staticmethod
+    def __fill_image_detail(products):
+        for product in products:
+            product.swipe_images = [
+                {'id': img.id, 'url': img.url, 'linkUrl': img.link_url, 'width':
+                    img.width, 'height': img.height,}
+                for img in mall_models.ProductSwipeImage.select().dj_where(
+                    product_id=product.id)]
+
+    @staticmethod
+    def __fill_category_detail(owner_id, products, only_selected_category):
+        categories = mall_models.ProductCategory.select().dj_where(owner=owner_id).order_by('id')
+        product_ids = [p.id for p in products]
+
+        # 获取product关联的category集合
+        id2product = dict([(product.id, product) for product in products])
+        for product in products:
+            product.categories = []
+            product.context['id2category'] = {}
+            id2product[product.id] = product
+            if not only_selected_category:
+                for category in categories:
+                    category_data = {
+                        'id': category.id,
+                        'name': category.name,
+                        'is_selected': False
+                    }
+                    product.categories.append(category_data)
+                    product.context['id2category'][category.id] = category_data
+
+        id2category = dict([(category.id, category) for category in categories])
+        for relation in mall_models.CategoryHasProduct.select().dj_where(product_id__in=product_ids).order_by('id'):
+            category_id = relation.category_id
+            product_id = relation.product_id
+            if not category_id in id2category:
+                # 微众商城分类，在商户中没有
+                continue
+            category = id2category[category_id]
+            if not only_selected_category:
+                id2product[product_id].context['id2category'][
+                    category.id]['is_selected'] = True
+            else:
+                id2product[product_id].categories.append({
+                    'id': category.id,
+                    'name': category.name,
+                    'is_selected': True
+                })
+
+    @staticmethod
+    def __fill_property_detail(owner_id, products):
+        for product in products:
+            product.properties = [
+                {"id": property.id, "name": property.name,
+                 "value": property.value}
+                for property in mall_models.ProductProperty.
+                    select().dj_where(product_id=product.id)]
 
 
 class ProductModel(business_model.Model):
