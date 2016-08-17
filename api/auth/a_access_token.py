@@ -22,7 +22,7 @@ class AAccessToken(api_resource.ApiResource):
 	app = 'auth'
 	resource = 'access_token'
 
-	@param_required(['app_key', 'app_secret', 'woid'])
+	@param_required(['app_key', 'app_secret'])
 	def get(args):
 		"""
 		获取access token
