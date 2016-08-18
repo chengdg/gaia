@@ -11,6 +11,8 @@ from eaglet.core import api_resource
 from eaglet.decorator import param_required
 
 from business.demo.data import Data
+from api.decorators import access_token_required
+import logging
 
 class AData(api_resource.ApiResource):
 	"""
@@ -20,7 +22,9 @@ class AData(api_resource.ApiResource):
 	resource = 'data'
 
 	@param_required(['id'])
+	@access_token_required()
 	def get(args):
+		logging.info('args: {}'.format(args))
 		data = Data.get({
 			"id": args.get('id', None)
 		})
@@ -28,5 +32,6 @@ class AData(api_resource.ApiResource):
 		return {
 			"id": data.id,
 			"name": data.name,
-			"age": data.age
+			"age": data.age,
+			"args": args
 		}

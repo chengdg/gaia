@@ -34,7 +34,7 @@ class PostageConfig(business_model.Model):
 
     @staticmethod
     @param_required(['id', 'owner_id'])
-    def get(args):
+    def from_id(args):
         id = args['id']
         owner_id = args['owner_id']
         postage_config = mall_models.PostageConfig.select().dj_where(id=id, owner_id=owner_id, is_delete=False).first()
@@ -49,7 +49,7 @@ class PostageConfig(business_model.Model):
     
     @staticmethod
     @param_required([])
-    def put(args):
+    def create(args):
         """
 
          创建运费模板
@@ -241,7 +241,7 @@ class PostageConfig(business_model.Model):
 
     @staticmethod
     @param_required(['owner_id'])
-    def get_list(args):
+    def from_owner_id(args):
         """
         运费模板列表
         """

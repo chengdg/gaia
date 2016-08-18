@@ -48,7 +48,7 @@ class AccessToken(business_model.Model):
 
 
 	@staticmethod
-	@param_required(['app_key', 'app_secret', 'woid'])
+	@param_required(['app_key', 'app_secret'])
 	def generate(args):
 		"""
 		生成access_token
@@ -57,15 +57,16 @@ class AccessToken(business_model.Model):
 		# 验证app_key和app_secret
 		app_key = args['app_key']
 		app_secret = args['app_secret']
-		woid = args['woid']
-		logging.info("authenticate with app_key:{}, app_secret:{}, woid:{}".format(app_key, app_secret, woid))
+		#woid = args['woid']
+		logging.info("authenticate with app_key:{}, app_secret:{}".format(app_key, app_secret))
 
 		app = ZeusApp.get_by_key_secret(app_key, app_secret)
 		if app:
 			# 生成AccessToken
 			timestamp = int(time.time())
 			noncestr = 'weizoom'
-			text = "woid={}&timestamp={}&noncestr={}".format(woid, timestamp, noncestr)
+			#text = "woid={}&timestamp={}&noncestr={}".format(woid, timestamp, noncestr)
+			text = "app_key={}&timestamp={}&noncestr={}".format(app_key, timestamp, noncestr)
 			h = hashlib.md5()
 			h.update(text)
 			access_token = h.hexdigest()
@@ -74,7 +75,7 @@ class AccessToken(business_model.Model):
 			# 创建record
 			db_model = account_models.AccessToken.create(
 				access_token = access_token,
-				corp_id = woid,
+				corp_id = '',
 				used_count = 0,
 				expire_time = expire_time,
 				app = app.id,

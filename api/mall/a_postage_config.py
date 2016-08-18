@@ -15,7 +15,7 @@ class APostageConfig(api_resource.ApiResource):
 
     @param_required(['id', 'owner_id'])
     def get(args):
-        postage_config = PostageConfig.get({
+        postage_config = PostageConfig.from_id({
             'id': int(args['id']),
             'owner_id': int(args['owner_id'])
         })
