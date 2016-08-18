@@ -13,10 +13,9 @@ class APostageConfig(api_resource.ApiResource):
     app = 'mall'
     resource = 'postage_configs'
 
-
     @param_required(['owner_id'])
     def get(args):
-        postage_configs = PostageConfig.get_list({'owner_id': args['owner_id']})
+        postage_configs = PostageConfig.from_owner_id({'owner_id': args['owner_id']})
 
         return {
             'postage_configs': postage_configs
