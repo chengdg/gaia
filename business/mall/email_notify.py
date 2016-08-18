@@ -6,7 +6,7 @@ from business import model as business_model
 from db.account import models as account_models
 
 
-class EmailNotify(business_model.Model):
+class EmailNotification(business_model.Model):
 	"""
 	商城配置
 	"""
@@ -29,7 +29,7 @@ class EmailNotify(business_model.Model):
 	def get(args):
 		db_model = account_models.UserOrderNotifySettings.select().dj_where(user_id=args['owner_id'],
 		                                                                    status=args['status']).first()
-		email_notify = EmailNotify(db_model)
+		email_notify = EmailNotification(db_model)
 		email_notify.context['db_model'] = db_model
 		return email_notify
 
@@ -54,8 +54,7 @@ class EmailNotify(business_model.Model):
 		emails = args['emails']
 
 		if account_models.UserOrderNotifySettings.select().dj_where(user=owner_id, status=status).count() > 0:
-			account_models.UserOrderNotifySettings.select().dj_where(user=owner_id, status=status).update(emails=emails,
-			                                                                                              black_member_ids=member_ids).execute()
+			account_models.UserOrderNotifySettings.update(emails=emails, black_member_ids=member_ids).dj_where(user=owner_id, status=status).execute()
 		else:
 			account_models.UserOrderNotifySettings.create(status=status, black_member_ids=member_ids, emails=emails,
 			                                              user=owner_id)
@@ -63,5 +62,10 @@ class EmailNotify(business_model.Model):
 	@staticmethod
 	@param_required(['owner_id'])
 	def get_from_owner_id(args):
+		owner_id = args['owner_id']
+
+		if account_models.UserOrderNotifySettings.select().dj_where(user=owner_id).count() == 0:
+			for i in xrange(5):
+				account_models.UserOrderNotifySettings.create(user=owner_id, status=i)
 		db_models = account_models.UserOrderNotifySettings.select().dj_where(user_id=args['owner_id'])
-		return map(lambda x: EmailNotify(x), db_models)
+		return map(lambda x: EmailNotification(x), db_models)
