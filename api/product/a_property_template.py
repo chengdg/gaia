@@ -37,16 +37,16 @@ class AProductTemplateProperty(api_resource.ApiResource):
         """
         删除单个模板
         """
-        template_id = args['id']
+        template_id = args['template_id']
         try:
             change_rows = ProductPropertyTemplate.delete_from_id({"id": template_id})
-            return {"change_rows": change_rows}
+            return {"msg": "delete success"}
         except:
             msg = unicode_full_stack()
             watchdog.error(msg)
-            return {"change_rows": -1}
+            return 500, {"msg": "delete failed"}
 
-    @param_required(['owner_id','title', 'newProperties'])
+    @param_required(['owner_id','title', 'new_properties'])
     def put(args):
         """创建属性模板
 
@@ -73,7 +73,7 @@ class AProductTemplateProperty(api_resource.ApiResource):
 
         return {}
 
-    @param_required(['owner_id', 'template_id','title', 'newProperties','updateProperties','deletedIds'])
+    @param_required(['owner_id', 'template_id','title', 'new_properties','update_properties','deleted_ids'])
     def post(args):
 
         """更新属性模板
@@ -88,9 +88,9 @@ class AProductTemplateProperty(api_resource.ApiResource):
         """
         template_id = args['id']
         title = args['title']
-        new_properties = json.loads(args.get('newProperties', "[]"))
-        update_properties = json.loads(args.get('updateProperties', "[]"))
-        deleted_property_ids = json.loads(args.get('deletedIds', "[]"))
+        new_properties = json.loads(args.get('new_properties', "[]"))
+        update_properties = json.loads(args.get('update_properties', "[]"))
+        deleted_property_ids = json.loads(args.get('deleted_ids', "[]"))
 
         ProductPropertyTemplate.modify({
             'template_id': template_id,
