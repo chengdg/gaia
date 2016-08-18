@@ -8,6 +8,9 @@ from business.mall.email_notify import EmailNotify
 
 
 class AEmailNotifyList(api_resource.ApiResource):
+	"""
+	运营邮件通知列表
+	"""
 	app = 'mall'
 	resource = 'email_notify_list'
 
