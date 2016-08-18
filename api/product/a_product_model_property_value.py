@@ -32,7 +32,7 @@ class AProductModelPropertyValue(api_resource.ApiResource):
                                         "property_id": model_property_id,
                                         "name": name,
                                         "pic_url": pic_url})
-            return model_property_value
+            return model_property_value.to_dict()
         except:
             msg = unicode_full_stack()
             watchdog.error(msg)
