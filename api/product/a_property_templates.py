@@ -12,12 +12,12 @@ from business.mall.factory.product_property_factory import ProductPropertyFactor
 from business.mall.product_property import ProductPropertyTemplate, ProductTemplateProperty
 
 
-class APropertyTemplateList(api_resource.ApiResource):
+class APropertyTemplates(api_resource.ApiResource):
     """
     商品属性模板列表
     """
     app = 'product'
-    resource = 'property_template_list'
+    resource = 'property_templates'
 
     @param_required(['owner_id'])
     def get(self):
