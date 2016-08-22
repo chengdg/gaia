@@ -2857,32 +2857,23 @@
                                 "data": {
                                     "type": "object",
                                     "properties": {
-                                        "product_models": {
+                                        "templates": {
                                             "type": "array",
-                                            "description": "规格集合",
+                                            "description": "模板集合",
                                             "items": {
                                                 "type": "object",
                                                 "properties": {
-                                                    "product_model": {
-                                                        "type": "object",
-                                                        "properties": {
-                                                            "id": {
-                                                                "type": "integer",
-                                                                "description": "规格id"
-                                                            },
-                                                            "type": {
-                                                                "type": "integer",
-                                                                "description": "规格类型"
-                                                            },
-                                                            "name": {
-                                                                "type": "string",
-                                                                "description": "规格的名称"
-                                                            },
-                                                            "owner_id": {
-                                                                "type": "integer",
-                                                                "description": "用户id"
-                                                            }
-                                                        }
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "description": "模板id"
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "description": "模板title"
+                                                    },
+                                                    "owner_id": {
+                                                        "type": "integer",
+                                                        "description": "用户id"
                                                     },
                                                     "properties": {
                                                         "type": "array",
@@ -2891,19 +2882,27 @@
                                                             "properties": {
                                                                 "id": {
                                                                     "type": "integer",
-                                                                    "description": "规格属性id"
+                                                                    "description": "属性id"
                                                                 },
                                                                 "name": {
                                                                     "type": "string",
-                                                                    "description": "规格属性名称"
+                                                                    "description": "属性名称"
                                                                 },
-                                                                "pic_url": {
+                                                                "value": {
                                                                     "type": "string",
-                                                                    "description": "属性的图片地址"
+                                                                    "description": "属性值"
+                                                                },
+                                                                "owner_id": {
+                                                                    "type": "integer",
+                                                                    "description": "用户id"
+                                                                },
+                                                                "template_id": {
+                                                                    "type": "integer",
+                                                                    "description": "模板id"
                                                                 }
                                                             }
                                                         },
-                                                        "description": "规格的属性集合"
+                                                        "description": "模板的属性"
                                                     }
                                                 }
                                             }
