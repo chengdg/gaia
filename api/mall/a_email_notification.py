@@ -34,3 +34,8 @@ class AEmailNotification(api_resource.ApiResource):
 			EmailNotification.modify({'owner_id': args['owner_id'], 'status': args['status'], 'emails': args['emails'],'member_ids':args['member_ids']})
 
 		return {}
+
+		if 1:
+			return {}
+		else:
+			500,{'msg'}
