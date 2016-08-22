@@ -2890,10 +2890,68 @@
                         }
                     }
                 }
-            }
+            },
+            "post":{
+                 "summary":"修改运营通知邮件",
+                 "parameters":[
+                      {
+                          "name":"owner_id",
+                          "required":true,
+                          "type":"integer"
+                      },
+                      {
+                          "name":"status",
+                          "required":true,
+                          "type":"integer"
+                      },
+                      {
+                        "name":"emails",
+                        "description":"'|'分割",
+                        "type":"string",
+                        "required":false
+                      },
+                      {
+                        "name":"member_ids",
+                        "description":"'|'分割",
+                        "type":"string",
+                        "required":false
+                      }
+                 ],
+             "responses":
+                   {
+                  "200": {
+                      "description": "Successful response",
+                      "schema": {
+                          "type": "object",
+                          "properties": {
+                              "code": {
+                                  "type": "integer",
+                                  "format": "int32"
+                              },
+                              "data": {
+
+                              },
+                              "errMsg": {
+                                  "type": "string"
+                              },
+                              "innerErrMsg": {
+                                  "type": "string"
+                              }
+                          }
+                      }
+                  }
+              }
+
+
+         }
         }
 
     },
+
+
+
+
+
     "definitions": {
         "Order": {
             "type": "object",
