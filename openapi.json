@@ -3009,6 +3009,176 @@
                     }
                 }
             },
+            "put": {
+                "summary": "创建新的商品属性模板",
+                "parameters": [
+                    {
+                        "name": "owner_id",
+                        "in": "query",
+                        "description": "owner_id",
+                        "required": true,
+                        "type": "integer"
+                    }, {
+                        "name": "title",
+                        "in": "query",
+                        "description": "模板的title",
+                        "required": true,
+                        "type": "string"
+                    }, {
+                        "name": "new_properties",
+                        "in": "query",
+                        "description": "模板属性值",
+                        "required": true,
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "integer",
+                                    "description": "属性id"
+                                },
+                                "name": {
+                                    "type": "string",
+                                    "description": "属性名称"
+                                },
+                                "value": {
+                                    "type": "string",
+                                    "description": "属性值"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "tags": [
+                    "new_zeus",
+                    "product_property"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                },
+                                "data": {
+                                    "type": "string"
+                                },
+                                "errMsg": {
+                                    "type": "string"
+                                },
+                                "innerErrMsg": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "更新的商品属性模板",
+                "parameters": [
+                    {
+                        "name": "owner_id",
+                        "in": "query",
+                        "description": "owner_id",
+                        "required": true,
+                        "type": "integer"
+                    }, {
+                        "name": "title",
+                        "in": "query",
+                        "description": "模板的title",
+                        "required": true,
+                        "type": "string"
+                    }, {
+                        "name": "new_properties",
+                        "in": "query",
+                        "description": "新添加的模板属性值",
+                        "required": true,
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "integer",
+                                    "description": "属性id"
+                                },
+                                "name": {
+                                    "type": "string",
+                                    "description": "属性名称"
+                                },
+                                "value": {
+                                    "type": "string",
+                                    "description": "属性值"
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "name": "update_properties",
+                        "in": "query",
+                        "description": "修改的模板属性值",
+                        "required": true,
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "integer",
+                                    "description": "属性id"
+                                },
+                                "name": {
+                                    "type": "string",
+                                    "description": "属性名称"
+                                },
+                                "value": {
+                                    "type": "string",
+                                    "description": "属性值"
+                                }
+                            }
+                        }
+                    }, {
+                        "name": "deleted_ids",
+                        "in": "query",
+                        "description": "被删除的模板属性值",
+                        "required": true,
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "description": "属性id"
+                        }
+                    }
+                ],
+                "tags": [
+                    "new_zeus",
+                    "product_property"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                },
+                                "data": {
+                                    "type": "string"
+                                },
+                                "errMsg": {
+                                    "type": "string"
+                                },
+                                "innerErrMsg": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
             "delete": {
                 "summary": "删除商品属性模板",
                 "parameters": [

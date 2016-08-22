@@ -1,12 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from eaglet.decorator import param_required
-from eaglet.core import watchdog
-from eaglet.core.exceptionutil import unicode_full_stack
 
 from business import model as business_model
-from db.mall import models as mall_models
-from business.mall.product_property import ProductPropertyTemplate, ProductTemplateProperty
+from business.product.product_property import ProductPropertyTemplate, ProductTemplateProperty
 
 
 class ProductPropertyFactory(business_model.Model):

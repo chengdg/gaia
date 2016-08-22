@@ -1,15 +1,10 @@
 # -*- coding: utf-8 -*-
 __author__ = "charles"
 
-import json
-
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
-from eaglet.core import watchdog
-from eaglet.core.exceptionutil import unicode_full_stack
 
-from business.mall.factory.product_property_factory import ProductPropertyFactory, ProductTemplatePropertyFactory
-from business.mall.product_property import ProductPropertyTemplate, ProductTemplateProperty
+from business.product.product_property import ProductPropertyTemplate
 
 
 class APropertyTemplates(api_resource.ApiResource):

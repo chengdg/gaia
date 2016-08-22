@@ -8,7 +8,7 @@ from eaglet.decorator import param_required
 from eaglet.core import watchdog
 from eaglet.core.exceptionutil import unicode_full_stack
 
-from business.mall.product_property import ProductPropertyTemplate, ProductTemplateProperty
+from business.product.product_property import ProductPropertyTemplate, ProductTemplateProperty
 
 
 class AProductTemplateProperty(api_resource.ApiResource):
@@ -74,10 +74,17 @@ class AProductTemplateProperty(api_resource.ApiResource):
           }
         """
 
-        new_properties = json.loads(args.get('newProperties', "[]"))
-        ProductPropertyTemplate.create({'owner_id': args['owner_id'], 'title': args['title'], 'new_properties': new_properties})
-
-        return {}
+        owner_id = args['owner_id']
+        title = args['title']
+        new_properties = args.get('new_properties', "[]")
+        try:
+            new_properties = json.loads(new_properties)
+            ProductPropertyTemplate.create({'owner_id': owner_id, 'title': title, 'new_properties': new_properties})
+            return {}
+        except:
+            msg = unicode_full_stack()
+            watchdog.error(msg)
+            return 500, {"msg": "create template failed"}
 
     @param_required(['owner_id', 'template_id','title', 'new_properties','update_properties','deleted_ids'])
     def post(args):
@@ -97,14 +104,17 @@ class AProductTemplateProperty(api_resource.ApiResource):
         new_properties = json.loads(args.get('new_properties', "[]"))
         update_properties = json.loads(args.get('update_properties', "[]"))
         deleted_property_ids = json.loads(args.get('deleted_ids', "[]"))
+        try:
+            ProductPropertyTemplate.modify({
+                'template_id': template_id,
+                'title': title,
+                'new_properties': new_properties,
+                'update_properties': update_properties,
+                'deleted_property_ids': deleted_property_ids
 
-        ProductPropertyTemplate.modify({
-            'template_id': template_id,
-            'title': title,
-            'new_properties': new_properties,
-            'update_properties': update_properties,
-            'deleted_property_ids': deleted_property_ids
-
-        })
-
-        return {}
+            })
+            return {}
+        except:
+            msg = unicode_full_stack()
+            watchdog.error(msg)
+            return 500, {"msg": "update template failed"}

@@ -1,16 +1,11 @@
 # -*- coding: utf-8 -*-
 from eaglet.decorator import param_required
 
+from business import model as business_model
 from business.mall.owner import Owner
 from business.mall.product import Product
-from business.mall.product_property import ProductPropertyTemplate
+from business.product.product_property import ProductPropertyTemplate
 from db.mall import models as mall_models
-from business.account.user_profile import UserProfile
-from business import model as business_model
-from eaglet.core import watchdog
-from eaglet.core.exceptionutil import unicode_full_stack
-from settings import PANDA_IMAGE_DOMAIN
-from services.product_service.task import clear_sync_product_cache
 
 
 class ProductConfig(business_model.Model):
