@@ -2830,6 +2830,7 @@
                 }
             }
         },
+
         "/mall/email_notification":{
             "get":{
                 "summary":"运营邮件通知",
@@ -2889,7 +2890,10 @@
                             }
                         }
                     }
-                }
+                },
+                "tags": [
+                    "mall_config"
+                ]
             },
             "post":{
                  "summary":"修改运营通知邮件",
@@ -2917,7 +2921,10 @@
                         "required":false
                       }
                  ],
-             "responses":
+                 "tags": [
+                    "mall_config"
+                   ],
+                "responses":
                    {
                   "200": {
                       "description": "Successful response",
@@ -2944,7 +2951,78 @@
 
 
          }
-        }
+
+        },
+        "/mall/email_notifications":{
+            "get":{
+                "summary":"运营通知邮件列表",
+                "parameters":[
+                    {
+                        "name":"owner_id",
+                        "required":true,
+                        "type":"integer"
+                    }
+                ],
+                "tags": ["mall_config"],
+                "responses": {
+                  "200": {
+                      "description": "Successful response",
+                      "schema": {
+                          "type": "object",
+                          "properties": {
+                              "code": {
+                                  "type": "integer",
+                                  "format": "int32"
+                              },
+                              "data": {
+                                    "type": "object",
+                                    "properties": {
+                                        "email_notifications": {
+                                            "type": "array",
+                                            "description": "运营通知邮件列表",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "user_id": {
+                                                        "type": "integer",
+                                                        "description": "等同为owner_id"
+                                                    },
+                                                    "emails": {
+                                                        "type": "string",
+                                                        "description": "'|'分割"
+                                                    },
+                                                    "black_member_ids":{
+                                                        "type":"string",
+                                                        "description":"'|'分割，会员id"
+                                                    },
+                                                    "status":{
+                                                        "type":"integer",
+                                                        "description":"状态"
+                                                    },
+                                                    "is_active":{
+                                                        "type":"boolean",
+                                                        "description":"是否启用"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                              },
+                              "errMsg": {
+                                  "type": "string"
+                              },
+                              "innerErrMsg": {
+                                  "type": "string"
+                              }
+                          }
+                      }
+                  }
+
+                }
+        }}
+
+
+
 
     },
 
