@@ -3344,8 +3344,10 @@
                                                 }
                                             },
                                             "postage_config":{
-                                                "type":"object",
-                                                "properties":{
+                                                "type":"array",
+                                                "items":{
+                                                    "type":"object",
+                                                    "properties":{
                                                     "update_time":{
                                                     "type":"string"
                                                 },
@@ -3394,8 +3396,8 @@
                                                     "owner_id":{
                                                         "type": "integer"
                                                     }
+                                                    }
                                                 }
-
                                             }
                                         }
                                     },
