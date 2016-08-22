@@ -2921,6 +2921,53 @@
                 }
             }
         },
+        "/product/property_template": {
+            "delete": {
+                "summary": "删除商品属性模板",
+                "parameters": [
+                    {
+                        "name": "template_id",
+                        "in": "query",
+                        "description": "商品属性模板的ID",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "tags": [
+                    "new_zeus",
+                    "property_template"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string",
+                                            "description": "delete success"
+                                        }
+                                    }
+                                },
+                                "errMsg": {
+                                    "type": "string"
+                                },
+                                "innerErrMsg": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/mall/email_notification":{
             "get":{
                 "summary":"运营邮件通知",
