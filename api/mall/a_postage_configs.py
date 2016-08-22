@@ -17,4 +17,4 @@ class APostageConfig(api_resource.ApiResource):
     def get(args):
         postage_configs = PostageConfig.from_owner_id({'owner_id': args['owner_id']})
 
-        return postage_configs['postage_configs']
+        return postage_configs
