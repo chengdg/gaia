@@ -2906,15 +2906,15 @@
                                                     "description": "模板的属性"
                                                 }
                                             }
-                                        },
-                                        "errMsg": {
-                                            "type": "string"
-                                        },
-                                        "innerErrMsg": {
-                                            "type": "string"
                                         }
                                     }
                                 }
+                            },
+                            "errMsg": {
+                                "type": "string"
+                            },
+                            "innerErrMsg": {
+                                "type": "string"
                             }
                         }
                     }
