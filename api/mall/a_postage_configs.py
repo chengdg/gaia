@@ -8,7 +8,7 @@ from business.mall.postage_config import PostageConfig
 
 class APostageConfig(api_resource.ApiResource):
     """
-    运费模板列表
+    运费模板集合
     """
     app = 'mall'
     resource = 'postage_configs'
@@ -17,6 +17,4 @@ class APostageConfig(api_resource.ApiResource):
     def get(args):
         postage_configs = PostageConfig.from_owner_id({'owner_id': args['owner_id']})
 
-        return {
-            'postage_configs': postage_configs
-        }
+        return postage_configs['postage_configs']

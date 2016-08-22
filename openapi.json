@@ -3324,6 +3324,99 @@
                     }
             }
 
+        },
+        "/mall/postage_configs":{
+            "get":{
+                "parameters": [
+                    {
+                        "name":"owner_id",
+                        "required":true,
+                        "type":"integer"
+                    }
+                ],
+                "summary": "运费配置集合",
+                "tags": [
+                        "mall_config","postage","new_zeus"
+                    ],
+                "responses":
+                   {
+                  "200": {
+                      "description": "Successful response",
+                      "schema": {
+                          "type": "object",
+                          "properties": {
+                              "code": {
+                                  "type": "integer",
+                                  "format": "int32"
+                              },
+                              "data": {
+                                  "type":"array",
+                                  "items":{
+                                      "type":"object",
+                                      "properties":{
+                                            "update_time":{
+                                            "type":"string"
+                                        },
+                                            "is_deleted":{
+                                                "type":"boolean"
+                                            },
+                                            "name":{
+                                                "type":"string"
+                                            },
+                                            "first_weight":{
+                                                "type": "integer"
+                                            },
+                                            "created_at":{
+                                                "type":"string"
+                                            },
+                                            "is_used":{
+                                                "type":"boolean"
+                                            },
+                                            "first_weight_price":{
+                                                "type": "integer"
+                                            },
+                                            "display_index":{
+                                                "type": "integer"
+                                            },
+                                            "added_weight":{
+                                                "type":"string"
+                                            },
+                                            "is_enable_free_config":{
+                                                "type":"boolean"
+                                            },
+                                            "is_enable_special_config":{
+                                                "type":"boolean"
+                                            },
+                                            "id":{
+                                                "type": "integer"
+                                            },
+                                            "added_weight_price":{
+                                                "type":"string"
+                                            },
+                                            "is_system_level_config":{
+                                                "type":"boolean"
+                                            },
+                                            "is_enable_added_weight":{
+                                                "type":"boolean"
+                                            },
+                                            "owner_id":{
+                                                "type": "integer"
+                                            }
+                                        }
+                                  }
+
+                              },
+                              "errMsg": {
+                                  "type": "string"
+                              },
+                              "innerErrMsg": {
+                                  "type": "string"
+                              }
+                          }
+                      }
+                  }
+              }
+            }
         }
 
 
