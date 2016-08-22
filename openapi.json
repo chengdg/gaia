@@ -2796,25 +2796,23 @@
                                         "description": "运费配置信息"
                                     },
                                     "property_templates": {
-                                        "description":"属性模板信息"
+                                        "description": "属性模板信息"
                                     },
                                     "pay_interface_config": {
                                         "description": "支付方式信息"
                                     },
-                                    "is_bill":{
+                                    "is_bill": {
                                         "description": "是否可以开启发票功能"
                                     },
-                                    "store_name":{
-                                        "description":"商户名称"
+                                    "store_name": {
+                                        "description": "商户名称"
                                     },
-                                    "product":{
+                                    "product": {
                                         "description": "商品信息"
                                     },
-                                    "categories":{
+                                    "categories": {
                                         "description": "分组列表"
                                     }
-
-                                }
                                 }
                             },
                             "errMsg": {
@@ -2824,9 +2822,7 @@
                                 "type": "string"
                             }
                         }
-
-
-
+                    }
                 }
             }
         },
