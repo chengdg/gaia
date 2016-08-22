@@ -18,19 +18,25 @@ class AProductTemplateProperty(api_resource.ApiResource):
     app = 'product'
     resource = 'property_template'
 
-    @param_required(['template_id', 'owner_id'])
+    @param_required(['template_id'])
     def get(args):
         """
         获得模板信息:包括模板本身信息和其中属性信息
         """
-        template_id = args['template_id']
-        properties = ProductTemplateProperty.from_template_id({"template_id": template_id})
-        temmplate = ProductPropertyTemplate.from_id({'id': template_id})
-        properties = [pro.to_dict() for pro in properties]
-        return {
-            'template': temmplate.to_dict(),
-            'properties': properties
-        }
+        try:
+            template_id = args['template_id']
+            properties = ProductTemplateProperty.from_template_id({"template_id": template_id})
+            temmplate = ProductPropertyTemplate.from_id({'id': template_id})
+            properties = [pro.to_dict() for pro in properties]
+            temmplate = temmplate.to_dict()
+            temmplate['properties'] = properties
+            return {
+                'template': temmplate
+            }
+        except:
+            msg = unicode_full_stack()
+            watchdog.error(msg)
+            return 500, {"msg": "get id=%s template failed" % template_id}
 
     @param_required(['template_id'])
     def delete(args):

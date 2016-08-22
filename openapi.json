@@ -2922,6 +2922,93 @@
             }
         },
         "/product/property_template": {
+            "get": {
+                "summary": "获取单个商品属性模板",
+                "parameters": [
+                    {
+                        "name": "template_id",
+                        "in": "query",
+                        "description": "属性模板id",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "tags": [
+                    "new_zeus",
+                    "product_property"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "properties": {
+                                        "template": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "description": "模板id"
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "description": "模板title"
+                                                },
+                                                "owner_id": {
+                                                    "type": "integer",
+                                                    "description": "用户id"
+                                                },
+                                                "properties": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "description": "属性id"
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "description": "属性名称"
+                                                            },
+                                                            "value": {
+                                                                "type": "string",
+                                                                "description": "属性值"
+                                                            },
+                                                            "owner_id": {
+                                                                "type": "integer",
+                                                                "description": "用户id"
+                                                            },
+                                                            "template_id": {
+                                                                "type": "integer",
+                                                                "description": "模板id"
+                                                            }
+                                                        }
+                                                    },
+                                                    "description": "模板的属性"
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "errMsg": {
+                                    "type": "string"
+                                },
+                                "innerErrMsg": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
             "delete": {
                 "summary": "删除商品属性模板",
                 "parameters": [
