@@ -2856,8 +2856,28 @@
                                     "format": "int32"
                                 },
                                 "data": {
-                                    "$ref": "#/definitions/Email_notification"
-
+                                    "type": "object",
+                                    "properties": {
+                                        "user_id": {
+                                            "type": "integer",
+                                            "description": "等同为owner_id"
+                                        },
+                                        "emails": {
+                                            "type": "string",
+                                            "description": "'|'分割"
+                                        },
+                                        "black_member_ids":{
+                                            "type":"string",
+                                            "description":"'|'分割，会员id"
+                                        },
+                                        "status":{
+                                            "type":"integer",
+                                            "description":"状态"
+                                        },
+                                        "is_active":{
+                                            "type":"boolean",
+                                            "description":"是否启用"
+                                        }
                                     }
                                 },
                                 "errMsg": {
@@ -3310,31 +3330,6 @@
                 }
             }
         },
-        "Email_notification":{
-            "type": "object",
-            "properties": {
-                "user_id": {
-                    "type": "integer",
-                    "description": "等同为owner_id"
-                },
-                "emails": {
-                    "type": "string",
-                    "description": "'|'分割"
-                },
-                "black_member_ids":{
-                    "type":"string",
-                    "description":"'|'分割，会员id"
-                },
-                "status":{
-                    "type":"integer",
-                    "description":"状态"
-                },
-                "is_active":{
-                    "type":"boolean",
-                    "description":"是否启用"
-                }
-            }
-        }
         "Actions": {}
     }
 }
