@@ -37,7 +37,8 @@ class PostageConfig(business_model.Model):
     def from_id(args):
         id = args['id']
         owner_id = args['owner_id']
-        postage_config = mall_models.PostageConfig.select().dj_where(id=id, owner_id=owner_id, is_delete=False).first()
+
+        postage_config = mall_models.PostageConfig.select().dj_where(id=id, owner_id=owner_id, is_deleted=False).first()
 
         special_configs = map(lambda x: x.to_dict(),
                               mall_models.SpecialPostageConfig.select().dj_where(postage_config=postage_config))
@@ -45,7 +46,7 @@ class PostageConfig(business_model.Model):
         free_configs = map(lambda x: x.to_dict(),
                            mall_models.FreePostageConfig.select().dj_where(postage_config=postage_config))
 
-        return PostageConfig(owner_id,id, special_configs, free_configs, postage_config.to_dict())
+        return PostageConfig(owner_id, id, special_configs, free_configs, postage_config.to_dict())
     
     @staticmethod
     @param_required([])

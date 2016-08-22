@@ -2981,7 +2981,7 @@
                     }
                 },
                 "tags": [
-                    "mall_config"
+                    "mall_config","mail_notification","new_zeus"
                 ]
             },
             "post":{
@@ -3011,7 +3011,7 @@
                       }
                  ],
                  "tags": [
-                    "mall_config"
+                    "mall_config","mail_notification","new_zeus"
                    ],
                 "responses":
                    {
@@ -3052,7 +3052,7 @@
                         "type":"integer"
                     }
                 ],
-                "tags": ["mall_config"],
+                "tags": ["mall_config","mail_notification","new_zeus"],
                 "responses": {
                   "200": {
                       "description": "Successful response",
@@ -3108,7 +3108,173 @@
                   }
 
                 }
-        }}
+
+        }},
+        "/mall/postage_config":{
+            "get":{
+                "summary":"运费模板详情数据"
+            },
+            "parameters":[
+                    {
+                        "name":"owner_id",
+                        "required":true,
+                        "type":"integer"
+                    },
+                    {
+                        "name":"id",
+                        "required":true,
+                        "type":"integer"
+                    }
+                ],
+            "tags": [
+                    "mall_config","postage","new_zeus"
+                ],
+            "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "properties": {
+                                        "special_configs": {
+                                            "type":"array",
+                                            "description":"特殊配置",
+                                            "items":{
+                                                "type":"object",
+                                                "properties":{
+                                                    "first_weight":{
+                                                        "type": "integer",
+                                                        "description": "首重"
+                                                    },
+                                                    "created_at":{
+                                                        "type":"string",
+                                                        "description":"创建时间"
+                                                    },
+                                                    "destination":{
+                                                        "type":"string",
+                                                        "description":"逗号隔开"
+                                                    },
+                                                    "first_weight_price":{
+                                                        "type":"integer"
+                                                    },
+                                                    "added_weight":{
+                                                        "type":"integer"
+                                                    },
+                                                    "postage_config_id":{
+                                                        "type":"integer"
+                                                        },
+                                                    "added_weight_price":{
+                                                        "type":"string"
+                                                    },
+                                                    "id":{
+                                                        "type":"integer"
+                                                    },
+                                                    "owner_id":{
+                                                        "type":"integer"
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "free_configs":{
+                                            "type":"array",
+                                            "description":"包邮条件",
+                                            "items":{
+                                                "type":"object",
+                                                "properties":{
+                                                    "created_at":{"type":"string",
+                                                        "description":"创建时间"
+                                                    },
+                                                    "destination":{
+                                                        "type":"string",
+                                                        "description":"逗号隔开"
+                                                    },
+                                                    "condition_value":{
+                                                        "type":"string"
+                                                    },
+                                                    "id":{
+                                                        "type":"integer"
+                                                    },
+                                                    "condition":{
+                                                        "type":"string"
+                                                    },
+                                                    "owner_id":{
+
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "postage_config":{
+                                            "update_time":{
+                                                "type":"string"
+                                            },
+                                            "is_deleted":{
+                                                "type":"boolean"
+                                            },
+                                            "name":{
+                                                "type":"string"
+                                            },
+                                            "first_weight":{
+                                                "type": "integer"
+                                            },
+                                            "created_at":{
+                                                "type":"string"
+                                            },
+                                            "is_used":{
+                                                "type":"boolean"
+                                            },
+                                            "first_weight_price":{
+                                                "type": "integer"
+                                            },
+                                            "display_index":{
+                                                "type": "integer"
+                                            },
+                                            "added_weight":{
+                                                "type":"string"
+                                            },
+                                            "is_enable_free_config":{
+                                                "type":"boolean"
+                                            },
+                                            "is_enable_special_config":{
+                                                "type":"boolean"
+                                            },
+                                            "id":{
+                                                "type": "integer"
+                                            },
+                                            "added_weight_price":{
+                                                "type":"string"
+                                            },
+                                            "is_system_level_config":{
+                                                "type":"boolean"
+                                            },
+                                            "is_enable_added_weight":{
+                                                "type":"boolean"
+                                            },
+                                            "owner_id":{
+                                                "type": "integer"
+                                            }
+                                        }
+                                    }
+                                },
+                                "errMsg": {
+                                    "type": "string"
+                                },
+                                "innerErrMsg": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+        }
+
+
+
     },
     "definitions": {
         "Order": {
