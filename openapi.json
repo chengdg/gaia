@@ -3721,6 +3721,61 @@
 						}
 					}
 				}
+			},
+			"put": {
+				"summary": "创建运费模板",
+				"parameters": [
+					{
+						"schema": {
+							"properties": {
+								"owner_id": {
+									"required": true,
+									"type": "integer"
+								},
+								"name": {
+									"type": "name"
+								},
+								"first_weight": {
+									"type": "number"
+								},
+								"first_weight_price": {
+									"type": "number"
+								},
+								"added_weight": {
+									"type": "number"
+								},
+								"added_weight_price": {
+									"type": "number"
+								},
+								"is_enable_special_config": {
+									"type": "boolean"
+								},
+								"special_configs": {
+									"type": "array",
+									"items": {
+										"properties": {
+											"destination": {
+												"type": "array"
+											},
+											"first_weight": {
+												"type": "number"
+											},
+											"first_weight_price": {
+												"type": "number"
+											},
+											"added_weight": {
+												"type": "number"
+											},
+											"added_weight_price": {
+												"type": "number"
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				]
 			}
 		},
 		"/mall/postage_configs": {
