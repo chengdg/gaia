@@ -822,7 +822,7 @@
 					}
 				}
 			}
-		}, 
+		},
 		"/mall/categories/": {
 			"get": {
 				"summary": "获取分组列表",
