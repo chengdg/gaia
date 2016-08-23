@@ -2567,6 +2567,7 @@
 			}
 		},
 
+<<<<<<< HEAD
 		"/product/product":{
 			"put": {
 				"summary": "创建商品",
@@ -3330,6 +3331,860 @@
 								  "format": "int32"
 							  },
 							  "data": {
+=======
+        "/product/product":{
+            "put": {
+                "summary": "创建商品",
+                "description": "创建商品,且放入该owner的商品池中",
+                "parameters": [
+                    {
+                        "name": "owner_id",
+                        "in": "query",
+                        "description": "商品所属账号的user id",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "商品名称",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "supplier",
+                        "in": "query",
+                        "description": "商品供货商id",
+                        "required": false,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "purchase_price",
+                        "in": "query",
+                        "description": "商品采购价",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "promotion_title",
+                        "in": "query",
+                        "description": "商品促销标题",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "user_code",
+                        "in": "query",
+                        "description": "商品编码",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "bar_code",
+                        "in": "query",
+                        "description": "商品条码",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "product_category",
+                        "in": "query",
+                        "description": "将商品放入的分组当中",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "min_limit",
+                        "in": "query",
+                        "description": "限购数量",
+                        "required": false,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "is_member_product",
+                        "in": "query",
+                        "description": "是否参与会员折扣",
+                        "required": false,
+                        "type": "boolean"
+                    },
+                    {
+                        "name": "customModels",
+                        "in": "query",
+                        "description": "定制规格json字符窜",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "is_use_custom_model",
+                        "in": "query",
+                        "description": "商品是否使用订制规格",
+                        "required": true,
+                        "type": "boolean"
+                    },
+                    {
+                        "name": "price",
+                        "in": "query",
+                        "description": "商品单价",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "weight",
+                        "in": "query",
+                        "description": "商品重量",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "stock_type",
+                        "in": "query",
+                        "description": "库存类型（有限或者无限）",
+                        "required": true,
+                        "type": "boolean"
+                    },
+                    {
+                        "name": "stocks",
+                        "in": "query",
+                        "description": "库存值",
+                        "required": false,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "swipe_images",
+                        "in": "query",
+                        "description": "商品图片（json字符串）",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "postage_type",
+                        "in": "query",
+                        "description": "运费类型",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "unified_postage_money",
+                        "in": "query",
+                        "description": "统一运费金额",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "is_enable_cod_pay_interface",
+                        "in": "query",
+                        "description": "是否支持货到付款",
+                        "required": false,
+                        "type": "boolean"
+                    },
+                    {
+                        "name": "is_use_online_pay_interface",
+                        "in": "query",
+                        "description": "是否支持在线支付",
+                        "required": false,
+                        "type": "boolean"
+                    },
+                    {
+                        "name": "is_enable_bill",
+                        "in": "query",
+                        "description": "是否支持开发票",
+                        "required": false,
+                        "type": "boolean"
+                    },
+                    {
+                        "name": "is_delivery",
+                        "in": "query",
+                        "description": "是否支持配送时间",
+                        "required": false,
+                        "type": "boolean"
+                    },
+                    {
+                        "name": "properties",
+                        "in": "query",
+                        "description": "商品属性（json）",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "detail",
+                        "in": "query",
+                        "description": "商品详情",
+                        "required": false,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response"
+                    }
+                }
+            }
+        },
+        "/product/product_config":{
+            "get":{
+                "summary": "商品配置,适用于创建商品和商品详情页面",
+                "parameters":
+                [
+                    {
+                        "name": "owner_id",
+                        "in": "query",
+                        "description": "owner_id",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "product_id",
+                        "in": "query",
+                        "description": "商品id",
+                        "required": false,
+                        "type": "string"
+                    }
+                ],
+                "tags": ["product"],
+                "responses":{
+                    "200": {
+                        "description":"商品配置数据",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "properties": {
+                                        "postage_config_info": {
+                                            "type": "integer",
+                                            "description": "运费配置信息"
+                                        },
+                                        "property_templates": {
+                                            "description": "属性模板信息"
+                                        },
+                                        "pay_interface_config": {
+                                            "description": "支付方式信息"
+                                        },
+                                        "is_bill": {
+                                            "description": "是否可以开启发票功能"
+                                        },
+                                        "store_name": {
+                                            "description": "商户名称"
+                                        },
+                                        "product": {
+                                            "description": "商品信息"
+                                        },
+                                        "categories": {
+                                            "description": "分组列表"
+                                        }
+                                    }
+                                },
+                                "errMsg": {
+                                    "type": "string"
+                                },
+                                "innerErrMsg": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/product/property_templates": {
+            "get": {
+                "summary": "商品属性模本列表数据接口",
+                "parameters": [
+                    {
+                        "name": "owner_id",
+                        "in": "query",
+                        "description": "owner_id",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "tags": [
+                    "new_zeus",
+                    "product_property"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "properties": {
+                                        "templates": {
+                                            "type": "array",
+                                            "description": "模板集合",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "description": "模板id"
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "description": "模板title"
+                                                    },
+                                                    "owner_id": {
+                                                        "type": "integer",
+                                                        "description": "用户id"
+                                                    },
+                                                    "properties": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "id": {
+                                                                    "type": "integer",
+                                                                    "description": "属性id"
+                                                                },
+                                                                "name": {
+                                                                    "type": "string",
+                                                                    "description": "属性名称"
+                                                                },
+                                                                "value": {
+                                                                    "type": "string",
+                                                                    "description": "属性值"
+                                                                },
+                                                                "owner_id": {
+                                                                    "type": "integer",
+                                                                    "description": "用户id"
+                                                                },
+                                                                "template_id": {
+                                                                    "type": "integer",
+                                                                    "description": "模板id"
+                                                                }
+                                                            }
+                                                        },
+                                                        "description": "模板的属性"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "errMsg": {
+                                    "type": "string"
+                                },
+                                "innerErrMsg": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/product/property_template": {
+            "get": {
+                "summary": "获取单个商品属性模板",
+                "parameters": [
+                    {
+                        "name": "template_id",
+                        "in": "query",
+                        "description": "属性模板id",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "tags": [
+                    "new_zeus",
+                    "product_property"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "properties": {
+                                        "template": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "description": "模板id"
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "description": "模板title"
+                                                },
+                                                "owner_id": {
+                                                    "type": "integer",
+                                                    "description": "用户id"
+                                                },
+                                                "properties": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "description": "属性id"
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "description": "属性名称"
+                                                            },
+                                                            "value": {
+                                                                "type": "string",
+                                                                "description": "属性值"
+                                                            },
+                                                            "owner_id": {
+                                                                "type": "integer",
+                                                                "description": "用户id"
+                                                            },
+                                                            "template_id": {
+                                                                "type": "integer",
+                                                                "description": "模板id"
+                                                            }
+                                                        }
+                                                    },
+                                                    "description": "模板的属性"
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "errMsg": {
+                                    "type": "string"
+                                },
+                                "innerErrMsg": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "summary": "创建新的商品属性模板",
+                "parameters": [
+                    {
+                        "name": "owner_id",
+                        "in": "query",
+                        "description": "owner_id",
+                        "required": true,
+                        "type": "integer"
+                    }, {
+                        "name": "title",
+                        "in": "query",
+                        "description": "模板的title",
+                        "required": true,
+                        "type": "string"
+                    }, {
+                        "name": "new_properties",
+                        "in": "query",
+                        "description": "模板属性值",
+                        "required": true,
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "integer",
+                                    "description": "属性id"
+                                },
+                                "name": {
+                                    "type": "string",
+                                    "description": "属性名称"
+                                },
+                                "value": {
+                                    "type": "string",
+                                    "description": "属性值"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "tags": [
+                    "new_zeus",
+                    "product_property"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                },
+                                "data": {
+                                    "type": "string"
+                                },
+                                "errMsg": {
+                                    "type": "string"
+                                },
+                                "innerErrMsg": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "更新的商品属性模板",
+                "parameters": [
+                    {
+                        "name": "owner_id",
+                        "in": "query",
+                        "description": "owner_id",
+                        "required": true,
+                        "type": "integer"
+                    }, {
+                        "name": "title",
+                        "in": "query",
+                        "description": "模板的title",
+                        "required": true,
+                        "type": "string"
+                    }, {
+                        "name": "new_properties",
+                        "in": "query",
+                        "description": "新添加的模板属性值",
+                        "required": true,
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "integer",
+                                    "description": "属性id"
+                                },
+                                "name": {
+                                    "type": "string",
+                                    "description": "属性名称"
+                                },
+                                "value": {
+                                    "type": "string",
+                                    "description": "属性值"
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "name": "update_properties",
+                        "in": "query",
+                        "description": "修改的模板属性值",
+                        "required": true,
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "integer",
+                                    "description": "属性id"
+                                },
+                                "name": {
+                                    "type": "string",
+                                    "description": "属性名称"
+                                },
+                                "value": {
+                                    "type": "string",
+                                    "description": "属性值"
+                                }
+                            }
+                        }
+                    }, {
+                        "name": "deleted_ids",
+                        "in": "query",
+                        "description": "被删除的模板属性值",
+                        "required": true,
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "description": "属性id"
+                        }
+                    }
+                ],
+                "tags": [
+                    "new_zeus",
+                    "product_property"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                },
+                                "data": {
+                                    "type": "string"
+                                },
+                                "errMsg": {
+                                    "type": "string"
+                                },
+                                "innerErrMsg": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "summary": "删除商品属性模板",
+                "parameters": [
+                    {
+                        "name": "template_id",
+                        "in": "query",
+                        "description": "商品属性模板的ID",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "tags": [
+                    "new_zeus",
+                    "property_template"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string",
+                                            "description": "delete success"
+                                        }
+                                    }
+                                },
+                                "errMsg": {
+                                    "type": "string"
+                                },
+                                "innerErrMsg": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/product/model_properties/": {
+            "get": {
+                "summary": "商品规格列表数据接口",
+                "parameters": [
+                    {
+                        "name": "owner_id",
+                        "in": "query",
+                        "description": "owner_id",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "tags": [
+                    "new_zeus",
+                    "product_model"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "properties": {
+                                        "product_model_properties": {
+                                            "type": "array",
+                                            "description": "模板集合",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "description": "商品属性id"
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "description": "商品属性名称"
+                                                    },
+                                                    "owner_id": {
+                                                        "type": "integer",
+                                                        "description": "用户id"
+                                                    },
+                                                    "type": {
+                                                        "type": "string",
+                                                        "description": "商品属性值的类型"
+                                                    },
+                                                    "value": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "id": {
+                                                                    "type": "integer",
+                                                                    "description": "商品规格值的的id"
+                                                                },
+                                                                "name": {
+                                                                    "type": "string",
+                                                                    "description": "商品规格值的名称"
+                                                                },
+                                                                "pic_url": {
+                                                                    "type": "string",
+                                                                    "description": "商品规格值图片地址"
+                                                                }
+                                                            }
+                                                        },
+                                                        "description": "商品规格值的"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "errMsg": {
+                                    "type": "string"
+                                },
+                                "innerErrMsg": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/mall/email_notification":{
+            "get":{
+                "summary":"运营邮件通知",
+                "parameters":[
+                    {
+                        "name":"owner_id",
+                        "required":true,
+                        "type":"integer"
+                    },
+                    {
+                        "name":"status",
+                        "required":true,
+                        "type":"integer"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "properties": {
+                                        "user_id": {
+                                            "type": "integer",
+                                            "description": "等同为owner_id"
+                                        },
+                                        "emails": {
+                                            "type": "string",
+                                            "description": "'|'分割"
+                                        },
+                                        "black_member_ids":{
+                                            "type":"string",
+                                            "description":"'|'分割，会员id"
+                                        },
+                                        "status":{
+                                            "type":"integer",
+                                            "description":"状态"
+                                        },
+                                        "is_active":{
+                                            "type":"boolean",
+                                            "description":"是否启用"
+                                        }
+                                    }
+                                },
+                                "errMsg": {
+                                    "type": "string"
+                                },
+                                "innerErrMsg": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "mall_config","mail_notification","new_zeus"
+                ]
+            },
+            "post":{
+                 "summary":"修改运营通知邮件",
+                 "parameters":[
+                      {
+                          "name":"owner_id",
+                          "required":true,
+                          "type":"integer"
+                      },
+                      {
+                          "name":"status",
+                          "required":true,
+                          "type":"integer"
+                      },
+                      {
+                        "name":"emails",
+                        "description":"'|'分割",
+                        "type":"string",
+                        "required":false
+                      },
+                      {
+                        "name":"member_ids",
+                        "description":"'|'分割",
+                        "type":"string",
+                        "required":false
+                      }
+                 ],
+                 "tags": [
+                    "mall_config","mail_notification","new_zeus"
+                   ],
+                "responses":
+                   {
+                  "200": {
+                      "description": "Successful response",
+                      "schema": {
+                          "type": "object",
+                          "properties": {
+                              "code": {
+                                  "type": "integer",
+                                  "format": "int32"
+                              },
+                              "data": {
+>>>>>>> 43d77e84ef2f7a67452732e1a6e67065272486ea
 
 							  },
 							  "errMsg": {
@@ -3509,6 +4364,7 @@
 														},
 														"owner_id":{
 
+<<<<<<< HEAD
 														}
 													}
 												}
@@ -3582,6 +4438,122 @@
 						}
 					}
 			}
+=======
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "postage_config":{
+                                                "type":"array",
+                                                "items":{
+                                                    "type":"object",
+                                                    "properties":{
+                                                    "update_time":{
+                                                    "type":"string"
+                                                },
+                                                    "is_deleted":{
+                                                        "type":"boolean"
+                                                    },
+                                                    "name":{
+                                                        "type":"string"
+                                                    },
+                                                    "first_weight":{
+                                                        "type": "integer"
+                                                    },
+                                                    "created_at":{
+                                                        "type":"string"
+                                                    },
+                                                    "is_used":{
+                                                        "type":"boolean"
+                                                    },
+                                                    "first_weight_price":{
+                                                        "type": "integer"
+                                                    },
+                                                    "display_index":{
+                                                        "type": "integer"
+                                                    },
+                                                    "added_weight":{
+                                                        "type":"string"
+                                                    },
+                                                    "is_enable_free_config":{
+                                                        "type":"boolean"
+                                                    },
+                                                    "is_enable_special_config":{
+                                                        "type":"boolean"
+                                                    },
+                                                    "id":{
+                                                        "type": "integer"
+                                                    },
+                                                    "added_weight_price":{
+                                                        "type":"string"
+                                                    },
+                                                    "is_system_level_config":{
+                                                        "type":"boolean"
+                                                    },
+                                                    "is_enable_added_weight":{
+                                                        "type":"boolean"
+                                                    },
+                                                    "owner_id":{
+                                                        "type": "integer"
+                                                    }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "errMsg": {
+                                        "type": "string"
+                                    },
+                                    "innerErrMsg": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+            },
+            "delete":{
+                "summary": "删除运费模板",
+                "parameters":[
+                    {
+                        "name":"owner_id",
+                        "required":true,
+                        "type":"integer"
+                    },
+                    {
+                        "name":"id",
+                        "required":true,
+                        "type":"integer"
+                    }
+                ],
+                "tags": [
+                        "mall_config","postage","new_zeus"
+                    ],
+                "responses": {
+                    "200": {
+                            "description": "Successful response",
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "code": {
+                                        "type": "integer",
+                                        "format": "int32"
+                                    },
+                                    "data": {
+
+                                    },
+                                    "errMsg": {
+                                        "type": "string"
+                                    },
+                                    "innerErrMsg": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                }
+            }
+>>>>>>> 43d77e84ef2f7a67452732e1a6e67065272486ea
 
 		},
 		"/mall/postage_configs":{

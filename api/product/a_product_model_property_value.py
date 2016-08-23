@@ -41,13 +41,14 @@ class AProductModelPropertyValue(api_resource.ApiResource):
             }
 
     @param_required(['id'])
-    def delete(self):
+    def delete(args):
         """
         id -- 规格属性id
         """
         model_property = ProductModelPropertyValue(None)
         try:
-            model_property.delete_from_id({'id': self['id']})
+            model_id = args['id']
+            model_property.delete_from_id({'id': model_id})
             return {"msg": "Delete success"}
         except:
             msg = unicode_full_stack()
