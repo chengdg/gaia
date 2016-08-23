@@ -3225,6 +3225,95 @@
                 }
             }
         },
+        "/product/model_properties/": {
+            "get": {
+                "summary": "商品规格列表数据接口",
+                "parameters": [
+                    {
+                        "name": "owner_id",
+                        "in": "query",
+                        "description": "owner_id",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "tags": [
+                    "new_zeus",
+                    "product_model"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "properties": {
+                                        "product_model_properties": {
+                                            "type": "array",
+                                            "description": "模板集合",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "description": "商品属性id"
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "description": "商品属性名称"
+                                                    },
+                                                    "owner_id": {
+                                                        "type": "integer",
+                                                        "description": "用户id"
+                                                    },
+                                                    "type": {
+                                                        "type": "string",
+                                                        "description": "商品属性值的类型"
+                                                    },
+                                                    "value": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "id": {
+                                                                    "type": "integer",
+                                                                    "description": "商品规格值的的id"
+                                                                },
+                                                                "name": {
+                                                                    "type": "string",
+                                                                    "description": "商品规格值的名称"
+                                                                },
+                                                                "pic_url": {
+                                                                    "type": "string",
+                                                                    "description": "商品规格值图片地址"
+                                                                }
+                                                            }
+                                                        },
+                                                        "description": "商品规格值的"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "errMsg": {
+                                    "type": "string"
+                                },
+                                "innerErrMsg": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/mall/email_notification":{
             "get":{
                 "summary":"运营邮件通知",

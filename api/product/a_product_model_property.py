@@ -30,11 +30,11 @@ class AProductModelProperty(api_resource.ApiResource):
         name = args.get('name', "")
 
         try:
-            product_model = ProductModelProperty.create({
+            product_model_property = ProductModelProperty.create({
                                 "owner_id": owner_id,
                                 "type": type,
                                 "name": name})
-            return {"product_model": product_model.to_dict()}
+            return {"product_model_property": product_model_property.to_dict()}
         except:
             msg = unicode_full_stack()
             watchdog.error(msg)
@@ -78,16 +78,17 @@ class AProductModelProperty(api_resource.ApiResource):
         获取单个规格
         """
         model_id = args['id']
-        product_model = ProductModelProperty.from_id({'id': model_id})
+        product_model_property = ProductModelProperty.from_id({'id': model_id})
         return {
-            "product_model": product_model.to_dict(),
-            'properties': product_model.properties
+            "product_model_property": product_model_property.to_dict(),
+            'properties': product_model_property.properties
         }
 
     @param_required(['id'])
     def delete(args):
         try:
-            ProductModelProperty.delete_from_id({"id": args['id']})
+            model_id = args['id']
+            ProductModelProperty.delete_from_id({"id": model_id})
             return {'msg': 'Delete success'}
         except:
             msg = unicode_full_stack()

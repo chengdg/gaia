@@ -64,7 +64,7 @@ class ProductModelProperty(business_model.Model):
             _model = ProductModelProperty(template)
             _model.type = 'text' if _model.type == mall_models.PRODUCT_MODEL_PROPERTY_TYPE_TEXT else 'image'
             model_dict = _model.to_dict()
-            model_dict['value'] = _model.properties
+            model_dict['values'] = _model.properties
             result.append(model_dict)
         return result
 
