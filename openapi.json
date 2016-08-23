@@ -823,7 +823,7 @@
                 }
             }
         },
-        "/mall/category_list": {
+        "/mall/categories/": {
             "get": {
                 "summary": "获取分组列表",
                 "description": "获取分组列表\n",
