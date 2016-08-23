@@ -246,22 +246,37 @@ class PostageConfig(business_model.Model):
 		"""
 		owner_id = args['owner_id']
 
-		postage_configs = [config for config in mall_models.PostageConfig.select().dj_where(owner=owner_id) if
-		                   not config.is_deleted]
+		db_postage_configs = [config for config in mall_models.PostageConfig.select().dj_where(owner=owner_id) if
+		                      not config.is_deleted]
 
 		# todo 验证下面这些奇奇怪怪的代码有用么。。。
 		config_ids = []
 		id2config = {}
-		for config in postage_configs:
+		for config in db_postage_configs:
 			config.special_configs = []
 			id2config[config.id] = config
 			if config.is_enable_special_config:
 				config_ids.append(config.id)
 
+		id2special_config = {}
 		for special_config in mall_models.SpecialPostageConfig.select().dj_where(postage_config_id__in=config_ids):
 			config_id = special_config.postage_config_id
-			id2config[config_id].special_configs.append(special_config)
+			# id2config[config_id].special_configs.append(special_config)
+			id2special_config[config_id] = special_config
 
-		postage_configs = map(lambda x: x.to_dict(), postage_configs)
+		# postage_configs = [PostageConfig(owner_id, p.id, id2special_config.setdefault(p.id, None).to_dict(), {}, p.to_dict()) for p in
+		#                    postage_configs]
 
-		return {'postage_configs': postage_configs}
+
+		postage_configs = []
+
+		for p in db_postage_configs:
+			special_config = id2special_config.get(p.id)
+			if special_config:
+				special_config = special_config.to_dict()
+			else:
+				special_config = {}
+
+			postage_configs.append(PostageConfig(owner_id, p.id, special_config, {}, p.to_dict()))
+
+		return postage_configs
