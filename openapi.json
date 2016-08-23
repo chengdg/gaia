@@ -4552,6 +4552,49 @@
                             }
                         }
                 }
+            },
+            "put":{
+                "summary": "创建运费模板",
+                "parameters": [
+                    {
+                        "name":"owner_id",
+                        "required":true,
+                        "type":"integer"
+                    }, {
+                        "name":"name",
+                        "required":true,
+                        "type":"string"
+                    }, {
+                        "name":"first_weight",
+                        "required":true,
+                        "type":"number"
+                    }, {
+                        "name":"first_weight_price",
+                        "required":true,
+                        "type":"number"
+                    },{
+                        "name":"added_weight",
+                        "required":true,
+                        "type":"number"
+                    },{
+                        "name":"added_weight_price",
+                        "required":true,
+                        "type":"number"
+                    },{
+                        "name":"is_enable_special_config",
+                        "required":true,
+                        "type":"boolean"
+                    },{
+                        "name":"special_configs",
+                        "type":"array",
+                        "items": {
+                          "type": "object",
+                            "properties":{
+
+                            }
+                        }
+                    }
+                ]
             }
 >>>>>>> 43d77e84ef2f7a67452732e1a6e67065272486ea
 
