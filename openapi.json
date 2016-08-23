@@ -3724,6 +3724,11 @@
 			},
 			"put": {
 				"summary": "创建运费模板",
+				"tags": [
+					"mall_config",
+					"postage",
+					"new_zeus"
+				],
 				"parameters": [
 					{
 						"in":"body",
@@ -3768,6 +3773,25 @@
 												"type": "number"
 											},
 											"added_weight_price": {
+												"type": "number"
+											}
+										}
+									}
+								},
+								"is_enable_free_config":{
+									"type":"boolean"
+								},
+								"free_configs":{
+									"type": "array",
+									"items": {
+										"properties": {
+											"destination": {
+												"type": "array"
+											},
+											"condition": {
+												"type": "string"
+											},
+											"condition_value": {
 												"type": "number"
 											}
 										}
