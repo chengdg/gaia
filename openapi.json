@@ -3726,6 +3726,7 @@
 				"summary": "创建运费模板",
 				"parameters": [
 					{
+						"in":"body",
 						"schema": {
 							"properties": {
 								"owner_id": {
