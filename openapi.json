@@ -3670,6 +3670,47 @@
                             }
                         }
                     }
+            },
+            "delete":{
+                "summary": "删除运费模板",
+                "parameters":[
+                    {
+                        "name":"owner_id",
+                        "required":true,
+                        "type":"integer"
+                    },
+                    {
+                        "name":"id",
+                        "required":true,
+                        "type":"integer"
+                    }
+                ],
+                "tags": [
+                        "mall_config","postage","new_zeus"
+                    ],
+                "responses": {
+                    "200": {
+                            "description": "Successful response",
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "code": {
+                                        "type": "integer",
+                                        "format": "int32"
+                                    },
+                                    "data": {
+
+                                    },
+                                    "errMsg": {
+                                        "type": "string"
+                                    },
+                                    "innerErrMsg": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                }
             }
 
         },
