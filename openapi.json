@@ -832,7 +832,6 @@
 						"name": "category_ids",
 						"in": "query",
 						"description": "array",
-						"required": true,
 						"type": "string",
 						"format": "all, 1,2,4,"
 					},
@@ -864,7 +863,7 @@
 					}
 				],
 				"tags": [
-					"category"
+					"new_zeus_category"
 				],
 				"produces": [
 					"application/json"
@@ -903,7 +902,7 @@
 					}
 				],
 				"tags": [
-					"category"
+					"new_zeus_category"
 				],
 				"responses": {
 					"200": {
@@ -934,7 +933,7 @@
 					}
 				],
 				"tags": [
-					"category"
+					"new_zeus_category"
 				],
 				"produces": [
 					"application/json"
@@ -961,7 +960,7 @@
 					}
 				],
 				"tags": [
-					"category"
+					"new_zeus_category"
 				],
 				"responses": {
 					"200": {
@@ -989,7 +988,7 @@
 					}
 				],
 				"tags": [
-					"category"
+					"new_zeus_category"
 				],
 				"produces": [
 					"application/json"
@@ -1028,7 +1027,7 @@
 					}
 				],
 				"tags": [
-					"category"
+					"new_zeus_category"
 				],
 				"responses": {
 					"200": {
@@ -1058,7 +1057,7 @@
 					}
 				],
 				"tags": [
-					"category"
+					"new_zeus_category"
 				],
 				"responses": {
 					"200": {
