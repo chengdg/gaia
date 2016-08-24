@@ -3013,46 +3013,44 @@
 				"summary": "创建新的商品属性模板",
 				"parameters": [
                     {
-                        "description": "模板属性值",
+                        "description": "创建新的商品属性模板请求参数",
                         "in": "body",
                         "schema": {
                             "properties": {
-                                "name": "new_properties",
-                                "type": "array",
-                                "items": {
-                                    "type": "object",
-                                    "properties": {
-                                        "id": {
-                                            "type": "integer",
-                                            "description": "属性id"
-                                        },
-                                        "name": {
-                                            "type": "string",
-                                            "description": "属性名称"
-                                        },
-                                        "value": {
-                                            "type": "string",
-                                            "description": "属性值"
+                                "owner_id": {
+                                    "description": "owner_id",
+                                    "required": true,
+                                    "type": "integer"
+                                },
+                                "new_properties": {
+                                    "required": true,
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "description": "属性id"
+                                            },
+                                            "name": {
+                                                "type": "string",
+                                                "description": "属性名称"
+                                            },
+                                            "value": {
+                                                "type": "string",
+                                                "description": "属性值"
+                                            }
                                         }
                                     }
+                                },
+                                "title": {
+                                    "required": true,
+                                    "description": "模板的title",
+                                    "type": "string"
                                 }
                             }
                         }
-                    },
-					{
-						"name": "owner_id",
-						"in": "query",
-						"description": "owner_id",
-						"required": true,
-						"type": "integer"
-					},
-					{
-						"name": "title",
-						"in": "query",
-						"description": "模板的title",
-						"required": true,
-						"type": "string"
-					}
+                    }
 				],
 				"tags": [
 					"new_zeus",
@@ -3085,78 +3083,76 @@
 			"post": {
 				"summary": "更新的商品属性模板",
 				"parameters": [
-					{
-						"name": "owner_id",
-						"in": "query",
-						"description": "owner_id",
-						"required": true,
-						"type": "integer"
-					},
-					{
-						"name": "title",
-						"in": "query",
-						"description": "模板的title",
-						"required": true,
-						"type": "string"
-					},
-					{
-						"name": "new_properties",
-						"in": "query",
-						"description": "新添加的模板属性值",
-						"required": true,
-						"type": "array",
-						"items": {
-							"type": "object",
-							"properties": {
-								"id": {
-									"type": "integer",
-									"description": "属性id"
-								},
-								"name": {
-									"type": "string",
-									"description": "属性名称"
-								},
-								"value": {
-									"type": "string",
-									"description": "属性值"
-								}
-							}
-						}
-					},
-					{
-						"name": "update_properties",
-						"in": "query",
-						"description": "修改的模板属性值",
-						"required": true,
-						"type": "array",
-						"items": {
-							"type": "object",
-							"properties": {
-								"id": {
-									"type": "integer",
-									"description": "属性id"
-								},
-								"name": {
-									"type": "string",
-									"description": "属性名称"
-								},
-								"value": {
-									"type": "string",
-									"description": "属性值"
-								}
-							}
-						}
-					},
-					{
-						"name": "deleted_ids",
-						"in": "query",
-						"description": "被删除的模板属性值",
-						"required": true,
-						"type": "array",
-						"items": {
-							"type": "integer"
-						}
-					}
+                    {
+                        "description": "创建新的商品属性模板请求参数",
+                        "in": "body",
+                        "schema": {
+                            "properties": {
+                                "name": {
+                                    "description": "owner_id",
+                                    "required": true,
+                                    "type": "integer"
+                                },
+                                "title": {
+                                    "description": "模板的title",
+                                    "required": true,
+                                    "type": "string"
+                                },
+                                "new_properties": {
+                                    "description": "新添加的模板属性值",
+                                    "required": true,
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "description": "属性id"
+                                            },
+                                            "name": {
+                                                "type": "string",
+                                                "description": "属性名称"
+                                            },
+                                            "value": {
+                                                "type": "string",
+                                                "description": "属性值"
+                                            }
+                                        }
+                                    }
+                                },
+                                "update_properties": {
+                                    "description": "修改的模板属性值",
+                                    "required": true,
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "description": "属性id"
+                                            },
+                                            "name": {
+                                                "type": "string",
+                                                "description": "属性名称"
+                                            },
+                                            "value": {
+                                                "type": "string",
+                                                "description": "属性值"
+                                            }
+                                        }
+                                    }
+                                },
+                                "deleted_ids": {
+                                    "description": "被删除的模板属性值",
+                                    "required": true,
+                                    "type": "array",
+                                    "items": {
+                                        "type": "integer"
+                                    }
+                                }
+                            }
+                        }
+                    }
 				],
 				"tags": [
 					"new_zeus",
