@@ -43,7 +43,7 @@ class AProductModelPropertyValue(api_resource.ApiResource):
     @param_required(['id'])
     def delete(args):
         """
-        id -- 规格属性id
+        id -- 规格属性值的id
         """
         model_property = ProductModelPropertyValue(None)
         try:

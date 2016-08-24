@@ -79,9 +79,10 @@ class AProductModelProperty(api_resource.ApiResource):
         """
         model_id = args['id']
         product_model_property = ProductModelProperty.from_id({'id': model_id})
+        product_model_property_data = product_model_property.to_dict()
+        product_model_property_data['properties'] = product_model_property.properties
         return {
-            "product_model_property": product_model_property.to_dict(),
-            'properties': product_model_property.properties
+            "product_model_property": product_model_property_data
         }
 
     @param_required(['id'])

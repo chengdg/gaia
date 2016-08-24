@@ -3317,6 +3317,255 @@
 				}
 			}
 		},
+		"/product/model_property/": {
+			"get": {
+				"summary": "获取单个商品规格的信息",
+				"parameters": [
+					{
+						"name": "id",
+						"in": "query",
+						"description": "商品规格id",
+						"required": true,
+						"type": "integer"
+					}
+				],
+				"tags": [
+					"new_zeus", "product_model"
+				],
+				"responses": {
+  					"200": {
+						"description": "Successful response",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+									"type": "object",
+									"properties": {
+										"product_model_property": {
+											"type": "object",
+											"properties": {
+												"id": {
+													"type": "integer",
+													"description": "商品规格id"
+												},
+												"type": {
+													"type": "string",
+													"description": "商品规格类型"
+												},
+												"name": {
+													"type": "string",
+													"description": "商品规格名称"
+												},
+												"owner_id": {
+													"type": "integer",
+													"description": "用户id"
+												},
+												"properties": {
+													"type": "array",
+													"items": {
+														"type": "object",
+														"properties": {
+															"id": {
+																"type": "integer",
+																"description": "规格值id"
+															},
+															"name": {
+																"type": "string",
+																"description": "规格值名称"
+															},
+															"pic_url": {
+																"type": "string",
+																"description": "规格值图片"
+															}
+														}
+													},
+													"description": "商品规格对应的不同值"
+												}
+											}
+										}
+									}
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			},
+			"put": {
+				"summary": "创建商品规格",
+				"parameters": [
+					{
+						"name": "owner_id",
+						"in": "query",
+						"description": "用户id",
+						"required": true,
+						"type": "integer"
+					}, {
+						"name": "type",
+						"in": "query",
+						"description": "商品规格的类型",
+						"required": true,
+						"type": "string"
+					}, {
+						"name": "name",
+						"in": "query",
+						"description": "商品规格的名称",
+						"required": false,
+						"type": "string"
+					}
+				],
+				"tags": ["new_zeus", "product_model"],
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+									"type": "object",
+									"properties": {
+										"product_model_property": {
+											"type": "object",
+											"properties": {
+												"id": {
+													"type": "integer",
+													"description": "商品规格id"
+												},
+												"type": {
+													"type": "string",
+													"description": "商品规格类型"
+												},
+												"name": {
+													"type": "string",
+													"description": "商品规格名称"
+												},
+												"owner_id": {
+													"type": "integer",
+													"description": "用户id"
+												}
+											}
+										}
+									}
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			},
+			"post": {
+				"summary": "更新商品规格",
+				"parameters": [
+					{
+						"name": "id",
+						"in": "query",
+						"description": "商品规格id",
+						"required": true,
+						"type": "integer"
+					}, {
+						"name": "type",
+						"in": "query",
+						"description": "商品规格的类型",
+						"required": true,
+						"type": "string"
+					}, {
+						"name": "name",
+						"in": "query",
+						"description": "商品规格的名称",
+						"required": false,
+						"type": "string"
+					}
+				],
+				"tags": ["new_zeus", "product_model"],
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+									"type": "object",
+									"properties": {
+										"msg": {
+											"type": "string"
+										}
+									}
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"summary": "删除商品规格",
+				"parameters": [
+					{
+						"name": "id",
+						"in": "query",
+						"description": "商品规格id",
+						"required": true,
+						"type": "integer"
+					}
+				],
+				"tags": ["new_zeus", "product_model"],
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+									"type": "object",
+									"properties": {
+										"msg": {
+											"type": "string"
+										}
+									}
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
 		"/mall/email_notification": {
 			"get": {
 				"summary": "运营邮件通知",
