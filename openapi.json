@@ -4040,7 +4040,148 @@
 							}
 						}
 					}
-				]
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			},
+			"post":{
+				"summary": "修改运费模板",
+				"tags": [
+					"mall_config",
+					"postage",
+					"new_zeus"
+				],
+				"parameters": [
+					{
+						"in": "body",
+						"schema": {
+							"properties": {
+								"owner_id": {
+									"required": true,
+									"type": "integer"
+								},
+								"id": {
+									"required": true,
+									"type": "integer"
+								},
+								"name": {
+									"type": "name",
+									"required": false
+								},
+								"first_weight": {
+									"type": "number",
+									"required": false
+								},
+								"first_weight_price": {
+									"type": "number",
+									"required": false
+								},
+								"added_weight": {
+									"type": "number",
+									"required": false
+								},
+								"added_weight_price": {
+									"type": "number",
+									"required": false
+								},
+								"is_enable_special_config": {
+									"type": "boolean",
+									"required": false
+								},
+								"special_configs": {
+									"type": "array",
+									"required": false,
+									"items": {
+										"properties": {
+											"destination": {
+												"type": "array"
+											},
+											"first_weight": {
+												"type": "number"
+											},
+											"first_weight_price": {
+												"type": "number"
+											},
+											"added_weight": {
+												"type": "number"
+											},
+											"added_weight_price": {
+												"type": "number"
+											}
+										}
+									}
+								},
+								"is_enable_free_config": {
+									"type": "boolean",
+									"required": false
+								},
+								"free_configs": {
+									"type": "array",
+									"required": false,
+									"items": {
+										"properties": {
+											"destination": {
+												"type": "array"
+											},
+											"condition": {
+												"type": "string"
+											},
+											"condition_value": {
+												"type": "number"
+											}
+										}
+									}
+								},
+								"is_used":{
+									"type": "boolean",
+									"required":false
+								}
+							}
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
 			}
 		},
 		"/mall/postage_configs": {
