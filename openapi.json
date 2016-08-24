@@ -902,59 +902,6 @@
 			}
 		},
 		"/mall/category/": {
-			"get": {
-				"summary": "获取指定分组",
-				"description": "获取指定分组",
-				"parameters": [
-					{
-						"name": "category_id",
-						"in": "query",
-						"type": "string",
-						"required": true,
-						"description": "指定分组ID"
-					},
-					{
-						"name": "is_has_product",
-						"in": "query",
-						"type": "string",
-						"format": "1 or 0"
-					}
-				],
-				"tags": [
-					"new_zeus_category"
-				],
-				"responses": {
-					"200": {
-						"description": "Successful response",
-						"schema": {
-							"type": "object",
-							"properties": {
-								"code": {
-									"type": "integer",
-									"format": "int32"
-								},
-								"data": {
-									"type": "object",
-									"properties": {
-										"categories": {
-											"type": "array",
-											"items": {
-												"$ref": "#/definitions/Category"
-											}
-										}
-									}
-								},
-								"errMsg": {
-									"type": "string"
-								},
-								"innerErrMsg": {
-									"type": "string"
-								}
-							}
-						}
-					}
-				}
-			},
 			"put": {
 				"summary": "修改指定分组内容",
 				"description": "修改指定分组内容",
@@ -1029,7 +976,7 @@
 				],
 				"responses": {
 					"200": {
-						"description": "返回来影响的数量"
+						"description": ""
 					}
 				}
 			},
