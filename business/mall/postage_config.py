@@ -26,8 +26,8 @@ class PostageConfig(business_model.Model):
 	def __init__(self, owner_id, id, special_configs, free_configs, config):
 		business_model.Model.__init__(self)
 
-		self.id = id,
-		self.owner_id = owner_id,
+		self.id = id
+		self.owner_id = owner_id
 		self.special_configs = special_configs
 		self.free_configs = free_configs
 		self.config = config
@@ -245,11 +245,8 @@ class PostageConfig(business_model.Model):
 		运费模板列表
 		"""
 		owner_id = args['owner_id']
+		db_postage_configs = mall_models.PostageConfig.select().dj_where(owner=owner_id, is_deleted=False)
 
-		db_postage_configs = [config for config in mall_models.PostageConfig.select().dj_where(owner=owner_id) if
-		                      not config.is_deleted]
-
-		# todo 验证下面这些奇奇怪怪的代码有用么。。。
 		config_ids = []
 		id2config = {}
 		for config in db_postage_configs:
@@ -258,25 +255,19 @@ class PostageConfig(business_model.Model):
 			if config.is_enable_special_config:
 				config_ids.append(config.id)
 
-		id2special_config = {}
 		for special_config in mall_models.SpecialPostageConfig.select().dj_where(postage_config_id__in=config_ids):
 			config_id = special_config.postage_config_id
-			# id2config[config_id].special_configs.append(special_config)
-			id2special_config[config_id] = special_config
+			id2config[config_id].special_configs.append(special_config.to_dict())
 
-		# postage_configs = [PostageConfig(owner_id, p.id, id2special_config.setdefault(p.id, None).to_dict(), {}, p.to_dict()) for p in
-		#                    postage_configs]
+		# postage_configs = []
+		# for p in db_postage_configs:
+		# 	special_config = id2special_config.get(p.id)
+		# 	if special_config:
+		# 		special_config = special_config.to_dict()
+		# 	else:
+		# 		special_config = {}
+		#
+		# 	postage_configs.append(PostageConfig(owner_id, p.id, special_config, {}, p.to_dict()))
 
-
-		postage_configs = []
-
-		for p in db_postage_configs:
-			special_config = id2special_config.get(p.id)
-			if special_config:
-				special_config = special_config.to_dict()
-			else:
-				special_config = {}
-
-			postage_configs.append(PostageConfig(owner_id, p.id, special_config, {}, p.to_dict()))
-
+		postage_configs = [PostageConfig(owner_id, p.id, p.special_configs, {}, p.to_dict()) for p in db_postage_configs]
 		return postage_configs

@@ -15,6 +15,7 @@ class APostageConfig(api_resource.ApiResource):
 
     @param_required(['owner_id'])
     def get(args):
-        postage_configs = PostageConfig.from_owner_id({'owner_id': args['owner_id']})
+        postage_configs = PostageConfig.from_owner_id({'owner_id': int(args['owner_id'])})
+        postage_configs = [postage_config.to_dict() for postage_config in postage_configs]
 
         return postage_configs
