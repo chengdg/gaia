@@ -872,10 +872,29 @@
 					"200": {
 						"description": "Successful response",
 						"schema": {
-							"title": "ArrayOfcategories",
-							"type": "array",
-							"items": {
-                                "$ref": "#/definitions/Category"
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+									"type": "object",
+									"properties": {
+										"categories": {
+											"type": "array",
+											"items": {
+												"$ref": "#/definitions/Category"
+											}
+										}
+									}
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
 							}
 						}
 					}
@@ -906,9 +925,32 @@
 				],
 				"responses": {
 					"200": {
-						"description": "OK",
+						"description": "Successful response",
 						"schema": {
-							"$ref": "#/definitions/Category"
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+									"type": "object",
+									"properties": {
+										"categories": {
+											"type": "array",
+											"items": {
+												"$ref": "#/definitions/Category"
+											}
+										}
+									}
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
 						}
 					}
 				}
@@ -940,9 +982,32 @@
 				],
 				"responses": {
 					"200": {
-						"description": "success",
+						"description": "Successful response",
 						"schema": {
-							"$ref": "#/definitions/Category"
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+									"type": "object",
+									"properties": {
+										"categories": {
+											"type": "array",
+											"items": {
+												"$ref": "#/definitions/Category"
+											}
+										}
+									}
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
 						}
 					}
 				}
@@ -995,9 +1060,32 @@
 				],
 				"responses": {
 					"200": {
-						"description": "success",
+						"description": "Successful response",
 						"schema": {
-							"$ref": "#/definitions/Category"
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+									"type": "object",
+									"properties": {
+										"categories": {
+											"type": "array",
+											"items": {
+												"$ref": "#/definitions/Category"
+											}
+										}
+									}
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
 						}
 					}
 				}
@@ -1031,9 +1119,32 @@
 				],
 				"responses": {
 					"200": {
-						"description": "OK",
+						"description": "Successful response",
 						"schema": {
-							"$ref": "#/definitions/CategoryHasProduct"
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+									"type": "object",
+									"properties": {
+										"categories": {
+											"type": "array",
+											"items": {
+												"$ref": "#/definitions/CategoryHasProduct"
+											}
+										}
+									}
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
 						}
 					}
 				}
