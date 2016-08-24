@@ -3012,6 +3012,33 @@
 			"put": {
 				"summary": "创建新的商品属性模板",
 				"parameters": [
+                    {
+                        "description": "模板属性值",
+                        "in": "body",
+                        "schema": {
+                            "properties": {
+                                "name": "new_properties",
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "description": "属性id"
+                                        },
+                                        "name": {
+                                            "type": "string",
+                                            "description": "属性名称"
+                                        },
+                                        "value": {
+                                            "type": "string",
+                                            "description": "属性值"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
 					{
 						"name": "owner_id",
 						"in": "query",
@@ -3025,30 +3052,6 @@
 						"description": "模板的title",
 						"required": true,
 						"type": "string"
-					},
-					{
-						"name": "new_properties",
-						"in": "query",
-						"description": "模板属性值",
-						"required": true,
-						"type": "array",
-						"items": {
-							"type": "object",
-							"properties": {
-								"id": {
-									"type": "integer",
-									"description": "属性id"
-								},
-								"name": {
-									"type": "string",
-									"description": "属性名称"
-								},
-								"value": {
-									"type": "string",
-									"description": "属性值"
-								}
-							}
-						}
 					}
 				],
 				"tags": [
@@ -3151,8 +3154,7 @@
 						"required": true,
 						"type": "array",
 						"items": {
-							"type": "integer",
-							"description": "属性id"
+							"type": "integer"
 						}
 					}
 				],
