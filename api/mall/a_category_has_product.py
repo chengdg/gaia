@@ -6,11 +6,11 @@ from eaglet.decorator import param_required
 from eaglet.core import watchdog
 
 from business.mall.category import Category
-from business.mall.category_has_product import CategoryHasProduct
+from business.mall.category_product import CategoryProduct
 from business.mall.product import Product
-from business.mall.category_has_product_factory import CategoryHasProductFactory
+from business.mall.category_product_factory import CategoryProductFactory
 
-class ACategoryHasProducts(api_resource.ApiResource):
+class ACategoryProducts(api_resource.ApiResource):
 	app = 'mall'
 	resource = 'category_has_product'
 

@@ -19,13 +19,12 @@ class CategoryFactory(business_model.Model):
 
 	@staticmethod
 	def create():
-		category_factory_obj = CategoryFactory()
-		return category_factory_obj
+		category_factory = CategoryFactory()
+		return category_factory
 
 	def save(self, owner_id, name):
-		category = Category.emptyCategory()
-		category_model =category.save(owner_id, name)
-		return category_model
+		category = Category.empty_category()
+		return category.save(owner_id, name)
 
 
 

@@ -876,13 +876,7 @@
 							"title": "ArrayOfcategories",
 							"type": "array",
 							"items": {
-								"title": "categories",
-								"type": "object",
-								"properties": {
-									"schema": {
-										"$ref": "#/definitions/Category"
-									}
-								}
+                                "$ref": "#/definitions/Category"
 							}
 						}
 					}
