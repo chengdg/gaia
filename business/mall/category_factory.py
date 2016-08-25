@@ -22,9 +22,14 @@ class CategoryFactory(business_model.Model):
 		category_factory = CategoryFactory()
 		return category_factory
 
-	def save(self, owner_id, name):
+	def save(self, owner_id, name, product_ids=None):
 		category = Category.empty_category()
-		return category.save(owner_id, name)
+		if product_ids:
+			product_ids = [product_id.strip() for product_id in product_ids.strip().split(',') if product_id]
+			products = Product.from_ids({'product_ids': product_ids})
+		else:
+			products = product_ids
+		return category.save(owner_id, name, products)
 
 
 

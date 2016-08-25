@@ -61,13 +61,12 @@ class Category(business_model.Model):
 												  'count_per_page'], query_string=params.get('query_string', None))
 		return [Category.from_model({'db_model': category}) for category in categories], pageinfo.to_dict()
 
-	def _update_name(self, category_id, name):
-		mall_models.ProductCategory.update(
-			name=name).dj_where(id=category_id).execute()
 
-	def _update_product_count(self, category_id, product_count):
-		mall_models.ProductCategory.update(
-			product_count=product_count).dj_where(id=category_id).execute()
+	def update_category_property(self, category_id, actionProperty='name', update_params={}):
+		if actionProperty == 'position':
+			mall_models.CategoryHasProduct.update(display_index=update_params['display_index']).dj_where(product_id=update_params['product_id'], category_id=category_id).execute()
+		else:
+			mall_models.ProductCategory.update(name=update_params['name']).dj_where(id=category_id).execute()
 
 	@staticmethod
 	@param_required(['category_id'])
@@ -82,7 +81,7 @@ class Category(business_model.Model):
 		else:
 			return None
 
-	def save(self, owner_id, name):
+	def save(self, owner_id, name, products=None):
 		opt = {
 			'owner': owner_id,
 			'name': name
@@ -93,6 +92,16 @@ class Category(business_model.Model):
 		# If an object is not found, get_or_create() will instantiate and save a new object, returning a tuple of the new object and True
 		# try:
 		category, created = mall_models.ProductCategory.get_or_create(**opt)
+		if products:
+			for b_product in products:
+				opt = {
+					'product': b_product.context['db_model'],
+					'category': category
+				}
+				mall_models.CategoryHasProduct.get_or_create(**opt)
+			category.product_count = len(products)
+			category.save()
+			# mall_models.ProductCategory.update(product_count=len(products)).dj_where(id=category.id).execute()
 		return Category(category)
 
 	def delete_from_id(self, category_id):
@@ -100,9 +109,18 @@ class Category(business_model.Model):
 		删除指定分组
 		'''
 		category = mall_models.ProductCategory.get(id=category_id)
-		if category.product_count != 0:
+		b_category = Category.from_model({'db_model': category})
+		if b_category.products:
 			mall_models.CategoryHasProduct.delete().dj_where(category=category).execute()
 		return category.delete_instance()
+
+	def delete_product(self, category_id, product_id):
+		"""
+		删除指定分组中的商品
+		"""
+		mall_models.CategoryHasProduct.delete().dj_where(category_id=category_id, product_id=product_id).execute()
+		self.context['db_model'].product_count = int(self.context['db_model'].product_count) - 1
+		self.context['db_model'].save()
 
 	@property
 	def products(self):
@@ -120,5 +138,4 @@ class Category(business_model.Model):
 
 	@products.setter
 	def products(self, value):
-		print self.context['products']
 		self.context['products'] = value

@@ -914,11 +914,28 @@
 						"description": "指定分组id"
 					},
 					{
+						"name": "owner_id",
+						"in": "query",
+						"type": "string",
+						"required": true
+					},
+					{
 						"name": "name",
 						"in": "query",
 						"type": "string",
-						"required": true,
 						"description": "分组的名称"
+					},
+					{
+						"name": "display_index",
+						"in": "query",
+						"type": "string",
+						"description": "排序"
+					},
+					{
+						"name": "product_id",
+						"in": "query",
+						"type": "string",
+						"description": "商品ID与display_index联合使用"
 					}
 				],
 				"tags": [
@@ -937,17 +954,7 @@
 									"type": "integer",
 									"format": "int32"
 								},
-								"data": {
-									"type": "object",
-									"properties": {
-										"categories": {
-											"type": "array",
-											"items": {
-												"$ref": "#/definitions/Category"
-											}
-										}
-									}
-								},
+								"data": {},
 								"errMsg": {
 									"type": "string"
 								},
@@ -960,8 +967,8 @@
 				}
 			},
 			"delete": {
-				"summary": "删除指定分组",
-				"description": "删除指定分组",
+				"summary": "删除指定分组或者分组内的商品",
+				"description": "删除指定分组或者分组内的商品",
 				"parameters": [
 					{
 						"name": "category_id",
@@ -969,7 +976,19 @@
 						"required": true,
 						"type": "string",
 						"description": "删除指定id"
-					}
+					},
+					{
+						"name": "owner_id",
+						"in": "query",
+						"type": "string",
+						"required": true
+					},
+					{
+						"name": "product_id",
+						"in": "query",
+						"type": "string",
+						"description": "指定的商品"
+					},
 				],
 				"tags": [
 					"new_zeus_category"
@@ -997,7 +1016,13 @@
 						"type": "string",
 						"required": true,
 						"description": "创建名称"
-					}
+					},
+					{
+						"name": "product_ids",
+						"in": "query",
+						"type": "string",
+						"description": "要加的商品量"
+					},
 				],
 				"tags": [
 					"new_zeus_category"
@@ -1034,92 +1059,6 @@
 								}
 							}
 						}
-					}
-				}
-			}
-		},
-		"/mall/category_has_product/": {
-			"get": {
-				"summary": "分组商品值对象",
-				"description": "分组商品值对象",
-				"parameters": [
-					{
-						"name": "category_has_product_id",
-						"in": "query",
-						"required": true,
-						"type": "string",
-						"description": "分组与商品关系id"
-					},
-					{
-						"name": "product_id",
-						"in": "query",
-						"type": "string"
-					},
-					{
-						"name": "category_id",
-						"in": "query",
-						"type": "string"
-					}
-				],
-				"tags": [
-					"new_zeus_category"
-				],
-				"responses": {
-					"200": {
-						"description": "Successful response",
-						"schema": {
-							"type": "object",
-							"properties": {
-								"code": {
-									"type": "integer",
-									"format": "int32"
-								},
-								"data": {
-									"type": "object",
-									"properties": {
-										"categories": {
-											"type": "array",
-											"items": {
-												"$ref": "#/definitions/CategoryHasProduct"
-											}
-										}
-									}
-								},
-								"errMsg": {
-									"type": "string"
-								},
-								"innerErrMsg": {
-									"type": "string"
-								}
-							}
-						}
-					}
-				}
-			},
-			"post": {
-				"summary": "向分组中添加商品",
-				"description": "向分组中添加商品",
-				"parameters": [
-					{
-						"name": "category_id",
-						"in": "query",
-						"type": "string",
-						"required": true
-					},
-					{
-						"name": "product_ids",
-						"in": "query",
-						"type": "string",
-						"required": true,
-						"format": "1,24,3"
-					}
-				],
-				"tags": [
-					"new_zeus_category"
-				],
-				"responses": {
-					"200": {
-						"description": "success"
 					}
 				}
 			}
