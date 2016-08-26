@@ -145,31 +145,18 @@ class PostageConfig(business_model.Model):
 
 	@staticmethod
 	@param_required([])
-	def update(args):
-		is_used = args.get('is_used', None)
-		name = args.get('name', None)
+	def modify(args):
 		owner_id = args['owner_id']
-		if is_used and not name:
-			mall_models.PostageConfig.update(is_used=False).dj_where(owner_id=owner_id, is_used=True).execute()
-			mall_models.PostageConfig.update(is_used=True).dj_where(owner_id=owner_id, id=id).execute()
-			return
 
 		name = args['name']
-		first_weight = args['firstWeight']
-		first_weight_price = args['firstWeightPrice']
-		added_weight = args['addedWeight']
-		added_weight_price = args['addedWeightPrice']
-		is_enable_special_config = (
-			args.get(
-				'isEnableSpecialConfig',
-				'false') == 'true')
-		special_configs = json.loads(args.get('specialConfigs', '[]'))
-		is_enable_free_config = (
-			args.get(
-				'isEnableFreeConfig',
-				'false') == 'true')
-		free_configs = json.loads(args.get('freeConfigs', '[]'))
-
+		first_weight = args['first_weight']
+		first_weight_price = args['first_weight_price']
+		added_weight = args['added_weight']
+		added_weight_price = args['added_weight_price']
+		is_enable_special_config = args.get('is_enable_special_config',False)
+		special_configs = args['specialConfigs']
+		is_enable_free_config = args['is_enable_free_config']
+		free_configs = args['free_configs']
 		mall_models.PostageConfig.update(
 			name=name,
 			first_weight=first_weight,
@@ -186,7 +173,7 @@ class PostageConfig(business_model.Model):
 			existed_special_config_ids = set(
 				[config.id
 				 for config in
-				 mall_models.SpecialPostageConfig.select.dj_where(postage_config_id=id)])
+				 mall_models.SpecialPostageConfig.select().dj_where(postage_config_id=id)])
 			for special_config in special_configs:
 				config_id = special_config['id']
 				if config_id < 0:
@@ -194,22 +181,22 @@ class PostageConfig(business_model.Model):
 						owner_id=owner_id,
 						postage_config_id=id,
 						destination=','.join(special_config.get('destination', [])),
-						first_weight=special_config.get('firstWeight', 0.0),
-						first_weight_price=special_config.get('firstWeightPrice', 0.0),
-						added_weight=special_config.get('addedWeight', 0.0),
-						added_weight_price=special_config.get('addedWeightPrice', 0.0)
+						first_weight=special_config.get('first_weight', 0.0),
+						first_weight_price=special_config.get('first_weight_price', 0.0),
+						added_weight=special_config.get('added_weight', 0.0),
+						added_weight_price=special_config.get('added_weight_price', 0.0)
 					)
 				else:
 					mall_models.SpecialPostageConfig.update(
 						destination=','.join(special_config.get('destination', [])),
-						first_weight=special_config.get('firstWeight', 0.0),
-						first_weight_price=special_config.get('firstWeightPrice', 0.0),
-						added_weight=special_config.get('addedWeight', 0.0),
-						added_weight_price=special_config.get('addedWeightPrice', 0.0)
+						first_weight=special_config.get('first_weight', 0.0),
+						first_weight_price=special_config.get('first_weight_price', 0.0),
+						added_weight=special_config.get('added_weight', 0.0),
+						added_weight_price=special_config.get('added_weight_price', 0.0)
 					).dj_where(id=config_id).execute()
 
 			ids_to_be_delete = existed_special_config_ids - special_config_ids
-			mall_models.SpecialPostageConfig.delete().dj_where(id__in=ids_to_be_delete)
+			mall_models.SpecialPostageConfig.delete().dj_where(id__in=ids_to_be_delete).execute()
 
 		# 更新free config
 		if is_enable_free_config:

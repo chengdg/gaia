@@ -832,7 +832,6 @@
 						"name": "category_ids",
 						"in": "query",
 						"description": "array",
-						"required": true,
 						"type": "string",
 						"format": "all, 1,2,4,"
 					},
@@ -864,7 +863,7 @@
 					}
 				],
 				"tags": [
-					"category"
+					"new_zeus_category"
 				],
 				"produces": [
 					"application/json"
@@ -873,15 +872,28 @@
 					"200": {
 						"description": "Successful response",
 						"schema": {
-							"title": "ArrayOfcategories",
-							"type": "array",
-							"items": {
-								"title": "categories",
-								"type": "object",
-								"properties": {
-									"schema": {
-										"$ref": "#/definitions/Category"
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+									"type": "object",
+									"properties": {
+										"categories": {
+											"type": "array",
+											"items": {
+												"$ref": "#/definitions/Category"
+											}
+										}
 									}
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
 								}
 							}
 						}
@@ -890,36 +902,6 @@
 			}
 		},
 		"/mall/category/": {
-			"get": {
-				"summary": "获取指定分组",
-				"description": "获取指定分组",
-				"parameters": [
-					{
-						"name": "category_id",
-						"in": "query",
-						"type": "string",
-						"required": true,
-						"description": "指定分组ID"
-					},
-					{
-						"name": "is_has_product",
-						"in": "query",
-						"type": "string",
-						"format": "1 or 0"
-					}
-				],
-				"tags": [
-					"category"
-				],
-				"responses": {
-					"200": {
-						"description": "OK",
-						"schema": {
-							"$ref": "#/definitions/Category"
-						}
-					}
-				}
-			},
 			"put": {
 				"summary": "修改指定分组内容",
 				"description": "修改指定分组内容",
@@ -932,31 +914,61 @@
 						"description": "指定分组id"
 					},
 					{
+						"name": "owner_id",
+						"in": "query",
+						"type": "string",
+						"required": true
+					},
+					{
 						"name": "name",
 						"in": "query",
 						"type": "string",
-						"required": true,
 						"description": "分组的名称"
+					},
+					{
+						"name": "display_index",
+						"in": "query",
+						"type": "string",
+						"description": "排序"
+					},
+					{
+						"name": "product_id",
+						"in": "query",
+						"type": "string",
+						"description": "商品ID与display_index联合使用"
 					}
 				],
 				"tags": [
-					"category"
+					"new_zeus_category"
 				],
 				"produces": [
 					"application/json"
 				],
 				"responses": {
 					"200": {
-						"description": "success",
+						"description": "Successful response",
 						"schema": {
-							"$ref": "#/definitions/Category"
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
 						}
 					}
 				}
 			},
 			"delete": {
-				"summary": "删除指定分组",
-				"description": "删除指定分组",
+				"summary": "删除指定分组或者分组内的商品",
+				"description": "删除指定分组或者分组内的商品",
 				"parameters": [
 					{
 						"name": "category_id",
@@ -964,14 +976,26 @@
 						"required": true,
 						"type": "string",
 						"description": "删除指定id"
-					}
+					},
+					{
+						"name": "owner_id",
+						"in": "query",
+						"type": "string",
+						"required": true
+					},
+					{
+						"name": "product_id",
+						"in": "query",
+						"type": "string",
+						"description": "指定的商品"
+					},
 				],
 				"tags": [
-					"category"
+					"new_zeus_category"
 				],
 				"responses": {
 					"200": {
-						"description": "返回来影响的数量"
+						"description": ""
 					}
 				}
 			},
@@ -992,83 +1016,49 @@
 						"type": "string",
 						"required": true,
 						"description": "创建名称"
-					}
+					},
+					{
+						"name": "product_ids",
+						"in": "query",
+						"type": "string",
+						"description": "要加的商品量"
+					},
 				],
 				"tags": [
-					"category"
+					"new_zeus_category"
 				],
 				"produces": [
 					"application/json"
 				],
 				"responses": {
 					"200": {
-						"description": "success",
+						"description": "Successful response",
 						"schema": {
-							"$ref": "#/definitions/Category"
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+									"type": "object",
+									"properties": {
+										"categories": {
+											"type": "array",
+											"items": {
+												"$ref": "#/definitions/Category"
+											}
+										}
+									}
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
 						}
-					}
-				}
-			}
-		},
-		"/mall/category_has_product/": {
-			"get": {
-				"summary": "分组商品值对象",
-				"description": "分组商品值对象",
-				"parameters": [
-					{
-						"name": "category_has_product_id",
-						"in": "query",
-						"required": true,
-						"type": "string",
-						"description": "分组与商品关系id"
-					},
-					{
-						"name": "product_id",
-						"in": "query",
-						"type": "string"
-					},
-					{
-						"name": "category_id",
-						"in": "query",
-						"type": "string"
-					}
-				],
-				"tags": [
-					"category"
-				],
-				"responses": {
-					"200": {
-						"description": "OK",
-						"schema": {
-							"$ref": "#/definitions/CategoryHasProduct"
-						}
-					}
-				}
-			},
-			"post": {
-				"summary": "向分组中添加商品",
-				"description": "向分组中添加商品",
-				"parameters": [
-					{
-						"name": "category_id",
-						"in": "query",
-						"type": "string",
-						"required": true
-					},
-					{
-						"name": "product_ids",
-						"in": "query",
-						"type": "string",
-						"required": true,
-						"format": "1,24,3"
-					}
-				],
-				"tags": [
-					"category"
-				],
-				"responses": {
-					"200": {
-						"description": "success"
 					}
 				}
 			}
@@ -4047,7 +4037,148 @@
 							}
 						}
 					}
-				]
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			},
+			"post":{
+				"summary": "修改运费模板",
+				"tags": [
+					"mall_config",
+					"postage",
+					"new_zeus"
+				],
+				"parameters": [
+					{
+						"in": "body",
+						"schema": {
+							"properties": {
+								"owner_id": {
+									"required": true,
+									"type": "integer"
+								},
+								"id": {
+									"required": true,
+									"type": "integer"
+								},
+								"name": {
+									"type": "name",
+									"required": false
+								},
+								"first_weight": {
+									"type": "number",
+									"required": false
+								},
+								"first_weight_price": {
+									"type": "number",
+									"required": false
+								},
+								"added_weight": {
+									"type": "number",
+									"required": false
+								},
+								"added_weight_price": {
+									"type": "number",
+									"required": false
+								},
+								"is_enable_special_config": {
+									"type": "boolean",
+									"required": false
+								},
+								"special_configs": {
+									"type": "array",
+									"required": false,
+									"items": {
+										"properties": {
+											"destination": {
+												"type": "array"
+											},
+											"first_weight": {
+												"type": "number"
+											},
+											"first_weight_price": {
+												"type": "number"
+											},
+											"added_weight": {
+												"type": "number"
+											},
+											"added_weight_price": {
+												"type": "number"
+											}
+										}
+									}
+								},
+								"is_enable_free_config": {
+									"type": "boolean",
+									"required": false
+								},
+								"free_configs": {
+									"type": "array",
+									"required": false,
+									"items": {
+										"properties": {
+											"destination": {
+												"type": "array"
+											},
+											"condition": {
+												"type": "string"
+											},
+											"condition_value": {
+												"type": "number"
+											}
+										}
+									}
+								},
+								"is_used":{
+									"type": "boolean",
+									"required":false
+								}
+							}
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
 			}
 		},
 		"/mall/postage_configs": {
