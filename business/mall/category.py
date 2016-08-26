@@ -65,6 +65,18 @@ class Category(business_model.Model):
 	def update_category_property(self, category_id, actionProperty='name', update_params={}):
 		if actionProperty == 'position':
 			mall_models.CategoryHasProduct.update(display_index=update_params['display_index']).dj_where(product_id=update_params['product_id'], category_id=category_id).execute()
+		if actionProperty == 'products':
+			category = mall_models.ProductCategory.get(id=category_id)
+			product_ids = [product_id.strip() for product_id in update_params['product_ids'].strip().split(',') if product_id]
+			products = Product.from_ids({'product_ids': product_ids})
+			for b_product in products:
+				opt = {
+					'product': b_product.context['db_model'],
+					'category': category
+				}
+				mall_models.CategoryHasProduct.get_or_create(**opt)
+			category.product_count += len(products)
+			category.save()
 		else:
 			mall_models.ProductCategory.update(name=update_params['name']).dj_where(id=category_id).execute()
 

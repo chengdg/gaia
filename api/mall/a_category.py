@@ -38,14 +38,18 @@ class ACategory(api_resource.ApiResource):
 					params['display_index'] = args['display_index']
 					params['product_id'] = args['product_id']
 					category.update_category_property(args['category_id'],actionProperty='position', update_params=params)
+				if 'product_ids' in args:
+					params['product_ids'] = args['product_ids']
+					category.update_category_property(args['category_id'],actionProperty='products', update_params=params)
 				return {}
 			except:
 				msg = unicode_full_stack()
 				watchdog.error(msg)
+				return 500, {}
 		else:
 			msg = u'{}不存在'.format(args['category_id'])
 			watchdog.error(message=msg)
-			return 500, msg
+			return 500, {'message': msg}
 
 	@param_required(['owner_id', 'category_id'])
 	def delete(args):
@@ -59,5 +63,5 @@ class ACategory(api_resource.ApiResource):
 		else:
 			msg = u'{}不存在'.format(args['category_id'])
 			watchdog.error(message=msg)
-			return 500, msg
+			return 500, {'message': msg}
 
