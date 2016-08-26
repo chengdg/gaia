@@ -73,49 +73,70 @@ class PayInterface(business_model.Model):
 				owner=self.owner_id, id=self.related_config_id).first()
 
 			if related_config.pay_version == 0:
-				configs = [{
-					"name": u"接口版本", "value": "v2"
-				}, {
-					"name": u"AppID", "value": related_config.app_id
-				}, {
-					"name": u"合作商户ID", "value": related_config.partner_id
-				}, {
-					"name": u"合作商户密钥", "value": related_config.partner_key
-				}, {
-					"name": u"支付专用签名串", "value": related_config.paysign_key
-				}]
+				configs = {
+						"pay_version": "v2",
+						"app_id": related_config.app_id,
+						"partner_id": related_config.partner_id,
+						"partner_key": related_config.partner_key,
+						"paysign_key": related_config.paysign_key
+				}
+				# [{
+				# 	"name": u"接口版本", "value": "v2"
+				# }, {
+				# 	"name": u"AppID", "value": related_config.app_id
+				# }, {
+				# 	"name": u"合作商户ID", "value": related_config.partner_id
+				# }, {
+				# 	"name": u"合作商户密钥", "value": related_config.partner_key
+				# }, {
+				# 	"name": u"支付专用签名串", "value": related_config.paysign_key
+				# }]
 			else:
-				configs = [{
-					"name": u"接口版本", "value": "v3"
-				}, {
-					"name": u"AppID", "value": related_config.app_id
-				}, {
-					"name": u"商户号MCHID", "value": related_config.partner_id
-				}, {
-					"name": u"APIKEY密钥", "value": related_config.partner_key
-				}]
+				configs = {
+					"pay_version": "v3",
+					"app_id": related_config.app_id,
+					"partner_id": related_config.partner_id,
+					"partner_key": related_config.partner_key
+				}
+				# [{
+				# 	"name": u"接口版本", "value": "v3"
+				# }, {
+				# 	"name": u"AppID", "value": related_config.app_id
+				# }, {
+				# 	"name": u"商户号MCHID", "value": related_config.partner_id
+				# }, {
+				# 	"name": u"APIKEY密钥", "value": related_config.partner_key
+				# }]
 			self.context['configs'] = configs
 			return self.context['configs']
 
 		elif self.type == mall_models.PAY_INTERFACE_ALIPAY and self.related_config_id != 0:
-			related_config = mall_models.UserAlipayOrderConfig.select().dj_where(owner=self.owner_id,
-															   id=self.related_config_id).first()
-
-			configs = [
-				{
-					"name": u"接口版本", "value": 'v2' if related_config.pay_version == '0' else 'v5'
-				},
-				{
-					"name": u"合作者身份ID", "value": related_config.partner
-				}, {
-					"name": u"交易安全检验码", "value": related_config.key
-				}, {
-					"name": u"支付宝公钥", "value": related_config.ali_public_key
-				}, {
-					"name": u"商户私钥", "value": related_config.private_key
-				}, {
-					"name": u"邮箱", "value": related_config.seller_email
-				}]
+			related_config = mall_models.UserAlipayOrderConfig.select().dj_where(
+				owner=self.owner_id,
+				id=self.related_config_id).first()
+			configs = {
+				"pay_version": 'v2' if related_config.pay_version == '0' else 'v5',
+				"partner_id": related_config.partner,
+				"key": related_config.key,
+				"ali_public_key": related_config.ali_public_key,
+				"private_key": related_config.private_key,
+				"seller_email": related_config.seller_email
+			}
+			# [
+			# 	{
+			# 		"name": u"接口版本", "value": 'v2' if related_config.pay_version == '0' else 'v5'
+			# 	},
+			# 	{
+			# 		"name": u"合作者身份ID", "value": related_config.partner
+			# 	}, {
+			# 		"name": u"交易安全检验码", "value": related_config.key
+			# 	}, {
+			# 		"name": u"支付宝公钥", "value": related_config.ali_public_key
+			# 	}, {
+			# 		"name": u"商户私钥", "value": related_config.private_key
+			# 	}, {
+			# 		"name": u"邮箱", "value": related_config.seller_email
+			# 	}]
 			self.context['configs'] = configs
 			return self.context['configs']
 		else:

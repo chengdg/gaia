@@ -3218,6 +3218,189 @@
 				}
 			}
 		},
+		"/mall/pay_interfaces/": {
+			"get": {
+				"summary": "商户支付方式列表",
+				"parameters": [
+					{
+						"name": "owner_id",
+						"in": "query",
+						"description": "owner_id",
+						"required": true,
+						"type": "integer"
+					}
+				],
+				"tags": [
+					"new_zeus",
+					"pay_interface"
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+									"type": "object",
+									"properties": {
+										"pay_interfaces": {
+											"type": "array",
+											"description": "支付方式集合",
+											"items": {
+												"type": "object",
+												"properties": {
+													"id": {
+														"type": "integer",
+														"description": "支付方式id"
+													},
+													"name": {
+														"type": "string",
+														"description": "支付方式名称"
+													},
+													"owner_id": {
+														"type": "integer",
+														"description": "用户id"
+													},
+													"description": {
+														"type": "string",
+														"description": "支付方式描述"
+													},
+													"type": {
+														"type": "integer",
+														"description": "支付方式类型"
+													},
+													"is_active": {
+														"type": "boolean",
+														"description": "支付方式是否开启"
+													},
+													"should_create_related_config": {
+														"type": "boolean",
+														"description": "是否应该关联支付配置"
+													},
+													"related_config_id": {
+														"type": "integer",
+														"description": "关联支付配置"
+													},
+													"configs": {
+														"type": "object",
+														"properties": {
+															"pay_version": {
+																"type": "string",
+																"description": "第三方支付平台的版本号"
+															},
+															"app_id": {
+																"type": "integer",
+																"description": "app_id(微信支付接口特有参数)"
+															},
+															"partner_id": {
+																"type": "integer",
+																"description": "合作商户ID(微信支付名称)/合作者身份ID(支付宝名称)"
+															},
+															"partner_key": {
+																"type": "string",
+																"description": "合作商户密钥(微信支付接口特有参数)"
+															},
+															"paysign_key": {
+																"type": "string",
+																"description": "支付专用签名串(微信支付v2接口特有参数)"
+															},
+															"key": {
+																"type": "string",
+																"description": "交易安全检验码(支付宝接口特有参数)"
+															},
+															"ali_public_key": {
+																"type": "string",
+																"description": "支付宝公钥(支付宝接口特有参数)"
+															},
+															"private_key": {
+																"type": "string",
+																"description": "商户私钥(支付宝接口特有参数)"
+															},
+															"seller_email": {
+																"type": "string",
+																"description": "邮箱(支付宝接口特有参数)"
+															}
+														},
+														"description": "支付方式对应的配置"
+													}
+												}
+											}
+										}
+									}
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/mall/pay_interface/": {
+			"post": {
+				"summary": "开启或者关闭支付方式",
+				"parameters": [
+                    {
+                        "description": "开启或者关闭支付方式请求参数",
+                        "in": "body",
+                        "schema": {
+                            "properties": {
+                                "owner_id": {
+                                    "description": "owner_id",
+                                    "required": true,
+                                    "type": "integer"
+                                },
+								"id": {
+                                    "description": "支付方式的id",
+                                    "required": true,
+                                    "type": "integer"
+                                },
+                                "is_enable": {
+									"description": "开启或者关闭",
+									"required": true,
+									"type": "boolean"
+								}
+                            }
+                        }
+                    }
+				],
+				"tags": [
+					"new_zeus",
+					"pay_interface"
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+									"type": "string"
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
 		"/product/model_properties/": {
 			"get": {
 				"summary": "商品规格列表数据接口",
