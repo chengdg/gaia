@@ -6,9 +6,9 @@ from eaglet.decorator import param_required
 from business.mall.pay_interface import PayInterface
 
 
-class APostageConfig(api_resource.ApiResource):
+class APayInterfaces(api_resource.ApiResource):
 	"""
-	运费模板列表
+	支付方式列表
 	"""
 	app = 'mall'
 	resource = 'pay_interfaces'
@@ -17,6 +17,6 @@ class APostageConfig(api_resource.ApiResource):
 	def get(args):
 		pay_interfaces = PayInterface.from_owner_id({"owner_id": args['owner_id']})
 
-		pay_interfaces = map(lambda x: x.to_dict(), pay_interfaces)
+		pay_interfaces = map(lambda x: x.to_dict('configs'), pay_interfaces)
 
 		return {'pay_interfaces': pay_interfaces}

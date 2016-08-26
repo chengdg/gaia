@@ -11,6 +11,7 @@ import a_user_profile
 import a_email_notification
 import a_email_notifications
 import a_pay_interfaces
+import a_pay_interface
 import a_category
 import a_categories
 import a_category_has_product
