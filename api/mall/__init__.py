@@ -14,6 +14,8 @@ import a_pay_interfaces
 import a_pay_interface
 import a_category
 import a_categories
-
+import a_pay_interface_config
+import a_weixin_pay_interface_config
+import a_ali_pay_interface_config
 
 

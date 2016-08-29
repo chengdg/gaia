@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
-import json
 
 from eaglet.core import watchdog
 from eaglet.decorator import param_required
 
 from business import model as business_model
-from db.account import models as account_model
 from db.mall import models as mall_models
 
 
@@ -148,7 +146,18 @@ class PayInterface(business_model.Model):
 	def from_id(args):
 		id = args['id']
 		model = mall_models.PayInterface.select().dj_where(id=id).first()
+		model.name = mall_models.PAYTYPE2NAME[model.type]
+		if model.type in [mall_models.PAY_INTERFACE_WEIXIN_PAY,
+								  mall_models.PAY_INTERFACE_ALIPAY] and model.related_config_id == 0:
+			model.should_create_related_config = True
+		else:
+			model.should_create_related_config = False
 		return PayInterface(model)
 
 	def update_status(self, is_enable):
 		mall_models.PayInterface.update(is_active=is_enable).dj_where(id=self.id).execute()
+
+	def update_related_config_id(self, config_id):
+		mall_models.PayInterface.update(
+			related_config_id=config_id,
+			is_active=True).dj_where(id=self.id).execute()
