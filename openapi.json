@@ -403,7 +403,7 @@
 				}
 			}
 		},
-		"/mall/product/": {
+		"/product/product/": {
 			"put": {
 				"summary": "添加供货商",
 				"description": "创建商品",
@@ -516,7 +516,7 @@
 					{
 						"name": "stocks",
 						"in": "query",
-						"description": "库存值",
+						"description": "库存值,大于等于0",
 						"required": false,
 						"type": "integer"
 					},
@@ -585,7 +585,7 @@
 					}
 				],
 				"tags": [
-					"product"
+					"product","new_zeus"
 				],
 				"responses": {
 					"200": {

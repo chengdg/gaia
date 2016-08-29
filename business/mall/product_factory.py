@@ -16,140 +16,140 @@ class ProductFactory(business_model.Model):
     def __init__(self):
         super(ProductFactory, self).__init__()
 
-    def save(self, args):
-        """
-
-        """
-        accounts = json.loads(args.get('accounts'))
-        name = args.get('name', '')
-        supplier = args.get('supplier', '')
-        model_type = args.get('model_type', 'single')
-
-        detail = args.get('detail', '')
-        # pic_url = args.get('pic_url')
-        purchase_price = args.get('purchase_price')
-        promotion_title = args.get('promotion_title')
-        swipe_images = json.loads(args.get('images'))
-        # 0无限
-        stock_type = 0 if args.get('stock_type') == 'unbound' else 1
-
-        product = Product(None)
-        product.name = name
-        product.supplier = supplier
-        product.detail = detail
-        # product.pic_url = pic_url
-        product.model_type = model_type
-        product.purchase_price = purchase_price
-        product.promotion_title = promotion_title
-        thumbnails_url = swipe_images[0].get('url') if swipe_images else ''
-        if not thumbnails_url.startswith('http'):
-            thumbnails_url = PANDA_IMAGE_DOMAIN + thumbnails_url
-        product.thumbnails_url = thumbnails_url
-        product.swipe_images = swipe_images
-        # 保存商品规格信息
-        if 'single' == model_type:
-            product.price = args.get('price', purchase_price)
-
-            product.purchase_price = purchase_price
-            product.weight = args.get('weight', '')
-            product.stock_type = stock_type
-            # product.stocks = args.get('stocks')
-
-        else:
-            # 多规格
-            product.price = 0
-
-            product.purchase_price = 0
-            product.weight = 0
-            product.stock_type = 0
-            product.stocks = 0
-
-        new_product = product.save(panda_product_id=args.get('product_id'))
-        if model_type == 'single':
-            product_model = ProductModel(None)
-            product_model.owner_id = new_product.owner_id
-            product_model.product_id = new_product.id
-            # 非定制规格
-            product_model.is_standard = True
-            product_model.stock_type = new_product.stock_type
-            product_model.stocks = args.get('stocks') if args.get('stocks') else 0
-            product_model.price = new_product.price
-            product_model.weight = new_product.weight
-            product_model.name = 'standard'
-            product_model.is_deleted = False
-            product_model.purchase_price = new_product.purchase_price
-            new_product_model = product_model.save()
-            # 用来设置规格信息
-
-            new_product.models = [new_product_model]
-
-        else:
-            # 多个规格（定制）
-            models_info = args.get('model_info', '')
-
-            if models_info:
-                models_info = json.loads(models_info)
-                # 创建标准规格
-                stand_product_model = ProductModel(None)
-                stand_product_model.owner_id = new_product.owner_id
-                stand_product_model.product_id = new_product.id
-                # 非定制规格
-                stand_product_model.is_standard = True
-                stand_product_model.stock_type = new_product.stock_type
-                stand_product_model.stocks = args.get('stocks') if args.get('stocks') else 0
-                stand_product_model.price = new_product.price
-                stand_product_model.weight = new_product.weight
-                stand_product_model.name = 'standard'
-                stand_product_model.is_deleted = True
-                stand_product_model.purchase_price = purchase_price
-                many_models = []
-                for model_info in models_info:
-                    # 多规格
-                    name = model_info.get('name')
-                    if not name or name == 'standard':
-                        continue
-                    purchase_price = model_info.get('purchase_price', 0)
-                    price = model_info.get('price', 0)
-                    stock_type = 0 if model_info.get('stock_type') == 'unbound' else 1
-                    stocks = model_info.get('stocks') if model_info.get('stocks') else 0
-                    weight = model_info.get('weight')
-                    product_model = ProductModel(None)
-                    product_model.owner_id = new_product.owner_id
-                    product_model.product_id = new_product.id
-                    product_model.name = name
-                    product_model.purchase_price = purchase_price
-                    product_model.stock_type = stock_type
-                    product_model.stocks = stocks
-                    product_model.weight = weight
-                    product_model.price = price
-                    product_model.is_standard = False
-                    product_model.is_deleted = False
-                    many_models.append(product_model)
-                many_models.append(stand_product_model)
-                ProductModel.save_many({'models': many_models})
-
-        # 处理论播图
-        # TODO 处理论播图的大小暂时无法同步（panda)中无此2字段。
-        if product.swipe_images:
-            images = []
-            for image in product.swipe_images:
-                url = image.get('url')
-                if not url.startswith('http'):
-                    url = PANDA_IMAGE_DOMAIN + url
-                images.append(dict(product=new_product.id,
-                                   url=url,
-                                   width=100,
-                                   height=100))
-
-            # for image in self.swipe_images:
-
-            ProductSwipeImage.save_many({'images': images})
-            # 处理商品在哪个自营平台显示
-        pool = [dict(woid=account,
-                     product_id=new_product.id,
-                     status=mall_models.PP_STATUS_ON_POOL) for account in accounts]
-        ProductPool.save_many(pool)
-        return new_product
+    # def save(self, args):
+    #     """
+    #
+    #     """
+    #     accounts = json.loads(args.get('accounts'))
+    #     name = args.get('name', '')
+    #     supplier = args.get('supplier', '')
+    #     model_type = args.get('model_type', 'single')
+    #
+    #     detail = args.get('detail', '')
+    #     # pic_url = args.get('pic_url')
+    #     purchase_price = args.get('purchase_price')
+    #     promotion_title = args.get('promotion_title')
+    #     swipe_images = json.loads(args.get('images'))
+    #     # 0无限
+    #     stock_type = 0 if args.get('stock_type') == 'unbound' else 1
+    #
+    #     product = Product(None)
+    #     product.name = name
+    #     product.supplier = supplier
+    #     product.detail = detail
+    #     # product.pic_url = pic_url
+    #     product.model_type = model_type
+    #     product.purchase_price = purchase_price
+    #     product.promotion_title = promotion_title
+    #     thumbnails_url = swipe_images[0].get('url') if swipe_images else ''
+    #     if not thumbnails_url.startswith('http'):
+    #         thumbnails_url = PANDA_IMAGE_DOMAIN + thumbnails_url
+    #     product.thumbnails_url = thumbnails_url
+    #     product.swipe_images = swipe_images
+    #     # 保存商品规格信息
+    #     if 'single' == model_type:
+    #         product.price = args.get('price', purchase_price)
+    #
+    #         product.purchase_price = purchase_price
+    #         product.weight = args.get('weight', '')
+    #         product.stock_type = stock_type
+    #         # product.stocks = args.get('stocks')
+    #
+    #     else:
+    #         # 多规格
+    #         product.price = 0
+    #
+    #         product.purchase_price = 0
+    #         product.weight = 0
+    #         product.stock_type = 0
+    #         product.stocks = 0
+    #
+    #     new_product = product.save(panda_product_id=args.get('product_id'))
+    #     if model_type == 'single':
+    #         product_model = ProductModel(None)
+    #         product_model.owner_id = new_product.owner_id
+    #         product_model.product_id = new_product.id
+    #         # 非定制规格
+    #         product_model.is_standard = True
+    #         product_model.stock_type = new_product.stock_type
+    #         product_model.stocks = args.get('stocks') if args.get('stocks') else 0
+    #         product_model.price = new_product.price
+    #         product_model.weight = new_product.weight
+    #         product_model.name = 'standard'
+    #         product_model.is_deleted = False
+    #         product_model.purchase_price = new_product.purchase_price
+    #         new_product_model = product_model.save()
+    #         # 用来设置规格信息
+    #
+    #         new_product.models = [new_product_model]
+    #
+    #     else:
+    #         # 多个规格（定制）
+    #         models_info = args.get('model_info', '')
+    #
+    #         if models_info:
+    #             models_info = json.loads(models_info)
+    #             # 创建标准规格
+    #             stand_product_model = ProductModel(None)
+    #             stand_product_model.owner_id = new_product.owner_id
+    #             stand_product_model.product_id = new_product.id
+    #             # 非定制规格
+    #             stand_product_model.is_standard = True
+    #             stand_product_model.stock_type = new_product.stock_type
+    #             stand_product_model.stocks = args.get('stocks') if args.get('stocks') else 0
+    #             stand_product_model.price = new_product.price
+    #             stand_product_model.weight = new_product.weight
+    #             stand_product_model.name = 'standard'
+    #             stand_product_model.is_deleted = True
+    #             stand_product_model.purchase_price = purchase_price
+    #             many_models = []
+    #             for model_info in models_info:
+    #                 # 多规格
+    #                 name = model_info.get('name')
+    #                 if not name or name == 'standard':
+    #                     continue
+    #                 purchase_price = model_info.get('purchase_price', 0)
+    #                 price = model_info.get('price', 0)
+    #                 stock_type = 0 if model_info.get('stock_type') == 'unbound' else 1
+    #                 stocks = model_info.get('stocks') if model_info.get('stocks') else 0
+    #                 weight = model_info.get('weight')
+    #                 product_model = ProductModel(None)
+    #                 product_model.owner_id = new_product.owner_id
+    #                 product_model.product_id = new_product.id
+    #                 product_model.name = name
+    #                 product_model.purchase_price = purchase_price
+    #                 product_model.stock_type = stock_type
+    #                 product_model.stocks = stocks
+    #                 product_model.weight = weight
+    #                 product_model.price = price
+    #                 product_model.is_standard = False
+    #                 product_model.is_deleted = False
+    #                 many_models.append(product_model)
+    #             many_models.append(stand_product_model)
+    #             ProductModel.save_many({'models': many_models})
+    #
+    #     # 处理论播图
+    #     # TODO 处理论播图的大小暂时无法同步（panda)中无此2字段。
+    #     if product.swipe_images:
+    #         images = []
+    #         for image in product.swipe_images:
+    #             url = image.get('url')
+    #             if not url.startswith('http'):
+    #                 url = PANDA_IMAGE_DOMAIN + url
+    #             images.append(dict(product=new_product.id,
+    #                                url=url,
+    #                                width=100,
+    #                                height=100))
+    #
+    #         # for image in self.swipe_images:
+    #
+    #         ProductSwipeImage.save_many({'images': images})
+    #         # 处理商品在哪个自营平台显示
+    #     pool = [dict(woid=account,
+    #                  product_id=new_product.id,
+    #                  status=mall_models.PP_STATUS_ON_POOL) for account in accounts]
+    #     ProductPool.save_many(pool)
+    #     return new_product
 
     @staticmethod
     def get():
@@ -157,10 +157,14 @@ class ProductFactory(business_model.Model):
 
     def create_product(self, owner_id, product_data):
         product = Product.empty_product()
-        product_model = self.__save_db(product, product_data)
-        product = Product.from_model({"db_model": product_model})
-        pool = ProductPool.get({'owner_id': owner_id})
-        pool.push(product)
+        try:
+            product_model = self.__save_db(product, product_data)
+            product = Product.from_model({"db_model": product_model})
+            pool = ProductPool.get({'owner_id': owner_id})
+            pool.push(product)
+        except BaseException as e:
+            from eaglet.core.exceptionutil import unicode_full_stack
+            print(unicode_full_stack())
 
 
     def update_product(self, id, product_data):
@@ -168,24 +172,29 @@ class ProductFactory(business_model.Model):
         return self.__save_db(product, product_data)
 
     def __init_product(self, product, product_data):
-        product.owner_id = product_data.get('owner_id', '')
-        product.name = product_data.get('name', '')
-        product.promotion_title = product_data.get('promotion_title', '')
-        product.introduction = product_data.get('introduction', '')
-        product.pic_url = product_data.get('pic_url', '')
-        product.thumbnails_url = product_data.get('thumbnails_url', '')
+        product.owner_id = product_data['owner_id']
+        product.name = product_data.get('name', '').strip()
+        product.promotion_title = product_data.get('promotion_title', '').strip()
+
         product.price = float(product_data.get('price', '0.0'))
-        product.user_code = product_data.get('user_code', '')
-        product.bar_code = product_data.get('bar_code', '')
-        product.min_limit = int(product_data.get('min_limit', '0'))
+        product.user_code = product_data.get('user_code', '').strip()
+        product.bar_code = product_data.get('bar_code', '').strip()
+        product.min_limit = int(product_data.get('min_limit', 0))
         product.is_member_product = int(product_data.get('is_member_product', '0'))
         product.purchase_price = float(product_data.get('purchase_price', '0.0'))
         product.supplier = int(product_data.get('supplier', '0'))
         product.weight = float(product_data.get('weight', '0.0'))
-        product.stock_type = int(product_data.get('stock_type', '0'))
-        product.stocks = int(product_data.get('stocks', '0'))
+
         product.postage_type = product_data.get('postage_type', '')
         product.unified_postage_money = float(product_data.get('unified_postage_money', '0.0'))
+
+        swipe_images = json.loads(product_data['swipe_images'])
+
+        if swipe_images:
+            product.thumbnails_url = swipe_images[0]["url"]
+        else:
+            product.thumbnails_url = ''
+
         product.is_use_cod_pay_interface = int(product_data.get('is_enable_cod_pay_interface', '0'))
         product.is_use_online_pay_interface = int(product_data.get('is_use_online_pay_interface', '0'))
         product.is_enable_bill = int(product_data.get('is_enable_bill', '0'))
@@ -206,7 +215,7 @@ class ProductFactory(business_model.Model):
         return properties
 
     def __init_product_model(self, product_data):
-        is_use_custom_models = product_data.get("is_use_custom_model", '') == u'true'
+        is_use_custom_models = int(product_data.get("is_use_custom_model", ''))
 
         custom_model_data = json.loads(product_data.get('customModels', '[]'))
         if custom_model_data and is_use_custom_models:
@@ -241,7 +250,7 @@ class ProductFactory(business_model.Model):
             }
             custom_models = []
 
-        return (standard_model, custom_models)
+        return standard_model, custom_models
 
     def __save_product(self, product):
 
@@ -277,9 +286,7 @@ class ProductFactory(business_model.Model):
                 owner=product.owner_id,
                 name=product.name,
                 promotion_title=product.promotion_title,
-                introduction=product.introduction,
                 thumbnails_url=product.thumbnails_url,
-                pic_url=product.pic_url,
                 price=product.price,
                 user_code=product.user_code,
                 bar_code=product.bar_code,
@@ -287,7 +294,7 @@ class ProductFactory(business_model.Model):
                 purchase_price=product.purchase_price,
                 supplier=product.supplier,
                 weight=product.weight,
-                stock_type=product.stock_type,
+
                 stocks=product.min_limit,
                 postage_type=product.postage_type,
                 unified_postage_money=product.unified_postage_money,
