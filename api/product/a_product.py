@@ -81,11 +81,4 @@ class AProduct(api_resource.ApiResource):
 
 		pids = args['ids'].split(',')
 
-	@param_required(['product_id', 'owner_id'])
-	def get(args):
-		product = Product.get_from_id({"product_id": args['product_id'], 'owner_id': args['owner_id']})
 
-		if product:
-			return product.to_dict()
-		else:
-			return 500, {}
