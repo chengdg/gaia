@@ -1615,3 +1615,34 @@ class Project(models.Model):
 		verbose_name = '项目'
 		verbose_name_plural = '项目'
 
+#########################################################################
+# ImageGroup：图片分组
+#########################################################################
+class ImageGroup(models.Model):
+	owner = models.ForeignKey(User)
+	name = models.CharField(max_length=125, default='')  # 图片分组名
+	created_at = models.DateTimeField(auto_now_add=True)  # 添加时间
+
+	class Meta(object):
+		db_table = 'mall_image_group'
+		verbose_name = '商城图片分组'
+		verbose_name_plural = '商城图片分组'
+
+
+#########################################################################
+# Image：图片
+#########################################################################
+class Image(models.Model):
+	owner = models.ForeignKey(User)
+	group = models.ForeignKey(ImageGroup)
+	title = models.CharField(max_length=125, default='')  # 图片标题
+	url = models.CharField(max_length=256, default='')  # 图片url
+	width = models.IntegerField()  # width
+	height = models.IntegerField()  # height
+	created_at = models.DateTimeField(auto_now_add=True)  # 添加时间
+
+	class Meta(object):
+		db_table = 'mall_image'
+		verbose_name = '商城图片'
+		verbose_name_plural = '商城图片'
+

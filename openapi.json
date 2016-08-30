@@ -862,9 +862,7 @@
 						"description": "是否展示分组中的商品"
 					}
 				],
-				"tags": [
-					"new_zeus_category"
-				],
+				"tags": ["new_zeus", "category"],
 				"produces": [
 					"application/json"
 				],
@@ -885,6 +883,64 @@
 											"type": "array",
 											"items": {
 												"$ref": "#/definitions/Category"
+											}
+										}
+									}
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/mall/image_group/": {
+			"post": {
+				"summary": "创建一个图片分组",
+				"parameters": [
+					{
+						"name": "owner_id",
+						"in": "query",
+						"type": "string",
+						"required": true
+					},
+					{
+						"name": "name",
+						"in": "query",
+						"type": "string",
+						"required": true,
+						"description": "分组的名称"
+					},
+					{
+						"name": "images",
+						"in": "query",
+						"type": "string",
+						"description": "分组时添加图片"
+					}
+				],
+				"tags": ["new_zeus", "image_group"],
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+									"type": "object",
+									"properties": {
+										"image_group": {
+											"type": "array",
+											"items": {
+												"$ref": "#/definitions/ImageGroup"
 											}
 										}
 									}
@@ -938,9 +994,7 @@
 						"description": "商品ID与display_index联合使用"
 					}
 				],
-				"tags": [
-					"new_zeus_category"
-				],
+				"tags": ["new_zeus", "category"],
 				"produces": [
 					"application/json"
 				],
@@ -990,9 +1044,7 @@
 						"description": "指定的商品"
 					},
 				],
-				"tags": [
-					"new_zeus_category"
-				],
+				"tags": ["new_zeus", "category"],
 				"responses": {
 					"200": {
 						"description": ""
@@ -1024,9 +1076,7 @@
 						"description": "要加的商品量"
 					},
 				],
-				"tags": [
-					"new_zeus_category"
-				],
+				"tags": ["new_zeus", "category"],
 				"produces": [
 					"application/json"
 				],
@@ -1083,9 +1133,7 @@
 						"description": "积分"
 					}
 				],
-				"tags": [
-					"member"
-				],
+				"tags": ["member"],
 				"responses": {
 					"200": {
 						"description": "OK",
@@ -4764,6 +4812,27 @@
 					"items": {
 						"$ref": "#/definitions/Product"
 					}
+				}
+			}
+		},
+		"ImageGroup": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "number",
+					"description": "数据库生成的ID"
+				},
+				"owner_id": {
+					"type": "number",
+					"description": "操作者id"
+				},
+				"name": {
+					"type": "number",
+					"description": "分组名称"
+				},
+				"created_at": {
+					"type": "string",
+					"description": "创建记录时间"
 				}
 			}
 		},

@@ -15,5 +15,9 @@ import a_pay_interface
 import a_category
 import a_categories
 
+import a_image
+import a_image_group
+import a_image_groups
+
 
 
