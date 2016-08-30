@@ -26,5 +26,8 @@ class AImageGroup(api_resource.ApiResource):
 			# TODO 如果在添加分组时添加图片
 			images = []
 		image_group_factory = ImageGroupFactory.create()
-		return image_group_factory.save(args['owner_id'], args['name'], images=images)
+		image_group = image_group_factory.save(args['owner_id'], args['name'], images=images)
 
+		return {
+			'image_group': image_group
+		}
