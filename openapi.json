@@ -403,7 +403,7 @@
 				}
 			}
 		},
-		"/mall/product/": {
+		"/product/product/": {
 			"put": {
 				"summary": "添加供货商",
 				"description": "创建商品",
@@ -516,7 +516,7 @@
 					{
 						"name": "stocks",
 						"in": "query",
-						"description": "库存值",
+						"description": "库存值,大于等于0",
 						"required": false,
 						"type": "integer"
 					},
@@ -585,7 +585,7 @@
 					}
 				],
 				"tags": [
-					"product"
+					"product","new_zeus"
 				],
 				"responses": {
 					"200": {
@@ -3436,6 +3436,508 @@
 								},
 								"data": {
 									"type": "string"
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/mall/weixin_pay_interface_config/": {
+			"get": {
+				"summary": "获取微信支付方式的配置信息",
+				"parameters": [
+					{
+						"name": "owner_id",
+						"in": "query",
+						"description": "owner_id",
+						"required": true,
+						"type": "integer"
+					}, {
+						"name": "pay_interface_id",
+						"in": "query",
+						"description": "支付方式的id",
+						"required": true,
+						"type": "integer"
+					}
+				],
+				"tags": [
+					"new_zeus",
+					"pay_interface"
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+									"type": "object",
+									"properties": {
+										"pay_interface_type": {
+											"type": "integer",
+											"description": "支付方式的类型"
+										},
+										"pay_interface_name": {
+											"type": "string",
+											"description": "支付方式的名称"
+										},
+										"auth_appid": {
+											"type": "integer",
+											"description": "授权方appid"
+										},
+										"pay_interface_config": {
+											"type": "object",
+											"description": "微信支付接口的配置信息",
+											"properties": {
+												"pay_version": {
+													"type": "string",
+													"description": "第三方支付平台的版本号"
+												},
+												"app_id": {
+													"type": "integer",
+													"description": "app_id(微信支付接口特有参数)"
+												},
+												"partner_id": {
+													"type": "integer",
+													"description": "合作商户ID(微信支付名称)/合作者身份ID(支付宝名称)"
+												},
+												"partner_key": {
+													"type": "string",
+													"description": "合作商户密钥(微信支付接口特有参数)"
+												},
+												"paysign_key": {
+													"type": "string",
+													"description": "支付专用签名串(微信支付v2接口特有参数)"
+												}
+											}
+										}
+									}
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			},
+			"put": {
+				"summary": "创建微信支付方式的配置信息",
+				"parameters": [
+					{
+						"name": "owner_id",
+						"in": "query",
+						"description": "owner_id",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"name": "pay_interface_id",
+						"in": "query",
+						"description": "支付方式的id",
+						"required": true,
+						"type": "integer"
+					}, {
+						"name": "pay_version",
+						"in": "query",
+						"description": "支付方式的版本",
+						"required": true,
+						"type": "integer"
+					}, {
+						"name": "app_id",
+						"in": "query",
+						"description": "授权方appid",
+						"required": true,
+						"type": "integer"
+					}, {
+						"name": "partner_id",
+						"in": "query",
+						"description": "合作商户ID",
+						"required": true,
+						"type": ""
+					}, {
+						"name": "partner_key",
+						"in": "query",
+						"description": "合作商户密钥",
+						"required": true,
+						"type": "integer"
+					}
+				],
+				"tags": [
+					"new_zeus",
+					"pay_interface"
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+									"type": "object",
+									"properties": {
+										"msg": {
+											"type": "integer",
+											"description": "创建信息"
+										}
+									}
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			},
+			"post": {
+				"summary": "更新微信支付方式的配置信息",
+				"parameters": [
+					{
+						"name": "owner_id",
+						"in": "query",
+						"description": "owner_id",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"name": "pay_interface_id",
+						"in": "query",
+						"description": "支付方式的id",
+						"required": true,
+						"type": "integer"
+					}, {
+						"name": "pay_version",
+						"in": "query",
+						"description": "支付方式的版本",
+						"required": true,
+						"type": "integer"
+					}, {
+						"name": "app_id",
+						"in": "query",
+						"description": "授权方appid",
+						"required": true,
+						"type": "integer"
+					}, {
+						"name": "partner_id",
+						"in": "query",
+						"description": "合作商户ID",
+						"required": true,
+						"type": ""
+					}, {
+						"name": "partner_key",
+						"in": "query",
+						"description": "合作商户密钥",
+						"required": true,
+						"type": "integer"
+					}
+				],
+				"tags": [
+					"new_zeus",
+					"pay_interface"
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+									"type": "object",
+									"properties": {
+										"msg": {
+											"type": "integer",
+											"description": "更新信息"
+										}
+									}
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/mall/ali_pay_interface_config/": {
+			"get": {
+				"summary": "获取支付宝支付方式的配置信息",
+				"parameters": [
+					{
+						"name": "owner_id",
+						"in": "query",
+						"description": "owner_id",
+						"required": true,
+						"type": "integer"
+					}, {
+						"name": "pay_interface_id",
+						"in": "query",
+						"description": "支付方式的id",
+						"required": true,
+						"type": "integer"
+					}
+				],
+				"tags": [
+					"new_zeus",
+					"pay_interface"
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+									"type": "object",
+									"properties": {
+										"pay_interface_type": {
+											"type": "integer",
+											"description": "支付方式的类型"
+										},
+										"pay_interface_name": {
+											"type": "string",
+											"description": "支付方式的名称"
+										},
+										"pay_interface_config": {
+											"type": "object",
+											"description": "支付宝支付接口的配置信息",
+											"properties": {
+												"pay_version": {
+													"type": "string",
+													"description": "第三方支付平台的版本号"
+												},
+												"key": {
+													"type": "integer",
+													"description": "交易安全检验码"
+												},
+												"partner_id": {
+													"type": "integer",
+													"description": "合作者身份ID"
+												},
+												"ali_public_key": {
+													"type": "integer",
+													"description": "支付宝公钥"
+												},
+												"private_key": {
+													"type": "string",
+													"description": "商户私钥"
+												},
+												"seller_email": {
+													"type": "string",
+													"description": "邮箱"
+												}
+											}
+										}
+									}
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			},
+			"put": {
+				"summary": "创建支付宝支付方式的配置信息",
+				"parameters": [
+					{
+						"name": "owner_id",
+						"in": "query",
+						"description": "owner_id",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"name": "pay_interface_id",
+						"in": "query",
+						"description": "支付方式的id",
+						"required": true,
+						"type": "integer"
+					}, {
+						"name": "pay_version",
+						"in": "query",
+						"description": "支付方式的版本",
+						"required": true,
+						"type": "integer"
+					}, {
+						"name": "partner",
+						"in": "query",
+						"description": "合作者身份ID",
+						"required": true,
+						"type": "integer"
+					}, {
+						"name": "key",
+						"in": "query",
+						"description": "交易安全检验码",
+						"required": true,
+						"type": "string"
+					}, {
+						"name": "private_key",
+						"in": "query",
+						"description": "商户私钥",
+						"required": true,
+						"type": "string"
+					}, {
+						"name": "ali_public_key",
+						"in": "query",
+						"description": "支付宝公钥",
+						"required": true,
+						"type": "string"
+					}, {
+						"name": "seller_email",
+						"in": "query",
+						"description": "邮箱",
+						"required": true,
+						"type": "string"
+					}
+				],
+				"tags": [
+					"new_zeus",
+					"pay_interface"
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+									"type": "object",
+									"properties": {
+										"msg": {
+											"type": "integer",
+											"description": "创建信息"
+										}
+									}
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			},
+			"post": {
+				"summary": "更新支付宝支付方式的配置信息",
+				"parameters": [
+					{
+						"name": "owner_id",
+						"in": "query",
+						"description": "owner_id",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"name": "pay_interface_id",
+						"in": "query",
+						"description": "支付方式的id",
+						"required": true,
+						"type": "integer"
+					}, {
+						"name": "pay_version",
+						"in": "query",
+						"description": "支付方式的版本",
+						"required": true,
+						"type": "integer"
+					}, {
+						"name": "partner",
+						"in": "query",
+						"description": "合作者身份ID",
+						"required": true,
+						"type": "integer"
+					}, {
+						"name": "key",
+						"in": "query",
+						"description": "交易安全检验码",
+						"required": true,
+						"type": "string"
+					}, {
+						"name": "private_key",
+						"in": "query",
+						"description": "商户私钥",
+						"required": true,
+						"type": "string"
+					}, {
+						"name": "ali_public_key",
+						"in": "query",
+						"description": "支付宝公钥",
+						"required": true,
+						"type": "string"
+					}, {
+						"name": "seller_email",
+						"in": "query",
+						"description": "邮箱",
+						"required": true,
+						"type": "string"
+					}
+				],
+				"tags": [
+					"new_zeus",
+					"pay_interface"
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+									"type": "object",
+									"properties": {
+										"msg": {
+											"type": "integer",
+											"description": "创建信息"
+										}
+									}
 								},
 								"errMsg": {
 									"type": "string"
