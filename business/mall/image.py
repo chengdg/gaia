@@ -25,6 +25,7 @@ class Image(business_model.Model):
 		'url',
 		'width',
 		'height',
+		'title',
 		'created_at',
 	)
 
@@ -48,13 +49,28 @@ class Image(business_model.Model):
 	@staticmethod
 	@param_required(['owner_id', 'image_id'])
 	def from_id(args):
-		image = mall_models.Image.select().dj_where(owner_id=args['owner_id'], id=args['image_id'])
-		return Image(image)
-
+		image = mall_models.Image.select().dj_where(owner=args['owner_id'], id=args['image_id'])
+		if image.first():
+			return Image(image.first())
+		else:
+			return None
 
 	@property
 	def group(self):
-		return self.context['db_model'].group
+		return self.context['db_model'].group.to_dict()
 	
 	def save(self, params):
-		mall_models.Image.create(**params)
+		image = mall_models.Image.create(**params)
+		return Image(image)
+
+	def delete_group(self, image_group):
+		mall_models.Image.delete().dj_where(group=image_group.context['db_model']).execute()
+
+	def delete_id(self, owner_id, image_id):
+		mall_models.Image.delete().dj_where(owner=owner_id, id=image_id).execute()
+
+	def update(self, owner_id, image_group, images=None):
+		mall_models.Image.delete().dj_where(group=image_group.context['db_model']).execute()
+
+
+

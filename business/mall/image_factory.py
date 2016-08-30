@@ -25,10 +25,11 @@ class ImageFactory(business_model.Model):
 	def save(self, params):
 		image = Image.empty_image()
 		opt = {
-			'owner_id': params['owner_id'],
-			'group_id': params['group_id'],
+			'owner': params['owner_id'],
+			'group': params['group_id'],
 			'url': params['image_path'],
 			'width': params['width'],
-			'height': params['height']
+			'height': params['height'],
+			'title': params['title']
 		}
-		return image.save(params)
+		return image.save(opt)

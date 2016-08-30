@@ -7,6 +7,7 @@ from business import model as business_model
 from db.mall import models as mall_models
 
 from business.mall.image_group import ImageGroup
+from business.mall.image_factory import ImageFactory
 
 class ImageGroupFactory(business_model.Model):
 	'''
@@ -23,5 +24,9 @@ class ImageGroupFactory(business_model.Model):
 
 	def save(self, owner_id, name, images=None):
 		image_group = ImageGroup.empty_image_group()
+		if images:
+			for image in images:
+				image_factory = ImageFactory.create()
+				image_factory.save(image)
 
 		return image_group.save(owner_id, name, images)

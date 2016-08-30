@@ -27,7 +27,10 @@ class AImage(api_resource.ApiResource):
 			'owner_id': params['owner_id'],
 			'image_id': params['image_id']
 		}
-		return Image.from_id(opt)
+		image = Image.from_id(opt)
+		return {
+			'image': image
+		}
 
 	@param_required(['owner_id', 'group_id', 'image_path', 'width', 'height'])
 	def post(args):
@@ -35,15 +38,26 @@ class AImage(api_resource.ApiResource):
 		添加图片 利用工厂类@生成器
 		'''
 		params = args
-		print '============-----------', args
 		image_factory = ImageFactory.create()
 		opt = {
 			'owner_id': args['owner_id'],
 			'group_id': args['group_id'],
 			'image_path': args['image_path'],
 			'width': args['width'],
-			'height': args['height']
+			'height': args['height'],
+			'title': args.get('title', '')
 		}
-		image_factory.save(opt)
+		image = image_factory.save(opt)
+		return {
+			'image':image
+		}
+	@param_required(['owner_id'])
+	def put(args):
+		pass
+
+	@param_required(['owner_id', 'image_id'])
+	def delete(args):
+		image = Image.empty_image()
+		image.delete_id(args['owner_id'], args['image_id'])
 		return {}
 
