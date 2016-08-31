@@ -36,7 +36,7 @@ class ProductConfig(business_model.Model):
 		# 商品数据
 		if product_id:
 			product = Product.from_id({"product_id": product_id, 'owner_id': owner_id, 'fill_options': {
-				'with_product_model': True,  # todo
+				'with_product_model': True,
 				'with_image': True,
 				'with_property': True,
 				'with_model_property_info': True,
