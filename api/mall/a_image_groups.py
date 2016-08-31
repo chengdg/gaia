@@ -8,7 +8,7 @@ from eaglet.core.exceptionutil import unicode_full_stack
 
 from business.mall.image_group import ImageGroup
 
-class AImageGroup(api_resource.ApiResource):
+class AImageGroups(api_resource.ApiResource):
 	'''
 	图片分组
 	'''
@@ -20,8 +20,7 @@ class AImageGroup(api_resource.ApiResource):
 		'''
 		图片分组列表
 		'''
-		params = args
-		image_groups = ImageGroup.from_owner({'owner_id': params['owner_id']})
+		image_groups = ImageGroup.from_owner({'owner_id': args['owner_id']})
 		if 'is_display_images' in args:
 			image_groups = [image_group.to_dict('images') for image_group in image_groups]
 		else:

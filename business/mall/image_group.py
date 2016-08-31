@@ -70,7 +70,6 @@ class ImageGroup(business_model.Model):
 	def images(self):
 		images = mall_models.Image.select().dj_where(group=self.context['db_model'])
 		if images:
-
 			self.context['images'] = [Image.from_model({'db_model': image}) for image in images]
 			return self.context['images']
 		else:
@@ -81,11 +80,12 @@ class ImageGroup(business_model.Model):
 		self.context['images'] = value
 
 
-	def delete(self, owner_id, image_group_id):
-		mall_models.ImageGroup.delete().dj_where(owner=owner_id, id=image_group_id).execute()
+	def delete(self):
+		self.context['db_model'].delete().execute()
 
-	def update(self, owner_id, image_group_id,params):
-		mall_models.ImageGroup.update(**params).dj_where(owner=owner_id, id=image_group_id).execute()
+	def update(self, params=None):
+		if params:
+			self.context['db_model'].update(**params).execute()
 
 
 

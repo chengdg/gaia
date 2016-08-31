@@ -64,13 +64,24 @@ class Image(business_model.Model):
 		return Image(image)
 
 	def delete_group(self, image_group):
-		mall_models.Image.delete().dj_where(group=image_group.context['db_model']).execute()
+		self.context['db_model'].delete().dj_where(group=image_group.context['db_model']).execute()
 
-	def delete_id(self, owner_id, image_id):
-		mall_models.Image.delete().dj_where(owner=owner_id, id=image_id).execute()
+	def delete_id(self):
+		self.context['db_model'].delete().execute()
+		# mall_models.Image.delete().dj_where(owner=owner_id, id=image_id).execute()
 
 	def update(self, owner_id, image_group, images=None):
 		mall_models.Image.delete().dj_where(group=image_group.context['db_model']).execute()
-
+		if images:
+			for image in images:
+				opt = {
+					'owner': owner_id,
+					'group': image_group.id,
+					'url': image['image_path'],
+					'width': image['width'],
+					'height': image['height'],
+					'title': image['title']
+				}
+				self.save(opt)
 
 

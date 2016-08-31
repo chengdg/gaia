@@ -33,7 +33,7 @@ class AImage(api_resource.ApiResource):
 		}
 
 	@param_required(['owner_id', 'group_id', 'image_path', 'width', 'height'])
-	def post(args):
+	def put(args):
 		'''
 		添加图片 利用工厂类@生成器
 		'''
@@ -52,12 +52,16 @@ class AImage(api_resource.ApiResource):
 			'image':image
 		}
 	@param_required(['owner_id'])
-	def put(args):
+	def post(args):
 		pass
 
 	@param_required(['owner_id', 'image_id'])
 	def delete(args):
-		image = Image.empty_image()
-		image.delete_id(args['owner_id'], args['image_id'])
-		return {}
+		image = Image.from_id({'owner_id': args['owner_id'], 'image_id': args['image_id']})
+		if image:
+			image.delete_id()
+			return {}
+		else:
+			msg = u'image_id {} 不存在'.format(args['image_id'])
+			return 500, {'msg': msg}
 
