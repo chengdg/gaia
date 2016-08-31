@@ -204,10 +204,10 @@ class Product(models.Model):
 	name = models.CharField(max_length=256)  # 商品名称
 	physical_unit = models.CharField(default='', max_length=256)  # 计量单位
 	price = models.FloatField(default=0.0)  # 商品价格
-	introduction = models.CharField(max_length=256)  # 商品简介
+	introduction = models.CharField(max_length=256, default='')  # 商品简介
 	weight = models.FloatField(default=0.0)  # 重量
 	thumbnails_url = models.CharField(max_length=1024)  # 商品缩略图
-	pic_url = models.CharField(max_length=1024)  # 商品图
+	pic_url = models.CharField(max_length=1024, default='')  # 商品图
 	detail = models.TextField(default='')  # 商品详情
 	remark = models.TextField(default='')  # 备注
 	display_index = models.IntegerField(default=0)  # 显示的排序
@@ -1630,4 +1630,35 @@ class Project(models.Model):
 		db_table = 'webapp_project'
 		verbose_name = '项目'
 		verbose_name_plural = '项目'
+
+#########################################################################
+# ImageGroup：图片分组
+#########################################################################
+class ImageGroup(models.Model):
+	owner = models.ForeignKey(User)
+	name = models.CharField(max_length=125, default='')  # 图片分组名
+	created_at = models.DateTimeField(auto_now_add=True)  # 添加时间
+
+	class Meta(object):
+		db_table = 'mall_image_group'
+		verbose_name = '商城图片分组'
+		verbose_name_plural = '商城图片分组'
+
+
+#########################################################################
+# Image：图片
+#########################################################################
+class Image(models.Model):
+	owner = models.ForeignKey(User)
+	group = models.ForeignKey(ImageGroup)
+	title = models.CharField(max_length=125, default='')  # 图片标题
+	url = models.CharField(max_length=256, default='')  # 图片url
+	width = models.IntegerField()  # width
+	height = models.IntegerField()  # height
+	created_at = models.DateTimeField(auto_now_add=True)  # 添加时间
+
+	class Meta(object):
+		db_table = 'mall_image'
+		verbose_name = '商城图片'
+		verbose_name_plural = '商城图片'
 

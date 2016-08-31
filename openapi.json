@@ -403,7 +403,7 @@
 				}
 			}
 		},
-		"/mall/product/": {
+		"/product/product/": {
 			"put": {
 				"summary": "添加供货商",
 				"description": "创建商品",
@@ -516,7 +516,7 @@
 					{
 						"name": "stocks",
 						"in": "query",
-						"description": "库存值",
+						"description": "库存值,大于等于0",
 						"required": false,
 						"type": "integer"
 					},
@@ -585,7 +585,7 @@
 					}
 				],
 				"tags": [
-					"product"
+					"product","new_zeus"
 				],
 				"responses": {
 					"200": {
@@ -862,9 +862,7 @@
 						"description": "是否展示分组中的商品"
 					}
 				],
-				"tags": [
-					"new_zeus_category"
-				],
+				"tags": ["new_zeus", "category"],
 				"produces": [
 					"application/json"
 				],
@@ -897,6 +895,378 @@
 								}
 							}
 						}
+					}
+				}
+			}
+		},
+		"/mall/image_groups/": {
+			"get": {
+				"summary": "获取图片分组列表",
+				"parameters": [
+					{
+						"name": "owner_id",
+						"in": "query",
+						"required": true,
+						"description": "操作者",
+						"type": "string"
+					},
+					{
+						"name": "is_display_images",
+						"in": "query",
+						"type": "number",
+						"format": "1 or 0",
+						"description": "是否展示分组中的图片信息"
+					}
+				],
+				"tags": ["new_zeus", "image_group"],
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+									"type": "object",
+									"properties": {
+										"image_groups": {
+											"type": "array",
+											"items": {
+												"$ref": "#/definitions/ImageGroup"
+											}
+										}
+									}
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/mall/image/": {
+			"get": {
+				"summary": "获取图片",
+				"parameters": [
+					{
+						"name": "owner_id",
+						"in": "query",
+						"required": true,
+						"description": "操作者",
+						"type": "string"
+					},
+					{
+						"name": "image_id",
+						"in": "query",
+						"type": "number",
+						"required": true
+					}
+				],
+				"tags": ["new_zeus", "image"],
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+									"type": "object",
+									"properties": {
+										"image": {
+											"type": "object",
+											"$ref": "#/definitions/Image"
+										}
+									}
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			},
+			"put": {
+				"summary": "获取图片",
+				"parameters": [
+					{
+						"name": "owner_id",
+						"in": "query",
+						"required": true,
+						"description": "操作者",
+						"type": "string"
+					},
+					{
+						"name": "group_id",
+						"in": "query",
+						"type": "number",
+						"required": true
+					},
+					{
+						"name": "image_path",
+						"in": "query",
+						"type": "string",
+						"required": true
+					},
+					{
+						"name": "width",
+						"in": "query",
+						"type": "number",
+						"required": true
+					},
+					{
+						"name": "height",
+						"in": "query",
+						"type": "number",
+						"required": true
+					}
+				],
+				"tags": ["new_zeus", "image"],
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+									"type": "object",
+									"properties": {
+										"image": {
+											"type": "object",
+											"$ref": "#/definitions/Image"
+										}
+									}
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"summary": "删除图片",
+				"parameters": [
+					{
+						"name": "image_id",
+						"in": "query",
+						"required": true,
+						"type": "string",
+						"description": "删除指定id"
+					},
+					{
+						"name": "owner_id",
+						"in": "query",
+						"type": "string",
+						"required": true
+					}
+				],
+				"tags": ["new_zeus", "image"],
+				"responses": {
+					"200": {
+						"description": ""
+					}
+				}
+			}
+		},
+		"/mall/image_group/": {
+			"get": {
+				"summary": "获取图片分组",
+				"parameters": [
+					{
+						"name": "owner_id",
+						"in": "query",
+						"required": true,
+						"description": "操作者",
+						"type": "string"
+					},
+					{
+						"name": "image_group_id",
+						"in": "query",
+						"type": "number",
+						"required": true,
+						"description": "分组id"
+					}
+				],
+				"tags": ["new_zeus", "image_group"],
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+									"type": "object",
+									"properties": {
+										"image_group": {
+											"type": "array",
+											"items": {
+												"$ref": "#/definitions/Image"
+											}
+										}
+									}
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			},
+			"put": {
+				"summary": "创建一个图片分组",
+				"parameters": [
+					{
+						"name": "owner_id",
+						"in": "query",
+						"type": "string",
+						"required": true
+					},
+					{
+						"name": "name",
+						"in": "query",
+						"type": "string",
+						"required": true,
+						"description": "分组的名称"
+					},
+					{
+						"name": "images",
+						"in": "query",
+						"type": "string",
+						"description": "分组时添加图片"
+					}
+				],
+				"tags": ["new_zeus", "image_group"],
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+									"type": "object",
+									"properties": {
+										"image_group": {
+											"type": "array",
+											"items": {
+												"$ref": "#/definitions/ImageGroup"
+											}
+										}
+									}
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"summary": "删除图片管理分组",
+				"parameters": [
+					{
+						"name": "image_group_id",
+						"in": "query",
+						"required": true,
+						"type": "string",
+						"description": "删除指定id"
+					},
+					{
+						"name": "owner_id",
+						"in": "query",
+						"type": "string",
+						"required": true
+					}
+				],
+				"tags": ["new_zeus", "image_group"],
+				"responses": {
+					"200": {
+						"description": ""
+					}
+				}
+			},
+			"post": {
+				"summary": "更新图片管理分组",
+				"parameters": [
+					{
+						"name": "image_group_id",
+						"in": "query",
+						"required": true,
+						"type": "string",
+						"description": "删除指定id"
+					},
+					{
+						"name": "owner_id",
+						"in": "query",
+						"type": "string",
+						"required": true
+					},
+					{
+						"name": "name",
+						"in": "query",
+						"type": "string"
+					},
+					{
+						"name": "images",
+						"in": "query",
+						"type": "array"
+					}
+				],
+				"tags": ["new_zeus", "image_group"],
+				"responses": {
+					"200": {
+						"description": ""
 					}
 				}
 			}
@@ -938,9 +1308,7 @@
 						"description": "商品ID与display_index联合使用"
 					}
 				],
-				"tags": [
-					"new_zeus_category"
-				],
+				"tags": ["new_zeus", "category"],
 				"produces": [
 					"application/json"
 				],
@@ -990,9 +1358,7 @@
 						"description": "指定的商品"
 					}
 				],
-				"tags": [
-					"new_zeus_category"
-				],
+				"tags": ["new_zeus", "category"],
 				"responses": {
 					"200": {
 						"description": ""
@@ -1024,9 +1390,7 @@
 						"description": "要加的商品量"
 					}
 				],
-				"tags": [
-					"new_zeus_category"
-				],
+				"tags": ["new_zeus", "category"],
 				"produces": [
 					"application/json"
 				],
@@ -1083,9 +1447,7 @@
 						"description": "积分"
 					}
 				],
-				"tags": [
-					"member"
-				],
+				"tags": ["member"],
 				"responses": {
 					"200": {
 						"description": "OK",
@@ -5383,6 +5745,60 @@
 				}
 			}
 		},
+		"ImageGroup": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "number",
+					"description": "数据库生成的ID"
+				},
+				"owner_id": {
+					"type": "number",
+					"description": "操作者id"
+				},
+				"name": {
+					"type": "number",
+					"description": "分组名称"
+				},
+				"created_at": {
+					"type": "string",
+					"description": "创建记录时间"
+				}
+			}
+		},
+		"Image": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "number",
+					"description": "数据库生成的ID"
+				},
+				"owner_id": {
+					"type": "number",
+					"description": "操作者id"
+				},
+				"group_id": {
+					"type": "number",
+					"description": "分组id"
+				},
+				"url": {
+					"type": "number",
+					"description": "图片地址"
+				},
+				"width": {
+					"type": "number",
+					"description": "图片宽度"
+				},
+				"height": {
+					"type": "number",
+					"description": "图片高度"
+				},
+				"created_at": {
+					"type": "string",
+					"description": "创建记录时间"
+				}
+			}
+		},		
 		"Product": {
 			"type": "object",
 			"properties": {
