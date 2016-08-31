@@ -35,15 +35,14 @@ class ProductConfig(business_model.Model):
 
 		# 商品数据
 		if product_id:
-			product = Product.get_from_id({"product_id": product_id, 'owner_id': owner_id})
-			Product.fill_details(owner_id, [product], {
+			product = Product.from_id({"product_id": product_id, 'owner_id': owner_id, 'fill_options': {
 				'with_product_model': True,  # todo
 				'with_image': True,
 				'with_property': True,
 				'with_model_property_info': True,
 				'with_all_category': True,
 				'with_group_buy_info': True
-			})
+			}})
 			product_config.product = product.to_dict()
 		else:
 			product_config.product = {}
