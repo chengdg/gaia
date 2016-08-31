@@ -970,7 +970,7 @@
 						"name": "image_id",
 						"in": "query",
 						"type": "number",
-						"required": true,
+						"required": true
 					}
 				],
 				"tags": ["new_zeus", "image"],
@@ -1021,25 +1021,25 @@
 						"name": "group_id",
 						"in": "query",
 						"type": "number",
-						"required": true,
+						"required": true
 					},
 					{
 						"name": "image_path",
 						"in": "query",
 						"type": "string",
-						"required": true,
+						"required": true
 					},
 					{
 						"name": "width",
 						"in": "query",
 						"type": "number",
-						"required": true,
+						"required": true
 					},
 					{
 						"name": "height",
 						"in": "query",
 						"type": "number",
-						"required": true,
+						"required": true
 					}
 				],
 				"tags": ["new_zeus", "image"],
@@ -1099,7 +1099,7 @@
 						"description": ""
 					}
 				}
-			},
+			}
 		},
 		"/mall/image_group/": {
 			"get": {
@@ -1255,12 +1255,12 @@
 					{
 						"name": "name",
 						"in": "query",
-						"type": "string",
+						"type": "string"
 					},
 					{
 						"name": "images",
 						"in": "query",
-						"type": "array",
+						"type": "array"
 					}
 				],
 				"tags": ["new_zeus", "image_group"],
@@ -1269,7 +1269,7 @@
 						"description": ""
 					}
 				}
-			},
+			}
 		},
 		"/mall/category/": {
 			"put": {
@@ -1356,7 +1356,7 @@
 						"in": "query",
 						"type": "string",
 						"description": "指定的商品"
-					},
+					}
 				],
 				"tags": ["new_zeus", "category"],
 				"responses": {
@@ -1388,7 +1388,7 @@
 						"in": "query",
 						"type": "string",
 						"description": "要加的商品量"
-					},
+					}
 				],
 				"tags": ["new_zeus", "category"],
 				"produces": [
