@@ -1099,7 +1099,7 @@
 						"description": ""
 					}
 				}
-			},
+			}
 		},
 		"/mall/image_group/": {
 			"get": {
@@ -1269,7 +1269,7 @@
 						"description": ""
 					}
 				}
-			},
+			}
 		},
 		"/mall/category/": {
 			"put": {

@@ -213,14 +213,14 @@ class Product(business_model.Model):
 
 		"""
 		change_rows = mall_models.Product.update(name=self.name,
-		                                         stock_type=self.stock_type,
-		                                         purchase_price=self.purchase_price,
-		                                         detail=self.detail,
-		                                         price=self.price,
-		                                         weight=self.weight,
-		                                         promotion_title=self.promotion_title,
-		                                         thumbnails_url=self.thumbnails_url
-		                                         ).dj_where(id=self.id).execute()
+												 stock_type=self.stock_type,
+												 purchase_price=self.purchase_price,
+												 detail=self.detail,
+												 price=self.price,
+												 weight=self.weight,
+												 promotion_title=self.promotion_title,
+												 thumbnails_url=self.thumbnails_url
+												 ).dj_where(id=self.id).execute()
 		# 清理缓存
 		try:
 
@@ -249,7 +249,7 @@ class Product(business_model.Model):
 		"""
 		product_ids = args.get('product_ids')
 		pools = mall_models.ProductPool.select().dj_where(product_id__in=product_ids,
-		                                                  status=mall_models.PP_STATUS_ON)
+														  status=mall_models.PP_STATUS_ON)
 		on_product_ids = [pool.product_id for pool in pools]
 		return list(set(on_product_ids))
 
@@ -335,7 +335,7 @@ class Product(business_model.Model):
 					owner=owner_id)
 			property_ids = [property.id for property in properties]
 			id2property = dict([(str(property.id), property)
-			                    for property in properties])
+								for property in properties])
 			id2propertyvalue = {}
 			for value in mall_models.ProductModelPropertyValue.select().dj_where(property_id__in=property_ids):
 				id = '%d:%d' % (value.property_id, value.id)
@@ -438,7 +438,7 @@ class Product(business_model.Model):
 
 	@staticmethod
 	def __fill_model_detail(owner_id, products, product_ids, id2property, id2propertyvalue,
-	                        is_enable_model_property_info):
+							is_enable_model_property_info):
 		_id2property = {}
 		_id2propertyvalue = {}
 		if is_enable_model_property_info:
@@ -584,7 +584,7 @@ class Product(business_model.Model):
 				product.stock_type = target_model['stock_type']
 				product.min_limit = product.stocks
 				product.stocks = u'无限' if target_model[
-					                          'stock_type'] == mall_models.PRODUCT_STOCK_TYPE_UNLIMIT else target_model[
+											  'stock_type'] == mall_models.PRODUCT_STOCK_TYPE_UNLIMIT else target_model[
 					'stocks']
 			else:
 				# 所有规格都已经被删除
@@ -641,7 +641,7 @@ class ProductModel(business_model.Model):
 	@param_required(['product_id'])
 	def from_product_id(args):
 		product_models = mall_models.ProductModel.select().dj_where(product_id=args['product_id'],
-		                                                            is_deleted=False)
+																	is_deleted=False)
 
 		return [ProductModel(product_model) for product_model in product_models]
 
@@ -649,15 +649,15 @@ class ProductModel(business_model.Model):
 	@param_required(['product_id', 'name'])
 	def from_product_id_name(args):
 		product_model = mall_models.ProductModel.select().dj_where(product_id=args['product_id'],
-		                                                           is_deleted=False,
-		                                                           name=args.get('name')).first()
+																   is_deleted=False,
+																   name=args.get('name')).first()
 
 		return ProductModel(product_model)
 
 	def update(self):
 
 		change_rows = mall_models.ProductModel.update(stock_type=self.stock_type,
-		                                              stocks=self.stocks).dj_where(id=self.id).execute()
+													  stocks=self.stocks).dj_where(id=self.id).execute()
 		return change_rows
 
 	@staticmethod
@@ -669,15 +669,15 @@ class ProductModel(business_model.Model):
 		bulk_create = []
 		models = args.get('models')
 		bulk_create = [dict(owner=temp_model.owner_id,
-		                    product=temp_model.product_id,
-		                    name=temp_model.name,
-		                    is_standard=temp_model.is_standard,
-		                    price=temp_model.price,
-		                    stock_type=temp_model.stock_type,
-		                    stocks=temp_model.stocks,
-		                    is_deleted=temp_model.is_deleted,
-		                    weight=temp_model.weight,
-		                    purchase_price=temp_model.purchase_price) for temp_model in models]
+							product=temp_model.product_id,
+							name=temp_model.name,
+							is_standard=temp_model.is_standard,
+							price=temp_model.price,
+							stock_type=temp_model.stock_type,
+							stocks=temp_model.stocks,
+							is_deleted=temp_model.is_deleted,
+							weight=temp_model.weight,
+							purchase_price=temp_model.purchase_price) for temp_model in models]
 
 		mall_models.ProductModel.insert_many(bulk_create).execute()
 
@@ -703,15 +703,15 @@ class ProductModel(business_model.Model):
 			mall_models.ProductModel.update(is_deleted=True).dj_where(product_id=args.get('product_id')).execute()
 			for temp_model in models:
 				if mall_models.ProductModel.select().dj_where(name=temp_model.name,
-				                                              product_id=temp_model.product_id).count() > 0:
+															  product_id=temp_model.product_id).count() > 0:
 					mall_models.ProductModel.update(price=temp_model.price,
-					                                stock_type=temp_model.stock_type,
-					                                stocks=temp_model.stocks,
-					                                weight=temp_model.weight,
-					                                purchase_price=temp_model.purchase_price,
-					                                is_deleted=temp_model.is_deleted) \
+													stock_type=temp_model.stock_type,
+													stocks=temp_model.stocks,
+													weight=temp_model.weight,
+													purchase_price=temp_model.purchase_price,
+													is_deleted=temp_model.is_deleted) \
 						.dj_where(name=temp_model.name,
-					              product_id=temp_model.product_id).execute()
+								  product_id=temp_model.product_id).execute()
 					if temp_model.name == 'standard':
 						need_update_stand = False
 				else:
@@ -721,7 +721,7 @@ class ProductModel(business_model.Model):
 				ProductModel.save_many({'models': need_add})
 			if need_update_stand:
 				mall_models.ProductModel.update(is_deleted=True).dj_where(product_id=args.get('product_id'),
-				                                                          name='standard').execute()
+																		  name='standard').execute()
 			return 'SUCCESS'
 		except:
 			msg = unicode_full_stack()
@@ -764,9 +764,9 @@ class ProductSwipeImage(business_model.Model):
 			if not url.startswith('http'):
 				url = PANDA_IMAGE_DOMAIN + url
 			images.append(dict(product=args['product_id'],
-			                   url=url,
-			                   width=100,
-			                   height=100))
+							   url=url,
+							   width=100,
+							   height=100))
 		# images = [dict(product=args['product_id'],
 		#                url=image.get('url'),
 		#                width=100,
