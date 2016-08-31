@@ -17,5 +17,6 @@ import a_categories
 import a_pay_interface_config
 import a_weixin_pay_interface_config
 import a_ali_pay_interface_config
+import a_weixin_certificate
 
 

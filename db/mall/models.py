@@ -1533,6 +1533,22 @@ class ProductLimitPurchasePrice(models.Model):
 		verbose_name_plural = "商品池商品"
 		db_table = "product_limit_purchase_price"
 
+class WxCertSettings(models.Model):
+	"""
+	存储微信每个帐号的证书文件地址
+	"""
+	owner = models.ForeignKey(User)  # 活动所有者
+	cert_path = models.CharField(default="", max_length=1024)  # 证书存储路径
+	up_cert_path = models.CharField(default="", max_length=2048)  # 证书又拍云存储路径
+
+	key_path = models.CharField(default="", max_length=1024)  # 证书key存储路径
+	up_key_path = models.CharField(default="", max_length=2048)  # 证书key又拍云存储路径
+
+	class Meta(object):
+		verbose_name = "微信证书文件地址"
+		verbose_name_plural = "微信证书文件地址"
+		db_table = "mall_weixin_cert"
+
 
 ########################################################################
 # Workspace: 一个工作空间，可包含多个Project
