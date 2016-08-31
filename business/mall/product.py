@@ -213,14 +213,14 @@ class Product(business_model.Model):
 
 		"""
 		change_rows = mall_models.Product.update(name=self.name,
-												 stock_type=self.stock_type,
-												 purchase_price=self.purchase_price,
-												 detail=self.detail,
-												 price=self.price,
-												 weight=self.weight,
-												 promotion_title=self.promotion_title,
-												 thumbnails_url=self.thumbnails_url
-												 ).dj_where(id=self.id).execute()
+												stock_type=self.stock_type,
+												purchase_price=self.purchase_price,
+												detail=self.detail,
+												price=self.price,
+												weight=self.weight,
+												promotion_title=self.promotion_title,
+												thumbnails_url=self.thumbnails_url
+												).dj_where(id=self.id).execute()
 		# 清理缓存
 		try:
 
@@ -249,7 +249,7 @@ class Product(business_model.Model):
 		"""
 		product_ids = args.get('product_ids')
 		pools = mall_models.ProductPool.select().dj_where(product_id__in=product_ids,
-														  status=mall_models.PP_STATUS_ON)
+														status=mall_models.PP_STATUS_ON)
 		on_product_ids = [pool.product_id for pool in pools]
 		return list(set(on_product_ids))
 
@@ -270,6 +270,14 @@ class Product(business_model.Model):
 
 		Product.__fill_details(owner_id, [product], fill_options)
 		return product
+
+	@staticmethod
+	@param_required(['owner_id', 'shelve_type', 'is_deleted', 'fill_options'])
+	def from_owner_id(args):
+		print 'ddddddddddddddddddssssssssssssssssss==========',args
+		products = mall_models.Product.select().dj_where(owner=args['owner_id'], shelve_type=args['shelve_type'], is_deleted=args['is_deleted'])
+		print products
+		return [Product(product) for product in products]
 
 	@staticmethod
 	def __fill_details(owner_id, products, options):
