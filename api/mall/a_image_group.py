@@ -37,11 +37,11 @@ class AImageGroup(api_resource.ApiResource):
 			# 	}
 			# ]
 			images = json.loads(args['images'])
-		image_group_factory = ImageGroupFactory.create()
-		image_group = image_group_factory.save(args['owner_id'], args['name'], images=images)
+		image_group = ImageGroup().create(args['owner_id'], args['name'], images=images)
+		# image_group = image_group_factory.save()
 
 		return {
-			'image_group': image_group
+			'image_group': image_group.to_dict()
 		}
 
 	@param_required(['owner_id', 'image_group_id'])
@@ -54,39 +54,32 @@ class AImageGroup(api_resource.ApiResource):
 		if 'name'in args:
 			params['name'] = args['name']
 		if 'images' in args:
-			# images = [
-			# 	{
-			# 		'image_path': '/home/rocky/Pictures/001.png',
-			# 		'width': 200,
-			# 		'height': 300,
-			# 		'title': args.get('title', '')
-			# 	}
-			# ]
-			images = json.loads(args['images'])
+			images = [
+				{
+					'image_path': '/home/rocky/Pictures/001.png',
+					'width': 200,
+					'height': 400,
+					'title': args.get('title', '')
+				}
+			]
+			# images = json.loads(args['images'])
 		image_group = ImageGroup.from_id({'owner_id': args['owner_id'], 'image_group_id': args['image_group_id']})
 		logging.info(image_group)
 		if image_group:
-			if images:
-				image = Image.empty_image()
-				image.update(args['owner_id'], image_group, images)
-
-			image_group.update(params)
+			image_group.update(params=params, images=images)
 			return {}
 		else:
-			msg = u'image_group_id %s 不存在'.formate(args['image_group_id'])
+			msg = u'image_group_id {} not exist'.format(args['image_group_id'])
 			return 500, {'msg': msg}
 
 	@param_required(['owner_id', 'image_group_id'])
 	def delete(args):
 		image_group = ImageGroup.from_id({'owner_id': args['owner_id'], 'image_group_id': args['image_group_id']})
 		if image_group:
-			if image_group.images:
-				image = Image.empty_image()
-				image.delete_group(image_group)
 			image_group.delete()
 			return {}
 		else:
-			msg = u'image_group_id %s 不存在'.formate(args['image_group_id'])
+			msg = u'image_group_id {} not exist'.format(args['image_group_id'])
 			return 500, {'msg': msg}
 
 	@param_required(['owner_id', 'image_group_id'])
@@ -98,5 +91,5 @@ class AImageGroup(api_resource.ApiResource):
 			}
 
 		else:
-			msg = u'image_group_id {} 不存在'.format(args['image_group_id'])
+			msg = u'image_group_id {} not exist'.format(args['image_group_id'])
 			return 500, {'msg': msg}

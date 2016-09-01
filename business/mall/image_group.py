@@ -22,7 +22,7 @@ class ImageGroup(business_model.Model):
 		'created_at',
 	)
 
-	def __init__(self, model):
+	def __init__(self, model=None):
 		business_model.Model.__init__(self)
 
 		self.context['db_model'] = model
@@ -58,12 +58,13 @@ class ImageGroup(business_model.Model):
 		image_group = ImageGroup(model)
 		return image_group
 
-	def save(self, owner_id, name, images=None):
+	def __save(self, owner_id, name, images=None):
 		opt = {
 			'owner': owner_id,
 			'name': name
 		}
 		image_group, created = mall_models.ImageGroup.get_or_create(**opt)
+
 		return ImageGroup(image_group)
 
 	@property
@@ -81,11 +82,50 @@ class ImageGroup(business_model.Model):
 
 
 	def delete(self):
-		self.context['db_model'].delete().execute()
+		if self.images:
+			Image().delete_from_group(self)
+		self.context['db_model'].delete_instance()
 
-	def update(self, params=None):
+	def update(self, params=None, images=None):
+		'''
+		更新分组内容
+		'''
+		# import pdb
+		# pdb.set_trace()
 		if params:
-			self.context['db_model'].update(**params).execute()
+			# 主要是name
+			self.context['db_model'].name = params['name']
+			self.context['db_model'].save()
+		if images:
+			mall_models.Image.delete().dj_where(group=self.context['db_model']).execute()
+			for image in images:
+				opt = {
+					'owner': self.context['db_model'].owner,
+					'group': self.context['db_model'],
+					'url': image['image_path'],
+					'width': image['width'],
+					'height': image['height'],
+					'title': image['title']
+				}
+				Image().save(opt)
+
+	def create(self, owner_id, name, images=None):
+		'''
+		创建图片分组
+		'''
+		image_group = self.__save(owner_id, name)
+		if images:
+			for image in images:
+				opt = {
+					'owner': owner_id,
+					'group': image_group.id,
+					'url': image['image_path'],
+					'width': image['width'],
+					'height': image['height'],
+					'title': image['title']
+				}
+				Image().save(opt)
+		return ImageGroup(image_group)
 
 
 

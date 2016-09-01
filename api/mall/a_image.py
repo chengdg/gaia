@@ -37,8 +37,7 @@ class AImage(api_resource.ApiResource):
 		'''
 		添加图片 利用工厂类@生成器
 		'''
-		params = args
-		image_factory = ImageFactory.create()
+		print args
 		opt = {
 			'owner_id': args['owner_id'],
 			'group_id': args['group_id'],
@@ -47,7 +46,7 @@ class AImage(api_resource.ApiResource):
 			'height': args['height'],
 			'title': args.get('title', '')
 		}
-		image = image_factory.save(opt)
+		image = Image().create(opt)
 		return {
 			'image':image
 		}
@@ -59,7 +58,7 @@ class AImage(api_resource.ApiResource):
 	def delete(args):
 		image = Image.from_id({'owner_id': args['owner_id'], 'image_id': args['image_id']})
 		if image:
-			image.delete_id()
+			image.delete()
 			return {}
 		else:
 			msg = u'image_id {} 不存在'.format(args['image_id'])

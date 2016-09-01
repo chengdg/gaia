@@ -11,8 +11,6 @@ from core import paginator
 from util import upyun_util
 
 
-
-
 class Image(business_model.Model):
 	"""
 	图片分组
@@ -25,11 +23,10 @@ class Image(business_model.Model):
 		'url',
 		'width',
 		'height',
-		'title',
 		'created_at',
 	)
 
-	def __init__(self, model):
+	def __init__(self, model=None):
 		business_model.Model.__init__(self)
 
 		self.context['db_model'] = model
@@ -63,25 +60,22 @@ class Image(business_model.Model):
 		image = mall_models.Image.create(**params)
 		return Image(image)
 
-	def delete_group(self, image_group):
-		self.context['db_model'].delete().dj_where(group=image_group.context['db_model']).execute()
+	def delete_from_group(self, image_group):
+		mall_models.Image.delete().dj_where(group=image_group.context['db_model']).execute()
 
-	def delete_id(self):
-		self.context['db_model'].delete().execute()
+	def delete(self):
+		self.context['db_model'].delete_instance()
 		# mall_models.Image.delete().dj_where(owner=owner_id, id=image_id).execute()
 
-	def update(self, owner_id, image_group, images=None):
-		mall_models.Image.delete().dj_where(group=image_group.context['db_model']).execute()
-		if images:
-			for image in images:
-				opt = {
-					'owner': owner_id,
-					'group': image_group.id,
-					'url': image['image_path'],
-					'width': image['width'],
-					'height': image['height'],
-					'title': image['title']
-				}
-				self.save(opt)
+	def create(self, params):
+		opt = {
+			'owner': params['owner_id'],
+			'group': params['group_id'],
+			'url': params['image_path'],
+			'width': params['width'],
+			'height': params['height'],
+			'title': params['title']
+		}
+		return self.save(opt)
 
 
