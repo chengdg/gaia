@@ -278,6 +278,7 @@ class Product(business_model.Model):
 	@staticmethod
 	@param_required(['owner_id', 'shelve_type', 'is_deleted', 'fill_options'])
 	def from_owner_id(args):
+		
 		products = mall_models.Product.select().dj_where(owner=args['owner_id'], shelve_type=args['shelve_type'], is_deleted=args['is_deleted'])
 		# 分页
 		pageinfo, products = paginator.paginate(products, args['cur_page'], args['count_per_page'], query_string=args.get('query_string', None))
