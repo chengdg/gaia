@@ -7,7 +7,6 @@ from eaglet.core import watchdog
 from eaglet.core.exceptionutil import unicode_full_stack
 
 from business.mall.category import Category
-from business.mall.category_factory import CategoryFactory
 from business.mall.product import Product
 
 class ACategory(api_resource.ApiResource):
@@ -15,18 +14,18 @@ class ACategory(api_resource.ApiResource):
 	resource = 'category'
 
 	@param_required(['name', 'owner_id'])
-	def post(args):
+	def put(args):
 		'''
 		创建商品分组,  利用工厂类@生成器
 		'''
-		category_factory = CategoryFactory.create()
-		category = category_factory.save(args['owner_id'], args['name'], product_ids=args.get('product_ids', None))
+		category = Category()
+		category = category.create(args['owner_id'], args['name'], product_ids=args.get('product_ids', None))
 		return  {
 			'category':category
 		}
 
 	@param_required(['owner_id','category_id'])
-	def put(args):
+	def post(args):
 		category = Category.from_id({'category_id': args['category_id']})
 		params = {}
 		if category:

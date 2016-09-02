@@ -1272,7 +1272,7 @@
 			}
 		},
 		"/mall/category/": {
-			"put": {
+			"post": {
 				"summary": "修改指定分组内容",
 				"description": "修改指定分组内容",
 				"parameters": [
@@ -1365,7 +1365,7 @@
 					}
 				}
 			},
-			"post": {
+			"put": {
 				"summary": "创建一个分组",
 				"description": "创建一个分组",
 				"parameters": [

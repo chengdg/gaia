@@ -24,7 +24,7 @@ class Category(business_model.Model):
 		'created_at',
 	)
 
-	def __init__(self, model):
+	def __init__(self, model=None):
 		business_model.Model.__init__(self)
 
 		self.context['db_model'] = model
@@ -151,3 +151,11 @@ class Category(business_model.Model):
 	@products.setter
 	def products(self, value):
 		self.context['products'] = value
+
+	def create(self, owner_id, name, product_ids=None):
+		if product_ids:
+			product_ids = [product_id.strip() for product_id in product_ids.strip().split(',') if product_id]
+			products = Product.from_ids({'product_ids': product_ids})
+		else:
+			products = product_ids
+		return self.save(owner_id, name, products)
