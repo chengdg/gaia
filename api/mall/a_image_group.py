@@ -7,10 +7,8 @@ from eaglet.decorator import param_required
 from eaglet.core import watchdog
 from eaglet.core.exceptionutil import unicode_full_stack
 
-from business.mall.image_group_factory import ImageGroupFactory
 from business.mall.image_group import ImageGroup
 from business.mall.image import Image
-from business.mall.image_factory import ImageFactory
 
 class AImageGroup(api_resource.ApiResource):
 	'''
@@ -54,17 +52,16 @@ class AImageGroup(api_resource.ApiResource):
 		if 'name'in args:
 			params['name'] = args['name']
 		if 'images' in args:
-			images = [
-				{
-					'image_path': '/home/rocky/Pictures/001.png',
-					'width': 200,
-					'height': 400,
-					'title': args.get('title', '')
-				}
-			]
-			# images = json.loads(args['images'])
+			# images = [
+			# 	{
+			# 		'image_path': '/home/rocky/Pictures/001.png',
+			# 		'width': 200,
+			# 		'height': 400,
+			# 		'title': args.get('title', '')
+			# 	}
+			# ]
+			images = json.loads(args['images'])
 		image_group = ImageGroup.from_id({'owner_id': args['owner_id'], 'image_group_id': args['image_group_id']})
-		logging.info(image_group)
 		if image_group:
 			image_group.update(params=params, images=images)
 			return {}

@@ -107,7 +107,8 @@ class ImageGroup(business_model.Model):
 					'height': image['height'],
 					'title': image['title']
 				}
-				Image().save(opt)
+				image = Image()
+				image.save(opt)
 
 	def create(self, owner_id, name, images=None):
 		'''
@@ -124,7 +125,8 @@ class ImageGroup(business_model.Model):
 					'height': image['height'],
 					'title': image['title']
 				}
-				Image().save(opt)
+				image = Image()
+				image.save(opt)
 		return ImageGroup(image_group)
 
 
