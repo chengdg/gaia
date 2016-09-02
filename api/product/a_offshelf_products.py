@@ -13,7 +13,7 @@ class AProductOffshelf(api_resource.ApiResource):
 
 	"""
 	app = "product"
-	resource = "product_offshelf"
+	resource = "offshelf_products"
 
 	@param_required(['owner_id'])
 	def get(args):
@@ -24,9 +24,25 @@ class AProductOffshelf(api_resource.ApiResource):
 			'owner_id': args['owner_id'],
 			'shelve_type': 0,   #int 0 待售标志 
 			'is_deleted': False,
-			'fill_options': {} # 填充参数
+			'fill_options': {
+				'with_selected_category': True,
+				'with_all_category': True,
+				'with_image': True,
+				'with_property': True,
+				'with_group_buy_info': True,
+				'with_sales': True,
+				'with_product_promotion': True,
+				'with_price': True
+			} # 填充参数
 		}
-		products = Product.from_owner_id(opt)
+		# 分页
+		page_info = {
+			'cur_page': int(args.get('page', 1)),
+			'count_per_page': int(args.get('count_per_page', 10))
+		}
+		opt.update(page_info)
+		products, pageinfo = Product.from_owner_id(opt)
 		return {
+			'pageinfo': pageinfo.to_dict(),
 			'products': products
 		}
