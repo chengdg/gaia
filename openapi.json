@@ -3180,6 +3180,55 @@
 				}
 			}
 		},
+		"/product/offshelf_products": {
+			"get": {
+				"summary": "待售商品列表",
+				"parameters": [
+					{
+						"name": "owner_id",
+						"in": "query",
+						"description": "owner_id",
+						"required": true,
+						"type": "integer"
+					}
+				],
+				"tags": [
+					"new_zeus",
+					"offshelf_products"
+				],
+				"responses": {
+					"200": {
+						"description": "商品配置数据",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+									"type": "object",
+									"properties": {
+										"pageinfo":{
+											"description": "分页器"
+										},
+										"products": {
+											"description": "商品信息"
+										}
+									}
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
 		"/product/property_templates": {
 			"get": {
 				"summary": "商品属性模本列表数据接口",
