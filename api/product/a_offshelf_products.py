@@ -37,12 +37,12 @@ class AProductOffshelf(api_resource.ApiResource):
 		}
 		# 分页
 		page_info = {
-			'cur_page': int(args.get('page', 1)),
+			'cur_page': int(args.get('cur_page', 1)),
 			'count_per_page': int(args.get('count_per_page', 10))
 		}
 		opt.update(page_info)
 		products, pageinfo = Product.from_owner_id(opt)
 		return {
 			'pageinfo': pageinfo.to_dict(),
-			'products': products
+			'products': [product.to_dict() for product in products]
 		}
