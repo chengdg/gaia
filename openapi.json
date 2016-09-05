@@ -3190,11 +3190,84 @@
 						"description": "owner_id",
 						"required": true,
 						"type": "integer"
+					},
+					{
+						"name": "count_per_page",
+						"in": "query",
+						"description": "count_per_page",
+						"type": "integer"
+					},
+					{
+						"name": "page",
+						"in": "query",
+						"description": "page",
+						"type": "integer"
 					}
 				],
 				"tags": [
 					"new_zeus",
 					"offshelf_products"
+				],
+				"responses": {
+					"200": {
+						"description": "商品配置数据",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+									"type": "object",
+									"properties": {
+										"pageinfo":{
+											"description": "分页器"
+										},
+										"products": {
+											"description": "商品信息"
+										}
+									}
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/product/onshelf_products": {
+			"get": {
+				"summary": "在售商品列表",
+				"parameters": [
+					{
+						"name": "owner_id",
+						"in": "query",
+						"description": "owner_id",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"name": "count_per_page",
+						"in": "query",
+						"description": "count_per_page",
+						"type": "integer"
+					},
+					{
+						"name": "page",
+						"in": "query",
+						"description": "page",
+						"type": "integer"
+					}
+				],
+				"tags": [
+					"new_zeus",
+					"onshelf_products"
 				],
 				"responses": {
 					"200": {
