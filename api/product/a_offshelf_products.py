@@ -44,5 +44,5 @@ class AProductOffshelf(api_resource.ApiResource):
 		products, pageinfo = Product.from_owner_id(opt)
 		return {
 			'pageinfo': pageinfo.to_dict(),
-			'products': products
+			'products': [product.to_dict() for product in products]
 		}
