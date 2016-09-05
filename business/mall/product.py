@@ -315,18 +315,12 @@ class Product(business_model.Model):
 				True)
 
 		if options.get('with_price', False):
-			# TODO
-			# 需要做的
 			Product.__fill_price(products)
 
 		if options.get('with_product_promotion', False):
-			# TODO
-			# 需要做的
 			Product.__fill_product_promotion(owner_id, products)
 
 		if options.get('with_sales', False):
-			# TODO
-			# 需要做的
 			Product.__fill_sales(owner_id, products)
 
 		if options.get('with_all_category', False):
