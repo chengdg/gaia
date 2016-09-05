@@ -12,6 +12,8 @@ from eaglet.core.exceptionutil import unicode_full_stack
 from settings import PANDA_IMAGE_DOMAIN
 from services.product_service.task import clear_sync_product_cache
 
+from core import paginator
+
 
 class Product(business_model.Model):
 	__slots__ = (
@@ -66,6 +68,8 @@ class Product(business_model.Model):
 
 		'group_buy_info',
 		'sales',
+		# 促销
+		'promotion',
 
 		'display_price',
 		'display_price_range',
@@ -213,14 +217,14 @@ class Product(business_model.Model):
 
 		"""
 		change_rows = mall_models.Product.update(name=self.name,
-		                                         stock_type=self.stock_type,
-		                                         purchase_price=self.purchase_price,
-		                                         detail=self.detail,
-		                                         price=self.price,
-		                                         weight=self.weight,
-		                                         promotion_title=self.promotion_title,
-		                                         thumbnails_url=self.thumbnails_url
-		                                         ).dj_where(id=self.id).execute()
+												stock_type=self.stock_type,
+												purchase_price=self.purchase_price,
+												detail=self.detail,
+												price=self.price,
+												weight=self.weight,
+												promotion_title=self.promotion_title,
+												thumbnails_url=self.thumbnails_url
+												).dj_where(id=self.id).execute()
 		# 清理缓存
 		try:
 
@@ -249,7 +253,7 @@ class Product(business_model.Model):
 		"""
 		product_ids = args.get('product_ids')
 		pools = mall_models.ProductPool.select().dj_where(product_id__in=product_ids,
-		                                                  status=mall_models.PP_STATUS_ON)
+														status=mall_models.PP_STATUS_ON)
 		on_product_ids = [pool.product_id for pool in pools]
 		return list(set(on_product_ids))
 
@@ -270,6 +274,19 @@ class Product(business_model.Model):
 
 		Product.__fill_details(owner_id, [product], fill_options)
 		return product
+
+	@staticmethod
+	@param_required(['owner_id', 'shelve_type', 'is_deleted', 'fill_options'])
+	def from_owner_id(args):
+		
+		products = mall_models.Product.select().dj_where(owner=args['owner_id'], shelve_type=args['shelve_type'], is_deleted=args['is_deleted'])
+		# 分页
+		pageinfo, products = paginator.paginate(products, args['cur_page'], args['count_per_page'], query_string=args.get('query_string', None))
+		# product_list = []
+		products = [Product(product) for product in products]
+		Product.__fill_details(args['owner_id'], products, args['fill_options'])
+
+		return products, pageinfo
 
 	@staticmethod
 	def __fill_details(owner_id, products, options):
@@ -296,6 +313,15 @@ class Product(business_model.Model):
 				owner_id,
 				products,
 				True)
+
+		if options.get('with_price', False):
+			Product.__fill_price(products)
+
+		if options.get('with_product_promotion', False):
+			Product.__fill_product_promotion(owner_id, products)
+
+		if options.get('with_sales', False):
+			Product.__fill_sales(owner_id, products)
 
 		if options.get('with_all_category', False):
 			Product.__fill_category_detail(
@@ -335,7 +361,7 @@ class Product(business_model.Model):
 					owner=owner_id)
 			property_ids = [property.id for property in properties]
 			id2property = dict([(str(property.id), property)
-			                    for property in properties])
+								for property in properties])
 			id2propertyvalue = {}
 			for value in mall_models.ProductModelPropertyValue.select().dj_where(property_id__in=property_ids):
 				id = '%d:%d' % (value.property_id, value.id)
@@ -378,6 +404,121 @@ class Product(business_model.Model):
 			product.group_buy_info = {
 				'is_in_group_buy': product2group_info.get(product.id, False)
 			}
+
+	@staticmethod
+	def __fill_price(products):
+		"""根据商品规格，获取商品价格
+		"""
+		# 获取所有models
+		product2models = {}
+		product_ids = [product.id for product in products]
+		for model in mall_models.ProductModel.select().dj_where(product_id__in=product_ids):
+			if model.is_deleted:
+				# model被删除，跳过
+				continue
+
+			product_id = model.product_id
+			if product_id in product2models:
+				models = product2models[product_id]
+			else:
+				models = {
+					'standard_model': None,
+					'custom_models': [],
+					'is_use_custom_model': False}
+				product2models[product_id] = models
+
+			if model.name == 'standard':
+				models['standard_model'] = model
+			else:
+				models['is_use_custom_model'] = True
+				models['custom_models'].append(model)
+
+		# 为每个product确定显示价格
+		for product in products:
+			product_id = product.id
+			if product_id in product2models:
+				models = product2models[product.id]
+				if models['is_use_custom_model']:
+					custom_models = models['custom_models']
+					if len(custom_models) == 1:
+						product.display_price = custom_models[0].price
+					else:
+						prices = sorted(
+							[model.price
+							 for model in custom_models])
+						# 列表页部分显示商品的最小价格
+						# add by liupeiyu at 19.0
+						# product.display_price = '%s-%s' % (prices[0], prices[-1])
+						product.display_price = prices[0]
+				else:
+					product.display_price = models['standard_model'].price
+			else:
+				product.display_price = product.price
+
+	@staticmethod
+	def __fill_product_promotion(owner_id, products):
+		# 需要去做  商品促销
+		from datetime import datetime
+		from db.mall import promotion_models
+		today = datetime.today()
+		id2product = {}
+		product_ids = []
+		for product in products:
+			# product.promotion = {}
+			id2product[product.id] = product
+			product_ids.append(product.id)
+
+		type2promotions = {}
+		id2promotion = {}
+		product_promotion_relations = promotion_models.ProductHasPromotion.select().dj_where(product_id__in=product_ids)
+		promotion_ids = [relation.promotion_id for relation in product_promotion_relations]
+		promotions = [relation.promotion for relation in product_promotion_relations]
+		# promotions = list(promotion_models.ProductHasPromotion.select().dj_where(product_id__in=product_ids))
+		for promotion in promotions:
+			type2promotions.setdefault(promotion.type, []).append(promotion)
+			id2promotion[promotion.id] = promotion
+
+		for relation in product_promotion_relations:
+			product = id2product[relation.product_id]
+			promotion = id2promotion[relation.promotion_id]
+			# import pdb
+			# pdb.set_trace()
+			product.promotion = {
+				'id': promotion.id,
+				'type': promotion.type,
+				'name': promotion.name,
+				'status_value': promotion.status,
+				'status': promotion.status,
+				'start_date': promotion.start_date.strftime("%Y-%m-%d %H:%M"),
+				'end_date': promotion.end_date.strftime('%Y-%m-%d %H:%M')
+			}
+
+		# for type, promotions in type2promotions.items():
+		# 	if type == promotion_models.PROMOTION_TYPE_FLASH_SALE:
+		# 		model2product = dict([(product.context['db_model'].id, product.context['db_model']) for product in products])
+		# 		product_model_ids = [product.context['db_model'].id for product in products]
+		# 		model_promotion_details = promotion_models.ProductModelFlashSaleDetail.select().dj_where(
+		# 			owner=owner_id,
+		# 			product_model_id__in=product_model_ids)
+		# 		for model_promotion_detail in model_promotion_details:
+		# 			model2product[promotion_detail.product_model_id].promotion['price'] = model_promotion_detail.promotion_price
+		# 	else:
+				# pass
+
+	@staticmethod
+	def __fill_sales(owner_id, products):
+		# 需要做的    商品销量
+		id2product = {}
+		product_ids = []
+		for product in products:
+			product.sales = 0
+			id2product[product.id] = product
+			product_ids.append(product.id)
+
+		for sales in mall_models.ProductSales.select().dj_where(product_id__in=product_ids):
+			product_id = sales.product_id
+			if id2product.has_key(product_id):
+				id2product[product_id].sales = sales.sales
 
 	@staticmethod
 	def __fill_image_detail(products):
@@ -438,7 +579,7 @@ class Product(business_model.Model):
 
 	@staticmethod
 	def __fill_model_detail(owner_id, products, product_ids, id2property, id2propertyvalue,
-	                        is_enable_model_property_info):
+							is_enable_model_property_info):
 		_id2property = {}
 		_id2propertyvalue = {}
 		if is_enable_model_property_info:
@@ -479,7 +620,8 @@ class Product(business_model.Model):
 				"stocks": model.stocks if model.stock_type == mall_models.PRODUCT_STOCK_TYPE_LIMIT else u'无限',
 				"user_code": model.user_code,
 				"market_price": '%.2f' % model.market_price,
-				"gross_profit": '%.2f' % (model.price - model.purchase_price)}
+				"gross_profit": '%.2f' % (model.price - model.purchase_price)
+			}
 
 			'''
 			获取model关联的property信息
@@ -584,7 +726,7 @@ class Product(business_model.Model):
 				product.stock_type = target_model['stock_type']
 				product.min_limit = product.stocks
 				product.stocks = u'无限' if target_model[
-					                          'stock_type'] == mall_models.PRODUCT_STOCK_TYPE_UNLIMIT else target_model[
+											  'stock_type'] == mall_models.PRODUCT_STOCK_TYPE_UNLIMIT else target_model[
 					'stocks']
 			else:
 				# 所有规格都已经被删除
@@ -641,7 +783,7 @@ class ProductModel(business_model.Model):
 	@param_required(['product_id'])
 	def from_product_id(args):
 		product_models = mall_models.ProductModel.select().dj_where(product_id=args['product_id'],
-		                                                            is_deleted=False)
+																	is_deleted=False)
 
 		return [ProductModel(product_model) for product_model in product_models]
 
@@ -649,15 +791,15 @@ class ProductModel(business_model.Model):
 	@param_required(['product_id', 'name'])
 	def from_product_id_name(args):
 		product_model = mall_models.ProductModel.select().dj_where(product_id=args['product_id'],
-		                                                           is_deleted=False,
-		                                                           name=args.get('name')).first()
+																   is_deleted=False,
+																   name=args.get('name')).first()
 
 		return ProductModel(product_model)
 
 	def update(self):
 
 		change_rows = mall_models.ProductModel.update(stock_type=self.stock_type,
-		                                              stocks=self.stocks).dj_where(id=self.id).execute()
+													  stocks=self.stocks).dj_where(id=self.id).execute()
 		return change_rows
 
 	@staticmethod
@@ -669,15 +811,15 @@ class ProductModel(business_model.Model):
 		bulk_create = []
 		models = args.get('models')
 		bulk_create = [dict(owner=temp_model.owner_id,
-		                    product=temp_model.product_id,
-		                    name=temp_model.name,
-		                    is_standard=temp_model.is_standard,
-		                    price=temp_model.price,
-		                    stock_type=temp_model.stock_type,
-		                    stocks=temp_model.stocks,
-		                    is_deleted=temp_model.is_deleted,
-		                    weight=temp_model.weight,
-		                    purchase_price=temp_model.purchase_price) for temp_model in models]
+							product=temp_model.product_id,
+							name=temp_model.name,
+							is_standard=temp_model.is_standard,
+							price=temp_model.price,
+							stock_type=temp_model.stock_type,
+							stocks=temp_model.stocks,
+							is_deleted=temp_model.is_deleted,
+							weight=temp_model.weight,
+							purchase_price=temp_model.purchase_price) for temp_model in models]
 
 		mall_models.ProductModel.insert_many(bulk_create).execute()
 
@@ -703,15 +845,15 @@ class ProductModel(business_model.Model):
 			mall_models.ProductModel.update(is_deleted=True).dj_where(product_id=args.get('product_id')).execute()
 			for temp_model in models:
 				if mall_models.ProductModel.select().dj_where(name=temp_model.name,
-				                                              product_id=temp_model.product_id).count() > 0:
+															  product_id=temp_model.product_id).count() > 0:
 					mall_models.ProductModel.update(price=temp_model.price,
-					                                stock_type=temp_model.stock_type,
-					                                stocks=temp_model.stocks,
-					                                weight=temp_model.weight,
-					                                purchase_price=temp_model.purchase_price,
-					                                is_deleted=temp_model.is_deleted) \
+													stock_type=temp_model.stock_type,
+													stocks=temp_model.stocks,
+													weight=temp_model.weight,
+													purchase_price=temp_model.purchase_price,
+													is_deleted=temp_model.is_deleted) \
 						.dj_where(name=temp_model.name,
-					              product_id=temp_model.product_id).execute()
+								  product_id=temp_model.product_id).execute()
 					if temp_model.name == 'standard':
 						need_update_stand = False
 				else:
@@ -721,7 +863,7 @@ class ProductModel(business_model.Model):
 				ProductModel.save_many({'models': need_add})
 			if need_update_stand:
 				mall_models.ProductModel.update(is_deleted=True).dj_where(product_id=args.get('product_id'),
-				                                                          name='standard').execute()
+																		  name='standard').execute()
 			return 'SUCCESS'
 		except:
 			msg = unicode_full_stack()
@@ -764,9 +906,9 @@ class ProductSwipeImage(business_model.Model):
 			if not url.startswith('http'):
 				url = PANDA_IMAGE_DOMAIN + url
 			images.append(dict(product=args['product_id'],
-			                   url=url,
-			                   width=100,
-			                   height=100))
+							   url=url,
+							   width=100,
+							   height=100))
 		# images = [dict(product=args['product_id'],
 		#                url=image.get('url'),
 		#                width=100,

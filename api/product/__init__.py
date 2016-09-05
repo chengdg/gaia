@@ -10,3 +10,6 @@ import a_product_model_property_value
 import a_product_model_properties
 import a_property_template
 import a_property_templates
+
+import a_offshelf_products
+import a_onshelf_products
