@@ -32,7 +32,8 @@ class AProductOnshelf(api_resource.ApiResource):
 				'with_group_buy_info': True,
 				'with_sales': True,
 				'with_product_promotion': True,
-				'with_price': True
+				'with_price': True,
+				'with_product_model': True
 			} # 填充参数
 		}
 		# 分页

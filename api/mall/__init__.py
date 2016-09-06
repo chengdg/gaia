@@ -24,4 +24,7 @@ import a_weixin_pay_interface_config
 import a_ali_pay_interface_config
 import a_weixin_certificate
 
+import a_express_delivery
+import a_express_deliverys
+
 

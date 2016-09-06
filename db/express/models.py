@@ -117,3 +117,21 @@ class ExpressServiceConfig(models.Model):
         db_table = 'mall_express_service_config'
         verbose_name = '快递服务配置'
         verbose_name_plural = '快递服务配置'
+        
+
+#########################################################################
+# ExpressDelivery: 物流名称管理
+#########################################################################
+class ExpressDelivery(models.Model):
+    owner = models.ForeignKey(User)
+    display_index = models.IntegerField(default=1, db_index=True)  # 显示的排序
+    name = models.CharField(max_length=1024, verbose_name='名称')
+    express_number = models.CharField(max_length=1024, verbose_name='编号')
+    express_value = models.CharField(max_length=1024, verbose_name='快递value')
+    remark = models.TextField(default='', verbose_name='备注')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='添加时间')
+
+    class Meta(object):
+        db_table = 'mall_express_delivery'
+        verbose_name = '物流名称'
+        verbose_name_plural = '物流名称'
