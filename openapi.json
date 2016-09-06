@@ -3272,11 +3272,8 @@
 									"properties": {
 										"express_deliverys":{
 											"type": "array",
-											"properties":{
-												"type": "object",
-												"items": {
-													"$ref": "#/definitions/ExpressDelivery"
-												}
+											"items": {
+												"$ref": "#/definitions/ExpressDelivery"
 											}
 										}
 									}
@@ -3330,7 +3327,7 @@
 									"type": "object",
 									"properties": {
 										"express_delivery":{
-											"type": "object",
+											"type": "array",
 											"items": {
 												"$ref": "#/definitions/ExpressDelivery"
 											}
@@ -3404,7 +3401,7 @@
 									"type": "object",
 									"properties": {
 										"express_delivery":{
-											"type": "object",
+											"type": "array",
 											"items": {
 												"$ref": "#/definitions/ExpressDelivery"
 											}
