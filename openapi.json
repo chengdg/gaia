@@ -1272,7 +1272,7 @@
 			}
 		},
 		"/mall/category/": {
-			"post": {
+			"put": {
 				"summary": "修改指定分组内容",
 				"description": "修改指定分组内容",
 				"parameters": [
@@ -1365,7 +1365,7 @@
 					}
 				}
 			},
-			"put": {
+			"post": {
 				"summary": "创建一个分组",
 				"description": "创建一个分组",
 				"parameters": [
@@ -3241,6 +3241,304 @@
 				}
 			}
 		},
+		"/mall/express_deliverys/": {
+			"get": {
+				"summary": "物流列表",
+				"parameters": [
+					{
+						"name": "owner_id",
+						"in": "query",
+						"description": "owner_id",
+						"required": true,
+						"type": "integer"
+					}
+				],
+				"tags": [
+					"new_zeus",
+					"express_deliverys"
+				],
+				"responses": {
+					"200": {
+						"description": "物流列表",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+									"type": "object",
+									"properties": {
+										"express_deliverys":{
+											"type": "array",
+											"properties":{
+												"type": "object",
+												"items": {
+													"$ref": "#/definitions/ExpressDelivery"
+												}
+											}
+										}
+									}
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/mall/express_delivery/": {
+			"get": {
+				"summary": "物流",
+				"parameters": [
+					{
+						"name": "owner_id",
+						"in": "query",
+						"description": "owner_id",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"name": "id",
+						"in": "query",
+						"description": "id",
+						"required": true,
+						"type": "integer"
+					}
+				],
+				"tags": [
+					"new_zeus",
+					"express_delivery"
+				],
+				"responses": {
+					"200": {
+						"description": "物流",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+									"type": "object",
+									"properties": {
+										"express_delivery":{
+											"type": "object",
+											"items": {
+												"$ref": "#/definitions/ExpressDelivery"
+											}
+										}
+									}
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			},
+			"put": {
+				"summary": "物流",
+				"parameters": [
+					{
+						"name": "owner_id",
+						"in": "query",
+						"description": "owner_id",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"name": "name",
+						"in": "query",
+						"description": "name",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"name": "express_number",
+						"in": "query",
+						"description": "express_number",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"name": "express_value",
+						"in": "query",
+						"description": "express_value",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"name": "remark",
+						"in": "query",
+						"description": "remark",
+						"type": "string"
+					}
+				],
+				"tags": [
+					"new_zeus",
+					"express_delivery"
+				],
+				"responses": {
+					"200": {
+						"description": "物流",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+									"type": "object",
+									"properties": {
+										"express_delivery":{
+											"type": "object",
+											"items": {
+												"$ref": "#/definitions/ExpressDelivery"
+											}
+										}
+									}
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			},
+			"post": {
+				"summary": "物流",
+				"parameters": [
+					{
+						"name": "owner_id",
+						"in": "query",
+						"description": "owner_id",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"name": "id",
+						"in": "query",
+						"description": "name",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"name": "express_number",
+						"in": "query",
+						"description": "express_number",
+						"type": "string"
+					},
+					{
+						"name": "express_value",
+						"in": "query",
+						"description": "express_value",
+						"type": "string"
+					},
+					{
+						"name": "remark",
+						"in": "query",
+						"description": "remark",
+						"type": "string"
+					},
+					{
+						"name": "dst_id",
+						"in": "query",
+						"description": "dst_id",
+						"type": "string"
+					}
+				],
+				"tags": [
+					"new_zeus",
+					"express_delivery"
+				],
+				"responses": {
+					"200": {
+						"description": "物流",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+									"type": "object"
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"summary": "物流",
+				"parameters": [
+					{
+						"name": "owner_id",
+						"in": "query",
+						"description": "owner_id",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"name": "id",
+						"in": "query",
+						"description": "name",
+						"required": true,
+						"type": "string"
+					}
+				],
+				"tags": [
+					"new_zeus",
+					"express_delivery"
+				],
+				"responses": {
+					"200": {
+						"description": "物流",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+									"type": "object"
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
 		"/product/onshelf_products": {
 			"get": {
 				"summary": "在售商品列表",
@@ -4725,120 +5023,6 @@
 				}
 			}
 		},
-		"/mall/weixin_certificate/": {
-			"get": {
-				"summary": "获取微信支付退款证书信息",
-				"parameters": [
-					{
-						"name": "owner_id",
-						"in": "query",
-						"description": "owner_id",
-						"required": true,
-						"type": "integer"
-					}
-				],
-				"tags": [
-					"new_zeus"
-				],
-				"responses": {
-  					"200": {
-						"description": "Successful response",
-						"schema": {
-							"type": "object",
-							"properties": {
-								"code": {
-									"type": "integer",
-									"format": "int32"
-								},
-								"data": {
-									"type": "object",
-									"properties": {
-										"cert_name": {
-											"type": "string",
-											"description": "证书的名称"
-										},
-										"key_name": {
-											"type": "string",
-											"description": "证书密钥的名称"
-										}
-									}
-								},
-								"errMsg": {
-									"type": "string"
-								},
-								"innerErrMsg": {
-									"type": "string"
-								}
-							}
-						}
-					}
-				}
-			},
-			"post": {
-				"summary": "上传微信支付退款证书信息",
-				"parameters": [
-					{
-						"name": "owner_id",
-						"in": "query",
-						"description": "owner_id",
-						"required": true,
-						"type": "integer"
-					},
-					{
-						"name": "file_cat",
-						"in": "query",
-						"description": "上传文件类型",
-						"required": true,
-						"type": "string"
-					},
-					{
-						"name": "file_path",
-						"in": "query",
-						"description": "文件服务器路径",
-						"required": true,
-						"type": "string"
-					},
-					{
-						"name": "up_file_path",
-						"in": "query",
-						"description": "文件又拍云路径",
-						"required": true,
-						"type": "string"
-					}
-				],
-				"tags": [
-					"new_zeus"
-				],
-				"responses": {
-  					"200": {
-						"description": "Successful response",
-						"schema": {
-							"type": "object",
-							"properties": {
-								"code": {
-									"type": "integer",
-									"format": "int32"
-								},
-								"data": {
-									"type": "object",
-									"properties": {
-										"msg": {
-											"msg": "string"
-										}
-									}
-								},
-								"errMsg": {
-									"type": "string"
-								},
-								"innerErrMsg": {
-									"type": "string"
-								}
-							}
-						}
-					}
-				}
-			}
-		},
 		"/mall/email_notification": {
 			"get": {
 				"summary": "运营邮件通知",
@@ -5826,6 +6010,42 @@
 				"display_index": {
 					"type": "number",
 					"description": "展示顺序"
+				},
+				"created_at": {
+					"type": "string",
+					"description": "创建时间"
+				}
+			}
+		},
+		"ExpressDelivery": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "number",
+					"description": "数据库生成的ID"
+				},
+				"owner_id": {
+					"type": "number",
+					"description": "创立者"
+				},
+				"name": {
+					"type": "string",
+					"description": "分组名称"
+				},
+				"express_value": {
+					"type": "string"
+				},
+				"express_number": {
+					"type": "number",
+					"description": "express_number"
+				},
+				"display_index": {
+					"type": "number",
+					"description": "展示顺序"
+				},
+				"remark": {
+					"type": "string",
+					"description": "remark"
 				},
 				"created_at": {
 					"type": "string",
