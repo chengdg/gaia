@@ -3292,7 +3292,7 @@
 		},
 		"/mall/express_delivery/": {
 			"get": {
-				"summary": "物流",
+				"summary": "获取单个物流",
 				"parameters": [
 					{
 						"name": "owner_id",
@@ -3315,7 +3315,7 @@
 				],
 				"responses": {
 					"200": {
-						"description": "物流",
+						"description": "获取单个物流",
 						"schema": {
 							"type": "object",
 							"properties": {
@@ -3346,7 +3346,7 @@
 				}
 			},
 			"put": {
-				"summary": "物流",
+				"summary": "增加物流",
 				"parameters": [
 					{
 						"name": "owner_id",
@@ -3389,7 +3389,7 @@
 				],
 				"responses": {
 					"200": {
-						"description": "物流",
+						"description": "物流信息",
 						"schema": {
 							"type": "object",
 							"properties": {
@@ -3420,7 +3420,7 @@
 				}
 			},
 			"post": {
-				"summary": "物流",
+				"summary": "更新单个物流信息",
 				"parameters": [
 					{
 						"name": "owner_id",
@@ -3490,7 +3490,7 @@
 				}
 			},
 			"delete": {
-				"summary": "物流",
+				"summary": "删除单个物流",
 				"parameters": [
 					{
 						"name": "owner_id",
