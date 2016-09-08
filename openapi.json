@@ -3345,9 +3345,8 @@
                                                     "type": "string"
                                                 }
                                             },
-                                            "description": "取已经添加的物流公司 "
-										},
-                                        "description": "说明express_delivery_companys ， express_delivery_companies，只是文档中区别。 这样写只是区别两种返回结果， 返回的都是，express_delivery_companies"
+                                            "description": "取已经添加的物流公司      说明express_delivery_companys ， express_delivery_companies，只是文档中区别。 这样写只是区别两种返回结果， 返回的都是，express_delivery_companies"
+										}
 									}
 								},
 								"errMsg": {
