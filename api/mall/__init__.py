@@ -26,5 +26,6 @@ import a_weixin_certificate
 
 import a_express_delivery
 import a_express_deliverys
+import a_express_delivery_company
 
 

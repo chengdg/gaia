@@ -3290,9 +3290,81 @@
 				}
 			}
 		},
+		"/mall/express_delivery_company/": {
+			"get": {
+				"summary": "物流公司列表",
+				"parameters": [
+					{
+						"name": "owner_id",
+						"in": "query",
+						"description": "owner_id",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"name": "source",
+						"in": "query",
+						"description": "@params source 如果有init_express_deliverys 取所有物流公司，如果没有，取已经添加的物流",
+						"type": "string"
+					}
+				],
+				"tags": [
+					"new_zeus",
+					"express_delivery_company"
+				],
+				"responses": {
+					"200": {
+						"description": "物流公司列表",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+									"type": "object",
+									"properties": {
+										"express_delivery_companies":{
+											"type": "array",
+											"items": {
+												"$ref": "#/definitions/ExpressDeliveryCompany"
+											},
+                                            "description": "取所有物流公司"
+										},
+										"express_delivery_companys":{
+											"type": "object",
+											"properties": {
+                                                "name": {
+                                                    "type": "string"
+                                                },
+                                                "expressNumber": {
+                                                    "type": "string"
+                                                },
+                                                "expressValue": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "description": "取已经添加的物流公司 "
+										},
+                                        "description": "说明express_delivery_companys ， express_delivery_companies，只是文档中区别。 这样写只是区别两种返回结果， 返回的都是，express_delivery_companies"
+									}
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
 		"/mall/express_delivery/": {
 			"get": {
-				"summary": "获取单个物流",
+				"summary": "物流",
 				"parameters": [
 					{
 						"name": "owner_id",
@@ -3315,7 +3387,7 @@
 				],
 				"responses": {
 					"200": {
-						"description": "获取单个物流",
+						"description": "物流",
 						"schema": {
 							"type": "object",
 							"properties": {
@@ -3346,7 +3418,7 @@
 				}
 			},
 			"put": {
-				"summary": "增加物流",
+				"summary": "物流",
 				"parameters": [
 					{
 						"name": "owner_id",
@@ -3389,7 +3461,7 @@
 				],
 				"responses": {
 					"200": {
-						"description": "物流信息",
+						"description": "物流",
 						"schema": {
 							"type": "object",
 							"properties": {
@@ -3420,7 +3492,7 @@
 				}
 			},
 			"post": {
-				"summary": "更新单个物流信息",
+				"summary": "物流",
 				"parameters": [
 					{
 						"name": "owner_id",
@@ -3490,7 +3562,7 @@
 				}
 			},
 			"delete": {
-				"summary": "删除单个物流",
+				"summary": "物流",
 				"parameters": [
 					{
 						"name": "owner_id",
@@ -6105,6 +6177,23 @@
 				}
 			}
 		},
+        "ExpressDeliveryCompany": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "string"
+                },
+                "kdniao_value": {
+                    "type": "string"
+                }
+            }
+        },
 		"Image": {
 			"type": "object",
 			"properties": {

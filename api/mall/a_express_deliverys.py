@@ -17,6 +17,7 @@ class AExpressDeliverys(api_resource.ApiResource):
 	def get(args):
 		'''
 		物流列表
+		# 默认排序 -display_index
 		'''
 		pageinfo, express_deliverys = ExpressDelivery.from_owner_id({'owner_id': args['owner_id'], 'cur_page': args.get('cur_page', 1), 'count_per_page': args.get('count_per_page', 10)})
 		

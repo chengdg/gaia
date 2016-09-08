@@ -8,9 +8,6 @@ from business import model as business_model
 from db.express import models as express_models
 from core import paginator
 
-from business.mall.image import Image
-from core import paginator
-
 
 class ExpressDelivery(business_model.Model):
 	"""
@@ -47,9 +44,12 @@ class ExpressDelivery(business_model.Model):
 	@staticmethod
 	@param_required(['owner_id'])
 	def from_owner_id(args):
-		express_deliverys = express_models.ExpressDelivery.select().dj_where(owner_id=args['owner_id'])
-		pageinfo, express_deliverys = paginator.paginate(express_deliverys, args['cur_page'], args['count_per_page'], query_string=args.get('query_string', None))
-		return pageinfo, [ExpressDelivery(express_delivery) for express_delivery in express_deliverys]
+		express_deliverys = express_models.ExpressDelivery.select().dj_where(owner_id=args['owner_id']).order_by(express_models.ExpressDelivery.display_index.desc())
+		if 'cur_page' in args:
+			pageinfo, express_deliverys = paginator.paginate(express_deliverys, args['cur_page'], args['count_per_page'], query_string=args.get('query_string', None))
+			return pageinfo, [ExpressDelivery(express_delivery) for express_delivery in express_deliverys]
+		else:
+			return [ExpressDelivery(express_delivery).to_dict() for express_delivery in express_deliverys]
 
 	@staticmethod
 	@param_required(['db_model'])
