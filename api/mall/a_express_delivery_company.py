@@ -21,7 +21,7 @@ class AExpressDeliveryCompany(api_resource.ApiResource):
 	@param_required(['owner_id'])
 	def get(args):
 		'''
-		@params source 如果有init_express_deliverys 取所有物流，
+		@params source 如果有 init_express_deliverys 取所有物流，
 			如果没有，取已经添加的物流
 		'''
 		source = args.get('source', '')

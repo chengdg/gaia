@@ -3361,6 +3361,238 @@
 				}
 			}
 		},
+		"/mall/integral_strategy/": {
+			"get": {
+				"summary": "积分规则",
+				"parameters": [
+					{
+						"name": "owner_id",
+						"in": "query",
+						"description": "owner_id",
+						"required": true,
+						"type": "integer"
+					}
+				],
+				"tags": [
+					"new_zeus",
+					"integral_strategy"
+				],
+				"responses": {
+					"200": {
+						"description": "积分规则",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+									"type": "object",
+									"properties": {
+										"integral_strategy":{
+											"type": "object",
+											"properties": {
+                                                "webapp_id": {
+                                                    "type": "string"
+                                                },
+                                                "click_shared_url_increase_count": {
+                                                    "type": "string",
+                                                    "description": "分享链接给好友点击"
+                                                },
+                                                "buy_via_offline_increase_count_for_author": {
+                                                    "type": "string",
+                                                    "description": "通过分享链接购买为分享者增加的额度"
+                                                },
+                                                "click_shared_url_increase_count_before_buy": {
+                                                    "type": "string",
+                                                    "description": "点击分享链接为未购买的分享者增加的额度"
+                                                },
+                                                "click_shared_url_increase_count_after_buy": {
+                                                    "type": "string",
+                                                    "description": "点击分享链接为购买后的分享者增加的额度"
+                                                },
+                                                "order_money_percentage_for_each_buy": {
+                                                    "type": "string",
+                                                    "description": "每次购物后，额外积分（以订单金额的百分比计算）"
+                                                },
+                                                "be_member_increase_count": {
+                                                    "type": "string",
+                                                    "description": "成为会员增加额度"
+                                                },
+                                                "buy_via_offline_increase_count_percentage_for_author": {
+                                                    "type": "string",
+                                                    "description": "线下会员购买为推荐者额外增加的额度"
+                                                },
+                                                "is_all_conditions": {
+                                                    "type": "string",
+                                                    "description": "自动升级条件"
+                                                },
+                                                "use_ceiling": {
+                                                    "type": "string",
+                                                    "description": "订单积分抵扣上限"
+                                                },
+                                                "review_increase": {
+                                                    "type": "string",
+                                                    "description": "商品好评送积分"
+                                                },
+                                                "usable_integral_or_conpon": {
+                                                    "type": "string",
+                                                    "description": "积分与优惠券可同时使用"
+                                                },
+                                                "buy_increase_count_for_father": {
+                                                    "type": "string",
+                                                    "description": "成为会员增加额度"
+                                                },
+                                                "increase_integral_count_for_brring_customer_by_qrcode": {
+                                                    "type": "string",
+                                                    "description": "使用二维码带来用户增加的额度"
+                                                },
+                                                "buy_award_count_for_buyer": {
+                                                    "type": "string",
+                                                    "description": "购物返积分额度"
+                                                },
+                                                "id": {
+                                                    "type": "string"
+                                                },
+                                                "buy_via_shared_url_increase_count_for_author": {
+                                                    "type": "string",
+                                                    "description": "通过分享链接购买为分享者增加的额度"
+                                                },
+                                                "integral_each_yuan": {
+                                                    "type": "string",
+                                                    "description": "一元是多少积分"
+                                                }
+                                            },
+                                            "description": "积分规则"
+										},
+                                        "show_guide": {
+                                            "type": "string"
+                                        },
+                                        "has_a_integral_strategy": {
+                                            "type": "string"
+                                        }
+									}
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			},
+			"post": {
+				"summary": "修改积分规则",
+				"parameters": [
+					{
+						"name": "owner_id",
+						"in": "query",
+						"description": "owner_id",
+						"required": true,
+						"type": "integer"
+					},
+					{
+						"name": "integral_each_yuan",
+						"in": "query",
+						"description": "一元是多少积分",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"name": "be_member_increase_count",
+						"in": "query",
+						"description": "成为会员增加额度",
+                        "required": true,
+						"type": "string"
+					},
+					{
+						"name": "click_shared_url_increase_count",
+						"in": "query",
+						"description": "分享链接给好友点击",
+                        "required": true,
+						"type": "string"
+					},
+					{
+						"name": "buy_award_count_for_buyer",
+						"in": "query",
+                        "required": true,
+						"description": "购物返积分额度",
+						"type": "string"
+					},
+					{
+						"name": "order_money_percentage_for_each_buy",
+						"in": "query",
+                        "required": true,
+						"description": "每次购物后，额外积分（以订单金额的百分比计算）",
+						"type": "string"
+					},
+					{
+						"name": "buy_via_shared_url_increase_count_for_author",
+						"in": "query",
+						"description": "通过分享链接购买为分享者增加的额度",
+                        "required": true,
+						"type": "string"
+					},
+					{
+						"name": "buy_via_offline_increase_count_for_author",
+						"in": "query",
+						"description": "线下会员购买为推荐者增加的额度",
+                        "required": true,
+						"type": "string"
+					},
+					{
+						"name": "buy_via_offline_increase_count_percentage_for_author",
+						"in": "query",
+						"description": "线下会员购买为推荐者额外增加的额度",
+                        "required": true,
+						"type": "string"
+					},
+					{
+						"name": "use_ceiling",
+						"in": "query",
+						"description": "订单积分抵扣上限",
+                        "required": true,
+						"type": "string"
+					},
+					{
+						"name": "review_increase",
+						"in": "query",
+                        "required": true,
+						"description": "商品好评送积分",
+						"type": "string"
+					}
+				],
+				"tags": [
+					"new_zeus",
+					"integral_strategy"
+				],
+				"responses": {
+					"200": {
+						"description": "积分规则",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
 		"/mall/express_delivery/": {
 			"get": {
 				"summary": "物流",
