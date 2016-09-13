@@ -80,11 +80,11 @@ class Product(business_model.Model):
 		'_is_use_custom_model',
 		'standard_model',
 		'current_used_model',
-		'custom_models'
+		'custom_models',
 
 	)
 
-	def __init__(self, model):
+	def __init__(self, model=None):
 		super(Product, self).__init__()
 
 		self.context['db_model'] = model
@@ -288,6 +288,27 @@ class Product(business_model.Model):
 
 		return products, pageinfo
 
+
+	@staticmethod
+	@param_required(['owner_id', 'fill_options'])
+	def promotion_products(args):
+		user_profile = UserProfile.from_user_id({'user_id': args['owner_id']})
+		mall_type = user_profile.webapp_type
+		promotion_products = mall_models.Product.select().dj_where(owner_id=args['owner_id'], shelve_type=mall_models.PRODUCT_SHELVE_TYPE_ON)
+		# 分页
+		pageinfo, promotion_products = paginator.paginate(promotion_products, args['cur_page'], args['count_per_page'], query_string=args.get('query_string', None))
+		promotion_products = [Product(product) for product in promotion_products]
+		Product.__fill_details(args['owner_id'], promotion_products, args['fill_options'])
+		return promotion_products, pageinfo
+
+	@staticmethod
+	@param_required(['owner_id','promotion_id' , 'fill_options'])
+	def from_promotion_id(args):
+		promotion_products = mall_models.Product.select().dj_where(owner_id=args['owner_id'], id=args['promotion_id'])
+		promotion_products = [Product(product) for product in promotion_products]
+		Product.__fill_details(args['owner_id'], promotion_products, args['fill_options'])
+
+
 	@staticmethod
 	def __fill_details(owner_id, products, options):
 		"""填充各种细节信息
@@ -328,6 +349,8 @@ class Product(business_model.Model):
 				owner_id,
 				products,
 				False)
+		if options.get('with_is_select', None):
+			Product.__fill_is_select(owner_id, products)
 
 		if options.get('with_image', False):
 			Product.__fill_image_detail(products)
@@ -377,6 +400,24 @@ class Product(business_model.Model):
 				id2property,
 				id2propertyvalue,
 				is_enable_model_property_info)
+
+	@staticmethod
+	def __fill_is_select(owner_id, products):
+		'''
+		# 在优惠卷，新增优惠卷， 选择部分商品添加时   是否有选取按扭
+		'''
+		#TODO 需要从cache获取被禁的商品id
+		# TODO 可以重新选取功能
+
+		forbidden_coupon_product_ids = [] #TODO 需要从cache获取被禁的商品id   #webapp_cache.get_forbidden_coupon_product_ids(request.manager.id)
+		for product in products:
+			has_forbidden_coupon = False
+			if product.id in forbidden_coupon_product_ids:
+				has_forbidden_coupon = True
+			product.promotion = {
+				'can_select': True,
+				'has_forbidden_coupon': has_forbidden_coupon
+			}
 
 	@staticmethod
 	def __fill_group_buy_info(owner_id, products):
