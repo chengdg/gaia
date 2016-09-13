@@ -11,7 +11,7 @@ from business.mall.express_delivery import ExpressDelivery
 
 class AExpressDeliverys(api_resource.ApiResource):
 	app = 'mall'
-	resource = 'express_deliverys'
+	resource = 'express_deliveries'
 
 	@param_required(['owner_id'])
 	def get(args):
@@ -19,9 +19,9 @@ class AExpressDeliverys(api_resource.ApiResource):
 		物流列表
 		# 默认排序 -display_index
 		'''
-		pageinfo, express_deliverys = ExpressDelivery.from_owner_id({'owner_id': args['owner_id'], 'cur_page': args.get('cur_page', 1), 'count_per_page': args.get('count_per_page', 10)})
+		pageinfo, express_deliveries = ExpressDelivery.from_owner_id({'owner_id': args['owner_id'], 'cur_page': args.get('cur_page', 1), 'count_per_page': args.get('count_per_page', 10)})
 		
 		return {
 			'pageinfo': pageinfo.to_dict(),
-			'express_deliverys': [express_delivery.to_dict() for express_delivery in express_deliverys]
+			'express_deliveries': [express_delivery.to_dict() for express_delivery in express_deliveries]
 		}
