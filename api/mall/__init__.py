@@ -31,5 +31,6 @@ import a_express_delivery_company
 import a_integral_strategy
 
 import a_promotion_products
+import a_category_products
 
 

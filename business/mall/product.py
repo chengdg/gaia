@@ -292,9 +292,13 @@ class Product(business_model.Model):
 	@staticmethod
 	@param_required(['owner_id', 'fill_options'])
 	def promotion_products(args):
+		'''
+		已经上架的商品
+		'''
 		user_profile = UserProfile.from_user_id({'user_id': args['owner_id']})
 		mall_type = user_profile.webapp_type
 		promotion_products = mall_models.Product.select().dj_where(owner_id=args['owner_id'], shelve_type=mall_models.PRODUCT_SHELVE_TYPE_ON)
+		# TODO   查询功能
 		# 分页
 		pageinfo, promotion_products = paginator.paginate(promotion_products, args['cur_page'], args['count_per_page'], query_string=args.get('query_string', None))
 		promotion_products = [Product(product) for product in promotion_products]
@@ -307,7 +311,6 @@ class Product(business_model.Model):
 		promotion_products = mall_models.Product.select().dj_where(owner_id=args['owner_id'], id=args['promotion_id'])
 		promotion_products = [Product(product) for product in promotion_products]
 		Product.__fill_details(args['owner_id'], promotion_products, args['fill_options'])
-
 
 	@staticmethod
 	def __fill_details(owner_id, products, options):
