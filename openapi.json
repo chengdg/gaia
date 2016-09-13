@@ -955,6 +955,131 @@
 				}
 			}
 		},
+		"/mall/promotion_products/": {
+			"get": {
+				"summary": "获取已经上架的商品",
+				"parameters": [
+					{
+						"name": "owner_id",
+						"in": "query",
+						"required": true,
+						"description": "操作者",
+						"type": "string"
+					},
+                    {
+						"name": "type",
+						"in": "query",
+						"required": true,
+						"description": "类型",
+                        "format": "usable_promotion_products  或者 promotion_products",
+						"type": "string"
+					},
+					{
+						"name": "promotion_id",
+						"in": "query",
+						"type": "string",
+						"format": "promotion_id 要与promotion_products 配合使用"
+					}
+				],
+				"tags": ["new_zeus", "promotion_products"],
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+									"type": "object",
+									"properties": {
+										"promotion_products": {
+											"type": "array",
+											"items": {
+												"$ref": "#/definitions/Product"
+											}
+										},
+                                        "pageinfo": {
+                                            "type": "object",
+                                            "description": "分页信息"
+
+                                        }
+									}
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/mall/category_products/": {
+			"get": {
+				"summary": "获取已经上架的商品",
+				"parameters": [
+					{
+						"name": "owner_id",
+						"in": "query",
+						"required": true,
+						"description": "操作者",
+						"type": "string"
+					},
+                    {
+						"name": "category_ids",
+						"in": "query",
+						"required": true,
+						"description": "分组列表ids",
+                        "format": "1,2,4,5",
+						"type": "string"
+					}
+				],
+				"tags": ["new_zeus", "promotion_products"],
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+									"type": "object",
+									"properties": {
+										"category_products": {
+											"type": "array",
+											"items": {
+												"$ref": "#/definitions/Product"
+											}
+										}
+									}
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
 		"/mall/image/": {
 			"get": {
 				"summary": "获取图片",

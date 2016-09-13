@@ -7,6 +7,7 @@ from eaglet.core import api_resource
 from business import model as business_model
 from db.mall import models as mall_models
 from core import paginator
+
 from business.mall.product import Product
 
 
@@ -58,7 +59,7 @@ class Category(business_model.Model):
 		if params['category_ids']:
 			return [Category.from_model({'db_model': category}) for category in categories], None
 		pageinfo, categories = paginator.paginate(categories, params['cur_page'], params[
-												  'count_per_page'], query_string=params.get('query_string', None))
+												'count_per_page'], query_string=params.get('query_string', None))
 		return [Category.from_model({'db_model': category}) for category in categories], pageinfo.to_dict()
 
 
