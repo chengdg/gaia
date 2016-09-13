@@ -9,7 +9,7 @@ from eaglet.core.exceptionutil import unicode_full_stack
 
 from business.mall.product import Product
 
-class AImageGroup(api_resource.ApiResource):
+class APromotionProducts(api_resource.ApiResource):
 	'''
 	获得促销活动可以选用的商品集合.
 	'''
@@ -43,7 +43,7 @@ class AImageGroup(api_resource.ApiResource):
 		elif promotion_product_type == 'promotion_products':
 			promotion_products = Product.promotion_products({
 				'owner_id': args['owner_id'],
-				'promotion_id': args['promotion_id'],
+				'promotion_id': args['promotion_id'],   # 在type=promotion_products 时
 				'fill_options': {"with_product": True}
 			})
 			return {

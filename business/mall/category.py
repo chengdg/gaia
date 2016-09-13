@@ -58,7 +58,7 @@ class Category(business_model.Model):
 		if params['category_ids']:
 			return [Category.from_model({'db_model': category}) for category in categories], None
 		pageinfo, categories = paginator.paginate(categories, params['cur_page'], params[
-												  'count_per_page'], query_string=params.get('query_string', None))
+												'count_per_page'], query_string=params.get('query_string', None))
 		return [Category.from_model({'db_model': category}) for category in categories], pageinfo.to_dict()
 
 
