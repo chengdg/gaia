@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import json
+
 from eaglet.decorator import param_required
 from eaglet.utils.resource_client import Resource
 
@@ -13,6 +15,57 @@ from settings import PANDA_IMAGE_DOMAIN
 from services.product_service.task import clear_sync_product_cache
 
 from core import paginator
+
+
+def _init_custom_model(self, custom_model_str):
+	properties = []
+	property_infos = custom_model_str.split('_')
+	for property_info in property_infos:
+		items = property_info.split(':')
+		properties.append({
+			'property_id': int(items[0]),
+			'property_value_id': int(items[1])
+		})
+	return properties
+
+
+def _extract_product_model(args):
+	is_use_custom_models = int(args.get("is_use_custom_model", ''))
+
+	custom_model_data = json.loads(args.get('customModels', '[]'))
+	if custom_model_data and is_use_custom_models:
+		standard_model = {
+			"price": 0.0,
+			"weight": 0.0,
+			"stock_type": mall_models.PRODUCT_STOCK_TYPE_LIMIT,
+			"stocks": 0,
+			"user_code": '',
+			"is_deleted": True
+		}
+		custom_models = custom_model_data
+		for model in custom_models:
+			model['properties'] = _init_custom_model(model['name'])
+			if model.get('stocks') and int(model.get('stocks')) == -1:
+				model['stocks'] = 0
+	else:
+		stock_type = int(args.get(
+			'stock_type',
+			mall_models.PRODUCT_STOCK_TYPE_UNLIMIT)
+		)
+		stocks = args.get('stocks')
+		if stocks and int(stocks) == -1:
+			stocks = 0
+		stocks = int(stocks) if stocks else 0
+		standard_model = {
+			"price": args.get('price', '0.0').strip(),
+			"weight": args.get('weight', '0.0').strip(),
+			"stock_type": stock_type,
+			"stocks": stocks,
+			"user_code": args.get('user_code', '').strip(),
+		}
+		custom_models = []
+
+	return standard_model, custom_models
 
 
 class Product(business_model.Model):
@@ -212,6 +265,253 @@ class Product(business_model.Model):
 	#
 	#     return new_product
 
+
+	def modify(self,args):
+		# 获取默认运费
+		owner_id = args['owner_id']
+		product_id = args['product_id']
+		# todo 
+		mall_type = account_models.UserProfile.select().dj_where(user_id=owner_id).first().webapp_type
+		
+
+
+		swipe_images = json.loads(args.get('swipe_images', '[]'))
+		thumbnails_url = swipe_images[0]["url"]
+
+		# 添加团购活动判断:非自营\团购\标准规格 todo
+		# if mall_type == 0:
+		# 	is_group_buying = product_is_group(product_id, woid)
+		# else:
+		# 	is_group_buying = False
+		has_product_model = mall_models.ProductModel.select().dj_where(
+			owner_id=owner_id,
+			product_id=product_id,
+			name='standard').exists()
+
+
+
+		# if is_group_buying and has_product_model:
+		# 	# 团购流程
+		# 	utils.handle_group_product(request, product_id, swipe_images, thumbnails_url)
+		if False:
+			pass
+		else:
+			# 标准流程
+
+
+			# 处理商品规格
+			standard_model, custom_models = _extract_product_model(args)
+			# 处理standard商品规格
+			has_product_model = mall_models.ProductModel.objects.filter(
+				owner_id=owner_id,
+				product_id=product_id,
+				name='standard').exists()
+
+			if standard_model.get('is_deleted', None):
+				# 多规格的情况
+				db_standard_model = models.ProductModel.objects.filter(
+					owner_id=woid,
+					product_id=product_id,
+					name='standard'
+				)
+				if not db_standard_model[0].is_deleted:
+					from mall.promotion import models as promotion_models
+					# 单规格改多规格商品
+					db_standard_model.update(is_deleted=True)
+
+					# 结束对应买赠活动 jz
+					premiumSaleIds = set(promotion_models.PremiumSaleProduct.objects.filter(
+						product_id=db_standard_model[0].product_id).values_list('premium_sale_id', flat=True))
+					if len(premiumSaleIds) > 0:
+						from webapp.handlers import event_handler_util
+						promotionIds = set(promotion_models.Promotion.objects.filter(
+							detail_id__in=premiumSaleIds,
+							type=promotion_models.PROMOTION_TYPE_PREMIUM_SALE).values_list('id', flat=True))
+						event_data = {
+							"id": ','.join([str(id) for id in promotionIds])
+						}
+						event_handler_util.handle(event_data, 'finish_promotion')
+			else:
+				models.ProductModel.objects.filter(
+					owner_id=woid, product_id=product_id, name='standard'
+				).update(
+					price=standard_model['price'],
+					weight=standard_model['weight'],
+					stock_type=standard_model['stock_type'],
+					stocks=standard_model['stocks'],
+					user_code=standard_model['user_code'],
+					is_deleted=False
+				)
+
+			# 清除旧的custom product model
+			existed_models = [product_model for product_model in models.ProductModel.objects.filter(
+				owner=request.manager,
+				product_id=product_id
+			) if product_model.name != 'standard']
+			existed_model_names = set([model.name for model in existed_models])
+
+			# 处理custom商品规格
+			updated_model_names = set()
+			for custom_model in custom_models:
+				custom_model_name = custom_model['name']
+				if custom_model_name in existed_model_names:
+					# model已经存在，更新之
+					# # 记录被更新的model name
+					updated_model_names.add(custom_model_name)
+					models.ProductModel.objects.filter(
+						product_id=product_id, name=custom_model_name
+					).update(
+						price=custom_model['price'],
+						weight=custom_model['weight'],
+						stock_type=custom_model['stock_type'],
+						stocks=custom_model['stocks'],
+						user_code=custom_model['user_code'],
+						is_deleted=False
+					)
+
+					product_model = models.ProductModel.objects.get(
+						product_id=product_id, name=custom_model_name)
+					models.ProductModelHasPropertyValue.objects.filter(
+						model=product_model).delete()
+				else:
+					# model不存在，创建之
+					product_model = models.ProductModel.objects.create(
+						owner=request.manager,
+						product_id=product_id,
+						name=custom_model['name'],
+						is_standard=False,
+						price=custom_model['price'],
+						weight=custom_model['weight'],
+						stock_type=custom_model['stock_type'],
+						stocks=custom_model['stocks'],
+						user_code=custom_model['user_code']
+					)
+
+				for property in custom_model['properties']:
+					models.ProductModelHasPropertyValue.objects.create(
+						model=product_model,
+						property_id=property['property_id'],
+						property_value_id=property['property_value_id']
+					)
+
+			# 删除不用的models
+			existed_model_names_not_delete = set([model.name for model in existed_models if not model.is_deleted])
+			to_be_deleted_model_names = existed_model_names_not_delete - updated_model_names
+			if len(to_be_deleted_model_names):
+				models.ProductModel.objects.filter(
+					product_id=product_id, name__in=to_be_deleted_model_names
+				).update(is_deleted=True)
+
+			# 处理轮播图
+			models.ProductSwipeImage.objects.filter(
+				product_id=product_id
+			).delete()
+			for swipe_image in swipe_images:
+				models.ProductSwipeImage.objects.create(
+					product_id=product_id,
+					url=swipe_image['url'],
+					width=swipe_image['width'],
+					height=swipe_image['height']
+				)
+
+			# 处理property
+			properties = request.POST.get('properties')
+			properties = json.loads(properties) if properties else []
+			property_ids = set([property['id'] for property in properties])
+			existed_property_ids = set([
+				                           property.id for property in models.ProductProperty.objects.filter(
+					owner_id=woid, product_id=product_id)
+				                           ])
+			for property in properties:
+				if property['id'] < 0:
+					models.ProductProperty.objects.create(
+						owner=request.manager,
+						product_id=product_id,
+						name=property['name'],
+						value=property['value']
+					)
+				else:
+					models.ProductProperty.objects.filter(
+						owner_id=woid, id=property['id']
+					).update(name=property['name'], value=property['value'])
+			property_ids_to_be_delete = existed_property_ids - property_ids
+			models.ProductProperty.objects.filter(
+				id__in=property_ids_to_be_delete).delete()
+
+			# 减少原category的product_count
+			_update_product_category(request, product_id)
+
+			# 更新product
+			postage_type = request.POST['postage_type']
+			if postage_type == models.POSTAGE_TYPE_UNIFIED:
+				postage_id = -1
+				unified_postage_money = request.POST.get(
+					'unified_postage_money', '')
+				if unified_postage_money == '':
+					unified_postage_money = 0.0
+			else:
+				postage_id = 999  # request.POST['postage_config_id']
+				unified_postage_money = 0.0
+
+			min_limit = request.POST.get('min_limit', '0')
+			if not min_limit.isdigit():
+				min_limit = 0
+			else:
+				min_limit = float(min_limit)
+			purchase_price = request.POST.get("purchase_price", '')
+			if purchase_price == '' or not purchase_price:
+				purchase_price = 0
+			is_enable_bill = request.POST.get('is_enable_bill', False)
+			if is_enable_bill in [True, '1', 'True']:
+				is_enable_bill = True
+			else:
+				is_enable_bill = False
+
+			is_delivery = request.POST.get('is_delivery', False)
+
+			is_bill = True if request.manager.username not in settings.WEIZOOM_ACCOUNTS else  False
+			if is_bill is False:
+				is_enable_bill = False
+				is_delivery = False
+
+			param = {
+				'name': request.POST.get('name', '').strip(),
+				'promotion_title': request.POST.get('promotion_title', '').strip(),
+				'user_code': request.POST.get('user_code', '').strip(),
+				'bar_code': request.POST.get('bar_code', '').strip(),
+				'thumbnails_url': thumbnails_url,
+				'detail': request.POST.get('detail', '').strip(),
+				'type': request.POST.get('type', models.PRODUCT_DEFAULT_TYPE),
+				'is_use_online_pay_interface': 'is_enable_online_pay_interface' in request.POST,
+				'is_use_cod_pay_interface': 'is_enable_cod_pay_interface' in request.POST,
+				'postage_id': postage_id,
+				'unified_postage_money': unified_postage_money,
+				'postage_type': postage_type,
+				'stocks': min_limit,
+				'is_member_product': request.POST.get("is_member_product", False) == 'on',
+				# 'supplier': request.POST.get("supplier", 0),
+				# 'purchase_price': purchase_price,
+				'is_enable_bill': is_enable_bill,
+				'is_delivery': is_delivery,
+				'buy_in_supplier': int(request.POST.get('buy_in_supplier', False)),
+				'limit_zone_type': int(request.POST.get('limit_zone_type', '0')),
+				'limit_zone': int(request.POST.get('limit_zone_template', '0'))
+			}
+
+			if mall_type == 1:
+				param['supplier'] = request.POST.get("supplier", 0)
+				param['purchase_price'] = purchase_price
+
+			# 微众商城代码
+			# if request.POST.get('weshop_sync', None):
+			#     param['weshop_sync'] = request.POST['weshop_sync'][0]
+			models.Product.objects.record_cache_args(
+				ids=[product_id]
+			).filter(
+				owner=request.manager,
+				id=product_id
+			).update(**param)
+
 	def update(self):
 		"""
 
@@ -263,7 +563,7 @@ class Product(business_model.Model):
 		product_id = args['product_id']
 		owner_id = args['owner_id']
 
-		fill_options = args.get('fill_options', {})
+		fill_options = args.get['fill_options']
 
 		is_in_owner_pool = ProductPool.get({'owner_id': owner_id})
 		# todo 临时关闭

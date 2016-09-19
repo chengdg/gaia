@@ -71,14 +71,20 @@ class AProduct(api_resource.ApiResource):
 
 	@param_required([])
 	def post(args):
-		product_factory = ProductFactory.get()
-		product_factory.update_product(args['id'], args)
+		"""
+		修改商品
+		@return:
+		"""
+		product = Product.from_id({
+			'product_id': args['product_ids'],
+			'owner_id': args['owner_id'],
+			'fill_options': {}
+		})
+
+		product.modify(args)
 
 		return {}
 
-	@param_required(['ids'])
-	def delete(args):
 
-		pids = args['ids'].split(',')
 
 
