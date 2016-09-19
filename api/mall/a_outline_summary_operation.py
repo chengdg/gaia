@@ -9,7 +9,7 @@ from eaglet.core.exceptionutil import unicode_full_stack
 
 from business.mall.summary_operation import SummaryOperation
 
-class AShopRemind(api_resource.ApiResource):
+class ASummaryOperation(api_resource.ApiResource):
 	'''
 	经营概况集合.
 	'''
