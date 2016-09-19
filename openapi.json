@@ -1549,7 +1549,7 @@
 			}
 		},
 		"/mall/category/": {
-			"put": {
+			"post": {
 				"summary": "修改指定分组内容",
 				"description": "修改指定分组内容",
 				"parameters": [
@@ -1583,6 +1583,12 @@
 						"in": "query",
 						"type": "string",
 						"description": "商品ID与display_index联合使用"
+					},
+					{
+						"name": "product_ids",
+						"in": "query",
+						"type": "string",
+						"description": "商品IDs"
 					}
 				],
 				"tags": ["new_zeus", "category"],
@@ -1642,7 +1648,7 @@
 					}
 				}
 			},
-			"post": {
+			"put": {
 				"summary": "创建一个分组",
 				"description": "创建一个分组",
 				"parameters": [
