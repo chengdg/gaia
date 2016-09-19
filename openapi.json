@@ -1023,6 +1023,74 @@
 				}
 			}
 		},
+		"/mall/summary_operation/": {
+			"get": {
+				"summary": "获取首页经营概况",
+				"parameters": [
+					{
+						"name": "owner_id",
+						"in": "query",
+						"required": true,
+						"description": "操作者",
+						"type": "string"
+					}
+				],
+				"tags": ["new_zeus", "summary_operation"],
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+									"type": "object",
+									"properties": {
+										"summary_operation": {
+                                            "type": "object",
+                                            "properties": {
+                                                "unread_message_count": {
+                                                  "type": "integer",
+                                                  "description": "未读消息"
+                                                },
+                                                "new_member_count": {
+                                                  "type": "integer",
+                                                  "description": "昨日新增会员"
+                                                },
+                                                "order_count": {
+                                                  "type": "integer",
+                                                  "description": "昨日下单数"
+                                                },
+                                                "order_money": {
+                                                  "type": "integer",
+                                                  "description": "昨日成交额"
+                                                },
+                                                "subscribed_member_count": {
+                                                  "type": "integer",
+                                                  "description": "关注会员"
+                                                }
+                                            }
+										}
+									}
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
 		"/mall/shop_remind/": {
 			"get": {
 				"summary": "获取首页店铺提醒",

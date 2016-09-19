@@ -1036,7 +1036,6 @@ class Order(models.Model):
 				 r[k] = json.dumps(getattr(self, k))
 		return str(r)
 
-
 # added by chuter
 ########################################################################
 # OrderPaymentInfo: 订单支付信息

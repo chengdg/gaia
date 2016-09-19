@@ -100,9 +100,9 @@ SOURCE_SELF_SUB = 0  # 直接关注
 SOURCE_MEMBER_QRCODE = 1  # 推广扫码
 SOURCE_BY_URL = 2  # 会员分享
 #status  会员状态
-CANCEL_SUBSCRIBED = 0
-SUBSCRIBED = 1
-NOT_SUBSCRIBED = 2
+CANCEL_SUBSCRIBED = 0  # 取消关注
+SUBSCRIBED = 1 # 关注
+NOT_SUBSCRIBED = 2  #会员从来都没关注
 class Member(models.Model):
     """
     会员
