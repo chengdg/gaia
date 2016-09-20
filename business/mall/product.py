@@ -1,9 +1,14 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime
+import json
+from bdem import msgutil
+
 from eaglet.decorator import param_required
 from eaglet.utils.resource_client import Resource
 
 from business.mall.product_pool import ProductPool
 from db.mall import models as mall_models
+from db.mall import promotion_models
 from db.account import models as account_models
 from business.account.user_profile import UserProfile
 from business import model as business_model
@@ -126,6 +131,47 @@ class Product(business_model.Model):
 		for model in product_models:
 			products.append(Product(model))
 		return products
+
+	@staticmethod
+	@param_required(['product_ids', 'owner_id'])
+	def offshelf_products(args):
+		product_ids = args['product_ids']
+		owner_id = args['owner_id']
+		product_ids = Product.__exclude_group_product_id(owner_id, product_ids)
+		products = mall_models.Product.select().dj_where(id__in=product_ids, owner=owner_id)
+		offshelf_product_ids = [product.id for product in products]
+		mall_models.Product.update(
+			shelve_type=mall_models.PRODUCT_SHELVE_TYPE_OFF,
+			display_index=0,
+			update_time=datetime.now()
+		).dj_where(id__in=offshelf_product_ids).execute()
+
+		topic_name = "test-topic"
+		msg_name = 'offshelf_product'
+		data = {
+			"name": "offshelf_product",
+			"data": {
+				"offshelf_product_ids": offshelf_product_ids
+			}
+		}
+		msgutil.send_message(topic_name, msg_name, data)
+		return offshelf_product_ids
+
+	@staticmethod
+	def __exclude_group_product_id(owner_id, product_ids):
+		params = {'woid': owner_id, 'pids': '_'.join([str(id) for id in product_ids])}
+
+		resp = Resource.use('marketapp_apiserver').get({
+			'resource': 'group.group_buy_products',
+			'data': params
+		})
+		if resp and resp['code'] == 200:
+			data = resp['data']
+			product_groups = data['pid2is_in_group_buy']
+			for product_group in product_groups:
+				if product_group['pid'] in product_ids and product_group["is_in_group_buy"]:
+					product_ids.remove(product_group['pid'])
+		return product_ids
 
 	def fill_specific_model(self, model_name):
 		product_model = mall_models.ProductModel.select().dj_where(product_id=self.id, name=model_name).first()
