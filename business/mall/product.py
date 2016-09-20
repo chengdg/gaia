@@ -146,7 +146,6 @@ class Product(business_model.Model):
 			update_time=datetime.now()
 		).dj_where(id__in=offshelf_product_ids).execute()
 
-		# 发布商品下架的topic
 		topic_name = "test-topic"
 		msg_name = 'offshelf_product'
 		data = {
@@ -156,7 +155,7 @@ class Product(business_model.Model):
 			}
 		}
 		msgutil.send_message(topic_name, msg_name, data)
-		return {'msg': 'success'}
+		return offshelf_product_ids
 
 	@staticmethod
 	def __exclude_group_product_id(owner_id, product_ids):
