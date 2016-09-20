@@ -335,6 +335,16 @@ class Product(business_model.Model):
 
 		return products, pageinfo
 
+	@staticmethod
+	@param_required(['owner_id', 'fill_options'])
+	def from_onshelf_products(args):
+		
+		products = mall_models.Product.select().dj_where(owner=args['owner_id'], shelve_type=mall_models.PRODUCT_SHELVE_TYPE_ON)
+		# product_list = []
+		products = [Product(product) for product in products]
+		Product.__fill_details(args['owner_id'], products, args['fill_options'])
+
+		return products
 
 	@staticmethod
 	@param_required(['owner_id', 'fill_options'])

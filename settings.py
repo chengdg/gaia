@@ -133,3 +133,17 @@ elif 'test' == MODE:
     DOMAIN = 'testweapp.weizoom.com'
 else:
     DOMAIN = 'weapp.weizoom.com'
+
+
+if 'deploy' == MODE:
+    MNS_ACCESS_KEY_ID = 'LTAICKQ4rQBofAhF'
+    MNS_ACCESS_KEY_SECRET = 'bPKU71c0cfrui4bWgGPO96tLiOJ0PZ'
+    MNS_ENDPOINT = 'http://1615750970594173.mns.cn-hangzhou.aliyuncs.com/'
+    MNS_SECURITY_TOKEN = ''
+    SUBSCRIBE_QUEUE_NAME = 'redmine-agent'
+else:
+    MNS_ACCESS_KEY_ID = 'LTAICKQ4rQBofAhF'
+    MNS_ACCESS_KEY_SECRET = 'bPKU71c0cfrui4bWgGPO96tLiOJ0PZ'
+    MNS_ENDPOINT = 'https://1615750970594173.mns.cn-beijing.aliyuncs.com/'
+    MNS_SECURITY_TOKEN = ''
+    SUBSCRIBE_QUEUE_NAME = 'test-queue'

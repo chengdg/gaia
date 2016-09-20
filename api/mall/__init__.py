@@ -33,4 +33,7 @@ import a_integral_strategy
 import a_promotion_products
 import a_category_products
 
+import a_shop_remind
+import a_outline_summary_operation
+
 

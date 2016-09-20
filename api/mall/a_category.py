@@ -26,6 +26,7 @@ class ACategory(api_resource.ApiResource):
 
 	@param_required(['owner_id','category_id'])
 	def post(args):
+		# 修改分组
 		category = Category.from_id({'category_id': args['category_id']})
 		params = {}
 		if category:

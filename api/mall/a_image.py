@@ -7,7 +7,6 @@ from eaglet.core import watchdog
 from eaglet.core.exceptionutil import unicode_full_stack
 
 from business.mall.image import Image
-from business.mall.image_factory import ImageFactory
 
 
 class AImage(api_resource.ApiResource):

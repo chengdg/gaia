@@ -1023,6 +1023,158 @@
 				}
 			}
 		},
+		"/mall/summary_operation/": {
+			"get": {
+				"summary": "获取首页经营概况",
+				"parameters": [
+					{
+						"name": "owner_id",
+						"in": "query",
+						"required": true,
+						"description": "操作者",
+						"type": "string"
+					}
+				],
+				"tags": ["new_zeus", "summary_operation"],
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+									"type": "object",
+									"properties": {
+										"summary_operation": {
+                                            "type": "object",
+                                            "properties": {
+                                                "unread_message_count": {
+                                                  "type": "integer",
+                                                  "description": "未读消息"
+                                                },
+                                                "new_member_count": {
+                                                  "type": "integer",
+                                                  "description": "昨日新增会员"
+                                                },
+                                                "order_count": {
+                                                  "type": "integer",
+                                                  "description": "昨日下单数"
+                                                },
+                                                "order_money": {
+                                                  "type": "integer",
+                                                  "description": "昨日成交额"
+                                                },
+                                                "subscribed_member_count": {
+                                                  "type": "integer",
+                                                  "description": "关注会员"
+                                                }
+                                            }
+										}
+									}
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/mall/shop_remind/": {
+			"get": {
+				"summary": "获取首页店铺提醒",
+				"parameters": [
+					{
+						"name": "owner_id",
+						"in": "query",
+						"required": true,
+						"description": "操作者",
+						"type": "string"
+					}
+				],
+				"tags": ["new_zeus", "shop_remind"],
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+									"type": "object",
+									"properties": {
+										"shop_remind": {
+                                            "type": "object",
+                                            "properties": {
+                                                "premium_sale_count": {
+                                                  "type": "integer",
+                                                  "description": "即将到期的买赠活动数"
+                                                },
+                                                "refunding_order_count": {
+                                                  "type": "integer",
+                                                  "description": "退款中订单数"
+                                                },
+                                                "sellout_product_count": {
+                                                  "type": "integer",
+                                                  "description": "库存不足商品数"
+                                                },
+                                                "onshelf_product_count": {
+                                                  "type": "integer",
+                                                  "description": "在售商品数"
+                                                },
+                                                "to_be_shipped_order_count": {
+                                                  "type": "integer",
+                                                  "description": "待发货订单数"
+                                                },
+                                                "flash_sale_count": {
+                                                  "type": "integer",
+                                                  "description": "即将到期的限时抢购活动数"
+                                                },
+                                                "integral_sale_count": {
+                                                  "type": "integer",
+                                                  "description": "即将到期的积分应用活动数"
+                                                },
+                                                "red_envelope_count": {
+                                                  "type": "integer",
+                                                  "description": "即将到期的分享红包活动数"
+                                                },
+                                                "coupon_count": {
+                                                  "type": "integer",
+                                                  "description": "即将到期的优惠券活动数"
+                                                }
+                                            }
+										}
+									}
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
 		"/mall/category_products/": {
 			"get": {
 				"summary": "获取已经上架的商品",
@@ -1397,7 +1549,7 @@
 			}
 		},
 		"/mall/category/": {
-			"put": {
+			"post": {
 				"summary": "修改指定分组内容",
 				"description": "修改指定分组内容",
 				"parameters": [
@@ -1431,6 +1583,12 @@
 						"in": "query",
 						"type": "string",
 						"description": "商品ID与display_index联合使用"
+					},
+					{
+						"name": "product_ids",
+						"in": "query",
+						"type": "string",
+						"description": "商品IDs"
 					}
 				],
 				"tags": ["new_zeus", "category"],
@@ -1490,7 +1648,7 @@
 					}
 				}
 			},
-			"post": {
+			"put": {
 				"summary": "创建一个分组",
 				"description": "创建一个分组",
 				"parameters": [

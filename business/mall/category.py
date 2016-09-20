@@ -50,7 +50,6 @@ class Category(business_model.Model):
 		'''
 		分组管理列表
 		'''
-		print params
 		filter_params = {'owner': params['owner_id']}
 		if params['category_ids']:
 			filter_params.update({'id__in': params['category_ids']})
