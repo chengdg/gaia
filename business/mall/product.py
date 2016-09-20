@@ -258,6 +258,87 @@ class Product(business_model.Model):
 	#
 	#     return new_product
 
+
+	def save(self,product_data):
+		owner_id = product_data.base_info['owner_id']
+
+		db_model = mall_models.Product.create(
+			owner_id=owner_id,
+			name=product_data.base_info['name'],
+			promotion_title=product_data.base_info['promotion_title'],
+			user_code=product_data.base_info['user_code'],
+
+			detail=product_data.base_info['detail'],
+			type=product_data.base_info['type'],
+
+			# 支付信息
+			is_use_online_pay_interface=product_data.pay_info['is_use_online_pay_interface'],
+			is_use_cod_pay_interface=product_data.pay_info['is_use_cod_pay_interface'],
+			is_enable_bill=product_data.pay_info['is_enable_bill'],
+
+			thumbnails_url=product_data.image_info['thumbnails_url'],
+
+			# 运费信息
+			postage_type=product_data.postage_info['postage_type'],
+			postage_id=product_data.postage_info['postage_id'],
+			unified_postage_money=product_data.postage_info['unified_postage_money'],
+			is_delivery=product_data.postage_info['is_delivery'],
+		)
+
+		standard_model = product_data.standard_model
+
+		mall_models.ProductModel.create(
+			owner=owner_id,
+			product=db_model,
+			name='standard',
+			is_standard=True,
+			price=standard_model['price'],
+			weight=standard_model['weight'],
+			stock_type=standard_model['stock_type'],
+			stocks=standard_model['stocks'],
+			user_code=standard_model['user_code'],
+			is_deleted=standard_model['is_deleted']
+		)
+
+		# 处理custom商品规格
+		custom_models = product_data.custom_models
+		for custom_model in custom_models:
+			product_model = mall_models.ProductModel.create(
+				owner=owner_id,
+				product=db_model,
+				name=custom_model['name'],
+				is_standard=False,
+				price=custom_model['price'],
+				weight=custom_model['weight'],
+				stock_type=custom_model['stock_type'],
+				stocks=custom_model['stocks'],
+				user_code=custom_model['user_code']
+			)
+
+			for property in custom_model['properties']:
+				mall_models.ProductModelHasPropertyValue.create(
+					model=product_model,
+					property_id=property['property_id'],
+					property_value_id=property['property_value_id']
+				)
+
+		# 处理轮播图
+		for swipe_image in product_data.image_info['swipe_images']:
+			if swipe_image['width'] and swipe_image['height']:
+				mall_models.ProductSwipeImage.objects.create(
+					product=db_model,
+					url=swipe_image['url'],
+					width=swipe_image['width'],
+					height=swipe_image['height']
+				)
+
+		# 处理商品分类
+		for category_id in product_data.category_ids.split(','):
+			category_id = int(category_id)
+			mall_models.CategoryHasProduct.create(
+				category_id=category_id,
+				product_id=db_model.id)
+
 	def update(self):
 		"""
 
