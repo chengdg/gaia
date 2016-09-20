@@ -47,3 +47,12 @@ class AProductOnshelf(api_resource.ApiResource):
 			'pageinfo': pageinfo.to_dict(),
 			'products': [product.to_dict() for product in products]
 		}
+
+	@param_required(['ids'])
+	def put(args):
+		"""
+		上架商品
+		@return:
+		"""
+
+		return "success"
