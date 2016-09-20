@@ -3522,6 +3522,41 @@
 						}
 					}
 				}
+			},
+		  	"put": {
+			  "summary": "下架商品",
+				"parameters": [
+					{
+						"description": "下架商品",
+						"in": "body",
+						"schema": {
+							"properties": {
+								"owner_id": {
+									"description": "ownerId",
+									"required": true,
+									"type": "integer"
+								},
+								"product_ids": {
+									"description": "下架商品的id列表",
+									"required": true,
+									"type": "array",
+									"items": {
+										"type": "integer"
+									}
+								}
+							}
+						}
+					}
+				],
+				"tags": [
+					"new_zeus",
+					"offshelf_products"
+				],
+			  	"responses": {
+					"200": {
+						"description": "Successful response"
+					}
+				}
 			}
 		},
 		"/mall/express_deliverys/": {
