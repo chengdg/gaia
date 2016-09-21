@@ -196,7 +196,7 @@ PRODUCT_TYPE2TEXT = {
 	PRODUCT_DELIVERY_PLAN_TYPE: u'套餐商品',
 	PRODUCT_INTEGRAL_TYPE: u'积分商品'
 }
-MAX_INDEX = 2**16 - 1
+# MAX_INDEX = 2**16 - 1
 
 class Product(models.Model):
 	"""
@@ -206,42 +206,42 @@ class Product(models.Model):
 	"""
 	owner = models.ForeignKey(User, related_name='user-product')
 	name = models.CharField(max_length=256)  # 商品名称
-	physical_unit = models.CharField(default='', max_length=256)  # 计量单位
+	physical_unit = models.CharField(default='', max_length=256)  # 计量单位,无效
 	price = models.FloatField(default=0.0)  # 商品价格
-	introduction = models.CharField(max_length=256, default='')  # 商品简介
+	introduction = models.CharField(max_length=256, default='')  # 商品简介，无效
 	weight = models.FloatField(default=0.0)  # 重量
 	thumbnails_url = models.CharField(max_length=1024)  # 商品缩略图
-	pic_url = models.CharField(max_length=1024, default='')  # 商品图
+	pic_url = models.CharField(max_length=1024, default='')  # 商品图，无效
 	detail = models.TextField(default='')  # 商品详情
-	remark = models.TextField(default='')  # 备注
-	display_index = models.IntegerField(default=0)  # 显示的排序
+	remark = models.TextField(default='')  # 备注，无效
+	display_index = models.IntegerField(default=0)  # 显示的排序，new_zeus后无效
 	created_at = models.DateTimeField(auto_now_add=True)  # 添加时间
 	# shelve_type = models.IntegerField(default=PRODUCT_SHELVE_TYPE_OFF)  # 0:下架（待售） 1:上架（在售） 2:回收站
-	shelve_type = models.IntegerField(default=DEFAULT_SHELVE_TYPE)  # 0:下架（待售） 1:上架（在售） 2:回收站
-	shelve_start_time = models.CharField(max_length=50, null=True)  # 定时上架:上架时间
-	shelve_end_time = models.CharField(max_length=50, null=True)  # 定时上架:下架时间
+	shelve_type = models.IntegerField(default=DEFAULT_SHELVE_TYPE)  # 0:下架（待售） 1:上架（在售） 2:回收站 -1：缺省状态
+	shelve_start_time = models.CharField(max_length=50, null=True)  # 定时上架:上架时间，无效
+	shelve_end_time = models.CharField(max_length=50, null=True)  # 定时上架:下架时间，无效
 	stock_type = models.IntegerField(
-		default=PRODUCT_STOCK_TYPE_UNLIMIT)  # 0:无限 1:有限
+		default=PRODUCT_STOCK_TYPE_UNLIMIT)  # 0:无限 1:有限，无效
 	stocks = models.IntegerField(default=-1)  # 起购数量
 	is_deleted = models.BooleanField(default=False)  # 是否删除
 	is_support_make_thanks_card = models.BooleanField(
-		default=False)  # 是否支持制作感恩贺卡
+		default=False)  # 是否支持制作感恩贺卡，无效
 	type = models.CharField(max_length=50,default=PRODUCT_DEFAULT_TYPE)  # 产品的类型
 	update_time = models.DateTimeField(auto_now=True)  # 商品信息更新时间 2014-11-11
 	postage_id = models.IntegerField(default=-1)  # 运费id ，-1为使用统一运费
 	is_use_online_pay_interface = models.BooleanField(default=True)  # 在线支付方式
 	is_use_cod_pay_interface = models.BooleanField(default=False)  # 货到付款支付方式
 	promotion_title = models.CharField(max_length=256, default='')  # 促销标题
-	user_code = models.CharField(max_length=256, default='')  # 编码
+	user_code = models.CharField(max_length=256, default='')  # 编码，无效，但数据扔进行兼容创建
 	bar_code = models.CharField(max_length=256, default='')  # 条码
 	unified_postage_money = models.FloatField(default=0.0)  # 统一运费金额
 	postage_type = models.CharField(max_length=125, default=POSTAGE_TYPE_UNIFIED)  # 运费类型
-	weshop_sync = models.IntegerField(default=0)  # 0不同步 1普通同步 2加价同步
-	weshop_status = models.IntegerField(default=0)  # 0待售 1上架 2回收站
+	weshop_sync = models.IntegerField(default=0)  # 0不同步 1普通同步 2加价同步，无效
+	weshop_status = models.IntegerField(default=0)  # 0待售 1上架 2回收站，无效
 	is_member_product = models.BooleanField(default=False)  # 是否参加会员折扣
 	supplier = models.IntegerField(default=0) # 供货商
-	supplier_user_id = models.IntegerField(default=0) # 供货商(非8千)
-	purchase_price = models.FloatField(default=0.0) # 进货价格
+	supplier_user_id = models.IntegerField(default=0) # 供货商(非8千)，无效
+	purchase_price = models.FloatField(default=0.0) # 进货价格，无效
 	is_enable_bill = models.BooleanField(default=False)  # 商品是否开具发票
 	is_delivery = models.BooleanField(default=False) # 是否勾选配送时间
 	buy_in_supplier = models.BooleanField(default=False) # 记录下单位置是商城还是供货商，0是商城1是供货商
