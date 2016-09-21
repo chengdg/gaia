@@ -187,5 +187,5 @@ class Product(business_model.Model):
 				"product_name": db_model.name
 			}
 		}
-		msg_name = "cancel_order"
+		msg_name = "msg_save_product"
 		msgutil.send_message(topic_name, msg_name, data)

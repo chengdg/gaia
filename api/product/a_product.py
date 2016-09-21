@@ -14,7 +14,7 @@ class AProduct(api_resource.ApiResource):
 	app = "product"
 	resource = "product"
 
-	@param_required(['name', 'swipe_images', 'postage_type', 'owner_id'])
+	@param_required(['base_info', 'models_info', 'image_info', 'postage_info', 'pay_info'])
 	def put(args):
 		"""
 		创建商品
@@ -77,7 +77,4 @@ class AProduct(api_resource.ApiResource):
 
 	@param_required(['ids'])
 	def delete(args):
-
 		pids = args['ids'].split(',')
-
-
