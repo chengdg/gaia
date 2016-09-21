@@ -1,0 +1,51 @@
+{
+	"swagger": "2.0",
+	"info": {
+		"version": "0.0.1",
+		"title": "Zeus消息文档"
+	},
+	"paths": {
+		"offshelf_product": {
+			"get": {
+				"summary": "下架商品",
+				"description": "描述下架的商品的消息（演示）",
+				"tags": [
+					"delivery"
+				],
+				"responses": {
+					"200": {
+						"description": "下架的商品",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"name": {
+									"type": "string",
+									"description": "消息名称"
+								},
+								"data": {
+									"type": "object",
+									"properties": {
+										"products": {
+											"type": "object",
+											"description": "商品信息",
+											"properties": {
+												"id": {
+													"type": "int",
+													"description": "商品ID"
+												},
+												"name": {
+													"type": "string",
+													"description": "商品名称"
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

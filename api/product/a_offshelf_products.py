@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import json
 
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
@@ -48,3 +49,17 @@ class AProductOffshelf(api_resource.ApiResource):
 			'pageinfo': pageinfo.to_dict(),
 			'products': [product.to_dict() for product in products]
 		}
+
+	@param_required(['owner_id', 'product_ids'])
+	def put(args):
+		"""
+		商品下架
+		@return:
+		"""
+		product_ids = json.loads(args['product_ids'])
+		owner_id = args['owner_id']
+		if product_ids:
+			Product.offshelf_products({'product_ids': product_ids, 'owner_id': owner_id})
+			return {'msg': 'success'}
+		else:
+			return 500, {'msg', 'No product need off shelf.'}
