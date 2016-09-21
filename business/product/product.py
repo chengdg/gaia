@@ -179,3 +179,13 @@ class Product(business_model.Model):
 				category_id=category_id,
 				product_id=db_model.id)
 
+		topic_name = "test-topic"
+		data = {
+			"name": "save_product",
+			"data": {
+				"product_id": db_model.id,
+				"product_name": db_model.name
+			}
+		}
+		msg_name = "cancel_order"
+		msgutil.send_message(topic_name, msg_name, data)
