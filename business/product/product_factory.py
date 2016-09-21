@@ -13,9 +13,9 @@ from eaglet.decorator import param_required
 class A(object):
 	pass
 
-
 	def add(self):
 		pass
+
 
 class ProductFactory(business_model.Model):
 	"""
@@ -31,19 +31,21 @@ class ProductFactory(business_model.Model):
 
 	def create_product(self, owner_id, args):
 
-		_product = A()
+		# _product = A()
 
 		try:
-			self.__init_base_info(_product, args)
-			self.__init_models_info(_product, args)
-			self.__init_image_info(_product, args)
-			self.__init_postage_info(_product, args)
-			self.__init_pay_info(_product, args)
-
 			product = Product()
 
+			additional_data = {}
+
+			self.__init_base_info(product, additional_data, args)
+			self.__init_models_info(product, additional_data, args)
+			self.__init_image_info(product, additional_data, args)
+			self.__init_postage_info(product, additional_data, args)
+			self.__init_pay_info(product, additional_data, args)
+
 			# 床架商品（持久化
-			product.save(_product)
+			product.save(product, additional_data)
 
 			return product
 
@@ -54,7 +56,7 @@ class ProductFactory(business_model.Model):
 			print(msg)
 			watchdog.alert(msg)
 
-	def __init_base_info(self, product, args):
+	def __init_base_info(self, product, additional_data, args):
 		"""
 		初始化基本信息
 		@param args:
@@ -70,14 +72,13 @@ class ProductFactory(business_model.Model):
 		product.is_member_product = int(base_info.get('is_member_product', '0'))
 		product.detail = base_info.get('detail', '')
 
-		product_category_id = base_info.get('product_category', '')
+		additional_data['category_ids'] = base_info.get('product_category', '').split(',')
 
-		product.product_category_id = product_category_id.split(',')
-
-	def __init_models_info(self, product, args):
+	def __init_models_info(self, product, additional_data, args):
 		models_info = json.loads(args['models_info'])
 
-		if int(models_info['is_use_custom_models']):
+		is_use_custom_models = int(models_info['is_use_custom_models'])
+		if is_use_custom_models:
 			custom_models_info = models_info['custom_model']
 			# 多规格商品创建默认标准规格
 
@@ -124,21 +125,24 @@ class ProductFactory(business_model.Model):
 			standard_model = {}
 			custom_models = {}
 
-		product.standard_model = standard_model
-		product.custom_models = custom_models
+		additional_data['standard_model'] = standard_model
+		additional_data['custom_models'] = custom_models
+		additional_data['is_use_custom_models'] = is_use_custom_models
 
-	def __init_image_info(self, product, args):
+	def __init_image_info(self, product, additional_data, args):
 		image_info = json.loads(args['image_info'])
 
-		product.swipe_images = json.loads(image_info['swipe_images'])
+		additional_data['swipe_images'] = json.loads(image_info['swipe_images'])
+		product.thumbnails_url = additional_data['swipe_images'][0]['url']
 
-	def __init_postage_info(self, product, args):
+	def __init_postage_info(self, product, additional_data, args):
 		postage_info = json.loads(args['postage_info'])
+
 		product.postage_type = postage_info.get('postage_type', '')
 		product.unified_postage_money = float(postage_info.get('unified_postage_money', '0.0'))
 		product.is_delivery = int(postage_info.get('is_delivery', '0'))
 
-	def __init_pay_info(self, product, args):
+	def __init_pay_info(self, product, additional_data, args):
 		pay_info = json.loads(args['pay_info'])
 
 		product.is_use_cod_pay_interface = int(pay_info.get('is_enable_cod_pay_interface', '0'))

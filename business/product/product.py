@@ -10,67 +10,44 @@ class Product(business_model.Model):
 		'id',
 		'owner_id',
 		'name',
-		'physical_unit',
 		'price',
-		'introduction',
 		'weight',
 		'thumbnails_url',
-		'pic_url',
+
 		'detail',
-		'remark',
+
 		'display_index',
 		'created_at',
 		'shelve_type',
-		'shelve_start_time',
-		'shelve_end_time',
+
 		'min_limit',
-		'stock_type',
-		'stocks',
+
 		'is_deleted',
-		'is_support_make_thanks_card',
+
 		'type',
 		'update_time',
-		'postage_id',
+
 		'is_use_online_pay_interface',
 		'is_use_cod_pay_interface',
+
 		'promotion_title',
-		'user_code',
 		'bar_code',
+
+		'postage_id',
 		'unified_postage_money',
 		'postage_type',
+
 		'is_member_product',
+
 		'supplier',
+
 		'supplier_user_id',
+
 		'supplier_name',
-		'purchase_price',
+
 		'is_enable_bill',
 		'is_delivery',
 		'buy_in_supplier',
-
-		'is_model_deleted',
-		'custom_model_properties',
-		'model_type',
-		'swipe_images',
-		'model_name',
-		'model',
-		'categories',
-		'properties',
-
-		'group_buy_info',
-		'sales',
-		# 促销
-		'promotion',
-
-		'display_price',
-		'display_price_range',
-
-		# 多规格相关
-		'system_model_properties',
-		'models',
-		'_is_use_custom_model',
-		'standard_model',
-		'current_used_model',
-		'custom_models',
 
 	)
 
@@ -81,39 +58,40 @@ class Product(business_model.Model):
 		if model:
 			self._init_slot_from_model(model)
 
-	def save(self, product_data):
-		owner_id = product_data.base_info['owner_id']
+	def save(self, product, additional_data):
+		owner_id = product.owner_id
 
 		# 兼容历史数据
-		if product_data.standard_model:
-			user_code = product_data.standard_model['user_code']
+		if additional_data['is_use_custom_models']:
+			user_code = additional_data.standard_model['user_code']
 		else:
 			user_code = ''
 
+		# 创建商品表
 		db_model = mall_models.Product.create(
 			owner_id=owner_id,
-			name=product_data.base_info['name'],
-			promotion_title=product_data.base_info['promotion_title'],
-			bar_code=product_data.base_info['bar_code'],
-			user_code=user_code, # 兼容历史数据
-			detail=product_data.base_info['detail'],
-			type=product_data.base_info['type'],
+			name=product.name,
+			promotion_title=product.promotion_title,
+			bar_code=product.bar_code,
+			user_code=user_code,  # 兼容历史数据
+			detail=product.detail,
+			type=product.type,
 
 			# 支付信息
-			is_use_online_pay_interface=product_data.pay_info['is_use_online_pay_interface'],
-			is_use_cod_pay_interface=product_data.pay_info['is_use_cod_pay_interface'],
-			is_enable_bill=product_data.pay_info['is_enable_bill'],
+			is_use_online_pay_interface=product.is_use_online_pay_interface,
+			is_use_cod_pay_interface=product.is_use_cod_pay_interface,
+			is_enable_bill=product.is_enable_bill,
 
-			thumbnails_url=product_data.image_info['thumbnails_url'],
+			thumbnails_url=product.thumbnails_url,
 			# 运费信息
-			postage_type=product_data.postage_info['postage_type'],
-			postage_id=product_data.postage_info['postage_id'],
-			unified_postage_money=product_data.postage_info['unified_postage_money'],
-			is_delivery=product_data.postage_info['is_delivery'],
+			postage_type=product.postage_type,
+			postage_id=product.postage_id,
+			unified_postage_money=product.unified_postage_money,
+			is_delivery=product.is_delivery,
 			shelve_type=mall_models.DEFAULT_SHELVE_TYPE
 		)
 
-		standard_model = product_data.standard_model
+		standard_model = additional_data['standard_model']
 
 		mall_models.ProductModel.create(
 			owner=owner_id,
@@ -129,7 +107,7 @@ class Product(business_model.Model):
 		)
 
 		# 处理custom商品规格
-		custom_models = product_data.custom_models
+		custom_models = additional_data['custom_models']
 		for custom_model in custom_models:
 			product_model = mall_models.ProductModel.create(
 				owner=owner_id,
@@ -151,7 +129,7 @@ class Product(business_model.Model):
 				)
 
 		# 处理轮播图
-		for swipe_image in product_data.image_info['swipe_images']:
+		for swipe_image in additional_data['swipe_images']:
 			if swipe_image['width'] and swipe_image['height']:
 				mall_models.ProductSwipeImage.objects.create(
 					product=db_model,
@@ -161,7 +139,7 @@ class Product(business_model.Model):
 				)
 
 		# 处理商品分类
-		for category_id in product_data.category_ids.split(','):
+		for category_id in additional_data['category_ids']:
 			category_id = int(category_id)
 			mall_models.CategoryHasProduct.create(
 				category_id=category_id,
