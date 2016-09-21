@@ -1186,12 +1186,12 @@
 						"description": "操作者",
 						"type": "string"
 					},
-                    {
+					{
 						"name": "category_ids",
 						"in": "query",
 						"required": true,
 						"description": "分组列表ids",
-                        "format": "1,2,4,5",
+						"format": "1,2,4,5",
 						"type": "string"
 					}
 				],
@@ -1589,6 +1589,12 @@
 						"in": "query",
 						"type": "string",
 						"description": "商品IDs"
+					},
+					{
+						"name": "category_old_id",
+						"in": "query",
+						"type": "string",
+						"description": "变更前的分组ID"
 					}
 				],
 				"tags": ["new_zeus", "category"],

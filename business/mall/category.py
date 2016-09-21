@@ -8,6 +8,9 @@ from business import model as business_model
 from db.mall import models as mall_models
 from core import paginator
 
+from bdem import msgutil
+
+
 from business.mall.product import Product
 
 
@@ -32,10 +35,10 @@ class Category(business_model.Model):
 		if model:
 			self._init_slot_from_model(model)
 
-	@staticmethod
-	def empty_category(model=None):
-		category = Category(model)
-		return category
+	# @staticmethod
+	# def empty_category(model=None):
+	# 	category = Category(model)
+	# 	return category
 
 	@staticmethod
 	@param_required(['db_model'])
@@ -44,41 +47,87 @@ class Category(business_model.Model):
 		category = Category(model)
 		return category
 
-	@staticmethod
-	@param_required(['owner_id'])
-	def get_categories(params):
-		'''
-		分组管理列表
-		'''
-		filter_params = {'owner': params['owner_id']}
-		if params['category_ids']:
-			filter_params.update({'id__in': params['category_ids']})
+	# @staticmethod
+	# @param_required(['owner_id'])
+	# def get_categories(params):
+	# 	'''
+	# 	分组管理列表
+	# 	'''
+	# 	filter_params = {'owner': params['owner_id']}
+	# 	if params['category_ids']:
+	# 		filter_params.update({'id__in': params['category_ids']})
 
-		categories = mall_models.ProductCategory.select().dj_where(**filter_params)
-		if params['category_ids']:
-			return [Category.from_model({'db_model': category}) for category in categories], None
-		pageinfo, categories = paginator.paginate(categories, params['cur_page'], params[
-												'count_per_page'], query_string=params.get('query_string', None))
-		return [Category.from_model({'db_model': category}) for category in categories], pageinfo.to_dict()
+	# 	categories = mall_models.ProductCategory.select().dj_where(**filter_params)
+	# 	if params['category_ids']:
+	# 		return [Category.from_model({'db_model': category}) for category in categories], None
+	# 	pageinfo, categories = paginator.paginate(categories, params['cur_page'], params['count_per_page'], query_string=params.get('query_string', None))
+	# 	return [Category.from_model({'db_model': category}) for category in categories], pageinfo.to_dict()
 
 
 	def update_category_property(self, category_id, actionProperty='name', update_params={}):
 		if actionProperty == 'position':
-			mall_models.CategoryHasProduct.update(display_index=update_params['display_index']).dj_where(product_id=update_params['product_id'], category_id=category_id).execute()
-		if actionProperty == 'products':
-			category = mall_models.ProductCategory.get(id=category_id)
-			product_ids = [product_id.strip() for product_id in update_params['product_ids'].strip().split(',') if product_id]
-			products = Product.from_ids({'product_ids': product_ids})
-			for b_product in products:
-				opt = {
-					'product': b_product.context['db_model'],
-					'category': category
-				}
-				mall_models.CategoryHasProduct.get_or_create(**opt)
-			category.product_count += len(products)
-			category.save()
+			self.update_display_index(category_id, update_params)
+
+		elif actionProperty == 'products':
+			self.update_change_category(category_id, update_params)
 		else:
-			mall_models.ProductCategory.update(name=update_params['name']).dj_where(id=category_id).execute()
+			self.update_name(category_id, update_params)
+
+	def update_products_to_category(set, category_id, update_params):
+		category = mall_models.ProductCategory.get(id=category_id)
+		product_ids = [product_id.strip() for product_id in update_params['product_ids'].strip().split(',') if product_id]
+		products = Product.from_ids({'product_ids': product_ids})
+		for b_product in products:
+			opt = {
+				'product': b_product.context['db_model'],
+				'category': category
+			}
+			mall_models.CategoryHasProduct.get_or_create(**opt)
+		category.product_count += len(products)
+		category.save()
+		# 
+		# TODO   更新缓存
+		# 发mns消息
+		topic_name = 'test-topic'#"category-update"
+		msg_name = "category_update_products"   # 变更商品分组
+		data = {
+			'category': {
+				'category_id': category_id,
+				'product_ids': product_ids
+			}
+		}
+		msgutil.send_message(topic_name, msg_name, data)
+
+
+	def update_name(self, category_id, update_params):
+		mall_models.ProductCategory.update(name=update_params['name']).dj_where(id=category_id).execute()
+		# TODO   更新缓存
+		topic_name = 'test-topic'#"category-update"
+		msg_name = "category_update_name"
+		data = {
+			'category': {
+				'id': category_id,
+				'name': update_params['name']
+			}
+		}
+		msgutil.send_message(topic_name, msg_name, data)
+
+	def update_display_index(self, category_id, update_params):
+		mall_models.CategoryHasProduct.update(display_index=update_params['display_index']).dj_where(product_id=update_params['product_id'], category_id=category_id).execute()
+		# TODO   更新缓存
+
+		# 发mns消息
+		topic_name = 'test-topic'#"category-update"
+		msg_name = "category_product_update_display_index"   # 变更分组下商品排序
+		data = {
+			'category': {
+				'category_id': category_id,
+				'product_id': update_params['product_id'],
+				'display_index': update_params['display_index']
+			}
+		}
+		msgutil.send_message(topic_name, msg_name, data)
+
 
 	@staticmethod
 	@param_required(['category_id'])
@@ -113,6 +162,9 @@ class Category(business_model.Model):
 				mall_models.CategoryHasProduct.get_or_create(**opt)
 			category.product_count = len(products)
 			category.save()
+		# TODO   更新缓存
+
+
 			# mall_models.ProductCategory.update(product_count=len(products)).dj_where(id=category.id).execute()
 		return Category(category)
 
@@ -124,6 +176,16 @@ class Category(business_model.Model):
 		b_category = Category.from_model({'db_model': category})
 		if b_category.products:
 			mall_models.CategoryHasProduct.delete().dj_where(category=category).execute()
+			# TODO   更新缓存
+
+			topic_name = 'test-topic'#"category-update"
+			msg_name = "category_delete"   # 删除指定分组
+			data = {
+				'category': {
+					'id': category_id,
+				}
+			}
+			msgutil.send_message(topic_name, msg_name, data)
 		return category.delete_instance()
 
 	def delete_product(self, category_id, product_id):
@@ -133,6 +195,17 @@ class Category(business_model.Model):
 		mall_models.CategoryHasProduct.delete().dj_where(category_id=category_id, product_id=product_id).execute()
 		self.context['db_model'].product_count = int(self.context['db_model'].product_count) - 1
 		self.context['db_model'].save()
+		# TODO   更新缓存
+		topic_name = 'test-topic'#"category-update"
+		msg_name = "category_product_delete"   # 删除指定分组中的商品
+		data = {
+			'category': {
+				'category_id': category_id,
+				'product_id': product_id
+			}
+		}
+		msgutil.send_message(topic_name, msg_name, data)
+
 
 	@property
 	def products(self):
