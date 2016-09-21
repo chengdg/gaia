@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
 
 
-from business.mall.product import Product
+from business.product.product import Product
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
 
 from business.product.product_pool import ProductPool
 
 
-class AProduct(api_resource.ApiResource):
+class AProductPool(api_resource.ApiResource):
 	"""
-	商品
+	商品 todo
 	"""
 	app = "product"
 	resource = "pool_product"
