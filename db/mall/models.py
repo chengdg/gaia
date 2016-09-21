@@ -177,9 +177,13 @@ class ProductCategory(models.Model):
 
 PRODUCT_STOCK_TYPE_LIMIT = 1
 PRODUCT_STOCK_TYPE_UNLIMIT = 0
+
+DEFAULT_SHELVE_TYPE = -1
 PRODUCT_SHELVE_TYPE_ON = 1
 PRODUCT_SHELVE_TYPE_OFF = 0
 PRODUCT_SHELVE_TYPE_RECYCLED = 2
+
+
 PRODUCT_DEFAULT_TYPE = 'object'
 PRODUCT_DELIVERY_PLAN_TYPE = 'delivery'
 PRODUCT_TEST_TYPE = 'test'
@@ -212,7 +216,8 @@ class Product(models.Model):
 	remark = models.TextField(default='')  # 备注
 	display_index = models.IntegerField(default=0)  # 显示的排序
 	created_at = models.DateTimeField(auto_now_add=True)  # 添加时间
-	shelve_type = models.IntegerField(default=PRODUCT_SHELVE_TYPE_OFF)  # 0:下架（待售） 1:上架（在售） 2:回收站
+	# shelve_type = models.IntegerField(default=PRODUCT_SHELVE_TYPE_OFF)  # 0:下架（待售） 1:上架（在售） 2:回收站
+	shelve_type = models.IntegerField(default=DEFAULT_SHELVE_TYPE)  # 0:下架（待售） 1:上架（在售） 2:回收站
 	shelve_start_time = models.CharField(max_length=50, null=True)  # 定时上架:上架时间
 	shelve_end_time = models.CharField(max_length=50, null=True)  # 定时上架:下架时间
 	stock_type = models.IntegerField(

@@ -32,7 +32,7 @@ class ProductPool(business_model.Model):
 	def get(args):
 		return ProductPool(args['owner_id'])
 
-	def push(self, product):
+	def add(self, product):
 		if self.is_has_product(product.id):
 			return False, u'{}已存在于{}的商品池'.format(product.id, self.owner_id)
 		mall_models.ProductPool.create(product_id=product.id, woid=self.owner_id)

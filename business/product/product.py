@@ -1,23 +1,8 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime
-import json
 from bdem import msgutil
 
-from eaglet.decorator import param_required
-from eaglet.utils.resource_client import Resource
-
-from business.mall.product_pool import ProductPool
-from db.mall import models as mall_models
-from db.mall import promotion_models
-from db.account import models as account_models
-from business.account.user_profile import UserProfile
 from business import model as business_model
-from eaglet.core import watchdog
-from eaglet.core.exceptionutil import unicode_full_stack
-from settings import PANDA_IMAGE_DOMAIN
-from services.product_service.task import clear_sync_product_cache
-
-from core import paginator
+from db.mall import models as mall_models
 
 
 class Product(business_model.Model):
@@ -96,10 +81,7 @@ class Product(business_model.Model):
 		if model:
 			self._init_slot_from_model(model)
 
-
-
-
-	def save(self,product_data):
+	def save(self, product_data):
 		owner_id = product_data.base_info['owner_id']
 
 		db_model = mall_models.Product.create(
@@ -117,12 +99,12 @@ class Product(business_model.Model):
 			is_enable_bill=product_data.pay_info['is_enable_bill'],
 
 			thumbnails_url=product_data.image_info['thumbnails_url'],
-
 			# 运费信息
 			postage_type=product_data.postage_info['postage_type'],
 			postage_id=product_data.postage_info['postage_id'],
 			unified_postage_money=product_data.postage_info['unified_postage_money'],
 			is_delivery=product_data.postage_info['is_delivery'],
+			shelve_type=mall_models.DEFAULT_SHELVE_TYPE
 		)
 
 		standard_model = product_data.standard_model

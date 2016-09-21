@@ -5,7 +5,15 @@ from eaglet.core import api_resource
 from eaglet.decorator import param_required
 
 from business.product.product_factory import ProductFactory
+from business.product.product_pool import ProductPool
 
+
+class A(object):
+	pass
+
+
+	def add(self):
+		pass
 
 class AProduct(api_resource.ApiResource):
 	"""
@@ -62,9 +70,19 @@ class AProduct(api_resource.ApiResource):
 		# 	'properties': args['properties', '[]']
 		# }
 
+		# 创建商品
+		owner_id = args['owner_id']
 		product_data = args
 		product_factory = ProductFactory.get()
-		product_factory.create_product(args['owner_id'], product_data)
+		product = product_factory.create_product(args['owner_id'], product_data)
+
+		# 放入商品池
+		pool = ProductPool.get({'owner_id': owner_id})
+		pool.add(product)
+
+		# 放入待售
+		shelf = A()
+		shelf.add(product)
 
 		return {}
 

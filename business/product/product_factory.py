@@ -5,6 +5,7 @@ from eaglet.core import watchdog
 
 from business import model as business_model
 from business.product.product import Product
+from business.product.product_pool import ProductPool
 from db.mall import models as mall_models
 from eaglet.decorator import param_required
 
@@ -12,6 +13,9 @@ from eaglet.decorator import param_required
 class A(object):
 	pass
 
+
+	def add(self):
+		pass
 
 class ProductFactory(business_model.Model):
 	"""
@@ -37,7 +41,12 @@ class ProductFactory(business_model.Model):
 			self.__init_pay_info(_product, args)
 
 			product = Product()
+
+			# 床架商品（持久化
 			product.save(_product)
+
+			return product
+
 
 		except BaseException as e:
 			from eaglet.core.exceptionutil import unicode_full_stack
@@ -59,7 +68,7 @@ class ProductFactory(business_model.Model):
 		product.bar_code = base_info.get('bar_code', '').strip()
 		product.min_limit = int(base_info.get('min_limit', 0))
 		product.is_member_product = int(base_info.get('is_member_product', '0'))
-		product.detail = base_info['detail']
+		product.detail = base_info.get('detail', '')
 
 		product_category_id = base_info.get('product_category', '')
 
@@ -68,7 +77,7 @@ class ProductFactory(business_model.Model):
 	def __init_models_info(self, product, args):
 		models_info = json.loads(args['models_info'])
 
-		if models_info['is_use_custom_models']:
+		if int(models_info['is_use_custom_models']):
 			custom_models_info = models_info['custom_model']
 			# 多规格商品创建默认标准规格
 
