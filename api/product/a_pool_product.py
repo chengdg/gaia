@@ -29,7 +29,7 @@ class AProduct(api_resource.ApiResource):
 	def delete(args):
 		pool = ProductPool.get({'owner_id': args['owner_id']})
 		product = Product.from_id({'product_id': args['product_id']})
-		is_success = pool.pop(product)
+		is_success = pool.remove(product)
 		if is_success:
 			return {}
 		else:

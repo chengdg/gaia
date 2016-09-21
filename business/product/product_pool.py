@@ -38,9 +38,9 @@ class ProductPool(business_model.Model):
 		mall_models.ProductPool.create(product_id=product.id, woid=self.owner_id)
 		return True, ''
 
-	def pop(self, product):
+	def remove(self, product):
 		is_success = mall_models.ProductPool.delete().dj_where(product_id=product.id, woid=self.owner_id).execute()
-		print('---',is_success)
+
 		return is_success
 
 	def is_has_product(self, product_id):

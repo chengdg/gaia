@@ -11,8 +11,7 @@ from business.product.product_pool import ProductPool
 class A(object):
 	pass
 
-
-	def add(self):
+	def add(*args,**kwargs):
 		pass
 
 class AProduct(api_resource.ApiResource):
@@ -80,7 +79,7 @@ class AProduct(api_resource.ApiResource):
 		pool = ProductPool.get({'owner_id': owner_id})
 		pool.add(product)
 
-		# 放入待售
+		# 放入待售货架
 		shelf = A()
 		shelf.add(product)
 
