@@ -84,12 +84,18 @@ class Product(business_model.Model):
 	def save(self, product_data):
 		owner_id = product_data.base_info['owner_id']
 
+		# 兼容历史数据
+		if product_data.standard_model:
+			user_code = product_data.standard_model['user_code']
+		else:
+			user_code = ''
+
 		db_model = mall_models.Product.create(
 			owner_id=owner_id,
 			name=product_data.base_info['name'],
 			promotion_title=product_data.base_info['promotion_title'],
-			user_code=product_data.base_info['user_code'],
-
+			bar_code=product_data.base_info['bar_code'],
+			user_code=user_code, # 兼容历史数据
 			detail=product_data.base_info['detail'],
 			type=product_data.base_info['type'],
 
