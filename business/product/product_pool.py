@@ -22,37 +22,46 @@ class ProductPool(business_model.Model):
 		owner_id = args['owner_id']
 		return ProductPool(owner_id)
 
-	def __seach_product(self, products, filter_values):
+	def __search_product(self, products, filter_values):
 		# 具体实现商品搜索的功能
 		if not filter_values:
 			return products
 		return products
 
 	def __init__filter_values(self, filter_values):
-		return filter_values
+		product_pool_filter_values, product_db_filter_values, product_detail_filter_values = {}, {}, {}
+		return product_pool_filter_values, product_db_filter_values, product_detail_filter_values
 
-	def get_product(self, filter_values):
-		filter_values = self.__init__filter_values(filter_values)
-		product_models = mall_models.Product.select().dj_where(owner=self.owner_id, is_deleted=False)
+	def add_products(self, product_ids):
+		for product_id in product_ids:
+			mall_models.ProductPool.create(
+				woid=self.owner_id,
+				product_id=product_id,
+				status=mall_models.PP_STATUS_ON_POOL
+			)
+		return True
+
+	def get_products(self, filter_values):
+		product_pool_filter_values, product_db_filter_values, product_detail_filter_values = self.__init__filter_values(filter_values)
+		product_ids = [model.product_id for model in mall_models.ProductPool.select().dj_where(**product_pool_filter_values)]
+		product_db_filter_values['id__in'] = product_ids
+		product_models = mall_models.Product.select().dj_where(**product_db_filter_values)
 		products = [Product(model) for model in product_models]
-		products = self.__seach_product(products, filter_values)
+		if product_detail_filter_values:
+			products = self.__search_product(products, product_detail_filter_values)
 		return products
 
 	def delete_products(self, product_ids):
-		if not product_ids:
-			return False
-		mall_models.Product.update(
-			display_index=0,
-			is_delete=True
-		).dj_where(id__in=product_ids, owner=self.owner_id).execute()
+		if product_ids:
+			mall_models.ProductPool.update(
+				display_index=0,
+				status=mall_models.PP_STATUS_DELETE
+			).dj_where(product_id__in=product_ids, owner=self.owner_id).execute()
 
-		topic_name = 'test-topic'
-		msg_name = 'msg_delete_product'
-		data = {
-			'name': "delete_product",
-			"data": {
+			topic_name = 'zeus-product'
+			msg_name = 'msg_delete_product'
+			data = {
 				"product_ids": product_ids
 			}
-		}
-		msgutil.send_message(topic_name, msg_name, data)
+			msgutil.send_message(topic_name, msg_name, data)
 		return True
