@@ -7,7 +7,7 @@ CACHE_KEY = {
 
 # 消息队列topic
 TOPIC = {
-	'product': 'zeus_product'
+	'product': 'test-topic'
 }
 
 # 消息队列message_name
