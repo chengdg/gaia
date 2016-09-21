@@ -2,6 +2,7 @@
 from datetime import datetime
 from bdem import msgutil
 from eaglet.utils.resource_client import Resource
+from eaglet.decorator import param_required
 
 from db.mall import models as mall_models
 from business import model as business_model
@@ -23,7 +24,11 @@ class ProductShelf(business_model.Model):
 		elif type == 'offshelf':
 			self.type = mall_models.PRODUCT_SHELVE_TYPE_OFF
 
-	def create(self, owner_id, type):
+	@staticmethod
+	@param_required(['owner_id', 'type'])
+	def create(args):
+		owner_id = args['owner_id']
+		type = args['type']
 		if type not in ('onshelf', 'offshelf'):
 			return None
 		else:
