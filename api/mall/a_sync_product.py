@@ -3,12 +3,12 @@
 import json
 
 from eaglet.core import api_resource
-from eaglet.decorator import param_required
 from eaglet.core import watchdog
 from eaglet.core.exceptionutil import unicode_full_stack
+from eaglet.decorator import param_required
 
-from business.mall.product_factory import ProductFactory
 from business.mall.product import Product, ProductModel, ProductSwipeImage, ProductPool
+from business.product.product_factory import ProductFactory
 from settings import PANDA_IMAGE_DOMAIN
 
 

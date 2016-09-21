@@ -4,8 +4,7 @@
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
 
-from business.mall.product import Product
-from business.mall.product_factory import ProductFactory
+from business.product.product_factory import ProductFactory
 
 
 class AProduct(api_resource.ApiResource):
