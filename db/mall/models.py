@@ -117,11 +117,6 @@ class PostageConfig(models.Model):
 	class Meta(object):
 		db_table = 'mall_postage_config'
 
-	def get_special_configs(self):
-		return SpecialPostageConfig.select().dj_where(postage_config=self)
-
-	def get_free_configs(self):
-		return FreePostageConfig.select().dj_where(postage_config=self)
 
 
 class SpecialPostageConfig(models.Model):
@@ -413,115 +408,6 @@ class PayInterface(models.Model):
 	class Meta(object):
 		db_table = 'mall_pay_interface'
 
-	def pay(self, order, webapp_owner_id):
-		if PAY_INTERFACE_ALIPAY == self.type:
-			return '/webapp/alipay/?woid={}&order_id={}&related_config_id={}'.format(webapp_owner_id, order.order_id, self.related_config_id)
-		elif PAY_INTERFACE_TENPAY == self.type:
-			from account.models import UserProfile
-			user_profile = UserProfile.objects.get(user_id=webapp_owner_id)
-			call_back_url = "http://{}/tenpay/mall/pay_result/get/{}/{}/".format(
-				user_profile.host,
-				webapp_owner_id,
-				self.related_config_id)
-			notify_url = "http://{}/tenpay/mall/pay_notify_result/get/{}/{}/".format(
-				user_profile.host,
-				webapp_owner_id,
-				self.related_config_id)
-			pay_submit = TenpaySubmit(
-				self.related_config_id,
-				order,
-				call_back_url,
-				notify_url)
-			tenpay_url = pay_submit.submit()
-
-			return tenpay_url
-		elif PAY_INTERFACE_COD == self.type:
-			return './?woid={}&module=mall&model=pay_result&action=get&pay_interface_type={}&order_id={}'.format(
-				webapp_owner_id,
-				PAY_INTERFACE_COD,
-				order.order_id)
-		elif PAY_INTERFACE_WEIXIN_PAY == self.type:
-			return '/webapp/wxpay/?woid={}&order_id={}&pay_id={}&showwxpaytitle=1'.format(
-				webapp_owner_id,
-				order.order_id,
-				self.id)
-		else:
-			return ''
-
-	def parse_pay_result(self, request):
-		error_msg = ''
-		if PAY_INTERFACE_ALIPAY == self.type:
-			order_id = request.GET.get('out_trade_no', None)
-			trade_status = request.GET.get('result', '')
-			is_trade_success = ('success' == trade_status.lower())
-		elif PAY_INTERFACE_TENPAY == self.type:
-			trade_status = int(request.GET.get('trade_status', -1))
-			is_trade_success = (0 == trade_status)
-			error_msg = request.GET.get('pay_info', '')
-			order_id = request.GET.get('out_trade_no', None)
-		elif PAY_INTERFACE_COD == self.type:
-			is_trade_success = True
-			order_id = request.GET.get('order_id')
-		elif PAY_INTERFACE_WEIXIN_PAY == self.type:
-			is_trade_success = True
-			order_id = request.GET.get('order_id')
-		else:
-			pass
-
-		#兼容改价
-		try:
-			order_id = order_id.split('-')[0]
-		except:
-			pass
-
-		return {
-			'is_success': is_trade_success,
-			'order_id': order_id,
-			'error_msg': error_msg
-		}
-
-	def parse_notify_result(self, request):
-		error_msg = ''
-		if PAY_INTERFACE_ALIPAY == self.type:
-			config = UserAlipayOrderConfig.objects.get(
-				id=self.related_config_id)
-			notify = AlipayNotify(request, config)
-		elif PAY_INTERFACE_TENPAY == self.type:
-			notify = TenpayNotify(request)
-		elif PAY_INTERFACE_WEIXIN_PAY == self.type:
-			notify = WxpayNotify(request)
-		else:
-			notify = None
-
-		if notify:
-			order_id = notify.get_payed_order_id()
-			is_trade_success = notify.is_pay_succeed()
-			error_msg = notify.get_pay_info()
-			reply_response = notify.get_reply_response()
-			order_payment_info = notify.get_order_payment_info()
-		else:
-			order_id = ''
-			is_trade_success = False
-			error_msg = ''
-			reply_response = ''
-			order_payment_info = None
-
-		#兼容改价
-		try:
-			order_id = order_id.split('-')[0]
-		except:
-			pass
-
-		return {
-			'order_id': order_id,
-			'is_success': is_trade_success,
-			'error_msg': error_msg,
-			'reply_response': reply_response,
-			'order_payment_info': order_payment_info
-		}
-
-	def get_str_name(self):
-		return PAYTYPE2NAME[self.type]
 
 
 V2 = 0
@@ -579,17 +465,6 @@ class ProductModelProperty(models.Model):
 	class Meta(object):
 		db_table = 'mall_product_model_property'
 
-	@property
-	def values(self):
-		return list(
-			ProductModelPropertyValue.objects.filter(
-				property=self,
-				is_deleted=False))
-
-	@property
-	def is_image_property(self):
-		return self.type == PRODUCT_MODEL_PROPERTY_TYPE_IMAGE
-
 
 class ProductModelPropertyValue(models.Model):
 	"""
@@ -627,8 +502,6 @@ class ProductModel(models.Model):
 	class Meta(object):
 		db_table = 'mall_product_model'
 
-	def __getitem__(self, name):
-		return getattr(self, name, None)
 
 
 class ProductModelHasPropertyValue(models.Model):
@@ -833,213 +706,6 @@ class Order(models.Model):
 		verbose_name = '订单'
 		verbose_name_plural = '订单'
 
-	@property
-	def has_sub_order(self):
-		"""
-		判断该订单是否有子订单
-		"""
-		return self.origin_order_id == -1 and self.status > 0 #未支付的订单按未拆单显示
-
-	@property
-	def is_sub_order(self):
-		return self.origin_order_id > 0
-
-	@staticmethod
-	def get_sub_order_ids(origin_order_id):
-		orders = Order.objects.filter(origin_order_id=origin_order_id)
-		sub_order_ids = [order.order_id for order in orders]
-		return sub_order_ids
-
-
-	@staticmethod
-	def by_webapp_user_id(webapp_user_id, order_id=None):
-		if order_id:
-			return Order.objects.filter(Q(webapp_user_id__in=webapp_user_id) | Q(id__in=order_id)).filter(origin_order_id__lte=0)
-		if isinstance(webapp_user_id, int) or isinstance(webapp_user_id, long):
-			return Order.objects.filter(webapp_user_id=webapp_user_id, origin_order_id__lte=0)
-		else:
-			return Order.objects.filter(webapp_user_id__in=webapp_user_id, origin_order_id__lte=0)
-
-	@staticmethod
-	def by_webapp_id(webapp_id):
-		# print webapp_id.isdight()
-		if str(webapp_id) == '3394':
-			return Order.objects.filter(webapp_id=webapp_id)
-		if isinstance(webapp_id, list):
-			return Order.objects.filter(webapp_source_id__in=webapp_id, origin_order_id__lte=0)
-		else:
-			return Order.objects.filter(webapp_source_id=webapp_id, origin_order_id__lte=0)
-
-	##########################################################################
-	# get_coupon: 获取定单使用的优惠券信息
-	##########################################################################
-	def get_coupon(self):
-		if self.coupon_id == 0:
-			return None
-		else:
-			from mall.promotion import models as coupon_model
-			coupon = coupon_model.Coupon.objects.filter(id=self.coupon_id)
-			if len(coupon) == 1:
-				return coupon[0]
-			return None
-
-
-	@staticmethod
-	def fill_payment_time(orders):
-		order_ids = [order.order_id for order in orders]
-		order2paylog = dict(
-			[
-				(pay_log.order_id, pay_log)
-				for pay_log in OrderOperationLog.objects.filter(
-					order_id__in=order_ids, action='支付')])
-		for order in orders:
-			if order.order_id in order2paylog:
-				order.payment_time = order2paylog[order.order_id].created_at
-			else:
-				order.payment_time = ''
-
-	##########################################################################
-	# get_orders_by_coupon_ids: 通过优惠券id获取订单列表
-	##########################################################################
-	@staticmethod
-	def get_orders_by_coupon_ids(coupon_ids):
-		if len(coupon_ids) == 0:
-			return None
-		else:
-			return list(Order.objects.filter(coupon_id__in=coupon_ids))
-
-	@property
-	def get_pay_interface_name(self):
-		return PAYTYPE2NAME.get(self.pay_interface_type, u'')
-
-	@property
-	def get_str_area(self):
-		from util import regional_util
-		if self.area:
-			return regional_util.get_str_value_by_string_ids(self.area)
-		else:
-			return ''
-
-	# 订单金额
-	def get_total_price(self):
-		return self.member_grade_discounted_money + self.postage
-
-	# 支付金额
-	# 1、如果是本店的订单，就显示 支付金额
-	# 2、如果是商城下的单，显示  订单金额
-	def get_final_price(self, webapp_id):
-		if self.webapp_id == webapp_id:
-			return self.final_price
-		else:
-			return self.get_total_price()
-
-	# 订单使用积分
-	# 1、如果是本店的订单，返回使用积分
-	# 2、如果是商城下的单，返回空
-	def get_use_integral(self, webapp_id):
-		if self.webapp_id == webapp_id:
-			return self.integral
-		else:
-			return ''
-
-	def get_products(self):
-		return OrderHasProduct.objects.filter(order=self)
-
-	@staticmethod
-	def get_order_has_price_number(order):
-		numbers = OrderHasProduct.objects.filter(
-			order=order).aggregate(
-			Sum("total_price"))
-		number = 0
-		if numbers["total_price__sum"] is not None:
-			number = numbers["total_price__sum"]
-
-		return number
-
-	@staticmethod
-	def get_order_has_product(order):
-		relations = list(OrderHasProduct.objects.filter(order=order))
-		product_ids = [r.product_id for r in relations]
-		return Product.objects.filter(id__in=product_ids)
-
-	@staticmethod
-	def get_order_has_product_number(order):
-		numbers = OrderHasProduct.objects.filter(
-			order=order).aggregate(
-			Sum("number"))
-		number = 0
-		if numbers["number__sum"] is not None:
-			number = numbers["number__sum"]
-		return number
-
-	def get_status_text(self):
-		return STATUS2TEXT[self.status]
-
-	# add by bert at member_4.0
-	@staticmethod
-	def get_orders_final_price_sum(webapp_user_ids):
-		numbers = Order.by_webapp_user_id(webapp_user_ids).filter(
-			status__gte=ORDER_STATUS_PAYED_SUCCESSED).aggregate(
-			Sum("final_price"))
-		number = 0
-		if numbers["final_price__sum"] is not None:
-			number = numbers["final_price__sum"]
-		return number
-
-	@staticmethod
-	def get_pay_numbers(webapp_user_ids):
-		return Order.objects.filter(
-			webapp_user_id__in=webapp_user_ids,
-			status__gte=ORDER_STATUS_PAYED_SUCCESSED, origin_order_id__lte=0).count()
-
-	@staticmethod
-	def get_webapp_user_ids_pay_times_greater_than(webapp_id, pay_times):
-		list_info = Order.by_webapp_user_id(webapp_id).filter(
-			status__gte=ORDER_STATUS_PAYED_SUCCESSED).values('webapp_user_id').annotate(
-			dcount=Count('webapp_user_id'))
-		webapp_user_ids = []
-		if list_info:
-			for vlaue in list_info:
-				if vlaue['dcount'] >= int(pay_times):
-					webapp_user_ids.append(vlaue['webapp_user_id'])
-		return webapp_user_ids
-
-	@staticmethod
-	def get_webapp_user_ids_pay_days_in(webapp_id, days):
-		date_day = datetime.today()-timedelta(days=int(days))
-		return [
-			order.webapp_user_id for order in Order.objects.filter(
-				webapp_id=webapp_id,
-				status__gte=ORDER_STATUS_PAYED_SUCCESSED,
-				payment_time__gte=date_day, origin_order_id__lte=0)]
-
-	@property
-	def get_express_details(self):
-		if hasattr(self, '_express_details'):
-			return self._express_details
-
-		self._express_details = express_util.get_express_details_by_order(self)
-		return self._express_details
-
-	@property
-	def get_express_detail_last(self):
-		if len(self.get_express_details) > 0:
-			return self.get_express_details[-1]
-
-		return None
-
-	@staticmethod
-	def get_orders_from_webapp_user_ids(webapp_user_ids):
-		return Order.objects.filter(webapp_user_id__in=webapp_user_ids)
-
-	def __str__(self):
-		r = {}
-		for k in self._data.keys():
-			try:
-				 r[k] = str(getattr(self, k))
-			except:
-				 r[k] = json.dumps(getattr(self, k))
-		return str(r)
 
 # added by chuter
 ########################################################################
@@ -1081,34 +747,6 @@ class OrderHasProduct(models.Model):
 	class Meta(object):
 		db_table = 'mall_order_has_product'
 
-	# 填充特定的规格信息
-	@property
-	def get_specific_model(self):
-		if hasattr(self, '_product_specific_model'):
-			return self._product_specific_model
-		else:
-			try:
-				self._product_specific_model = self.product.fill_specific_model(
-					self.product_model_name)
-				return self._product_specific_model
-			except:
-				return None
-
-	# 如果规格有图片就显示，如果没有，使用缩略图
-	@property
-	def order_thumbnails_url(self):
-		if hasattr(self, '_order_thumbnails_url'):
-			return self._order_thumbnails_url
-		else:
-			if self.get_specific_model:
-				for model in self.get_specific_model:
-					if model['property_pic_url']:
-						self._order_thumbnails_url = model['property_pic_url']
-						return self._order_thumbnails_url
-			# 没有图片使用商品的图片
-			self._order_thumbnails_url = self.product.thumbnails_url
-			return self._order_thumbnails_url
-
 
 class OrderHasPromotion(models.Model):
 	"""
@@ -1125,12 +763,6 @@ class OrderHasPromotion(models.Model):
 
 	class Meta(object):
 		db_table = 'mall_order_has_promotion'
-
-	@property
-	def promotion_result(self):
-		data = json.loads(self.promotion_result_json)
-		data['type'] = self.promotion_type
-		return data
 
 
 class OrderCardInfo(models.Model):
@@ -1570,22 +1202,6 @@ class Workspace(models.Model):
 	created_at = models.DateTimeField(auto_now_add=True)  # 添加时间
 	display_index = models.IntegerField(default=1)  # 显示排序
 
-	@staticmethod
-	def get_market_tool_workspace(owner, market_tool_name):
-		'''market_tool_name的格式为: market_tool:vote'''
-		workspace = Workspace()
-		workspace.owner = owner
-		workspace.data_backend = market_tool_name
-		return workspace
-
-	@staticmethod
-	def get_app_workspace(owner, app_name):
-		'''app的格式为: app:app1'''
-		workspace = Workspace()
-		workspace.owner = owner
-		workspace.data_backend = app_name
-		return workspace
-
 	class Meta(object):
 		db_table = 'webapp_workspace'
 		verbose_name = 'APP'
@@ -1612,28 +1228,6 @@ class Project(models.Model):
 	is_active = models.BooleanField(default=False) #是否启用该微页面
 	created_at = models.DateTimeField(auto_now_add=True) #添加时间
 
-	@staticmethod
-	def get_market_tool_project(owner, market_tool_name):
-		'''market_tool_name的格式为: market_tool:vote'''
-		project = Project()
-		project.id = '%s:%d' % (market_tool_name, owner.id)
-		project.owner = owner
-		project.type = 'market_tool'
-		return project
-
-	@staticmethod
-	def get_app_project(owner, app_name):
-		'''app_name的格式为: apps:vote'''
-		project = Project()
-		project.id = '%s:%d' % (app_name, owner.id)
-		project.owner = owner
-		project.type = 'app'
-		return project
-
-	class Meta(object):
-		db_table = 'webapp_project'
-		verbose_name = '项目'
-		verbose_name_plural = '项目'
 
 #########################################################################
 # ImageGroup：图片分组
