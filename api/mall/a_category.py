@@ -65,3 +65,11 @@ class ACategory(api_resource.ApiResource):
 			watchdog.error(message=msg)
 			return 500, {'message': msg}
 
+	@param_required(['owner_id'])
+	def get(args):
+		from business.account.user import User
+		user = User(args['owner_id'])
+
+		print user
+		return
+
