@@ -19,20 +19,35 @@ class ProductPool(business_model.Model):
 	@staticmethod
 	@param_required(['owner_id'])
 	def from_owner_id(args):
+		"""
+		根据owner_id获取商品池对象
+		@param args:
+		@return:
+		"""
 		owner_id = args['owner_id']
 		return ProductPool(owner_id)
 
 	def __search_product(self, products, filter_values):
 		# 具体实现商品搜索的功能
-		if not filter_values:
-			return products
+		if filter_values:
+			pass
 		return products
 
 	def __init__filter_values(self, filter_values):
+		"""
+		解析商品池搜索的条件
+		@param filter_values:
+		@return:
+		"""
 		product_pool_filter_values, product_db_filter_values, product_detail_filter_values = {}, {}, {}
 		return product_pool_filter_values, product_db_filter_values, product_detail_filter_values
 
 	def add_products(self, product_ids):
+		"""
+		添加商品到商品池
+		@param product_ids:
+		@return:
+		"""
 		for product_id in product_ids:
 			mall_models.ProductPool.create(
 				woid=self.owner_id,
@@ -42,7 +57,13 @@ class ProductPool(business_model.Model):
 		return True
 
 	def get_products(self, filter_values):
+		"""
+		根据条件在商品池搜索商品
+		@param filter_values:
+		@return:
+		"""
 		product_pool_filter_values, product_db_filter_values, product_detail_filter_values = self.__init__filter_values(filter_values)
+
 		product_ids = [model.product_id for model in mall_models.ProductPool.select().dj_where(**product_pool_filter_values)]
 		product_db_filter_values['id__in'] = product_ids
 		product_models = mall_models.Product.select().dj_where(**product_db_filter_values)
@@ -52,6 +73,11 @@ class ProductPool(business_model.Model):
 		return products
 
 	def delete_products(self, product_ids):
+		"""
+		从商品池删除商品
+		@param product_ids:
+		@return:
+		"""
 		if product_ids:
 			mall_models.ProductPool.update(
 				display_index=0,

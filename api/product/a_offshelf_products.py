@@ -60,7 +60,7 @@ class AProductOffshelf(api_resource.ApiResource):
 		product_ids = json.loads(args['product_ids'])
 		owner_id = args['owner_id']
 		if product_ids:
-			product_offsaled_shelf = ProductShelf(owner_id, 'offshelf')
+			product_offsaled_shelf = ProductShelf.get(owner_id, 'outsell')
 			product_offsaled_shelf.add_products(product_ids)
 			return 200
 		else:

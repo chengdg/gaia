@@ -16,19 +16,21 @@ class ProductShelfError(Exception):
 class ProductShelf(business_model.Model):
 	__slots__ = (
 		'owner_id',
-		'topic_name',
-		'type',
-		'msg_name'
+		'type'
 	)
 
 	def __init__(self, owner_id, type):
 		self.owner_id = owner_id
 		self.type = type
-		self.topic_name = "zeus-product"
 
 	@staticmethod
 	@param_required(['owner_id', 'type'])
 	def get(args):
+		"""
+		工厂方法：获得一个商品货架对象
+		@param args:
+		@return:
+		"""
 		owner_id = args['owner_id']
 		type = args['type']
 		if type in ('onsell', 'outsell'):
@@ -37,28 +39,43 @@ class ProductShelf(business_model.Model):
 			raise ProductShelfError('Product Shelf Type Error!')
 
 	def add_products(self, product_ids):
+		"""
+		在货架上添加商品
+		@param product_ids:
+		@return:
+		"""
 		if product_ids:
 			if self.type == 'onsell':
-				self.msg_name = 'msg_onsell_product'
+				msg_name = 'msg_onsell_product'
 				product_shelf_type = mall_models.PP_STATUS_ON
 			elif self.type == 'outsell':
-				self.msg_name = 'msg_outsell_product'
+				msg_name = 'msg_outsell_product'
 				product_shelf_type = mall_models.PP_STATUS_OFF
 			mall_models.ProductPool.update(
 				status=product_shelf_type,
 				display_index=0
 			).dj_where(id__in=product_ids, woid=self.owner_id, status__gt=mall_models.PP_STATUS_DELETE).execute()
 
-			self.__send_msg_to_topic(product_ids)
+			self.__send_msg_to_topic(product_ids, msg_name)
 		return product_ids
 
 	def move_products(self, product_ids):
+		"""
+		货架之间移动商品
+		@param product_ids:
+		@return:
+		"""
 		product_ids = self.__exclude_group_product_id(product_ids)
 		if product_ids:
 			product_ids = self.add_products(product_ids)
 		return product_ids
 
 	def __exclude_not_move_product_id(self, product_ids):
+		"""
+		过滤不能移动的商品
+		@param product_ids:
+		@return:
+		"""
 		params = {'woid': self.owner_id, 'pids': '_'.join([str(id) for id in product_ids])}
 
 		resp = Resource.use('marketapp_apiserver').get({
@@ -75,8 +92,9 @@ class ProductShelf(business_model.Model):
 					group_product_ids.append(product_group['pid'])
 		return product_ids
 
-	def __send_msg_to_topic(self, product_ids):
+	def __send_msg_to_topic(self, product_ids, msg_name):
+		topic_name = 'zeus-product'
 		data = {
 			"product_ids": product_ids
 		}
-		msgutil.send_message(self.topic_name, self.msg_name, data)
+		msgutil.send_message(topic_name, msg_name, data)
