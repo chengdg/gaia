@@ -44,6 +44,7 @@ class OrdersBook(business_model.Model):
 	def get_orders(self, filter_values):
 		webapp_id = self.owner.webapp_id
 		db_models = mall_models.Order.select().dj_where(webapp_id=webapp_id)
+		self.context['db_models'] = db_models
 
 		self.orders = [Order(db_model) for db_model in db_models]
 
@@ -52,5 +53,5 @@ class OrdersBook(business_model.Model):
 
 	@cached_context_property
 	def count(self):
-		return len(self.orders)
+		return self.context['db_models'].count()
 
