@@ -20,7 +20,8 @@ class Owner(business_model.Model):
 		'username',
 		'mall_type',
 		'config',
-		'store_name'
+		'store_name',
+		'webapp_id'
 	)
 
 	def __init__(self, owner_id):
@@ -31,3 +32,4 @@ class Owner(business_model.Model):
 		self.username = _user.username
 		self.mall_type = _user_profile.webapp_type
 		self.store_name = _user_profile.store_name
+		self.webapp_id = _user_profile.webapp_id
