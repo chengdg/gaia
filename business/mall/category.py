@@ -8,7 +8,7 @@ from business import model as business_model
 from db.mall import models as mall_models
 from core import paginator
 
-from business.mall.product import Product
+from business.product.product import Product
 
 
 class Category(business_model.Model):

@@ -16,7 +16,7 @@ from eaglet.core.cache import utils as cache_util
 from db.mall import models as mall_models
 from eaglet.core import watchdog
 from business import model as business_model
-from product import Product
+from business.product.product import Product
 from supplier import Supplier
 from business.account.user_profile import UserProfile
 from order_has_promotion import OrderHasPromotion

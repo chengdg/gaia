@@ -4,7 +4,7 @@ from eaglet.decorator import param_required
 
 from db.mall import models as mall_models
 from business import model as business_model
-from business.mall.product import Product
+from business.product.product import Product
 
 class OrderProductRelation(business_model.Model):
     """订单商品

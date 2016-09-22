@@ -7,7 +7,6 @@ from eaglet.decorator import param_required
 from eaglet.core import watchdog
 from eaglet.core.exceptionutil import unicode_full_stack
 
-from business.mall.product import Product
 from business.mall.category import Category
 
 class ACategoryProducts(api_resource.ApiResource):

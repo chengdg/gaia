@@ -68,14 +68,14 @@ class Service(object):
 	__slots__ = ('context', )
 
 	@classmethod
-	def get(cls, webapp_owner=None, webapp_user=None):
-		return cls(webapp_owner, webapp_user)
+	def get(cls, corp=None):
+		return cls(corp)
 	
-	def __init__(self, webapp_owner=None, webapp_user=None):
+	def __init__(self, corp=None):
 		self.context = {
-			'webapp_user': webapp_user,
-			'webapp_owner': webapp_owner
+			'corp': corp
 		}
+
 
 RESOURCE_TYPE_INTEGRAL = 'integral'
 RESOURCE_TYPE_COUPON = 'coupon'

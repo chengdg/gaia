@@ -7,7 +7,8 @@ from eaglet.core import watchdog
 from eaglet.core.exceptionutil import unicode_full_stack
 from eaglet.decorator import param_required
 
-from business.mall.product import Product, ProductModel, ProductSwipeImage, ProductPool
+from business.mall.product import ProductModel, ProductSwipeImage, ProductPool
+from business.product.product import Product
 from business.product.product_factory import ProductFactory
 from settings import PANDA_IMAGE_DOMAIN
 

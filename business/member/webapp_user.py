@@ -19,8 +19,6 @@ from db.member import models as member_models
 from eaglet.core import watchdog
 from business import model as business_model
 from business.member.member import Member
-#from business.mall.shopping_cart import ShoppingCart
-#from business.mall.product import Product
 import settings
 from eaglet.decorator import cached_context_property
 from util import regional_util

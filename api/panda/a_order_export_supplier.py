@@ -7,7 +7,7 @@ from eaglet.decorator import param_required
 from business.mall.order_product_relation import OrderProductRelation
 from business.mall.order import Order
 from business.mall.order_items import OrderItems
-from business.mall.product import Product
+from business.product.product import Product
 from business.mall.order_has_group import OrderHasGroup
 from business.mall.product_model_property_value import ProductModelPropertyValue
 from db.mall import models as mall_models

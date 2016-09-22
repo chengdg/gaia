@@ -5,30 +5,31 @@ from eaglet.decorator import param_required
 from bdem import msgutil
 from business import model as business_model
 
-from business.mall.product import Product
+from business.product.product import Product
 from db.mall import models as mall_models
 from zeus_conf import TOPIC
 from core import paginator
 
 class ProductPool(business_model.Model):
 	__slots__ = (
-		'corp_id',
+		'corp',
+		'corp_id'
 	)
 
-	def __init__(self, corp_id):
+	def __init__(self, corp):
 		business_model.Model.__init__(self)
-		self.corp_id = corp_id
+		self.corp = corp
+		self.corp_id = corp.id
 
 	@staticmethod
-	@param_required(['corp_id'])
+	@param_required(['corp'])
 	def get_for_corp(args):
 		"""
 		获得corp对应的商品池
 		@param args:
 		@return:
 		"""
-		corp_id = args['corp_id']
-		return ProductPool(corp_id)
+		return ProductPool(args['corp'])
 
 	def __search_product(self, products, filter_values):
 		# 具体实现商品搜索的功能
@@ -74,7 +75,7 @@ class ProductPool(business_model.Model):
 		product_db_filter_values['id__in'] = product_ids
 		product_models = mall_models.Product.select().dj_where(**product_db_filter_values)
 		pageinfo, product_models = paginator.paginate(product_models, page_info.cur_page, page_info.count_per_page)
-		products = [Product(model) for model in product_models]
+		products = [Product.from_model({'model':model}) for model in product_models]
 		if product_detail_filter_values:
 			products = self.__search_product(products, product_detail_filter_values)
 		return products, pageinfo

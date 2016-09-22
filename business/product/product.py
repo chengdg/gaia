@@ -6,7 +6,6 @@ from bdem import msgutil
 from eaglet.decorator import param_required
 from eaglet.utils.resource_client import Resource
 
-from business.product.product_pool import ProductPool
 from db.mall import models as mall_models
 from db.mall import promotion_models
 from db.account import models as account_models
@@ -88,20 +87,20 @@ class Product(business_model.Model):
 	)
 
 	@staticmethod
-	@param_required(['webapp_owner', 'model', 'fill_options'])
+	@param_required(['model'])
 	def from_model(args):
-		webapp_owner = args['webapp_owner']
+		1/0
 		model = args['model']
-		fill_options = args.get('fill_options', {})
+		#fill_options = args.get('fill_options', {})
 
 		product = Product(model)
-		Product.__fill_details(webapp_owner, [product], fill_options)
-		product.context['webapp_owner'] = webapp_owner
+		#Product.__fill_details(corp, [product], fill_options)
+		#product.context['corp'] = corp
 
 		return product
 
 	@staticmethod
-	@param_required(['webapp_owner', 'models', 'fill_options'])
+	@param_required(['corp', 'models', 'fill_options'])
 	def from_models(args):
 		"""
 		商品列表
@@ -109,7 +108,7 @@ class Product(business_model.Model):
 		@return:
 		"""
 
-		webapp_owner = args['webapp_owner']
+		corp = args['corp']
 		models = args['models']
 		fill_options = args.get('fill_options', {})
 
@@ -120,25 +119,25 @@ class Product(business_model.Model):
 		for model in models:
 			products.append(Product(model))
 
-		Product.__fill_details(webapp_owner, products, fill_options)
+		Product.__fill_details(corp, products, fill_options)
 
 		return products
 
 
 	@staticmethod
-	@param_required(['webapp_owner', 'product_id'])
+	@param_required(['corp', 'product_id'])
 	def from_id(args):
 		return CachedProduct.get(args)
 
 	@staticmethod
-	@param_required(['webapp_owner', 'member', 'product_ids'])
+	@param_required(['corp', 'member', 'product_ids'])
 	def from_ids(args):
 		"""从product_ids集合构造Product对象集合
 
 		@return Product对象集合
 		"""
 		#update by bert
-		return [Product.from_id({"product_id":product_id,"webapp_owner": args['webapp_owner']}) for product_id in args['product_ids']]
+		return [Product.from_id({"product_id":product_id,"corp": args['corp']}) for product_id in args['product_ids']]
 
 	def __init__(self, model=None):
 		business_model.Model.__init__(self)
@@ -251,9 +250,9 @@ class Product(business_model.Model):
 		"""
 		[property] 判断商品是否被禁止使用全场优惠券
 		"""
-		webapp_owner = self.context['webapp_owner']
-		forbidden_coupon_product_ids = ForbiddenCouponProductIds.get_for_webapp_owner({
-			'webapp_owner': webapp_owner
+		corp = self.context['corp']
+		forbidden_coupon_product_ids = ForbiddenCouponProductIds.get_for_corp({
+			'corp': corp
 		}).ids
 		if self.id in forbidden_coupon_product_ids:
 			return u'该商品不参与全场优惠券使用！'
@@ -305,7 +304,7 @@ class Product(business_model.Model):
 				'product_id': self.id,
 				'product_detail': self.to_dict()
 			})
-			Product.__fill_model_detail(self.context['webapp_owner'], [self], True)
+			Product.__fill_model_detail(self.context['corp'], [self], True)
 			models = self.models
 		candidate_models = filter(lambda m: m.name == model_name if m else False, models)
 		if len(candidate_models) > 0:
@@ -402,7 +401,7 @@ class Product(business_model.Model):
 					}
 
 	@staticmethod
-	def __fill_model_detail(webapp_owner, products, is_enable_model_property_info=False):
+	def __fill_model_detail(corp, products, is_enable_model_property_info=False):
 		"""填充商品规格相关细节
 		向product中添加is_use_custom_model, models, used_system_model_properties三个属性
 		"""
@@ -410,18 +409,18 @@ class Product(business_model.Model):
 			#已经完成过填充，再次进入，跳过填充
 			return
 
-		#TODO2: 因为这里是静态方法，所以目前无法使用product.context['webapp_owner']，构造基于Object的临时解决方案，需要优化
-		webapp_owner_id = webapp_owner.id
+		#TODO2: 因为这里是静态方法，所以目前无法使用product.context['corp']，构造基于Object的临时解决方案，需要优化
+		corp_id = corp.id
 		from core.cache.utils import Object
-		# webapp_owner = Object('fake_webapp_owner')
-		# webapp_owner.id = webapp_owner_id
+		# corp = Object('fake_corp')
+		# corp.id = corp_id
 		product_model_generator = ProductModelGenerator.get({
-			'webapp_owner': webapp_owner
+			'corp': corp
 		})
 		product_model_generator.fill_models_for_products(products, is_enable_model_property_info)
 
 	@staticmethod
-	def __fill_image_detail(webapp_owner, products, product_ids):
+	def __fill_image_detail(corp, products, product_ids):
 		"""填充商品轮播图相关细节
 		"""
 		for product in products:
@@ -434,7 +433,7 @@ class Product(business_model.Model):
 			} for img in mall_models.ProductSwipeImage.select().dj_where(product_id=product.id)]
 
 	@staticmethod
-	def __fill_property_detail(webapp_owner, products, product_ids):
+	def __fill_property_detail(corp, products, product_ids):
 		"""填充商品属性相关细节
 		"""
 		for product in products:
@@ -445,11 +444,11 @@ class Product(business_model.Model):
 			} for property in mall_models.ProductProperty.select().dj_where(product_id=product.id)]
 
 	@staticmethod
-	def __fill_category_detail(webapp_owner, products, product_ids, only_selected_category=False):
+	def __fill_category_detail(corp, products, product_ids, only_selected_category=False):
 		"""填充商品分类信息相关细节
 		"""
-		webapp_owner_id = webapp_owner.id
-		categories = list(mall_models.ProductCategory.select().dj_where(owner=webapp_owner_id).order_by('id'))
+		corp_id = corp.id
+		categories = list(mall_models.ProductCategory.select().dj_where(owner=corp_id).order_by('id'))
 
 		# 获取product关联的category集合
 		id2product = dict([(product.id, product) for product in products])
@@ -487,16 +486,16 @@ class Product(business_model.Model):
 				})
 
 	@staticmethod
-	def __fill_promotion_detail(webapp_owner, products, product_ids):
+	def __fill_promotion_detail(corp, products, product_ids):
 		"""填充商品促销相关细节
 		"""
 		PromotionRepository.fill_for_products({
 			'products': products,
-			'webapp_owner': webapp_owner
+			'corp': corp
 		})
 
 	@staticmethod
-	def __fill_sales_detail(webapp_owner, products, product_ids):
+	def __fill_sales_detail(corp, products, product_ids):
 		"""填充商品销售情况相关细节
 		"""
 		id2product = dict([(product.id, product) for product in products])
@@ -509,7 +508,7 @@ class Product(business_model.Model):
 				id2product[product_id].sales = sales.sales
 
 	@staticmethod
-	def __fill_details(webapp_owner, products, options):
+	def __fill_details(corp, products, options):
 		"""填充各种细节信息
 
 		此方法会根据options中的各种填充选项，填充相应的细节信息
@@ -534,45 +533,45 @@ class Product(business_model.Model):
 		if options.get('with_price', False):
 			#price需要商品规格信息
 			Product.__fill_model_detail(
-				webapp_owner,
+				corp,
 				products,
 				is_enable_model_property_info)
 			Product.__fill_display_price(products)
 
 		if options.get('with_product_model', False):
 			Product.__fill_model_detail(
-				webapp_owner,
+				corp,
 				products,
 				is_enable_model_property_info)
 
 		if options.get('with_product_promotion', False):
-			Product.__fill_promotion_detail(webapp_owner, products, product_ids)
+			Product.__fill_promotion_detail(corp, products, product_ids)
 
 		if options.get('with_image', False):
-			Product.__fill_image_detail(webapp_owner, products, product_ids)
+			Product.__fill_image_detail(corp, products, product_ids)
 
 		if options.get('with_property', False):
-			Product.__fill_property_detail(webapp_owner, products, product_ids)
+			Product.__fill_property_detail(corp, products, product_ids)
 
 		if options.get('with_selected_category', False):
 			Product.__fill_category_detail(
-				webapp_owner,
+				corp,
 				products,
 				product_ids,
 				True)
 
 		if options.get('with_all_category', False):
 			Product.__fill_category_detail(
-				webapp_owner,
+				corp,
 				products,
 				product_ids,
 				False)
 
 		if options.get('with_sales', False):
-			Product.__fill_sales_detail(webapp_owner, products, product_ids)
+			Product.__fill_sales_detail(corp, products, product_ids)
 
 		# if options.get('with_promotion', False):
-		# 	Product.__fill_promotion_detail(webapp_owner_id, products, product_ids)
+		# 	Product.__fill_promotion_detail(corp_id, products, product_ids)
 
 	def to_dict(self, **kwargs):
 		self.product_promotion_title = self.promotion_title
@@ -658,7 +657,7 @@ class Product(business_model.Model):
 	def supplier_name(self):
 		try:
 			# 非微众系列商家
-			if not self.context['webapp_owner'].user_profile.webapp_type:
+			if not self.context['corp'].user_profile.webapp_type:
 				return ''
 			# 手动添加的供货商
 			if self.supplier:
@@ -706,7 +705,7 @@ class Product(business_model.Model):
 	# @cached_context_property
 	# def supplier_user_id(self):
 	# 	try:
-	# 		if not self.context['webapp_owner'].user_profile.webapp_type:
+	# 		if not self.context['corp'].user_profile.webapp_type:
 	# 			return 0
 	# 		relation = mall_models.WeizoomHasMallProductRelation.select().dj_where(weizoom_product_id=self.id).first()
 	# 		return relation.mall_id

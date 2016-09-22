@@ -3,7 +3,6 @@
 import settings
 from eaglet.core import watchdog
 
-from core.redirects import HTTPMiddlewareError
 from business.mall.corporation import Corporation
 
 class AccountMiddleware(object):

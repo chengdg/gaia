@@ -46,5 +46,5 @@ class Corporation(business_model.Model):
 	@property
 	def product_pool(self):
 		return ProductPool.get_for_corp({
-			"corp_id": self.id
+			"corp": self
 		})

@@ -5,7 +5,7 @@ import json
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
 
-from business.mall.product import Product
+from business.product.product import Product
 from business.product.product_shelf import ProductShelf
 
 
