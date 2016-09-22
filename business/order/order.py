@@ -27,3 +27,10 @@ class Order(business_model.Model):
 
 	def __init__(self, db_model=None):
 		business_model.Model.__init__(self)
+
+	@staticmethod
+	def fill_orders(args):
+		db_models = args['db_models']
+		orders = [Order(db_model) for db_model in db_models]
+
+		return orders

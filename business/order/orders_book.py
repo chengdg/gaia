@@ -18,8 +18,7 @@ order_types = ('all', 'to_be_paid', 'to_be_shipped')
 class OrdersBook(business_model.Model):
 	__slots__ = (
 		'owner',
-		'type',
-		'orders'
+		'type'
 	)
 
 	def __init__(self, owner, order_type):
@@ -41,17 +40,26 @@ class OrdersBook(business_model.Model):
 		else:
 			raise RuntimeError('Error orders_book type..')
 
+	def __search(self, webapp_id, filter_values):
+		return mall_models.Order.select().dj_where(webapp_id=webapp_id)
+
 	def get_orders(self, filter_values):
 		webapp_id = self.owner.webapp_id
-		db_models = mall_models.Order.select().dj_where(webapp_id=webapp_id)
+		# db_models = mall_models.Order.select().dj_where(webapp_id=webapp_id)
+		db_models = self.__search(webapp_id, filter_values)
 		self.context['db_models'] = db_models
 
-		self.orders = [Order(db_model) for db_model in db_models]
+		# self.orders = [Order(db_model) for db_model in db_models]
 
-		return self.orders
+		orders = Order.fill_orders({"db_models": db_models, 'fill_options': {
+			'with_products': True,
+			'with_refund_info': True,
+			'with_group_buy_info': True,
 
+		}})
+
+		return orders
 
 	@cached_context_property
 	def count(self):
 		return self.context['db_models'].count()
-
