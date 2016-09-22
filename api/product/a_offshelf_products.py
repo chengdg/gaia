@@ -61,7 +61,7 @@ class AProductOffshelf(api_resource.ApiResource):
 		owner_id = args['owner_id']
 		if product_ids:
 			product_offsaled_shelf = ProductShelf.get(owner_id, 'outsell')
-			product_offsaled_shelf.add_products(product_ids)
+			product_offsaled_shelf.move_products(product_ids)
 			return 200
 		else:
 			return 500, {'msg', 'No product need off shelf.'}
