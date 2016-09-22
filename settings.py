@@ -11,13 +11,15 @@ MODE = 'develop'
 SERVICE_NAME = 'zeus'
 DEV_SERVER_MULTITHREADING = True
 WEAPP_DOMAIN = "weapp.weizoom.com"
+ZEUS_DB = os.environ.get('ZEUS_DB', None) or 'db.dev.com'
+
 DATABASES = {
     'default': {
         'ENGINE': 'mysql+retry',
         'NAME': 'weapp',
         'USER': 'weapp',
         'PASSWORD': 'weizoom',
-        'HOST': 'db.zeus.com',
+        'HOST': ZEUS_DB,
         'PORT': '',
         'CONN_MAX_AGE': 100
     },
@@ -36,9 +38,10 @@ DATABASES = {
 MIDDLEWARES = [
     'eaglet.middlewares.debug_middleware.QueryMonitorMiddleware',
     'eaglet.middlewares.debug_middleware.RedisMiddleware',
-    'eaglet.middlewares.zipkin_middleware.ZipkinMiddleware'
+    'eaglet.middlewares.zipkin_middleware.ZipkinMiddleware',
     #账号信息中间件
     #'middleware.webapp_account_middleware.WebAppAccountMiddleware',
+    'middleware.account_middleware.AccountMiddleware',
 ]
 #sevice celery 相关
 EVENT_DISPATCHER = 'redis'

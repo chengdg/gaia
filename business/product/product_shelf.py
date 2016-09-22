@@ -7,7 +7,7 @@ from eaglet.decorator import param_required
 from db.mall import models as mall_models
 from business import model as business_model
 from zeus_conf import TOPIC
-
+from product_pool import ProductPool
 
 class ProductShelfError(Exception):
 	def __init__(self, err_msg):
@@ -16,26 +16,26 @@ class ProductShelfError(Exception):
 
 class ProductShelf(business_model.Model):
 	__slots__ = (
-		'owner_id',
+		'corp',
 		'type'
 	)
 
-	def __init__(self, owner_id, type):
-		self.owner_id = owner_id
+	def __init__(self, corp, type):
+		self.corp = corp
 		self.type = type
 
 	@staticmethod
-	@param_required(['owner_id', 'type'])
+	@param_required(['corp', 'type'])
 	def get(args):
 		"""
 		工厂方法：获得一个商品货架对象
 		@param args:
 		@return:
 		"""
-		owner_id = args['owner_id']
+		corp = args['corp']
 		type = args['type']
-		if type in ('onsell', 'outsell'):
-			return ProductShelf(owner_id, type)
+		if type in ('in_sale', 'for_sale'):
+			return ProductShelf(corp, type)
 		else:
 			raise ProductShelfError('Product Shelf Type Error!')
 
@@ -46,16 +46,16 @@ class ProductShelf(business_model.Model):
 		@return:
 		"""
 		if product_ids:
-			if self.type == 'onsell':
-				msg_name = 'add_product_to_onsell_shelf'
+			if self.type == 'in_sale':
+				msg_name = 'add_product_to_in_sale_shelf'
 				product_shelf_type = mall_models.PP_STATUS_ON
-			elif self.type == 'outsell':
-				msg_name = 'add_product_to_outsell_shelf'
+			elif self.type == 'for_sale':
+				msg_name = 'add_product_to_for_sale_shelf'
 				product_shelf_type = mall_models.PP_STATUS_OFF
 			mall_models.ProductPool.update(
 				status=product_shelf_type,
 				display_index=0
-			).dj_where(id__in=product_ids, woid=self.owner_id, status__gt=mall_models.PP_STATUS_DELETE).execute()
+			).dj_where(id__in=product_ids, woid=self.corp.id, status__gt=mall_models.PP_STATUS_DELETE).execute()
 
 			self.__send_msg_to_topic(product_ids, msg_name)
 		return product_ids
@@ -71,13 +71,26 @@ class ProductShelf(business_model.Model):
 			product_ids = self.add_products(product_ids)
 		return product_ids
 
+	def get_products(self, page_info):
+		"""
+		获得货架上的商品集合
+		"""
+		product_pool = self.corp.product_pool
+		#TODO: get_products不应泄露DB层信息
+		query = {
+			"status": mall_models.PP_STATUS_ON
+		}
+		products, pageinfo = product_pool.get_products(query, page_info)
+
+		return products, pageinfo
+
 	def __exclude_not_move_product_id(self, product_ids):
 		"""
 		过滤不能移动的商品
 		@param product_ids:
 		@return:
 		"""
-		params = {'woid': self.owner_id, 'pids': '_'.join([str(id) for id in product_ids])}
+		params = {'woid': self.corp.id, 'pids': '_'.join([str(id) for id in product_ids])}
 
 		resp = Resource.use('marketapp_apiserver').get({
 			'resource': 'group.group_buy_products',
