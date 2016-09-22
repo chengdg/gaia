@@ -1,11 +1,12 @@
+# coding=utf-8
 # -*- utf-8 -*-
-from datetime import datetime
 from bdem import msgutil
 from eaglet.utils.resource_client import Resource
 from eaglet.decorator import param_required
 
 from db.mall import models as mall_models
 from business import model as business_model
+from zeus_conf import TOPIC
 
 
 class ProductShelfError(Exception):
@@ -46,10 +47,10 @@ class ProductShelf(business_model.Model):
 		"""
 		if product_ids:
 			if self.type == 'onsell':
-				msg_name = 'msg_onsell_product'
+				msg_name = 'add_product_to_onsell_shelf'
 				product_shelf_type = mall_models.PP_STATUS_ON
 			elif self.type == 'outsell':
-				msg_name = 'msg_outsell_product'
+				msg_name = 'add_product_to_outsell_shelf'
 				product_shelf_type = mall_models.PP_STATUS_OFF
 			mall_models.ProductPool.update(
 				status=product_shelf_type,
@@ -93,7 +94,7 @@ class ProductShelf(business_model.Model):
 		return product_ids
 
 	def __send_msg_to_topic(self, product_ids, msg_name):
-		topic_name = 'zeus-product'
+		topic_name = TOPIC['product']
 		data = {
 			"product_ids": product_ids
 		}

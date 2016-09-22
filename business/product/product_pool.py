@@ -1,3 +1,4 @@
+# coding=utf-8
 # -*- utf-8 -*-
 from eaglet.decorator import param_required
 
@@ -6,6 +7,7 @@ from business import model as business_model
 
 from business.mall.product import Product
 from db.mall import models as mall_models
+from zeus_conf import TOPIC
 
 class ProductPool(business_model.Model):
 	__slots__ = (
@@ -84,8 +86,8 @@ class ProductPool(business_model.Model):
 				status=mall_models.PP_STATUS_DELETE
 			).dj_where(product_id__in=product_ids, owner=self.owner_id).execute()
 
-			topic_name = 'zeus-product'
-			msg_name = 'msg_delete_product'
+			topic_name = TOPIC['product']
+			msg_name = 'delete_product_from_pool'
 			data = {
 				"product_ids": product_ids
 			}
