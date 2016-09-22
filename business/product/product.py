@@ -149,10 +149,10 @@ class Product(business_model.Model):
 			pass
 
 			@staticmethod
-			def add_product(product_ids):
+			def add_products(product_ids):
 				pass
 
-		ProductCategory.add_product(product_ids=db_model.id)
+		ProductCategory.add_products(product_ids=db_model.id)
 
 		topic_name = "test-topic"
 		data = {
