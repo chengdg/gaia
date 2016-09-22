@@ -20,12 +20,18 @@ class Corporation(business_model.Model):
 	"""
 	__slots__ = (
 		'id',
-		'name'
+		'name',
+		'type',
+		'webapp_id'
 	)
 
 	def __init__(self, owner_id):
 		self.id = owner_id
 		self.name = 'unknown'
+		_account_user_profile = account_model.UserProfile.select().dj_where(user_id=owner_id).first()
+
+		self.webapp_id = _account_user_profile.webapp_id
+		self.type = _account_user_profile.webapp_type   # todo 数字123到类型名称转换
 
 	@property
 	def insale_shelf(self):

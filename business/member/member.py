@@ -432,3 +432,25 @@ class Member(business_model.Model):
                 return u'%s...' % output_str
         except:
             return self.username_for_html[:10]
+
+
+    @staticmethod
+    @param_required(['webapp_user_ids'])
+    def from_webapp_user_ids(args):
+        """
+
+        @param args:
+        @return:
+        """
+        webapp_user_ids = args['webapp_user_ids']
+        webappuser_id2member = dict([(u.id, u.member_id) for u in member_models.WebAppUser.select().dj_where(id__in=webapp_user_ids)])
+        member_ids = set(webappuser_id2member.values())
+        db_member_models = member_models.Member.select().dj_where(id__in=member_ids)
+
+        members = [Member.from_model({'model': db_member_model}) for db_member_model in db_member_models]
+        id2member = dict([(m.id, m) for m in members])
+
+        for webapp_user_id, member_id in webappuser_id2member.items():
+            webappuser_id2member[webapp_user_id] = id2member.get(member_id, None)
+
+        return webappuser_id2member, members

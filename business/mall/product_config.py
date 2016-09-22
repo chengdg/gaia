@@ -2,7 +2,7 @@
 from eaglet.decorator import param_required
 
 from business import model as business_model
-from business.mall.owner import Owner
+# from business.mall.owner import Owner
 from business.product.product import Product
 from business.product.product_property import ProductPropertyTemplate
 from db.mall import models as mall_models
