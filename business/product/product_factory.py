@@ -107,22 +107,38 @@ class ProductFactory(business_model.Model):
 			for model in custom_models_info:
 
 				model['properties'] = __init_custom_model(model['name'])
-				if model.get('stocks') and int(model.get('stocks')) == -1:
-					model['stocks'] = 0
-
+				stocks = int(model['stocks'])
+				if stocks < 0:
+					stocks = 0
+				else:
+					stocks = 0
 				custom_models.append({
+
 					'name': model['name'],
 					'is_standard': False,
 					'price': model['price'],
 					'weight': model['weight'],
 					'stock_type': model['stock_type'],
-					'stocks': model['stocks'],
+					'stocks': stocks,
 					'user_code': model['user_code'],
 
 				})
 
 		else:
-			standard_model = {}
+			standard_model_info = models_info['standard_model']
+
+			stocks = int(standard_model_info['stocks'])
+			if stocks < 0:
+				stocks = 0
+			else:
+				stocks = 0
+			standard_model = {
+				"price": standard_model_info['price'],
+				"weight": standard_model_info['weight'],
+				"stock_type": standard_model_info['stock_type'],
+				"stocks": stocks,
+				"user_code": standard_model_info['user_code'],
+			}
 			custom_models = {}
 
 		additional_data['standard_model'] = standard_model
@@ -139,6 +155,10 @@ class ProductFactory(business_model.Model):
 		postage_info = json.loads(args['postage_info'])
 
 		product.postage_type = postage_info.get('postage_type', '')
+		if product.postage_type == mall_models.POSTAGE_TYPE_UNIFIED:
+			product.postage_id = -1
+		else:
+			product.postage_id = 0
 		product.unified_postage_money = float(postage_info.get('unified_postage_money', '0.0'))
 		product.is_delivery = int(postage_info.get('is_delivery', '0'))
 

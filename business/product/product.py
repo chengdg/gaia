@@ -10,7 +10,7 @@ class Product(business_model.Model):
 		'id',
 		'owner_id',
 		'name',
-		'price',
+
 		'weight',
 		'thumbnails_url',
 
@@ -139,19 +139,28 @@ class Product(business_model.Model):
 				)
 
 		# 处理商品分类
-		for category_id in additional_data['category_ids']:
-			category_id = int(category_id)
-			mall_models.CategoryHasProduct.create(
-				category_id=category_id,
-				product_id=db_model.id)
+		# for category_id in additional_data['category_ids']:
+		# 	category_id = int(category_id)
+		# 	mall_models.CategoryHasProduct.create(
+		# 		category_id=category_id,
+		# 		product_id=db_model.id)
+
+		class ProductCategory():
+			pass
+
+			@staticmethod
+			def add_product(product_ids):
+				pass
+
+		ProductCategory.add_product(product_ids=db_model.id)
 
 		topic_name = "test-topic"
 		data = {
-			"name": "save_product",
+			"name": "create_product",
 			"data": {
 				"product_id": db_model.id,
 				"product_name": db_model.name
 			}
 		}
-		msg_name = "msg_save_product"
+		msg_name = "create_product"
 		msgutil.send_message(topic_name, msg_name, data)
