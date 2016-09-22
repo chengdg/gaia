@@ -6,6 +6,7 @@ from eaglet.core import api_resource
 from eaglet.decorator import param_required
 
 from business.mall.product import Product
+from business.product.product_shelf import ProductShelf
 
 
 class AProductOffshelf(api_resource.ApiResource):
@@ -59,7 +60,8 @@ class AProductOffshelf(api_resource.ApiResource):
 		product_ids = json.loads(args['product_ids'])
 		owner_id = args['owner_id']
 		if product_ids:
-			Product.offshelf_products({'product_ids': product_ids, 'owner_id': owner_id})
-			return {'msg': 'success'}
+			product_offsaled_shelf = ProductShelf.get(owner_id, 'outsell')
+			product_offsaled_shelf.move_products(product_ids)
+			return 200
 		else:
 			return 500, {'msg', 'No product need off shelf.'}
