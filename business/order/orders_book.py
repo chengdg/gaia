@@ -4,6 +4,7 @@
 """
 
 from eaglet.core import watchdog
+from eaglet.decorator import cached_context_property
 from eaglet.decorator import param_required
 
 from business import model as business_model
@@ -17,7 +18,8 @@ order_types = ('all', 'to_be_paid', 'to_be_shipped')
 class OrdersBook(business_model.Model):
 	__slots__ = (
 		'owner',
-		'type'
+		'type',
+		'orders'
 	)
 
 	def __init__(self, owner, order_type):
@@ -43,10 +45,12 @@ class OrdersBook(business_model.Model):
 		webapp_id = self.owner.webapp_id
 		db_models = mall_models.Order.select().dj_where(webapp_id=webapp_id)
 
+		self.orders = [Order(db_model) for db_model in db_models]
+
+		return self.orders
 
 
-		orders = [Order(db_model) for db_model in db_models]
-
-		return orders
-
+	@cached_context_property
+	def count(self):
+		return len(self.orders)
 
