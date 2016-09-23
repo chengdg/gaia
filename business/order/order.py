@@ -91,8 +91,9 @@ class Order(business_model.Model):
 			order.bid = db_model.order_id  # todo 数据库层面处理bid
 			order.bid_with_edit_money = order.bid + "-" + str(db_model.edit_money).replace('.', '').replace('-',
 			                                                                                                '')  # 含有edit_money的bid
-
+			order.status = db_model.status
 			order.is_self_order = db_model.origin_order_id == -1  # todo 起个名
+			order.remark = db_model.remark
 
 			order.created_at = db_model.created_at
 			# 支付信息
@@ -104,6 +105,9 @@ class Order(business_model.Model):
 			order.product_price = db_model.product_price
 			order.edit_money = db_model.edit_money
 			order.coupon_money = db_model.coupon_money
+
+			## 衍生数据
+			order.pay_money = db_model.final_price + db_model.weizoom_card_money
 
 			# 发票信息
 			order.bill = db_model.bill
@@ -128,6 +132,9 @@ class Order(business_model.Model):
 			orders.append(order)
 
 		if with_member:
+			webapp_user_id2member, _ = Member.from_webapp_user_ids({'webapp_user_ids': webapp_user_ids})
+
+		if with_supplier:
 			webapp_user_id2member, _ = Member.from_webapp_user_ids({'webapp_user_ids': webapp_user_ids})
 
 		for order in orders:
@@ -158,9 +165,6 @@ class Order(business_model.Model):
 	def fill_delivery_items(orders, fill_options):
 		# type: list(Order) -> None
 
-		order_ids = [order.id for order in orders]
-
-		# delivery_item_db_models = mall_models.Order.select().dj_where(origin_order_id__in=order_ids)
 		delivery_item_db_models = []
 		order_ids = []
 
@@ -171,18 +175,16 @@ class Order(business_model.Model):
 			if order.is_self_order:
 				self_order_ids.append(order.id)
 			else:
+				# 对于非拆单订单，出货单在db层即其本身
 				delivery_item_db_models.append(order.context['db_model'])
 
 		delivery_item_db_models.extend(mall_models.Order.select().dj_where(origin_order_id__in=self_order_ids))
 
-		print('----len', len(delivery_item_db_models))
-		# print('--------delivery_item_db_models',delivery_item_db_models.count())
 		delivery_items = DeliveryItem.from_models({
 			'models': delivery_item_db_models,
 			'fill_options': fill_options
 		})
-		print('--------3', len(delivery_items), delivery_items,
-		      [(delivery_item.id, delivery_item.origin_order_id) for delivery_item in delivery_items])
+
 		order_id2delivery_items = {}
 		for item in delivery_items:
 			if item.origin_order_id in order_id2delivery_items:
@@ -190,7 +192,6 @@ class Order(business_model.Model):
 			else:
 				order_id2delivery_items[item.origin_order_id] = [item]
 
-		print('------2', order_id2delivery_items)
 		for order in orders:
 			order.delivery_items = order_id2delivery_items[order.id]  # todo
 

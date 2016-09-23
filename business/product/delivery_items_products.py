@@ -13,19 +13,17 @@ from eaglet.decorator import param_required
 from db.mall import models as mall_models
 from eaglet.core import watchdog
 from business import model as business_model
-# from business.product.order_product import OrderProduct
-
-import settings
 
 
 class DeliveryItemProduct(business_model.Model):
-
 	__slots__ = (
 		'id',
 		'name',
 		'price',
 		'count',
-		'delivery_item_id'
+		'delivery_item_id',
+		'thumbnails_url',
+		'is_deleted'
 
 	)
 
@@ -51,13 +49,17 @@ class DeliveryItemsProducts(business_model.Model):
 		# delivery_item_product.name =
 
 		delivery_item_products = []
-		for db_model in ohs_list:
+		for ohs in ohs_list:
+			product_db_model = product_id2product[ohs.product_id]
 			delivery_item_product = DeliveryItemProduct()
-			delivery_item_product.name = db_model.product_name
-			delivery_item_product.id = db_model.product_id
-			delivery_item_product.price = db_model.total_price / db_model.number
-			delivery_item_product.count = db_model.number
-			delivery_item_product.delivery_item_id = db_model.order_id
+			delivery_item_product.name = ohs.product_name
+			delivery_item_product.id = ohs.product_id
+			delivery_item_product.price = ohs.total_price / ohs.number
+			delivery_item_product.count = ohs.number
+			delivery_item_product.delivery_item_id = ohs.order_id
+
+			delivery_item_product.thumbnails_url = product_db_model.thumbnails_url
+			delivery_item_product.is_deleted = product_db_model.is_deleted
 
 			delivery_item_products.append(delivery_item_product)
 

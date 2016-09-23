@@ -26,18 +26,17 @@ class AOrderList(api_resource.ApiResource):
 		owner_id = args['owner_id']
 		# order_type = args['order_type']
 
-		filter_values = args.get('filter_values','')
+		filter_values = args.get('filter_values', '')
 
-		orders_repository = OrderRepository.get({'corp': args['corp']})
+		order_repository = OrderRepository.get({'corp': args['corp']})
 
 		try:
-			orders = orders_repository.get_orders(filter_values)
+			orders = order_repository.get_orders(filter_values)
 		except:
 			from eaglet.core.exceptionutil import unicode_full_stack
 			print(unicode_full_stack())
 
 		order_dicts = [order.to_dict() for order in orders]
-		print('-------order_dicts',order_dicts)
 		return {
 			'page_info': '',
 			'orders': order_dicts

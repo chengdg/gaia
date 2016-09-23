@@ -5,7 +5,8 @@
 from business import model as business_model
 from eaglet.decorator import param_required
 
-from business.product.delivery_products import DeliveryItemsProducts
+from business.mall.supplier import Supplier
+from business.product.delivery_items_products import DeliveryItemsProducts
 
 
 class DeliveryItem(business_model.Model):
@@ -13,7 +14,8 @@ class DeliveryItem(business_model.Model):
 		'id',
 		'bid',
 		'origin_order_id',
-		'products'
+		'products',
+		'supplier_id'
 	)
 
 	def __init__(self, db_model):
@@ -27,6 +29,15 @@ class DeliveryItem(business_model.Model):
 		else:
 			self.origin_order_id = self.id
 
+		if db_model.supplier:
+			self.supplier_id = db_model.supplier + 's'
+		elif db_model.supplier_user_id:
+			self.supplier_id = db_model.supplier_user_id + 'u'
+		else:
+			self.supplier_id = ''
+
+		self.context['db_model'] = db_model
+
 	@staticmethod
 	@param_required(['models'])
 	def from_models(args):
@@ -38,6 +49,11 @@ class DeliveryItem(business_model.Model):
 			DeliveryItem.__fill_products(delivery_items)
 
 		return delivery_items
+
+	@staticmethod
+	def __fill_supplier(delivery_items):
+		pass
+		# suppliers = Supplier.from_ids()
 
 	@staticmethod
 	def __fill_products(delivery_items):
