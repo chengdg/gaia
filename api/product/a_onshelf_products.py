@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+import json
 
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
@@ -51,3 +51,11 @@ class AOnshelfProducts(api_resource.ApiResource):
 			'pageinfo': pageinfo.to_dict(),
 			'products': datas
 		}
+
+	@param_required(['corp', 'product_ids'])
+	def put(args):
+		corp = args['corp']
+		product_ids = json.loads(args['product_ids'])
+		corp.insale_shelf.move_products(product_ids)
+
+		return {}

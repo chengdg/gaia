@@ -98,7 +98,7 @@ class ProductPool(business_model.Model):
 			mall_models.ProductPool.update(
 				display_index=0,
 				status=mall_models.PP_STATUS_DELETE
-			).dj_where(product_id__in=product_ids, owner=self.corp_id).execute()
+			).dj_where(product_id__in=product_ids, woid=self.corp_id).execute()
 
 			topic_name = TOPIC['product']
 			msg_name = 'delete_product_from_pool'

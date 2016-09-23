@@ -52,3 +52,11 @@ class AOffshelfProducts(api_resource.ApiResource):
 			'pageinfo': pageinfo.to_dict(),
 			'products': datas
 		}
+
+	@param_required(['corp'])
+	def put(args):
+		corp = args['corp']
+		product_ids = json.loads(args['product_ids'])
+		corp.forsale_shelf.move_products(product_ids)
+
+		return {}

@@ -125,6 +125,9 @@ class FillProductDetailService(business_model.Service):
 			with_all_category: 填充所有商品分类详情
 			with_sales: 填充商品销售详情
 		"""
+		if len(products) == 0:
+			return
+			
 		is_enable_model_property_info = options.get('with_model_property_info',False)
 		product_ids = [product.id for product in products]
 
