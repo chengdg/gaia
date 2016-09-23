@@ -444,7 +444,7 @@ class Member(business_model.Model):
         """
         webapp_user_ids = args['webapp_user_ids']
         webappuser_id2member = dict([(u.id, u.member_id) for u in member_models.WebAppUser.select().dj_where(id__in=webapp_user_ids)])
-        member_ids = set(webappuser_id2member.values())
+        member_ids = webappuser_id2member.values()
         db_member_models = member_models.Member.select().dj_where(id__in=member_ids)
 
         members = [Member.from_model({'model': db_member_model}) for db_member_model in db_member_models]

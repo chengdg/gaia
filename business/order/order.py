@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 
-# -*- coding: utf-8 -*-
-
 from eaglet.core import watchdog
 from eaglet.decorator import param_required
 
 from business import model as business_model
 from business.member.member import Member
+from business.order.delivery_item import DeliveryItem
 from db.mall import models as mall_models
 
 
@@ -63,13 +62,17 @@ class Order(business_model.Model):
 		'is_first_order',
 		'supplier_user_id',
 		'total_purchase_price',
+
+		'member_info',
+		'delivery_items',
+		'is_self_order'
 	)
 
 	def __init__(self, db_model=None):
 		business_model.Model.__init__(self)
 
 	@staticmethod
-	def fill_orders(args):
+	def from_models(args):
 		db_models = args['db_models']
 		fill_options = args['fill_options']
 		# orders = [Order(db_model) for db_model in db_models]
@@ -77,6 +80,7 @@ class Order(business_model.Model):
 		webapp_user_ids = []
 
 		with_member = fill_options.get('with_member')
+		with_delivery_items = fill_options.get('with_delivery_items') and fill_options['with_delivery_items']['fill']
 
 		orders = []
 		for db_model in db_models:
@@ -87,6 +91,9 @@ class Order(business_model.Model):
 			order.bid = db_model.order_id  # todo 数据库层面处理bid
 			order.bid_with_edit_money = order.bid + "-" + str(db_model.edit_money).replace('.', '').replace('-',
 			                                                                                                '')  # 含有edit_money的bid
+
+			order.is_self_order = db_model.origin_order_id == -1  # todo 起个名
+
 			order.created_at = db_model.created_at
 			# 支付信息
 			order.pay_interface_type = db_model.pay_interface_type
@@ -112,18 +119,85 @@ class Order(business_model.Model):
 			order.webapp_user_id = db_model.webapp_user_id
 			order.customer_message = db_model.customer_message
 
+			order.delivery_items = []
+
 			# 临时数据
 			webapp_user_ids.append(db_model.webapp_user_id)
+			order.context['db_model'] = db_model
 
 			orders.append(order)
 
 		if with_member:
-			webappuser_id2member, _ = Member.from_webapp_user_ids({'webapp_user_ids': webapp_user_ids})
+			webapp_user_id2member, _ = Member.from_webapp_user_ids({'webapp_user_ids': webapp_user_ids})
 
 		for order in orders:
 
-
 			if with_member:
-				order.member_info = webappuser_id2member[order.webapp_user_id].to_dict()
+				member = webapp_user_id2member.get(order.webapp_user_id, None)
+				if member:
+					order.member_info = {
+						'name': member.username_for_html,
+						'id': member.id,
+						'is_subscribed': member.is_subscribed
+					}
+				else:
+					order.member_info = {
+						'name': u'未知',
+						'id': 0,
+						'is_subscribed': 0
+					}
+
+		# 填充出货单
+		if with_delivery_items:
+			delivery_items_fill_options = fill_options['with_delivery_items']['fill_options']
+			Order.fill_delivery_items(orders, delivery_items_fill_options)
 
 		return orders
+
+	@staticmethod
+	def fill_delivery_items(orders, fill_options):
+		# type: list(Order) -> None
+
+		order_ids = [order.id for order in orders]
+
+		# delivery_item_db_models = mall_models.Order.select().dj_where(origin_order_id__in=order_ids)
+		delivery_item_db_models = []
+		order_ids = []
+
+		self_order_ids = []
+		for order in orders:
+			order_ids.append(order.id)
+
+			if order.is_self_order:
+				self_order_ids.append(order.id)
+			else:
+				delivery_item_db_models.append(order.context['db_model'])
+
+		delivery_item_db_models.extend(mall_models.Order.select().dj_where(origin_order_id__in=self_order_ids))
+
+		print('----len', len(delivery_item_db_models))
+		# print('--------delivery_item_db_models',delivery_item_db_models.count())
+		delivery_items = DeliveryItem.from_models({
+			'models': delivery_item_db_models,
+			'fill_options': fill_options
+		})
+		print('--------3', len(delivery_items), delivery_items,
+		      [(delivery_item.id, delivery_item.origin_order_id) for delivery_item in delivery_items])
+		order_id2delivery_items = {}
+		for item in delivery_items:
+			if item.origin_order_id in order_id2delivery_items:
+				order_id2delivery_items[item.origin_order_id].append(item)
+			else:
+				order_id2delivery_items[item.origin_order_id] = [item]
+
+		print('------2', order_id2delivery_items)
+		for order in orders:
+			order.delivery_items = order_id2delivery_items[order.id]  # todo
+
+	def to_dict(self, *extras):
+
+		result = business_model.Model.to_dict(self, *extras)
+		if self.delivery_items:
+			result['delivery_items'] = [delivery_item.to_dict() for delivery_item in self.delivery_items]
+
+		return result
