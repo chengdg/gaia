@@ -53,9 +53,6 @@ class Order(business_model.Model):
 		'integral_each_yuan',
 		'webapp_id',
 		'webapp_user_id',
-		'member_grade_id',
-		'member_grade_discount',
-		'buyer_name',
 
 		'weizoom_card_money',
 		'delivery_time',  # 配送时间字符串
@@ -155,7 +152,7 @@ class Order(business_model.Model):
 						'id': 0,
 						'is_subscribed': 0
 					}
-
+		print(1111)
 		# 填充出货单
 		if with_delivery_items:
 			delivery_items_fill_options = fill_options['with_delivery_items']['fill_options']
