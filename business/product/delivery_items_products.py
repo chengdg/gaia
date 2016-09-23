@@ -41,12 +41,10 @@ class DeliveryItemsProducts(business_model.Model):
 		delivery_item_ids = [delivery_item.id for delivery_item in delivery_items]
 		ohs_list = mall_models.OrderHasProduct.select().dj_where(order_id__in=delivery_item_ids)
 
-		product_ids = [p.id for p in ohs_list]
+		product_ids = [p.product_id for p in ohs_list]
 		product_db_models = mall_models.Product.select().dj_where(id__in=product_ids)
 
 		product_id2product = {p.id: p for p in product_db_models}
-
-		# delivery_item_product.name =
 
 		delivery_item_products = []
 		for ohs in ohs_list:

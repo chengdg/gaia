@@ -65,7 +65,9 @@ class Order(business_model.Model):
 
 		'member_info',
 		'delivery_items',
-		'is_self_order'
+		'is_self_order',
+		'remark',
+		'pay_money'
 	)
 
 	def __init__(self, db_model=None):
@@ -134,8 +136,8 @@ class Order(business_model.Model):
 		if with_member:
 			webapp_user_id2member, _ = Member.from_webapp_user_ids({'webapp_user_ids': webapp_user_ids})
 
-		if with_supplier:
-			webapp_user_id2member, _ = Member.from_webapp_user_ids({'webapp_user_ids': webapp_user_ids})
+		# if with_supplier:
+		# 	webapp_user_id2member, _ = Member.from_webapp_user_ids({'webapp_user_ids': webapp_user_ids})
 
 		for order in orders:
 
