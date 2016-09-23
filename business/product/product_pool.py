@@ -9,6 +9,7 @@ from business.product.product import Product
 from db.mall import models as mall_models
 from zeus_conf import TOPIC
 from core import paginator
+from fill_product_detail_service import FillProductDetailService
 
 class ProductPool(business_model.Model):
 	__slots__ = (
@@ -78,6 +79,13 @@ class ProductPool(business_model.Model):
 		products = [Product.from_model({'model':model}) for model in product_models]
 		if product_detail_filter_values:
 			products = self.__search_product(products, product_detail_filter_values)
+
+		fill_product_detail_service = FillProductDetailService.get(self.corp)
+		fill_options = {
+			'with_price': False,
+			'with_product_model': True
+		}
+		fill_product_detail_service.fill_detail(products, fill_options)
 		return products, pageinfo
 
 	def delete_products(self, product_ids):

@@ -9,19 +9,15 @@ from business.product.product_shelf import ProductShelf
 from business.common.page_info import PageInfo
 
 
-class AProductOnshelf(api_resource.ApiResource):
+class AOnshelfProducts(api_resource.ApiResource):
 	"""
-	待售商品管理
-
+	在售商品集合
 	"""
 	app = "product"
 	resource = "onshelf_products"
 
 	@param_required(['corp'])
 	def get(args):
-		'''
-		待售商品列表
-		'''
 		corp = args['corp']
 		in_sale_shelf = corp.insale_shelf
 		
@@ -32,33 +28,26 @@ class AProductOnshelf(api_resource.ApiResource):
 
 		products, pageinfo = in_sale_shelf.get_products(target_page)
 
-		opt = {
-			'owner_id': args['owner_id'],
-			'shelve_type': 1,   #int 0 在售标志 
-			'is_deleted': False,
-			'fill_options': {
-				'with_selected_category': True,
-				'with_all_category': True,
-				'with_image': True,
-				'with_property': True,
-				'with_group_buy_info': True,
-				'with_sales': True,
-				'with_product_promotion': True,
-				'with_price': True,
-				'with_product_model': True
-			} # 填充参数
-		}
+		datas = []
+		for product in products:
+			data = {
+				"id": product.id,
+				"name": product.name,
+				"image": product.thumbnails_url,
+				"models": product.models,
+				"user_code": -1,
+				"bar_code": product.bar_code,
+				"categories": [],
+				"price": None,
+				"stocks": -1,
+				"sales": -1,
+				"created_at": product.created_at.strftime('%Y-%m-%d %H:%M'),
+				"is_use_custom_model": product.is_use_custom_model,
+				"display_index": product.display_index
+			}
+			datas.append(data)
 
 		return {
 			'pageinfo': pageinfo.to_dict(),
-			'products': []
+			'products': datas
 		}
-
-	@param_required(['ids'])
-	def put(args):
-		"""
-		上架商品
-		@return:
-		"""
-
-		return "success"

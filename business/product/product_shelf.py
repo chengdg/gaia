@@ -55,7 +55,7 @@ class ProductShelf(business_model.Model):
 			mall_models.ProductPool.update(
 				status=product_shelf_type,
 				display_index=0
-			).dj_where(id__in=product_ids, woid=self.corp.id, status__gt=mall_models.PP_STATUS_DELETE).execute()
+			).dj_where(product_id__in=product_ids, woid=self.corp.id, status__gt=mall_models.PP_STATUS_DELETE).execute()
 
 			self.__send_msg_to_topic(product_ids, msg_name)
 		return product_ids
@@ -66,7 +66,7 @@ class ProductShelf(business_model.Model):
 		@param product_ids:
 		@return:
 		"""
-		product_ids = self.__exclude_group_product_id(product_ids)
+		product_ids = self.__exclude_not_move_product_id(product_ids)
 		if product_ids:
 			product_ids = self.add_products(product_ids)
 		return product_ids
@@ -77,9 +77,15 @@ class ProductShelf(business_model.Model):
 		"""
 		product_pool = self.corp.product_pool
 		#TODO: get_products不应泄露DB层信息
-		query = {
-			"status": mall_models.PP_STATUS_ON
-		}
+		if self.type == 'in_sale':
+			query = {
+				"status": mall_models.PP_STATUS_ON
+			}
+		else:
+			query = {
+				"status": mall_models.PP_STATUS_OFF
+			}
+
 		products, pageinfo = product_pool.get_products(query, page_info)
 
 		return products, pageinfo
@@ -90,21 +96,23 @@ class ProductShelf(business_model.Model):
 		@param product_ids:
 		@return:
 		"""
-		params = {'woid': self.corp.id, 'pids': '_'.join([str(id) for id in product_ids])}
-
-		resp = Resource.use('marketapp_apiserver').get({
-			'resource': 'group.group_buy_products',
-			'data': params
-		})
-		if resp and resp['code'] == 200:
-			data = resp['data']
-			product_groups = data['pid2is_in_group_buy']
-			group_product_ids = []
-			for product_group in product_groups:
-				if product_group['pid'] in product_ids and product_group["is_in_group_buy"]:
-					product_ids.remove(product_group['pid'])
-					group_product_ids.append(product_group['pid'])
 		return product_ids
+		#TODO: 连接团购api service
+		# params = {'woid': self.corp.id, 'pids': '_'.join([str(id) for id in product_ids])}
+
+		# resp = Resource.use('marketapp_apiserver').get({
+		# 	'resource': 'group.group_buy_products',
+		# 	'data': params
+		# })
+		# if resp and resp['code'] == 200:
+		# 	data = resp['data']
+		# 	product_groups = data['pid2is_in_group_buy']
+		# 	group_product_ids = []
+		# 	for product_group in product_groups:
+		# 		if product_group['pid'] in product_ids and product_group["is_in_group_buy"]:
+		# 			product_ids.remove(product_group['pid'])
+		# 			group_product_ids.append(product_group['pid'])
+		# return product_ids
 
 	def __send_msg_to_topic(self, product_ids, msg_name):
 		topic_name = TOPIC['product']

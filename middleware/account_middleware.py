@@ -11,5 +11,7 @@ class AccountMiddleware(object):
 			watchdog.info("skipped in WebAppAccountMiddleware. req.path: {}".format(req.path))
 			return
 
-		woid = req.params.get('woid')
-		req.context['corp'] = Corporation(woid)
+		corp_id = req.params.get('woid')
+		if not corp_id:
+			corp_id = req.params.get('corp_id')
+		req.context['corp'] = Corporation(corp_id)

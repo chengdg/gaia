@@ -7,61 +7,48 @@ from eaglet.decorator import param_required
 
 from business.product.product import Product
 from business.product.product_shelf import ProductShelf
+from business.common.page_info import PageInfo
 
 
-class AProductOffshelf(api_resource.ApiResource):
+class AOffshelfProducts(api_resource.ApiResource):
 	"""
-	待售商品管理
-
+	待售商品集合
 	"""
 	app = "product"
 	resource = "offshelf_products"
 
-	@param_required(['owner_id'])
+	@param_required(['corp'])
 	def get(args):
-		'''
-		待售商品列表
-		'''
-		opt = {
-			'owner_id': args['owner_id'],
-			'shelve_type': 0,   #int 0 待售标志 
-			'is_deleted': False,
-			'fill_options': {
-				'with_selected_category': True,
-				'with_all_category': True,
-				'with_image': True,
-				'with_property': True,
-				'with_group_buy_info': True,
-				'with_sales': True,
-				'with_product_promotion': True,
-				'with_price': True,
-				'with_product_model': True
+		corp = args['corp']
+		for_sale_shelf = corp.forsale_shelf
+		
+		target_page = PageInfo.create({
+			"cur_page": int(args.get('cur_page', 1)),
+			"count_per_page": int(args.get('count_per_page', 10))
+		})
 
-			} # 填充参数
-		}
-		# 分页
-		page_info = {
-			'cur_page': int(args.get('cur_page', 1)),
-			'count_per_page': int(args.get('count_per_page', 10))
-		}
-		opt.update(page_info)
-		products, pageinfo = Product.from_owner_id(opt)
+		products, pageinfo = for_sale_shelf.get_products(target_page)
+
+		datas = []
+		for product in products:
+			data = {
+				"id": product.id,
+				"name": product.name,
+				"image": product.thumbnails_url,
+				"models": product.models,
+				"user_code": -1,
+				"bar_code": product.bar_code,
+				"categories": [],
+				"price": None,
+				"stocks": -1,
+				"sales": -1,
+				"created_at": product.created_at.strftime('%Y-%m-%d %H:%M'),
+				"is_use_custom_model": product.is_use_custom_model,
+				"display_index": product.display_index
+			}
+			datas.append(data)
+
 		return {
 			'pageinfo': pageinfo.to_dict(),
-			'products': [product.to_dict() for product in products]
+			'products': datas
 		}
-
-	@param_required(['owner_id', 'product_ids'])
-	def put(args):
-		"""
-		商品下架
-		@return:
-		"""
-		product_ids = json.loads(args['product_ids'])
-		owner_id = args['owner_id']
-		if product_ids:
-			product_offsaled_shelf = ProductShelf.get(owner_id, 'outsell')
-			product_offsaled_shelf.move_products(product_ids)
-			return 200
-		else:
-			return 500, {'msg', 'No product need off shelf.'}

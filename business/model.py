@@ -65,16 +65,15 @@ class Service(object):
 	"""
 	领域服务的基类
 	"""
-	__slots__ = ('context', )
+	__slots__ = ('context', 'corp')
 
 	@classmethod
 	def get(cls, corp=None):
 		return cls(corp)
 	
 	def __init__(self, corp=None):
-		self.context = {
-			'corp': corp
-		}
+		self.context = {}
+		self.corp = corp
 
 
 RESOURCE_TYPE_INTEGRAL = 'integral'

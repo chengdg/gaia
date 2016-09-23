@@ -3,6 +3,7 @@ from datetime import datetime
 import json
 from bdem import msgutil
 
+import settings
 from eaglet.decorator import param_required
 from eaglet.utils.resource_client import Resource
 
@@ -89,7 +90,6 @@ class Product(business_model.Model):
 	@staticmethod
 	@param_required(['model'])
 	def from_model(args):
-		1/0
 		model = args['model']
 		#fill_options = args.get('fill_options', {})
 

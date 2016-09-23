@@ -12,4 +12,6 @@ import a_property_template
 import a_property_templates
 
 import a_offshelf_products
+import a_offshelf_product
 import a_onshelf_products
+import a_onshelf_product
