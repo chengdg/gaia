@@ -15,17 +15,34 @@ class AImageGroups(api_resource.ApiResource):
 	app = 'mall'
 	resource = 'image_groups'
 
-	@param_required(['owner_id'])
+	@param_required(['corp'])
 	def get(args):
 		'''
 		图片分组列表
 		'''
-		image_groups = ImageGroup.from_owner({'owner_id': args['owner_id']})
-		if 'is_display_images' in args:
-			image_groups = [image_group.to_dict('images') for image_group in image_groups]
-		else:
-			image_groups = [image_group.to_dict() for image_group in image_groups]
-		return {
-			'image_groups': image_groups
-		}
+		corp = args['corp']
+		image_groups = corp.image_group_repository.get_image_groups()
 
+		datas = []
+		for image_group in image_groups:
+			data = {
+				"id": image_group.id,
+				"corp_id": corp.id,
+				"name": image_group.name,
+				"images": [],
+				"created_at": image_group.created_at.strftime('%Y-%m-%d %H:%M')
+			}
+
+			for image in image_group.images[:6]: #在group列表中，一个group最多显示6张图片
+				data['images'].append({
+					"id": image.id,
+					"title": image.title,
+					"url": image.url,
+					"width": image.width,
+					"height": image.height
+				})
+			datas.append(data)
+
+		return {
+			'image_groups': datas
+		}

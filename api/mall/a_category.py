@@ -12,15 +12,24 @@ class ACategory(api_resource.ApiResource):
 	app = 'mall'
 	resource = 'category'
 
-	@param_required(['name', 'owner_id'])
+	@param_required(['corp', 'name'])
 	def put(args):
 		'''
 		创建商品分组,  利用工厂类@生成器
 		'''
-		category = Category()
-		category = category.create(args['owner_id'], args['name'], product_ids=args.get('product_ids', None))
+		name = args['name']
+		corp = args['corp']
+		if 'product_ids' in args:
+			product_ids = json.loads(args['product_ids'])
+		else:
+			product_ids = None
+		category = Category.create(corp, name, product_ids)
+
 		return  {
-			'category':category
+			'category': {
+				"id": category.id,
+				"name": category.name
+			}
 		}
 
 	@param_required(['owner_id','category_id'])
@@ -50,17 +59,10 @@ class ACategory(api_resource.ApiResource):
 			watchdog.error(message=msg)
 			return 500, {'message': msg}
 
-	@param_required(['owner_id', 'category_id'])
+	@param_required(['corp', 'category_id'])
 	def delete(args):
-		category = Category.from_id({'category_id': args['category_id']})
-		if category:
-			if 'product_id' not in args:
-				category.delete_from_id(args['category_id'])
-			else:
-				category.delete_product(args['category_id'], args['product_id'])
-			return {}
-		else:
-			msg = u'{}不存在'.format(args['category_id'])
-			watchdog.error(message=msg)
-			return 500, {'message': msg}
+		corp = args['corp']
+		corp.category_repository.delete_category(args['category_id'])
+		
+		return {}
 

@@ -33,11 +33,6 @@ class Category(business_model.Model):
 			self._init_slot_from_model(model)
 
 	@staticmethod
-	def empty_category(model=None):
-		category = Category(model)
-		return category
-
-	@staticmethod
 	@param_required(['db_model'])
 	def from_model(args):
 		model = args['db_model']
@@ -152,10 +147,21 @@ class Category(business_model.Model):
 	def products(self, value):
 		self.context['products'] = value
 
-	def create(self, owner_id, name, product_ids=None):
+	@staticmethod
+	def create(corp, name, product_ids=None):
+		category_model = mall_models.ProductCategory.create(
+			owner = corp.id,
+			name = name,
+			product_count = len(product_ids) if product_ids else 0
+		)
+		
 		if product_ids:
-			product_ids = [product_id.strip() for product_id in product_ids.strip().split(',') if product_id]
-			products = Product.from_ids({'product_ids': product_ids})
-		else:
-			products = product_ids
-		return self.save(owner_id, name, products)
+			for product_id in product_ids:
+				mall_models.CategoryHasProduct.create(
+					product_id = product_id,
+					category_id = category_model.id
+				)
+
+		return Category.from_model({
+			"db_model": category_model
+		})

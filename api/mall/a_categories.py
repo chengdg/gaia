@@ -7,39 +7,35 @@ from eaglet.decorator import param_required
 
 from core import paginator
 from business.mall.category import Category
+from business.common.page_info import PageInfo
 
 class ACategories(api_resource.ApiResource):
 	"""
-	商品分组管理
+	商品分组集合
 	"""
 	app = 'mall'
 	resource = 'categories'
 
-	@param_required(['owner_id'])
+	@param_required(['corp'])
 	def get(args):
-		"""
-		商品管理---> 分组管理列表
-		@param category_ids:分组id列表
-		"""
-		# 由于在zeus测试平台，不能传列表，现由'1,2,3,4,5'这种方式处理
-		params = {'owner_id': args['owner_id']}
+		target_page = PageInfo.create({
+			"cur_page": int(args.get('cur_page', 1)),
+			"count_per_page": int(args.get('count_per_page', 10))
+		})
+		
+		categories, pageinfo = args['corp'].category_repository.get_all_categories(target_page)
 
-		if 'category_ids' not in args:
-			category_ids = list()
-		else:
-			category_ids = [category_id.strip() for category_id in args['category_ids'].strip().split(',') if category_id]
-		params.update({'category_ids': category_ids})
-		# 分页
-		page_info = {
-			'cur_page': int(args.get('page', 1)),
-			'count_per_page': int(args.get('count_per_page', 10))
-		}
-		params.update(page_info)
+		datas = []
+		for category in categories:
+			datas.append({
+				"id": category.id,
+				"name": category.name,
+				
+				"products": [],
+				"created_at": category.created_at.strftime('%Y-%m-%d %H:%M')
+			})
 
-		if 'is_display_products' in args:
-			params['is_display_products'] = True
-		categories, pageinfo = Category.get_categories(params)
 		return {
-			'pageinfo': pageinfo,
-			'categories': [category.to_dict('products') for category in categories] if params.get('is_display_products', None) else categories
+			'pageinfo': pageinfo.to_dict(),
+			'categories': datas
 		}
