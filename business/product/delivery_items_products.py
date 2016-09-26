@@ -19,11 +19,13 @@ class DeliveryItemProduct(business_model.Model):
 	__slots__ = (
 		'id',
 		'name',
-		'origin_price',
+		'origin_price',  # 下单时的原价
+		'sale_price',  # 售价
 		'count',
 		'delivery_item_id',
 		'thumbnails_url',
-		'is_deleted'
+		'is_deleted',
+		'total_origin_price',
 
 	)
 
@@ -53,6 +55,8 @@ class DeliveryItemsProducts(business_model.Model):
 			delivery_item_product.name = ohs.product_name
 			delivery_item_product.id = ohs.product_id
 			delivery_item_product.origin_price = ohs.total_price / ohs.number
+			delivery_item_product.sale_price = ohs.price
+			delivery_item_product.total_origin_price = ohs.total_price
 			delivery_item_product.count = ohs.number
 			delivery_item_product.delivery_item_id = ohs.order_id
 
