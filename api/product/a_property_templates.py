@@ -14,19 +14,23 @@ class APropertyTemplates(api_resource.ApiResource):
     app = 'product'
     resource = 'property_templates'
 
-    @param_required(['owner_id'])
-    def get(self):
+    @param_required(['corp'])
+    def get(args):
         """
         根据用户id，获取所有的属性模板
         """
-        templates = ProductPropertyTemplate.from_owner_id({'owner_id': self['owner_id']})
-        result = []
+        corp = args['corp']
+        templates = corp.product_property_template_repository.get_property_templates()
 
+        datas = []
         for template in templates:
-            temp = template.to_dict()
-            properties = [pro.to_dict() for pro in template.properties]
-            temp.update({"properties": properties})
-            result.append(temp)
+            data = {
+                "id": template.id,
+                "name": template.name,
+                "properties": []
+            }
+            datas.append(data)
+
         return {
-            "templates": result
+            "templates": datas
         }

@@ -12,6 +12,7 @@ from business.product.product_shelf import ProductShelf
 from business.product.product_pool import ProductPool
 from business.mall.category_repository import CategoryRepository
 from business.mall.image_group_repository import ImageGroupRepository
+from business.product.property_template_repository import PropertyTemplateRepository
 
 
 class Corporation(business_model.Model):
@@ -64,3 +65,7 @@ class Corporation(business_model.Model):
 	@property
 	def image_group_repository(self):
 		return ImageGroupRepository.get(self)
+
+	@property
+	def product_property_template_repository(self):
+		return PropertyTemplateRepository.get(self)
