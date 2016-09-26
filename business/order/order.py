@@ -189,7 +189,7 @@ class Order(business_model.Model):
 
 		if with_full_money_info:
 			# 需要在最后
-			Order.with_full_money_info(orders, order_ids)
+			Order.__with_full_money_info(orders, order_ids)
 
 		return orders
 
@@ -286,7 +286,7 @@ class Order(business_model.Model):
 				}
 
 	@staticmethod
-	def with_full_money_info(orders, order_ids):
+	def __with_full_money_info(orders, order_ids):
 
 		for order in orders:
 			print('----------1', order.weizoom_card_money, order.refunding_info['total_weizoom_card_money'])

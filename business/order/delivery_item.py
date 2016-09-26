@@ -87,7 +87,8 @@ class DeliveryItem(business_model.Model):
 
 	@staticmethod
 	def __fill_products(delivery_items):
-		delivery_items_products = DeliveryItemsProducts.get_for_delivery_items(delivery_items)
+		delivery_items_products = DeliveryItemsProducts.get_for_delivery_items(delivery_items=delivery_items,
+		                                                                       with_premium_sale=True)
 
 		delivery_item_id2products = {}
 		for product in delivery_items_products:
@@ -99,8 +100,6 @@ class DeliveryItem(business_model.Model):
 		for delivery_item in delivery_items:
 			delivery_item.products = delivery_item_id2products[delivery_item.id]
 			delivery_item.total_origin_product_price = sum([p.total_origin_price for p in delivery_item.products])
-
-
 
 	def to_dict(self, *extras):
 
