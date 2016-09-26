@@ -64,7 +64,7 @@ else:
     # 真实环境暂时关闭
     #WAPI_LOGGER_ENABLED = False
     # 生产环境开启API Logger
-    WAPI_LOGGER_ENABLED = True
+    WAPI_LOGGER_ENABLED = False
     WAPI_LOGGER_SERVER_HOST = 'mongo.weapp.com'
     WAPI_LOGGER_SERVER_PORT = 27017
     WAPI_LOGGER_DB = 'wapi'

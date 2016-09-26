@@ -6,6 +6,7 @@ from eaglet.decorator import param_required
 from eaglet.utils.resource_client import Resource
 
 from business import model as business_model
+from business.order.order_repository import OrderRepository
 from db.account import models as account_model
 from db.mall import models as mall_models
 from business.product.product_shelf import ProductShelf
@@ -32,7 +33,7 @@ class Corporation(business_model.Model):
 		_account_user_profile = account_model.UserProfile.select().dj_where(user_id=owner_id).first()
 
 		self.webapp_id = _account_user_profile.webapp_id
-		self.type = _account_user_profile.webapp_type   # todo 数字123到类型名称转换
+		self.type = _account_user_profile.webapp_type  # todo 数字123到类型名称转换
 
 	@property
 	def insale_shelf(self):
@@ -69,3 +70,7 @@ class Corporation(business_model.Model):
 	@property
 	def product_property_template_repository(self):
 		return PropertyTemplateRepository.get(self)
+
+	@property
+	def order_repository(self):
+		return OrderRepository.get({'corp': self})
