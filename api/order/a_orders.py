@@ -1,15 +1,10 @@
 # -*- coding: utf-8 -*-
-import json
-from datetime import datetime
 
-from eaglet.core import api_resource, paginator
+from eaglet.core import api_resource
+from eaglet.core import watchdog
 from eaglet.decorator import param_required
 
-from business.mall.order_product_relation import OrderProductRelation
-from business.mall.order import Order
-from business.mall.order_items import OrderItems
-from business.account.user_profile import UserProfile
-from business.mall.order_has_group import OrderHasGroup
+from business.common.page_info import PageInfo
 from business.order.order_repository import OrderRepository
 
 
@@ -21,23 +16,34 @@ class AOrderList(api_resource.ApiResource):
 	resource = 'orders'
 
 	# @param_required(['owner_id', 'cur_page', 'count_per_page', 'order_type'])
-	@param_required(['owner_id', 'cur_page', 'count_per_page'])
+	@param_required(['cur_page', 'count_per_page'])
 	def get(args):
-		owner_id = args['owner_id']
-		# order_type = args['order_type']
 
 		filter_values = args.get('filter_values', '')
 
-		order_repository = OrderRepository.get({'corp': args['corp']})
+		corp = args['corp']
+		order_repository = corp.order_repository
 
 		try:
-			orders = order_repository.get_orders(filter_values)
-		except:
+			target_page = PageInfo.create({
+				"cur_page": int(args.get('cur_page', 1)),
+				"count_per_page": int(args.get('count_per_page', 10))
+			})
+			orders = order_repository.get_orders(filter_values, target_page)
+		except BaseException as e:
+			# todo 去掉
 			from eaglet.core.exceptionutil import unicode_full_stack
+			watchdog.alert({
+				'traceback': unicode_full_stack(),
+				'uuid': 'a_orders error',
+				'corp_id': args['corp'].id
+			})
 			print(unicode_full_stack())
+
+			raise e
 
 		order_dicts = [order.to_dict() for order in orders]
 		return {
-			'page_info': '',
+			'page_info': target_page.to_dict(),
 			'orders': order_dicts
 		}

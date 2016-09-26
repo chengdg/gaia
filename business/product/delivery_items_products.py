@@ -19,7 +19,7 @@ class DeliveryItemProduct(business_model.Model):
 	__slots__ = (
 		'id',
 		'name',
-		'price',
+		'origin_price',
 		'count',
 		'delivery_item_id',
 		'thumbnails_url',
@@ -52,7 +52,7 @@ class DeliveryItemsProducts(business_model.Model):
 			delivery_item_product = DeliveryItemProduct()
 			delivery_item_product.name = ohs.product_name
 			delivery_item_product.id = ohs.product_id
-			delivery_item_product.price = ohs.total_price / ohs.number
+			delivery_item_product.origin_price = ohs.total_price / ohs.number
 			delivery_item_product.count = ohs.number
 			delivery_item_product.delivery_item_id = ohs.order_id
 

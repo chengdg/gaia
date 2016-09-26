@@ -38,11 +38,11 @@ class Order(business_model.Model):
 		'coupon_money',
 
 		'coupon_id',
-		'raw_status',
+
 		'status',
 		'origin_order_id',
-		'express_company_name',
-		'express_number',
+
+
 		'customer_message',
 		'promotion_saved_money',
 
@@ -50,7 +50,7 @@ class Order(business_model.Model):
 		'update_at',
 
 		'supplier',
-		'integral_each_yuan',
+
 		'webapp_id',
 		'webapp_user_id',
 

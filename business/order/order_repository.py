@@ -28,24 +28,16 @@ class OrderRepository(business_model.Model):
 	@staticmethod
 	@param_required(['corp'])
 	def get(args):
-		# order_type = args['type']
-
-
-		# owner = Owner.from_id({'owner_id': owner_id})
 		corp = args['corp']
 		return OrderRepository(corp)
 
-	# if order_type in order_types:
-	# 	return OrdersRepository(corp, order_type)
-	# else:
-	# 	raise RuntimeError('Error orders_book type..')
 
 	def __search(self, webapp_id, filter_values):
 		db_models = mall_models.Order.select().dj_where(webapp_id=webapp_id, origin_order_id__lte=0)
 
 		return db_models
 
-	def get_orders(self, filter_values):
+	def get_orders(self, filter_values, target_page):
 		webapp_id = self.corp.webapp_id
 		# db_models = mall_models.Order.select().dj_where(webapp_id=webapp_id)
 		db_models = self.__search(webapp_id, filter_values)
