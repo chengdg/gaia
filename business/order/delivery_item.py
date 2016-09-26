@@ -27,7 +27,8 @@ class DeliveryItem(business_model.Model):
 		'supplier_name',
 		'refunding_info',
 		'total_origin_product_price',
-		'refund_info'
+		'refund_info',
+		'supplier_info'
 	)
 
 	def __init__(self, db_model):
@@ -51,6 +52,7 @@ class DeliveryItem(business_model.Model):
 		self.postage = db_model.postage
 
 		self.status = db_model.status
+
 		self.supplier_name = 'todo'  # todo 填充
 
 		# 快递公司信息
@@ -77,11 +79,9 @@ class DeliveryItem(business_model.Model):
 		if fill_options['with_refunding_info']:
 			DeliveryItem.__fill_refunding_info(delivery_items, delivery_item_ids)
 
-		return delivery_items
+		DeliveryItem.__fill_supplier(delivery_items, delivery_item_ids)
 
-	@staticmethod
-	def __fill_supplier(delivery_items):
-		pass
+		return delivery_items
 
 	# suppliers = Supplier.from_ids()
 
@@ -136,4 +136,31 @@ class DeliveryItem(business_model.Model):
 					'coupon_money': 0,
 					'total': 0,
 					'finished': False
+				}
+
+	@staticmethod
+	def __fill_supplier(delivery_items, delivery_item_ids):
+		# todo 性能优化
+		for delivery_item in delivery_items:
+			db_model = delivery_item.context['db_model']
+			supplier = None
+			if db_model.supplier_user_id:
+				supplier = Supplier.from_id({
+					'id': db_model.supplier_user_id,
+					'type': 'user'
+				})
+			elif db_model.supplier:
+				supplier = Supplier.from_id({
+					'id': db_model.supplier_user_id,
+					'type': 'supplier'
+				})
+
+			if supplier:
+				delivery_item.supplier_info = {
+					'name': supplier.name,
+					'type': supplier.type
+				}
+			else:
+				delivery_item.supplier_info = {
+
 				}

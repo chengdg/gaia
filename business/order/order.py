@@ -289,7 +289,6 @@ class Order(business_model.Model):
 	def __with_full_money_info(orders, order_ids):
 
 		for order in orders:
-			print('----------1', order.weizoom_card_money, order.refunding_info['total_weizoom_card_money'])
 			origin_weizoom_card_money = order.weizoom_card_money + order.refunding_info['total_weizoom_card_money']
 			origin_final_price = order.final_price + order.refunding_info['total_cash']
 
