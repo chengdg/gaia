@@ -45,8 +45,47 @@ class PropertyTemplate(business_model.Model):
 		if model:
 			self._init_slot_from_model(model)
 
-	def update(self, name, properties):
+	def set_corp(self, corp):
+		self.context['corp'] = corp
+
+	def update(params):
 		"""
 		更新模板
 		"""
-		pass
+		corp = self.context['corp']
+		name = params['title']
+		properties = params['new_properties']
+		template_id = params['template_id']
+
+		mall_models.ProductPropertyTemplate.update(name=name).dj_where(owner_id=corp.id, id=template_id).execute()
+
+		mall_models.TemplateProperty.delete().dj_where(owner_id=corp.id, template_id=template_id).execute()
+		for template_property in properties:
+			mall_models.TemplateProperty.create(
+				owner = corp.id,
+				template = template_id,
+				name = template_property['name'],
+				value = template_property['value']
+			)
+
+	def delete(self):
+		mall_models.ProductPropertyTemplate.delete().dj_where(owner_id=self.corp.id, id=template_id)
+
+	@staticmethod
+	def create(params):
+		corp = params['corp']
+		name = params['title']
+		properties = params['new_properties']
+
+		template = mall_models.ProductPropertyTemplate.create(
+			owner = corp.id,
+			name = name
+		)
+
+		for template_property in properties:
+			mall_models.TemplateProperty.create(
+				owner = corp.id,
+				template = template,
+				name = template_property['name'],
+				value = template_property['value']
+			)

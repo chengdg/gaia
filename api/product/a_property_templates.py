@@ -20,7 +20,7 @@ class APropertyTemplates(api_resource.ApiResource):
         根据用户id，获取所有的属性模板
         """
         corp = args['corp']
-        templates = corp.product_property_template_repository.get_property_templates()
+        templates = corp.product_property_template_repository.get_templates()
 
         datas = []
         for template in templates:

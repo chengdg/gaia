@@ -11,59 +11,48 @@ from eaglet.core.exceptionutil import unicode_full_stack
 from business.product.product_property import ProductPropertyTemplate, ProductTemplateProperty
 
 
-class AProductTemplateProperty(api_resource.ApiResource):
+class AProductPropertyTemplate(api_resource.ApiResource):
     """
-    商品模板的属性
+    商品模板
     """
     app = 'product'
     resource = 'property_template'
 
-    @param_required(['template_id'])
+    @param_required(['corp', 'template_id'])
     def get(args):
-        """
-        获得模板信息:包括模板本身信息和其中属性信息
-        """
-        try:
-            template_id = args['template_id']
-            properties = ProductTemplateProperty.from_template_id({"template_id": template_id})
-            temmplate = ProductPropertyTemplate.from_id({'id': template_id})
-            properties = [pro.to_dict() for pro in properties]
-            temmplate = temmplate.to_dict()
-            temmplate['properties'] = properties
-            return {
-                'template': temmplate
-            }
-        except:
-            msg = unicode_full_stack()
-            watchdog.error(msg)
-            return 500, {"msg": "get id=%s template failed" % template_id}
-
-    @param_required(['template_id'])
-    def delete(args):
-        """
-        删除单个模板
-        """
+        corp = args['corp']
         template_id = args['template_id']
-        try:
-            change_rows = ProductPropertyTemplate.delete_from_id({"id": template_id})
-            return {"msg": "delete success"}
-        except:
-            msg = unicode_full_stack()
-            watchdog.error(msg)
-            return 500, {"msg": "delete failed"}
+        template = corp.product_property_template_repository.get_template(template_id)
 
-    @param_required(['owner_id','title', 'new_properties'])
+        data = {
+            "id": template.id,
+            "name": template.name,
+            "properties": []
+        }
+        return {
+            'template': data
+        }
+
+    @param_required(['corp', 'template_id'])
+    def delete(args):
+        corp = args['corp']
+        template_id = args['template_id']
+        template = corp.product_property_template_repository.delete_template(template_id)
+
+        return {}
+
+    @param_required(['title', 'new_properties'])
     def put(args):
         """创建属性模板
 
         Args:
           title: 属性模板标题
-          newProperties 属性模板中需要新建的property信息的json字符串
+          new_properties 属性模板中需要新建的property信息的json字符串
 
         Example:
           {
             'title': 'aaa',
-            'newProperties':[
+            'new_properties':[
                 {
                     id: -1, //id=-1, 代表需要新建的属性
                     name: "属性1",
@@ -73,13 +62,17 @@ class AProductTemplateProperty(api_resource.ApiResource):
             ]
           }
         """
-
-        owner_id = args['owner_id']
+        corp = args['corp']
         title = args['title']
         new_properties = args.get('new_properties', "[]")
         try:
             new_properties = json.loads(new_properties)
-            ProductPropertyTemplate.create({'owner_id': owner_id, 'title': title, 'new_properties': new_properties})
+            ProductPropertyTemplate.create({
+                'corp': corp, 
+                'title': title, 
+                'new_properties': new_properties
+            })
+            
             return {}
         except:
             msg = unicode_full_stack()
