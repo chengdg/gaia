@@ -3,7 +3,6 @@
 from eaglet.decorator import param_required
 
 from business import model as business_model
-from business.product.product_property import ProductPropertyTemplate, ProductTemplateProperty
 
 
 class ProductPropertyFactory(business_model.Model):

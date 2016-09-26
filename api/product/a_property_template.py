@@ -8,7 +8,7 @@ from eaglet.decorator import param_required
 from eaglet.core import watchdog
 from eaglet.core.exceptionutil import unicode_full_stack
 
-from business.product.product_property import ProductPropertyTemplate, ProductTemplateProperty
+from business.product.product_property_template import ProductPropertyTemplate
 
 
 class AProductPropertyTemplate(api_resource.ApiResource):
@@ -29,14 +29,21 @@ class AProductPropertyTemplate(api_resource.ApiResource):
             "name": template.name,
             "properties": []
         }
+
+        for template_property in template.properties:
+            data['properties'].append({
+                "id": template_property.id,
+                "name": template_property.name,
+                "value": template_property.value
+            })
         return {
             'template': data
         }
 
-    @param_required(['corp', 'template_id'])
+    @param_required(['corp', 'id'])
     def delete(args):
         corp = args['corp']
-        template_id = args['template_id']
+        template_id = args['id']
         template = corp.product_property_template_repository.delete_template(template_id)
 
         return {}
@@ -79,7 +86,7 @@ class AProductPropertyTemplate(api_resource.ApiResource):
             watchdog.error(msg)
             return 500, {"msg": "create template failed"}
 
-    @param_required(['owner_id', 'template_id','title', 'new_properties','update_properties','deleted_ids'])
+    @param_required(['id', 'title', 'new_properties', 'update_properties', 'deleted_ids'])
     def post(args):
 
         """更新属性模板
@@ -97,17 +104,13 @@ class AProductPropertyTemplate(api_resource.ApiResource):
         new_properties = json.loads(args.get('new_properties', "[]"))
         update_properties = json.loads(args.get('update_properties', "[]"))
         deleted_property_ids = json.loads(args.get('deleted_ids', "[]"))
-        try:
-            ProductPropertyTemplate.modify({
-                'template_id': template_id,
-                'title': title,
-                'new_properties': new_properties,
-                'update_properties': update_properties,
-                'deleted_property_ids': deleted_property_ids
 
-            })
-            return {}
-        except:
-            msg = unicode_full_stack()
-            watchdog.error(msg)
-            return 500, {"msg": "update template failed"}
+        corp = args['corp']
+        corp.product_property_template_repository.get_template(template_id).update({
+            'title': title,
+            'new_properties': new_properties,
+            'update_properties': update_properties,
+            'deleted_property_ids': deleted_property_ids
+        })
+        
+        return {}

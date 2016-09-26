@@ -4,9 +4,6 @@ __author__ = "charles"
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
 
-from business.product.product_property import ProductPropertyTemplate
-
-
 class APropertyTemplates(api_resource.ApiResource):
     """
     商品属性模板列表
@@ -29,6 +26,14 @@ class APropertyTemplates(api_resource.ApiResource):
                 "name": template.name,
                 "properties": []
             }
+
+            for template_property in template.properties:
+                data['properties'].append({
+                    "id": template_property.id,
+                    "name": template_property.name,
+                    "value": template_property.value
+                })
+
             datas.append(data)
 
         return {

@@ -21,7 +21,7 @@ from core import paginator
 from business.decorator import cached_context_property
 
 
-class TemplateProperty(business_model.Model):
+class ProductTemplateProperty(business_model.Model):
 	"""
 	商品属性模板中的商品属性
 	"""
@@ -36,7 +36,7 @@ class TemplateProperty(business_model.Model):
 	@param_required(['model'])
 	def from_model(args):
 		model = args['model']
-		template_property = TemplateProperty(model)
+		template_property = ProductTemplateProperty(model)
 
 		return template_property
 
