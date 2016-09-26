@@ -262,40 +262,45 @@ class Order(business_model.Model):
 		for order in orders:
 			if order.is_self_order:
 				order.refunding_info = {
-					'total_cash': sum([delivery_item.refund_info['cash'] for delivery_item in order.delivery_items if
-					                   delivery_item.refund_info['finished']]),
-					'total_weizoom_card_money': sum(
+					'cash': sum([delivery_item.refund_info['cash'] for delivery_item in order.delivery_items if
+					             delivery_item.refund_info['finished']]),
+					'weizoom_card_money': sum(
 						[delivery_item.refund_info['weizoom_card_money'] for delivery_item in order.delivery_items if
 						 delivery_item.refund_info['finished']]),
-					'total_integral_money': sum(
+					'integral_money': sum(
 						[delivery_item.refund_info['integral_money'] for delivery_item in order.delivery_items if
 						 delivery_item.refund_info['finished']]),
-					'total_coupon_money': sum(
+					'integral': sum(
+						[delivery_item.refund_info['integral'] for delivery_item in order.delivery_items if
+						 delivery_item.refund_info['finished']]),
+					'coupon_money': sum(
 						[delivery_item.refund_info['coupon_money'] for delivery_item in order.delivery_items if
 						 delivery_item.refund_info['finished']]),
-					'total_money': sum([delivery_item.refund_info['total'] for delivery_item in order.delivery_items if
-					                    delivery_item.refund_info['finished']]),
+					'total': sum([delivery_item.refund_info['total'] for delivery_item in order.delivery_items if
+					              delivery_item.refund_info['finished']]),
 				}
 			else:
 				order.refunding_info = {
-					'total_cash': 0,
-					'total_weizoom_card_money': 0,
-					'total_integral_money': 0,
-					'total_coupon_money': 0,
-					'total_money': 0,
+					'cash': 0,
+					'weizoom_card_money': 0,
+					'integral':0,
+					'integral_money': 0,
+					'coupon_money': 0,
+					'total': 0,
 				}
 
 	@staticmethod
 	def __with_full_money_info(orders, order_ids):
 
 		for order in orders:
-			origin_weizoom_card_money = order.weizoom_card_money + order.refunding_info['total_weizoom_card_money']
-			origin_final_price = order.final_price + order.refunding_info['total_cash']
+			order.origin_weizoom_card_money = order.weizoom_card_money + order.refunding_info[
+				'weizoom_card_money']
+			order.origin_final_price = order.final_price + order.refunding_info['cash']
 
 			total_product_origin_price = sum(
 				[delivery_item.total_origin_product_price for delivery_item in order.delivery_items])
 
 			order.save_money = round(total_product_origin_price, 2) + round(order.postage, 2) - round(
-				origin_final_price,
+				order.origin_final_price,
 				2) - round(
-				origin_weizoom_card_money, 2)
+				order.origin_weizoom_card_money, 2)

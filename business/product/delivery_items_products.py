@@ -82,4 +82,5 @@ class DeliveryItemsProducts(business_model.Model):
 
 			delivery_item_products.append(delivery_item_product)
 
+
 		return delivery_item_products
