@@ -152,7 +152,6 @@ class Order(business_model.Model):
 						'id': 0,
 						'is_subscribed': 0
 					}
-		print(1111)
 		# 填充出货单
 		if with_delivery_items:
 			delivery_items_fill_options = fill_options['with_delivery_items']['fill_options']
