@@ -26,7 +26,8 @@ class DeliveryItemProduct(business_model.Model):
 		'thumbnails_url',
 		'is_deleted',
 		'total_origin_price',
-		'promotion_result'
+		'promotion_result',
+		'product_model_name'
 
 	)
 
@@ -50,7 +51,8 @@ class DeliveryItemsProducts(business_model.Model):
 		product_id2product = {p.id: p for p in product_db_models}
 
 		origin_order_ids = [delivery_item.origin_order_id for delivery_item in delivery_items]
-		id2promotion = {r.promotion_id: r for r in mall_models.OrderHasPromotion.select().dj_where(order_id__in=origin_order_ids)}
+		id2promotion = {r.promotion_id: r for r in
+		                mall_models.OrderHasPromotion.select().dj_where(order_id__in=origin_order_ids)}
 
 		delivery_item_products = []
 		for ohs in ohp_list:
@@ -71,6 +73,7 @@ class DeliveryItemsProducts(business_model.Model):
 			delivery_item_product.total_origin_price = ohs.total_price
 			delivery_item_product.count = ohs.number
 			delivery_item_product.delivery_item_id = ohs.order_id
+			delivery_item_product.product_model_name = 'todo'  # todo
 
 			delivery_item_product.thumbnails_url = product_db_model.thumbnails_url
 			delivery_item_product.is_deleted = product_db_model.is_deleted
