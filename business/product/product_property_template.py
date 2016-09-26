@@ -100,12 +100,6 @@ class ProductPropertyTemplate(business_model.Model):
 		deleted_property_ids = params['deleted_property_ids']
 		mall_models.TemplateProperty.delete().dj_where(owner_id=corp.id, template_id=template_id, id__in=deleted_property_ids).execute()
 
-	def delete(self):
-		"""
-		删除property template
-		"""
-		mall_models.ProductPropertyTemplate.delete().dj_where(owner_id=self.corp.id, id=template_id)
-
 	@staticmethod
 	def create(params):
 		corp = params['corp']
