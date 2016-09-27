@@ -309,7 +309,7 @@
 																			"products":{
 																				"type":"array",
 																				"description":"商品",
-																				"item":{
+																				"items":{
 																					"type":"object",
 																					"properties":{
 																						"count":{
