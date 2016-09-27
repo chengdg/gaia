@@ -44,7 +44,7 @@ class AOrderList(api_resource.ApiResource):
 				}
 
 			}
-			orders = order_repository.get_orders(filter_values, target_page, fill_options)
+			pageinfo, orders = order_repository.get_orders(filter_values, target_page, fill_options)
 		except BaseException as e:
 			# todo 去掉
 			from eaglet.core.exceptionutil import unicode_full_stack
@@ -59,6 +59,6 @@ class AOrderList(api_resource.ApiResource):
 
 		order_dicts = [order.to_dict() for order in orders]
 		return {
-			'page_info': target_page.to_dict(),
+			'page_info': pageinfo.to_dict(),
 			'orders': order_dicts
 		}

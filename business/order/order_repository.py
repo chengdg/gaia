@@ -50,4 +50,4 @@ class OrderRepository(business_model.Model):
 
 		orders = Order.from_models({"db_models": db_models, 'fill_options': fill_options})
 
-		return orders
+		return pageinfo, orders
