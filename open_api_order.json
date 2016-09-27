@@ -327,7 +327,7 @@
 																						"promotion_result":{
 																							"type":"object",
 																							"properties":{
-																								"description":"促销结果，如果没促销则为null"
+																								"description":"促销结果，如果没促销则为null",
 																								"name":{
 																									"type":"促销类型"
 																								}
