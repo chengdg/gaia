@@ -91,8 +91,8 @@ class Supplier(business_model.Model):
 			return Supplier.__from_user(args['id'])
 		elif type == 'supplier':
 			return Supplier.__from_supplier(args['id'])
-		supplier_db_model = mall_models.Supplier.get(id=args['id'])
-		return Supplier(supplier_db_model)
+		else:
+			raise RuntimeError('% is undefined type supplier'.format(type))
 
 	@staticmethod
 	def __from_user(id):
@@ -108,6 +108,5 @@ class Supplier(business_model.Model):
 		supplier_db_model = mall_models.Supplier.get(id=id)
 		supplier = Supplier(supplier_db_model)
 		supplier.type = 'supplier'
-
-
 		return supplier
+

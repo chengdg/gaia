@@ -16,7 +16,7 @@ class DeliveryItem(business_model.Model):
 		'bid',
 		'origin_order_id',
 		'products',
-		'supplier_id',
+
 		'postage',
 		'status',
 		'express_company_name',
@@ -24,7 +24,6 @@ class DeliveryItem(business_model.Model):
 		'leader_name',
 		'created_at',
 
-		'supplier_name',
 		'refunding_info',
 		'total_origin_product_price',
 		'refund_info',
@@ -42,18 +41,9 @@ class DeliveryItem(business_model.Model):
 		else:
 			self.origin_order_id = self.id
 
-		if db_model.supplier:
-			self.supplier_id = db_model.supplier + 's'
-		elif db_model.supplier_user_id:
-			self.supplier_id = db_model.supplier_user_id + 'u'
-		else:
-			self.supplier_id = ''
-
 		self.postage = db_model.postage
 
 		self.status = db_model.status
-
-		self.supplier_name = 'todo'  # todo 填充
 
 		# 快递公司信息
 		self.express_company_name = db_model.express_company_name,
@@ -116,19 +106,19 @@ class DeliveryItem(business_model.Model):
 		delivery_item_id2refund_info = {refund_info.delivery_item_id: refund_info for refund_info in refund_info_list}
 
 		for delivery_item in delivery_items:
-			refund_info = delivery_item_id2refund_info.get(delivery_item.id)
-			if refund_info:
-				delivery_item.refund_info = {
-					'cash': refund_info.cash,
-					'weizoom_card_money': refund_info.weizoom_card_money,
-					'integral': refund_info.integral,
-					'integral_money': refund_info.integral_money,
-					'coupon_money': refund_info.coupon_money,
-					'total': refund_info.total,
-					'finished': refund_info.finished
+			refunding_info = delivery_item_id2refund_info.get(delivery_item.id)
+			if refunding_info:
+				delivery_item.refunding_info = {
+					'cash': refunding_info.cash,
+					'weizoom_card_money': refunding_info.weizoom_card_money,
+					'integral': refunding_info.integral,
+					'integral_money': refunding_info.integral_money,
+					'coupon_money': refunding_info.coupon_money,
+					'total': refunding_info.total,
+					'finished': refunding_info.finished
 				}
 			else:
-				delivery_item.refund_info = {
+				delivery_item.refunding_info = {
 					'cash': 0,
 					'weizoom_card_money': 0,
 					'integral': 0,
