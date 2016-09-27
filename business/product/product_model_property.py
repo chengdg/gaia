@@ -36,21 +36,22 @@ class ProductModelProperty(business_model.Model):
         return product_model_property
 
     @property
-    def properties(self):
+    def values(self):
         """
+        商品规格属性的属性值集合
         """
-        properties = self.context.get('properties', None)
-        if not properties and self.id:
-            return ProductModelPropertyValue.from_model_id({'model_id': self.id})
-        return properties
+        value_models = mall_models.ProductModelPropertyValue.select().dj_where(property=self.id, is_deleted=False)
 
-    @properties.setter
-    def properties(self, value):
-        self.context['properties'] = value
+        property_values = []
+        for value_model in value_models:
+            property_values.append(ProductModelPropertyValue.from_model({
+                'db_model': value_model
+            }))
+        return property_values
 
     def update(self, field, value):
         """
-        更新
+        更新商品规格属性
         """
         if field == 'name':
             #更新name
@@ -58,9 +59,21 @@ class ProductModelProperty(business_model.Model):
         elif field == 'type':
             #更新type
             model_type = mall_models.PRODUCT_MODEL_PROPERTY_TYPE_TEXT
-            if self.type == 'image':
+            if value == 'image':
                 model_type = mall_models.PRODUCT_MODEL_PROPERTY_TYPE_IMAGE
             mall_models.ProductModelProperty.update(type=model_type).dj_where(id=self.id).execute()
+
+    def add_property_value(self, name, pic_url):
+        """
+        向商品规格属性中添加一个property value（规格值）
+        """
+        property_value = mall_models.ProductModelPropertyValue.create(
+            property = self.id,
+            name = name,
+            pic_url = pic_url
+        )
+
+        return property_value
 
     @staticmethod
     @param_required(['corp', 'name', 'type'])

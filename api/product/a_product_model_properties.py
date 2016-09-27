@@ -24,12 +24,21 @@ class AProductModelProperties(api_resource.ApiResource):
 
         datas = []
         for model_property in model_properties:
-            datas.append({
+            data = {
                 "id": model_property.id,
                 "name": model_property.name,
                 "type": model_property.type,
                 "values": []
-            })
+            }
+
+            for property_value in model_property.values:
+                data['values'].append({
+                    "id": property_value.id,
+                    "name": property_value.name,
+                    "pic_url": property_value.pic_url
+                })
+
+            datas.append(data)
 
         return {
             "product_model_properties": datas

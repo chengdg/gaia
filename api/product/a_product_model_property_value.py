@@ -15,42 +15,29 @@ class AProductModelPropertyValue(api_resource.ApiResource):
     app = 'product'
     resource = 'model_property_value'
 
-    @param_required(['model_property_id', 'name'])
+    @param_required(['model_property_id'])
     def put(args):
         """
-        添加
-        model_property_id -- 规格id
-        name -- 规格值的名字
-        pic_url -- 规格值的图片地址(非必须)
         """
-        model_property_id = args['model_property_id']
-        name = args['name']
-        pic_url = args.get('pic_url', '')
+        corp = args['corp']
+        property_id = args['model_property_id']
+        model_property = corp.product_model_property_repository.get_property(property_id)
 
-        try:
-            model_property_value = ProductModelPropertyValue.create({
-                                        "property_id": model_property_id,
-                                        "name": name,
-                                        "pic_url": pic_url})
-            return model_property_value.to_dict()
-        except:
-            msg = unicode_full_stack()
-            watchdog.error(msg)
-            return 500, {
-                'product_model_value': None
-            }
+        name = args.get('name', '')
+        pic_url = args.get('pic_url', '')
+        property_value = model_property.add_property_value(name, pic_url)
+
+        return {
+            "id": property_value.id
+        }
 
     @param_required(['id'])
     def delete(args):
         """
         id -- 规格属性值的id
         """
-        model_property = ProductModelPropertyValue(None)
-        try:
-            model_id = args['id']
-            model_property.delete_from_id({'id': model_id})
-            return {"msg": "Delete success"}
-        except:
-            msg = unicode_full_stack()
-            watchdog.error(msg)
-            return 500, {"msg": "Delete failed"}
+        corp = args['corp']
+        property_value_id = args['id']
+        corp.product_model_property_repository.delete_property_value(property_value_id)
+        
+        return {}

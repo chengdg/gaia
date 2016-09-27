@@ -36,3 +36,9 @@ class ProductModelPropertyRepository(business_model.Service):
         删除指定的商品规格属性
         """
         mall_models.ProductModelProperty.update(is_deleted=True).dj_where(owner_id=self.corp.id, id=property_id).execute()
+
+    def delete_property_value(self, property_value_id):
+        """
+        删除指定的商品规格属性的属性值
+        """
+        mall_models.ProductModelPropertyValue.update(is_deleted=True).dj_where(id=property_value_id).execute()
