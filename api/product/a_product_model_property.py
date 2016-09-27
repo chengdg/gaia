@@ -13,64 +13,50 @@ class AProductModelProperty(api_resource.ApiResource):
     """
     商品规格属性
     """
-
     app = 'product'
     resource = 'model_property'
 
-    @param_required(['owner_id', 'type'])
+    @param_required(['corp', 'type'])
     def put(args):
         """
-        添加规格
-        owner_id -- 用户id
-        type -- 规格类型　可以为空，但是必须传递，默认是text(text)类型,image:图片类型
-        name -- 规格名　
+        添加规格属性
+        corp_id -- corp_id
+        type -- 规格属性类型　可以为空，但是必须传递，默认是text(text)类型, image:图片类型
+        name -- 规格属性名
         """
-        owner_id = args['owner_id']
+        corp = args['corp']
         type = args['type']
         name = args.get('name', "")
 
-        try:
-            product_model_property = ProductModelProperty.create({
-                                "owner_id": owner_id,
-                                "type": type,
-                                "name": name})
-            return {"product_model_property": product_model_property.to_dict()}
-        except:
-            msg = unicode_full_stack()
-            watchdog.error(msg)
-            return 500, {
-                "msg": "Create failed"
-            }
+        model_property = ProductModelProperty.create({
+            "corp": corp,
+            "name": name,
+            "type": type
+        })
 
-    @param_required(['type', 'id', 'name'])
+        return {
+            "product_model_property": {
+                "id": model_property.id,
+                "name": model_property.name,
+                "type": model_property.type,
+                "values": []
+            }
+        }
+
+    @param_required(['corp', 'id', 'field', 'value'])
     def post(args):
         """
-        更新规格
-        id -- 规格ｉｄ
-        type -- 规格类型　可以为空，但是必须传递，默认是text(text)类型,image:图片类型
-        name -- 规格名　
+        更新规格属性
         """
+        corp = args['corp']
+        property_id = args['id']
+        product_model_property = corp.product_model_property_repository.get_property(property_id)
 
-        model_id = args['id']
-        model_type = args['type']
-        name = args['name']
+        field = args['field']
+        value = args['value']
+        product_model_property.update(field, value)
 
-        resource_model = ProductModelProperty(None)
-        resource_model.type = model_type
-        resource_model.name = name
-        resource_model.id = model_id
-        try:
-            change_rows = resource_model.update()
-            if change_rows:
-                return {"msg": "Update success"}
-            else:
-                return 500, {"msg": "model(id:%s) not found or have deleted" % model_id}
-        except:
-            msg = unicode_full_stack()
-            watchdog.error(msg)
-            return 500, {
-                "msg": "Update failed"
-            }
+        return {}
 
     @param_required(['id'])
     def get(args):
@@ -87,11 +73,8 @@ class AProductModelProperty(api_resource.ApiResource):
 
     @param_required(['id'])
     def delete(args):
-        try:
-            model_id = args['id']
-            ProductModelProperty.delete_from_id({"id": model_id})
-            return {'msg': 'Delete success'}
-        except:
-            msg = unicode_full_stack()
-            watchdog.error(msg)
-            return 500, {'msg': 'Delete failed'}
+        corp = args['corp']
+        property_id = args['id']
+        corp.product_model_property_repository.delete_property(property_id)
+
+        return {}

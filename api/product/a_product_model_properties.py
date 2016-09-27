@@ -14,18 +14,23 @@ class AProductModelProperties(api_resource.ApiResource):
     app = 'product'
     resource = 'model_properties'
 
-    @param_required(['owner_id'])
+    @param_required(['corp'])
     def get(args):
         """
         规格列表
         """
-        try:
-            owner_id = args['owner_id']
-            result = ProductModelProperty.from_owner_id({"owner_id": owner_id})
-            return {
-                'product_model_properties': result
-            }
-        except:
-            msg = unicode_full_stack()
-            watchdog.error(msg)
-            return 500, {"msg": "Get product model property list failed"}
+        corp = args['corp']
+        model_properties = corp.product_model_property_repository.get_properties()
+
+        datas = []
+        for model_property in model_properties:
+            datas.append({
+                "id": model_property.id,
+                "name": model_property.name,
+                "type": model_property.type,
+                "values": []
+            })
+
+        return {
+            "product_model_properties": datas
+        }

@@ -14,6 +14,7 @@ from business.product.product_pool import ProductPool
 from business.mall.category_repository import CategoryRepository
 from business.mall.image_group_repository import ImageGroupRepository
 from business.product.property_template_repository import PropertyTemplateRepository
+from business.product.product_model_property_repository import ProductModelPropertyRepository
 
 
 class Corporation(business_model.Model):
@@ -70,6 +71,10 @@ class Corporation(business_model.Model):
 	@property
 	def product_property_template_repository(self):
 		return PropertyTemplateRepository.get(self)
+
+	@property
+	def product_model_property_repository(self):
+		return ProductModelPropertyRepository.get(self)
 
 	@property
 	def order_repository(self):
