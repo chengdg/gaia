@@ -5,7 +5,7 @@ import copy
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
 
-from core import paginator
+
 from business.mall.category import Category
 from business.common.page_info import PageInfo
 
