@@ -1,0 +1,382 @@
+{
+	"swagger": "2.0",
+	"info": {
+		"version": "0.0.1",
+		"title": "zeus API doc"
+	},
+	"paths": {
+		"/order/orders": {
+			"get": {
+				"summary": "订单列表",
+				"parameters": [
+					{
+						"name": "woid",
+						"in": "query",
+						"required": true
+					},
+					{
+						"name": "cur_page",
+						"in": "query",
+						"required": true
+					},
+					{
+						"name": "count_per_page",
+						"in": "query",
+						"required": true
+					}
+				],
+				"tags": [
+					"order"
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+									"type": "object",
+									"properties": {
+										"orders": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"orders": {
+														"type": "array",
+														"items": {
+															"type": "object",
+															"properties": {
+																"id": {
+																	"type": "integer"
+																},
+																"bid": {
+																	"type": "string",
+																	"description": "订单编号"
+																},
+																"coupon_money": {
+																	"type": "number",
+																	"description": "优惠券抵扣金额"
+																},
+																"integral": {
+																	"type": "number",
+																	"description": "使用积分"
+																},
+																"ship_area": {
+																	"type": "string",
+																	"description": "收货地址地区"
+																},
+																"ship_name": {
+																	"type": "string",
+																	"description": "收货人姓名"
+																},
+																"ship_address": {
+																	"type": "string",
+																	"description": "收货地址详细地址"
+																},
+																"pay_money": {
+																	"type": "number",
+																	"description": "支付金额"
+																},
+																"origin_weizoom_card_money": {
+																	"type": "number",
+																	"description": "原始微众卡金额"
+																},
+																"weizoom_card_money": {
+																	"type": "number",
+																	"description": "微众卡金额"
+																},
+																"origin_final_price": {
+																	"type": "number",
+																	"description": "原始现金支付金额"
+																},
+																"product_price": {
+																	"type": "number",
+																	"description": "商品售价之和"
+																},
+																"final_price": {
+																	"type": "number",
+																	"description": "现金支付金额"
+																},
+																"type": {
+																	"type": "string",
+																	"description": "类型"
+																},
+																"member_info": {
+																},
+																"status": {
+																	"type": "integer",
+																	"description": "状态"
+																},
+																"pay_interface_type": {
+																	"type": "integer",
+																	"description": "支付方式"
+																},
+																"save_money": {
+																	"type": "number",
+																	"description": "优惠金额"
+																},
+																"bill_type": {
+																	"type": "integer",
+																	"description": "发票类型"
+																},
+																"remark": {
+																	"type": "string",
+																	"description": "商家备注"
+																},
+																"is_first_order": {
+																	"type": "boolean",
+																	"description": "是否是首单"
+																},
+																"refunding_info": {
+																	"type": "object",
+																	"properties": {
+																		"weizoom_card_money": {
+																			"type": "number",
+																			"description": "订单已经退款的微众卡金额"
+																		},
+																		"coupon_money": {
+																			"type": "number",
+																			"description": "订单已经退款的优惠券金额"
+																		},
+																		"integral": {
+																			"type": "number",
+																			"description": "订单已经退款的积分"
+																		},
+																		"integral_money": {
+																			"type": "number",
+																			"description": "订单已经退款的积分金额"
+																		},
+																		"cash": {
+																			"type": "number",
+																			"description": "订单已经退款的现金金额"
+																		},
+																		"total": {
+																			"type": "number",
+																			"description": "订单已经退款的总金额"
+																		}
+																	}
+																},
+																"integral_money": {
+																	"type": "number",
+																	"description": "积分抵扣金额"
+																},
+																"ship_tel": {
+																	"type": "number",
+																	"description": "收获人电话"
+																},
+																"is_group_buy": {
+																	"type": "boolean",
+																	"description": "是否是团购订单"
+																},
+																"coupon_id": {
+																	"type": "integer",
+																	"description": "优惠券主键id"
+																},
+																"customer_message": {
+																	"type": "string",
+																	"description": "买家留言"
+																},
+																"postage": {
+																	"type": "number",
+																	"description": "运费"
+																},
+																"delivery_time": {
+																	"type": "string",
+																	"description": "配送时间"
+																},
+																"payment_time": {
+																	"type": "string",
+																	"description": "支付时间"
+																},
+																"bid_with_edit_money": {
+																	"type": "string",
+																	"description": "带有改价的订单编号"
+																},
+																"created_at": {
+																	"type": "string",
+																	"description": "下单时间"
+																},
+																"bill": {
+																	"type": "string",
+																	"description": "发票信息"
+																},
+																"webapp_user_id": {
+																	"type": "integer",
+																	"description": "webapp_user的主键id"
+																},
+																"is_self_order": {
+																	"type": "boolean",
+																	"description": "是否是自营订单"
+																},
+																"edit_money": {
+																	"type": "boolean",
+																	"description": "改价金额"
+																},
+																"delivery_items": {
+																	"description": "出货单列表",
+																	"type": "array",
+																	"items": {
+																		"type": "object",
+																		"properties": {
+																			"postage": {
+																				"type": "number",
+																				"description": "运费"
+																			},
+																			"status": {
+																				"type": "integer",
+																				"description": "状态"
+																			},
+																			"supplier_info": {
+																				"type": "object",
+																				"description": "供货商信息，如果非自营订单，此项值为空",
+																				"properties": {
+																					"name": {
+																						"type": "string",
+																						"description": "供货商名称"
+																					},
+																					"type": {
+																						"type": "类型",
+																						"description": "supplier/user"
+																					}
+																				}
+																			},
+																			"bid": {
+																				"type": "string",
+																				"description": "子订单编号"
+																			},
+																			"express_company_name": {
+																				"type": "string",
+																				"description": "快递公司名称"
+																			},
+																			"created_at": {
+																				"type": "string",
+																				"description": "下单时间"
+																			},
+																			"leader_name": {
+																				"type": "string",
+																				"description": "发货人"
+																			},
+																			"refunding_info": {
+																				"type": "object",
+																				"properties": {
+																					"weizoom_card_money": {
+																						"type": "number",
+																						"description": "出货单申请退款的微众卡金额"
+																					},
+																					"coupon_money": {
+																						"type": "number",
+																						"description": "出货单申请退款的优惠券金额"
+																					},
+																					"integral": {
+																						"type": "number",
+																						"description": "出货单申请退款的积分"
+																					},
+																					"integral_money": {
+																						"type": "number",
+																						"description": "出货单申请退款的积分金额"
+																					},
+																					"cash": {
+																						"type": "number",
+																						"description": "出货单申请退款的现金金额"
+																					},
+																					"total": {
+																						"type": "number",
+																						"description": "出货单申请退款的总金额"
+																					},
+																					"finished":{
+																						"type":"boolean",
+																						"description":"是否已经退款完成"
+																					}
+																				}
+																			},
+																			"express_number":{
+																				"type":"string",
+																				"description":"快递单号"
+																			},
+																			"origin_order_id":{
+																				"type":"integer",
+																				"description":"订单主键id"
+																			},
+																			"id":{
+																				"type":"integer",
+																				"description":"主键id"
+																			},
+																			"products":{
+																				"type":"array",
+																				"description":"商品",
+																				"item":{
+																					"type":"object",
+																					"properties":{
+																						"count":{
+																							"type":"integer",
+																							"description":"数量"
+																						},
+																						"is_deleted":{
+																							"type":"boolean",
+																							"description":"是否被删除"
+																						},
+																						"name":{
+																							"type":"string",
+																							"description":"商品名"
+																						},
+																						"promotion_result":{
+																							"type":"object",
+																							"properties":{
+																								"description":"促销结果，如果没促销则为null"
+																								"name":{
+																									"type":"促销类型"
+																								}
+																							}
+																						},
+																						"thumbnails_url":{
+																							"type":"string",
+																							"description":"缩略图"
+																						},
+																						"origin_price":{
+																							"type":"number",
+																							"description":"原始单价(订单列表的单价)"
+																						},
+																						"sale_price":{
+																							"type":"number",
+																							"description":"售价"
+																						},
+																						"id":{
+																							"type":"integer",
+																							"description":"商品id"
+
+																						}
+																					}
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													},
+													"page_info": {
+													}
+												}
+											}
+										}
+									}
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

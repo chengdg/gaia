@@ -5,7 +5,6 @@ from eaglet.core import watchdog
 from eaglet.decorator import param_required
 
 from business.common.page_info import PageInfo
-from business.order.order_repository import OrderRepository
 
 
 class AOrderList(api_resource.ApiResource):
@@ -15,7 +14,6 @@ class AOrderList(api_resource.ApiResource):
 	app = 'order'
 	resource = 'orders'
 
-	# @param_required(['owner_id', 'cur_page', 'count_per_page', 'order_type'])
 	@param_required(['cur_page', 'count_per_page'])
 	def get(args):
 
@@ -55,7 +53,7 @@ class AOrderList(api_resource.ApiResource):
 			})
 			print(unicode_full_stack())
 
-			# raise e
+		# raise e
 
 		order_dicts = [order.to_dict() for order in orders]
 		return {
