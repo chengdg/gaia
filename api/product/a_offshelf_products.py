@@ -20,14 +20,13 @@ class AOffshelfProducts(api_resource.ApiResource):
 	@param_required(['corp'])
 	def get(args):
 		corp = args['corp']
-		for_sale_shelf = corp.forsale_shelf
 		
 		target_page = PageInfo.create({
 			"cur_page": int(args.get('cur_page', 1)),
 			"count_per_page": int(args.get('count_per_page', 10))
 		})
 
-		products, pageinfo = for_sale_shelf.get_products(target_page)
+		products, pageinfo = corp.forsale_shelf.get_products(target_page)
 
 		datas = []
 		for product in products:

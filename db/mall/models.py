@@ -240,6 +240,8 @@ class Product(models.Model):
 	is_enable_bill = models.BooleanField(default=False)  # 商品是否开具发票
 	is_delivery = models.BooleanField(default=False) # 是否勾选配送时间
 	buy_in_supplier = models.BooleanField(default=False) # 记录下单位置是商城还是供货商，0是商城1是供货商
+	limit_zone_type = models.IntegerField(default=0) # 0不限制 1禁售 2仅售
+	limit_zone = models.IntegerField(default=0) # 限制地区的模板id
 
 	class Meta(object):
 		db_table = 'mall_product'

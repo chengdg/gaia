@@ -6,15 +6,14 @@ from eaglet.decorator import param_required
 from business import model as business_model
 from db.mall import models as mall_models
 
+NEED_RELATED_CONFIG_TYPES = [mall_models.PAY_INTERFACE_WEIXIN_PAY, mall_models.PAY_INTERFACE_ALIPAY]
 
 class PayInterface(business_model.Model):
 	"""
 	支付信息
 	"""
-
 	__slots__ = (
 		'id',
-		'owner_id',
 		'type',
 		'description',
 		'is_active',
@@ -29,6 +28,14 @@ class PayInterface(business_model.Model):
 		self.context['db_model'] = db_model
 		if db_model:
 			self._init_slot_from_model(db_model)
+
+		#
+		self.name = mall_models.PAYTYPE2NAME[self.type]
+		global NEED_RELATED_CONFIG_TYPES
+		if self.type in NEED_RELATED_CONFIG_TYPES and self.related_config_id == 0:
+			self.should_create_related_config = True
+		else:
+			self.should_create_related_config = False
 
 	@staticmethod
 	@param_required(['owner_id'])

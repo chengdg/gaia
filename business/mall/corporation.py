@@ -15,6 +15,8 @@ from business.mall.category_repository import CategoryRepository
 from business.mall.image_group_repository import ImageGroupRepository
 from business.product.property_template_repository import PropertyTemplateRepository
 from business.product.product_model_property_repository import ProductModelPropertyRepository
+from business.mall.pay_interface_repository import PayInterfaceRepository
+from business.mall.config import Config as MallConfig
 
 
 class Corporation(business_model.Model):
@@ -31,10 +33,13 @@ class Corporation(business_model.Model):
 	def __init__(self, owner_id):
 		self.id = owner_id
 		self.name = 'unknown'
-		_account_user_profile = account_model.UserProfile.select().dj_where(user_id=owner_id).first()
-
-		self.webapp_id = _account_user_profile.webapp_id
-		self.type = _account_user_profile.webapp_type  # todo 数字123到类型名称转换
+		if owner_id:
+			_account_user_profile = account_model.UserProfile.select().dj_where(user_id=owner_id).first()
+			self.webapp_id = _account_user_profile.webapp_id
+			self.type = _account_user_profile.webapp_type  # todo 数字123到类型名称转换
+		else:
+			self.webapp_id = 0
+			self.type = 0
 
 	@property
 	def insale_shelf(self):
@@ -79,3 +84,11 @@ class Corporation(business_model.Model):
 	@property
 	def order_repository(self):
 		return OrderRepository.get({'corp': self})
+
+	@property
+	def mall_config(self):
+		return MallConfig(self)
+
+	@property
+	def pay_interface_repository(self):
+		return PayInterfaceRepository(self)

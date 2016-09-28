@@ -13,37 +13,55 @@ class A(object):
 	pass
 
 
-class ProductFactory(business_model.Model):
+class ProductFactory(business_model.Service):
 	"""
-	商品工厂类
+	商品工厂
 	"""
+	def __create_product(self, base_info, image_info, postage_info, pay_info):
+		product = mall_models.Product.create(
+            owner=self.corp.id,
+            name=base_info.get('name', '').strip(),
+            promotion_title=base_info.get('promotion_title', '').strip(),
+            bar_code=base_info.get('bar_code', '').strip(),
+            thumbnails_url=image_info.get('thumbnails_url', '').strip(),
+            pic_url='',
+            detail=base_info.get('detail', '').strip(),
+            type=base_info.get('type', mall_models.PRODUCT_DEFAULT_TYPE),
+            is_use_online_pay_interface='is_enable_online_pay_interface' in pay_info,
+            is_use_cod_pay_interface='is_enable_cod_pay_interface' in pay_info,
+            postage_type=postage_info['postage_type'],
+            postage_id=postage_info.get('postage_id', 0),
+            unified_postage_money=postage_info['unified_postage_money'],
+            stocks=base_info['min_limit'],
+            is_member_product=base_info.get("is_member_product", "false") == 'true',
+            supplier=base_info.get('supplier_id', 0),
+            purchase_price=base_info.get('purchase_price', 0.0),
+            is_enable_bill=base_info.get('is_enable_bill', 'false') == 'true',
+            is_delivery=base_info.get('is_delivery', 'false') == 'true',
+            limit_zone_type=int(postage_info.get('limit_zone_type', '0')),
+            limit_zone=int(postage_info.get('limit_zone_template', '0'))
+        )
+		
+		return product
 
-	def __init__(self):
-		super(ProductFactory, self).__init__()
+	def create_product(self, args):
+		base_info = json.loads(args['base_info'])
+		models_info = json.loads(args['models_info'])
+		image_info = json.loads(args['image_info'])
+		postage_info = json.loads(args['postage_info'])
+		pay_info = json.loads(args['pay_info'])
+		categories = json.loads(args['categories'])
+		properties = json.loads(args['properties'])
 
-	@staticmethod
-	def get():
-		return ProductFactory()
+		product = self.__create_product(base_info, image_info, postage_info, pay_info)
 
-	def create_product(self, owner_id, args):
+		corp = self.corp
+		#将商品放入product pool
+		corp.product_pool.add_products([product.id])
+		#将商品放入待售shelf
+		corp.forsale_shelf.add_products([product.id])
 
-		_product = A()
-
-		try:
-			self.__init_base_info(_product, args)
-			self.__init_models_info(_product, args)
-			self.__init_image_info(_product, args)
-			self.__init_postage_info(_product, args)
-			self.__init_pay_info(_product, args)
-
-			product = Product()
-			product.save(_product)
-
-		except BaseException as e:
-			from eaglet.core.exceptionutil import unicode_full_stack
-			msg = unicode_full_stack()
-			print(msg)
-			watchdog.alert(msg)
+		return product
 
 	def __init_base_info(self, product, args):
 		"""

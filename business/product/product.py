@@ -149,6 +149,7 @@ class Product(business_model.Model):
 			self.min_limit = model.stocks
 			self.thumbnails_url = '%s%s' % (settings.IMAGE_HOST, model.thumbnails_url) if model.thumbnails_url.find('http') == -1 else model.thumbnails_url
 			self.pic_url = '%s%s' % (settings.IMAGE_HOST, model.pic_url) if model.pic_url.find('http') == -1 else model.pic_url
+			self.models = []
 
 	@property
 	def is_sellout(self):

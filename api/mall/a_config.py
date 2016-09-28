@@ -11,9 +11,12 @@ class AConfig(api_resource.ApiResource):
     app = 'mall'
     resource = 'config'
 
-    @param_required(['woid'])
+    @param_required(['corp'])
     def get(args):
+        mall_config = args['corp'].mall_config
 
+        pay_interfaces = mall_config.pay_interfaces
+        
         woid = args['woid']
         mall_config = MallConfig.get({'woid': woid})
 

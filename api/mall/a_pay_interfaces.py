@@ -13,10 +13,25 @@ class APayInterfaces(api_resource.ApiResource):
 	app = 'mall'
 	resource = 'pay_interfaces'
 
-	@param_required(['owner_id'])
+	@param_required(['corp'])
 	def get(args):
-		pay_interfaces = PayInterface.from_owner_id({"owner_id": args['owner_id']})
+		corp = args['corp']
+		pay_interfaces = corp.pay_interface_repository.get_pay_interfaces()
 
-		pay_interfaces = map(lambda x: x.to_dict('configs'), pay_interfaces)
+		datas = []
+		for pay_interface in pay_interfaces:
+			data = {
+				"id": pay_interface.id,
+				"type": pay_interface.type,
+				"name": pay_interface.name,
+				"is_active": pay_interface.is_active,
+				"description": pay_interface.description,
+				"should_create_related_config": pay_interface.should_create_related_config,
+				"configs": []
+			}
 
-		return {'pay_interfaces': pay_interfaces}
+			datas.append(data)
+
+		return {
+			"pay_interfaces": datas
+		}
