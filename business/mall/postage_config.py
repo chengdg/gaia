@@ -17,20 +17,41 @@ class PostageConfig(business_model.Model):
 
 	__slots__ = (
 		'id',
-		'special_configs',
-		'free_configs',
-		'owner_id',
-		'config'
+		'name',
+		'first_weight', #首重
+		'first_weight_price', #首重价格
+		'is_enable_added_weight', #是否启用续重
+		'added_weight', #续重
+		'added_weight_price', # 续重价格
+		'is_used',# 是否启用
+		'is_system_level_config', # 是否是系统创建的不可修改的配置
+		
+		'is_enable_special_config', # 是否启用特殊地区运费机制
+		'special_configs', #特殊地区运费集合
+
+		'is_enable_free_config', # 是否启用包邮机制		
+		'free_configs' #包邮配置集合
 	)
 
-	def __init__(self, owner_id, id, special_configs, free_configs, config):
+	def __init__(self, model=None):
 		business_model.Model.__init__(self)
 
-		self.id = id
-		self.owner_id = owner_id
-		self.special_configs = special_configs
-		self.free_configs = free_configs
-		self.config = config
+		if model:
+			self._init_slot_from_model(model)
+		self.special_configs = []
+		self.free_configs = []
+
+	def add_special_config(self, special_config):
+		"""
+		添加特殊地区运费配置
+		"""
+		self.special_configs.append(special_config)
+
+	def add_free_config(self, free_config):
+		"""
+		添加包邮运费配置
+		"""
+		self.free_configs.append(free_config)
 
 	@staticmethod
 	@param_required(['id', 'owner_id'])
@@ -224,37 +245,3 @@ class PostageConfig(business_model.Model):
 					)
 			ids_to_be_delete = existed_free_config_ids - free_config_ids
 			mall_models.FreePostageConfig.delete().dj_where(id__in=ids_to_be_delete).execute()
-
-	@staticmethod
-	@param_required(['owner_id'])
-	def from_owner_id(args):
-		"""
-		运费模板列表
-		"""
-		owner_id = args['owner_id']
-		db_postage_configs = mall_models.PostageConfig.select().dj_where(owner=owner_id, is_deleted=False)
-
-		config_ids = []
-		id2config = {}
-		for config in db_postage_configs:
-			config.special_configs = []
-			id2config[config.id] = config
-			if config.is_enable_special_config:
-				config_ids.append(config.id)
-
-		for special_config in mall_models.SpecialPostageConfig.select().dj_where(postage_config_id__in=config_ids):
-			config_id = special_config.postage_config_id
-			id2config[config_id].special_configs.append(special_config.to_dict())
-
-		# postage_configs = []
-		# for p in db_postage_configs:
-		# 	special_config = id2special_config.get(p.id)
-		# 	if special_config:
-		# 		special_config = special_config.to_dict()
-		# 	else:
-		# 		special_config = {}
-		#
-		# 	postage_configs.append(PostageConfig(owner_id, p.id, special_config, {}, p.to_dict()))
-
-		postage_configs = [PostageConfig(owner_id, p.id, p.special_configs, {}, p.to_dict()) for p in db_postage_configs]
-		return postage_configs

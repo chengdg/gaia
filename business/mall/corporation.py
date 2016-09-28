@@ -16,6 +16,7 @@ from business.mall.image_group_repository import ImageGroupRepository
 from business.product.property_template_repository import PropertyTemplateRepository
 from business.product.product_model_property_repository import ProductModelPropertyRepository
 from business.mall.pay_interface_repository import PayInterfaceRepository
+from business.mall.postage_config_repository import PostageConfigRepository
 from business.mall.config import Config as MallConfig
 
 
@@ -92,3 +93,7 @@ class Corporation(business_model.Model):
 	@property
 	def pay_interface_repository(self):
 		return PayInterfaceRepository(self)
+
+	@property
+	def postage_config_repository(self):
+		return PostageConfigRepository(self)
