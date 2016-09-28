@@ -16,6 +16,24 @@ class FillProductDetailService(business_model.Service):
 	"""
 	对商品集合批量进行详情填充的服务
 	"""
+	def __fill_shelve_status(self, corp, products):
+		"""
+		填充商品货架状态相关细节
+		"""
+		if len(products) == 0:
+			return
+
+		product_ids = [product.id for product in products]
+		id2product = dict([(product.id, product) for product in products])
+		for p in mall_models.ProductPool.select().dj_where(product_id__in=product_ids):
+			product = id2product[p.product_id]
+			if p.status == mall_models.PP_STATUS_ON:
+				product.set_shelve_type('on_shelf')
+			elif p.status == mall_models.PP_STATUS_OFF:
+				product.set_shelve_type('off_shelf')
+			else:
+				product.set_shelve_type('in_pool')
+
 	def __fill_model_detail(self, corp, products, is_enable_model_property_info=False):
 		"""填充商品规格相关细节
 		向product中添加is_use_custom_model, models, used_system_model_properties三个属性
@@ -141,6 +159,9 @@ class FillProductDetailService(business_model.Service):
 
 		if options.get('with_product_model', False):
 			self.__fill_model_detail(self.corp, products, is_enable_model_property_info)
+
+		if options.get('with_shelve_status', False):
+			self.__fill_shelve_status(self.corp, products)
 
 		if options.get('with_product_promotion', False):
 			Product.__fill_promotion_detail(corp, products, product_ids)

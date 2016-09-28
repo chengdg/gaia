@@ -253,7 +253,7 @@ class CategoryHasProduct(models.Model):
 	"""
 	product = models.ForeignKey(Product)
 	category = models.ForeignKey(ProductCategory)
-	display_index = models.IntegerField(default=0, null=True)  # 分组商品排序
+	display_index = models.IntegerField(default=9999999, null=True)  # 分组商品排序
 	created_at = models.DateTimeField(auto_now_add=True)
 
 	class Meta(object):

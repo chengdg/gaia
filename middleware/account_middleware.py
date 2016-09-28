@@ -4,6 +4,7 @@ import settings
 from eaglet.core import watchdog
 
 from business.mall.corporation import Corporation
+from business.mall.corporation_factory import CorporationFactory
 
 class AccountMiddleware(object):
 	def process_request(sel, req, resp):
@@ -15,3 +16,4 @@ class AccountMiddleware(object):
 		if not corp_id:
 			corp_id = req.params.get('corp_id')
 		req.context['corp'] = Corporation(corp_id)
+		CorporationFactory.set(req.context['corp'])

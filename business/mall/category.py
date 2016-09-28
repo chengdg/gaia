@@ -9,6 +9,8 @@ from db.mall import models as mall_models
 from eaglet.core import paginator
 
 from business.product.product import Product
+from business.mall.corporation_factory import CorporationFactory
+from business.mall.category_product_repository import CategoryProductRepository
 
 
 class Category(business_model.Model):
@@ -131,21 +133,21 @@ class Category(business_model.Model):
 
 	@property
 	def products(self):
-		product_relations = mall_models.CategoryHasProduct.select(
-		).dj_where(category=self.context['db_model'])
-		if product_relations:
-			product_ids = [
-				relation.product_id for relation in product_relations]
+		category_product_repository = CategoryProductRepository.get(self)
+		category_products = category_product_repository.get_products()
+		return category_products
 
-			self.context['products'] = Product.from_ids(
-				{'product_ids': product_ids})
-			return self.context['products']
-		else:
-			return []
-
-	@products.setter
-	def products(self, value):
-		self.context['products'] = value
+	@property
+	def top_ten_products(self):
+		"""
+		获得排序靠前的10个商品
+		"""
+		category_product_repository = CategoryProductRepository.get(self)
+		category_products = category_product_repository.get_top_n_products(10)
+		print '-*-' * 20
+		print category_products
+		print '-*-' * 20
+		return category_products
 
 	@staticmethod
 	def create(corp, name, product_ids=None):
@@ -158,8 +160,8 @@ class Category(business_model.Model):
 		if product_ids:
 			for product_id in product_ids:
 				mall_models.CategoryHasProduct.create(
-					product_id = product_id,
-					category_id = category_model.id
+					product = product_id,
+					category = category_model.id
 				)
 
 		return Category.from_model({

@@ -150,6 +150,7 @@ class Product(business_model.Model):
 			self.thumbnails_url = '%s%s' % (settings.IMAGE_HOST, model.thumbnails_url) if model.thumbnails_url.find('http') == -1 else model.thumbnails_url
 			self.pic_url = '%s%s' % (settings.IMAGE_HOST, model.pic_url) if model.pic_url.find('http') == -1 else model.pic_url
 			self.models = []
+			self.sales = 0
 
 	@property
 	def is_sellout(self):
@@ -264,7 +265,14 @@ class Product(business_model.Model):
 		"""
 		判断商品是否是上架状态
 		"""
-		return self.shelve_type == mall_models.PRODUCT_SHELVE_TYPE_ON
+		return self.shelve_type == 'on_shelf'
+
+
+	def set_shelve_type(self, shelve_type):
+		"""
+		设置商品的货架状态
+		"""
+		self.shelve_type = shelve_type
 
 	def apply_discount(self, webapp_user):
 		"""

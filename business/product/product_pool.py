@@ -47,6 +47,8 @@ class ProductPool(business_model.Model):
 		product_pool_filter_values, product_db_filter_values, product_detail_filter_values = {}, {}, {}
 		if 'status' in filter_values:
 			product_pool_filter_values['status'] = filter_values['status']
+		else:
+			product_pool_filter_values['status__not'] = mall_models.PP_STATUS_DELETE
 
 		return product_pool_filter_values, product_db_filter_values, product_detail_filter_values
 
@@ -72,7 +74,12 @@ class ProductPool(business_model.Model):
 		"""
 		product_pool_filter_values, product_db_filter_values, product_detail_filter_values = self.__init__filter_values(filter_values)
 
-		product_ids = [model.product_id for model in mall_models.ProductPool.select().dj_where(**product_pool_filter_values)]
+		#TODO: dj_where支持{}
+		if product_pool_filter_values:
+			product_ids = [model.product_id for model in mall_models.ProductPool.select().dj_where(**product_pool_filter_values)]
+		else:
+			product_ids = [model.product_id for model in mall_models.ProductPool.select().dj_where(status__not=mall_models.PP_STATUS_DELETE)]
+
 		product_db_filter_values['id__in'] = product_ids
 		product_models = mall_models.Product.select().dj_where(**product_db_filter_values)
 		pageinfo, product_models = paginator.paginate(product_models, page_info.cur_page, page_info.count_per_page)
@@ -83,10 +90,24 @@ class ProductPool(business_model.Model):
 		fill_product_detail_service = FillProductDetailService.get(self.corp)
 		fill_options = {
 			'with_price': False,
-			'with_product_model': True
+			'with_product_model': True,
+			'with_shelve_status': True
 		}
 		fill_product_detail_service.fill_detail(products, fill_options)
 		return products, pageinfo
+
+	def get_products_by_ids(self, product_ids, fill_options={}):
+		"""
+		根据商品id获得商品集合
+		@param product_ids: 商品id集合
+		@return:
+		"""
+		product_models = mall_models.Product.select().dj_where(id__in=product_ids)
+		products = [Product.from_model({'model':model}) for model in product_models]
+
+		fill_product_detail_service = FillProductDetailService.get(self.corp)
+		fill_product_detail_service.fill_detail(products, fill_options)
+		return products
 
 	def delete_products(self, product_ids):
 		"""

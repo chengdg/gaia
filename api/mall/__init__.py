@@ -12,8 +12,11 @@ import a_email_notification
 import a_email_notifications
 import a_pay_interfaces
 import a_pay_interface
+
 import a_category
 import a_categories
+import a_category_candidate_products
+import a_category_products
 
 import a_image
 import a_image_group
@@ -31,6 +34,5 @@ import a_express_delivery_company
 import a_integral_strategy
 
 import a_promotion_products
-import a_category_products
 
 
