@@ -9,7 +9,7 @@ from business.product.product import Product
 from business.product.product_model_generator import ProductModelGenerator
 from db.mall import models as mall_models
 from zeus_conf import TOPIC
-from core import paginator
+
 
 
 class FillProductDetailService(business_model.Service):

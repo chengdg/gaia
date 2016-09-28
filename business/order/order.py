@@ -47,8 +47,6 @@ class Order(business_model.Model):
 		'created_at',
 		'update_at',
 
-		'supplier',
-
 		'webapp_id',
 		'webapp_user_id',
 
@@ -106,6 +104,9 @@ class Order(business_model.Model):
 			order.status = db_model.status
 			order.is_self_order = db_model.origin_order_id == -1  # todo 起个名
 			order.remark = db_model.remark
+			order.type = db_model.type
+			order.webapp_id = db_model.webapp_id
+			order.webapp_user_id = db_model.webapp_user_id
 
 			order.created_at = db_model.created_at
 			# 支付信息
@@ -119,8 +120,8 @@ class Order(business_model.Model):
 			order.coupon_money = db_model.coupon_money
 			order.postage = db_model.postage
 			order.weizoom_card_money = db_model.weizoom_card_money
-			order.integral_money = order.integral_money
-			order.integral = order.integral
+			order.integral_money = db_model.integral_money
+			order.integral = db_model.integral
 
 			## 衍生数据
 			order.pay_money = db_model.final_price + db_model.weizoom_card_money
@@ -283,7 +284,7 @@ class Order(business_model.Model):
 				order.refunding_info = {
 					'cash': 0,
 					'weizoom_card_money': 0,
-					'integral':0,
+					'integral': 0,
 					'integral_money': 0,
 					'coupon_money': 0,
 					'total': 0,

@@ -8,7 +8,7 @@ from business import model as business_model
 from business.product.product import Product
 from db.mall import models as mall_models
 from zeus_conf import TOPIC
-from core import paginator
+from eaglet.core import paginator
 from fill_product_detail_service import FillProductDetailService
 
 class ProductPool(business_model.Model):

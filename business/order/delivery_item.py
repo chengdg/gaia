@@ -26,7 +26,6 @@ class DeliveryItem(business_model.Model):
 
 		'refunding_info',
 		'total_origin_product_price',
-		'refund_info',
 		'supplier_info'
 	)
 
@@ -46,10 +45,10 @@ class DeliveryItem(business_model.Model):
 		self.status = db_model.status
 
 		# 快递公司信息
-		self.express_company_name = db_model.express_company_name,
-		self.express_number = db_model.express_number,
-		self.leader_name = db_model.leader_name,
-
+		self.express_company_name = db_model.express_company_name
+		self.express_number = db_model.express_number
+		self.leader_name = db_model.leader_name
+		self.created_at = db_model.created_at
 		self.context['db_model'] = db_model
 
 	@staticmethod

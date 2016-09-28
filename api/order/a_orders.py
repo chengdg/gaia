@@ -5,7 +5,6 @@ from eaglet.core import watchdog
 from eaglet.decorator import param_required
 
 from business.common.page_info import PageInfo
-from business.order.order_repository import OrderRepository
 
 
 class AOrderList(api_resource.ApiResource):
@@ -15,7 +14,6 @@ class AOrderList(api_resource.ApiResource):
 	app = 'order'
 	resource = 'orders'
 
-	# @param_required(['owner_id', 'cur_page', 'count_per_page', 'order_type'])
 	@param_required(['cur_page', 'count_per_page'])
 	def get(args):
 
@@ -44,7 +42,7 @@ class AOrderList(api_resource.ApiResource):
 				}
 
 			}
-			orders = order_repository.get_orders(filter_values, target_page, fill_options)
+			pageinfo, orders = order_repository.get_orders(filter_values, target_page, fill_options)
 		except BaseException as e:
 			# todo 去掉
 			from eaglet.core.exceptionutil import unicode_full_stack
@@ -55,10 +53,10 @@ class AOrderList(api_resource.ApiResource):
 			})
 			print(unicode_full_stack())
 
-			# raise e
+		# raise e
 
 		order_dicts = [order.to_dict() for order in orders]
 		return {
-			'page_info': target_page.to_dict(),
+			'page_info': pageinfo.to_dict(),
 			'orders': order_dicts
 		}
