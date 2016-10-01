@@ -20,6 +20,7 @@ class APostageConfigs(api_resource.ApiResource):
 
         datas = []
         for postage_config in postage_configs:
+            default_config = postage_config.default_config
             data = {
                 "id": postage_config.id,
                 "name": postage_config.name,
@@ -27,10 +28,12 @@ class APostageConfigs(api_resource.ApiResource):
                 "is_system_level_config": postage_config.is_system_level_config,
                 "is_enable_special_config": postage_config.is_enable_special_config,
                 "is_enable_free_config": postage_config.is_enable_free_config,
-                "first_weight": postage_config.first_weight,
-                "first_weight_price": postage_config.first_weight_price,
-                "added_weight": postage_config.added_weight,
-                "added_weight_price": postage_config.added_weight_price,
+                "default_config": {
+                    "first_weight": default_config.first_weight,
+                    "first_weight_price": default_config.first_weight_price,
+                    "added_weight": default_config.added_weight,
+                    "added_weight_price": default_config.added_weight_price
+                },
                 "special_configs": []
             }
 

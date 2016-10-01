@@ -2,8 +2,6 @@
 
 import a_config
 import a_delivery
-import a_postage_config
-import a_postage_configs
 import a_store_name
 import a_supplier
 import a_supplier_name
@@ -21,6 +19,10 @@ import a_category_products
 import a_image
 import a_image_group
 import a_image_groups
+
+import a_postage_config
+import a_postage_configs
+import a_active_postage_config
 
 import a_pay_interface_config
 import a_weixin_pay_interface_config

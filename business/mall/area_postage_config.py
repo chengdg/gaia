@@ -10,9 +10,9 @@ from db.account import models as account_model
 from db.mall import models as mall_models
 
 
-class SpecialPostageConfig(business_model.Model):
+class AreaPostageConfig(business_model.Model):
 	"""
-	特殊地区运费配置
+	按地区的运费配置
 	"""
 	__slots__ = (
 		'id',
