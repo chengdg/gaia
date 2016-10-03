@@ -1,0 +1,340 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "Hermes Pay Interface API"
+    },
+    "paths": {
+        "/mall/pay_interfaces/": {
+            "get": {
+                "description": "获取支付接口列表",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "商户id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "pay"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "title": "pay_interfaces",
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/PayInterface"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/mall/pay_interface/": {
+            "get": {
+                "description": "获取支付接口详情",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "商户id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "pay interface的id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "pay"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/PayInterface"
+                        }
+                    }
+                }
+            }
+        },
+        "/mall/weixin_pay_v2_config/": {
+          "post": {
+                "description": "修改微信支付接口v2的配置信息",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "app_id",
+                        "in": "query",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "name": "partner_id",
+                        "in": "query",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "name": "partner_key",
+                        "in": "query",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "name": "paysign_key",
+                        "in": "query",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    }
+                ],
+                "tags": [
+                    "pay"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        },
+        "/mall/weixin_pay_v3_config/": {
+          "post": {
+                "description": "修改微信支付接口v3的配置信息",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "app_id",
+                        "in": "query",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "name": "mch_id",
+                        "in": "query",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "name": "api_key",
+                        "in": "query",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "name": "paysign_key",
+                        "in": "query",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    }
+                ],
+                "tags": [
+                    "pay"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        },
+        "/mall/ali_pay_config/": {
+          "post": {
+                "description": "修改微信支付接口v3的配置信息",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "partner_id",
+                        "in": "query",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "name": "key",
+                        "in": "query",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "name": "ali_public_key",
+                        "in": "query",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "name": "private_key",
+                        "in": "query",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "name": "seller_email",
+                        "in": "query",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    }
+                ],
+                "tags": [
+                    "pay"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        },
+        "/mall/pay_interface_activity/": {
+          "post": {
+                "description": "修改支付接口启用状态",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "name": "is_active",
+                        "in": "query",
+                        "type": "string",
+                        "required": true,
+                        "description": "是否开启",
+                        "format": "true or false"
+                    }
+                ],
+                "tags": [
+                    "pay"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "PayInterface": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "number",
+                    "description": "id"
+                },
+                "type": {
+                    "type": "string",
+                    "description": "支付接口类型",
+                    "format": "weixin_pay"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "支付接口用于显示的名字"
+                },
+                "is_active": {
+                    "type": "boolean",
+                    "description": "是否开启"
+                },
+                "config": {
+                    "type": "object",
+                    "description": "不同支付接口的详细配置对象"
+                }
+            }
+        },
+        "WeixinPayV2Config": {
+            "type": "object",
+            "properties": {
+                "app_id": {
+                    "type": "string"
+                },
+                "partner_id": {
+                    "type": "string"
+                },
+                "partner_key": {
+                    "type": "string"
+                },
+                "paysign_key": {
+                    "type": "string"
+                }
+            }
+        },
+        "WeixinPayV3Config": {
+            "type": "object",
+            "properties": {
+                "app_id": {
+                    "type": "string"
+                },
+                "mch_id": {
+                    "type": "string"
+                },
+                "api_key": {
+                    "type": "string"
+                },
+                "paysign_key": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

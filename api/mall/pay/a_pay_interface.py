@@ -3,7 +3,8 @@
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
 
-from business.mall.pay.pay_interface import PayInterface
+from business.mall.pay.weixin_pay_interface import WeixinPayInterface
+from business.mall.pay.ali_pay_interface import AliPayInterface
 
 
 class APayInterface(api_resource.ApiResource):
@@ -13,38 +14,55 @@ class APayInterface(api_resource.ApiResource):
     app = 'mall'
     resource = 'pay_interface'
 
-    @param_required(['owner_id', 'id'])
+    @param_required(['corp_id', 'id'])
     def get(args):
-        return {}
+        corp = args['corp']
+        pay_interface = corp.pay_interface_repository.get_pay_interface(args['id'])
 
-    @param_required([])
-    def put(args):
-        return {}
+        data = {
+            "id": pay_interface.id,
+            "type": pay_interface.str_type,
+            "name": pay_interface.name,
+            "is_active": pay_interface.is_active,
+            "config": None
+        }
 
-    @param_required(['owner_id', 'id', 'is_enable'])
-    def post(args):
-        """
-
-        @param args: owner_id--->用户id
-                     id---->支付方式的id
-                     is_enable-->是否启用支付方式
-        @return:
-        """
-        owner_id = int(args['owner_id'])
-        pay_interface_id = args['id']
-        is_enable = True if args['is_enable'] == 'true' else False
-
-        try:
-            pay_interface = PayInterface.from_id({'id': pay_interface_id})
-            if owner_id == pay_interface.owner_id:
-                pay_interface.update_status(is_enable=is_enable)
-                return {'msg': 'success'}
+        if pay_interface.is_weixin_pay():
+            weixin_pay_interface = WeixinPayInterface(pay_interface)
+            config = weixin_pay_interface.config
+            if weixin_pay_interface.is_v2_weixin_pay():
+                data['config'] = {
+                    "version": 'v2',
+                    "id": config.id,
+                    "app_id": config.app_id,
+                    "partner_id": config.partner_id,
+                    "partner_key": config.partner_key,
+                    "paysign_key": config.paysign_key
+                }
+            elif weixin_pay_interface.is_v3_weixin_pay():
+                data['config'] = {
+                    "version": 'v3',
+                    "id": config.id,
+                    "app_id": config.app_id,
+                    "mch_id": config.mch_id,
+                    "api_key": config.api_key,
+                    "paysign_key": config.paysign_key
+                }
             else:
-                return 500, {'msg': "failed"}
-        except:
-            return 500, {'msg': "failed"}
+                pass
+        elif pay_interface.is_ali_pay():
+            ali_pay_interface = AliPayInterface(pay_interface)
+            config = ali_pay_interface.config
+            data['config'] = {
+                'version': 'v5',
+                'id': config.id,
+                'partner': config.partner,
+                'key': config.key,
+                'ali_public_key': config.ali_public_key,
+                'private_key': config.private_key,
+                'seller_email': config.seller_email
+            }
+        else:
+            pass
 
-
-    @param_required([])
-    def delete(args):
-        return {}
+        return data

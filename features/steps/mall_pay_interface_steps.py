@@ -50,19 +50,23 @@ def __fill_post_data(pay_interface):
 def __add_pay_interface(context, pay_interface):
     data = __fill_post_data(pay_interface)
 
-    db_pay_interface = mall_models.PayInterface.select().dj_where(owner_id=context.corp.id, type=data['type']).get()
     data['corp_id'] = context.corp.id
-    data['id'] = db_pay_interface.id
     data['is_active'] = "true"
 
     type = pay_interface['type']
     if type == u'微信支付':
-        response = context.client.post('/mall/weixin_pay_interface/', data)
+        if data['pay_version'] == 'v2':
+            response = context.client.post('/mall/weixin_pay_v2_config/', data)
+        else:
+            response = context.client.post('/mall/weixin_pay_v3_config/', data)
     elif type == u'支付宝':
-        response = context.client.post('/mall/ali_pay_interface', data)
+        response = context.client.post('/mall/ali_pay_config/', data)
     else:
+        db_pay_interface = mall_models.PayInterface.select().dj_where(owner_id=context.corp.id, type=data['type']).get()
+        data['id'] = db_pay_interface.id
         response = context.client.post('/mall/pay_interface_activity/', data)
 
+    bdd_util.assert_api_call_success(response)
     return response
 
 @when(u"{user}添加支付方式")

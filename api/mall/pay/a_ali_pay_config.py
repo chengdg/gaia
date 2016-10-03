@@ -11,9 +11,9 @@ class AAliPayInterface(api_resource.ApiResource):
     微信支付的支付接口
     """
     app = 'mall'
-    resource = 'ali_pay_interface'
+    resource = 'ali_pay_config'
 
-    @param_required(['corp_id', 'id', 'is_active'])
+    @param_required(['corp_id', 'is_active'])
     def post(args):
         """
         @param args: owner_id--->用户id
@@ -22,7 +22,7 @@ class AAliPayInterface(api_resource.ApiResource):
         @return:
         """
         corp = args['corp']
-        weixin_pay_interface = corp.pay_interface_repository.get_ali_pay_interface(args['id'])
+        weixin_pay_interface = corp.pay_interface_repository.get_ali_pay_interface()
         weixin_pay_interface.update_config(args)
 
         if args['is_active'] == 'true':

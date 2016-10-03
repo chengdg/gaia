@@ -85,18 +85,18 @@ class PayInterfaceRepository(business_model.Service):
 
 		return PayInterface(model)
 
-	def get_weixin_pay_interface(self, pay_interface_id):
+	def get_weixin_pay_interface(self):
 		"""
 		获得特定的微信支付的pay interface
 		"""
-		model = mall_models.PayInterface.select().dj_where(owner_id=self.corp.id, id=pay_interface_id).get()
+		model = mall_models.PayInterface.select().dj_where(owner_id=self.corp.id, type=mall_models.PAY_INTERFACE_WEIXIN_PAY).get()
 
 		return WeixinPayInterface(PayInterface(model))
 
-	def get_ali_pay_interface(self, pay_interface_id):
+	def get_ali_pay_interface(self):
 		"""
 		获得特定的支付宝的pay interface
 		"""
-		model = mall_models.PayInterface.select().dj_where(owner_id=self.corp.id, id=pay_interface_id).get()
+		model = mall_models.PayInterface.select().dj_where(owner_id=self.corp.id, type=mall_models.PAY_INTERFACE_ALIPAY).get()
 
 		return AliPayInterface(PayInterface(model))

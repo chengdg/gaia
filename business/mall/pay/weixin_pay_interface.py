@@ -62,36 +62,25 @@ class WeixinPayInterface(business_model.Model):
 		else:
 			return WeixinPayV3Config(config)
 
-	def update_config(self, args):
-		"""
-		更新微信支付具体配置
-		"""
+	def update_v2_config(self, args):
 		corp_id = CorporationFactory.get().id
-		version = args.get('pay_version', 'v2')
-		if version == 'v2':
-			version = mall_models.WEIXIN_PAY_V2
-		else:
-			version = mall_models.WEIXIN_PAY_V3
+		mall_models.UserWeixinPayOrderConfig.update(
+			app_id=args.get('app_id', '').strip(),
+			pay_version=mall_models.WEIXIN_PAY_V2,
+			partner_id=args['partner_id'].strip(),
+			partner_key=args['partner_key'].strip(),
+			paysign_key=args['paysign_key'].strip(),
+		).dj_where(owner=corp_id).execute()
 
-		if args.get('pay_version', 'v2') == 'v2':
-			#更新微信支付v2配置
-			mall_models.UserWeixinPayOrderConfig.update(
-				app_id=args.get('app_id', '').strip(),
-				pay_version=version,
-				partner_id=args.get('partner_id', '').strip(),
-				partner_key=args.get('partner_key', '').strip(),
-				paysign_key=args.get('paysign_key', '').strip(),
-			).dj_where(owner=corp_id).execute()
-		else:
-			#更新微信支付v3配置
-
-			mall_models.UserWeixinPayOrderConfig.update(
-				app_id=args.get('app_id', '').strip(),
-				pay_version=version,
-				partner_id=args.get('mch_id', '').strip(),
-				partner_key=args.get('api_key', '').strip(),
-				paysign_key=args.get('paysign_key', ''),
-			).dj_where(owner=corp_id).execute()
+	def update_v3_config(self, args):
+		corp_id = CorporationFactory.get().id
+		mall_models.UserWeixinPayOrderConfig.update(
+			app_id=args['app_id'].strip(),
+			pay_version=mall_models.WEIXIN_PAY_V3,
+			partner_id=args['mch_id'].strip(),
+			partner_key=args['api_key'].strip(),
+			paysign_key=args['paysign_key'].strip(),
+		).dj_where(owner=corp_id).execute()
 
 	def enable(self):
 		"""
