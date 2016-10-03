@@ -3,9 +3,9 @@
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
 
-from business.mall.pay_interface import PayInterface
-from business.mall.weixin_pay_interface import WeixinPayInterface
-from business.mall.ali_pay_interface import AliPayInterface
+from business.mall.pay.pay_interface import PayInterface
+from business.mall.pay.weixin_pay_interface import WeixinPayInterface
+from business.mall.pay.ali_pay_interface import AliPayInterface
 
 
 class APayInterfaces(api_resource.ApiResource):

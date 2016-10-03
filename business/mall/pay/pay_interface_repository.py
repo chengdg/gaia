@@ -6,12 +6,12 @@ from eaglet.decorator import param_required
 from business import model as business_model
 from db.mall import models as mall_models
 
-from business.mall.pay_interface import PayInterface
-from business.mall.weixin_pay_interface import WeixinPayInterface
-from business.mall.ali_pay_interface import AliPayInterface
+from business.mall.pay.pay_interface import PayInterface
+from business.mall.pay.weixin_pay_interface import WeixinPayInterface
+from business.mall.pay.ali_pay_interface import AliPayInterface
 from business.decorator import cached_context_property
-from business.mall.weixin_pay_interface_v2_config import WeixinPayV2Config
-from business.mall.ali_pay_interface_config import AliPayConfig
+from business.mall.pay.weixin_pay_interface_v2_config import WeixinPayV2Config
+from business.mall.pay.ali_pay_interface_config import AliPayConfig
 
 
 class PayInterfaceRepository(business_model.Service):

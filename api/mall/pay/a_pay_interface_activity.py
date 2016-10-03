@@ -3,7 +3,7 @@
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
 
-from business.mall.pay_interface import PayInterface
+from business.mall.pay.pay_interface import PayInterface
 
 
 class APayInterfaceActivity(api_resource.ApiResource):

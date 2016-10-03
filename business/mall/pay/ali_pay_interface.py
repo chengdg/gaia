@@ -8,7 +8,7 @@ from db.mall import models as mall_models
 
 from business.mall.corporation_factory import CorporationFactory
 from business.decorator import cached_context_property
-from business.mall.ali_pay_interface_config import AliPayConfig
+from business.mall.pay.ali_pay_interface_config import AliPayConfig
 
 class AliPayInterface(business_model.Model):
 	"""

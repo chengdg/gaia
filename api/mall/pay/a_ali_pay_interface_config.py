@@ -5,8 +5,8 @@ from eaglet.core import watchdog
 from eaglet.decorator import param_required
 from eaglet.core.exceptionutil import unicode_full_stack
 
-from business.mall.pay_interface import PayInterface
-from business.mall.ali_pay_interface_config import AliPayConfig
+from business.mall.pay.pay_interface import PayInterface
+from business.mall.pay.ali_pay_interface_config import AliPayConfig
 
 
 class AAliPayInterfaceConfig(api_resource.ApiResource):

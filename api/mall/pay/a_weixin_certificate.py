@@ -5,7 +5,7 @@ from eaglet.core import watchdog
 from eaglet.decorator import param_required
 from eaglet.core.exceptionutil import unicode_full_stack
 
-from business.mall.weixin_certificate import WeixinCertificate
+from business.mall.pay.weixin_certificate import WeixinCertificate
 
 class AWeixinCertificate(api_resource.ApiResource):
 	app = 'mall'
