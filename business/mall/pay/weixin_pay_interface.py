@@ -8,8 +8,8 @@ from db.mall import models as mall_models
 
 from business.mall.corporation_factory import CorporationFactory
 from business.decorator import cached_context_property
-from business.mall.pay.weixin_pay_interface_v2_config import WeixinPayV2Config
-from business.mall.pay.weixin_pay_interface_v3_config import WeixinPayV3Config
+from business.mall.pay.weixin_pay_v2_config import WeixinPayV2Config
+from business.mall.pay.weixin_pay_v3_config import WeixinPayV3Config
 
 class WeixinPayInterface(business_model.Model):
 	"""

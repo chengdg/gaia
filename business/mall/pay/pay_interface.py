@@ -8,8 +8,6 @@ from db.mall import models as mall_models
 
 from business.mall.corporation_factory import CorporationFactory
 
-NEED_RELATED_CONFIG_TYPES = [mall_models.PAY_INTERFACE_WEIXIN_PAY, mall_models.PAY_INTERFACE_ALIPAY]
-
 class PayInterface(business_model.Model):
 	"""
 	支付接口
