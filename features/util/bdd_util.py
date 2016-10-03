@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
 import json
-#import time
-from datetime import datetime
+import time
+from datetime import datetime,timedelta
 
 import settings
 from client import Client
 from db.account.models import User, UserProfile
-from utils import string_util
+from util import string_util
 from db.member import models as member_models
 from db.mall import models as mall_models
-from eaglet.core import watchdog
-from business.account.member import Member
+import logging
+#from business.account.member import Member
 
 tc = None
 
@@ -258,7 +258,7 @@ def assert_api_call_success(response):
 		buf = []
 		buf.append('>>>>>>>>>>>>>>> response <<<<<<<<<<<<<<<')
 		buf.append(str(response))
-		watchdog.error("API calling failure: %s" % '\n'.join(buf))
+		logging.error("API calling failure: %s" % '\n'.join(buf))
 	assert 200 == response.body['code'], "code != 200, call api FAILED!!!!"
 
 

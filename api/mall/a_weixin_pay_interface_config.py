@@ -10,13 +10,16 @@ from business.mall.weixin_pay_interface_config import WeixinPayConfig
 from business.weixin.component_authed_appid_info import ComponentAuthedAppidInfo
 
 
-class APayInterfaceConfig(api_resource.ApiResource):
+class AWeixinPayInterfaceConfig(api_resource.ApiResource):
     app = 'mall'
     resource = 'weixin_pay_interface_config'
 
-    @param_required(['pay_interface_id', 'owner_id'])
+    @param_required(['corp_id', 'pay_interface_id'])
     def get(args):
+        corp = args['corp']
         pay_interface_id = args['pay_interface_id']
+        pay_interface = corp.pay_interface_repository.get_pay_interface(pay_interface_id)
+
         owner_id = args['owner_id']
         pay_interface = PayInterface.from_id({'id': pay_interface_id})
         pay_interface_configs = pay_interface.configs
@@ -32,7 +35,7 @@ class APayInterfaceConfig(api_resource.ApiResource):
         }
 
 
-    @param_required(['owner_id', 'pay_version', 'app_id', 'partner_id', 'partner_key', 'pay_interface_id'])
+    @param_required(['corp_id', 'pay_version', 'pay_interface_id'])
     def put(args):
         pay_interface_id = args['pay_interface_id']
         owner_id = args['owner_id']

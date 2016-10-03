@@ -7,28 +7,64 @@ from business import model as business_model
 from db.mall import models as mall_models
 
 from business.mall.pay_interface import PayInterface
+from business.mall.weixin_pay_interface import WeixinPayInterface
+from business.mall.ali_pay_interface import AliPayInterface
 from business.decorator import cached_context_property
+from business.mall.weixin_pay_interface_v2_config import WeixinPayV2Config
+from business.mall.ali_pay_interface_config import AliPayConfig
 
 
 class PayInterfaceRepository(business_model.Service):
-	"""
-	支付信息
-	"""
-	def get_pay_interfaces(self):
+	def __make_sure_all_pay_interfaces_exists(self):
+		"""
+		创建当前还不存在的支付接口
+		TODO: 将这个操作移到command中
+		"""
 		pay_interface_db_models = mall_models.PayInterface.select().dj_where(owner_id=self.corp.id)
 
 		exist_pay_interface_types = [p.type for p in pay_interface_db_models]
 
+		is_create_pay_interface = False
 		for pay_type in mall_models.VALID_PAY_INTERFACES:
 			#如果数据库中没有需要的支付接口，创建之
 			if pay_type not in exist_pay_interface_types:
-				mall_models.PayInterface.create(
-					owner=owner_id,
+				pay_interface_model = mall_models.PayInterface.create(
+					owner=self.corp.id,
 					type=pay_type,
 					description='',
 					is_active=False
 				)
 
+				config = None
+				if pay_type == mall_models.PAY_INTERFACE_WEIXIN_PAY:
+					config = WeixinPayV2Config.create({
+						'app_id': '',
+						'partner_id': '',
+						'partner_key': '',
+						'app_secret': '',
+						'paysign_key': ''
+					})
+				elif pay_type == mall_models.PAY_INTERFACE_ALIPAY:
+					config = AliPayConfig.create({
+						'partner': '',
+				        'key': '',
+				        'private_key': '',
+				        'ali_public_key': '',
+				        'seller_email': ''
+					})
+				else:
+					config = None
+
+				if config:
+					pay_interface = PayInterface(pay_interface_model)
+					pay_interface.set_config(config)
+				is_create_pay_interface = True
+
+		return is_create_pay_interface
+
+	def get_pay_interfaces(self):
+		self.__make_sure_all_pay_interfaces_exists()
+		pay_interface_db_models = mall_models.PayInterface.select().dj_where(owner_id=self.corp.id)			
 		pay_interface_db_models = [model for model in pay_interface_db_models if model.type != mall_models.PAY_INTERFACE_WEIZOOM_COIN]
 
 		pay_interfaces = [PayInterface(db_model) for db_model in pay_interface_db_models]
@@ -40,3 +76,27 @@ class PayInterfaceRepository(business_model.Service):
 
 		pay_interfaces = [PayInterface(db_model) for db_model in pay_interface_db_models]
 		return pay_interfaces
+
+	def get_pay_interface(self, pay_interface_id):
+		"""
+		获得特定的pay interface
+		"""
+		model = mall_models.PayInterface.select().dj_where(owner_id=self.corp.id, id=pay_interface_id).get()
+
+		return PayInterface(model)
+
+	def get_weixin_pay_interface(self, pay_interface_id):
+		"""
+		获得特定的微信支付的pay interface
+		"""
+		model = mall_models.PayInterface.select().dj_where(owner_id=self.corp.id, id=pay_interface_id).get()
+
+		return WeixinPayInterface(PayInterface(model))
+
+	def get_ali_pay_interface(self, pay_interface_id):
+		"""
+		获得特定的支付宝的pay interface
+		"""
+		model = mall_models.PayInterface.select().dj_where(owner_id=self.corp.id, id=pay_interface_id).get()
+
+		return AliPayInterface(PayInterface(model))

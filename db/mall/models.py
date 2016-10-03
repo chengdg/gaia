@@ -384,6 +384,17 @@ PAYNAME2TYPE = {
 	u'货到付款': PAY_INTERFACE_COD,
 	u"微众卡支付": PAY_INTERFACE_WEIZOOM_COIN
 }
+PAYTYPE2STR = {
+	-1: u'unknown',
+	PAY_INTERFACE_PREFERENCE: u'preference',
+	PAY_INTERFACE_ALIPAY: u'alipay',
+	PAY_INTERFACE_TENPAY: u'tenpay',
+	PAY_INTERFACE_WEIXIN_PAY: u'weixin_pay',
+	PAY_INTERFACE_COD: u'cod',
+	PAY_INTERFACE_WEIZOOM_COIN: u"weizoom_coin",
+	PAY_INTERFACE_BEST_PAY: u"best_pay",
+	PAY_INTERFACE_KANGOU: u"kangou_pay"
+}
 
 VALID_PAY_INTERFACES = [
 	PAY_INTERFACE_WEIXIN_PAY,
@@ -411,7 +422,9 @@ class PayInterface(models.Model):
 		db_table = 'mall_pay_interface'
 
 V2 = 0
+WEIXIN_PAY_V2 = V2
 V3 = 1
+WEIXIN_PAY_V3 = V3
 class UserWeixinPayOrderConfig(models.Model):
 	owner = models.ForeignKey(User)
 	app_id = models.CharField(max_length=32, verbose_name='微信公众号app_id')
@@ -427,7 +440,8 @@ class UserWeixinPayOrderConfig(models.Model):
 
 
 
-
+ALI_PAY_V2 = 0
+ALI_PAY_V5 = 1
 #===============================================================================
 # UserAlipayOrderConfig : 支付宝支付配置信息
 #===============================================================================

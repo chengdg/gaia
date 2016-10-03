@@ -8,8 +8,6 @@ import a_supplier_name
 import a_user_profile
 import a_email_notification
 import a_email_notifications
-import a_pay_interfaces
-import a_pay_interface
 
 import a_category
 import a_categories
@@ -24,9 +22,12 @@ import a_postage_config
 import a_postage_configs
 import a_active_postage_config
 
+import a_pay_interfaces
+import a_pay_interface
 import a_pay_interface_config
-import a_weixin_pay_interface_config
-import a_ali_pay_interface_config
+import a_pay_interface_activity
+import a_weixin_pay_interface
+import a_ali_pay_interface
 import a_weixin_certificate
 
 import a_express_delivery

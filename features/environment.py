@@ -2,7 +2,7 @@
 
 import os
 import sys
-from eaglet.core import watchdog
+import logging
 
 #from db.mall import models as mall_models
 
@@ -11,11 +11,11 @@ sys.path.insert(0, path)
 
 import unittest
 #from pymongo import Connection
-
 import settings
 from features.util import bdd_util
-from core.cache import utils as cache_utils
-from core.service import celeryconfig
+from eaglet.core.cache import utils as cache_utils
+
+#from core.service import celeryconfig
 
 ######################################################################################
 # __clear_all_account_data: 清空账号数据
@@ -27,8 +27,22 @@ def __clear_all_account_data():
 ######################################################################################
 # __clear_all_app_data: 清空应用数据
 ######################################################################################
+clean_modules = []
 def __clear_all_app_data():
-	pass
+	"""
+	清空应用数据
+	"""
+	if len(clean_modules) == 0:
+		for clean_file in os.listdir('./features/clean'):
+			if clean_file.startswith('__'):
+				continue
+
+			module_name = 'features.clean.%s' % clean_file[:-3]
+			module = __import__(module_name, {}, {}, ['*',])	
+			clean_modules.append(module)
+
+	for clean_module in clean_modules:
+		clean_module.clean()
 
 ######################################################################################
 # __create_system_user: 创建系统用户
@@ -38,20 +52,11 @@ def __create_system_user(username):
 
 
 def before_all(context):
-	cache_utils.clear_db()
+	# cache_utils.clear_db()
 	# __clear_all_account_data()
 	# __create_system_user('jobs')
 	# __create_system_user('bill')
 	# __create_system_user('tom')
-
-	weapp_working_dir = os.path.join(settings.WEAPP_DIR, 'weapp')
-	if not os.path.exists(weapp_working_dir):
-		info = '* ERROR: CAN NOT do bdd testing. Because bdd need %s be exists!!!' % weapp_working_dir
-		info = info.replace(os.path.sep, '/')
-		print('*' * 80)
-		print(info)
-		print('*' * 80)
-		sys.exit(3)
 
 	#创建test case，使用assert
 	context.tc = unittest.TestCase('__init__')
@@ -62,13 +67,13 @@ def before_all(context):
 
 	#启动weapp下的bdd server
 	#print u'TODO2: 启动weapp下的bdd server'
-	watchdog.warning(u'TODO2: 启动weapp下的bdd server')
+	logging.warning(u'TODO2: 启动weapp下的bdd server')
 
 	#登录添加App
 	#client = bdd_util.login('manager')
 
 	# 让Celery以同步方式运行
-	celeryconfig.CELERY_ALWAYS_EAGER = True
+	# celeryconfig.CELERY_ALWAYS_EAGER = True
 
 
 
@@ -77,23 +82,7 @@ def after_all(context):
 
 
 def before_scenario(context, scenario):
-	is_ui_test = False
 	context.scenario = scenario
-	for tag in scenario.tags:
-		if tag.startswith('ui-') or tag == 'ui':
-			is_ui_test = True
-			break
-
-	if is_ui_test:
-		#创建浏览器
-		print('[before scenario]: init browser driver')
-		chrome_options = Options()
-		chrome_options.add_argument("--disable-extensions")
-		chrome_options.add_argument("--disable-plugins")
-		driver = webdriver.Chrome(chrome_options=chrome_options)
-		driver.implicitly_wait(3)
-		context.driver = driver
-
 	__clear_all_app_data()
 
 

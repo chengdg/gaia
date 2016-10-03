@@ -6,15 +6,15 @@ from eaglet.decorator import param_required
 from business import model as business_model
 from db.mall import models as mall_models
 
+from business.mall.corporation_factory import CorporationFactory
+
 
 class AliPayConfig(business_model.Model):
     """
     支付宝支付配置信息
     """
-
     __slots__ = (
         'id',
-        'owner_id',
         'partner',
         'key',
         'private_key',
@@ -31,18 +31,15 @@ class AliPayConfig(business_model.Model):
             self._init_slot_from_model(db_model)
 
     @staticmethod
-    @param_required(['id'])
-    def from_id(args):
-        id = args['id']
-        model = mall_models.UserAlipayOrderConfig.select().dj_where(id=id).first()
-        if model:
-            return AliPayConfig(model)
-
-    @staticmethod
-    @param_required(['owner', 'pay_version', 'partner', 'key', 'private_key', 'ali_public_key', 'seller_email'])
+    @param_required(['partner', 'key', 'private_key', 'ali_public_key', 'seller_email'])
     def create(args):
-        config = mall_models.UserAlipayOrderConfig.create(**args)
+        config = mall_models.UserAlipayOrderConfig.create(
+            owner=CorporationFactory.get().id,
+            partner=args.get('partner', ''),
+            key=args.get('key', ''),
+            private_key=args.get('private_key', ''),
+            ali_public_key=args.get('ali_public_key', ''),
+            seller_email=args.get('seller_email', ''),
+            pay_version=mall_models.ALI_PAY_V5
+        )
         return AliPayConfig(config)
-
-    def update(self, **kwargs):
-        mall_models.UserAlipayOrderConfig.update(**kwargs).dj_where(id=self.id).execute()

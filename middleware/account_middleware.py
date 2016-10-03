@@ -12,6 +12,9 @@ class AccountMiddleware(object):
 			watchdog.info("skipped in WebAppAccountMiddleware. req.path: {}".format(req.path))
 			return
 
+		if settings.DEBUG:
+			print '=====> req.params <====='
+			print req.params
 		corp_id = req.params.get('woid')
 		if not corp_id:
 			corp_id = req.params.get('corp_id')

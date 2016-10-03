@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 import sys
+import json
 import os
 import json
 import re
@@ -166,8 +167,8 @@ class FakeResponse(object):
 class ClientHandler(object):
     def __init__(self, enforce_csrf_checks=True, *args, **kwargs):
         self.enforce_csrf_checks = enforce_csrf_checks
-        from apps import create_app
-        self.app = create_app()
+        from eaglet import apps
+        self.app = apps.create_app()
 
     def __call__(self, environ):
         url = u'%s?%s' % (environ['PATH_INFO'], environ['QUERY_STRING'])
@@ -347,16 +348,16 @@ class RequestFactory(object):
 
     def __fill_query_string(self, path):
         #set __nocache
-        if '__nocache' in path:
-            pass
-        else:
-            if '?' in path:
-                path = '%s&__nocache=1' % path
-            else:
-                if path[-1] == '/':
-                    path = '%s?__nocache=1' % path
-                else:
-                    path = '%s/?__nocache=1' % path
+        # if '__nocache' in path:
+        #     pass
+        # else:
+        #     if '?' in path:
+        #         path = '%s&__nocache=1' % path
+        #     else:
+        #         if path[-1] == '/':
+        #             path = '%s?__nocache=1' % path
+        #         else:
+        #             path = '%s/?__nocache=1' % path
 
         #set access_token
         if hasattr(self.webapp_user, 'access_token'):
@@ -386,7 +387,7 @@ class RequestFactory(object):
         "Construct a POST request."
 
         path = self.__fill_query_string(path)
-        data['__nocache'] = 1
+        #data['__nocache'] = 1
         post_data = self._encode_data(data, content_type)
 
         parsed = urlparse(path)
@@ -572,6 +573,7 @@ class Client(RequestFactory):
         response = super(Client, self).get(path, data=data, **extra)
         if settings.ENABLE_BDD_DUMP_RESPONSE:
             print response
+            print '\n' * 15
         if follow:
             response = self._handle_redirects(response, **extra)
         return response
@@ -586,6 +588,7 @@ class Client(RequestFactory):
             response = self._handle_redirects(response, **extra)
         if settings.ENABLE_BDD_DUMP_RESPONSE:
             print response
+            print '\n' * 15
         return response
 
     def head(self, path, data={}, follow=False, **extra):
@@ -619,6 +622,7 @@ class Client(RequestFactory):
             response = self._handle_redirects(response, **extra)
         if settings.ENABLE_BDD_DUMP_RESPONSE:
             print response
+            print '\n' * 15
         return response
 
     def patch(self, path, data='', content_type='application/octet-stream',
