@@ -1,0 +1,407 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "Hermes Mall Logistics API"
+    },
+    "paths": {
+        "/mall/postage_configs/": {
+            "get": {
+                "description": "获取运费配置列表",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "logistics"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "title": "postage_configs",
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/PostageConfig"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/mall/postage_config/": {
+            "get": {
+                "description": "获取指定的运费配置详情",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "postage config的id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "logistics"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/PostageConfig"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "创建运费配置详情",
+                "parameters": [
+                    {
+                        "name": "",
+                        "in": "body",
+                        "description": "postage config的name",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/NewConfig"
+                        }
+                    }
+                ],
+                "tags": [
+                    "logistics"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "number",
+                                    "description": "新建的postage config对象的id"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "修改运费配置详情",
+                "parameters": [
+                    {
+                        "name": "",
+                        "in": "body",
+                        "description": "postage config的name",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/UpdateConfig"
+                        }
+                    }
+                ],
+                "tags": [
+                    "logistics"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "number",
+                                    "description": "新建的postage config对象的id"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "删除运费配置",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "type": "string",
+                        "required": true,
+                        "description": "待删除的运费配置的id"
+                    }
+                ],
+                "tags": [
+                    "logistics"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        },
+        "/mall/active_postage_config/": {
+            "put": {
+                "description": "将postage config设置为当前使用的postage config",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "postage_config_id",
+                        "in": "query",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    }
+                ],
+                "tags": [
+                    "logistics"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "number",
+                                    "description": "被选中的postage config对象的id"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "PostageConfig": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "number",
+                    "description": "id"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "运费配置的名字"
+                },
+                "is_system_level_config": {
+                    "type": "boolean",
+                    "description": "是否是系统级的运费配置，系统级的运费配置不能被删除"
+                },
+                "is_used": {
+                    "type": "boolean",
+                    "description": "运费配置当前是否被选中"
+                },
+                "is_enable_special_config": {
+                    "type": "boolean",
+                    "description": "是否配置了特殊地区运费配置"
+                },
+                "is_enable_free_config": {
+                    "type": "boolean",
+                    "description": "是否配置了免邮费运费配置"
+                },
+                "default_config": {
+                    "$ref": "#/definitions/DefaultConfig"
+                },
+                "special_configs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/AreaConfig"
+                    },
+                    "minItems": 0
+                },
+                "free_configs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/FreeConfig"
+                    },
+                    "minItems": 0
+                }
+            }
+        },
+        "DefaultConfig": {
+            "type": "object",
+            "properties": {
+                "first_weight": {
+                    "type": "string",
+                    "description": "首重"
+                },
+                "first_weight_price": {
+                    "type": "string",
+                    "description": "首重价格"
+                },
+                "added_weight": {
+                    "type": "string",
+                    "description": "续重"
+                },
+                "added_weight_price": {
+                    "type": "string",
+                    "description": "续重价格"
+                }
+            }
+        },
+        "AreaConfig": {
+            "type": "object",
+            "properties": {
+                "destinations": {
+                    "type": "string",
+                    "description": "地区列表",
+                    "format": "以逗号连接的地区id集合：1,2,3"
+                },
+                "first_weight": {
+                    "type": "string",
+                    "description": "首重"
+                },
+                "first_weight_price": {
+                    "type": "string",
+                    "description": "首重价格"
+                },
+                "added_weight": {
+                    "type": "string",
+                    "description": "续重"
+                },
+                "added_weight_price": {
+                    "type": "string",
+                    "description": "续重价格"
+                }
+            }
+        },
+        "FreeConfig": {
+            "type": "object",
+            "properties": {
+                "destinations": {
+                    "type": "string",
+                    "description": "地区列表",
+                    "format": "以逗号连接的地区id集合：1,2,3"
+                },
+                "condition": {
+                    "type": "string",
+                    "description": "免邮条件",
+                    "format": "'count:件数' 或 'money:金额'"
+                },
+                "value": {
+                    "type": "string",
+                    "description": "免邮条件需要满足的值"
+                }
+            }
+        },
+        "NewConfig": {
+            "type": "object",
+            "properties": {
+                "corp_id": {
+                    "type": "string",
+                    "description": ""
+                },
+                "name": {
+                    "type": "string",
+                    "description": "运费配置的名字"
+                },
+                "is_enable_special_config": {
+                    "type": "boolean",
+                    "description": "是否配置了特殊地区运费配置"
+                },
+                "is_enable_free_config": {
+                    "type": "boolean",
+                    "description": "是否配置了免邮费运费配置"
+                },
+                "default_config": {
+                    "$ref": "#/definitions/DefaultConfig"
+                },
+                "special_configs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/AreaConfig"
+                    },
+                    "minItems": 0
+                },
+                "free_configs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/FreeConfig"
+                    },
+                    "minItems": 0
+                }
+            }
+        },
+        "UpdateConfig": {
+            "type": "object",
+            "properties": {
+                "corp_id": {
+                    "type": "string",
+                    "description": ""
+                },
+                "id": {
+                    "type": "number",
+                    "description": "postage config的id"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "运费配置的名字"
+                },
+                "is_enable_special_config": {
+                    "type": "boolean",
+                    "description": "是否配置了特殊地区运费配置"
+                },
+                "is_enable_free_config": {
+                    "type": "boolean",
+                    "description": "是否配置了免邮费运费配置"
+                },
+                "default_config": {
+                    "$ref": "#/definitions/DefaultConfig"
+                },
+                "special_configs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/AreaConfig"
+                    },
+                    "minItems": 0
+                },
+                "free_configs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/FreeConfig"
+                    },
+                    "minItems": 0
+                }
+            }
+        }
+    }
+}

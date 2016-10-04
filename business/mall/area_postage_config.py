@@ -28,4 +28,8 @@ class AreaPostageConfig(business_model.Model):
 
 		if model:
 			self._init_slot_from_model(model)
-			self.destinations = model.destination
+			self.destinations = model.destination if hasattr(model, 'destination') else ''
+			self.first_weight = '%.1f' % self.first_weight
+			self.first_weight_price = '%.2f' % self.first_weight_price
+			self.added_weight = '%.1f' % float(self.added_weight)
+			self.added_weight_price = '%.2f' % float(self.added_weight_price)

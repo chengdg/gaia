@@ -73,7 +73,7 @@
             }
         },
         "/mall/weixin_pay_v2_config/": {
-          "post": {
+            "post": {
                 "description": "修改微信支付接口v2的配置信息",
                 "parameters": [
                     {
@@ -132,7 +132,7 @@
             }
         },
         "/mall/weixin_pay_v3_config/": {
-          "post": {
+            "post": {
                 "description": "修改微信支付接口v3的配置信息",
                 "parameters": [
                     {
@@ -191,7 +191,7 @@
             }
         },
         "/mall/ali_pay_config/": {
-          "post": {
+            "post": {
                 "description": "修改支付宝接口的配置信息",
                 "parameters": [
                     {
@@ -264,7 +264,7 @@
             }
         },
         "/mall/pay_interface_activity/": {
-          "post": {
+            "post": {
                 "description": "修改支付接口启用状态",
                 "parameters": [
                     {
@@ -327,48 +327,6 @@
                 "config": {
                     "type": "object",
                     "description": "不同支付接口的详细配置对象"
-                }
-            }
-        },
-        "WeixinPayV2Config": {
-            "type": "object",
-            "properties": {
-                "versin": {
-                    "type": "string",
-                    "formt": "v2"
-                },
-                "app_id": {
-                    "type": "string"
-                },
-                "partner_id": {
-                    "type": "string"
-                },
-                "partner_key": {
-                    "type": "string"
-                },
-                "paysign_key": {
-                    "type": "string"
-                }
-            }
-        },
-        "WeixinPayV3Config": {
-            "type": "object",
-            "properties": {
-                "versin": {
-                    "type": "string",
-                    "formt": "v3"
-                },
-                "app_id": {
-                    "type": "string"
-                },
-                "mch_id": {
-                    "type": "string"
-                },
-                "api_key": {
-                    "type": "string"
-                },
-                "paysign_key": {
-                    "type": "string"
                 }
             }
         }

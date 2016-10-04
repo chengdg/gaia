@@ -37,11 +37,7 @@ class PostageConfig(business_model.Model):
 
 		if model:
 			self._init_slot_from_model(model)
-			default_config = AreaPostageConfig()
-			default_config.first_weight = model.first_weight
-			default_config.first_weight_price = model.first_weight_price
-			default_config.added_weight = model.added_weight
-			default_config.added_weight_price = model.added_weight_price
+			default_config = AreaPostageConfig(model)
 			self.default_config = default_config
 
 		self._special_configs = None

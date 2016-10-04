@@ -181,6 +181,35 @@ def get_datetime_str(str):
 def get_datetime_no_second_str(str):
 	date = get_date(str)
 	return '%s 00:00' % date.strftime('%Y-%m-%d')
+
+def convert_to_same_type(a, b):
+	def to_same_type(target, other):
+		target_type = type(target)
+		other_type = type(other)
+		if other_type == target_type:
+			return True, target, other
+
+		if (target_type == int) or (target_type == float):
+			try:
+				if target_type == int:
+					other = int(float(other))
+				else:
+					other = float(other)
+				return True, target, other
+			except:
+				return False, target, other
+
+		return False, target, other
+
+	is_success, new_a, new_b = to_same_type(a, b)
+	if is_success:
+		return new_a, new_b
+	else:
+		is_success, new_b, new_a = to_same_type(b, a)
+		if is_success:
+			return new_a, new_b
+
+	return a, b
 	
 
 ###########################################################################
@@ -201,6 +230,7 @@ def assert_dict(expected, actual):
 		elif isinstance(expected_value, list):
 			assert_list(expected_value, actual_value)
 		else:
+			expected_value, actual_value = convert_to_same_type(expected_value, actual_value)
 			try:
 				tc.assertEquals(expected_value, actual_value)
 			except Exception, e:
@@ -222,6 +252,7 @@ def assert_list(expected, actual):
 		if isinstance(expected_obj, dict):
 			assert_dict(expected_obj, actual_obj)
 		else:
+			expected_obj, actual_obj = convert_to_same_type(expected_obj, actual_obj)
 			try:
 				tc.assertEquals(expected_obj, actual_obj)
 			except Exception, e:

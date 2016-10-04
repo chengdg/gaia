@@ -37,7 +37,7 @@ Scenario:1 添加支付方式:微信支付 v3
 		}
 		"""
 
-@mall @mall.pay_interface @hermes @wip
+@mall @mall.pay_interface @hermes
 Scenario:2 添加支付方式:支付宝支付
 	
 	Given jobs登录系统

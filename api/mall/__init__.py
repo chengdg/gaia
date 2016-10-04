@@ -18,11 +18,8 @@ import a_image
 import a_image_group
 import a_image_groups
 
-import a_postage_config
-import a_postage_configs
-import a_active_postage_config
-
 import pay
+import logistics
 
 import a_express_delivery
 import a_express_deliveries
