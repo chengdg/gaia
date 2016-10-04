@@ -440,8 +440,17 @@ class UserWeixinPayOrderConfig(models.Model):
 
 
 
-ALI_PAY_V2 = 0
-ALI_PAY_V5 = 1
+ALIPAY_SIGN_TYPES = (
+		('MD5', 'MD5'),
+		('0001', '0001(RSA)')
+	)
+ALI_PAY_V2 = '0'
+ALI_PAY_V5 = '1'
+
+ALIPAY_PAY_VERSION = (
+	(ALI_PAY_V2, 'v2'),
+	(ALI_PAY_V5, 'v5')
+)
 #===============================================================================
 # UserAlipayOrderConfig : 支付宝支付配置信息
 #===============================================================================

@@ -6,14 +6,14 @@ from eaglet.decorator import param_required
 from business.mall.pay.pay_interface import PayInterface
 
 
-class AAliPayInterface(api_resource.ApiResource):
+class AAliPayConfig(api_resource.ApiResource):
     """
     微信支付的支付接口
     """
     app = 'mall'
     resource = 'ali_pay_config'
 
-    @param_required(['corp_id', 'is_active'])
+    @param_required(['corp_id', 'version'])
     def post(args):
         """
         @param args: owner_id--->用户id
@@ -22,13 +22,14 @@ class AAliPayInterface(api_resource.ApiResource):
         @return:
         """
         corp = args['corp']
-        weixin_pay_interface = corp.pay_interface_repository.get_ali_pay_interface()
-        weixin_pay_interface.update_config(args)
+        ali_pay_interface = corp.pay_interface_repository.get_ali_pay_interface()
+        ali_pay_interface.update_config(args)
 
-        if args['is_active'] == 'true':
-            weixin_pay_interface.enable()
-        else:
-            weixin_pay_interface.disable()
+        if 'is_active' in args:
+            if args['is_active'] == 'true':
+                ali_pay_interface.enable()
+            else:
+                ali_pay_interface.disable()
 
         return {}
 

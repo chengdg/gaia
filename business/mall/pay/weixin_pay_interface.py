@@ -19,7 +19,8 @@ class WeixinPayInterface(business_model.Model):
 		'id',
 		'type',
 		'is_active',
-		'name'
+		'name',
+		'should_create_related_config'
 	)
 
 	def __init__(self, db_model=None):
@@ -56,11 +57,13 @@ class WeixinPayInterface(business_model.Model):
 
 	@cached_context_property
 	def config(self):
-		config = self.__load_related_config()
-		if config.pay_version == mall_models.WEIXIN_PAY_V2:
-			return WeixinPayV2Config(config)
+		config_model = self.__load_related_config()
+		if config_model.pay_version == mall_models.WEIXIN_PAY_V2:
+			config = WeixinPayV2Config(config_model)
 		else:
-			return WeixinPayV3Config(config)
+			config = WeixinPayV3Config(config_model)
+
+		return config
 
 	def update_v2_config(self, args):
 		corp_id = CorporationFactory.get().id

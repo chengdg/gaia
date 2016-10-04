@@ -109,6 +109,13 @@
                         "type": "string",
                         "required": true,
                         "description": ""
+                    },
+                    {
+                        "name": "is_active",
+                        "in": "query",
+                        "type": "boolean",
+                        "required": false,
+                        "description": "is_active为'true'，会将支付接口启用；若为'false'，会将支付接口禁用"
                     }
                 ],
                 "tags": [
@@ -161,6 +168,13 @@
                         "type": "string",
                         "required": true,
                         "description": ""
+                    },
+                    {
+                        "name": "is_active",
+                        "in": "query",
+                        "type": "boolean",
+                        "required": false,
+                        "description": "is_active为'true'，会将支付接口启用；若为'false'，会将支付接口禁用"
                     }
                 ],
                 "tags": [
@@ -178,13 +192,20 @@
         },
         "/mall/ali_pay_config/": {
           "post": {
-                "description": "修改微信支付接口v3的配置信息",
+                "description": "修改支付宝接口的配置信息",
                 "parameters": [
                     {
                         "name": "corp_id",
                         "in": "query",
                         "type": "string",
                         "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "query",
+                        "type": "string",
+                        "required": true,
+                        "description": "v2 或 v5"
                     },
                     {
                         "name": "partner_id",
@@ -220,6 +241,13 @@
                         "type": "string",
                         "required": true,
                         "description": ""
+                    },
+                    {
+                        "name": "is_active",
+                        "in": "query",
+                        "type": "boolean",
+                        "required": false,
+                        "description": "is_active为'true'，会将支付接口启用；若为'false'，会将支付接口禁用"
                     }
                 ],
                 "tags": [
@@ -305,6 +333,10 @@
         "WeixinPayV2Config": {
             "type": "object",
             "properties": {
+                "versin": {
+                    "type": "string",
+                    "formt": "v2"
+                },
                 "app_id": {
                     "type": "string"
                 },
@@ -322,6 +354,10 @@
         "WeixinPayV3Config": {
             "type": "object",
             "properties": {
+                "versin": {
+                    "type": "string",
+                    "formt": "v3"
+                },
                 "app_id": {
                     "type": "string"
                 },

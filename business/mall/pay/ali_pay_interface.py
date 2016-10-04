@@ -63,14 +63,20 @@ class AliPayInterface(business_model.Model):
 		更新微信支付具体配置
 		"""
 		corp_id = CorporationFactory.get().id
+
+		version = args['version']
+		if version == 'v2':
+			version = mall_models.ALI_PAY_V2
+		else:
+			version = mall_models.ALI_PAY_V5
 		
 		mall_models.UserAlipayOrderConfig.update(
+			pay_version=version,
 			partner=args.get('partner', ''),
 			key=args.get('key', ''),
 			private_key=args.get('private_key', ''),
 			ali_public_key=args.get('ali_public_key', ''),
-			seller_email=args.get('seller_email', ''),
-			pay_version=mall_models.ALI_PAY_V5
+			seller_email=args.get('seller_email', '')
 		).dj_where(owner=corp_id).execute()
 
 	def enable(self):

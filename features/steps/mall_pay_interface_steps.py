@@ -33,6 +33,7 @@ def __fill_post_data(pay_interface):
             data['paysign_key'] = pay_interface.get('paysign_key', '55')
     elif type == u'支付宝':
         data['type'] = mall_models.PAY_INTERFACE_ALIPAY
+        data['version'] = 'v5'
         data['partner'] = pay_interface.get('partner', '1')
         data['key'] = pay_interface.get('key', '2')
         data['ali_public_key'] = pay_interface.get('ali_public_key', '3')
