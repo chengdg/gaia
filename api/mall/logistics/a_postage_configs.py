@@ -3,8 +3,6 @@
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
 
-from business.mall.postage_config import PostageConfig
-
 
 class APostageConfigs(api_resource.ApiResource):
     """

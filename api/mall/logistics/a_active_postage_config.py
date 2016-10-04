@@ -5,9 +5,6 @@ import json
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
 
-from business.mall.postage_config import PostageConfig
-from business.mall.postage_config_factory import PostageConfigFactory
-
 
 class AActivePostageConfig(api_resource.ApiResource):
 	"""

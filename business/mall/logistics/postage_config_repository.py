@@ -9,9 +9,9 @@ from business import model as business_model
 from db.account import models as account_model
 from db.mall import models as mall_models
 
-from business.mall.area_postage_config import AreaPostageConfig
-from business.mall.free_postage_config import FreePostageConfig
-from business.mall.postage_config import PostageConfig
+from business.mall.logistics.area_postage_config import AreaPostageConfig
+from business.mall.logistics.free_postage_config import FreePostageConfig
+from business.mall.logistics.postage_config import PostageConfig
 
 class PostageConfigRepository(business_model.Service):
 	def get_postage_configs(self):

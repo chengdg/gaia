@@ -10,8 +10,8 @@ from db.account import models as account_model
 from db.mall import models as mall_models
 
 from business.decorator import cached_context_property
-from business.mall.area_postage_config import AreaPostageConfig
-from business.mall.free_postage_config import FreePostageConfig
+from business.mall.logistics.area_postage_config import AreaPostageConfig
+from business.mall.logistics.free_postage_config import FreePostageConfig
 
 
 class PostageConfig(business_model.Model):
