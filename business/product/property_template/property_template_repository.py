@@ -19,7 +19,7 @@ from services.product_service.task import clear_sync_product_cache
 
 
 from business.decorator import cached_context_property
-from business.product.product_property_template import ProductPropertyTemplate
+from business.product.property_template.product_property_template import ProductPropertyTemplate
 
 
 class PropertyTemplateRepository(business_model.Service):
@@ -45,7 +45,6 @@ class PropertyTemplateRepository(business_model.Service):
 		template = ProductPropertyTemplate.from_model({
 			'model': template_model
 		})
-		template.set_corp(self.corp)
 
 		return template
 

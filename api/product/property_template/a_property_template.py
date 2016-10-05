@@ -8,7 +8,7 @@ from eaglet.decorator import param_required
 from eaglet.core import watchdog
 from eaglet.core.exceptionutil import unicode_full_stack
 
-from business.product.product_property_template import ProductPropertyTemplate
+from business.product.property_template.product_property_template import ProductPropertyTemplate
 
 
 class AProductPropertyTemplate(api_resource.ApiResource):
@@ -18,7 +18,7 @@ class AProductPropertyTemplate(api_resource.ApiResource):
     app = 'product'
     resource = 'property_template'
 
-    @param_required(['corp', 'template_id'])
+    @param_required(['corp_id', 'template_id'])
     def get(args):
         corp = args['corp']
         template_id = args['template_id']
@@ -40,7 +40,7 @@ class AProductPropertyTemplate(api_resource.ApiResource):
             'template': data
         }
 
-    @param_required(['corp', 'id'])
+    @param_required(['corp_id', 'id'])
     def delete(args):
         corp = args['corp']
         template_id = args['id']
@@ -48,7 +48,7 @@ class AProductPropertyTemplate(api_resource.ApiResource):
 
         return {}
 
-    @param_required(['title', 'new_properties'])
+    @param_required(['corp_id', 'title', 'new_properties'])
     def put(args):
         """创建属性模板
 
@@ -86,7 +86,7 @@ class AProductPropertyTemplate(api_resource.ApiResource):
             watchdog.error(msg)
             return 500, {"msg": "create template failed"}
 
-    @param_required(['id', 'title', 'new_properties', 'update_properties', 'deleted_ids'])
+    @param_required(['corp_id', 'id', 'title', 'new_properties', 'update_properties', 'deleted_ids'])
     def post(args):
 
         """更新属性模板

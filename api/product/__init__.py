@@ -8,8 +8,8 @@ import a_product_creation_option
 import a_product_model_property
 import a_product_model_property_value
 import a_product_model_properties
-import a_property_template
-import a_property_templates
+
+import property_template
 
 import a_offshelf_products
 import a_onshelf_products

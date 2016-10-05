@@ -17,9 +17,9 @@ from eaglet.core.exceptionutil import unicode_full_stack
 from settings import PANDA_IMAGE_DOMAIN
 from services.product_service.task import clear_sync_product_cache
 
-
 from business.decorator import cached_context_property
-from business.product.product_template_property import ProductTemplateProperty
+from business.product.property_template.product_template_property import ProductTemplateProperty
+from business.mall.corporation_factory import CorporationFactory
 
 
 class ProductPropertyTemplate(business_model.Model):
@@ -46,9 +46,6 @@ class ProductPropertyTemplate(business_model.Model):
 		if model:
 			self._init_slot_from_model(model)
 
-	def set_corp(self, corp):
-		self.context['corp'] = corp
-
 	@property
 	def properties(self):
 		"""
@@ -74,7 +71,7 @@ class ProductPropertyTemplate(business_model.Model):
           update_properties: 需要更新的property集合
           deleted_property_ids: 需要删除的property的id集合
 		"""
-		corp = self.context['corp']
+		corp = CorporationFactory.get()
 		template_id = self.id
 
 		#更新template name

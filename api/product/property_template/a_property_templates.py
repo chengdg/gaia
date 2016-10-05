@@ -11,7 +11,7 @@ class APropertyTemplates(api_resource.ApiResource):
     app = 'product'
     resource = 'property_templates'
 
-    @param_required(['corp'])
+    @param_required(['corp_id'])
     def get(args):
         """
         根据用户id，获取所有的属性模板

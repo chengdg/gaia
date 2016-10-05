@@ -9,12 +9,14 @@ from business import model as business_model
 from business.order.order_repository import OrderRepository
 from db.account import models as account_model
 from db.mall import models as mall_models
+
 from business.product.product_shelf import ProductShelf
 from business.product.product_pool import ProductPool
+from business.product.property_template.property_template_repository import PropertyTemplateRepository
+from business.product.product_model_property_repository import ProductModelPropertyRepository
+
 from business.mall.category_repository import CategoryRepository
 from business.mall.image_group.image_group_repository import ImageGroupRepository
-from business.product.property_template_repository import PropertyTemplateRepository
-from business.product.product_model_property_repository import ProductModelPropertyRepository
 from business.mall.pay.pay_interface_repository import PayInterfaceRepository
 from business.mall.logistics.postage_config_repository import PostageConfigRepository
 from business.mall.config import Config as MallConfig
