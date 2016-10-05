@@ -14,12 +14,9 @@ import a_categories
 import a_category_candidate_products
 import a_category_products
 
-import a_image
-import a_image_group
-import a_image_groups
-
 import pay
 import logistics
+import image_group
 
 import a_express_delivery
 import a_express_deliveries

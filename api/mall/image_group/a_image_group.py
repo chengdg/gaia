@@ -7,8 +7,7 @@ from eaglet.decorator import param_required
 from eaglet.core import watchdog
 from eaglet.core.exceptionutil import unicode_full_stack
 
-from business.mall.image_group import ImageGroup
-from business.mall.image import Image
+from business.mall.image_group.image_group import ImageGroup
 
 class AImageGroup(api_resource.ApiResource):
 	'''
@@ -17,7 +16,7 @@ class AImageGroup(api_resource.ApiResource):
 	app = 'mall'
 	resource = 'image_group'
 
-	@param_required(['corp', 'image_group_id'])
+	@param_required(['corp_id', 'image_group_id'])
 	def get(args):
 		corp = args['corp']
 		image_group = corp.image_group_repository.get_image_group(args['image_group_id'])
@@ -45,7 +44,7 @@ class AImageGroup(api_resource.ApiResource):
 		else:
 			return 500, "image group not found"
 
-	@param_required(['corp', 'name', 'images'])
+	@param_required(['corp_id', 'name', 'images'])
 	def put(args):
 		images = json.loads(args['images'])
 		image_group = ImageGroup.create(args['corp'], args['name'], images)
@@ -56,7 +55,7 @@ class AImageGroup(api_resource.ApiResource):
 			}
 		}
 
-	@param_required(['corp', 'image_group_id'])
+	@param_required(['corp_id', 'image_group_id'])
 	def post(args):
 		corp = args['corp']
 		image_group = corp.image_group_repository.get_image_group(args['image_group_id'])
@@ -74,7 +73,7 @@ class AImageGroup(api_resource.ApiResource):
 			msg = u'image_group_id {} not exist'.format(args['image_group_id'])
 			return 500, {'msg': msg}
 
-	@param_required(['corp', 'image_group_id'])
+	@param_required(['corp_id', 'image_group_id'])
 	def delete(args):
 		corp = args['corp']
 		corp.image_group_repository.delete_image_group(args['image_group_id'])

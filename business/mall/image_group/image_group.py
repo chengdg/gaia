@@ -8,7 +8,7 @@ from business import model as business_model
 from db.mall import models as mall_models
 
 
-from business.mall.image import Image
+from business.mall.image_group.image import Image
 
 
 class ImageGroup(business_model.Model):
@@ -62,7 +62,7 @@ class ImageGroup(business_model.Model):
 
 		if 'name' in params:
 			#更新name
-			mall_models.ImageGroup.update(name=params['name']).dj_where(owner_id=corp.id, id=self.id)
+			mall_models.ImageGroup.update(name=params['name']).dj_where(owner_id=corp.id, id=self.id).execute()
 
 		if 'images' in params:
 			#更新images

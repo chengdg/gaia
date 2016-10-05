@@ -8,7 +8,6 @@ from business import model as business_model
 from db.mall import models as mall_models
 
 
-
 class Image(business_model.Model):
 	"""
 	图片分组

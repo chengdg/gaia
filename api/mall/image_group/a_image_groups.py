@@ -6,7 +6,7 @@ from eaglet.decorator import param_required
 from eaglet.core import watchdog
 from eaglet.core.exceptionutil import unicode_full_stack
 
-from business.mall.image_group import ImageGroup
+from business.mall.image_group.image_group import ImageGroup
 
 class AImageGroups(api_resource.ApiResource):
 	'''
@@ -15,7 +15,7 @@ class AImageGroups(api_resource.ApiResource):
 	app = 'mall'
 	resource = 'image_groups'
 
-	@param_required(['corp'])
+	@param_required(['corp_id'])
 	def get(args):
 		'''
 		图片分组列表

@@ -7,8 +7,7 @@ from eaglet.core import api_resource
 from business import model as business_model
 from db.mall import models as mall_models
 
-
-from business.mall.image_group import ImageGroup
+from business.mall.image_group.image_group import ImageGroup
 
 class ImageGroupRepository(business_model.Service):
 	"""
@@ -38,4 +37,5 @@ class ImageGroupRepository(business_model.Service):
 			return None
 
 	def delete_image_group(self, image_group_id):
+		mall_models.Image.delete().dj_where(owner_id=self.corp.id, group_id=image_group_id).execute()
 		mall_models.ImageGroup.delete().dj_where(owner_id=self.corp.id, id=image_group_id).execute()
