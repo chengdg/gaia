@@ -24,7 +24,6 @@ class AImageGroup(api_resource.ApiResource):
 		if image_group:
 			data = {
 				"id": image_group.id,
-				"corp_id": corp.id,
 				"name": image_group.name,
 				"images": [],
 				"created_at": image_group.created_at.strftime('%Y-%m-%d %H:%M')
@@ -50,9 +49,7 @@ class AImageGroup(api_resource.ApiResource):
 		image_group = ImageGroup.create(args['corp'], args['name'], images)
 
 		return {
-			'image_group': {
-				'id': image_group.id
-			}
+			'id': image_group.id
 		}
 
 	@param_required(['corp_id', 'image_group_id'])

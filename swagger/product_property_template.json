@@ -1,0 +1,279 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "Hermes Product Property Template API"
+    },
+    "paths": {
+        "/product/property_templates/": {
+            "get": {
+                "description": "获得商品属性模板列表",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product",
+                    "product_property_template"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "templates": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/PropertyTemplate"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/product/property_template/": {
+            "get": {
+                "description": "获取指定的属性模板",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "template_id",
+                        "in": "query",
+                        "description": "property template的id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product",
+                    "product_property_template"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "template": {
+                                    "$ref": "#/definitions/PropertyTemplate"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "创建属性模板",
+                "parameters": [
+                    {
+                        "name": "",
+                        "in": "body",
+                        "description": "POST中的数据",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/NewPropertyTemplate"
+                        }
+                    }
+                ],
+                "tags": [
+                    "product",
+                    "product_property_template"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            },
+            "post": {
+                "description": "修改属性模板",
+                "parameters": [
+                    {
+                        "name": "",
+                        "in": "body",
+                        "description": "POST中的数据",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/UpdatePropertyTemplate"
+                        }
+                    }
+                ],
+                "tags": [
+                    "product",
+                    "product_property_template"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            },
+            "delete": {
+                "description": "删除属性模板",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "type": "string",
+                        "required": true,
+                        "description": "待删除的属性模板的id"
+                    }
+                ],
+                "tags": [
+                    "product",
+                    "product_property_template"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "PropertyTemplate": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "number",
+                    "description": "id"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "属性模板的名字"
+                },
+                "properties": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/TemplateProperty"
+                    },
+                    "minItems": 0
+                }
+            }
+        },
+        "TemplateProperty": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": ""
+                },
+                "name": {
+                    "type": "string",
+                    "description": "属性名"
+                },
+                "value": {
+                    "type": "string",
+                    "description": "属性描述"
+                }
+            }
+        },
+        "NewProperty": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "属性名"
+                },
+                "value": {
+                    "type": "string",
+                    "description": "属性描述"
+                }
+            }
+        },
+        "NewPropertyTemplate": {
+            "type": "object",
+            "properties": {
+                "corp_id": {
+                    "type": "string",
+                    "description": ""
+                },
+                "title": {
+                    "type": "string",
+                    "description": "属性名"
+                },
+                "new_properties": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/NewProperty"
+                    },
+                    "minItems": 0
+                }
+            }
+        },
+        "UpdatePropertyTemplate": {
+            "type": "object",
+            "properties": {
+                "corp_id": {
+                    "type": "string",
+                    "description": ""
+                },
+                "id": {
+                    "type": "string",
+                    "description": "更新的property template的id"
+                },
+                "title": {
+                    "type": "string",
+                    "description": "属性名"
+                },
+                "new_properties": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/NewProperty"
+                    },
+                    "minItems": 0
+                },
+                "update_properties": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/TemplateProperty"
+                    },
+                    "minItems": 0
+                },
+                "deleted_ids": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/TemplateProperty"
+                    },
+                    "minItems": 0
+                }
+            }
+        }
+    }
+}

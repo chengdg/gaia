@@ -1,0 +1,277 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "Hermes Image Group API"
+    },
+    "paths": {
+        "/mall/image_groups/": {
+            "get": {
+                "description": "获得图片分组列表",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "image_group"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "image_groups": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/ImageGroup"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/mall/image_group/": {
+            "get": {
+                "description": "获取指定的图片分组",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "image_group_id",
+                        "in": "query",
+                        "description": "image group的id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "image_group"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "image_group": {
+                                    "$ref": "#/definitions/ImageGroup"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "创建图片分组",
+                "parameters": [
+                    {
+                        "name": "",
+                        "in": "body",
+                        "description": "POST中的数据",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/NewImageGroup"
+                        }
+                    }
+                ],
+                "tags": [
+                    "image_group"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "number",
+                                    "description": "创建的图片分组的id"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "修改图片分组",
+                "parameters": [
+                    {
+                        "name": "",
+                        "in": "body",
+                        "description": "POST中的数据",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/UpdateImageGroup"
+                        }
+                    }
+                ],
+                "tags": [
+                    "image_group"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            },
+            "delete": {
+                "description": "删除图片分组",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "image_group_id",
+                        "in": "query",
+                        "type": "string",
+                        "required": true,
+                        "description": "待删除的图片分组的id"
+                    }
+                ],
+                "tags": [
+                    "image_group"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "ImageGroup": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "number",
+                    "description": "id"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "图片分组的名字"
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Image"
+                    },
+                    "minItems": 0
+                }
+            }
+        },
+        "Image": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": ""
+                },
+                "url": {
+                    "type": "string",
+                    "description": "图片的url"
+                },
+                "width": {
+                    "type": "number",
+                    "description": "图片width"
+                },
+                "height": {
+                    "type": "number",
+                    "description": "图片height"
+                }
+            }
+        },
+        "NewImageGroup": {
+            "type": "object",
+            "properties": {
+                "corp_id": {
+                    "type": "number",
+                    "description": ""
+                },
+                "name": {
+                    "type": "string",
+                    "description": "图片分组的名字"
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/NewImage"
+                    },
+                    "minItems": 0
+                }
+            }
+        },
+        "NewImage": {
+            "type": "object",
+            "properties": {
+                "path": {
+                    "type": "string",
+                    "description": "图片的url"
+                },
+                "width": {
+                    "type": "number",
+                    "description": "图片width"
+                },
+                "height": {
+                    "type": "number",
+                    "description": "图片height"
+                }
+            }
+        },
+        "UpdateImageGroup": {
+            "type": "object",
+            "properties": {
+                "corp_id": {
+                    "type": "number",
+                    "description": ""
+                },
+                "image_group_id": {
+                    "type": "number",
+                    "description": ""
+                },
+                "name": {
+                    "type": "string",
+                    "description": "图片分组的名字"
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/NewImage"
+                    },
+                    "minItems": 0
+                }
+            }
+        }
+    }
+}

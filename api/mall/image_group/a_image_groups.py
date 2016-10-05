@@ -27,7 +27,6 @@ class AImageGroups(api_resource.ApiResource):
 		for image_group in image_groups:
 			data = {
 				"id": image_group.id,
-				"corp_id": corp.id,
 				"name": image_group.name,
 				"images": [],
 				"created_at": image_group.created_at.strftime('%Y-%m-%d %H:%M')
@@ -36,7 +35,6 @@ class AImageGroups(api_resource.ApiResource):
 			for image in image_group.images[:6]: #在group列表中，一个group最多显示6张图片
 				data['images'].append({
 					"id": image.id,
-					"title": image.title,
 					"url": image.url,
 					"width": image.width,
 					"height": image.height
