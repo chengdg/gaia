@@ -31,7 +31,6 @@ class ImageGroupRepository(business_model.Service):
 				'db_model': model
 			})
 
-			image_group.set_corp(self.corp)
 			return image_group
 		else:
 			return None

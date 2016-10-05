@@ -7,8 +7,8 @@ from eaglet.core import api_resource
 from business import model as business_model
 from db.mall import models as mall_models
 
-
 from business.mall.image_group.image import Image
+from business.mall.corporation_factory import CorporationFactory
 
 
 class ImageGroup(business_model.Model):
@@ -17,7 +17,6 @@ class ImageGroup(business_model.Model):
 	"""
 	__slots__ = (
 		'id',
-		'owner_id',
 		'name',
 		'created_at',
 	)
@@ -36,6 +35,9 @@ class ImageGroup(business_model.Model):
 
 	@property
 	def images(self):
+		"""
+		获取image group中的Image对象集合
+		"""
 		image_models = mall_models.Image.select().dj_where(group_id=self.id)
 		images = []
 		for image_model in image_models:
@@ -44,6 +46,9 @@ class ImageGroup(business_model.Model):
 		return images
 
 	def add_image(self, corp, image):
+		"""
+		向image group中添加一个image
+		"""
 		mall_models.Image.create(
 			owner = corp.id,
 			group = self.id,
@@ -53,11 +58,11 @@ class ImageGroup(business_model.Model):
 			height = image['height']
 		)
 
-	def set_corp(self, corp):
-		self.context['corp'] = corp
-
 	def update(self, params):
-		corp = self.context['corp']
+		"""
+		更新image group
+		"""
+		corp = CorporationFactory.get()
 		mall_models.Image.delete().dj_where(owner_id=corp.id, group_id=self.id).execute()
 
 		if 'name' in params:

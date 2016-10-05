@@ -10,7 +10,7 @@ from db.mall import models as mall_models
 
 class Image(business_model.Model):
 	"""
-	图片分组
+	图片分组中的图片
 	"""
 	__slots__ = (
 		'id',
