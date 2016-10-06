@@ -6,7 +6,7 @@ from eaglet.core import watchdog
 from eaglet.core.exceptionutil import unicode_full_stack
 from eaglet.decorator import param_required
 
-from business.product.product_model_property import ProductModelProperty
+from business.product.model.product_model_property import ProductModelProperty
 
 
 class AProductModelProperty(api_resource.ApiResource):
@@ -16,7 +16,7 @@ class AProductModelProperty(api_resource.ApiResource):
     app = 'product'
     resource = 'model_property'
 
-    @param_required(['corp', 'type'])
+    @param_required(['corp_id', 'type'])
     def put(args):
         """
         添加规格属性
@@ -43,7 +43,7 @@ class AProductModelProperty(api_resource.ApiResource):
             }
         }
 
-    @param_required(['corp', 'id', 'field', 'value'])
+    @param_required(['corp_id', 'id', 'field', 'value'])
     def post(args):
         """
         更新规格属性
@@ -71,7 +71,7 @@ class AProductModelProperty(api_resource.ApiResource):
             "product_model_property": product_model_property_data
         }
 
-    @param_required(['id'])
+    @param_required(['corp_id', 'id'])
     def delete(args):
         corp = args['corp']
         property_id = args['id']

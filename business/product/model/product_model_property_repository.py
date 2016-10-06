@@ -5,7 +5,7 @@ from eaglet.decorator import param_required
 
 from business import model as business_model
 from db.mall import models as mall_models
-from business.product.product_model_property import ProductModelProperty
+from business.product.model.product_model_property import ProductModelProperty
 
 
 class ProductModelPropertyRepository(business_model.Service):

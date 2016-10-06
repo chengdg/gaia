@@ -8,7 +8,7 @@ Feature: 添加图片分组
 Background:
 	Given jobs登录系统
 
-@mall @mall.product @mall.image_group @hermes @wip
+@mall @mall.product @mall.image_group @hermes
 Scenario:1 添加图片分组
 	Jobs添加图片分组后
 	1. jobs能获取图片分组

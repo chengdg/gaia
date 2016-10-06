@@ -5,7 +5,6 @@ from eaglet.core import api_resource
 from eaglet.decorator import param_required
 from eaglet.core import watchdog
 from eaglet.core.exceptionutil import unicode_full_stack
-from business.product.product_model_property import ProductModelProperty
 
 class AProductModelProperties(api_resource.ApiResource):
     """
@@ -14,7 +13,7 @@ class AProductModelProperties(api_resource.ApiResource):
     app = 'product'
     resource = 'model_properties'
 
-    @param_required(['corp'])
+    @param_required(['corp_id'])
     def get(args):
         """
         规格列表

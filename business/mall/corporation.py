@@ -13,7 +13,7 @@ from db.mall import models as mall_models
 from business.product.product_shelf import ProductShelf
 from business.product.product_pool import ProductPool
 from business.product.property_template.property_template_repository import PropertyTemplateRepository
-from business.product.product_model_property_repository import ProductModelPropertyRepository
+from business.product.model.product_model_property_repository import ProductModelPropertyRepository
 
 from business.mall.category_repository import CategoryRepository
 from business.mall.image_group.image_group_repository import ImageGroupRepository

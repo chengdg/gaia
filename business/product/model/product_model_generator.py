@@ -16,7 +16,7 @@ from db.mall import promotion_models
 from eaglet.core import watchdog
 from business import model as business_model
 import settings
-from business.product.product_model import ProductModel
+from business.product.model.product_model import ProductModel
 
 
 class ProductModelGenerator(business_model.Service):

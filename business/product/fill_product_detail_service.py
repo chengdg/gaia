@@ -6,7 +6,7 @@ from bdem import msgutil
 from business import model as business_model
 
 from business.product.product import Product
-from business.product.product_model_generator import ProductModelGenerator
+from business.product.model.product_model_generator import ProductModelGenerator
 from db.mall import models as mall_models
 from zeus_conf import TOPIC
 
