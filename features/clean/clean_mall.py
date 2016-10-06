@@ -30,3 +30,7 @@ def clean():
 	#商品规格属性
 	mall_models.ProductModelPropertyValue.delete().execute()
 	mall_models.ProductModelProperty.delete().execute()
+
+	#商品分类
+	mall_models.CategoryHasProduct.delete().execute()
+	mall_models.ProductCategory.delete().execute()

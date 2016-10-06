@@ -10,7 +10,7 @@ from eaglet.core import paginator
 
 from business.product.product import Product
 from business.mall.corporation_factory import CorporationFactory
-from business.mall.category_product import CategoryProduct
+from business.mall.category.category_product import CategoryProduct
 
 UNLIMITED = -1
 

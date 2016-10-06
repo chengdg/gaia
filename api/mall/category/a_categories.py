@@ -5,8 +5,6 @@ import copy
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
 
-
-from business.mall.category import Category
 from business.common.page_info import PageInfo
 
 class ACategories(api_resource.ApiResource):
@@ -16,7 +14,7 @@ class ACategories(api_resource.ApiResource):
 	app = 'mall'
 	resource = 'categories'
 
-	@param_required(['corp'])
+	@param_required(['corp_id'])
 	def get(args):
 		should_return_product = (args.get('return_product', 'false') == 'true')
 		target_page = PageInfo.create({

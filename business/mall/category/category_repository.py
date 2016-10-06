@@ -9,7 +9,7 @@ from db.mall import models as mall_models
 from eaglet.core import paginator
 from business.common.page_info import PageInfo
 
-from business.mall.category import Category
+from business.mall.category.category import Category
 
 class CategoryRepository(business_model.Service):
 	"""

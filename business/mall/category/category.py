@@ -10,7 +10,7 @@ from eaglet.core import paginator
 
 from business.product.product import Product
 from business.mall.corporation_factory import CorporationFactory
-from business.mall.category_product_repository import CategoryProductRepository
+from business.mall.category.category_product_repository import CategoryProductRepository
 
 
 class Category(business_model.Model):

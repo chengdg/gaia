@@ -6,16 +6,15 @@ from eaglet.decorator import param_required
 from eaglet.core import watchdog
 from eaglet.core.exceptionutil import unicode_full_stack
 
-from business.mall.category import Category
+from business.mall.category.category import Category
 
 class ACategory(api_resource.ApiResource):
 	app = 'mall'
 	resource = 'category'
 
-	@param_required(['corp', 'name'])
+	@param_required(['corp_id', 'name'])
 	def put(args):
 		'''
-		创建商品分组,  利用工厂类@生成器
 		'''
 		name = args['name']
 		corp = args['corp']
@@ -59,7 +58,7 @@ class ACategory(api_resource.ApiResource):
 			watchdog.error(message=msg)
 			return 500, {'message': msg}
 
-	@param_required(['corp', 'category_id'])
+	@param_required(['corp_id', 'category_id'])
 	def delete(args):
 		corp = args['corp']
 		corp.category_repository.delete_category(args['category_id'])
