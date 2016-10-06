@@ -29,10 +29,9 @@ class AProductModelPropertyValue(api_resource.ApiResource):
             "id": property_value.id
         }
 
-    @param_required(['id'])
+    @param_required(['corp_id', 'id'])
     def delete(args):
         """
-        id -- 规格属性值的id
         """
         corp = args['corp']
         property_value_id = args['id']

@@ -16,6 +16,38 @@ class AProductModelProperty(api_resource.ApiResource):
     app = 'product'
     resource = 'model_property'
 
+    @staticmethod
+    def __format_product_model_property(model_property):
+        data = {
+            "id": model_property.id,
+            "name": model_property.name,
+            "type": model_property.type,
+            "values": []
+        }
+
+        for property_value in model_property.values:
+            data['values'].append({
+                "id": property_value.id,
+                "name": property_value.name,
+                "pic_url": property_value.pic_url
+            })
+
+        return data
+
+    @param_required(['corp_id', 'id'])
+    def get(args):
+        """
+        获取单个规格
+        """
+        corp = args['corp']
+        property_id = args['id']
+        model_property = corp.product_model_property_repository.get_property(property_id)
+
+        data = AProductModelProperty.__format_product_model_property(model_property)
+        return {
+            "product_model_property": data
+        }
+
     @param_required(['corp_id', 'type'])
     def put(args):
         """
@@ -34,13 +66,9 @@ class AProductModelProperty(api_resource.ApiResource):
             "type": type
         })
 
+        data = AProductModelProperty.__format_product_model_property(model_property)
         return {
-            "product_model_property": {
-                "id": model_property.id,
-                "name": model_property.name,
-                "type": model_property.type,
-                "values": []
-            }
+            "product_model_property": data
         }
 
     @param_required(['corp_id', 'id', 'field', 'value'])
@@ -57,19 +85,6 @@ class AProductModelProperty(api_resource.ApiResource):
         product_model_property.update(field, value)
 
         return {}
-
-    @param_required(['id'])
-    def get(args):
-        """
-        获取单个规格
-        """
-        model_id = args['id']
-        product_model_property = ProductModelProperty.from_id({'id': model_id})
-        product_model_property_data = product_model_property.to_dict()
-        product_model_property_data['properties'] = product_model_property.properties
-        return {
-            "product_model_property": product_model_property_data
-        }
 
     @param_required(['corp_id', 'id'])
     def delete(args):

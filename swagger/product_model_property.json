@@ -1,0 +1,340 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "Hermes Product Model Property API"
+    },
+    "paths": {
+        "/product/model_properties/": {
+            "get": {
+                "description": "获得商品规格属性列表",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product",
+                    "product_model"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "product_model_properties": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/ModelProperty"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/product/model_property/": {
+            "get": {
+                "description": "获取指定的商品规格属性",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "product model property的id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product",
+                    "product_model"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "product_model_property": {
+                                    "$ref": "#/definitions/ModelProperty"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "创建商品规格属性",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "formData",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "type",
+                        "in": "formData",
+                        "description": "商品规格属性的类型",
+                        "required": true,
+                        "type": "string",
+                        "format": "'text' or 'image'"
+                    },
+                    {
+                        "name": "name",
+                        "in": "formData",
+                        "description": "商品规格属性的名字",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product",
+                    "product_model"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "product_model_property": {
+                                    "$ref": "#/definitions/ModelProperty"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "修改商品规格属性",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "formData",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "formData",
+                        "description": "待修改的商品规格属性的id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "field",
+                        "in": "query",
+                        "description": "需要修改的商品规格属性的field",
+                        "required": true,
+                        "type": "string",
+                        "format": "'name' or 'type'"
+                    },
+                    {
+                        "name": "value",
+                        "in": "query",
+                        "description": "修改后的新值。如果field为name, vlaue为字符串；如果field为type，value为'text'或'image'",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product",
+                    "product_model"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            },
+            "delete": {
+                "description": "删除商品规格属性",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "formData",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "id",
+                        "in": "formData",
+                        "type": "string",
+                        "required": true,
+                        "description": "待删除的商品规格属性的id"
+                    }
+                ],
+                "tags": [
+                    "product",
+                    "product_model"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        },
+        "/product/model_property_value/": {
+            "put": {
+                "description": "创建商品规格属性值",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "formData",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "model_property_id",
+                        "in": "formData",
+                        "description": "需要新增属性值的商品规格属性的id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "name",
+                        "in": "formData",
+                        "description": "商品规格属性为text时，name中为属性值的值",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "pic_url",
+                        "in": "formData",
+                        "description": "商品规格属性为image时，pic_url中为属性值的值",
+                        "required": false,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product",
+                    "product_model"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "number",
+                                    "description": "新建的规格属性值的id"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "删除商品规格属性值",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "formData",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "id",
+                        "in": "formData",
+                        "type": "string",
+                        "required": true,
+                        "description": "待删除的商品规格属性值的id"
+                    }
+                ],
+                "tags": [
+                    "product",
+                    "product_model"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "ModelProperty": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "number",
+                    "description": "id"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "规格属性的名字"
+                },
+                "type": {
+                    "type": "string",
+                    "description": "规格属性的类型",
+                    "format": "'text' or 'image'"
+                },
+                "values": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ModelPropertyValue"
+                    },
+                    "minItems": 0
+                }
+            }
+        },
+        "ModelPropertyValue": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": ""
+                },
+                "name": {
+                    "type": "string",
+                    "description": "当ModelProperty中type为'text'时，name指定了属性值的值"
+                },
+                "pic_url": {
+                    "type": "string",
+                    "description": "当ModelProperty中type为'image'时，pic_url指定了图片的url"
+                }
+            }
+        }
+    }
+}
