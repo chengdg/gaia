@@ -488,17 +488,6 @@ class ProductModelProperty(models.Model):
 	class Meta(object):
 		db_table = 'mall_product_model_property'
 
-	@property
-	def values(self):
-		return list(
-			ProductModelPropertyValue.objects.filter(
-				property=self,
-				is_deleted=False))
-
-	@property
-	def is_image_property(self):
-		return self.type == PRODUCT_MODEL_PROPERTY_TYPE_IMAGE
-
 
 class ProductModelPropertyValue(models.Model):
 	"""

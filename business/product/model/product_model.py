@@ -23,7 +23,6 @@ class ProductModel(business_model.Model):
 	__slots__ = (
 		'id',
 		'is_deleted',
-		'product_id',
 		'name',
 		'weight',
 		'price',
@@ -46,9 +45,16 @@ class ProductModel(business_model.Model):
 			self._init_slot_from_model(db_model)
 			self.original_price = db_model.price
 			self.gross_profit = -1
+			self.stock_type = 'unlimit' if db_model.stock_type == mall_models.PRODUCT_STOCK_TYPE_UNLIMIT else 'limit'
 			self.stocks = db_model.stocks if db_model.stock_type == mall_models.PRODUCT_STOCK_TYPE_LIMIT else u'无限'
 
 			self.__fill_model_property_info(id2property, id2propertyvalue)
+
+	def is_standard_model(self):
+		"""
+		判断规格是否是标准规格
+		"""
+		return self.name == 'standard'
 
 	def __fill_model_property_info(self, id2property, id2propertyvalue):
 		'''
@@ -93,8 +99,9 @@ class ProductModel(business_model.Model):
 			}
 			a_image = _value['image'] if _value['image'] else ''
 			property_values.append({
-				'propertyId': _property['id'],
-				'propertyName': _property['name'],
+				'property_id': _property['id'],
+				'property_name': _property['name'],
+				'property_type': _property['type'],
 				'id': _value['id'],
 				'name': _value['name'],
 				'image': '%s%s' % (settings.IMAGE_HOST, a_image) if a_image and a_image.find('http') == -1 else a_image

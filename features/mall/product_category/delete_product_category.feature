@@ -28,7 +28,7 @@ Background:
 		"""
 
 
-@mall @mall.product @mall.product_category @hermes @wip
+@mall @mall.product @mall.product_category @hermes
 Scenario:1 Jobs删除已存在的商品分类
 	Given jobs登录系统
 	When jobs删除商品分类'分类2'

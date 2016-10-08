@@ -17,7 +17,63 @@ class AOffshelfProducts(api_resource.ApiResource):
 	app = "product"
 	resource = "offshelf_products"
 
-	@param_required(['corp'])
+	@staticmethod
+	def __get_models_info(product):
+		"""
+		获得商品的models_info数据
+		"""
+		models_info = {
+			'is_use_custom_model': False,
+			'standard_model': None,
+			'custom_models': None,
+			'used_system_model_properties': None
+		}
+		models_info['is_use_custom_model'] = product.is_use_custom_model
+
+		standard_model = product.standard_model
+		if standard_model:
+			models_info['standard_model'] = {
+				"name": standard_model.name,
+				"price": standard_model.price,
+				"weight": standard_model.weight,
+				"stock_type": standard_model.stock_type,
+				"stocks": standard_model.stocks,
+				"user_code": standard_model.user_code
+			}
+		else:
+			models_info['standard_model'] = None
+		
+		custom_models = product.custom_models
+		if custom_models:
+			for custom_model in custom_models:
+				models_info['custom_models'].append({
+					"name": custom_model.name,
+					"price": custom_model.price,
+					"weight": custom_model.weight,
+					"stock_type": custom_model.stock_type,
+					"stocks": custom_model.stocks,
+					"user_code": custom_model.user_code
+				})
+		else:
+			models_info['custom_models'] = []
+
+		return models_info
+
+	@staticmethod
+	def __get_categories(product):
+		"""
+		获得商品的category集合
+		"""
+		categories = []
+		for category in product.categories:
+			categories.append({
+				"id": category['id'],
+				"name": category['name']
+			})
+
+		return categories
+
+	@param_required(['corp_id'])
 	def get(args):
 		corp = args['corp']
 		
@@ -34,17 +90,27 @@ class AOffshelfProducts(api_resource.ApiResource):
 				"id": product.id,
 				"name": product.name,
 				"image": product.thumbnails_url,
-				"models": product.models,
+				"models": [],
 				"user_code": -1,
 				"bar_code": product.bar_code,
-				"categories": [],
+				"categories": AOffshelfProducts.__get_categories(product),
 				"price": None,
-				"stocks": -1,
-				"sales": -1,
+				"sales": product.sales,
 				"created_at": product.created_at.strftime('%Y-%m-%d %H:%M'),
 				"is_use_custom_model": product.is_use_custom_model,
 				"display_index": product.display_index
 			}
+
+			if product.is_use_custom_model:
+				data['stock_type'] = 'combined'
+				data['stocks'] = -1
+				data['price'] = 'todo'
+			else:
+				standard_model = product.standard_model
+				data['stock_type'] = standard_model.stock_type
+				data['stocks'] = standard_model.stocks
+				data['price'] = standard_model.price
+
 			datas.append(data)
 
 		return {

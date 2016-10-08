@@ -16,7 +16,7 @@ class AOnshelfProducts(api_resource.ApiResource):
 	app = "product"
 	resource = "onshelf_products"
 
-	@param_required(['corp'])
+	@param_required(['corp_id'])
 	def get(args):
 		corp = args['corp']
 		in_sale_shelf = corp.insale_shelf
@@ -40,7 +40,7 @@ class AOnshelfProducts(api_resource.ApiResource):
 				"categories": [],
 				"price": None,
 				"stocks": -1,
-				"sales": -1,
+				"sales": product.sales,
 				"created_at": product.created_at.strftime('%Y-%m-%d %H:%M'),
 				"is_use_custom_model": product.is_use_custom_model,
 				"display_index": product.display_index

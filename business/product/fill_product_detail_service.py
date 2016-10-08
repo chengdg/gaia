@@ -10,6 +10,7 @@ from business.product.model.product_model_generator import ProductModelGenerator
 from db.mall import models as mall_models
 from zeus_conf import TOPIC
 
+import settings
 
 
 class FillProductDetailService(business_model.Service):
@@ -38,13 +39,55 @@ class FillProductDetailService(business_model.Service):
 		"""填充商品规格相关细节
 		向product中添加is_use_custom_model, models, used_system_model_properties三个属性
 		"""
-		if products[0].models:
+		first_product = products[0]
+		if first_product.standard_model or first_product.custom_models:
 			#已经完成过填充，再次进入，跳过填充
 			return
 
 		#TODO2: 因为这里是静态方法，所以目前无法使用product.context['corp']，构造基于Object的临时解决方案，需要优化
 		product_model_generator = ProductModelGenerator.get(corp)
 		product_model_generator.fill_models_for_products(products, is_enable_model_property_info)
+
+	def __fill_category_detail(self, corp, products, product_ids):
+		"""填充商品分类信息相关细节
+		"""
+		categories = list(mall_models.ProductCategory.select().dj_where(owner=corp.id).order_by('id'))
+
+		# 获取product关联的category集合
+		id2product = {}
+		for product in products:
+			product.categories = []
+			id2product[product.id] = product
+
+		category_ids = [category.id for category in categories]
+		id2category = dict([(category.id, category) for category in categories])
+		for relation in mall_models.CategoryHasProduct.select().dj_where(product_id__in=product_ids).order_by('id'):
+			category_id = relation.category_id
+			product_id = relation.product_id
+			# if not category_id in id2category:
+			# 	# 微众商城分类，在商户中没有
+			# 	continue
+			category = id2category[category_id]
+			id2product[product_id].categories.append({
+				'id': category.id,
+				'name': category.name
+			})
+
+	def __fill_image_detail(self, corp, products, product_ids):
+		"""
+		填充商品轮播图相关细节
+		"""
+		id2product = dict([(product.id, product) for product in products])
+
+		for img in mall_models.ProductSwipeImage.select().dj_where(product_id__in=product_ids):
+			data = {
+				'id': img.id,
+				'url': '%s%s' % (settings.IMAGE_HOST, img.url) if img.url.find('http') == -1 else img.url,
+				'link_url': img.link_url,
+				'width': img.width,
+				'height': img.height
+			}
+			id2product[img.product_id].swipe_images.append(data)
 
 	def __fill_display_price(self, products):
 		"""根据商品规格，获取商品价格
@@ -145,6 +188,9 @@ class FillProductDetailService(business_model.Service):
 		"""
 		if len(products) == 0:
 			return
+
+		if not options:
+			return
 			
 		is_enable_model_property_info = options.get('with_model_property_info',False)
 		product_ids = [product.id for product in products]
@@ -167,24 +213,18 @@ class FillProductDetailService(business_model.Service):
 			Product.__fill_promotion_detail(corp, products, product_ids)
 
 		if options.get('with_image', False):
-			Product.__fill_image_detail(corp, products, product_ids)
+			self.__fill_image_detail(self.corp, products, product_ids)
 
 		if options.get('with_property', False):
 			Product.__fill_property_detail(corp, products, product_ids)
 
-		if options.get('with_selected_category', False):
-			Product.__fill_category_detail(
-				corp,
-				products,
-				product_ids,
-				True)
-
-		if options.get('with_all_category', False):
-			Product.__fill_category_detail(
-				corp,
-				products,
-				product_ids,
-				False)
+		if options.get('with_category', False):
+			self.__fill_category_detail(self.corp, products, product_ids)
+			# Product.__fill_category_detail(
+			# 	corp,
+			# 	products,
+			# 	product_ids,
+			# 	True)
 
 		if options.get('with_sales', False):
 			Product.__fill_sales_detail(corp, products, product_ids)

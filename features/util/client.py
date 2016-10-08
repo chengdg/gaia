@@ -128,17 +128,18 @@ def closing_iterator_wrapper(iterable, close):
 #         return response
 
 class FakeResponse(object):
-    def __init__(self, url=None):
+    def __init__(self, method='get', url=None):
         self.body = None
         self.status = None
         self.headers = None
         self.cookies = None
+        self.method = method
         self.url = url
 
     def __str__(self):
         buf = []
         buf.append('\n===== start response =====')
-        buf.append('URL: %s' % self.url)
+        buf.append('%s: %s' % (self.method, self.url))
         buf.append('*** body ***')
         if self.body and 'queries' in self.body:
             del self.body['queries']
@@ -171,9 +172,9 @@ class ClientHandler(object):
         self.app = apps.create_app()
 
     def __call__(self, environ):
+        method = environ.get('_REAL_REQUEST_METHOD', environ.get('REQUEST_METHOD', 'UNKNOWN'))
         url = u'%s?%s' % (environ['PATH_INFO'], environ['QUERY_STRING'])
-        self.response = FakeResponse(url)
-        print environ
+        self.response = FakeResponse(method, url)
         response_text = ''.join(self.app(environ, self.start_response))
         try:
             self.response.body = json.loads(response_text)
@@ -431,6 +432,7 @@ class RequestFactory(object):
             **extra):
         "Construct a PUT request."
         path = self._hack_method('put', path)
+        extra['_REAL_REQUEST_METHOD'] = 'PUT'
         return self.post(path, data, X_WWW_FORM_URLENCODED, **extra)
         #return self.generic('PUT', path, data, content_type, **extra)
 
@@ -443,6 +445,7 @@ class RequestFactory(object):
             **extra):
         "Construct a DELETE request."
         path = self._hack_method('delete', path)
+        extra['_REAL_REQUEST_METHOD'] = 'DELETE'
         return self.post(path, data, X_WWW_FORM_URLENCODED, **extra)
         #return self.generic('DELETE', path, data, content_type, **extra)
 
@@ -572,8 +575,7 @@ class Client(RequestFactory):
         """
         response = super(Client, self).get(path, data=data, **extra)
         if settings.ENABLE_BDD_DUMP_RESPONSE:
-            print response
-            print '\n' * 15
+            print >> sys.stderr, response
         if follow:
             response = self._handle_redirects(response, **extra)
         return response
@@ -587,8 +589,7 @@ class Client(RequestFactory):
         if follow:
             response = self._handle_redirects(response, **extra)
         if settings.ENABLE_BDD_DUMP_RESPONSE:
-            print response
-            print '\n' * 15
+            print >> sys.stderr, response
         return response
 
     def head(self, path, data={}, follow=False, **extra):
@@ -621,8 +622,7 @@ class Client(RequestFactory):
         if follow:
             response = self._handle_redirects(response, **extra)
         if settings.ENABLE_BDD_DUMP_RESPONSE:
-            print response
-            print '\n' * 15
+            print >> sys.stderr, response
         return response
 
     def patch(self, path, data='', content_type='application/octet-stream',

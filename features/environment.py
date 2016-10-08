@@ -64,6 +64,9 @@ def before_all(context):
 
 	#设置bdd模式
 	settings.IS_UNDER_BDD = True
+	settings.DUMP_FORMATTED_INNER_ERROR_MSG = True
+	settings.DUMP_API_CALL_RESULT = False
+	settings.ENABLE_BDD_DUMP_RESPONSE = False
 
 	#启动weapp下的bdd server
 	#print u'TODO2: 启动weapp下的bdd server'

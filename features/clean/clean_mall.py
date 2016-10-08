@@ -2,6 +2,7 @@
 import logging
 
 from db.mall import models as mall_models
+from db.mall import promotion_models
 from django.db import connection
 
 def clean():
@@ -34,3 +35,13 @@ def clean():
 	#商品分类
 	mall_models.CategoryHasProduct.delete().execute()
 	mall_models.ProductCategory.delete().execute()
+
+	#促销
+	promotion_models.ProductHasPromotion.delete().execute()
+	promotion_models.PremiumSaleProduct.delete().execute()
+
+	#商品
+	mall_models.ProductModelHasPropertyValue.delete().execute()
+	mall_models.ProductModel.delete().execute()
+	mall_models.ProductSwipeImage.delete().execute()
+	mall_models.Product.delete().execute()

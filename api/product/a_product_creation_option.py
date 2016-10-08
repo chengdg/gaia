@@ -64,6 +64,7 @@ class AProductCreationOption(api_resource.ApiResource):
 
 		return datas
 
+
 	@param_required(['corp'])
 	def get(args):
 		corp = args['corp']

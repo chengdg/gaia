@@ -47,13 +47,17 @@ MIDDLEWARES = [
 #sevice celery 相关
 EVENT_DISPATCHER = 'redis'
 
+#信息输出配置
+DUMP_API_CALL_RESULT = False
+DUMP_FORMATTED_INNER_ERROR_MSG = False
+
 # settings for WAPI Logger
 if MODE == 'develop':
     WAPI_LOGGER_ENABLED = False # Debug环境下不记录wapi详细数据
     WAPI_LOGGER_SERVER_HOST = 'mongo.weapp.com'
     WAPI_LOGGER_SERVER_PORT = 27017
     WAPI_LOGGER_DB = 'wapi'
-    IMAGE_HOST = 'http://dev.weapp.com'
+    IMAGE_HOST = ''
     PAY_HOST = 'api.weapp.com'
     #sevice celery 相关
     EVENT_DISPATCHER = 'local'
@@ -145,9 +149,11 @@ if 'deploy' == MODE:
     MNS_ENDPOINT = 'http://1615750970594173.mns.cn-hangzhou.aliyuncs.com/'
     MNS_SECURITY_TOKEN = ''
     SUBSCRIBE_QUEUE_NAME = 'redmine-agent'
+    MESSAGE_DEBUG_MODE = False
 else:
     MNS_ACCESS_KEY_ID = 'LTAICKQ4rQBofAhF'
     MNS_ACCESS_KEY_SECRET = 'bPKU71c0cfrui4bWgGPO96tLiOJ0PZ'
     MNS_ENDPOINT = 'https://1615750970594173.mns.cn-beijing.aliyuncs.com/'
     MNS_SECURITY_TOKEN = ''
     SUBSCRIBE_QUEUE_NAME = 'test-queue'
+    MESSAGE_DEBUG_MODE = True

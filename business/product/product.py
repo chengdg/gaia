@@ -56,7 +56,8 @@ class Product(business_model.Model):
 		'is_use_custom_model',
 		#'model_name',
 		#'product_model_properties',
-		'models',
+		'standard_model',
+		'custom_models',
 		'used_system_model_properties',
 
 		#价格、销售信息
@@ -149,7 +150,9 @@ class Product(business_model.Model):
 			self.min_limit = model.stocks
 			self.thumbnails_url = '%s%s' % (settings.IMAGE_HOST, model.thumbnails_url) if model.thumbnails_url.find('http') == -1 else model.thumbnails_url
 			self.pic_url = '%s%s' % (settings.IMAGE_HOST, model.pic_url) if model.pic_url.find('http') == -1 else model.pic_url
-			self.models = []
+			self.custom_models = []
+			self.swipe_images = []
+			self.categories = []
 			self.sales = 0
 
 	@property
@@ -451,48 +454,6 @@ class Product(business_model.Model):
 				"name": property.name,
 				"value": property.value
 			} for property in mall_models.ProductProperty.select().dj_where(product_id=product.id)]
-
-	@staticmethod
-	def __fill_category_detail(corp, products, product_ids, only_selected_category=False):
-		"""填充商品分类信息相关细节
-		"""
-		corp_id = corp.id
-		categories = list(mall_models.ProductCategory.select().dj_where(owner=corp_id).order_by('id'))
-
-		# 获取product关联的category集合
-		id2product = dict([(product.id, product) for product in products])
-		for product in products:
-			product.categories = []
-			product.id2category = {}
-			id2product[product.id] = product
-			if not only_selected_category:
-				for category in categories:
-					category_data = {
-						'id': category.id,
-						'name': category.name,
-						'is_selected': False
-					}
-					product.categories.append(category_data)
-					product.id2category[category.id] = category_data
-
-		category_ids = [category.id for category in categories]
-		id2category = dict([(category.id, category) for category in categories])
-		for relation in mall_models.CategoryHasProduct.select().dj_where(product_id__in=product_ids).order_by('id'):
-			category_id = relation.category_id
-			product_id = relation.product_id
-			if not category_id in id2category:
-				# 微众商城分类，在商户中没有
-				continue
-			category = id2category[category_id]
-			if not only_selected_category:
-				id2product[product_id].id2category[
-					category.id]['is_selected'] = True
-			else:
-				id2product[product_id].categories.append({
-					'id': category.id,
-					'name': category.name,
-					'is_selected': True
-				})
 
 	@staticmethod
 	def __fill_promotion_detail(corp, products, product_ids):

@@ -86,7 +86,14 @@ class ProductShelf(business_model.Model):
 				"status": mall_models.PP_STATUS_OFF
 			}
 
-		products, pageinfo = product_pool.get_products(query, page_info)
+		fill_options = {
+			'with_category': True,
+			'with_product_model': True,
+			'with_model_property_info': True,
+			'with_shelve_status': True
+		}
+
+		products, pageinfo = product_pool.get_products(query, page_info, fill_options)
 
 		return products, pageinfo
 

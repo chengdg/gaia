@@ -66,7 +66,7 @@ class ProductPool(business_model.Model):
 			)
 		return True
 
-	def get_products(self, filter_values, page_info):
+	def get_products(self, filter_values, page_info, fill_options=None):
 		"""
 		根据条件在商品池搜索商品
 		@param filter_values:
@@ -88,11 +88,6 @@ class ProductPool(business_model.Model):
 			products = self.__search_product(products, product_detail_filter_values)
 
 		fill_product_detail_service = FillProductDetailService.get(self.corp)
-		fill_options = {
-			'with_price': False,
-			'with_product_model': True,
-			'with_shelve_status': True
-		}
 		fill_product_detail_service.fill_detail(products, fill_options)
 		return products, pageinfo
 
