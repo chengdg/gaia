@@ -1,0 +1,1822 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "Hermes Product Category API"
+    },
+    "host": "",
+    "basePath": "/api",
+    "schemes": [
+        "http"
+    ],
+    "consumes": [],
+    "produces": [],
+    "definitions": {
+        "CategoryList": {
+            "type": "object",
+            "properties": {
+                "pageinfo": {
+                    "type": "object",
+                    "description": "分页信息"
+                },
+                "categories": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Category"
+                    },
+                    "minItems": 0
+                }
+            }
+        },
+        "Category": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": ""
+                },
+                "name": {
+                    "type": "string",
+                    "description": "分组名"
+                },
+                "products": {
+                    "type": "string",
+                    "description": "商品集合"
+                }
+            }
+        },
+        "ImageGroup": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "number",
+                    "description": "id"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "图片分组的名字"
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Image"
+                    },
+                    "minItems": 0
+                }
+            }
+        },
+        "Image": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": ""
+                },
+                "url": {
+                    "type": "string",
+                    "description": "图片的url"
+                },
+                "width": {
+                    "type": "number",
+                    "description": "图片width"
+                },
+                "height": {
+                    "type": "number",
+                    "description": "图片height"
+                }
+            }
+        },
+        "NewImageGroup": {
+            "type": "object",
+            "properties": {
+                "corp_id": {
+                    "type": "number",
+                    "description": ""
+                },
+                "name": {
+                    "type": "string",
+                    "description": "图片分组的名字"
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/NewImage"
+                    },
+                    "minItems": 0
+                }
+            }
+        },
+        "NewImage": {
+            "type": "object",
+            "properties": {
+                "path": {
+                    "type": "string",
+                    "description": "图片的url"
+                },
+                "width": {
+                    "type": "number",
+                    "description": "图片width"
+                },
+                "height": {
+                    "type": "number",
+                    "description": "图片height"
+                }
+            }
+        },
+        "UpdateImageGroup": {
+            "type": "object",
+            "properties": {
+                "corp_id": {
+                    "type": "number",
+                    "description": ""
+                },
+                "image_group_id": {
+                    "type": "number",
+                    "description": ""
+                },
+                "name": {
+                    "type": "string",
+                    "description": "图片分组的名字"
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/NewImage"
+                    },
+                    "minItems": 0
+                }
+            }
+        },
+        "PostageConfig": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "number",
+                    "description": "id"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "运费配置的名字"
+                },
+                "is_system_level_config": {
+                    "type": "boolean",
+                    "description": "是否是系统级的运费配置，系统级的运费配置不能被删除"
+                },
+                "is_used": {
+                    "type": "boolean",
+                    "description": "运费配置当前是否被选中"
+                },
+                "is_enable_special_config": {
+                    "type": "boolean",
+                    "description": "是否配置了特殊地区运费配置"
+                },
+                "is_enable_free_config": {
+                    "type": "boolean",
+                    "description": "是否配置了免邮费运费配置"
+                },
+                "default_config": {
+                    "$ref": "#/definitions/DefaultConfig"
+                },
+                "special_configs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/AreaConfig"
+                    },
+                    "minItems": 0
+                },
+                "free_configs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/FreeConfig"
+                    },
+                    "minItems": 0
+                }
+            }
+        },
+        "DefaultConfig": {
+            "type": "object",
+            "properties": {
+                "first_weight": {
+                    "type": "string",
+                    "description": "首重"
+                },
+                "first_weight_price": {
+                    "type": "string",
+                    "description": "首重价格"
+                },
+                "added_weight": {
+                    "type": "string",
+                    "description": "续重"
+                },
+                "added_weight_price": {
+                    "type": "string",
+                    "description": "续重价格"
+                }
+            }
+        },
+        "AreaConfig": {
+            "type": "object",
+            "properties": {
+                "destinations": {
+                    "type": "string",
+                    "description": "地区列表",
+                    "format": "以逗号连接的地区id集合：1,2,3"
+                },
+                "first_weight": {
+                    "type": "string",
+                    "description": "首重"
+                },
+                "first_weight_price": {
+                    "type": "string",
+                    "description": "首重价格"
+                },
+                "added_weight": {
+                    "type": "string",
+                    "description": "续重"
+                },
+                "added_weight_price": {
+                    "type": "string",
+                    "description": "续重价格"
+                }
+            }
+        },
+        "FreeConfig": {
+            "type": "object",
+            "properties": {
+                "destinations": {
+                    "type": "string",
+                    "description": "地区列表",
+                    "format": "以逗号连接的地区id集合：1,2,3"
+                },
+                "condition": {
+                    "type": "string",
+                    "description": "免邮条件",
+                    "format": "'count:件数' 或 'money:金额'"
+                },
+                "value": {
+                    "type": "string",
+                    "description": "免邮条件需要满足的值"
+                }
+            }
+        },
+        "NewConfig": {
+            "type": "object",
+            "properties": {
+                "corp_id": {
+                    "type": "string",
+                    "description": ""
+                },
+                "name": {
+                    "type": "string",
+                    "description": "运费配置的名字"
+                },
+                "is_enable_special_config": {
+                    "type": "boolean",
+                    "description": "是否配置了特殊地区运费配置"
+                },
+                "is_enable_free_config": {
+                    "type": "boolean",
+                    "description": "是否配置了免邮费运费配置"
+                },
+                "default_config": {
+                    "$ref": "#/definitions/DefaultConfig"
+                },
+                "special_configs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/AreaConfig"
+                    },
+                    "minItems": 0
+                },
+                "free_configs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/FreeConfig"
+                    },
+                    "minItems": 0
+                }
+            }
+        },
+        "UpdateConfig": {
+            "type": "object",
+            "properties": {
+                "corp_id": {
+                    "type": "string",
+                    "description": ""
+                },
+                "id": {
+                    "type": "number",
+                    "description": "postage config的id"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "运费配置的名字"
+                },
+                "is_enable_special_config": {
+                    "type": "boolean",
+                    "description": "是否配置了特殊地区运费配置"
+                },
+                "is_enable_free_config": {
+                    "type": "boolean",
+                    "description": "是否配置了免邮费运费配置"
+                },
+                "default_config": {
+                    "$ref": "#/definitions/DefaultConfig"
+                },
+                "special_configs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/AreaConfig"
+                    },
+                    "minItems": 0
+                },
+                "free_configs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/FreeConfig"
+                    },
+                    "minItems": 0
+                }
+            }
+        },
+        "PayInterface": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "number",
+                    "description": "id"
+                },
+                "type": {
+                    "type": "string",
+                    "description": "支付接口类型",
+                    "format": "weixin_pay"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "支付接口用于显示的名字"
+                },
+                "is_active": {
+                    "type": "boolean",
+                    "description": "是否开启"
+                },
+                "config": {
+                    "type": "object",
+                    "description": "不同支付接口的详细配置对象"
+                }
+            }
+        },
+        "ModelProperty": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "number",
+                    "description": "id"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "规格属性的名字"
+                },
+                "type": {
+                    "type": "string",
+                    "description": "规格属性的类型",
+                    "format": "'text' or 'image'"
+                },
+                "values": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ModelPropertyValue"
+                    },
+                    "minItems": 0
+                }
+            }
+        },
+        "ModelPropertyValue": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": ""
+                },
+                "name": {
+                    "type": "string",
+                    "description": "当ModelProperty中type为'text'时，name指定了属性值的值"
+                },
+                "pic_url": {
+                    "type": "string",
+                    "description": "当ModelProperty中type为'image'时，pic_url指定了图片的url"
+                }
+            }
+        },
+        "PropertyTemplate": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "number",
+                    "description": "id"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "属性模板的名字"
+                },
+                "properties": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/TemplateProperty"
+                    },
+                    "minItems": 0
+                }
+            }
+        },
+        "TemplateProperty": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": ""
+                },
+                "name": {
+                    "type": "string",
+                    "description": "属性名"
+                },
+                "value": {
+                    "type": "string",
+                    "description": "属性描述"
+                }
+            }
+        },
+        "NewProperty": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "属性名"
+                },
+                "value": {
+                    "type": "string",
+                    "description": "属性描述"
+                }
+            }
+        },
+        "NewPropertyTemplate": {
+            "type": "object",
+            "properties": {
+                "corp_id": {
+                    "type": "string",
+                    "description": ""
+                },
+                "title": {
+                    "type": "string",
+                    "description": "属性名"
+                },
+                "new_properties": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/NewProperty"
+                    },
+                    "minItems": 0
+                }
+            }
+        },
+        "UpdatePropertyTemplate": {
+            "type": "object",
+            "properties": {
+                "corp_id": {
+                    "type": "string",
+                    "description": ""
+                },
+                "id": {
+                    "type": "string",
+                    "description": "更新的property template的id"
+                },
+                "title": {
+                    "type": "string",
+                    "description": "属性名"
+                },
+                "new_properties": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/NewProperty"
+                    },
+                    "minItems": 0
+                },
+                "update_properties": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/TemplateProperty"
+                    },
+                    "minItems": 0
+                },
+                "deleted_ids": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/TemplateProperty"
+                    },
+                    "minItems": 0
+                }
+            }
+        }
+    },
+    "paths": {
+        "/mall/categories/": {
+            "get": {
+                "description": "获得商品分组列表",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product_category"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/CategoryList"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/category/": {
+            "get": {
+                "description": "获取指定的属性模板",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "template_id",
+                        "in": "query",
+                        "description": "property template的id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product_category"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "template": {
+                                    "$ref": "#/definitions/Category"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "创建商品分组",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "formData",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "name",
+                        "in": "formData",
+                        "description": "分组名",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "product_ids",
+                        "in": "formData",
+                        "description": "商品id数组的json字符串",
+                        "required": false,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product_category"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "category": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "number",
+                                            "description": "新建分组的id"
+                                        },
+                                        "name": {
+                                            "type": "string",
+                                            "description": "分组名"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "修改商品分组",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "formData",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "name",
+                        "in": "formData",
+                        "description": "分组名",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "product_ids",
+                        "in": "formData",
+                        "description": "商品id数组的json字符串",
+                        "required": false,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product_category"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            },
+            "delete": {
+                "description": "删除属性模板",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "category_id",
+                        "in": "query",
+                        "type": "string",
+                        "required": true,
+                        "description": "待删除的商品分组的id"
+                    }
+                ],
+                "tags": [
+                    "product_category"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        },
+        "/mall/image_groups/": {
+            "get": {
+                "description": "获得图片分组列表",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "image_group"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "image_groups": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/ImageGroup"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/mall/image_group/": {
+            "get": {
+                "description": "获取指定的图片分组",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "image_group_id",
+                        "in": "query",
+                        "description": "image group的id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "image_group"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "image_group": {
+                                    "$ref": "#/definitions/ImageGroup"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "创建图片分组",
+                "parameters": [
+                    {
+                        "name": "",
+                        "in": "body",
+                        "description": "POST中的数据",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/NewImageGroup"
+                        }
+                    }
+                ],
+                "tags": [
+                    "image_group"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "number",
+                                    "description": "创建的图片分组的id"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "修改图片分组",
+                "parameters": [
+                    {
+                        "name": "",
+                        "in": "body",
+                        "description": "POST中的数据",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/UpdateImageGroup"
+                        }
+                    }
+                ],
+                "tags": [
+                    "image_group"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            },
+            "delete": {
+                "description": "删除图片分组",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "image_group_id",
+                        "in": "query",
+                        "type": "string",
+                        "required": true,
+                        "description": "待删除的图片分组的id"
+                    }
+                ],
+                "tags": [
+                    "image_group"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        },
+        "/mall/postage_configs/": {
+            "get": {
+                "description": "获取运费配置列表",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "logistics"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "title": "postage_configs",
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/PostageConfig"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/mall/postage_config/": {
+            "get": {
+                "description": "获取指定的运费配置详情",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "postage config的id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "logistics"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/PostageConfig"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "创建运费配置详情",
+                "parameters": [
+                    {
+                        "name": "",
+                        "in": "body",
+                        "description": "postage config的name",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/NewConfig"
+                        }
+                    }
+                ],
+                "tags": [
+                    "logistics"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "number",
+                                    "description": "新建的postage config对象的id"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "修改运费配置详情",
+                "parameters": [
+                    {
+                        "name": "",
+                        "in": "body",
+                        "description": "postage config的name",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/UpdateConfig"
+                        }
+                    }
+                ],
+                "tags": [
+                    "logistics"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "number",
+                                    "description": "新建的postage config对象的id"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "删除运费配置",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "type": "string",
+                        "required": true,
+                        "description": "待删除的运费配置的id"
+                    }
+                ],
+                "tags": [
+                    "logistics"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        },
+        "/mall/active_postage_config/": {
+            "put": {
+                "description": "将postage config设置为当前使用的postage config",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "postage_config_id",
+                        "in": "query",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    }
+                ],
+                "tags": [
+                    "logistics"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "number",
+                                    "description": "被选中的postage config对象的id"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/mall/pay_interfaces/": {
+            "get": {
+                "description": "获取支付接口列表",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "商户id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "pay"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "title": "pay_interfaces",
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/PayInterface"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/mall/pay_interface/": {
+            "get": {
+                "description": "获取支付接口详情",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "商户id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "pay interface的id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "pay"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/PayInterface"
+                        }
+                    }
+                }
+            }
+        },
+        "/mall/weixin_pay_v2_config/": {
+            "post": {
+                "description": "修改微信支付接口v2的配置信息",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "app_id",
+                        "in": "query",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "name": "partner_id",
+                        "in": "query",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "name": "partner_key",
+                        "in": "query",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "name": "paysign_key",
+                        "in": "query",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "name": "is_active",
+                        "in": "query",
+                        "type": "boolean",
+                        "required": false,
+                        "description": "is_active为'true'，会将支付接口启用；若为'false'，会将支付接口禁用"
+                    }
+                ],
+                "tags": [
+                    "pay"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        },
+        "/mall/weixin_pay_v3_config/": {
+            "post": {
+                "description": "修改微信支付接口v3的配置信息",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "app_id",
+                        "in": "query",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "name": "mch_id",
+                        "in": "query",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "name": "api_key",
+                        "in": "query",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "name": "paysign_key",
+                        "in": "query",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "name": "is_active",
+                        "in": "query",
+                        "type": "boolean",
+                        "required": false,
+                        "description": "is_active为'true'，会将支付接口启用；若为'false'，会将支付接口禁用"
+                    }
+                ],
+                "tags": [
+                    "pay"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        },
+        "/mall/ali_pay_config/": {
+            "post": {
+                "description": "修改支付宝接口的配置信息",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "query",
+                        "type": "string",
+                        "required": true,
+                        "description": "v2 或 v5"
+                    },
+                    {
+                        "name": "partner_id",
+                        "in": "query",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "name": "key",
+                        "in": "query",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "name": "ali_public_key",
+                        "in": "query",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "name": "private_key",
+                        "in": "query",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "name": "seller_email",
+                        "in": "query",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "name": "is_active",
+                        "in": "query",
+                        "type": "boolean",
+                        "required": false,
+                        "description": "is_active为'true'，会将支付接口启用；若为'false'，会将支付接口禁用"
+                    }
+                ],
+                "tags": [
+                    "pay"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        },
+        "/mall/pay_interface_activity/": {
+            "post": {
+                "description": "修改支付接口启用状态",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    },
+                    {
+                        "name": "is_active",
+                        "in": "query",
+                        "type": "string",
+                        "required": true,
+                        "description": "是否开启",
+                        "format": "true or false"
+                    }
+                ],
+                "tags": [
+                    "pay"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        },
+        "/product/model_properties/": {
+            "get": {
+                "description": "获得商品规格属性列表",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product",
+                    "product_model"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "product_model_properties": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/ModelProperty"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/product/model_property/": {
+            "get": {
+                "description": "获取指定的商品规格属性",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "product model property的id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product",
+                    "product_model"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "product_model_property": {
+                                    "$ref": "#/definitions/ModelProperty"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "创建商品规格属性",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "formData",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "type",
+                        "in": "formData",
+                        "description": "商品规格属性的类型",
+                        "required": true,
+                        "type": "string",
+                        "format": "'text' or 'image'"
+                    },
+                    {
+                        "name": "name",
+                        "in": "formData",
+                        "description": "商品规格属性的名字",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product",
+                    "product_model"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "product_model_property": {
+                                    "$ref": "#/definitions/ModelProperty"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "修改商品规格属性",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "formData",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "formData",
+                        "description": "待修改的商品规格属性的id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "field",
+                        "in": "query",
+                        "description": "需要修改的商品规格属性的field",
+                        "required": true,
+                        "type": "string",
+                        "format": "'name' or 'type'"
+                    },
+                    {
+                        "name": "value",
+                        "in": "query",
+                        "description": "修改后的新值。如果field为name, vlaue为字符串；如果field为type，value为'text'或'image'",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product",
+                    "product_model"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            },
+            "delete": {
+                "description": "删除商品规格属性",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "formData",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "id",
+                        "in": "formData",
+                        "type": "string",
+                        "required": true,
+                        "description": "待删除的商品规格属性的id"
+                    }
+                ],
+                "tags": [
+                    "product",
+                    "product_model"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        },
+        "/product/model_property_value/": {
+            "put": {
+                "description": "创建商品规格属性值",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "formData",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "model_property_id",
+                        "in": "formData",
+                        "description": "需要新增属性值的商品规格属性的id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "name",
+                        "in": "formData",
+                        "description": "商品规格属性为text时，name中为属性值的值",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "pic_url",
+                        "in": "formData",
+                        "description": "商品规格属性为image时，pic_url中为属性值的值",
+                        "required": false,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product",
+                    "product_model"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "number",
+                                    "description": "新建的规格属性值的id"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "删除商品规格属性值",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "formData",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "id",
+                        "in": "formData",
+                        "type": "string",
+                        "required": true,
+                        "description": "待删除的商品规格属性值的id"
+                    }
+                ],
+                "tags": [
+                    "product",
+                    "product_model"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        },
+        "/product/property_templates/": {
+            "get": {
+                "description": "获得商品属性模板列表",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product",
+                    "product_property_template"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "templates": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/PropertyTemplate"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/product/property_template/": {
+            "get": {
+                "description": "获取指定的属性模板",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "template_id",
+                        "in": "query",
+                        "description": "property template的id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product",
+                    "product_property_template"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "template": {
+                                    "$ref": "#/definitions/PropertyTemplate"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "创建属性模板",
+                "parameters": [
+                    {
+                        "name": "",
+                        "in": "body",
+                        "description": "POST中的数据",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/NewPropertyTemplate"
+                        }
+                    }
+                ],
+                "tags": [
+                    "product",
+                    "product_property_template"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            },
+            "post": {
+                "description": "修改属性模板",
+                "parameters": [
+                    {
+                        "name": "",
+                        "in": "body",
+                        "description": "POST中的数据",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/UpdatePropertyTemplate"
+                        }
+                    }
+                ],
+                "tags": [
+                    "product",
+                    "product_property_template"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            },
+            "delete": {
+                "description": "删除属性模板",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "type": "string",
+                        "required": true,
+                        "description": "待删除的属性模板的id"
+                    }
+                ],
+                "tags": [
+                    "product",
+                    "product_property_template"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        }
+    }
+}
