@@ -42,7 +42,7 @@ class OrderRepository(business_model.Model):
 		# db_models = mall_models.Order.select().dj_where(webapp_id=webapp_id)
 		db_models = self.__search(webapp_id, filter_values)
 
-		pageinfo,db_models = paginator.paginate(db_models, target_page.cur_page, target_page.count_per_page)
+		pageinfo, db_models = paginator.paginate(db_models, target_page.cur_page, target_page.count_per_page)
 
 		self.context['db_models'] = db_models
 
@@ -51,3 +51,11 @@ class OrderRepository(business_model.Model):
 		orders = Order.from_models({"db_models": db_models, 'fill_options': fill_options})
 
 		return pageinfo, orders
+
+	def get_order(self, id, fill_options):
+		webapp_id = self.corp.webapp_id
+		db_model = mall_models.Order.get(webapp_id=webapp_id, id=id)
+
+		order = Order.from_models({"db_models": [db_model], 'fill_options': fill_options})[0]
+
+		return order
