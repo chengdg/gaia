@@ -39,10 +39,8 @@ class Order(business_model.Model):
 		'status',
 
 		'customer_message',
-		'promotion_saved_money',
 
 		'created_at',
-		'update_at',
 
 		'webapp_id',
 		'webapp_user_id',

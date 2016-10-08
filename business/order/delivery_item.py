@@ -35,12 +35,12 @@ class DeliveryItem(business_model.Model):
 		business_model.Model.__init__(self)
 
 		self.id = db_model.id
-		self.bid = db_model.origin_order_id
+		self.bid = db_model.order_id
 
 		if db_model.origin_order_id > 0:
 			self.origin_order_id = db_model.origin_order_id
 		else:
-			self.origin_order_id = self.id
+			self.origin_order_id = db_model.id
 
 		self.postage = db_model.postage
 
