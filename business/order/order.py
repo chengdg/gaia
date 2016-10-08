@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from eaglet.core import watchdog
-from eaglet.decorator import param_required
-
 from business import model as business_model
 from business.member.member import Member
 from business.order.delivery_item import DeliveryItem
@@ -67,10 +64,11 @@ class Order(business_model.Model):
 		'refunding_info',
 		'save_money',
 		'origin_weizoom_card_money',
-		'origin_final_price'
+		'origin_final_price',
+		'status_logs'
 	)
 
-	def __init__(self, db_model=None):
+	def __init__(self):
 		business_model.Model.__init__(self)
 
 	@staticmethod
@@ -87,6 +85,7 @@ class Order(business_model.Model):
 		with_group_buy_info = fill_options.get('with_group_buy_info')
 		with_refunding_info = fill_options.get('with_refunding_info')
 		with_full_money_info = fill_options.get('with_full_money_info')  # 有依赖
+		with_status_logs = fill_options.get('status_logs')
 
 		orders = []
 		order_ids = []
@@ -190,7 +189,10 @@ class Order(business_model.Model):
 
 		if with_full_money_info:
 			# 需要在最后
-			Order.__with_full_money_info(orders, order_ids)
+			Order.__fill_full_money_info(orders, order_ids)
+
+		if with_status_logs:
+			Order.__fill_status_logs(orders, order_ids)
 
 		return orders
 
@@ -234,13 +236,16 @@ class Order(business_model.Model):
 		for order in orders:
 			order.delivery_items = order_id2delivery_items[order.id]
 
-	def to_dict(self, *extras):
-
-		result = business_model.Model.to_dict(self, *extras)
-		if self.delivery_items:
-			result['delivery_items'] = [delivery_item.to_dict() for delivery_item in self.delivery_items]
-
-		return result
+	@staticmethod
+	def __fill_status_logs(orders, order_ids):
+		logs = mall_models.OrderStatusLog.select().dj_where(order_id__in=order_ids).order_by(
+			mall_models.OrderStatusLog.created_at)
+		if len(orders) == 1:
+			order = orders[0]
+			order.status_logs = []
+			order.status_logs.append({'status': '11', 'time': order.created_at})
+			for log in logs:
+				order.status_logs.append({'status': log.to_staus, 'time': log.created_at})
 
 	@staticmethod
 	def __fill_group_buy(orders, order_ids):
@@ -291,7 +296,7 @@ class Order(business_model.Model):
 				}
 
 	@staticmethod
-	def __with_full_money_info(orders, order_ids):
+	def __fill_full_money_info(orders, order_ids):
 
 		for order in orders:
 			order.origin_weizoom_card_money = order.weizoom_card_money + order.refunding_info[
@@ -305,3 +310,10 @@ class Order(business_model.Model):
 				order.origin_final_price,
 				2) - round(
 				order.origin_weizoom_card_money, 2)
+
+	def to_dict(self, *extras):
+		result = business_model.Model.to_dict(self, *extras)
+		if self.delivery_items:
+			result['delivery_items'] = [delivery_item.to_dict() for delivery_item in self.delivery_items]
+
+		return result

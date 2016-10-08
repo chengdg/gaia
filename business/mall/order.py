@@ -11,7 +11,7 @@ from util import regional_util
 
 from business.mall.order_products import OrderProducts
 from business.mall.express import util as express_util
-from business.tools.express_detail import ExpressDetail
+
 from business.mall.order_operation_log_info import OrderOperationLogInfo
 from business.mall.order_status_log_info import OrderStatusLogInfo
 from business.account.user_profile import UserProfile

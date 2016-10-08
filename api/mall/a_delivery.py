@@ -7,7 +7,7 @@ from eaglet.decorator import param_required
 from business.mall.order_product_relation import OrderProductRelation
 from business.mall.order import Order
 from business.mall.order_state import OrderState
-from business.tools.express_detail import ExpressDetail
+
 
 class ADelivery(api_resource.ApiResource):
     """

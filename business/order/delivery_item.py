@@ -8,6 +8,7 @@ from eaglet.decorator import param_required
 from business.mall.supplier import Supplier
 from business.product.delivery_items_products import DeliveryItemsProducts
 from db.mall import models as mall_models
+from db.express import models as express_models
 
 
 class DeliveryItem(business_model.Model):
@@ -26,7 +27,8 @@ class DeliveryItem(business_model.Model):
 
 		'refunding_info',
 		'total_origin_product_price',
-		'supplier_info'
+		'supplier_info',
+		'express_details'
 	)
 
 	def __init__(self, db_model):
@@ -62,17 +64,96 @@ class DeliveryItem(business_model.Model):
 		delivery_item_ids = []
 		for delivery_item in delivery_items:
 			delivery_item_ids.append(delivery_item.id)
-		if fill_options['with_products']:
+		if fill_options.get('with_products'):
 			DeliveryItem.__fill_products(delivery_items)
 
-		if fill_options['with_refunding_info']:
+		if fill_options.get('with_refunding_info'):
 			DeliveryItem.__fill_refunding_info(delivery_items, delivery_item_ids)
+
+		if fill_options.get('with_express_details'):
+			DeliveryItem.__fill_express_details(delivery_items, delivery_item_ids)
 
 		DeliveryItem.__fill_supplier(delivery_items, delivery_item_ids)
 
 		return delivery_items
 
 	# suppliers = Supplier.from_ids()
+
+	@staticmethod
+	def __fill_express_details(delivery_items, delivery_item_ids):
+		"""
+		物流信息
+		@param delivery_items:
+		@param delivery_item_ids:
+		@return:
+		"""
+		details =express_models.ExpressDetail.select().dj_where(order_id__in=delivery_item_ids).order_by('-display_index')
+		other_delivery_items = []
+		if details.count() > 0:
+			# 兼容历史数据,老数据里订单的发货信息直接关联到ExpressDetail
+			delivery_item_id2details = {}
+
+			for detail in details:
+				if detail.order_id in delivery_item_id2details:
+					delivery_item_id2details[detail.order_id].append(detail)
+				else:
+					delivery_item_id2details[detail.order_id] = [detail]
+
+			for delivery_item in delivery_items:
+				express_details = delivery_item_id2details.get(delivery_item.id)
+				if express_details:
+					for detail in express_details:
+						delivery_item.express_details.append({
+							'ftime': detail.ftime,
+							'context': detail.context
+						})
+				else:
+
+					other_delivery_items.append(delivery_items)
+		else:
+			other_delivery_items = delivery_items
+		if other_delivery_items:
+			express_company_names = []
+			express_numbers = []
+			for delivery_item in delivery_items:
+				express_company_names.append(delivery_item.express_company_name)
+				express_numbers.append(delivery_item.express_number)
+
+				delivery_item.express_details = []
+
+			express_push_list = express_models.ExpressHasOrderPushStatus.select().dj_where(
+				express_company_name__in=express_company_names,
+				express_number__in=express_numbers
+			)
+
+			name_number2express_push_id = {str(push.express_company_name + '__' + push.express_number):push.id for push in express_push_list}
+
+			express_push_ids = []
+			for push in express_push_list:
+				express_push_ids.append(push.id)
+
+			express_details = express_models.ExpressDetail.select().dj_where(express_id__in=express_push_ids)
+			express_push_id2details = {detail.express_id:detail for detail in express_details}
+
+			for detail in express_details:
+				if detail.express_id in express_push_id2details:
+					express_push_id2details[detail.express_id].append(detail)
+				else:
+					express_push_id2details[detail.express_id] = [detail]
+
+			for delivery_item in delivery_items:
+				push_id = name_number2express_push_id.get(str(delivery_item.express_company_name + '__' + delivery_item.express_number))
+				if push_id:
+					express_details = express_push_id2details.get(push_id, [])
+
+					for detail in express_details:
+						delivery_item.express_details.append({
+							'ftime': detail.ftime,
+							'context': detail.context
+						})
+
+
+
 
 	@staticmethod
 	def __fill_products(delivery_items):

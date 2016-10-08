@@ -19,7 +19,7 @@ DATABASES = {
         'NAME': 'weapp',
         'USER': 'weapp',
         'PASSWORD': 'weizoom',
-        'HOST': ZEUS_DB,
+        'HOST': '127.0.0.1',
         'PORT': '',
         'CONN_MAX_AGE': 100
     }

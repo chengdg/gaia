@@ -4,47 +4,42 @@ import json
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
 
-from business.mall.order_product_relation import OrderProductRelation
-from business.mall.order import Order
-from business.mall.order_state import OrderState
-from business.tools.express_detail import ExpressDetail
 
 class AOrder(api_resource.ApiResource):
-    """
-    订单
-    """
-    app = 'order'
-    resource = 'order'
+	"""
+	订单
+	"""
+	app = 'order'
+	resource = 'order'
 
-    # @param_required(['ship_name', 'ship_address', 'ship_tel', 'order_type', 'xa-choseInterfaces'])
-    # def put(args):
-    #     """
-    #     下单接口
+	@param_required(['id'])
+	def get(args):
+		"""
+		特殊信息:相对于订单列表，状态日志、操作日志、物流信息
+		@return:
+		"""
+		id = args['id']
 
-    #     @param id 商
-    @param_required(['order_id', "action", "operator_name"])
-    def post(args):
-        order_id = args['order_id']
-        action = args['action']
-        operator_name = args["operator_name"]
+		corp = args['corp']
+		order_repository = corp.order_repository
+		fill_options = {
+			'with_refunding_info': True,
+			'with_group_buy_info': True,
+			'with_member': True,
+			'with_group_info': True,
+			'with_full_money_info': True,
+			'status_logs': True,
+			'with_delivery_items': {
+				'fill': True,
+				'fill_options': {
+					'with_products': True,
+					'with_refunding_info': True,
+					'with_express_details': True
+				}
+			}
 
-        order = OrderState.from_order_id({
-            "order_id": order_id
-            })
-        if order:
-            if action == "finish":
-                result, msg = order.finish(operator_name)
-            elif action == "cancel":
-                result, msg = order.cancel(operator_name)
-            else:
-                result, msg = False, 'no action'
-        else:
-            result, msg = False, 'error order_id'
-        if result:
-            result = "SUCCESS"
-        else:
-            result = "FAILED"
-        return {
-            'result': result,
-            'msg': msg
-        }
+		}
+
+		order = order_repository.get_order(id, fill_options)
+
+		return {'order': order.to_dict()}
