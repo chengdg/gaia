@@ -241,7 +241,8 @@ class Order(business_model.Model):
 		if len(orders) == 1:
 			order = orders[0]
 			order.status_logs = []
-			order.status_logs.append({'status': '11', 'time': order.created_at})
+			# 下单时没状态日志
+			order.status_logs.append({'status': mall_models.ORDER_STATUS_NOT, 'time': order.created_at})
 			for log in logs:
 				order.status_logs.append({'status': log.to_staus, 'time': log.created_at})
 

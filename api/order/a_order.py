@@ -18,6 +18,8 @@ class AOrder(api_resource.ApiResource):
 		特殊信息:相对于订单列表，状态日志、操作日志、物流信息
 		@return:
 		"""
+
+		# todo 操作日志
 		id = args['id']
 
 		corp = args['corp']
@@ -41,5 +43,5 @@ class AOrder(api_resource.ApiResource):
 		}
 
 		order = order_repository.get_order(id, fill_options)
-
+		# todo 显式声明
 		return {'order': order.to_dict()}
