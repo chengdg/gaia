@@ -19,7 +19,7 @@ host = '';
 
 var info = {
     "version": "1.0.0",
-    "title": "Hermes Product Category API"
+    "title": "New Zeus API"
 };
 
 
