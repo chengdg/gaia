@@ -1,6 +1,6 @@
 var fs = require('fs');
 var path = require('path');
-var swaggermerge = require('swagger-merge');
+var swaggermerge = require('./lib/merge');
 
 var sourceFolder = __dirname;
 var outputFolder = __dirname;
