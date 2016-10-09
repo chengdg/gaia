@@ -10,7 +10,7 @@
 				"summary": "订单列表",
 				"parameters": [
 					{
-						"name": "woid",
+						"name": "corp_id",
 						"in": "query",
 						"required": true
 					},
@@ -382,7 +382,7 @@
 				"summary": "订单详情",
 				"parameters": [
 					{
-						"name": "woid"
+						"name": "corp_id"
 					},
 					{
 						"name": "id"
