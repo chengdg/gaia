@@ -6,6 +6,14 @@ var sourceFolder = __dirname;
 var outputFolder = __dirname;
 var outputFileName = 'openapi.json';
 
+var projectRootFolder = path.basename(path.dirname(__dirname));
+
+var projectName;
+
+projectName = projectRootFolder.split('_').map(function(t){
+  return t.substr(0,1).toUpperCase() + t.substr(1);
+}).join(' ');
+
 var basePath = '/api';
 var host = 'hermes.com';
 var schemes =  ['http'];
@@ -19,7 +27,7 @@ host = '';
 
 var info = {
     "version": "1.0.0",
-    "title": "New Zeus API"
+    "title": projectName + " API"
 };
 
 
@@ -50,4 +58,3 @@ var outputFile = path.join(outputFolder, outputFileName);
 console.log("输出文件：" + outputFile);
 
 fs.writeFile(outputFile, data);
-
