@@ -67,6 +67,7 @@ class Product(business_model.Model):
 		'postage_id',
 		'postage_type',
 		'unified_postage_money',
+		'is_use_online_pay_interface',
 		'is_use_cod_pay_interface',
 		'product_promotion_title', #商品的促销标题
 		'is_enable_bill',
@@ -153,6 +154,7 @@ class Product(business_model.Model):
 			self.custom_models = []
 			self.swipe_images = []
 			self.categories = []
+			self.properties = []
 			self.sales = 0
 
 	@property

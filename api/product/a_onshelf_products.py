@@ -8,6 +8,7 @@ from business.product.product import Product
 from business.product.product_shelf import ProductShelf
 from business.common.page_info import PageInfo
 
+from a_offshelf_products import AOffshelfProducts
 
 class AOnshelfProducts(api_resource.ApiResource):
 	"""
@@ -19,14 +20,13 @@ class AOnshelfProducts(api_resource.ApiResource):
 	@param_required(['corp_id'])
 	def get(args):
 		corp = args['corp']
-		in_sale_shelf = corp.insale_shelf
 		
 		target_page = PageInfo.create({
 			"cur_page": int(args.get('cur_page', 1)),
 			"count_per_page": int(args.get('count_per_page', 10))
 		})
 
-		products, pageinfo = in_sale_shelf.get_products(target_page)
+		products, pageinfo = corp.insale_shelf.get_products(target_page)
 
 		datas = []
 		for product in products:
@@ -34,17 +34,27 @@ class AOnshelfProducts(api_resource.ApiResource):
 				"id": product.id,
 				"name": product.name,
 				"image": product.thumbnails_url,
-				"models": product.models,
+				"models": [],
 				"user_code": -1,
 				"bar_code": product.bar_code,
-				"categories": [],
+				"categories": AOffshelfProducts._get_categories(product),
 				"price": None,
-				"stocks": -1,
 				"sales": product.sales,
 				"created_at": product.created_at.strftime('%Y-%m-%d %H:%M'),
 				"is_use_custom_model": product.is_use_custom_model,
 				"display_index": product.display_index
 			}
+
+			if product.is_use_custom_model:
+				data['stock_type'] = 'combined'
+				data['stocks'] = -1
+				data['price'] = 'todo'
+			else:
+				standard_model = product.standard_model
+				data['stock_type'] = standard_model.stock_type
+				data['stocks'] = standard_model.stocks
+				data['price'] = standard_model.price
+
 			datas.append(data)
 
 		return {

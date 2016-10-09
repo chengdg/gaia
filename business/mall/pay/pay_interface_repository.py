@@ -15,12 +15,43 @@ from business.mall.pay.ali_pay_config import AliPayConfig
 
 
 class PayInterfaceRepository(business_model.Service):
+	def __make_sure_old_pay_interface_config_exists(self, pay_interface_models):
+		"""
+		兼容老的数据库数据，老的数据中，对于weixin pay和alipay，存在以下情况
+		pay interface存在，但相应的config不存在
+		这里统一为pay interface创建默认的config
+		"""
+		for pay_interface_model in pay_interface_models:
+			if pay_interface_model.type == mall_models.PAY_INTERFACE_WEIXIN_PAY:
+				if pay_interface_model.related_config_id == 0:
+					config = WeixinPayV2Config.create({
+						'app_id': '',
+						'partner_id': '',
+						'partner_key': '',
+						'app_secret': '',
+						'paysign_key': ''
+					})
+					mall_models.PayInterface.update(related_config_id = config.id).dj_where(id=pay_interface_model.id).execute()
+			elif pay_interface_model.type == mall_models.PAY_INTERFACE_ALIPAY:
+				if pay_interface_model.related_config_id == 0:
+					config = AliPayConfig.create({
+						'partner': '',
+						'key': '',
+						'private_key': '',
+						'ali_public_key': '',
+						'seller_email': ''
+					})
+					mall_models.PayInterface.update(related_config_id = config.id).dj_where(id=pay_interface_model.id).execute()
+			else:
+				pass
+
 	def __make_sure_all_pay_interfaces_exists(self):
 		"""
 		创建当前还不存在的支付接口
 		TODO: 将这个操作移到command中
 		"""
 		pay_interface_db_models = mall_models.PayInterface.select().dj_where(owner_id=self.corp.id)
+		self.__make_sure_old_pay_interface_config_exists(pay_interface_db_models)
 
 		exist_pay_interface_types = [p.type for p in pay_interface_db_models]
 
@@ -47,10 +78,10 @@ class PayInterfaceRepository(business_model.Service):
 				elif pay_type == mall_models.PAY_INTERFACE_ALIPAY:
 					config = AliPayConfig.create({
 						'partner': '',
-				        'key': '',
-				        'private_key': '',
-				        'ali_public_key': '',
-				        'seller_email': ''
+						'key': '',
+						'private_key': '',
+						'ali_public_key': '',
+						'seller_email': ''
 					})
 				else:
 					config = None

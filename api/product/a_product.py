@@ -96,6 +96,24 @@ class AProduct(api_resource.ApiResource):
 
 		return categories
 
+	@staticmethod
+	def __get_pay_info(product):
+		return {
+			'is_use_online_pay_interface': product.is_use_online_pay_interface,
+			'is_use_cod_pay_interface': product.is_use_cod_pay_interface
+		}
+
+	@staticmethod
+	def __get_properties(product):
+		data = []
+		for product_property in product.properties:
+			data.append({
+				"name": product_property['name'],
+				"value": product_property['value']
+			})
+
+		return data
+
 	@param_required(['corp_id', 'id'])
 	def get(args):
 		"""
@@ -108,7 +126,8 @@ class AProduct(api_resource.ApiResource):
 			'with_category': True,
 			'with_image': True,
 			'with_product_model': True,
-			'with_model_property_info': True
+			'with_model_property_info': True,
+			'with_property': True
 		}
 		products = corp.product_pool.get_products_by_ids(ids, fill_options)
 		if len(products) == 0:
@@ -122,12 +141,16 @@ class AProduct(api_resource.ApiResource):
 					"name": product.name,
 					"bar_code": product.bar_code,
 					"min_limit": product.min_limit,
+					"is_enable_bill": product.is_enable_bill,
 					"promotion_title": product.promotion_title,
-					"detail": product.detail
+					"detail": product.detail,
+					"is_member_product": product.is_member_product
 				},
 				"categories": AProduct.__get_categories(product),
 				"image_info": AProduct.__get_image_info(product),
-				"models_info": AProduct.__get_models_info(product)
+				"models_info": AProduct.__get_models_info(product),
+				"pay_info": AProduct.__get_pay_info(product),
+				'properties': AProduct.__get_properties(product)
 			}
 
 			return data

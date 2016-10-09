@@ -22,16 +22,16 @@ class UpdateProductService(business_model.Service):
 			pic_url='',
 			detail=base_info.get('detail', '').strip(),
 			type=base_info.get('type', mall_models.PRODUCT_DEFAULT_TYPE),
-			is_use_online_pay_interface='is_enable_online_pay_interface' in pay_info,
-			is_use_cod_pay_interface='is_enable_cod_pay_interface' in pay_info,
+			is_use_online_pay_interface=pay_info['is_use_online_pay_interface'],
+			is_use_cod_pay_interface=pay_info['is_use_cod_pay_interface'],
 			postage_type=postage_info['postage_type'],
 			postage_id=postage_info.get('postage_id', 0),
 			unified_postage_money=postage_info['unified_postage_money'],
 			stocks=base_info['min_limit'],
-			is_member_product=base_info.get("is_member_product", "false") == 'true',
+			is_member_product=base_info['is_member_product'],
 			supplier=base_info.get('supplier_id', 0),
 			purchase_price=base_info.get('purchase_price', 0.0),
-			is_enable_bill=base_info.get('is_enable_bill', 'false') == 'true',
+			is_enable_bill=base_info['is_enable_bill'],
 			is_delivery=base_info.get('is_delivery', 'false') == 'true',
 			limit_zone_type=int(postage_info.get('limit_zone_type', '0')),
 			limit_zone=int(postage_info.get('limit_zone_template', '0'))
@@ -41,7 +41,7 @@ class UpdateProductService(business_model.Service):
 
 	def __update_product_categories(self, product_id, category_ids):
 		"""
-		将商品加入到多个商品分组中
+		更新商品分组
 		"""
 		if len(category_ids) == 0:
 			return
@@ -164,12 +164,15 @@ class UpdateProductService(business_model.Service):
 			self.__delete_custom_models(need_delete_ids)
 
 	def __update_product_models(self, product_id, models_info):
+		"""
+		更新商品规格
+		"""
 		self.__update_standard_model(product_id, models_info)
 		self.__update_custom_models(product_id, models_info)
 
 	def __update_product_images(self, product_id, image_info):
 		"""
-		设置商品图片
+		更新商品图片
 		"""
 		images = image_info['images']
 		if len(images) == 0:
@@ -185,6 +188,22 @@ class UpdateProductService(business_model.Service):
 					height=swipe_image['height']
 				)
 
+	def __update_product_properties(self, product_id, properties):
+		"""
+		更新商品属性
+		"""
+		if len(properties) == 0:
+			return
+
+		mall_models.ProductProperty.delete().dj_where(product_id=product_id).execute()
+		for product_property in properties:
+			mall_models.ProductProperty.create(
+				owner=self.corp.id,
+				product=product_id,
+				name=product_property['name'],
+				value=product_property['value']
+			)
+
 	def update_product(self, product_id, args):
 		base_info = json.loads(args['base_info'])
 		models_info = json.loads(args['models_info'])
@@ -198,5 +217,6 @@ class UpdateProductService(business_model.Service):
 		self.__update_product_categories(product_id, categories)
 		self.__update_product_images(product_id, image_info)
 		self.__update_product_models(product_id, models_info)
+		self.__update_product_properties(product_id, properties)
 
 		return product

@@ -170,6 +170,19 @@ class FillProductDetailService(business_model.Service):
 						'max_price': 0,
 					}
 
+	def __fill_property_detail(self, corp, products, product_ids):
+		"""
+		填充商品属性相关细节
+		"""
+		id2product = dict([(product.id, product) for product in products])
+
+		for product_property in mall_models.ProductProperty.select().dj_where(product_id__in=product_ids):
+			product = id2product[product_property.product_id]
+			product.properties.append({
+				"name": product_property.name,
+				"value": product_property.value
+			})
+
 	def fill_detail(self, products, options):
 		"""填充各种细节信息
 
@@ -216,7 +229,7 @@ class FillProductDetailService(business_model.Service):
 			self.__fill_image_detail(self.corp, products, product_ids)
 
 		if options.get('with_property', False):
-			Product.__fill_property_detail(corp, products, product_ids)
+			self.__fill_property_detail(self.corp, products, product_ids)
 
 		if options.get('with_category', False):
 			self.__fill_category_detail(self.corp, products, product_ids)

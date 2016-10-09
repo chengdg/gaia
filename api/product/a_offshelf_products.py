@@ -18,7 +18,7 @@ class AOffshelfProducts(api_resource.ApiResource):
 	resource = "offshelf_products"
 
 	@staticmethod
-	def __get_models_info(product):
+	def _get_models_info(product):
 		"""
 		获得商品的models_info数据
 		"""
@@ -60,7 +60,7 @@ class AOffshelfProducts(api_resource.ApiResource):
 		return models_info
 
 	@staticmethod
-	def __get_categories(product):
+	def _get_categories(product):
 		"""
 		获得商品的category集合
 		"""
@@ -93,7 +93,7 @@ class AOffshelfProducts(api_resource.ApiResource):
 				"models": [],
 				"user_code": -1,
 				"bar_code": product.bar_code,
-				"categories": AOffshelfProducts.__get_categories(product),
+				"categories": AOffshelfProducts._get_categories(product),
 				"price": None,
 				"sales": product.sales,
 				"created_at": product.created_at.strftime('%Y-%m-%d %H:%M'),

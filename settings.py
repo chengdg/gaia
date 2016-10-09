@@ -11,7 +11,7 @@ MODE = 'develop'
 SERVICE_NAME = 'zeus'
 DEV_SERVER_MULTITHREADING = True
 WEAPP_DOMAIN = "weapp.weizoom.com"
-ZEUS_DB = os.environ.get('ZEUS_DB', None) or '192.168.31.219'
+ZEUS_DB = os.environ.get('ZEUS_DB', None) or 'db.dev.com'
 
 DATABASES = {
     'default': {
@@ -48,7 +48,7 @@ MIDDLEWARES = [
 EVENT_DISPATCHER = 'redis'
 
 #信息输出配置
-DUMP_API_CALL_RESULT = False
+DUMP_API_CALL_RESULT = True
 DUMP_FORMATTED_INNER_ERROR_MSG = False
 
 # settings for WAPI Logger
@@ -65,6 +65,8 @@ if MODE == 'develop':
 
     WEAPP_HOST = "http://dev.weapp.com/"
     H5_HOST = "http://h5.weapp.com/"
+
+    DUMP_READABLE_EXCEPTION_STACK = True
 else:
     # 真实环境暂时关闭
     #WAPI_LOGGER_ENABLED = False
