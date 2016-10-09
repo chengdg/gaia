@@ -2,7 +2,8 @@
 	"swagger": "2.0",
 	"info": {
 		"version": "0.0.1",
-		"title": "zeus API doc"
+		"title": "zeus API doc",
+		"description": "已废弃，等待删除"
 	},
 	"paths": {
 		"/mall/delivery/": {
