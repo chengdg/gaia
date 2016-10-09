@@ -55,6 +55,7 @@ class Order(business_model.Model):
 		'is_self_order',
 		'remark',
 		'pay_money',
+		'promotion_saved_money',
 
 		# 他表数据
 		'member_info',
@@ -119,6 +120,7 @@ class Order(business_model.Model):
 			order.weizoom_card_money = db_model.weizoom_card_money
 			order.integral_money = db_model.integral_money
 			order.integral = db_model.integral
+			order.promotion_saved_money = db_model.promotion_saved_money
 
 			## 衍生数据
 			order.pay_money = db_model.final_price + db_model.weizoom_card_money
