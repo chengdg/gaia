@@ -27,6 +27,9 @@ Scenario:1 更新属性模板
 				"name": "产地",
 				"description": "产地描述"
 			}]
+		}, {
+			"name": "空模板",
+			"properties": []
 		}]
 		"""
 	Then jobs能获取属性模板列表
@@ -46,6 +49,9 @@ Scenario:1 更新属性模板
 				"name": "产地",
 				"description": "产地描述"
 			}]
+		}, {
+			"name": "空模板",
+			"properties": []
 		}]
 		"""
 	Given bill登录系统

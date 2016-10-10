@@ -85,18 +85,22 @@ def step_impl(context, user):
 def step_impl(context, user):
     client = context.client
     response = context.client.get('/mall/postage_configs/?corp_id=%d' % context.corp.id)
-    actual =response.data['postage_configs']
+    actual = response.data['postage_configs']
     for item in actual:
+        item['postage_items'] = []
         default_config = item['default_config']
-        item['first_weight'] = default_config['first_weight']
-        item['first_weight_price'] = default_config['first_weight_price']
-        item['added_weight'] = default_config['added_weight']
-        item['added_weight_price'] = default_config['added_weight_price']
 
         if 'special_configs' in item:
             item['special_area'] = item['special_configs']
             for special_config in item['special_area']:
                 special_config['to_the'] = special_config['destinations']
+                item['postage_items'].append(special_config)
+
+        if len(item['postage_items']) > 0:
+            default_config['to_the'] = u'其他地区'
+        else:
+            default_config['to_the'] = u'全国'
+        item['postage_items'].append(default_config)
                 
     expected = json.loads(context.text)
     bdd_util.assert_list(expected, actual)

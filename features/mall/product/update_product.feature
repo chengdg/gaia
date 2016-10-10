@@ -5,7 +5,7 @@ Feature: 更新商品
 
 Background:
 	Given jobs登录系统
-	And jobs已添加商品分类
+	And jobs已添加商品分组
 		"""
 		[{
 			"name": "分类1"
@@ -72,7 +72,7 @@ Background:
 			"bar_code": "zhouzi_1",
 			"min_limit": 10,
 			"promotion_title": "促销的东坡肘子",
-			"categories": "分类1",
+			"categories": ["分类1"],
 			"detail": "东坡肘子的详情",
 			"swipe_images": [{
 				"url": "/static/test_resource_img/hangzhou1.jpg"
@@ -131,6 +131,18 @@ Scenario:1 修改商品基本信息
 	1、能获得修改后的商品信息(name, bar_code, min_limit, promotion_title, detail)
 
 	Given jobs登录系统
+	Then jobs能获取商品'东坡肘子'
+		"""
+		{
+			"name": "东坡肘子",
+			"bar_code": "zhouzi_1",
+			"min_limit": 10,
+			"promotion_title": "促销的东坡肘子",
+			"detail": "东坡肘子的详情",
+			"is_member_product": false,
+			"is_enable_bill": false
+		}
+		"""
 	When jobs更新商品'东坡肘子'
 		#东坡肘子(有分类，上架，无限库存，多轮播图), 叫花鸡(无分类，下架，有限库存，单轮播图)
 		"""
@@ -139,7 +151,9 @@ Scenario:1 修改商品基本信息
 			"bar_code": "zhouzi_1*",
 			"min_limit": 20,
 			"promotion_title": "促销的东坡肘子*",
-			"detail": "东坡肘子的详情*"
+			"detail": "东坡肘子的详情*",
+			"is_member_product": true,
+			"is_enable_bill": true
 		}
 		"""
 	Then jobs能获取商品'东坡肘子*'
@@ -147,13 +161,15 @@ Scenario:1 修改商品基本信息
 		{
 			"name": "东坡肘子*",
 			"bar_code": "zhouzi_1*",
-			"categories": "分类1",
+			"categories": ["分类1"],
 			"min_limit": 20,
 			"promotion_title": "促销的东坡肘子*",
 			"detail": "东坡肘子的详情*",
 			"swipe_images": [{
 				"url": "/static/test_resource_img/hangzhou1.jpg"
 			}],
+			"is_member_product": true,
+			"is_enable_bill": true,
 			"model": {
 				"models": {
 					"standard": {
@@ -417,7 +433,7 @@ Scenario:5 修改商品的定制商品规格
 		"""
 
 
-@mall @mall.product @mall.product_management @hermes @wip
+@mall @mall.product @mall.product_management @hermes
 Scenario:6 修改商品分组信息
 	jobs进行如下操作：
 	1. 对已经有分组的商品，对分组进行删除、新增
@@ -428,31 +444,98 @@ Scenario:6 修改商品分组信息
 		#有分组的修改分组
 		"""
 		{
-			"categories": "分类2,分类3"
+			"categories": ["分类2", "分类3"]
 		}
 		"""
 	Then jobs能获取商品'东坡肘子'
 		"""
 		{
 			"name": "东坡肘子",
-			"categories": "分类2,分类3"
+			"categories": ["分类2", "分类3"]
 		}
 		"""
 	When jobs更新商品'叫花鸡'
 		#无分组的增加分组
 		"""
 		{
-			"categories": "分类2"
+			"categories": ["分类2"]
 		}
 		"""
 	Then jobs能获取商品'叫花鸡'
 		"""
 		{
 			"name": "叫花鸡",
-			"categories": "分类2"
+			"categories": ["分类2"]
 		}
 		"""
 
+@mall @mall.product @mall.product_management @hermes
+Scenario:7 修改物流信息
+	jobs进行如下操作：
+	1. 修改邮费配置
+
+	Given jobs登录系统
+	When jobs更新商品'东坡肘子'
+		#有分组的修改分组
+		"""
+		{
+			"postage_type": "运费模板"
+		}
+		"""
+	Then jobs能获取商品'东坡肘子'
+		"""
+		{
+			"name": "东坡肘子",
+			"postage_type": "运费模板"
+		}
+		"""
+	When jobs更新商品'东坡肘子'
+		"""
+		{
+			"postage_type": "统一运费",
+			"unified_postage_money": 12.34
+		}
+		"""
+	Then jobs能获取商品'东坡肘子'
+		"""
+		{
+			"name": "东坡肘子",
+			"postage_type": "统一运费",
+			"unified_postage_money": 12.34
+		}
+		"""
+
+@mall @mall.product @mall.product_management @hermes @wip
+Scenario:7 修改商品属性信息
+	jobs进行如下操作：
+	1. 修改邮费配置
+
+	Given jobs登录系统
+	When jobs更新商品'东坡肘子'
+		"""
+		{
+			"properties": [{
+				"name": "n1",
+				"value": "n2"
+			}, {
+				"name": "n3",
+				"value": "n4"
+			}]
+		}
+		"""
+	Then jobs能获取商品'东坡肘子'
+		"""
+		{
+			"name": "东坡肘子",
+			"properties": [{
+				"name": "n1",
+				"value": "n2"
+			}, {
+				"name": "n3",
+				"value": "n4"
+			}]
+		}
+		"""
 
 @ignore
 Scenario:2 添加商品时选择分类，能在分类中看到该商品

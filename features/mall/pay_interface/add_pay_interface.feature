@@ -1,7 +1,7 @@
 Feature:添加支付方式
 	Jobs能通过管理系统添加"支付方式"
 
-@mall @mall.pay_interface @hermes
+@mall @mall.pay_interface @hermes @wip
 Scenario:1 添加支付方式:微信支付 v3
 	
 	Given jobs登录系统
@@ -21,6 +21,7 @@ Scenario:1 添加支付方式:微信支付 v3
 		"""
 		{
 			"type": "微信支付",
+			"version": 3,
 			"is_active": "启用",
 			"weixin_appid": "app_id_1",
 			"mch_id": "mch_id_1",
@@ -108,11 +109,14 @@ Scenario:4 获得多个支付方式，改变支付接口启用状态
 	Then jobs能获得支付方式列表
 		"""
 		[{
-			"type": "微信支付"
+			"type": "微信支付",
+			"is_active": "停用"
 		}, {
-			"type": "货到付款"
+			"type": "货到付款",
+			"is_active": "停用"
 		},{
-			"type": "支付宝"
+			"type": "支付宝",
+			"is_active": "停用"
 		}]
 		"""
 	Given bill登录系统

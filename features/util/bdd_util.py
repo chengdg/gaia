@@ -198,6 +198,8 @@ def convert_to_same_type(a, b):
 				return True, target, other
 			except:
 				return False, target, other
+		elif ((target_type == bool) and (other_type == str)) or ((target_type == str) and (other_type == bool)):
+			return True, str(target).lower(), str(other).lower()
 
 		return False, target, other
 

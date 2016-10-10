@@ -95,9 +95,9 @@ def __format_product_post_data(context, product):
         'bar_code': product.get('bar_code', 'bar_code_default_value'), #商品条码
         'min_limit': product.get('min_limit', '1'), #起购数量
         'promotion_title': product.get('promotion_title', 'promotion_title_default_value'), #促销标题
-        'is_enable_bill': __get_boolean(product, 'is_enable_bill'), #是否使用发票
+        'is_enable_bill': product.get('is_enable_bill', False), #是否使用发票
         'detail': product.get('detail', u'商品的详情'), #详情
-        'is_member_product': __get_boolean(product, 'is_member_product'), #是否参与会员折扣
+        'is_member_product': product.get('is_member_product', False), #是否参与会员折扣
     }
 
     #规格信息
@@ -110,8 +110,8 @@ def __format_product_post_data(context, product):
     }
 
     #运费信息
-    postage_type = 'unified_postage_type' if (product.get('postage', u'统一运费') == u'统一运费') else 'custom_postage_type'
-    postage_info = {
+    postage_type = 'unified_postage_type' if (product.get('postage_type', u'统一运费') == u'统一运费') else 'custom_postage_type'
+    logistics_info = {
         'unified_postage_money': product.get('unified_postage_money', '0.0'), #统一运费金额
         'postage_type': postage_type, #运费类型
     }
@@ -131,7 +131,6 @@ def __format_product_post_data(context, product):
     categories = []
     category_names = product.get('categories', None)
     if category_names:
-        category_names = category_names.split(',')
         for category_name in category_names:
             db_category = mall_models.ProductCategory.select().dj_where(
                 owner_id = context.corp.id, 
@@ -144,12 +143,10 @@ def __format_product_post_data(context, product):
         'base_info': json.dumps(base_info),
         'models_info': json.dumps(models_info),
         'pay_info': json.dumps(pay_info),
-        'postage_info': json.dumps(postage_info),
+        'logistics_info': json.dumps(logistics_info),
         'image_info': json.dumps(image_info),
-        #分组
         'categories': json.dumps(categories),
-        #属性
-        'properties': product.get('properties', '[]'),        
+        'properties': json.dumps(product.get('properties', [])),        
     }
 
     return data
@@ -179,12 +176,14 @@ def __get_product(context, name):
         "bar_code": base_info['bar_code'],
         "min_limit": base_info['min_limit'],
         "promotion_title": base_info['promotion_title'],
-        "detail": base_info['detail']
+        "detail": base_info['detail'],
+        "is_member_product": base_info['is_member_product'],
+        "is_enable_bill": base_info['is_enable_bill'],
+        "properties": resp_data['properties']
     }
 
     #处理category
-    categories = [category['name'] for category in resp_data['categories']]
-    product['categories'] = u','.join(categories)
+    product['categories'] = [category['name'] for category in resp_data['categories']]
 
     #处理图片信息
     image_info = resp_data['image_info']
@@ -218,6 +217,11 @@ def __get_product(context, name):
             "stock_type": u'无限' if model['stock_type'] == 'unlimit' else u'有限',
             "stocks": model['stocks']
         }
+
+    #处理物流信息
+    logistics_info = resp_data['logistics_info']
+    product['postage_type'] = u'统一运费' if logistics_info['postage_type'] == 'unified_postage_type' else u'运费模板'
+    product['unified_postage_money'] = logistics_info['unified_postage_money']
 
     return product
 

@@ -5,7 +5,7 @@ Feature: 添加新商品
 
 Background:
 	Given jobs登录系统
-	And jobs已添加商品分类
+	And jobs已添加商品分组
 		"""
 		[{
 			"name": "分类1"
@@ -59,16 +59,21 @@ Scenario:1 添加标准规格商品
 
 	Given jobs登录系统
 	When jobs添加商品
-		#东坡肘子(有分类，上架，无限库存，多轮播图), 叫花鸡(无分类，下架，有限库存，单轮播图)
+		#东坡肘子(有分类，上架，无限库存，多轮播图), 包含其他所有信息
+		#叫花鸡(无分类，下架，有限库存，单轮播图)
 		"""
 		[{
 			"name": "东坡肘子",
 			"bar_code": "zhouzi_1",
 			"min_limit": 10,
 			"promotion_title": "促销的东坡肘子",
-			"categories": "分类1,分类2,分类3",
+			"categories": ["分类1", "分类2", "分类3"],
 			"detail": "东坡肘子的详情",
 			"status": "待售",
+			"is_member_product": true,
+			"is_enable_bill": true,
+			"postage_type": "统一运费",
+			"unified_postage_money": 3.1,
 			"swipe_images": [{
 				"url": "/static/test_resource_img/hangzhou1.jpg"
 			}, {
@@ -84,7 +89,14 @@ Scenario:1 添加标准规格商品
 						"stock_type": "无限"
 					}
 				}
-			}
+			},
+			"properties": [{
+				"name": "产地",
+				"value": "南京"
+			}, {
+				"name": "品质",
+				"value": "优"
+			}]
 		}, {
 			"name": "叫花鸡",
 			"detail": "叫花鸡的详情",
@@ -111,8 +123,12 @@ Scenario:1 添加标准规格商品
 			"bar_code": "zhouzi_1",
 			"min_limit": 10,
 			"promotion_title": "促销的东坡肘子",
-			"categories": "分类1,分类2,分类3",
+			"categories": ["分类1", "分类2", "分类3"],
 			"detail": "东坡肘子的详情",
+			"is_member_product": true,
+			"is_enable_bill": true,
+			"postage_type": "统一运费",
+			"unified_postage_money": 3.1,
 			"swipe_images": [{
 				"url": "/static/test_resource_img/hangzhou1.jpg"
 			}, {
@@ -129,7 +145,14 @@ Scenario:1 添加标准规格商品
 						"stock_type": "无限"
 					}
 				}
-			}
+			},
+			"properties": [{
+				"name": "产地",
+				"value": "南京"
+			}, {
+				"name": "品质",
+				"value": "优"
+			}]
 		}
 		"""
 	Then jobs能获取商品'叫花鸡'
