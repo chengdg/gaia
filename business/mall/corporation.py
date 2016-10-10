@@ -40,6 +40,7 @@ class Corporation(business_model.Model):
 			_account_user_profile = account_model.UserProfile.select().dj_where(user_id=owner_id).first()
 			self.webapp_id = _account_user_profile.webapp_id
 			self.type = _account_user_profile.webapp_type  # todo 数字123到类型名称转换
+			# type：0普通商家，1自营平台，2微众托管账号，3多门店平台
 		else:
 			self.webapp_id = 0
 			self.type = 0

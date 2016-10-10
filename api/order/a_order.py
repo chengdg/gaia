@@ -15,7 +15,7 @@ class AOrder(api_resource.ApiResource):
 	@param_required(['id'])
 	def get(args):
 		"""
-		特殊信息:相对于订单列表，状态日志、操作日志、物流信息
+		相对于订单列表的增量信息：状态日志、操作日志、物流信息、完整的促销信息、优惠券信息
 		@return:
 		"""
 
