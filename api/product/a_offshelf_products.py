@@ -25,7 +25,7 @@ class AOffshelfProducts(api_resource.ApiResource):
 		models_info = {
 			'is_use_custom_model': False,
 			'standard_model': None,
-			'custom_models': None,
+			'custom_models': [],
 			'used_system_model_properties': None
 		}
 		models_info['is_use_custom_model'] = product.is_use_custom_model
@@ -52,7 +52,8 @@ class AOffshelfProducts(api_resource.ApiResource):
 					"weight": custom_model.weight,
 					"stock_type": custom_model.stock_type,
 					"stocks": custom_model.stocks,
-					"user_code": custom_model.user_code
+					"user_code": custom_model.user_code,
+					"property_values": custom_model.property_values
 				})
 		else:
 			models_info['custom_models'] = []
@@ -90,7 +91,7 @@ class AOffshelfProducts(api_resource.ApiResource):
 				"id": product.id,
 				"name": product.name,
 				"image": product.thumbnails_url,
-				"models": [],
+				"models": AOffshelfProducts._get_models_info(product),
 				"user_code": -1,
 				"bar_code": product.bar_code,
 				"categories": AOffshelfProducts._get_categories(product),

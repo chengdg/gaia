@@ -34,7 +34,7 @@ class AOnshelfProducts(api_resource.ApiResource):
 				"id": product.id,
 				"name": product.name,
 				"image": product.thumbnails_url,
-				"models": [],
+				"models": AOffshelfProducts._get_categories(product),
 				"user_code": -1,
 				"bar_code": product.bar_code,
 				"categories": AOffshelfProducts._get_categories(product),
