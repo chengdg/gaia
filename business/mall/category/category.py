@@ -41,95 +41,121 @@ class Category(business_model.Model):
 		category = Category(model)
 		return category
 
-	@staticmethod
-	@param_required(['owner_id'])
-	def get_categories(params):
-		'''
-		分组管理列表
-		'''
-		filter_params = {'owner': params['owner_id']}
-		if params['category_ids']:
-			filter_params.update({'id__in': params['category_ids']})
+	# @staticmethod
+	# @param_required(['owner_id'])
+	# def get_categories(params):
+	# 	'''
+	# 	分组管理列表
+	# 	'''
+	# 	filter_params = {'owner': params['owner_id']}
+	# 	if params['category_ids']:
+	# 		filter_params.update({'id__in': params['category_ids']})
 
-		categories = mall_models.ProductCategory.select().dj_where(**filter_params)
-		if params['category_ids']:
-			return [Category.from_model({'db_model': category}) for category in categories], None
-		pageinfo, categories = paginator.paginate(categories, params['cur_page'], params[
-												'count_per_page'], query_string=params.get('query_string', None))
-		return [Category.from_model({'db_model': category}) for category in categories], pageinfo.to_dict()
+	# 	categories = mall_models.ProductCategory.select().dj_where(**filter_params)
+	# 	if params['category_ids']:
+	# 		return [Category.from_model({'db_model': category}) for category in categories], None
+	# 	pageinfo, categories = paginator.paginate(categories, params['cur_page'], params[
+	# 											'count_per_page'], query_string=params.get('query_string', None))
+	# 	return [Category.from_model({'db_model': category}) for category in categories], pageinfo.to_dict()
 
 
-	def update_category_property(self, category_id, actionProperty='name', update_params={}):
-		if actionProperty == 'position':
-			mall_models.CategoryHasProduct.update(display_index=update_params['display_index']).dj_where(product_id=update_params['product_id'], category_id=category_id).execute()
-		if actionProperty == 'products':
-			category = mall_models.ProductCategory.get(id=category_id)
-			product_ids = [product_id.strip() for product_id in update_params['product_ids'].strip().split(',') if product_id]
-			products = Product.from_ids({'product_ids': product_ids})
-			for b_product in products:
-				opt = {
-					'product': b_product.context['db_model'],
-					'category': category
-				}
-				mall_models.CategoryHasProduct.get_or_create(**opt)
-			category.product_count += len(products)
-			category.save()
-		else:
-			mall_models.ProductCategory.update(name=update_params['name']).dj_where(id=category_id).execute()
+	# def update_category_property(self, category_id, actionProperty='name', update_params={}):
+	# 	if actionProperty == 'position':
+	# 		mall_models.CategoryHasProduct.update(display_index=update_params['display_index']).dj_where(product_id=update_params['product_id'], category_id=category_id).execute()
+	# 	if actionProperty == 'products':
+	# 		category = mall_models.ProductCategory.get(id=category_id)
+	# 		product_ids = [product_id.strip() for product_id in update_params['product_ids'].strip().split(',') if product_id]
+	# 		products = Product.from_ids({'product_ids': product_ids})
+	# 		for b_product in products:
+	# 			opt = {
+	# 				'product': b_product.context['db_model'],
+	# 				'category': category
+	# 			}
+	# 			mall_models.CategoryHasProduct.get_or_create(**opt)
+	# 		category.product_count += len(products)
+	# 		category.save()
+	# 	else:
+	# 		mall_models.ProductCategory.update(name=update_params['name']).dj_where(id=category_id).execute()
 
-	@staticmethod
-	@param_required(['category_id'])
-	def from_id(args):
-		'''
-		获取单个分组信息
-		'''
-		category = mall_models.ProductCategory.select().dj_where(id=args[
-			'category_id'])
-		if category.first():
-			return Category(category.first())
-		else:
-			return None
+	# @staticmethod
+	# @param_required(['category_id'])
+	# def from_id(args):
+	# 	'''
+	# 	获取单个分组信息
+	# 	'''
+	# 	category = mall_models.ProductCategory.select().dj_where(id=args[
+	# 		'category_id'])
+	# 	if category.first():
+	# 		return Category(category.first())
+	# 	else:
+	# 		return None
 
-	def save(self, owner_id, name, products=None):
-		opt = {
-			'owner': owner_id,
-			'name': name
-		}
-		# created is True or False
-		# If an object is found, get_or_create() returns a tuple of that object and False.
-		# If multiple objects are found, get_or_create raises MultipleObjectsReturned.
-		# If an object is not found, get_or_create() will instantiate and save a new object, returning a tuple of the new object and True
-		# try:
-		category, created = mall_models.ProductCategory.get_or_create(**opt)
-		if products:
-			for b_product in products:
-				opt = {
-					'product': b_product.context['db_model'],
-					'category': category
-				}
-				mall_models.CategoryHasProduct.get_or_create(**opt)
-			category.product_count = len(products)
-			category.save()
-			# mall_models.ProductCategory.update(product_count=len(products)).dj_where(id=category.id).execute()
-		return Category(category)
+	# def save(self, owner_id, name, products=None):
+	# 	opt = {
+	# 		'owner': owner_id,
+	# 		'name': name
+	# 	}
+	# 	# created is True or False
+	# 	# If an object is found, get_or_create() returns a tuple of that object and False.
+	# 	# If multiple objects are found, get_or_create raises MultipleObjectsReturned.
+	# 	# If an object is not found, get_or_create() will instantiate and save a new object, returning a tuple of the new object and True
+	# 	# try:
+	# 	category, created = mall_models.ProductCategory.get_or_create(**opt)
+	# 	if products:
+	# 		for b_product in products:
+	# 			opt = {
+	# 				'product': b_product.context['db_model'],
+	# 				'category': category
+	# 			}
+	# 			mall_models.CategoryHasProduct.get_or_create(**opt)
+	# 		category.product_count = len(products)
+	# 		category.save()
+	# 		# mall_models.ProductCategory.update(product_count=len(products)).dj_where(id=category.id).execute()
+	# 	return Category(category)
 
-	def delete_from_id(self, category_id):
-		'''
-		删除指定分组
-		'''
-		category = mall_models.ProductCategory.get(id=category_id)
-		b_category = Category.from_model({'db_model': category})
-		if b_category.products:
-			mall_models.CategoryHasProduct.delete().dj_where(category=category).execute()
-		return category.delete_instance()
+	# def delete_from_id(self, category_id):
+	# 	'''
+	# 	删除指定分组
+	# 	'''
+	# 	category = mall_models.ProductCategory.get(id=category_id)
+	# 	b_category = Category.from_model({'db_model': category})
+	# 	if b_category.products:
+	# 		mall_models.CategoryHasProduct.delete().dj_where(category=category).execute()
+	# 	return category.delete_instance()
 
-	def delete_product(self, category_id, product_id):
+	def update_product_position(self, product_id, new_position):
+		"""
+		更新商品在分类中的排序位置
+		"""
+		mall_models.CategoryHasProduct.update(display_index=new_position).dj_where(category_id=self.id, product_id=product_id).execute()
+
+	def delete_product(self, product_id):
 		"""
 		删除指定分组中的商品
 		"""
-		mall_models.CategoryHasProduct.delete().dj_where(category_id=category_id, product_id=product_id).execute()
-		self.context['db_model'].product_count = int(self.context['db_model'].product_count) - 1
-		self.context['db_model'].save()
+		mall_models.CategoryHasProduct.delete().dj_where(category_id=self.id, product_id=product_id).execute()
+
+		mall_models.ProductCategory.update(product_count=mall_models.ProductCategory.product_count-1).dj_where(id=self.id).execute()
+		#self.context['db_model'].product_count = int(self.context['db_model'].product_count) - 1
+		#self.context['db_model'].save()
+
+	def add_products(self, product_ids):
+		"""
+		向分组中添加一组商品
+		"""
+		if product_ids:
+			for product_id in product_ids:
+				mall_models.CategoryHasProduct.create(
+					product = product_id,
+					category = self.id
+				)
+			mall_models.ProductCategory.update(product_count=mall_models.ProductCategory.product_count+len(product_ids)).dj_where(id=self.id).execute()
+
+	def update_name(self, name):
+		"""
+		更新分组名
+		"""
+		mall_models.ProductCategory.update(name=name).dj_where(id=self.id).execute()		
 
 	@property
 	def products(self):
@@ -144,9 +170,6 @@ class Category(business_model.Model):
 		"""
 		category_product_repository = CategoryProductRepository.get(self)
 		category_products = category_product_repository.get_top_n_products(10)
-		print '-*-' * 20
-		print category_products
-		print '-*-' * 20
 		return category_products
 
 	@staticmethod

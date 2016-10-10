@@ -102,7 +102,13 @@ class ProductPool(business_model.Model):
 
 		fill_product_detail_service = FillProductDetailService.get(self.corp)
 		fill_product_detail_service.fill_detail(products, fill_options)
-		return products
+
+		#按照product_ids中id的顺序对products进行顺序调整
+		id2product = dict([(product.id, product) for product in products])
+		result = []
+		for product_id in product_ids:
+			result.append(id2product[product_id])
+		return result
 
 	def delete_products(self, product_ids):
 		"""

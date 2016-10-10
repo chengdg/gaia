@@ -31,32 +31,18 @@ class ACategory(api_resource.ApiResource):
 			}
 		}
 
-	@param_required(['owner_id','category_id'])
+	@param_required(['corp_id', 'category_id', 'field', 'value'])
 	def post(args):
-		# 修改分组
-		category = Category.from_id({'category_id': args['category_id']})
-		params = {}
-		if category:
-			try:
-				if 'name' in args:
-					params['name'] = args['name']
-					category.update_category_property(args['category_id'], update_params=params)
-				if 'display_index' in args and 'product_id' in args:
-					params['display_index'] = args['display_index']
-					params['product_id'] = args['product_id']
-					category.update_category_property(args['category_id'],actionProperty='position', update_params=params)
-				if 'product_ids' in args:
-					params['product_ids'] = args['product_ids']
-					category.update_category_property(args['category_id'],actionProperty='products', update_params=params)
-				return {}
-			except:
-				msg = unicode_full_stack()
-				watchdog.error(msg)
-				return 500, {}
+		corp = args['corp']
+		field = args['field']
+		value = args['value']
+		category = corp.category_repository.get_category(args['category_id'])
+		if field == 'name':
+			category.update_name(value)
 		else:
-			msg = u'{}不存在'.format(args['category_id'])
-			watchdog.error(message=msg)
-			return 500, {'message': msg}
+			pass
+
+		return {}
 
 	@param_required(['corp_id', 'category_id'])
 	def delete(args):

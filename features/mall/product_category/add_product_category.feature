@@ -4,14 +4,14 @@ Feature: 添加商品分组
 """
 
 @mall @mall.product @mall.product_category @hermes
-Scenario:1 添加商品分组
+Scenario:1 添加无商品的商品分组
 	Jobs添加一组"商品分组"后，"商品分组列表"会按照添加的顺序倒序排列
 
 	Given jobs登录系统
 	When jobs添加商品分组
 		"""
 		[{
-			"name": "分组1"
+			"name": "分组1",
 		}, {
 			"name": "分组2"
 		}, {
@@ -32,6 +32,96 @@ Scenario:1 添加商品分组
 	Then bill能获取商品分组列表
 		"""
 		[]
+		"""
+
+
+@mall @mall.product @mall.product_category @hermes
+Scenario:1 添加包含商品的商品分组
+
+	Given jobs登录系统
+	And jobs已添加商品规格
+		"""
+		[{
+			"name": "颜色",
+			"type": "图片",
+			"values": [{
+				"name": "黑色",
+				"image": "/static/test_resource_img/icon_color/black.png"
+			}, {
+				"name": "白色",
+				"image": "/static/test_resource_img/icon_color/white.png"
+			}]
+		}, {
+			"name": "尺寸",
+			"type": "文字",
+			"values": [{
+				"name": "M"
+			}, {
+				"name": "S"
+			}]
+		}]
+		"""
+	When jobs添加商品
+		#东坡肘子(有分类，上架，无限库存，多轮播图), 包含其他所有信息
+		#叫花鸡(无分类，下架，有限库存，单轮播图)
+		"""
+		[{
+			"name": "东坡肘子",
+			"model": {
+				"models": {
+					"standard": {
+						"price": 11.12
+					}
+				}
+			}
+		}, {
+			"name": "叫花鸡",
+			"model": {
+				"models": {
+					"standard": {
+						"price": 12.00
+					}
+				}
+			}
+		}, {
+			"name": "莲藕排骨汤",
+			"model": {
+				"models": {
+					"standard": {
+						"price": 1.1
+					}
+				}
+			}
+		}]
+		"""
+	When jobs添加商品分组
+		"""
+		[{
+			"name": "分组1",
+			"products": ["东坡肘子", "叫花鸡", "莲藕排骨汤"]
+		}]
+		"""
+	Then jobs能获取商品分组列表
+		"""
+		[{
+			"name": "分组1",
+			"products": [{
+				"name": "东坡肘子",
+				"price": 11.12,
+				"sales": 0,
+				"status": "待售"
+			}, {
+				"name": "叫花鸡",
+				"price": 12.00,
+				"sales": 0,
+				"status": "待售"
+			}, {
+				"name": "莲藕排骨汤",
+				"price": 1.1,
+				"sales": 0,
+				"status": "待售"
+			}]
+		}]
 		"""
 
 @ignore

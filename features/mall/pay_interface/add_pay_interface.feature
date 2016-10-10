@@ -1,7 +1,7 @@
 Feature:添加支付方式
 	Jobs能通过管理系统添加"支付方式"
 
-@mall @mall.pay_interface @hermes @wip
+@mall @mall.pay_interface @hermes
 Scenario:1 添加支付方式:微信支付 v3
 	
 	Given jobs登录系统

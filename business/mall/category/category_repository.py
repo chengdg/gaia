@@ -26,6 +26,12 @@ class CategoryRepository(business_model.Service):
 		categories = mall_models.ProductCategory.select().dj_where(id__in=category_ids)
 		return [Category.from_model({'db_model': category}) for category in categories]
 
+	def get_category(self, category_id):
+		"""
+		获得指定的category
+		"""
+		return self.get_specific_categories([category_id])[0]
+
 	def delete_category(self, category_id):
 		mall_models.CategoryHasProduct.delete().dj_where(category=category_id).execute()
 		mall_models.ProductCategory.delete().dj_where(owner_id=self.corp.id, id=category_id).execute()

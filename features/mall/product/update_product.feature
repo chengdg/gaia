@@ -505,7 +505,7 @@ Scenario:7 修改物流信息
 		}
 		"""
 
-@mall @mall.product @mall.product_management @hermes @wip
+@mall @mall.product @mall.product_management @hermes
 Scenario:7 修改商品属性信息
 	jobs进行如下操作：
 	1. 修改邮费配置

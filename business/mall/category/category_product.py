@@ -37,6 +37,9 @@ class CategoryProduct(business_model.Model):
 			else:
 				self.status = 'off_shelf'
 
+			#获取价格
+			self.price = product.price_info['display_price']
+
 	@staticmethod
 	def from_product(product):
 		return CategoryProduct(product)

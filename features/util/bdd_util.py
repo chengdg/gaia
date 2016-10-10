@@ -230,7 +230,7 @@ def assert_dict(expected, actual):
 		if isinstance(expected_value, dict):
 			assert_dict(expected_value, actual_value)
 		elif isinstance(expected_value, list):
-			assert_list(expected_value, actual_value)
+			assert_list(expected_value, actual_value, key)
 		else:
 			expected_value, actual_value = convert_to_same_type(expected_value, actual_value)
 			try:
@@ -244,9 +244,9 @@ def assert_dict(expected, actual):
 ###########################################################################
 # assert_list: 验证expected中的数据都出现在了actual中
 ###########################################################################
-def assert_list(expected, actual):
+def assert_list(expected, actual, key=None):
 	global tc
-	tc.assertEquals(len(expected), len(actual))
+	tc.assertEquals(len(expected), len(actual), "list %s's length is not equals. e:%d != a:%d" % (key, len(expected), len(actual)))
 
 	for i in range(len(expected)):
 		expected_obj = expected[i]

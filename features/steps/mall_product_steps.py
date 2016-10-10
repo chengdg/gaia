@@ -50,34 +50,44 @@ def __format_product_models_info(context, product):
         'standard_model': {},
         'custom_models': []
     }
-    for model_name, model in product['model']['models'].items():
-        is_unlimit_stock = (model.get('stock_type', u'无限') == u'无限')
-        data = {
-            "price": model.get('price', 1.0),
-            "weight": model.get('weight', 2.0),
-            "stock_type": 'unlimit' if is_unlimit_stock else 'limit',
-            "stocks": -1 if is_unlimit_stock else model.get('stocks', 10),
-            "user_code": model.get('user_code', 'user_code_%s' % model_name)
-        }
-        if model_name == 'standard':
-            data['name'] = 'standard'
-            models_info['standard_model'] = data
-        else:
-            normalized_model_name, model_properties = __parse_model_name(context, model_name)
-            data['name'] = normalized_model_name
-            data['properties'] = model_properties
-
-            #在数据库中查询是否已存在该model，如果存在，则是更新；否则，为创建
-            try:
-                existed_product_model = mall_models.ProductModel.select().dj_where(owner_id=context.corp.id, name=normalized_model_name, is_deleted=False).get()
-            except:
-                existed_product_model = None
-            if existed_product_model:
-                data['id'] = existed_product_model.id
+    if 'model' in product:
+        for model_name, model in product['model']['models'].items():
+            is_unlimit_stock = (model.get('stock_type', u'无限') == u'无限')
+            data = {
+                "price": model.get('price', 1.0),
+                "weight": model.get('weight', 2.0),
+                "stock_type": 'unlimit' if is_unlimit_stock else 'limit',
+                "stocks": -1 if is_unlimit_stock else model.get('stocks', 10),
+                "user_code": model.get('user_code', 'user_code_%s' % model_name)
+            }
+            if model_name == 'standard':
+                data['name'] = 'standard'
+                models_info['standard_model'] = data
             else:
-                data['id'] = normalized_model_name
+                normalized_model_name, model_properties = __parse_model_name(context, model_name)
+                data['name'] = normalized_model_name
+                data['properties'] = model_properties
 
-            models_info['custom_models'].append(data)
+                #在数据库中查询是否已存在该model，如果存在，则是更新；否则，为创建
+                try:
+                    existed_product_model = mall_models.ProductModel.select().dj_where(owner_id=context.corp.id, name=normalized_model_name, is_deleted=False).get()
+                except:
+                    existed_product_model = None
+                if existed_product_model:
+                    data['id'] = existed_product_model.id
+                else:
+                    data['id'] = normalized_model_name
+
+                models_info['custom_models'].append(data)
+    else:
+        models_info['standard_model'] = {
+            "name": "standard",
+            "price": 1.0,
+            "weight": 2.0,
+            "stock_type": 'unlimit',
+            "stocks": -1,
+            "user_code": 'user_code'
+        }
     if len(models_info['custom_models']) > 0:
         models_info['is_use_custom_model'] = 'true'
 

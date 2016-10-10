@@ -90,11 +90,12 @@ class FillProductDetailService(business_model.Service):
 			id2product[img.product_id].swipe_images.append(data)
 
 	def __fill_display_price(self, products):
-		"""根据商品规格，获取商品价格
+		"""
+		根据商品规格，获取商品价格
 		"""
 		for product in products:
 			if product.is_use_custom_model:
-				custom_models = product.models
+				custom_models = product.custom_models
 				if len(custom_models) == 1:
 					#只有一个custom model，显示custom model的价格信息
 					product_model = custom_models[0]
@@ -149,10 +150,7 @@ class FillProductDetailService(business_model.Service):
 						'max_price': max_price,
 					}
 			else:
-				standard_model = None
-				if product.models:
-					standard_model = product.models[0]
-
+				standard_model = product.standard_model
 				if standard_model:
 					product.price_info = {
 						'display_price': str("%.2f" % standard_model.price),

@@ -33,9 +33,10 @@ class CategoryProductRepository(object):
 		product2relation = {}
 
 		if n == UNLIMITED:
-			product_relations = mall_models.CategoryHasProduct.select().dj_where(category_id=self.category.id).order_by('display_index')
+			product_relations = mall_models.CategoryHasProduct.select().dj_where(category_id=self.category.id).order_by(mall_models.CategoryHasProduct.display_index)
 		else:
-			product_relations = mall_models.CategoryHasProduct.select().dj_where(category_id=self.category.id).order_by('display_index')[:n]
+			product_relations = mall_models.CategoryHasProduct.select().dj_where(category_id=self.category.id).order_by(mall_models.CategoryHasProduct.display_index)[:n]
+		print [r.product_id for r in product_relations]
 
 		product_ids = []
 		if product_relations:
@@ -43,7 +44,7 @@ class CategoryProductRepository(object):
 			product2relation.update(dict([(relation.product_id, relation) for relation in product_relations]))
 
 		fill_options = {
-			'with_price': False,
+			'with_price': True,
 			'with_product_model': True,
 			'with_shelve_status': True
 		}
