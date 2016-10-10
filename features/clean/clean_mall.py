@@ -40,6 +40,13 @@ def clean():
 	promotion_models.ProductHasPromotion.delete().execute()
 	promotion_models.PremiumSaleProduct.delete().execute()
 
+	# 订单
+	mall_models.OrderHasProduct.delete().execute()
+	mall_models.OrderHasPromotion.delete().execute()
+	mall_models.OrderHasGroup.delete().execute()
+	mall_models.OrderHasRefund.delete().execute()
+	mall_models.OrderCardInfo.delete().execute()
+
 	#商品
 	mall_models.ProductModelHasPropertyValue.delete().execute()
 	mall_models.ProductModel.delete().execute()
