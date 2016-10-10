@@ -51,4 +51,5 @@ def clean():
 	mall_models.ProductModelHasPropertyValue.delete().execute()
 	mall_models.ProductModel.delete().execute()
 	mall_models.ProductSwipeImage.delete().execute()
+	mall_models.ProductSales.delete().execute()
 	mall_models.Product.delete().execute()
