@@ -14,7 +14,7 @@ class AOrderList(api_resource.ApiResource):
 	app = 'order'
 	resource = 'orders'
 
-	@param_required(['cur_page', 'count_per_page'])
+	@param_required(['corp'])
 	def get(args):
 
 		filter_values = args.get('filter_values', '')
@@ -22,38 +22,26 @@ class AOrderList(api_resource.ApiResource):
 		corp = args['corp']
 		order_repository = corp.order_repository
 
-		try:
-			target_page = PageInfo.create({
-				"cur_page": int(args.get('cur_page', 1)),
-				"count_per_page": int(args.get('count_per_page', 10))
-			})
-			fill_options = {
-				'with_refunding_info': True,
-				'with_group_buy_info': True,
-				'with_member': True,
-				'with_group_info': True,
-				'with_full_money_info': True,
-				'with_delivery_items': {
-					'fill': True,
-					'fill_options': {
-						'with_products': True,
-						'with_refunding_info': True
-					}
+		target_page = PageInfo.create({
+			"cur_page": int(args.get('cur_page', 1)),
+			"count_per_page": int(args.get('count_per_page', 10))
+		})
+		fill_options = {
+			'with_refunding_info': True,
+			'with_group_buy_info': True,
+			'with_member': True,
+			'with_group_info': True,
+			'with_full_money_info': True,
+			'with_delivery_items': {
+				'fill': True,
+				'fill_options': {
+					'with_products': True,
+					'with_refunding_info': True
 				}
-
 			}
-			pageinfo, orders = order_repository.get_orders(filter_values, target_page, fill_options)
-		except BaseException as e:
-			# todo 去掉
-			from eaglet.core.exceptionutil import unicode_full_stack
-			watchdog.alert({
-				'traceback': unicode_full_stack(),
-				'uuid': 'a_orders error',
-				'corp_id': args['corp'].id
-			})
-			print(unicode_full_stack())
 
-		# raise e
+		}
+		pageinfo, orders = order_repository.get_orders(filter_values, target_page, fill_options)
 
 		order_dicts = [order.to_dict() for order in orders]
 		return {

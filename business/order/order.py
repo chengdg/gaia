@@ -64,7 +64,9 @@ class Order(business_model.Model):
 		'save_money',
 		'origin_weizoom_card_money',
 		'origin_final_price',
-		'status_logs'
+		'status_logs',
+
+		'is_use_delivery_item_db_model'  # 对于老的同步订单，订单是出货单，此类订单不会再产生，业务只处理显示
 	)
 
 	def __init__(self):
@@ -101,6 +103,7 @@ class Order(business_model.Model):
 				order.bid_with_edit_money = order.bid
 			order.status = db_model.status
 			order.is_self_order = db_model.origin_order_id == -1  # todo 起个名
+			order.is_use_delivery_item_db_model = db_model.origin_order_id > 0
 			order.remark = db_model.remark
 			order.type = db_model.type
 			order.webapp_id = db_model.webapp_id
@@ -215,6 +218,9 @@ class Order(business_model.Model):
 
 			if order.is_self_order:
 				self_order_ids.append(order.id)
+			elif order.is_use_delivery_item_db_model:
+				# 对于老同步订单，出货单在db层是出货单本身
+				delivery_item_db_models.append(order.context['db_model'])
 			else:
 				# 对于非拆单订单，出货单在db层即其本身
 				delivery_item_db_models.append(order.context['db_model'])
