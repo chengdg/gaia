@@ -20,7 +20,7 @@ class ACategoryCandidateProducts(api_resource.ApiResource):
 	def get(args):
 		category_id = args['category_id']
 		corp = args['corp']
-		if category_id == '0':
+		if category_id == '0' or category_id == 0:
 			#没有指定category，获取全部商品
 			count_per_page = args.get('count_per_page', 10)
 			query = {}

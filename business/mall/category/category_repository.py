@@ -27,4 +27,5 @@ class CategoryRepository(business_model.Service):
 		return [Category.from_model({'db_model': category}) for category in categories]
 
 	def delete_category(self, category_id):
+		mall_models.CategoryHasProduct.delete().dj_where(category=category_id).execute()
 		mall_models.ProductCategory.delete().dj_where(owner_id=self.corp.id, id=category_id).execute()
