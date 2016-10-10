@@ -1,0 +1,710 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "Hermes Product API"
+    },
+    "paths": {
+        "/product/product/": {
+            "get": {
+                "description": "获取商品详情",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "商品id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/ReturnProduct"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "创建商品",
+                "parameters": [
+                    {
+                        "name": "",
+                        "in": "body",
+                        "description": "postage config的name",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/NewProduct"
+                        }
+                    }
+                ],
+                "tags": [
+                    "product"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            },
+            "post": {
+                "description": "更新商品",
+                "parameters": [
+                    {
+                        "name": "",
+                        "in": "body",
+                        "description": "postage config的name",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/UpdateProduct"
+                        }
+                    }
+                ],
+                "tags": [
+                    "product"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        },
+        "/product/product_creation_option/": {
+            "get": {
+                "description": "获取商品创建参数",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "pay_interfaces": {
+                                    "type": "array",
+                                    "description": "支付接口集合",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "id": {
+                                                "type": "string",
+                                                "description": "支付接口的id"
+                                            },
+                                            "type": {
+                                                "type": "string",
+                                                "description": "支付接口的类型，比如'weixin_pay', 'alipay'等"
+                                            },
+                                            "name": {
+                                                "type": "string",
+                                                "description": "支付接口的名字，比如'微信支付', '支付宝'等"
+                                            }
+                                        }
+                                    }
+                                },
+                                "property_templates": {
+                                    "type": "array",
+                                    "description": "商品属性模板集合",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "id": {
+                                                "type": "string",
+                                                "description": "商品属性模板的id"
+                                            },
+                                            "name": {
+                                                "type": "string",
+                                                "description": "商品属性模板的名字"
+                                            }
+                                        }
+                                    }
+                                },
+                                "categories": {
+                                    "type": "array",
+                                    "description": "商品分组集合",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "id": {
+                                                "type": "string",
+                                                "description": "商品分组的id"
+                                            },
+                                            "name": {
+                                                "type": "string",
+                                                "description": "商品分组的名字"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/product/onshelf_products/": {
+            "get": {
+                "description": "获取在售商品集合",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "products": {
+                                    "$ref": "#/definitions/ProductInProductList"
+                                },
+                                "pageinfo": {
+                                    "type": "object",
+                                    "description": "分页信息"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "将商品集合上架",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "formData",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "product_ids",
+                        "in": "formData",
+                        "description": "待上架的商品的id集合的json字符串",
+                        "format": "'[1, 2, 3]'",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        },
+        "/product/offshelf_products/": {
+            "get": {
+                "description": "获取待售商品集合",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "products": {
+                                    "$ref": "#/definitions/ProductInProductList"
+                                },
+                                "pageinfo": {
+                                    "type": "object",
+                                    "description": "分页信息"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "将商品集合下架",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "formData",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "product_ids",
+                        "in": "formData",
+                        "description": "待下架的商品的id集合的json字符串",
+                        "format": "'[1, 2, 3]'",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        },
+        "/product/deleted_products/": {
+            "put": {
+                "description": "将商品集合删除",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "formData",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "product_ids",
+                        "in": "formData",
+                        "description": "待删除的商品的id集合的json字符串",
+                        "format": "'[1, 2, 3]'",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "NewProduct": {
+            "type": "object",
+            "properties": {
+                "corp_id": {
+                    "type": "number",
+                    "description": ""
+                },
+                "base_info(json字符串)": {
+                    "$ref": "#/definitions/BaseInfo"
+                },
+                "models_info(json字符串)": {
+                    "$ref": "#/definitions/ModelsInfo"
+                },
+                "image_info(json字符串)": {
+                    "$ref": "#/definitions/ImageInfo"
+                },
+                "logistics_info(json字符串)": {
+                    "$ref": "#/definitions/LogisticsInfo"
+                },
+                "pay_info(json字符串)": {
+                    "$ref": "#/definitions/PayInfo"
+                },
+                "properties(json字符串)": {
+                    "$ref": "#/definitions/ProductProperties"
+                },
+                "categories(json字符串)": {
+                    "$ref": "#/definitions/ProductCategories"
+                }
+            }
+        },
+        "UpdateProduct": {
+            "type": "object",
+            "properties": {
+                "corp_id": {
+                    "type": "number",
+                    "description": ""
+                },
+                "id": {
+                    "type": "number",
+                    "description": "待更新的商品的id"
+                },
+                "base_info(json字符串)": {
+                    "$ref": "#/definitions/BaseInfo"
+                },
+                "models_info(json字符串)": {
+                    "$ref": "#/definitions/ModelsInfo"
+                },
+                "image_info(json字符串)": {
+                    "$ref": "#/definitions/ImageInfo"
+                },
+                "logistics_info(json字符串)": {
+                    "$ref": "#/definitions/LogisticsInfo"
+                },
+                "pay_info(json字符串)": {
+                    "$ref": "#/definitions/PayInfo"
+                },
+                "properties(json字符串)": {
+                    "$ref": "#/definitions/ProductProperties"
+                },
+                "categories(json字符串)": {
+                    "$ref": "#/definitions/ProductCategories"
+                }
+            }
+        },
+        "ReturnProduct": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "number",
+                    "description": "商品的id"
+                },
+                "base_info(json字符串)": {
+                    "$ref": "#/definitions/BaseInfo"
+                },
+                "models_info(json字符串)": {
+                    "$ref": "#/definitions/ModelsInfo"
+                },
+                "image_info(json字符串)": {
+                    "$ref": "#/definitions/ImageInfo"
+                },
+                "logistics_info(json字符串)": {
+                    "$ref": "#/definitions/LogisticsInfo"
+                },
+                "pay_info(json字符串)": {
+                    "$ref": "#/definitions/PayInfo"
+                },
+                "properties(json字符串)": {
+                    "$ref": "#/definitions/ProductProperties"
+                },
+                "categories(json字符串)": {
+                    "$ref": "#/definitions/ReturnCategories"
+                }
+            }
+        },
+        "BaseInfo": {
+            "type": "object",
+            "description": "商品的基本信息",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "商品名"
+                },
+                "type": {
+                    "type": "string",
+                    "description": "商品类型",
+                    "format": "默认为object"
+                },
+                "bar_code": {
+                    "type": "string",
+                    "description": "商品条码"
+                },
+                "min_limit": {
+                    "type": "number",
+                    "description": "起购数量"
+                },
+                "promotion_title": {
+                    "type": "string",
+                    "description": "促销标题"
+                },
+                "is_enable_bill": {
+                    "type": "boolean",
+                    "description": "是否出具发票"
+                },
+                "is_member_product": {
+                    "type": "boolean",
+                    "description": "是否参与会员折扣"
+                },
+                "detail": {
+                    "type": "string",
+                    "description": "商品详情"
+                }
+            }
+        },
+        "ModelsInfo": {
+            "type": "object",
+            "description": "商品的规格信息",
+            "properties": {
+                "is_use_custom_model": {
+                    "type": "boolean",
+                    "description": "是否使用定制规格"
+                },
+                "standard_model": {
+                    "$ref": "#/definitions/Model"
+                },
+                "custom_models": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Model"
+                    }
+                }
+            }
+        },
+        "Model": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "规格的id，-1代表库中没有的新规格"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "规格名"
+                },
+                "price": {
+                    "type": "number",
+                    "description": "价格"
+                },
+                "weight": {
+                    "type": "number",
+                    "description": "重量"
+                },
+                "user_code": {
+                    "type": "string",
+                    "description": "编码"
+                },
+                "stock_type": {
+                    "type": "string",
+                    "description": "库存类型，可取'unlimit(无限)', 'limit(有限)'"
+                },
+                "stocks": {
+                    "type": "number",
+                    "description": "库存数量，当stock_type为unlimit时候，改值应该为-1"
+                },
+                "properties": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ModelPropertyInfo"
+                    },
+                    "minItems": 0,
+                    "description": "当规格是标准规格时，properties属性可以不出现"
+                }
+            }
+        },
+        "ModelPropertyInfo": {
+            "type": "object",
+            "properties": {
+                "property_id": {
+                    "type": "number",
+                    "description": "model使用的model property的id"
+                },
+                "property_value_id": {
+                    "type": "number",
+                    "description": "model使用的model property value的id"
+                }
+            }
+        },
+        "ImageInfo": {
+            "type": "object",
+            "description": "商品的图片信息",
+            "properties": {
+                "thumbnails_url": {
+                    "type": "string",
+                    "description": "商品的缩略图"
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Image"
+                    }
+                }
+            }
+        },
+        "Image": {
+            "type": "object",
+            "properties": {
+                "url": {
+                    "type": "string",
+                    "description": "图片的url"
+                },
+                "width": {
+                    "type": "number",
+                    "description": "图片的宽度"
+                },
+                "height": {
+                    "type": "number",
+                    "description": "图片的高度"
+                }
+            }
+        },
+        "LogisticsInfo": {
+            "type": "object",
+            "description": "商品的物流信息",
+            "properties": {
+                "postage_type": {
+                    "type": "string",
+                    "description": "邮费类型",
+                    "format": "可取'unified_postage_type(统一运费)', 'custom_postage_type(使用系统运费模板)'"
+                },
+                "unified_postage_money": {
+                    "type": "number",
+                    "description": "当postage_type为unified_postage_type时，指定运费的数值"
+                }
+            }
+        },
+        "PayInfo": {
+            "type": "object",
+            "description": "商品的支付信息",
+            "properties": {
+                "is_use_online_pay_interface": {
+                    "type": "boolean",
+                    "description": "是否启用在线支付接口"
+                },
+                "is_use_cod_pay_interface": {
+                    "type": "boolean",
+                    "description": "是否启用货到付款支付方式"
+                }
+            }
+        },
+        "ProductProperties": {
+            "type": "array",
+            "description": "商品属性集合",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "商品属性名"
+                    },
+                    "value": {
+                        "type": "string",
+                        "description": "商品属性值"
+                    }
+                }
+            }
+        },
+        "ProductCategories": {
+            "type": "array",
+            "description": "商品分组的id集合",
+            "items": {
+                "type": "number"
+            }
+        },
+        "ReturnCategories": {
+            "type": "array",
+            "description": "商品分组的集合",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number",
+                        "description": "商品分组的id"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "商品分组名"
+                    }
+                }
+            }
+        },
+        "ProductInProductList": {
+            "type": "object",
+            "description": "商品信息",
+            "properties": {
+                "id": {
+                    "type": "number",
+                    "description": "商品的id"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "商品名"
+                },
+                "image": {
+                    "type": "string",
+                    "description": "商品缩略图的url"
+                },
+                "bar_code": {
+                    "type": "string",
+                    "description": "商品条码"
+                },
+                "categories": {
+                    "$ref": "#/definitions/ReturnCategories"
+                },
+                "price": {
+                    "type": "string",
+                    "description": "商品价格"
+                },
+                "sales": {
+                    "type": "string",
+                    "description": "商品销量"
+                },
+                "is_use_custom_model": {
+                    "type": "boolean",
+                    "description": "商品是否使用定制规格"
+                },
+                "display_index": {
+                    "type": "string",
+                    "description": "商品显示的顺序"
+                },
+                "stock_type": {
+                    "type": "string",
+                    "description": "商品库存类型",
+                    "format": "如果使用定制规格，stock_type='combined'；否则，为标准规格的stock_type值"
+                },
+                "stocks": {
+                    "type": "number",
+                    "description": "商品库存数量",
+                    "format": "如果使用定制规格，stocks=-1；否则，为标准规格的stocks值"
+                }
+            }
+        }
+    }
+}

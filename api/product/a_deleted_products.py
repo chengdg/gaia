@@ -11,12 +11,12 @@ from business.common.page_info import PageInfo
 
 class ADeletedProducts(api_resource.ApiResource):
 	"""
-	在售商品集合
+	已删除商品集合
 	"""
 	app = "product"
 	resource = "deleted_products"
 
-	@param_required(['corp', 'product_ids'])
+	@param_required(['corp_id', 'product_ids'])
 	def put(args):
 		corp = args['corp']
 		product_ids = json.loads(args['product_ids'])

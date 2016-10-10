@@ -75,7 +75,7 @@ class AProduct(api_resource.ApiResource):
 		for image in product.swipe_images:
 			images.append({
 				"url": image['url'],
-				"link_url": image['link_url'],
+				#"link_url": image['link_url'],
 				"width": image['width'],
 				"height": image['height']
 			})
@@ -188,4 +188,4 @@ class AProduct(api_resource.ApiResource):
 
 	@param_required(['ids'])
 	def delete(args):
-		pids = args['ids'].split(',')
+		pass

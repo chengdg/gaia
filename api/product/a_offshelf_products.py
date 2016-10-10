@@ -118,7 +118,7 @@ class AOffshelfProducts(api_resource.ApiResource):
 			'products': datas
 		}
 
-	@param_required(['corp'])
+	@param_required(['corp_id', 'product_ids'])
 	def put(args):
 		corp = args['corp']
 		product_ids = json.loads(args['product_ids'])
