@@ -13,7 +13,7 @@ class ProductFactory(business_model.Service):
 	"""
 	商品工厂
 	"""
-	def __create_product(self, base_info, image_info, postage_info, pay_info):
+	def __create_product(self, base_info, image_info, logistics_info, pay_info):
 		product = mall_models.Product.create(
 			owner=self.corp.id,
 			name=base_info.get('name', '').strip(),
@@ -25,17 +25,17 @@ class ProductFactory(business_model.Service):
 			type=base_info.get('type', mall_models.PRODUCT_DEFAULT_TYPE),
 			is_use_online_pay_interface=pay_info["is_use_online_pay_interface"],
 			is_use_cod_pay_interface=pay_info["is_use_cod_pay_interface"],
-			postage_type=postage_info['postage_type'],
-			postage_id=postage_info.get('postage_id', 0),
-			unified_postage_money=postage_info['unified_postage_money'],
+			postage_type=logistics_info['postage_type'],
+			postage_id=logistics_info.get('postage_id', 0),
+			unified_postage_money=logistics_info['unified_postage_money'],
 			stocks=base_info['min_limit'],
 			is_member_product=base_info["is_member_product"],
 			supplier=base_info.get('supplier_id', 0),
 			purchase_price=base_info.get('purchase_price', 0.0),
 			is_enable_bill=base_info['is_enable_bill'],
 			is_delivery=base_info.get('is_delivery', 'false') == 'true',
-			limit_zone_type=int(postage_info.get('limit_zone_type', '0')),
-			limit_zone=int(postage_info.get('limit_zone_template', '0'))
+			limit_zone_type=int(logistics_info.get('limit_zone_type', '0')),
+			limit_zone=int(logistics_info.get('limit_zone_template', '0'))
 		)
 		
 		return product
@@ -142,12 +142,12 @@ class ProductFactory(business_model.Service):
 		base_info = json.loads(args['base_info'])
 		models_info = json.loads(args['models_info'])
 		image_info = json.loads(args['image_info'])
-		postage_info = json.loads(args['postage_info'])
+		logistics_info = json.loads(args['logistics_info'])
 		pay_info = json.loads(args['pay_info'])
 		categories = json.loads(args['categories'])
 		properties = json.loads(args['properties'])
 
-		product = self.__create_product(base_info, image_info, postage_info, pay_info)
+		product = self.__create_product(base_info, image_info, logistics_info, pay_info)
 		self.__add_product_to_categories(product, categories)
 		self.__add_images_to_product(product, image_info)
 		self.__set_product_models(product, models_info)

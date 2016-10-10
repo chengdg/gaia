@@ -60,13 +60,15 @@ class Product(business_model.Model):
 		'custom_models',
 		'used_system_model_properties',
 
+		#物流信息
+		'postage_id',
+		'postage_type',
+		'unified_postage_money',
+
 		#价格、销售信息
 		'price_info',
 		'sales',
 		'is_sellout',
-		'postage_id',
-		'postage_type',
-		'unified_postage_money',
 		'is_use_online_pay_interface',
 		'is_use_cod_pay_interface',
 		'product_promotion_title', #商品的促销标题

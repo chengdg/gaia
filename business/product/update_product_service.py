@@ -13,7 +13,7 @@ class UpdateProductService(business_model.Service):
 	"""
 	商品工厂
 	"""
-	def __update_product(self, product_id, base_info, image_info, postage_info, pay_info):
+	def __update_product(self, product_id, base_info, image_info, logistics_info, pay_info):
 		product = mall_models.Product.update(
 			name=base_info.get('name', '').strip(),
 			promotion_title=base_info.get('promotion_title', '').strip(),
@@ -24,17 +24,17 @@ class UpdateProductService(business_model.Service):
 			type=base_info.get('type', mall_models.PRODUCT_DEFAULT_TYPE),
 			is_use_online_pay_interface=pay_info['is_use_online_pay_interface'],
 			is_use_cod_pay_interface=pay_info['is_use_cod_pay_interface'],
-			postage_type=postage_info['postage_type'],
-			postage_id=postage_info.get('postage_id', 0),
-			unified_postage_money=postage_info['unified_postage_money'],
+			postage_type=logistics_info['postage_type'],
+			postage_id=logistics_info.get('postage_id', 0),
+			unified_postage_money=logistics_info['unified_postage_money'],
 			stocks=base_info['min_limit'],
 			is_member_product=base_info['is_member_product'],
 			supplier=base_info.get('supplier_id', 0),
 			purchase_price=base_info.get('purchase_price', 0.0),
 			is_enable_bill=base_info['is_enable_bill'],
 			is_delivery=base_info.get('is_delivery', 'false') == 'true',
-			limit_zone_type=int(postage_info.get('limit_zone_type', '0')),
-			limit_zone=int(postage_info.get('limit_zone_template', '0'))
+			limit_zone_type=int(logistics_info.get('limit_zone_type', '0')),
+			limit_zone=int(logistics_info.get('limit_zone_template', '0'))
 		).dj_where(owner_id=self.corp.id, id=product_id).execute()
 		
 		return product
@@ -208,12 +208,12 @@ class UpdateProductService(business_model.Service):
 		base_info = json.loads(args['base_info'])
 		models_info = json.loads(args['models_info'])
 		image_info = json.loads(args['image_info'])
-		postage_info = json.loads(args['postage_info'])
+		logistics_info = json.loads(args['logistics_info'])
 		pay_info = json.loads(args['pay_info'])
 		categories = json.loads(args['categories'])
 		properties = json.loads(args['properties'])
 
-		product = self.__update_product(product_id, base_info, image_info, postage_info, pay_info)
+		product = self.__update_product(product_id, base_info, image_info, logistics_info, pay_info)
 		self.__update_product_categories(product_id, categories)
 		self.__update_product_images(product_id, image_info)
 		self.__update_product_models(product_id, models_info)

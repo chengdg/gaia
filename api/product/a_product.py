@@ -114,6 +114,15 @@ class AProduct(api_resource.ApiResource):
 
 		return data
 
+	@staticmethod
+	def __get_logistics_info(product):
+		data = {
+			'postage_type': product.postage_type,
+			'unified_postage_money': product.unified_postage_money
+		}
+
+		return data
+
 	@param_required(['corp_id', 'id'])
 	def get(args):
 		"""
@@ -150,12 +159,13 @@ class AProduct(api_resource.ApiResource):
 				"image_info": AProduct.__get_image_info(product),
 				"models_info": AProduct.__get_models_info(product),
 				"pay_info": AProduct.__get_pay_info(product),
-				'properties': AProduct.__get_properties(product)
+				'properties': AProduct.__get_properties(product),
+				"logistics_info": AProduct.__get_logistics_info(product)
 			}
 
 			return data
 
-	@param_required(['corp_id', 'base_info', 'models_info', 'image_info', 'postage_info', 'pay_info', 'categories', 'properties'])
+	@param_required(['corp_id', 'base_info', 'models_info', 'image_info', 'logistics_info', 'pay_info', 'categories', 'properties'])
 	def put(args):
 		"""
 		创建商品
@@ -167,7 +177,7 @@ class AProduct(api_resource.ApiResource):
 
 		return {}
 
-	@param_required(['corp_id', 'id', 'base_info', 'models_info', 'image_info', 'postage_info', 'pay_info', 'categories', 'properties'])
+	@param_required(['corp_id', 'id', 'base_info', 'models_info', 'image_info', 'logistics_info', 'pay_info', 'categories', 'properties'])
 	def post(args):
 		product_data = args
 		product_id = product_data['id']
