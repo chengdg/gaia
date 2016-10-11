@@ -56,7 +56,10 @@ class ProductPool(business_model.Model):
 
 		if 'id__notin' in filter_values:
 			if len(filter_values['id__notin']) > 0:
-				product_pool_filter_values['product_id__notin'] = filter_values['id__notin']			
+				product_pool_filter_values['product_id__notin'] = filter_values['id__notin']
+
+		if 'name__icontains' in filter_values:
+			product_db_filter_values['name__icontains'] = filter_values['name__icontains']		
 
 		return product_pool_filter_values, product_db_filter_values, product_detail_filter_values
 

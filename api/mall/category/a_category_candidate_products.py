@@ -17,7 +17,7 @@ class ACategoryCandidateProducts(api_resource.ApiResource):
 	app = 'mall'
 	resource = 'category_candidate_products'
 
-	@param_required(['corp_id', 'category_id'])
+	@param_required(['corp_id', 'category_id', 'filters'])
 	def get(args):
 		category_id = int(args['category_id'])
 		corp = args['corp']
@@ -26,8 +26,9 @@ class ACategoryCandidateProducts(api_resource.ApiResource):
 		cur_page = int(args.get('page', 1))
 		count_per_page = int(args.get('count_per_page', 10))
 		target_page = PageInfo(cur_page, count_per_page)
+		filters = json.loads(args['filters'])
 
-		category_products, pageinfo = CategoryProductRepository.get(corp).get_candidate_products_for_category(category_id, target_page)
+		category_products, pageinfo = CategoryProductRepository.get(corp).get_candidate_products_for_category(category_id, target_page, filters)
 
 		datas = []
 		for category_product in category_products:

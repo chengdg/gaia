@@ -11,6 +11,7 @@ from eaglet.core import paginator
 from business.product.product import Product
 from business.mall.corporation_factory import CorporationFactory
 from business.mall.category.category_product import CategoryProduct
+from business.common.filter_parser import FilterParser
 
 UNLIMITED = -1
 
@@ -77,7 +78,7 @@ class CategoryProductRepository(object):
 
 		return category_products, pageinfo
 
-	def get_candidate_products_for_category(self, category_id, target_page):
+	def get_candidate_products_for_category(self, category_id, target_page, filters=None):
 		"""
 		获得商品分组的候选商品集合
 		"""
@@ -87,9 +88,14 @@ class CategoryProductRepository(object):
 			'with_shelve_status': True
 		}
 
+		#搜索条件
+		filter_parse_result = FilterParser.get().parse(filters)
+
 		if category_id == '0' or category_id == 0:
 			#没有指定category，获取全部商品
 			query = {}
+			if filter_parse_result:
+				query.update(filter_parse_result)
 			products, pageinfo = CorporationFactory().get().product_pool.get_products(query, target_page, fill_options)
 		else:
 			#获取category的可选商品
@@ -99,6 +105,8 @@ class CategoryProductRepository(object):
 			query = {
 				'id__notin': product_ids
 			}
+			if filter_parse_result:
+				query.update(filter_parse_result)
 			products, pageinfo = CorporationFactory().get().product_pool.get_products(query, target_page, fill_options)
 
 		#创建CategoryProduct对象
