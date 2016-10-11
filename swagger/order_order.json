@@ -602,16 +602,16 @@
 																"type": "integer",
 																"description": "状态"
 															},
-															"express_details":{
-																"type":"array",
-																"items":{
-																	"type":"object",
-																	"properties":{
-																		"context":{
-																			"type":"string"
+															"express_details": {
+																"type": "array",
+																"items": {
+																	"type": "object",
+																	"properties": {
+																		"context": {
+																			"type": "string"
 																		},
-																		"ftime":{
-																			"type":"string"
+																		"ftime": {
+																			"type": "string"
 																		}
 																	}
 																}
@@ -743,6 +743,47 @@
 											}
 										}
 									}
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			},
+			"post": {
+				"summary": "修改订单信息，只支持修改价格",
+				"tags": [
+					"order"
+				],
+				"parameters": [
+					{
+						"name": "corp_id"
+					},
+					{
+						"name": "id",
+					},
+					{
+						"name": "new_final_price",
+						"description": "要修改成的价格",
+						"type": "number"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
 								},
 								"errMsg": {
 									"type": "string"
