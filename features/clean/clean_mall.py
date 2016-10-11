@@ -53,3 +53,4 @@ def clean():
 	mall_models.ProductSwipeImage.delete().execute()
 	mall_models.ProductSales.delete().execute()
 	mall_models.Product.delete().execute()
+	mall_models.ProductPool.delete().execute()
