@@ -41,7 +41,7 @@
                 }
             }
         },
-        "/product/category/": {
+        "/mall/category/": {
             "get": {
                 "summary": "获取指定的商品分组",
                 "parameters": [
