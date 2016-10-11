@@ -704,11 +704,8 @@
                     "description": "商品库存数量",
                     "format": "如果使用定制规格，stocks=-1；否则，为标准规格的stocks值"
                 },
-                "models": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ModelsInfo"
-                    }
+                "models_info": {
+                    "$ref": "#/definitions/ModelsInfo"
                 }
             }
         }

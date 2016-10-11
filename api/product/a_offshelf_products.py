@@ -91,7 +91,7 @@ class AOffshelfProducts(api_resource.ApiResource):
 				"id": product.id,
 				"name": product.name,
 				"image": product.thumbnails_url,
-				"models": AOffshelfProducts._get_models_info(product),
+				"models_info": AOffshelfProducts._get_models_info(product),
 				"user_code": -1,
 				"bar_code": product.bar_code,
 				"categories": AOffshelfProducts._get_categories(product),
