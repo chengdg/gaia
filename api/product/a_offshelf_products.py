@@ -25,8 +25,8 @@ class AOffshelfProducts(api_resource.ApiResource):
 		models_info = {
 			'is_use_custom_model': False,
 			'standard_model': None,
-			'custom_models': [],
-			'used_system_model_properties': None
+			'custom_models': []
+			#'used_system_model_properties': None
 		}
 		models_info['is_use_custom_model'] = product.is_use_custom_model
 

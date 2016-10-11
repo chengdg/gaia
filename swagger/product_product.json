@@ -707,7 +707,7 @@
                 "models": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/Model"
+                        "$ref": "#/definitions/ModelsInfo"
                     }
                 }
             }
