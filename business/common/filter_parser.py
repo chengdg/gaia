@@ -37,6 +37,9 @@ class FilterParser(object):
             return filter_options[key]
 
     def parse(self, filters, filter2field=None):
+        """
+        将filters中的所有filter转换成peewee查询条件
+        """
         peewee_query = {}
         if not filters:
             return peewee_query
@@ -45,8 +48,25 @@ class FilterParser(object):
             if not filter_express.startswith('__f-'):
                 continue
 
-            key = self.get_filter_key(filter_express)
+            key = self.get_filter_key(filter_express, filter2field)
             peewee_query[key] = value
+
+        return peewee_query
+
+    def parse_key(self, filters, key, filter2field=None):
+        """
+        将filters中的一个filter转换成peewee查询条件
+        """
+        peewee_query = {}
+        if not filters:
+            return peewee_query
+
+        if not key in filters:
+            return peewee_query
+
+        value = filters[key]
+        key = self.get_filter_key(key, filter2field)
+        peewee_query[key] = value
 
         return peewee_query
 

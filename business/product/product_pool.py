@@ -10,6 +10,7 @@ from db.mall import models as mall_models
 from zeus_conf import TOPIC
 from eaglet.core import paginator
 from fill_product_detail_service import FillProductDetailService
+from business.mall.corporation_factory import CorporationFactory
 
 class ProductPool(business_model.Model):
 	__slots__ = (
@@ -60,6 +61,8 @@ class ProductPool(business_model.Model):
 
 		if 'name__icontains' in filter_values:
 			product_db_filter_values['name__icontains'] = filter_values['name__icontains']		
+
+		product_pool_filter_values['woid'] = CorporationFactory.get().id
 
 		return product_pool_filter_values, product_db_filter_values, product_detail_filter_values
 

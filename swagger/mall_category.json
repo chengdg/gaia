@@ -7,7 +7,7 @@
     "paths": {
         "/mall/categories/": {
             "get": {
-                "description": "获得商品分组列表",
+                "summary": "获得商品分组列表",
                 "parameters": [
                     {
                         "name": "corp_id",
@@ -15,6 +15,14 @@
                         "description": "",
                         "required": true,
                         "type": "string"
+                    },
+                    {
+                        "name": "filters",
+                        "in": "query",
+                        "description": "查询条件(json字符串)",
+                        "required": true,
+                        "type": "string",
+                        "format": "类似{'__f-name-contains':'abc', '__f-product_name-contains':'def'}这样的查询对象"
                     }
                 ],
                 "tags": [
@@ -35,7 +43,7 @@
         },
         "/product/category/": {
             "get": {
-                "description": "获取指定的商品分组",
+                "summary": "获取指定的商品分组",
                 "parameters": [
                     {
                         "name": "corp_id",
@@ -68,7 +76,7 @@
                 }
             },
             "put": {
-                "description": "创建商品分组",
+                "summary": "创建商品分组",
                 "parameters": [
                     {
                         "name": "corp_id",
@@ -123,7 +131,7 @@
                 }
             },
             "post": {
-                "description": "修改商品分组",
+                "summary": "修改商品分组",
                 "parameters": [
                     {
                         "name": "corp_id",
@@ -168,7 +176,7 @@
                 }
             },
             "delete": {
-                "description": "删除商品分组",
+                "summary": "删除商品分组",
                 "parameters": [
                     {
                         "name": "corp_id",
@@ -199,7 +207,7 @@
         },
         "/mall/category_candidate_products/": {
             "get": {
-                "description": "获得商品分组中可选的商品列表",
+                "summary": "获得商品分组中可选的商品列表",
                 "parameters": [
                     {
                         "name": "corp_id",
@@ -214,6 +222,14 @@
                         "description": "如果为0，获取所有商品列表；如果不为0，获取指定商品分组的可选商品列表（去除已在分组中商品后的商品列表）",
                         "required": true,
                         "type": "string"
+                    },
+                    {
+                        "name": "filters",
+                        "in": "query",
+                        "description": "查询条件(json字符串)",
+                        "required": true,
+                        "type": "string",
+                        "format": "类似{'__f-name-contains':'abc'}这样的查询对象"
                     }
                 ],
                 "tags": [
@@ -247,7 +263,7 @@
         },
         "/mall/category_product/": {
             "post": {
-                "description": "修改分组商品的属性",
+                "summary": "修改分组商品的属性",
                 "parameters": [
                     {
                         "name": "corp_id",
@@ -299,7 +315,7 @@
                 }
             },
             "delete": {
-                "description": "删除分组中的商品",
+                "summary": "删除分组中的商品",
                 "parameters": [
                     {
                         "name": "corp_id",
@@ -338,7 +354,7 @@
         },
         "/mall/category_products/": {
             "put": {
-                "description": "在商品分组中创建新的商品集合",
+                "summary": "在商品分组中创建新的商品集合",
                 "parameters": [
                     {
                         "name": "corp_id",

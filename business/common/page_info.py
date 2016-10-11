@@ -26,3 +26,7 @@ class PageInfo(business_model.Model):
     @param_required(['cur_page'])
     def create(args):
         return PageInfo(args['cur_page'], args.get('count_per_page', COUNT_PER_PAGE))
+
+    @staticmethod
+    def get_max_page():
+        return PageInfo(1, 9999999)

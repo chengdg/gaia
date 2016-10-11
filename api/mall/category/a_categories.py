@@ -23,7 +23,12 @@ class ACategories(api_resource.ApiResource):
 		})
 		
 		corp = args['corp']
-		categories, pageinfo = corp.category_repository.get_all_categories(target_page)
+
+		filters = json.loads(args.get('filters', '[]'))
+		if filters:
+			categories, pageinfo = corp.category_repository.search_categories(filters)
+		else:
+			categories, pageinfo = corp.category_repository.get_all_categories(target_page)
 
 		datas = []
 		for category in categories:
@@ -50,6 +55,6 @@ class ACategories(api_resource.ApiResource):
 			datas.append(data)
 
 		return {
-			'pageinfo': pageinfo.to_dict(),
+			'pageinfo': pageinfo.to_dict() if pageinfo else None,
 			'categories': datas
 		}
