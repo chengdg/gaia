@@ -152,8 +152,8 @@ class Order(business_model.Model):
 
 		if fill_options:
 			with_member = fill_options.get('with_member')
-			with_delivery_items = fill_options.get('with_delivery_items') and fill_options['with_delivery_items'][
-				'fill']
+			# with_delivery_items = fill_options.get('with_delivery_items')
+			with_delivery_items = 'with_delivery_items' in fill_options
 			with_group_buy_info = fill_options.get('with_group_buy_info')
 			with_refunding_info = fill_options.get('with_refunding_info')
 			with_full_money_info = fill_options.get('with_full_money_info')  # 有依赖
@@ -183,7 +183,7 @@ class Order(business_model.Model):
 
 			# 填充出货单
 			if with_delivery_items:
-				delivery_items_fill_options = fill_options['with_delivery_items']['fill_options']
+				delivery_items_fill_options = fill_options['with_delivery_items']
 				Order.__fill_delivery_items(orders, delivery_items_fill_options)
 
 			if with_group_buy_info:
@@ -375,9 +375,9 @@ class Order(business_model.Model):
 		action_text = u"支付"
 		from_status = self.status
 		to_status = mall_models.ORDER_STATUS_PAYED_NOT_SHIP
+		payment_time = datetime.now()
 
 		self.status = to_status
-		payment_time = datetime.now()
 		self.payment_time = payment_time
 
 		# 更新首单信息
@@ -389,9 +389,15 @@ class Order(business_model.Model):
 
 		self.__record_operation_log(self.bid, corp.username, action_text)
 		self.__recode_status_log(self.bid, corp.username, from_status, to_status)
+		self.__save()
+
 		self.__send_msg_to_topic('pay')
 
-		self.__save()
+		Order.__fill_delivery_items([self], None)
+
+		for delivery_item in self.delivery_items:
+			delivery_item.pay(payment_time, corp.username)
+
 		return True, ''
 
 	def __record_operation_log(self, bid, operator_name, action_text):
@@ -406,7 +412,7 @@ class Order(business_model.Model):
 		)
 
 	def __send_msg_to_topic(self, msg_name):
-		topic_name = TOPIC['product']
+		topic_name = TOPIC['order']
 		data = {
 			"order_id": self.id,
 			"order_bid": self.bid

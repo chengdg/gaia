@@ -31,12 +31,10 @@ class AOrder(api_resource.ApiResource):
 			'with_full_money_info': True,
 			'status_logs': True,
 			'with_delivery_items': {
-				'fill': True,
-				'fill_options': {
-					'with_products': True,
-					'with_refunding_info': True,
-					'with_express_details': True
-				}
+				'with_products': True,
+				'with_refunding_info': True,
+				'with_express_details': True,
+				'with_supplier': True
 			}
 
 		}

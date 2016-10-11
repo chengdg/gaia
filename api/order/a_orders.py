@@ -16,7 +16,6 @@ class AOrderList(api_resource.ApiResource):
 
 	@param_required(['corp'])
 	def get(args):
-
 		filter_values = args.get('filter_values', '')
 
 		corp = args['corp']
@@ -36,7 +35,8 @@ class AOrderList(api_resource.ApiResource):
 				'fill': True,
 				'fill_options': {
 					'with_products': True,
-					'with_refunding_info': True
+					'with_refunding_info': True,
+					'with_supplier': True
 				}
 			}
 

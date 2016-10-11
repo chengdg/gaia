@@ -382,10 +382,12 @@
 				"summary": "订单详情",
 				"parameters": [
 					{
-						"name": "corp_id"
+						"name": "corp_id",
+						"required": true
 					},
 					{
-						"name": "id"
+						"name": "id",
+						"required": true
 					}
 				],
 				"tags": [
@@ -762,15 +764,12 @@
 				],
 				"parameters": [
 					{
-						"name": "corp_id"
+						"name": "corp_id",
+						"required": true
 					},
 					{
-						"name": "id"
-					},
-					{
-						"name": "new_final_price",
-						"description": "要修改成的价格",
-						"type": "number"
+						"name": "id",
+						"required": true
 					}
 				],
 				"responses": {

@@ -1,0 +1,49 @@
+{
+	"swagger": "2.0",
+	"info": {
+		"version": "0.0.1",
+		"title": "zeus API doc"
+	},
+	"paths": {
+		"/order/paid_order": {
+			"put": {
+				"summary": "创建已支付订单，即支付",
+				"parameters": [
+					{
+						"name": "corp_id",
+						"required": true
+					},
+					{
+						"name": "id",
+						"required": true
+					}
+				],
+				"tags": [
+					"order"
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
