@@ -115,6 +115,7 @@ class ProductPool(business_model.Model):
 		id2product = dict([(product.id, product) for product in products])
 		result = []
 		for product_id in product_ids:
+			product_id = int(product_id)
 			result.append(id2product[product_id])
 		return result
 
