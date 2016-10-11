@@ -16,8 +16,14 @@ class ACategoryProducts(api_resource.ApiResource):
 	def put(args):
 		corp = args['corp']
 		product_ids = json.loads(args['product_ids'])
-		category = corp.category_repository.get_category(args['category_id'])
-		category.add_products(product_ids)
+		category_ids = json.loads(args['category_id'])
+		if type(category_ids) == int:
+			#category_ids是一个id
+			category_ids = [category_ids]
+
+		for category_id in category_ids:
+			category = corp.category_repository.get_category(category_id)
+			category.add_products(product_ids)
 
 		return {}
 

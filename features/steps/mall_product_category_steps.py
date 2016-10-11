@@ -106,7 +106,8 @@ def step_get_p_from_category(context, user, category_name):
 
     data = {
         "corp_id": context.corp.id,
-        "category_id": category_id
+        "category_id": category_id,
+        "filters": '[]'
     }
     response = context.client.get('/mall/category_candidate_products/', data)
 

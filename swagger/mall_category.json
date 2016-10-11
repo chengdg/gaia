@@ -364,11 +364,12 @@
                         "type": "string"
                     },
                     {
-                        "name": "category_id",
+                        "name": "category_id(json字符串)",
                         "in": "formData",
-                        "description": "商品分组的id",
+                        "description": "商品分组的id或id集合，当为id集合时，同时在多个商品分组中添加新的商品",
                         "required": true,
-                        "type": "string"
+                        "type": "string",
+                        "format": "'1'或'[1, 2, 3]'"
                     },
                     {
                         "name": "product_ids(json字符串)",
