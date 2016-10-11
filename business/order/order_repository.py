@@ -46,16 +46,19 @@ class OrderRepository(business_model.Model):
 
 		self.context['db_models'] = db_models
 
-		orders = Order.from_models({"db_models": db_models, 'fill_options': fill_options})
+		orders = Order.from_models({"db_models": db_models, 'fill_options': fill_options, 'corp': self.corp})
 
 		return pageinfo, orders
 
-	def get_order(self, id, fill_options):
-		# db_model = mall_models.Order.get(webapp_id=webapp_id, id=id)
+	def get_order(self, id, fill_options=None):
 		db_models = self.__get_db_models_for_corp()
 		db_model = db_models.dj_where(id=id).first()
-		order = Order.from_models({"db_models": [db_model], 'fill_options': fill_options})[0]
-		return order
+		orders = Order.from_models({"db_models": [db_model], 'fill_options': fill_options, 'corp': self.corp})
+
+		if orders:
+			return orders[0]
+		else:
+			return None
 
 	def __get_db_models_for_corp(self):
 		webapp_id = self.corp.webapp_id

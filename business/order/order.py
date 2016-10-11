@@ -4,6 +4,8 @@ from business import model as business_model
 from business.member.member import Member
 from business.order.delivery_item import DeliveryItem
 from db.mall import models as mall_models
+from zeus_conf import TOPIC
+from bdem import msgutil
 
 
 class Order(business_model.Model):
@@ -76,18 +78,8 @@ class Order(business_model.Model):
 	def from_models(args):
 		db_models = args['db_models']
 		fill_options = args['fill_options']
-		# orders = [Order(db_model) for db_model in db_models]
 
 		webapp_user_ids = []
-
-		with_member = fill_options.get('with_member')
-
-		with_delivery_items = fill_options.get('with_delivery_items') and fill_options['with_delivery_items']['fill']
-		with_group_buy_info = fill_options.get('with_group_buy_info')
-		with_refunding_info = fill_options.get('with_refunding_info')
-		with_full_money_info = fill_options.get('with_full_money_info')  # 有依赖
-		with_status_logs = fill_options.get('status_logs')
-
 		orders = []
 		order_ids = []
 		for db_model in db_models:
@@ -157,45 +149,54 @@ class Order(business_model.Model):
 
 			orders.append(order)
 
-		if with_member:
-			webapp_user_id2member, _ = Member.from_webapp_user_ids({'webapp_user_ids': webapp_user_ids})
-
-		# if with_supplier:
-		# 	webapp_user_id2member, _ = Member.from_webapp_user_ids({'webapp_user_ids': webapp_user_ids})
-
-		for order in orders:
+		if fill_options:
+			with_member = fill_options.get('with_member')
+			with_delivery_items = fill_options.get('with_delivery_items') and fill_options['with_delivery_items'][
+				'fill']
+			with_group_buy_info = fill_options.get('with_group_buy_info')
+			with_refunding_info = fill_options.get('with_refunding_info')
+			with_full_money_info = fill_options.get('with_full_money_info')  # 有依赖
+			with_status_logs = fill_options.get('status_logs')
 
 			if with_member:
-				member = webapp_user_id2member.get(order.webapp_user_id, None)
-				if member:
-					order.member_info = {
-						'name': member.username_for_html,
-						'id': member.id,
-						'is_subscribed': member.is_subscribed
-					}
-				else:
-					order.member_info = {
-						'name': u'未知',
-						'id': 0,
-						'is_subscribed': 0
-					}
-		# 填充出货单
-		if with_delivery_items:
-			delivery_items_fill_options = fill_options['with_delivery_items']['fill_options']
-			Order.__fill_delivery_items(orders, delivery_items_fill_options)
+				webapp_user_id2member, _ = Member.from_webapp_user_ids({'webapp_user_ids': webapp_user_ids})
+			else:
+				webapp_user_id2member = {}
 
-		if with_group_buy_info:
-			Order.__fill_group_buy(orders, order_ids)
+			for order in orders:
 
-		if with_refunding_info:
-			Order.__fill_refunding_info(orders, order_ids)
+				if with_member:
+					member = webapp_user_id2member.get(order.webapp_user_id, None)
+					if member:
+						order.member_info = {
+							'name': member.username_for_html,
+							'id': member.id,
+							'is_subscribed': member.is_subscribed
+						}
+					else:
+						order.member_info = {
+							'name': u'未知',
+							'id': 0,
+							'is_subscribed': 0
+						}
 
-		if with_full_money_info:
-			# 需要在最后
-			Order.__fill_full_money_info(orders, order_ids)
+			# 填充出货单
+			if with_delivery_items:
+				delivery_items_fill_options = fill_options['with_delivery_items']['fill_options']
+				Order.__fill_delivery_items(orders, delivery_items_fill_options)
 
-		if with_status_logs:
-			Order.__fill_status_logs(orders, order_ids)
+			if with_group_buy_info:
+				Order.__fill_group_buy(orders, order_ids)
+
+			if with_refunding_info:
+				Order.__fill_refunding_info(orders, order_ids)
+
+			if with_full_money_info:
+				# 需要在最后
+				Order.__fill_full_money_info(orders, order_ids)
+
+			if with_status_logs:
+				Order.__fill_status_logs(orders, order_ids)
 
 		return orders
 
@@ -324,3 +325,40 @@ class Order(business_model.Model):
 			result['delivery_items'] = [delivery_item.to_dict() for delivery_item in self.delivery_items]
 
 		return result
+
+	def update_final_price(self, corp, new_final_price):
+		"""
+		修改价格
+		@param corp:
+		@param new_final_price:
+		@return:
+		"""
+		if self.status != mall_models.ORDER_STATUS_NOT:
+			return False, 'Error Status'
+		if self.final_price != new_final_price:
+			action_text = u' 修改订单金额'
+			db_model = self.context['db_model']
+
+			self.final_price = new_final_price
+			self.edit_money = (db_model.product_price + db_model.postage) - (
+				db_model.coupon_money + db_model.integral_money + db_model.weizoom_card_money + db_model.promotion_saved_money) - new_final_price
+			db_model.final_price = self.final_price
+			db_model.edit_money = self.edit_money
+			db_model.save()
+
+			self.__record_operation_log(self.bid, corp.username, action_text)
+			self.__send_msg_to_topic('update_final_price')
+			return True, ''
+		else:
+			return True, ''
+
+	def __record_operation_log(self, bid, operator_name, action_text):
+		mall_models.OrderOperationLog.create(order_id=bid, operator=operator_name, action=action_text)
+
+	def __send_msg_to_topic(self, msg_name):
+		topic_name = TOPIC['product']
+		data = {
+			"order_id": self.id,
+			"order_bid": self.bid
+		}
+		msgutil.send_message(topic_name, msg_name, data)
