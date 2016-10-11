@@ -6,6 +6,7 @@ from business.order.delivery_item import DeliveryItem
 from db.mall import models as mall_models
 from zeus_conf import TOPIC
 from bdem import msgutil
+from datetime import datetime, timedelta
 
 
 class Order(business_model.Model):
@@ -342,9 +343,8 @@ class Order(business_model.Model):
 			self.final_price = new_final_price
 			self.edit_money = (db_model.product_price + db_model.postage) - (
 				db_model.coupon_money + db_model.integral_money + db_model.weizoom_card_money + db_model.promotion_saved_money) - new_final_price
-			db_model.final_price = self.final_price
-			db_model.edit_money = self.edit_money
-			db_model.save()
+
+			self.__save()
 
 			self.__record_operation_log(self.bid, corp.username, action_text)
 			self.__send_msg_to_topic('update_final_price')
@@ -352,8 +352,58 @@ class Order(business_model.Model):
 		else:
 			return True, ''
 
+	def pay(self, corp):
+		"""
+		影响：
+		- 更新订单状态
+		- 更新支付时间
+		- 更新买家的首单信息
+		- 支付出货单
+		- 记录状态日志
+		- 记录操作日志
+
+		- 修改会员信息
+		- 更新销量
+		- 发送模板消息
+		-
+		@param corp:
+		@return:
+		"""
+		if self.status != mall_models.ORDER_STATUS_NOT:
+			return False, 'Error Status'
+
+		action_text = u"支付"
+		from_status = self.status
+		to_status = mall_models.ORDER_STATUS_PAYED_NOT_SHIP
+
+		self.status = to_status
+		payment_time = datetime.now()
+		self.payment_time = payment_time
+
+		# 更新首单信息
+		if mall_models.Order.select().dj_where(
+				webapp_id=self.webapp_id,
+				webapp_user_id=self.webapp_user_id,
+				is_first_order=True).count() == 0:
+			self.is_first_order = True
+
+		self.__record_operation_log(self.bid, corp.username, action_text)
+		self.__recode_status_log(self.bid, corp.username, from_status, to_status)
+		self.__send_msg_to_topic('pay')
+
+		self.__save()
+		return True, ''
+
 	def __record_operation_log(self, bid, operator_name, action_text):
 		mall_models.OrderOperationLog.create(order_id=bid, operator=operator_name, action=action_text)
+
+	def __recode_status_log(self, bid, operator_name, from_status, to_status):
+		mall_models.OrderStatusLog.create(
+			order_id=bid,
+			from_status=from_status,
+			to_status=to_status,
+			operator=operator_name
+		)
 
 	def __send_msg_to_topic(self, msg_name):
 		topic_name = TOPIC['product']
@@ -362,3 +412,14 @@ class Order(business_model.Model):
 			"order_bid": self.bid
 		}
 		msgutil.send_message(topic_name, msg_name, data)
+
+	def __save(self):
+		"""
+		持久化修改的数据
+		@return:
+		"""
+		db_model = self.context['db_model']
+		db_model.status = self.status
+		db_model.payment_time = self.payment_time
+		db_model.is_first_order = self.is_first_order
+		db_model.save()
