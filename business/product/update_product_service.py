@@ -205,6 +205,9 @@ class UpdateProductService(business_model.Service):
 			)
 
 	def update_product(self, product_id, args):
+		"""
+		更新商品
+		"""
 		base_info = json.loads(args['base_info'])
 		models_info = json.loads(args['models_info'])
 		image_info = json.loads(args['image_info'])
@@ -220,3 +223,28 @@ class UpdateProductService(business_model.Service):
 		self.__update_product_properties(product_id, properties)
 
 		return product
+
+	def update_product_price(self, product_id, price_infos):
+		"""
+		更新商品价格
+		"""
+		for price_info in price_infos:
+			model_id = price_info['model_id']
+			price = price_info['price']
+			mall_models.ProductModel.update(price=price).dj_where(owner_id=self.corp.id, id=model_id).execute()
+
+	def update_product_stock(self, product_id, stock_infos):
+		"""
+		更新商品库存
+		"""
+		for stock_info in stock_infos:
+			model_id = stock_info['model_id']
+			stock_type = mall_models.PRODUCT_STOCK_TYPE_UNLIMIT if stock_info['stock_type'] == 'unlimit' else mall_models.PRODUCT_STOCK_TYPE_LIMIT
+			stocks = stock_info['stocks']
+			mall_models.ProductModel.update(stock_type=stock_type, stocks=stocks).dj_where(owner_id=self.corp.id, id=model_id).execute()
+
+	def update_product_position(self, product_id, position):
+		"""
+		更新商品库存
+		"""
+		mall_models.ProductPool.update(display_index=position).dj_where(woid=self.corp.id, product_id=product_id).execute()

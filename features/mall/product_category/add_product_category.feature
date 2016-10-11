@@ -160,7 +160,7 @@ Scenario:2 添加包含商品的商品分组
 		"""
 
 
-@mall @mall.product @mall.product_category @hermes @wip
+@mall @mall.product @mall.product_category @hermes
 Scenario:3 添加商品时获取分组的可选商品集合
 
 	Given jobs登录系统

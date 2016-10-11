@@ -12,6 +12,8 @@ from eaglet.core import paginator
 from fill_product_detail_service import FillProductDetailService
 from business.mall.corporation_factory import CorporationFactory
 
+NEW_PRODUCT_DISPLAY_INDEX = 9999999
+
 class ProductPool(business_model.Model):
 	__slots__ = (
 		'corp',
@@ -76,11 +78,12 @@ class ProductPool(business_model.Model):
 			mall_models.ProductPool.create(
 				woid=self.corp_id,
 				product_id=product_id,
-				status=mall_models.PP_STATUS_ON_POOL
+				status=mall_models.PP_STATUS_ON_POOL,
+				display_index=999
 			)
 		return True
 
-	def get_products(self, filter_values, page_info, fill_options=None):
+	def get_products(self, filter_values, page_info, fill_options=None, options={}):
 		"""
 		根据条件在商品池搜索商品
 		@param filter_values:
@@ -90,9 +93,15 @@ class ProductPool(business_model.Model):
 
 		#TODO: dj_where支持{}
 		if product_pool_filter_values:
-			product_ids = [model.product_id for model in mall_models.ProductPool.select().dj_where(**product_pool_filter_values)]
+			if 'order_by_display_index' in options:
+				product_ids = [model.product_id for model in mall_models.ProductPool.select().dj_where(**product_pool_filter_values).order_by(mall_models.ProductPool.display_index, mall_models.ProductPool.product_id)]
+			else:
+				product_ids = [model.product_id for model in mall_models.ProductPool.select().dj_where(**product_pool_filter_values)]
 		else:
-			product_ids = [model.product_id for model in mall_models.ProductPool.select().dj_where(status__not=mall_models.PP_STATUS_DELETE)]
+			if 'order_by_display_index' in options:
+				product_ids = [model.product_id for model in mall_models.ProductPool.select().dj_where(status__not=mall_models.PP_STATUS_DELETE).order_by(mall_models.ProductPool.display_index, mall_models.ProductPool.product_id)]
+			else:
+				product_ids = [model.product_id for model in mall_models.ProductPool.select().dj_where(status__not=mall_models.PP_STATUS_DELETE)]
 
 		product_db_filter_values['id__in'] = product_ids
 		product_models = mall_models.Product.select().dj_where(**product_db_filter_values)
@@ -103,7 +112,14 @@ class ProductPool(business_model.Model):
 
 		fill_product_detail_service = FillProductDetailService.get(self.corp)
 		fill_product_detail_service.fill_detail(products, fill_options)
-		return products, pageinfo
+
+		#按照product_ids中id的顺序对products进行顺序调整
+		id2product = dict([(product.id, product) for product in products])
+		result = []
+		for product_id in product_ids:
+			product_id = int(product_id)
+			result.append(id2product[product_id])
+		return result, pageinfo
 
 	def get_products_by_ids(self, product_ids, fill_options={}):
 		"""
@@ -133,7 +149,7 @@ class ProductPool(business_model.Model):
 		"""
 		if product_ids:
 			mall_models.ProductPool.update(
-				display_index=0,
+				display_index=NEW_PRODUCT_DISPLAY_INDEX,
 				status=mall_models.PP_STATUS_DELETE
 			).dj_where(product_id__in=product_ids, woid=self.corp_id).execute()
 

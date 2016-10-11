@@ -33,6 +33,7 @@ class AOffshelfProducts(api_resource.ApiResource):
 		standard_model = product.standard_model
 		if standard_model:
 			models_info['standard_model'] = {
+				"id": standard_model.id,
 				"name": standard_model.name,
 				"price": standard_model.price,
 				"weight": standard_model.weight,
@@ -47,6 +48,7 @@ class AOffshelfProducts(api_resource.ApiResource):
 		if custom_models:
 			for custom_model in custom_models:
 				models_info['custom_models'].append({
+					"id": custom_model.id,
 					"name": custom_model.name,
 					"price": custom_model.price,
 					"weight": custom_model.weight,

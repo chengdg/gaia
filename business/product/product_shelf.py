@@ -9,6 +9,8 @@ from business import model as business_model
 from zeus_conf import TOPIC
 from product_pool import ProductPool
 
+NEW_PRODUCT_DISPLAY_INDEX = 9999999
+
 class ProductShelfError(Exception):
 	def __init__(self, err_msg):
 		self.err_msg = err_msg
@@ -54,7 +56,7 @@ class ProductShelf(business_model.Model):
 				product_shelf_type = mall_models.PP_STATUS_OFF
 			mall_models.ProductPool.update(
 				status=product_shelf_type,
-				display_index=0
+				display_index=NEW_PRODUCT_DISPLAY_INDEX
 			).dj_where(product_id__in=product_ids, woid=self.corp.id, status__gt=mall_models.PP_STATUS_DELETE).execute()
 
 			self.__send_msg_to_topic(product_ids, msg_name)
@@ -93,7 +95,11 @@ class ProductShelf(business_model.Model):
 			'with_shelve_status': True
 		}
 
-		products, pageinfo = product_pool.get_products(query, page_info, fill_options)
+		options = {
+			'order_by_display_index': True
+		}
+
+		products, pageinfo = product_pool.get_products(query, page_info, fill_options, options)
 
 		return products, pageinfo
 

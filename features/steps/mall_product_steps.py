@@ -259,6 +259,7 @@ def __get_products(context, type_name=u'在售'):
         data['stocks'] = u'无限' if product['stock_type'] == 'unlimit' else product['stocks']
         data['image'] = product['image']
         data['sales'] = product['sales']
+        data['display_index'] = product['display_index']
         products.append(data)
 
     return products
@@ -331,4 +332,78 @@ def step_impl(context, user, product_name):
     data['id'] = product['id']
 
     response = context.client.post('/product/product/', data)
+    bdd_util.assert_api_call_success(response)
+
+
+@when(u"{user}修改商品'{product_name}'的价格为")
+def step_impl(context, user, product_name):
+    product = mall_models.Product.select().dj_where(owner_id=context.corp.id, name=product_name).get()
+
+    update_data = json.loads(context.text)
+    price_infos = []
+    for model_name, price in update_data.items():
+        if model_name == 'standard':
+            pass
+        else:
+            model_name, _ = __parse_model_name(context, model_name)
+
+        product_model = mall_models.ProductModel.select().dj_where(owner_id=context.corp.id, product_id=product.id, name=model_name).get()
+
+        price_infos.append({
+            "model_id": product_model.id,
+            "price": price
+        })
+
+    data = {
+        "corp_id": context.corp.id,
+        "id": product.id,
+        "price_infos": json.dumps(price_infos)
+    }
+
+    response = context.client.post('/product/product_price/', data)
+    bdd_util.assert_api_call_success(response)
+
+
+@when(u"{user}修改商品'{product_name}'的库存为")
+def step_impl(context, user, product_name):
+    product = mall_models.Product.select().dj_where(owner_id=context.corp.id, name=product_name).get()
+
+    update_data = json.loads(context.text)
+    stock_infos = []
+    for model_name, stock_info in update_data.items():
+        if model_name == 'standard':
+            pass
+        else:
+            model_name, _ = __parse_model_name(context, model_name)
+
+        product_model = mall_models.ProductModel.select().dj_where(owner_id=context.corp.id, product_id=product.id, name=model_name).get()
+
+        stock_type = stock_info['stock_type']
+        stock_infos.append({
+            "model_id": product_model.id,
+            "stock_type": 'unlimit' if stock_type == u'无限' else 'limit',
+            "stocks": -1 if stock_type == u'无限' else stock_info['stocks']
+        })
+
+    data = {
+        "corp_id": context.corp.id,
+        "id": product.id,
+        "stock_infos": json.dumps(stock_infos)
+    }
+
+    response = context.client.post('/product/product_stock/', data)
+    bdd_util.assert_api_call_success(response)
+
+
+@when(u"{user}修改商品'{product_name}'的显示排序为'{position}'")
+def step_impl(context, user, product_name, position):
+    db_product = mall_models.Product.select().dj_where(owner_id=context.corp.id, name=product_name).get()
+
+    data = {
+        "corp_id": context.corp.id,
+        "id": db_product.id,
+        "position": position
+    }
+
+    response = context.client.post('/product/product_position/', data)
     bdd_util.assert_api_call_success(response)

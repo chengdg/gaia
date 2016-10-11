@@ -1176,7 +1176,7 @@ class ProductPool(models.Model):
 	woid = models.IntegerField() #自营平台woid
 	product_id = models.IntegerField() #商品管理上传的商品id
 	status = models.IntegerField(default=PP_STATUS_ON_POOL) #商品状态
-	display_index = models.IntegerField(default=0, blank=True)  # 显示的排序
+	display_index = models.IntegerField()  # 显示的排序
 	created_at = models.DateTimeField(auto_now_add=True)  # 添加时间
 
 	class Meta(object):
