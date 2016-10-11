@@ -275,7 +275,8 @@
                         "in": "formData",
                         "description": "待修改的属性",
                         "required": true,
-                        "type": "string"
+                        "type": "string",
+                        "format": "目前只支持'position'"
                     },
                     {
                         "name": "value",
