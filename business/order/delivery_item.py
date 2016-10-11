@@ -2,6 +2,8 @@
 """
 出货单
 """
+from bdem import msgutil
+
 from business import model as business_model
 from eaglet.decorator import param_required
 
@@ -9,6 +11,7 @@ from business.mall.supplier import Supplier
 from business.product.delivery_items_products import DeliveryItemsProducts
 from db.mall import models as mall_models
 from db.express import models as express_models
+from zeus_conf import TOPIC
 
 
 class DeliveryItem(business_model.Model):
@@ -24,11 +27,13 @@ class DeliveryItem(business_model.Model):
 		'express_number',
 		'leader_name',
 		'created_at',
+		'payment_time',
 
 		'refunding_info',
 		'total_origin_product_price',
 		'supplier_info',
-		'express_details'
+		'express_details',
+		'is_use_delivery_item_db_model'
 	)
 
 	def __init__(self, db_model):
@@ -41,6 +46,8 @@ class DeliveryItem(business_model.Model):
 			self.origin_order_id = db_model.origin_order_id
 		else:
 			self.origin_order_id = db_model.id
+
+		self.is_use_delivery_item_db_model = db_model.origin_order_id > 0
 
 		self.postage = db_model.postage
 
@@ -59,21 +66,27 @@ class DeliveryItem(business_model.Model):
 		db_models = args['models']
 		fill_options = args['fill_options']
 
-		delivery_items = [DeliveryItem(db_model) for db_model in db_models]
-
+		delivery_items = []
 		delivery_item_ids = []
-		for delivery_item in delivery_items:
+
+		for db_model in db_models:
+			delivery_item = DeliveryItem(db_model)
+			delivery_item.context['db_model'] = db_model
+			delivery_items.append(delivery_item)
 			delivery_item_ids.append(delivery_item.id)
-		if fill_options.get('with_products'):
-			DeliveryItem.__fill_products(delivery_items)
 
-		if fill_options.get('with_refunding_info'):
-			DeliveryItem.__fill_refunding_info(delivery_items, delivery_item_ids)
+		if fill_options:
+			if fill_options.get('with_products'):
+				DeliveryItem.__fill_products(delivery_items)
 
-		if fill_options.get('with_express_details'):
-			DeliveryItem.__fill_express_details(delivery_items, delivery_item_ids)
+			if fill_options.get('with_refunding_info'):
+				DeliveryItem.__fill_refunding_info(delivery_items, delivery_item_ids)
 
-		DeliveryItem.__fill_supplier(delivery_items, delivery_item_ids)
+			if fill_options.get('with_express_details'):
+				DeliveryItem.__fill_express_details(delivery_items, delivery_item_ids)
+
+			if fill_options.get('with_supplier'):
+				DeliveryItem.__fill_supplier(delivery_items, delivery_item_ids)
 
 		return delivery_items
 
@@ -87,7 +100,8 @@ class DeliveryItem(business_model.Model):
 		@param delivery_item_ids:
 		@return:
 		"""
-		details =express_models.ExpressDetail.select().dj_where(order_id__in=delivery_item_ids).order_by('-display_index')
+		details = express_models.ExpressDetail.select().dj_where(order_id__in=delivery_item_ids).order_by(
+			'-display_index')
 		other_delivery_items = []
 		if details.count() > 0:
 			# 兼容历史数据,老数据里订单的发货信息直接关联到ExpressDetail
@@ -126,14 +140,15 @@ class DeliveryItem(business_model.Model):
 				express_number__in=express_numbers
 			)
 
-			name_number2express_push_id = {str(push.express_company_name + '__' + push.express_number):push.id for push in express_push_list}
+			name_number2express_push_id = {str(push.express_company_name + '__' + push.express_number): push.id for push
+			                               in express_push_list}
 
 			express_push_ids = []
 			for push in express_push_list:
 				express_push_ids.append(push.id)
 
 			express_details = express_models.ExpressDetail.select().dj_where(express_id__in=express_push_ids)
-			express_push_id2details = {detail.express_id:detail for detail in express_details}
+			express_push_id2details = {detail.express_id: detail for detail in express_details}
 
 			for detail in express_details:
 				if detail.express_id in express_push_id2details:
@@ -142,7 +157,8 @@ class DeliveryItem(business_model.Model):
 					express_push_id2details[detail.express_id] = [detail]
 
 			for delivery_item in delivery_items:
-				push_id = name_number2express_push_id.get(str(delivery_item.express_company_name + '__' + delivery_item.express_number))
+				push_id = name_number2express_push_id.get(
+					str(delivery_item.express_company_name + '__' + delivery_item.express_number))
 				if push_id:
 					express_details = express_push_id2details.get(push_id, [])
 
@@ -151,9 +167,6 @@ class DeliveryItem(business_model.Model):
 							'ftime': detail.ftime,
 							'context': detail.context
 						})
-
-
-
 
 	@staticmethod
 	def __fill_products(delivery_items):
@@ -234,3 +247,48 @@ class DeliveryItem(business_model.Model):
 				delivery_item.supplier_info = {
 
 				}
+
+	def pay(self, payment_time, operator_name):
+		"""
+
+		@return:
+		"""
+
+		if self.is_use_delivery_item_db_model:
+			action_text = u"支付"
+			from_status = self.status
+			to_status = mall_models.ORDER_STATUS_PAYED_NOT_SHIP
+
+			self.payment_time = payment_time
+			self.status = to_status
+
+			self.__record_operation_log(self.bid, operator_name, action_text)
+			self.__recode_status_log(self.bid, operator_name, from_status, to_status)
+			self.__save()
+
+			self.__send_msg_to_topic('pay')
+
+	def __record_operation_log(self, bid, operator_name, action_text):
+		mall_models.OrderOperationLog.create(order_id=bid, operator=operator_name, action=action_text)
+
+	def __recode_status_log(self, bid, operator_name, from_status, to_status):
+		mall_models.OrderStatusLog.create(
+			order_id=bid,
+			from_status=from_status,
+			to_status=to_status,
+			operator=operator_name
+		)
+
+	def __send_msg_to_topic(self, msg_name):
+		topic_name = TOPIC['delivery_item']
+		data = {
+			"delivery_item_id": self.id,
+			"delivery_item_bid": self.bid
+		}
+		msgutil.send_message(topic_name, msg_name, data)
+
+	def __save(self):
+		db_model = self.context['db_model']
+		db_model.status = self.status
+		db_model.payment_time = self.payment_time
+		db_model.save()
