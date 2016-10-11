@@ -294,7 +294,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "success",
+                        "description": "success"
                     }
                 }
             },
@@ -331,7 +331,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "success",
+                        "description": "success"
                     }
                 }
             }
@@ -371,7 +371,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "success",
+                        "description": "success"
                     }
                 }
             }

@@ -765,7 +765,7 @@
 						"name": "corp_id"
 					},
 					{
-						"name": "id",
+						"name": "id"
 					},
 					{
 						"name": "new_final_price",
