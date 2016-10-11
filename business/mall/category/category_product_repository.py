@@ -26,19 +26,12 @@ class CategoryProductRepository(object):
 		repository = CategoryProductRepository(category)
 		return repository
 
-	def get_top_n_products(self, n):
+	def __get_category_products_for_category_product_relations(self, product_relations):
 		"""
-		获得排序靠前的n个商品
+		根据一批CategoryHasProduct model对象获取CategoryProduct对象集合
 		"""
-		product2relation = {}
-
-		if n == UNLIMITED:
-			product_relations = mall_models.CategoryHasProduct.select().dj_where(category_id=self.category.id).order_by(mall_models.CategoryHasProduct.display_index)
-		else:
-			product_relations = mall_models.CategoryHasProduct.select().dj_where(category_id=self.category.id).order_by(mall_models.CategoryHasProduct.display_index)[:n]
-		print [r.product_id for r in product_relations]
-
 		product_ids = []
+		product2relation = {}
 		if product_relations:
 			product_ids = [relation.product_id for relation in product_relations]
 			product2relation.update(dict([(relation.product_id, relation) for relation in product_relations]))
@@ -46,7 +39,8 @@ class CategoryProductRepository(object):
 		fill_options = {
 			'with_price': True,
 			'with_product_model': True,
-			'with_shelve_status': True
+			'with_shelve_status': True,
+			'with_category': True
 		}
 		products = CorporationFactory.get().product_pool.get_products_by_ids(product_ids, fill_options)
 		category_products = []
@@ -57,8 +51,60 @@ class CategoryProductRepository(object):
 
 		return category_products
 
-	def get_products(self):
+
+	def get_top_n_products(self, n):
 		"""
-		获得全部商品
+		获得排序靠前的n个商品
 		"""
-		return this.get_top_n_products(UNLIMITED)
+		if n == UNLIMITED:
+			product_relations = mall_models.CategoryHasProduct.select().dj_where(category_id=self.category.id).order_by(mall_models.CategoryHasProduct.display_index)
+		else:
+			product_relations = mall_models.CategoryHasProduct.select().dj_where(category_id=self.category.id).order_by(mall_models.CategoryHasProduct.display_index)[:n]
+
+		category_products = self.__get_category_products_for_category_product_relations(product_relations)
+
+		return category_products
+
+	def get_products(self, target_page):
+		"""
+		获得商品分组中的商品集合
+		"""
+		#获得目标商品id集合
+		product_relations = mall_models.CategoryHasProduct.select().dj_where(category_id=self.category.id).order_by(mall_models.CategoryHasProduct.display_index)
+		pageinfo, product_relations = paginator.paginate(product_relations, target_page.cur_page, target_page.count_per_page)
+
+		category_products = self.__get_category_products_for_category_product_relations(product_relations)
+
+		return category_products, pageinfo
+
+	def get_candidate_products_for_category(self, category_id, target_page):
+		"""
+		获得商品分组的候选商品集合
+		"""
+		#商品详情填充选项
+		fill_options = {
+			'with_price': True,
+			'with_shelve_status': True
+		}
+
+		if category_id == '0' or category_id == 0:
+			#没有指定category，获取全部商品
+			query = {}
+			products, pageinfo = CorporationFactory().get().product_pool.get_products(query, target_page, fill_options)
+		else:
+			#获取category的可选商品
+			product_relations = mall_models.CategoryHasProduct.select().dj_where(category_id=category_id)
+			product_ids = [relation.product_id for relation in product_relations]
+
+			query = {
+				'id__notin': product_ids
+			}
+			products, pageinfo = CorporationFactory().get().product_pool.get_products(query, target_page, fill_options)
+
+		#创建CategoryProduct对象
+		category_products = []
+		for product in products:
+			category_product = CategoryProduct(product)
+			category_products.append(category_product)
+
+		return category_products, pageinfo

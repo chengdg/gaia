@@ -13,7 +13,7 @@ class ACategoryProducts(api_resource.ApiResource):
 	resource = 'category_products'
 
 	@param_required(['corp_id', 'category_id', 'product_ids'])
-	def post(args):
+	def put(args):
 		corp = args['corp']
 		product_ids = json.loads(args['product_ids'])
 		category = corp.category_repository.get_category(args['category_id'])

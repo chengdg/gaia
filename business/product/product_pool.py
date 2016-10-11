@@ -50,6 +50,14 @@ class ProductPool(business_model.Model):
 		else:
 			product_pool_filter_values['status__not'] = mall_models.PP_STATUS_DELETE
 
+		if 'id__in' in filter_values:
+			if len(filter_values['id__in']) > 0:
+				product_pool_filter_values['product_id__in'] = filter_values['id__in']
+
+		if 'id__notin' in filter_values:
+			if len(filter_values['id__notin']) > 0:
+				product_pool_filter_values['product_id__notin'] = filter_values['id__notin']			
+
 		return product_pool_filter_values, product_db_filter_values, product_detail_filter_values
 
 	def add_products(self, product_ids):

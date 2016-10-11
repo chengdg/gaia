@@ -11,7 +11,7 @@ Scenario:1 添加无商品的商品分组
 	When jobs添加商品分组
 		"""
 		[{
-			"name": "分组1",
+			"name": "分组1"
 		}, {
 			"name": "分组2"
 		}, {
@@ -36,7 +36,7 @@ Scenario:1 添加无商品的商品分组
 
 
 @mall @mall.product @mall.product_category @hermes
-Scenario:1 添加包含商品的商品分组
+Scenario:2 添加包含商品的商品分组
 
 	Given jobs登录系统
 	And jobs已添加商品规格
@@ -99,6 +99,12 @@ Scenario:1 添加包含商品的商品分组
 		[{
 			"name": "分组1",
 			"products": ["东坡肘子", "叫花鸡", "莲藕排骨汤"]
+		}, {
+			"name": "分组2",
+			"products": ["东坡肘子"]
+		}, {
+			"name": "分组3",
+			"products": ["东坡肘子"]
 		}]
 		"""
 	Then jobs能获取商品分组列表
@@ -121,8 +127,139 @@ Scenario:1 添加包含商品的商品分组
 				"sales": 0,
 				"status": "待售"
 			}]
+		}, {
+			"name": "分组2"
+		}, {
+			"name": "分组3"
 		}]
 		"""
+	Then jobs能获得商品分组'分组1'详情
+		"""
+		{
+			"name": "分组1",
+			"products": [{
+				"name": "东坡肘子",
+				"price": 11.12,
+				"sales": 0,
+				"status": "待售",
+				"categories": ["分组1", "分组2", "分组3"]
+			}, {
+				"name": "叫花鸡",
+				"price": 12.00,
+				"sales": 0,
+				"status": "待售",
+				"categories": ["分组1"]
+			}, {
+				"name": "莲藕排骨汤",
+				"price": 1.1,
+				"sales": 0,
+				"status": "待售",
+				"categories": ["分组1"]
+			}]
+		}
+		"""
+
+
+@mall @mall.product @mall.product_category @hermes @wip
+Scenario:3 添加商品时获取分组的可选商品集合
+
+	Given jobs登录系统
+	When jobs添加商品
+		"""
+		[{
+			"name": "东坡肘子",
+			"model": {
+				"models": {
+					"standard": {
+						"price": 11.12
+					}
+				}
+			}
+		}, {
+			"name": "叫花鸡",
+			"model": {
+				"models": {
+					"standard": {
+						"price": 12.00
+					}
+				}
+			}
+		}, {
+			"name": "莲藕排骨汤",
+			"model": {
+				"models": {
+					"standard": {
+						"price": 1.1
+					}
+				}
+			}
+		}]
+		"""
+	When jobs添加商品分组
+		"""
+		[{
+			"name": "分组1"
+		}, {
+			"name": "分组2",
+			"products": ["东坡肘子"]
+		}]
+		"""
+	Then jobs能获得商品分组'分组3'的可选商品集合为
+		#还没有创建的分组，可以获取全部商品
+		"""
+		[{
+			"name": "东坡肘子",
+			"price": 11.12,
+			"sales": 0,
+			"status": "待售"
+		}, {
+			"name": "叫花鸡",
+			"price": 12.00,
+			"sales": 0,
+			"status": "待售"
+		}, {
+			"name": "莲藕排骨汤",
+			"price": 1.1,
+			"sales": 0,
+			"status": "待售"
+		}]
+		"""
+	Then jobs能获得商品分组'分组1'的可选商品集合为
+		#没有商品的分组，可以获取全部商品
+		"""
+		[{
+			"name": "东坡肘子",
+			"price": 11.12,
+			"sales": 0,
+			"status": "待售"
+		}, {
+			"name": "叫花鸡",
+			"price": 12.00,
+			"sales": 0,
+			"status": "待售"
+		}, {
+			"name": "莲藕排骨汤",
+			"price": 1.1,
+			"sales": 0,
+			"status": "待售"
+		}]
+		"""
+	Then jobs能获得商品分组'分组2'的可选商品集合为
+		#有商品的分组，可以获取剩余商品
+		"""
+		[{
+			"name": "叫花鸡",
+			"price": 12.00,
+			"sales": 0,
+			"status": "待售"
+		}, {
+			"name": "莲藕排骨汤",
+			"price": 1.1,
+			"sales": 0,
+			"status": "待售"
+		}]
+		"""
+
 
 @ignore
 Scenario:2 添加商品时选择分组，能在分组中看到该商品

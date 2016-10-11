@@ -8,6 +8,7 @@ from eaglet.core import watchdog
 from eaglet.core.exceptionutil import unicode_full_stack
 
 from business.common.page_info import PageInfo
+from business.mall.category.category_product_repository import CategoryProductRepository
 
 class ACategoryCandidateProducts(api_resource.ApiResource):
 	'''
@@ -16,28 +17,27 @@ class ACategoryCandidateProducts(api_resource.ApiResource):
 	app = 'mall'
 	resource = 'category_candidate_products'
 
-	@param_required(['corp', 'category_id'])
+	@param_required(['corp_id', 'category_id'])
 	def get(args):
-		category_id = args['category_id']
+		category_id = int(args['category_id'])
 		corp = args['corp']
-		if category_id == '0' or category_id == 0:
-			#没有指定category，获取全部商品
-			count_per_page = args.get('count_per_page', 10)
-			query = {}
-			target_page = PageInfo(args.get('page', 1), count_per_page)
-			products, pageinfo = corp.product_pool.get_products(query, target_page)
-		else:
-			products = []
+
+		#分页信息
+		cur_page = int(args.get('page', 1))
+		count_per_page = int(args.get('count_per_page', 10))
+		target_page = PageInfo(cur_page, count_per_page)
+
+		category_products, pageinfo = CategoryProductRepository.get(corp).get_candidate_products_for_category(category_id, target_page)
 
 		datas = []
-		for product in products:
+		for category_product in category_products:
 			data = {
-				"id": product.id,
-				"name": product.name,
-				"sales": product.sales,
-				"status": product.shelve_type,
-				"updated_at": product.created_at.strftime('%Y-%m-%d %H:%M'),
-				"price": 0
+				"id": category_product.id,
+				"name": category_product.name,
+				"sales": category_product.sales,
+				"status": category_product.status,
+				"updated_at": category_product.created_at.strftime('%Y-%m-%d %H:%M'),
+				"price": category_product.price
 			}
 			datas.append(data)
 

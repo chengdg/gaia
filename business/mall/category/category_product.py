@@ -23,6 +23,7 @@ class CategoryProduct(business_model.Model):
 		'display_index',
 		'status',
 		'sales',
+		'categories',
 		'created_at'
 	)
 

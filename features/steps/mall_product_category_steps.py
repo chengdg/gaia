@@ -98,11 +98,27 @@ def step_delete_p_in_categroy(context, user, category_name, product_name):
 
 @then(u"{user}能获得商品分组'{category_name}'的可选商品集合为")
 def step_get_p_from_category(context, user, category_name):
-    existed_product_category = ProductCategoryFactory(name=category_name)
-    url = '/mall2/api/category_list/?id={}'.format(existed_product_category.id)
-    response = context.client.get(url)
+    try:
+        existed_product_category = mall_models.ProductCategory.select().dj_where(owner=context.corp.id, name=category_name).get()
+        category_id = existed_product_category.id
+    except:
+        category_id = 0
 
-    actual = json.loads(response.content)['data']['items']
+    data = {
+        "corp_id": context.corp.id,
+        "category_id": category_id
+    }
+    response = context.client.get('/mall/category_candidate_products/', data)
+
+    for product in response.data['products']:
+        if product['status'] == 'off_shelf':
+            product['status'] = u'待售'
+        elif product['status'] == 'on_shelf':
+            product['status'] = u'在售'
+        else:
+            pass
+    actual = response.data['products']
+
     expected = json.loads(context.text)
     bdd_util.assert_list(expected, actual)
 
@@ -122,7 +138,7 @@ def step_add_p_to_category(context, user, category_name):
         'category_id': existed_product_category.id,
         'product_ids': json.dumps(product_ids)
     }
-    response = context.client.post('/mall/category_products/', data)
+    response = context.client.put('/mall/category_products/', data)
     bdd_util.assert_api_call_success(response)
 
 
@@ -141,3 +157,27 @@ def step_impl(context, user, category_name, product_name, position):
     response = context.client.post('/mall/category_product/', data)
     bdd_util.assert_api_call_success(response)
 
+
+@then(u"{user}能获得商品分组'{category_name}'详情")
+def step_impl(context, user, category_name):
+    existed_product_category = mall_models.ProductCategory.select().dj_where(owner=context.corp.id, name=category_name).get()
+
+    data = {
+        'corp_id': context.corp.id,
+        'category_id': existed_product_category.id
+    }
+    response = context.client.get('/mall/category/', data)
+
+    for product in response.data['products']:
+        if product['status'] == 'off_shelf':
+            product['status'] = u'待售'
+        elif product['status'] == 'on_shelf':
+            product['status'] = u'在售'
+        else:
+            pass
+
+        product['categories'] = [category['name'] for category in product['categories']]
+    actual = response.data
+
+    expected = json.loads(context.text)
+    bdd_util.assert_dict(expected, actual)

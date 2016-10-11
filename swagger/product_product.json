@@ -529,7 +529,7 @@
                     "type": "number",
                     "description": "库存数量，当stock_type为unlimit时候，改值应该为-1"
                 },
-                "properties": {
+                "property_values": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/ModelPropertyInfo"

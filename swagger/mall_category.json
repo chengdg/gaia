@@ -35,7 +35,7 @@
         },
         "/product/category/": {
             "get": {
-                "description": "获取指定的属性模板",
+                "description": "获取指定的商品分组",
                 "parameters": [
                     {
                         "name": "corp_id",
@@ -45,9 +45,9 @@
                         "type": "string"
                     },
                     {
-                        "name": "template_id",
+                        "name": "category_id",
                         "in": "query",
-                        "description": "property template的id",
+                        "description": "商品分组的id",
                         "required": true,
                         "type": "string"
                     }
@@ -62,12 +62,7 @@
                     "200": {
                         "description": "success",
                         "schema": {
-                            "type": "object",
-                            "properties": {
-                                "template": {
-                                    "$ref": "#/definitions/Category"
-                                }
-                            }
+                          "$ref": "#/definitions/CategoryDetail"
                         }
                     }
                 }
@@ -138,17 +133,25 @@
                         "type": "string"
                     },
                     {
-                        "name": "name",
+                        "name": "category_id",
                         "in": "formData",
-                        "description": "分组名",
+                        "description": "待修改的分组名",
                         "required": true,
                         "type": "string"
                     },
                     {
-                        "name": "product_ids",
+                        "name": "field",
                         "in": "formData",
-                        "description": "商品id数组的json字符串",
-                        "required": false,
+                        "description": "要修改的分组的属性",
+                        "required": true,
+                        "type": "string",
+                        "format": "目前只支持'name'"
+                    },
+                    {
+                        "name": "value",
+                        "in": "formData",
+                        "description": "修改后分组属性的值",
+                        "required": true,
                         "type": "string"
                     }
                 ],
@@ -165,7 +168,7 @@
                 }
             },
             "delete": {
-                "description": "删除属性模板",
+                "description": "删除商品分组",
                 "parameters": [
                     {
                         "name": "corp_id",
@@ -190,6 +193,184 @@
                 "responses": {
                     "200": {
                         "description": "success"
+                    }
+                }
+            }
+        },
+        "/mall/category_candidate_products/": {
+            "get": {
+                "description": "获得商品分组中可选的商品列表",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "category_id",
+                        "in": "query",
+                        "description": "如果为0，获取所有商品列表；如果不为0，获取指定商品分组的可选商品列表（去除已在分组中商品后的商品列表）",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product_category"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                              "pageinfo": {
+                                "type": "object",
+                                "description": "分页信息"
+                              },
+                              "products": {
+                                "type": "array",
+                                "items": {
+                                  "$ref": "#/definitions/CategoryCandidateProduct"
+                                }
+                              }
+                            }
+
+                        }
+                    }
+                }
+            }
+        },
+        "/mall/category_product/": {
+            "post": {
+                "description": "修改分组商品的属性",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "formData",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "category_id",
+                        "in": "formData",
+                        "description": "商品分组的id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "product_id",
+                        "in": "formData",
+                        "description": "商品分组中商品的id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "field",
+                        "in": "formData",
+                        "description": "待修改的属性",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "value",
+                        "in": "formData",
+                        "description": "修改后的值",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product_category"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                    }
+                }
+            },
+            "delete": {
+                "description": "删除分组中的商品",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "formData",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "category_id",
+                        "in": "formData",
+                        "description": "商品分组的id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "product_id",
+                        "in": "formData",
+                        "description": "商品分组中商品的id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product_category"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                    }
+                }
+            }
+        },
+        "/mall/category_products/": {
+            "put": {
+                "description": "在商品分组中创建新的商品集合",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "formData",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "category_id",
+                        "in": "formData",
+                        "description": "商品分组的id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "product_ids(json字符串)",
+                        "in": "formData",
+                        "description": "新加入商品分组的商品id集合",
+                        "format": "[1, 2, 3]",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product_category"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
                     }
                 }
             }
@@ -224,8 +405,124 @@
                     "description": "分组名"
                 },
                 "products": {
-                    "type": "string",
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/definitions/CategoryProduct"
+                    },
                     "description": "商品集合"
+                }
+            }
+        },
+        "CategoryDetail": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": ""
+                },
+                "name": {
+                    "type": "string",
+                    "description": "分组名"
+                },
+                "products": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/definitions/CategoryProduct"
+                    },
+                    "description": "商品集合"
+                },
+                "pageinfo": {
+                    "type": "object",
+                    "description": "分页信息"
+                },
+                "created_at": {
+                    "type": "string",
+                    "description": "分组创建时间"
+                }
+            }
+        },
+        "CategoryProduct": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": ""
+                },
+                "name": {
+                    "type": "string",
+                    "description": "商品名"
+                },
+                "price": {
+                    "type": "string",
+                    "description": "商品价格"
+                },
+                "display_index": {
+                    "type": "number",
+                    "description": "商品排序"
+                },
+                "status": {
+                    "type": "string",
+                    "description": "商品在售状态",
+                    "format": "'在售' 或 '待售'"
+                },
+                "sales": {
+                    "type": "number",
+                    "description": "商品销量"
+                },
+                "categories": {
+                    "$ref": "#/definitions/FullCategories"
+                },
+                "created_at": {
+                    "type": "string",
+                    "description": "商品加入分组时间"
+                }
+            }
+        },
+        "FullCategories": {
+            "type": "array",
+            "description": "商品分组的集合",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number",
+                        "description": "商品分组的id"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "商品分组名"
+                    }
+                }
+            }
+        },
+        "CategoryCandidateProduct": {
+            "type": "object",
+            "description": "商品分组的可选商品",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": ""
+                },
+                "name": {
+                    "type": "string",
+                    "description": "商品名"
+                },
+                "price": {
+                    "type": "string",
+                    "description": "商品价格"
+                },
+                "status": {
+                    "type": "string",
+                    "description": "商品在售状态",
+                    "format": "'在售' 或 '待售'"
+                },
+                "sales": {
+                    "type": "number",
+                    "description": "商品销量"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "description": "商品加入分组时间"
                 }
             }
         }

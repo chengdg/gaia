@@ -51,7 +51,7 @@ Scenario:1 从分组中删除商品
 		"""
 
 @mall @mall.product @mall.product_category @hermes
-Scenario:1 调整分组中商品排序
+Scenario:2 调整分组中商品排序
 
 	Given jobs登录系统
 	When jobs添加商品
@@ -114,7 +114,7 @@ Scenario:1 调整分组中商品排序
 		"""
 
 @mall @mall.product @mall.product_category @hermes
-Scenario:1 向分组中增加商品
+Scenario:3 向分组中增加商品
 
 	Given jobs登录系统
 	When jobs添加商品
