@@ -159,3 +159,10 @@ else:
     MNS_SECURITY_TOKEN = ''
     SUBSCRIBE_QUEUE_NAME = 'test-queue'
     MESSAGE_DEBUG_MODE = True
+
+# BDD_SERVER相关配置
+BDD_SERVER2PORT = {
+    'weapp': 8170,
+    'weizoom_card': 8171,
+    'apiserver': 8172
+}
