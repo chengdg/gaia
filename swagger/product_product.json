@@ -7,7 +7,7 @@
     "paths": {
         "/product/product/": {
             "get": {
-                "description": "获取商品详情",
+                "summary": "获取商品详情",
                 "parameters": [
                     {
                         "name": "corp_id",
@@ -40,7 +40,7 @@
                 }
             },
             "put": {
-                "description": "创建商品",
+                "summary": "创建商品",
                 "parameters": [
                     {
                         "name": "",
@@ -65,7 +65,7 @@
                 }
             },
             "post": {
-                "description": "更新商品",
+                "summary": "更新商品",
                 "parameters": [
                     {
                         "name": "",
@@ -92,7 +92,7 @@
         },
         "/product/product_creation_option/": {
             "get": {
-                "description": "获取商品创建参数",
+                "summary": "获取商品创建参数",
                 "parameters": [
                     {
                         "name": "corp_id",
@@ -177,7 +177,7 @@
         },
         "/product/onshelf_products/": {
             "get": {
-                "description": "获取在售商品集合",
+                "summary": "获取在售商品集合",
                 "parameters": [
                     {
                         "name": "corp_id",
@@ -212,7 +212,7 @@
                 }
             },
             "put": {
-                "description": "将商品集合上架",
+                "summary": "将商品集合上架",
                 "parameters": [
                     {
                         "name": "corp_id",
@@ -245,7 +245,7 @@
         },
         "/product/offshelf_products/": {
             "get": {
-                "description": "获取待售商品集合",
+                "summary": "获取待售商品集合",
                 "parameters": [
                     {
                         "name": "corp_id",
@@ -280,7 +280,7 @@
                 }
             },
             "put": {
-                "description": "将商品集合下架",
+                "summary": "将商品集合下架",
                 "parameters": [
                     {
                         "name": "corp_id",
@@ -313,7 +313,7 @@
         },
         "/product/deleted_products/": {
             "put": {
-                "description": "将商品集合删除",
+                "summary": "将商品集合删除",
                 "parameters": [
                     {
                         "name": "corp_id",
@@ -329,6 +329,44 @@
                         "format": "'[1, 2, 3]'",
                         "required": true,
                         "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        },
+        "/product/product_position/": {
+            "post": {
+                "summary": "更新商品排序",
+                "parameters": [
+                    {
+                      "name": "corp_id",
+                      "in": "query",
+                      "required": true,
+                      "type": "number"
+                    },
+                    {
+                      "name": "id",
+                      "in": "query",
+                      "required": true,
+                      "type": "number",
+                      "description": "商品id"
+                    },
+                    {
+                      "name": "position",
+                      "in": "query",
+                      "required": true,
+                      "type": "number",
+                      "description": "新的排序信息"
                     }
                 ],
                 "tags": [
