@@ -3,14 +3,13 @@
 出货单
 """
 from bdem import msgutil
-
-from business import model as business_model
 from eaglet.decorator import param_required
 
+from business import model as business_model
 from business.mall.supplier import Supplier
-from business.product.delivery_items_products import DeliveryItemsProducts
-from db.mall import models as mall_models
+from business.order.delivery_item_product_repository import DeliveryItemProductRepository
 from db.express import models as express_models
+from db.mall import models as mall_models
 from zeus_conf import TOPIC
 
 
@@ -65,6 +64,7 @@ class DeliveryItem(business_model.Model):
 	def from_models(args):
 		db_models = args['models']
 		fill_options = args['fill_options']
+		corp = args['corp']
 
 		delivery_items = []
 		delivery_item_ids = []
@@ -72,6 +72,7 @@ class DeliveryItem(business_model.Model):
 		for db_model in db_models:
 			delivery_item = DeliveryItem(db_model)
 			delivery_item.context['db_model'] = db_model
+			delivery_item.context['corp'] = corp
 			delivery_items.append(delivery_item)
 			delivery_item_ids.append(delivery_item.id)
 
@@ -170,8 +171,17 @@ class DeliveryItem(business_model.Model):
 
 	@staticmethod
 	def __fill_products(delivery_items):
-		delivery_items_products = DeliveryItemsProducts.get_for_delivery_items(delivery_items=delivery_items,
-		                                                                       with_premium_sale=True)
+		# delivery_items_products = DeliveryItemsProducts.get_for_delivery_items(delivery_items=delivery_items,
+		#                                                                        with_premium_sale=True)
+		if delivery_items:
+			corp = delivery_items[0].context['corp']
+		else:
+			corp = None
+		delivery_item_product_repository = DeliveryItemProductRepository.get({'corp': corp})
+
+		delivery_items_products = delivery_item_product_repository.get_products_for_delivery_items(
+			delivery_items=delivery_items,
+			with_premium_sale=True)
 
 		delivery_item_id2products = {}
 		for product in delivery_items_products:
