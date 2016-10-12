@@ -324,6 +324,12 @@
 																							"type": "string",
 																							"description": "商品名"
 																						},
+																						"product_model_names": {
+																							"type": "array",
+																							"items": {
+																								"type": "string"
+																							}
+																						},
 																						"promotion_result": {
 																							"type": "object",
 																							"properties": {
@@ -710,6 +716,12 @@
 																		"name": {
 																			"type": "string",
 																			"description": "商品名"
+																		},
+																		"product_model_names": {
+																			"type": "array",
+																			"items": {
+																				"type": "string"
+																			}
 																		},
 																		"promotion_result": {
 																			"type": "object",
