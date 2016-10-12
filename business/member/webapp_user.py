@@ -634,7 +634,7 @@ class WebAppUser(business_model.Model):
         grades = member_models.MemberGrade.select().dj_where(webapp_id=self.member.webapp_id)
         #grades = sorted(filter(lambda x: x.is_auto_upgrade and x.id > self.grade.id, webapp_owner.member_grades))
         try:
-            integral_strategy_settings = member_models.IntegralStrategySttings.get(webapp_id=self.member.webapp_id)
+            integral_strategy_settings = member_models.IntegralStrategySettings.get(webapp_id=self.member.webapp_id)
             is_all_conditions = integral_strategy_settings.is_all_conditions
         except:
             is_all_conditions = None

@@ -74,7 +74,7 @@ class Integral(business_model.Model):
 		"""
 		webapp_id = args['webapp_id']
 		try:
-			integral_db_model = member_models.IntegralStrategySttings.get(webapp_id=webapp_id)
+			integral_db_model = member_models.IntegralStrategySettings.get(webapp_id=webapp_id)
 			return Integral.from_model({
 				#'webapp_owner': webapp_owner,
 				'model': integral_db_model
@@ -190,7 +190,7 @@ class Integral(business_model.Model):
 		order_id = args['order_id']
 		webapp_user = args['webapp_user']
 		member = webapp_user.member
-		integral_strategy = member_models.IntegralStrategySttings.select().dj_where(webapp_id=member.webapp_id).first()
+		integral_strategy = member_models.IntegralStrategySettings.select().dj_where(webapp_id=member.webapp_id).first()
 		order = mall_models.Order.get(id=order_id)
 		# print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.3',order_id
 		#try:
@@ -217,9 +217,6 @@ class Integral(business_model.Model):
 			else:
 				followed_member = None
 
-			# if not integral_strategy:
-			# 	integral_strategy_settings = member_models.IntegralStrategySttings.get(webapp_id=webapp_owner.webapp_id)
-			#print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.46fmt:',integral_strategy
 			if integral_strategy:
 				#print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.7:'
 				increase_count = integral_strategy.buy_via_shared_url_increase_count_for_author

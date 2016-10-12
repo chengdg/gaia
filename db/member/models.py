@@ -214,7 +214,7 @@ USABLE_BOTH = 0 #积分优惠券可以同时使用
 USABLE_INTEGRAL = 1 #只可使用积分
 USABLE_CONPON = 2 #只可使用优惠券
 ONLY_ONE = 3 #仅可用一项
-class IntegralStrategySttings(models.Model):
+class IntegralStrategySettings(models.Model):
     """
     积分策略配置
     """
