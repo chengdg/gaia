@@ -38,9 +38,10 @@ class DeliveryItemProductRepository(business_model.Model):
 		delivery_item_ids = [delivery_item.id for delivery_item in delivery_items]
 		ohp_list = mall_models.OrderHasProduct.select().dj_where(order_id__in=delivery_item_ids)
 		product_ids = [p.product_id for p in ohp_list]
-		product_db_models = mall_models.Product.select().dj_where(id__in=product_ids)
 
-		product_id2db_model = {p.id: p for p in product_db_models}
+		products = self.corp.product_pool.get_products_by_ids(product_ids, {"with_product_model": True,"with_property":True})
+		product_id2product = {p.id: p for p in products}
+
 
 		origin_order_ids = [delivery_item.origin_order_id for delivery_item in delivery_items]
 		id2promotion = {r.promotion_id: r for r in
@@ -48,14 +49,7 @@ class DeliveryItemProductRepository(business_model.Model):
 
 		delivery_item_products = []
 		for r in ohp_list:
-			product_db_model = product_id2db_model[r.product_id]
-
-			# product = Product.from_models({
-			# 	'corp': self.corp,
-			# 	'models': [product_db_model],
-			# 	'fill_options': {}
-			# })[0]
-			product = product_db_model
+			product = product_id2product[r.product_id]
 
 			promotion = id2promotion.get(r.promotion_id, None)
 			if promotion:
@@ -72,9 +66,11 @@ class DeliveryItemProductRepository(business_model.Model):
 			delivery_item_product.total_origin_price = r.total_price
 			delivery_item_product.count = r.number
 			delivery_item_product.delivery_item_id = r.order_id
-			# delivery_item_product.product_model_name = 'todo'  # todo
-			delivery_item_product.product_model_name = 'todo'  # todo
 
+			if r.product_model_name == 'standard':
+				delivery_item_product.product_model_names = []
+			else:
+				delivery_item_product.product_model_names = ['todo1', 'todo2']
 			delivery_item_product.thumbnails_url = product.thumbnails_url
 			delivery_item_product.is_deleted = product.is_deleted
 
