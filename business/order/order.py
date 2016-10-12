@@ -79,6 +79,7 @@ class Order(business_model.Model):
 	def from_models(args):
 		db_models = args['db_models']
 		fill_options = args['fill_options']
+		corp = args['corp']
 
 		webapp_user_ids = []
 		orders = []
@@ -145,6 +146,7 @@ class Order(business_model.Model):
 			# 临时数据
 			webapp_user_ids.append(db_model.webapp_user_id)
 			order.context['db_model'] = db_model
+			order.context['corp'] = corp
 
 			order_ids.append(db_model.id)
 
@@ -213,6 +215,10 @@ class Order(business_model.Model):
 
 		delivery_item_db_models = []
 		order_ids = []
+		if len(orders):
+			corp = orders[0].context['corp']
+		else:
+			corp = None
 
 		self_order_ids = []
 		for order in orders:
@@ -231,7 +237,8 @@ class Order(business_model.Model):
 
 		delivery_items = DeliveryItem.from_models({
 			'models': delivery_item_db_models,
-			'fill_options': fill_options
+			'fill_options': fill_options,
+			'corp': corp
 		})
 
 		order_id2delivery_items = {}
@@ -306,6 +313,7 @@ class Order(business_model.Model):
 
 	@staticmethod
 	def __fill_full_money_info(orders, order_ids):
+		print('-order.delivery_items]',orders[0].delivery_items)
 
 		for order in orders:
 			order.origin_weizoom_card_money = order.weizoom_card_money + order.refunding_info[

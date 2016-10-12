@@ -32,12 +32,10 @@ class AOrderList(api_resource.ApiResource):
 			'with_group_info': True,
 			'with_full_money_info': True,
 			'with_delivery_items': {
-				'fill': True,
-				'fill_options': {
-					'with_products': True,
-					'with_refunding_info': True,
-					'with_supplier': True
-				}
+				'with_products': True,
+				'with_refunding_info': True,
+				'with_express_details': True,
+				'with_supplier': True
 			}
 
 		}
