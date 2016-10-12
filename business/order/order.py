@@ -313,7 +313,6 @@ class Order(business_model.Model):
 
 	@staticmethod
 	def __fill_full_money_info(orders, order_ids):
-		print('-order.delivery_items]',orders[0].delivery_items)
 
 		for order in orders:
 			order.origin_weizoom_card_money = order.weizoom_card_money + order.refunding_info[
