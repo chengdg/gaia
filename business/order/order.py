@@ -313,7 +313,6 @@ class Order(business_model.Model):
 
 	@staticmethod
 	def __fill_full_money_info(orders, order_ids):
-		print('-order.delivery_items]',orders[0].delivery_items)
 
 		for order in orders:
 			order.origin_weizoom_card_money = order.weizoom_card_money + order.refunding_info[
@@ -358,6 +357,15 @@ class Order(business_model.Model):
 			self.__send_msg_to_topic('update_final_price')
 			return True, ''
 		else:
+			return True, ''
+
+	def update_remark(self, corp, new_remark):
+		if self.remark != new_remark:
+			self.remark = new_remark
+			action_text = u' 修改订单备注'
+
+			self.__record_operation_log(self.bid, corp.username, action_text)
+			self.__save()
 			return True, ''
 
 	def pay(self, corp):
@@ -436,4 +444,5 @@ class Order(business_model.Model):
 		db_model.status = self.status
 		db_model.payment_time = self.payment_time
 		db_model.is_first_order = self.is_first_order
+		db_model.remark = self.remark
 		db_model.save()

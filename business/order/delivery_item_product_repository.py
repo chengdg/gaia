@@ -27,7 +27,6 @@ class DeliveryItemProductRepository(business_model.Model):
 
 		self.corp = corp
 
-
 	@staticmethod
 	@param_required(['corp'])
 	def get(args):
@@ -39,26 +38,20 @@ class DeliveryItemProductRepository(business_model.Model):
 		delivery_item_ids = [delivery_item.id for delivery_item in delivery_items]
 		ohp_list = mall_models.OrderHasProduct.select().dj_where(order_id__in=delivery_item_ids)
 		product_ids = [p.product_id for p in ohp_list]
-		product_db_models = mall_models.Product.select().dj_where(id__in=product_ids)
 
-		product_id2db_model = {p.id: p for p in product_db_models}
+		products = self.corp.product_pool.get_products_by_ids(product_ids, {"with_product_model": True,"with_property":True})
+		product_id2product = {p.id: p for p in products}
+
 
 		origin_order_ids = [delivery_item.origin_order_id for delivery_item in delivery_items]
 		id2promotion = {r.promotion_id: r for r in
 		                mall_models.OrderHasPromotion.select().dj_where(order_id__in=origin_order_ids)}
 
 		delivery_item_products = []
-		for ohs in ohp_list:
-			product_db_model = product_id2db_model[ohs.product_id]
+		for r in ohp_list:
+			product = product_id2product[r.product_id]
 
-			product = Product.from_models({
-				'corp': self.corp,
-				'models': [product_db_model],
-				'fill_options': {}
-			})[0]
-			# product = product_db_model
-
-			promotion = id2promotion.get(ohs.promotion_id, None)
+			promotion = id2promotion.get(r.promotion_id, None)
 			if promotion:
 				promotion_result = json.loads(promotion.promotion_result_json)
 				promotion_result['type'] = promotion.promotion_type
@@ -67,21 +60,43 @@ class DeliveryItemProductRepository(business_model.Model):
 
 			delivery_item_product = DeliveryItemProduct()
 			delivery_item_product.name = product.name
-			delivery_item_product.id = ohs.product_id
-			delivery_item_product.origin_price = ohs.total_price / ohs.number
-			delivery_item_product.sale_price = ohs.price
-			delivery_item_product.total_origin_price = ohs.total_price
-			delivery_item_product.count = ohs.number
-			delivery_item_product.delivery_item_id = ohs.order_id
-			delivery_item_product.product_model_name = 'todo'  # todo
+			delivery_item_product.id = r.product_id
+			delivery_item_product.origin_price = r.total_price / r.number
+			delivery_item_product.sale_price = r.price
+			delivery_item_product.total_origin_price = r.total_price
+			delivery_item_product.count = r.number
+			delivery_item_product.delivery_item_id = r.order_id
 
+			if r.product_model_name == 'standard':
+				delivery_item_product.product_model_names = []
+			else:
+				delivery_item_product.product_model_names = ['todo1', 'todo2']
 			delivery_item_product.thumbnails_url = product.thumbnails_url
 			delivery_item_product.is_deleted = product.is_deleted
 
 			delivery_item_product.promotion_result = promotion_result
 
+			# delivery_item_product_info = {
+			# 	'rid': r.id,
+			# 	'id': r.product_id,
+			# 	'model_name': r.product_model_name,
+			# 	'count': r.number,
+			# 	'promotion_id': r.promotion_id,
+			# 	'price': r.price,
+			# 	'total_price': r.total_price,
+			# 	'promotion_money': r.promotion_money,
+			# 	'discount_money': r.grade_discounted_money,
+			# 	'promotion_result': promotion_result,
+			# 	'integral_sale_id': r.integral_sale_id,
+			# 	'delivery_item_id': r.order_id,
+			# 	'db_model': product_db_model
+			# }
+			#
+			# delivery_item_product = DeliveryItemProduct.get({
+			# 	'corp': self.corp,
+			# 	'product_info': delivery_item_product_info
+			# })
+
 			delivery_item_products.append(delivery_item_product)
 
 		return delivery_item_products
-
-

@@ -51,12 +51,20 @@ class AOrder(api_resource.ApiResource):
 		"""
 		corp = args['corp']
 		id = args['id']
-		new_final_price = float(args['new_final_price'])
 
 		order_repository = corp.order_repository
 		order = order_repository.get_order(id)
 		if order:
-			is_success, msg = order.update_final_price(corp, new_final_price)
+
+			if 'new_final_price' in args:
+				new_final_price = float(args['new_final_price'])
+
+				is_success, msg = order.update_final_price(corp, new_final_price)
+
+			if 'new_remark' in args:
+				remark = args['new_remark'].strip()
+				is_success, msg = order.update_remark(corp, remark)
+
 			if is_success:
 				return {}
 			else:

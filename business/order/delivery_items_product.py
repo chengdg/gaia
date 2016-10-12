@@ -31,6 +31,30 @@ class DeliveryItemProduct(business_model.Model):
 		'is_deleted',
 		'total_origin_price',
 		'promotion_result',
-		'product_model_name'
+		'product_model_names'
 
 	)
+
+	@staticmethod
+	@param_required(['corp', 'product_info'])
+	def get(args):
+		product_info = args['product_info']
+		corp = args['corp']
+		db_model = product_info['db_model']
+
+		delivery_item_product = DeliveryItemProduct()
+
+		delivery_item_product.name = db_model.name
+		delivery_item_product.id = product_info['id']
+		delivery_item_product.origin_price = product_info['total_price'] / product_info['number']
+		delivery_item_product.sale_price = product_info['price']
+		delivery_item_product.total_origin_price = product_info['total_price']
+		delivery_item_product.count = product_info['number']
+		delivery_item_product.delivery_item_id = product_info
+		# delivery_item_product.product_model_name = 'todo'  # todo
+		delivery_item_product.product_model_name = 'todo'  # todo
+
+		delivery_item_product.thumbnails_url = product.thumbnails_url
+		delivery_item_product.is_deleted = product.is_deleted
+
+		delivery_item_product.promotion_result = promotion_result
