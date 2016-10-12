@@ -19,9 +19,7 @@ class Category(business_model.Model):
 	"""
 	__slots__ = (
 		'id',
-		'owner_id',
 		'name',
-		'pric_url',
 		'product_count',
 		'display_index',
 		'created_at',

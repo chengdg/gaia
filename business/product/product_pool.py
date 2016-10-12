@@ -41,7 +41,7 @@ class ProductPool(business_model.Model):
 			pass
 		return products
 
-	def __init__filter_values(self, filter_values):
+	def __init_filter_values(self, filter_values):
 		"""
 		解析商品池搜索的条件
 		@param filter_values:
@@ -89,7 +89,7 @@ class ProductPool(business_model.Model):
 		@param filter_values:
 		@return:
 		"""
-		product_pool_filter_values, product_db_filter_values, product_detail_filter_values = self.__init__filter_values(filter_values)
+		product_pool_filter_values, product_db_filter_values, product_detail_filter_values = self.__init_filter_values(filter_values)
 
 		#TODO: dj_where支持{}
 		if product_pool_filter_values:

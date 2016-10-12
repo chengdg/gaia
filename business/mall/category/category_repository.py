@@ -54,7 +54,7 @@ class CategoryRepository(business_model.Service):
 
 		return [Category.from_model({'db_model': category}) for category in result_categories], pageinfo
 
-	def get_specific_categories(self, category_ids):
+	def get_categories_by_ids(self, category_ids):
 		categories = mall_models.ProductCategory.select().dj_where(id__in=category_ids)
 		return [Category.from_model({'db_model': category}) for category in categories]
 
@@ -62,7 +62,7 @@ class CategoryRepository(business_model.Service):
 		"""
 		获得指定的category
 		"""
-		return self.get_specific_categories([category_id])[0]
+		return self.get_categories_by_ids([category_id])[0]
 
 	def delete_category(self, category_id):
 		mall_models.CategoryHasProduct.delete().dj_where(category=category_id).execute()
