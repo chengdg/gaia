@@ -359,6 +359,15 @@ class Order(business_model.Model):
 		else:
 			return True, ''
 
+	def update_remark(self, corp, new_remark):
+		if self.remark != new_remark:
+			self.remark = new_remark
+			action_text = u' 修改订单备注'
+
+			self.__record_operation_log(self.bid, corp.username, action_text)
+			self.__save()
+			return True, ''
+
 	def pay(self, corp):
 		"""
 		影响：
@@ -435,4 +444,5 @@ class Order(business_model.Model):
 		db_model.status = self.status
 		db_model.payment_time = self.payment_time
 		db_model.is_first_order = self.is_first_order
+		db_model.remark = self.remark
 		db_model.save()

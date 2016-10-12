@@ -782,6 +782,16 @@
 					{
 						"name": "id",
 						"required": true
+					},
+					{
+						"name":"new_final_price",
+						"type": "number",
+						"required": false
+					},
+					{
+						"name":"new_remark",
+						"type": "string",
+						"required": false
 					}
 				],
 				"responses": {
