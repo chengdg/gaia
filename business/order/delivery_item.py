@@ -8,6 +8,7 @@ from eaglet.decorator import param_required
 from business import model as business_model
 from business.mall.supplier import Supplier
 from business.order.delivery_item_product_repository import DeliveryItemProductRepository
+from business.order.process_order_after_delivery_item_service import ProcessOrderAfterDeliveryItemService
 from db.express import models as express_models
 from db.mall import models as mall_models
 from zeus_conf import TOPIC
@@ -46,11 +47,12 @@ class DeliveryItem(business_model.Model):
 		else:
 			self.origin_order_id = db_model.id
 
-		self.is_use_delivery_item_db_model = db_model.origin_order_id > 0
+		self.is_use_delivery_item_db_model = db_model.origin_order_id > 0  # 出货单使用出货单db，即db层面有出货单
 
 		self.postage = db_model.postage
 
 		self.status = db_model.status
+		self.payment_time = db_model.payment_time
 
 		# 快递公司信息
 		self.express_company_name = db_model.express_company_name
@@ -258,9 +260,9 @@ class DeliveryItem(business_model.Model):
 
 				}
 
-	def pay(self, payment_time, operator_name):
+	def pay(self, payment_time, corp):
 		"""
-
+		支付出货单，只由pay_order触发
 		@return:
 		"""
 
@@ -272,11 +274,68 @@ class DeliveryItem(business_model.Model):
 			self.payment_time = payment_time
 			self.status = to_status
 
-			self.__record_operation_log(self.bid, operator_name, action_text)
-			self.__recode_status_log(self.bid, operator_name, from_status, to_status)
+			self.__record_operation_log(self.bid, corp.username, action_text)
+			self.__recode_status_log(self.bid, corp.username, from_status, to_status)
 			self.__save()
 
-			self.__send_msg_to_topic('pay')
+		self.__send_msg_to_topic('pay_delivery_item')
+
+	def cancel(self, corp):
+		"""
+		取消出货单，只有cancel_order触发
+		@param corp:
+		@return:
+		"""
+		if self.is_use_delivery_item_db_model:
+			action_text = u"支付"
+			from_status = self.status
+			to_status = mall_models.ORDER_STATUS_PAYED_NOT_SHIP
+
+			self.status = to_status
+
+			self.__record_operation_log(self.bid, corp.username, action_text)
+			self.__recode_status_log(self.bid, corp.username, from_status, to_status)
+			self.__save()
+
+		self.__send_msg_to_topic('cancel_delivery_item')
+
+	def finish(self, corp):
+		"""
+		完成出货单，可外部调用
+
+		影响:
+		- 更新订单状态
+		- 记录状态日志
+		- 记录操作日志
+
+
+		- 更新红包引入消费金额的数据
+		- 更新会员信息
+		- 发送运营邮件通知
+		- 发送短信通知
+		- 更新红包引入消费金额的数据
+		@param corp:
+		@return:
+		"""
+
+		action_text = u'完成'
+		from_status = self.status
+		to_status = mall_models.ORDER_STATUS_SUCCESSED
+
+		self.status = to_status
+
+		self.__record_operation_log(self.bid, corp.username, action_text)
+		self.__recode_status_log(self.bid, corp.username, from_status, to_status)
+		self.__save()
+
+		self.__send_msg_to_topic('finish_delivery_item')
+		process_order_after_delivery_item_service = ProcessOrderAfterDeliveryItemService.get(corp)
+		process_order_after_delivery_item_service.process_order(self)
+
+		return True, ''
+
+	def ship(self, corp):
+		pass
 
 	def __record_operation_log(self, bid, operator_name, action_text):
 		mall_models.OrderOperationLog.create(order_id=bid, operator=operator_name, action=action_text)

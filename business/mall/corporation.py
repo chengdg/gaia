@@ -6,6 +6,7 @@ from eaglet.decorator import param_required
 from eaglet.utils.resource_client import Resource
 
 from business import model as business_model
+from business.order.delivery_item_repository import DeliveryItemRepository
 from business.order.order_repository import OrderRepository
 from db.account import models as account_model
 from db.mall import models as mall_models
@@ -92,6 +93,10 @@ class Corporation(business_model.Model):
 	@property
 	def order_repository(self):
 		return OrderRepository.get({'corp': self})
+
+	@property
+	def delivery_item_repository(self):
+		return DeliveryItemRepository.get({'corp': self})
 
 	@property
 	def pay_interface_repository(self):

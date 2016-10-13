@@ -4,17 +4,18 @@ from eaglet.core import api_resource
 from eaglet.decorator import param_required
 
 
-class APaidOrder(api_resource.ApiResource):
+
+class ACancelledOrder(api_resource.ApiResource):
 	"""
-	已支付的订单
+	已取消的订单
 	"""
-	app = 'order'
-	resource = 'paid_order'
+	app = "order"
+	resource = "cancelled_order"
 
 	@param_required(['id'])
 	def put(args):
 		"""
-		支付订单
+		取消订单
 		@return:
 		"""
 		corp = args['corp']
@@ -23,7 +24,7 @@ class APaidOrder(api_resource.ApiResource):
 		order_repository = corp.order_repository
 		order = order_repository.get_order(id)
 		if order:
-			is_success, msg = order.pay(corp)
+			is_success, msg = order.cancel(corp)
 			if is_success:
 				return {}
 			else:

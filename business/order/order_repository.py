@@ -13,8 +13,6 @@ from business.order.order import Order
 
 from db.mall import models as mall_models
 
-order_types = ('all', 'to_be_paid', 'to_be_shipped')
-
 
 class OrderRepository(business_model.Model):
 	__slots__ = (
