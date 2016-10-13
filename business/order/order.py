@@ -410,7 +410,7 @@ class Order(business_model.Model):
 		Order.__fill_delivery_items([self], None)
 
 		for delivery_item in self.delivery_items:
-			delivery_item.pay(payment_time, corp.username)
+			delivery_item.pay(payment_time, corp)
 
 		self.__send_msg_to_topic('pay_order')
 		return True, ''
@@ -433,6 +433,7 @@ class Order(business_model.Model):
 		- 更新商品销量（如果订单已支付
 		- 更新会员信息
 		- 发送运营邮件通知
+		- 发送短信通知
 
 		@return:
 		"""
@@ -448,10 +449,29 @@ class Order(business_model.Model):
 		Order.__fill_delivery_items([self], None)
 
 		for delivery_item in self.delivery_items:
-			delivery_item.cancel(corp.username)
+			delivery_item.cancel(corp)
 
 		self.__send_msg_to_topic('cancel_order')
 		return True, ''
+
+	def finish(self, corp):
+		"""
+		只会由出货单都完成触发
+		@param corp:
+		@return:
+		"""
+		action_text = u"完成"
+		from_status = self.status
+		to_status = mall_models.ORDER_STATUS_SUCCESSED
+		self.status = to_status
+
+		self.__record_operation_log(self.bid, corp.username, action_text)
+		self.__recode_status_log(self.bid, corp.username, from_status, to_status)
+		self.__save()
+
+		self.__send_msg_to_topic('finish_order')
+		return True, ''
+
 
 	def __record_operation_log(self, bid, operator_name, action_text):
 		mall_models.OrderOperationLog.create(order_id=bid, operator=operator_name, action=action_text)

@@ -4,3 +4,4 @@ import a_order
 import a_orders
 import a_paid_order
 import a_cancelled_order
+import a_finished_delivery_item
