@@ -1,13 +1,8 @@
 # -*- coding: utf-8 -*-
-from bdem import msgutil
-from eaglet.decorator import param_required
 
 from business import model as business_model
-from business.mall.supplier import Supplier
-from business.order.delivery_item_product_repository import DeliveryItemProductRepository
-from db.express import models as express_models
 from db.mall import models as mall_models
-from zeus_conf import TOPIC
+
 
 
 class ProcessOrderAfterDeliveryItemService(business_model.Service):

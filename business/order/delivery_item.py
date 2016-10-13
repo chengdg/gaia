@@ -334,6 +334,9 @@ class DeliveryItem(business_model.Model):
 
 		return True, ''
 
+	def ship(self, corp):
+		pass
+
 	def __record_operation_log(self, bid, operator_name, action_text):
 		mall_models.OrderOperationLog.create(order_id=bid, operator=operator_name, action=action_text)
 
