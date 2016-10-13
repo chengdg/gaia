@@ -15,11 +15,6 @@ import logistics
 import image_group
 import config
 
-import a_express_delivery
-import a_express_deliveries
-import a_express_delivery_company
-
-
 import a_promotion_products
 
 
