@@ -3,7 +3,7 @@ Feature: 更新积分规则
 Background:
 	Given jobs登录系统
 
-@mall @mall.product @mall.image_group @hermes @wip
+@mall @mall.config @hermes
 Scenario:1 更新积分规则
 	When jobs更新积分规则为
 		"""
