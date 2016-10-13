@@ -19,6 +19,7 @@ from business.mall.category.category_repository import CategoryRepository
 from business.mall.image_group.image_group_repository import ImageGroupRepository
 from business.mall.pay.pay_interface_repository import PayInterfaceRepository
 from business.mall.logistics.postage_config_repository import PostageConfigRepository
+from business.mall.logistics.express_delivery_repository import ExpressDeliveryRepository
 from business.mall.config.mall_config_repository import MallConfigRepository
 
 class Corporation(business_model.Model):
@@ -103,3 +104,7 @@ class Corporation(business_model.Model):
 	@property
 	def mall_config_repository(self):
 		return MallConfigRepository(self)
+
+	@property
+	def express_delivery_repository(self):
+		return ExpressDeliveryRepository(self)
