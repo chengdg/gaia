@@ -354,7 +354,7 @@ class Order(business_model.Model):
 			self.__save()
 
 			self.__record_operation_log(self.bid, corp.username, action_text)
-			self.__send_msg_to_topic('update_final_price')
+			self.__send_msg_to_topic('update_order_final_price')
 			return True, ''
 		else:
 			return True, ''
@@ -378,10 +378,10 @@ class Order(business_model.Model):
 		- 记录状态日志
 		- 记录操作日志
 
-		- 修改会员信息
+		- 更新会员信息
 		- 更新销量
 		- 发送模板消息
-		-
+		- 发送运营邮件通知
 		@param corp:
 		@return:
 		"""
@@ -407,13 +407,50 @@ class Order(business_model.Model):
 		self.__recode_status_log(self.bid, corp.username, from_status, to_status)
 		self.__save()
 
-		self.__send_msg_to_topic('pay')
-
 		Order.__fill_delivery_items([self], None)
 
 		for delivery_item in self.delivery_items:
 			delivery_item.pay(payment_time, corp.username)
 
+		self.__send_msg_to_topic('pay_order')
+		return True, ''
+
+	def cancel(self, corp):
+		"""
+		影响:
+		- 更新订单状态
+		- 记录状态日志
+		- 记录操作日志
+		- 取消出货单
+
+
+		- 返还订单资源
+			- 积分
+			- 优惠券
+			- 库存
+			- 微众卡
+			- 库存
+		- 更新商品销量（如果订单已支付
+		- 更新会员信息
+		- 发送运营邮件通知
+
+		@return:
+		"""
+		action_text = u"取消订单"
+		from_status = self.status
+		to_status = mall_models.ORDER_STATUS_CANCEL
+		self.status = to_status
+
+		self.__record_operation_log(self.bid, corp.username, action_text)
+		self.__recode_status_log(self.bid, corp.username, from_status, to_status)
+		self.__save()
+
+		Order.__fill_delivery_items([self], None)
+
+		for delivery_item in self.delivery_items:
+			delivery_item.cancel(corp.username)
+
+		self.__send_msg_to_topic('cancel_order')
 		return True, ''
 
 	def __record_operation_log(self, bid, operator_name, action_text):

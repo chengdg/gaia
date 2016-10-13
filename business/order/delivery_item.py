@@ -46,7 +46,7 @@ class DeliveryItem(business_model.Model):
 		else:
 			self.origin_order_id = db_model.id
 
-		self.is_use_delivery_item_db_model = db_model.origin_order_id > 0
+		self.is_use_delivery_item_db_model = db_model.origin_order_id > 0 # 出货单使用出货单db，即db层面有出货单
 
 		self.postage = db_model.postage
 
@@ -260,7 +260,7 @@ class DeliveryItem(business_model.Model):
 
 	def pay(self, payment_time, operator_name):
 		"""
-
+		支付出货单，只由pay_order触发
 		@return:
 		"""
 
@@ -276,7 +276,28 @@ class DeliveryItem(business_model.Model):
 			self.__recode_status_log(self.bid, operator_name, from_status, to_status)
 			self.__save()
 
-			self.__send_msg_to_topic('pay')
+		self.__send_msg_to_topic('pay_delivery_item')
+
+
+	def cancel(self,operator_name):
+		"""
+		取消出货单，只有cancel_order触发
+		@param operator_name:
+		@return:
+		"""
+		if self.is_use_delivery_item_db_model:
+			action_text = u"支付"
+			from_status = self.status
+			to_status = mall_models.ORDER_STATUS_PAYED_NOT_SHIP
+
+			self.status = to_status
+
+			self.__record_operation_log(self.bid, operator_name, action_text)
+			self.__recode_status_log(self.bid, operator_name, from_status, to_status)
+			self.__save()
+
+		self.__send_msg_to_topic('cancel_delivery_item')
+
 
 	def __record_operation_log(self, bid, operator_name, action_text):
 		mall_models.OrderOperationLog.create(order_id=bid, operator=operator_name, action=action_text)
