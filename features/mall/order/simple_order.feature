@@ -9,7 +9,7 @@ Background:
 	Given jobs登录系统
 
 	#添加支付方式
-	When jobs已添加支付方式
+	When jobs添加支付方式
 		"""
 		[{
 			"type": "货到付款",

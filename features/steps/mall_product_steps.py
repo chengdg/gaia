@@ -268,6 +268,8 @@ def __get_products(context, type_name=u'在售'):
 @when(u"{user}添加商品")
 def step_add_property(context, user):
     products = json.loads(context.text)
+    if isinstance(products, dict):
+        products = [products]
     for product in products:
         __create_product(context, product)
 
