@@ -33,7 +33,9 @@ class DeliveryItem(business_model.Model):
 		'total_origin_product_price',
 		'supplier_info',
 		'express_details',
-		'is_use_delivery_item_db_model'
+		'is_use_delivery_item_db_model',  # 出货单使用出货单db，即db层面有出货单
+		'with_logistics_trace',  # 是否使用快递100，对应于数据库里的is_100
+		'with_logistics'         # 是否使用物流
 	)
 
 	def __init__(self, db_model):
@@ -59,6 +61,8 @@ class DeliveryItem(business_model.Model):
 		self.express_number = db_model.express_number
 		self.leader_name = db_model.leader_name
 		self.created_at = db_model.created_at
+		self.with_logistics_trace = db_model.is_100
+		self.with_logistics = bool(db_model.express_company_name)
 		self.context['db_model'] = db_model
 
 	@staticmethod
@@ -334,8 +338,40 @@ class DeliveryItem(business_model.Model):
 
 		return True, ''
 
-	def ship(self, corp):
-		pass
+	def ship(self, corp, with_logistics_trace, company_name_value, express_number, leader_name):
+		"""
+		影响:
+		- 更新订单状态
+		- 记录状态日志
+		- 记录操作日志
+
+		@param corp:
+		@param express_company_name:
+		@param express_number:
+		@param leader_name:
+		@param is_100:
+		@return:
+		"""
+		self.express_company_name = company_name_value
+		self.express_number = express_number
+		self.leader_name = leader_name
+		self.with_logistics_trace = with_logistics_trace
+
+		action_text = u'订单发货'
+		from_status = self.status
+		to_status = mall_models.ORDER_STATUS_PAYED_SHIPED
+
+		self.status = to_status
+
+		self.__record_operation_log(self.bid, corp.username, action_text)
+		self.__recode_status_log(self.bid, corp.username, from_status, to_status)
+		self.__save()
+
+		self.__send_msg_to_topic('ship_delivery_item')
+		process_order_after_delivery_item_service = ProcessOrderAfterDeliveryItemService.get(corp)
+		process_order_after_delivery_item_service.process_order(self)
+
+		return True, ''
 
 	def __record_operation_log(self, bid, operator_name, action_text):
 		mall_models.OrderOperationLog.create(order_id=bid, operator=operator_name, action=action_text)
@@ -360,4 +396,8 @@ class DeliveryItem(business_model.Model):
 		db_model = self.context['db_model']
 		db_model.status = self.status
 		db_model.payment_time = self.payment_time
+		db_model.express_company_name = self.express_company_name
+		db_model.express_number = self.express_number
+		db_model.leader_name = self.leader_name
+		db_model.is_100 = self.with_logistics_trace
 		db_model.save()

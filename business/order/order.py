@@ -84,6 +84,7 @@ class Order(business_model.Model):
 		webapp_user_ids = []
 		orders = []
 		order_ids = []
+
 		for db_model in db_models:
 			order = Order()
 
@@ -454,24 +455,43 @@ class Order(business_model.Model):
 		self.__send_msg_to_topic('cancel_order')
 		return True, ''
 
-	def finish(self, corp):
+	def finish(self, corp, only_send_message):
 		"""
 		只会由出货单都完成触发
 		@param corp:
 		@return:
 		"""
-		action_text = u"完成"
-		from_status = self.status
-		to_status = mall_models.ORDER_STATUS_SUCCESSED
-		self.status = to_status
+		if not only_send_message:
+			action_text = u"完成"
+			from_status = self.status
+			to_status = mall_models.ORDER_STATUS_SUCCESSED
+			self.status = to_status
 
-		self.__record_operation_log(self.bid, corp.username, action_text)
-		self.__recode_status_log(self.bid, corp.username, from_status, to_status)
-		self.__save()
+			self.__record_operation_log(self.bid, corp.username, action_text)
+			self.__recode_status_log(self.bid, corp.username, from_status, to_status)
+			self.__save()
 
 		self.__send_msg_to_topic('finish_order')
 		return True, ''
 
+	def ship(self, corp, only_send_message):
+		"""
+		只会由出货单都完成触发
+		@param corp:
+		@return:
+		"""
+		if not only_send_message:
+			action_text = u"订单发货"
+			from_status = self.status
+			to_status = mall_models.ORDER_STATUS_PAYED_SHIPED
+			self.status = to_status
+
+			self.__record_operation_log(self.bid, corp.username, action_text)
+			self.__recode_status_log(self.bid, corp.username, from_status, to_status)
+			self.__save()
+
+		self.__send_msg_to_topic('finish_order')
+		return True, ''
 
 	def __record_operation_log(self, bid, operator_name, action_text):
 		mall_models.OrderOperationLog.create(order_id=bid, operator=operator_name, action=action_text)

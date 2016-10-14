@@ -17,34 +17,36 @@ class AShippedDeliveryItems(api_resource.ApiResource):
 		批量创建已发货订单
 
 		发货基本信息：
-		- delivery_item_id
 		- delivery_item_bid
-		- express_company_name
+		- with_logistics
+		- with_logistics_trace
+		- express_company_name: 为中文名称，如申通快递
 		- express_number
 		- leader_name
-		- is_100
 		@return:
 		"""
 
-		infos = json.loads(args)
-
+		infos = json.loads(args["ship_infos"])
 		corp = args['corp']
 
 		ship_infos = [
 			{
 				'delivery_item_bid': x['delivery_item_bid'],
+				'with_logistics': x['with_logistics'] == 'true',
+				'with_logistics_trace': x['with_logistics_trace'] == 'true',
 				'express_company_name': x['express_company_name'],
 				'express_number': x['express_number'],
 				'leader_name': x['leader_name'],
-				'is_100': x['delivery_item_id'] == "true"
-
 			} for x in infos]
 
 		delivery_item_ship_service = DeliveryItemShipService.get(corp)
 
-		success_data, error_data = delivery_item_ship_service.ship_delivery_items(ship_infos)
+		_tmp_ship_infos = delivery_item_ship_service.ship_delivery_items(ship_infos)
 
-		return {
-			'success_data': success_data,
-			'error_data': error_data
-		}
+		ship_result = [{
+			               "delivery_item_bid": info["delivery_item_bid"],
+			               "is_success": info['is_success'],
+			               "error_info": info['error_info']
+
+		               } for info in _tmp_ship_infos]
+		return ship_result

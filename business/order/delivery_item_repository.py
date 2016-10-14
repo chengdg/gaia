@@ -33,9 +33,22 @@ class DeliveryItemRepository(business_model.Model):
 
 	def get_delivery_item(self, id, fill_options=None):
 		db_models = self.__get_db_models_for_corp()
-		db_model = db_models.dj_where(id=id).first()
+		db_models = db_models.dj_where(id=id)
 		delivery_items = DeliveryItem.from_models(
-			{"models": [db_model], 'fill_options': fill_options, 'corp': self.corp})
+			{"models": db_models, 'fill_options': fill_options, 'corp': self.corp})
+
+		if delivery_items:
+			return delivery_items[0]
+		else:
+			return None
+
+	def get_delivery_item_by_bid(self, bid, fill_options=None):
+		db_models = self.__get_db_models_for_corp()
+		db_models = db_models.dj_where(order_id=bid)
+		print(db_models.count())
+
+		delivery_items = DeliveryItem.from_models(
+			{"models": db_models, 'fill_options': fill_options, 'corp': self.corp})
 
 		if delivery_items:
 			return delivery_items[0]
@@ -44,9 +57,6 @@ class DeliveryItemRepository(business_model.Model):
 
 	def __get_db_models_for_corp(self):
 		webapp_id = self.corp.webapp_id
-		webapp_type = self.corp.type
-		user_id = self.corp.id
-
 		db_models = mall_models.Order.select().dj_where(webapp_id=webapp_id, webapp_user_id__gt=0)
 
 		return db_models
