@@ -261,6 +261,10 @@
 																				"type": "string",
 																				"description": "发货人"
 																			},
+																			"with_logistics": {
+																				"type": "boolean",
+																				"description": "是否使用物流"
+																			},
 																			"refunding_info": {
 																				"type": "object",
 																				"properties": {
@@ -654,6 +658,10 @@
 																"type": "string",
 																"description": "发货人"
 															},
+															"with_logistics": {
+																"type": "boolean",
+																"description": "是否使用物流"
+															},
 															"refunding_info": {
 																"type": "object",
 																"properties": {
@@ -784,12 +792,12 @@
 						"required": true
 					},
 					{
-						"name":"new_final_price",
+						"name": "new_final_price",
 						"type": "number",
 						"required": false
 					},
 					{
-						"name":"new_remark",
+						"name": "new_remark",
 						"type": "string",
 						"required": false
 					}
