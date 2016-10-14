@@ -490,7 +490,26 @@ class Order(business_model.Model):
 			self.__recode_status_log(self.bid, corp.username, from_status, to_status)
 			self.__save()
 
-		self.__send_msg_to_topic('finish_order')
+		self.__send_msg_to_topic('ship_order')
+		return True, ''
+
+	def apply_for_refunding(self, corp, only_send_message):
+		"""
+		只会由出货单都完成触发
+		@param corp:
+		@return:
+		"""
+		if not only_send_message:
+			action_text = u"退款"
+			from_status = self.status
+			to_status = mall_models.ORDER_STATUS_REFUNDING
+			self.status = to_status
+
+			self.__record_operation_log(self.bid, corp.username, action_text)
+			self.__recode_status_log(self.bid, corp.username, from_status, to_status)
+			self.__save()
+
+		self.__send_msg_to_topic('apply_for_refunding_order')
 		return True, ''
 
 	def __record_operation_log(self, bid, operator_name, action_text):

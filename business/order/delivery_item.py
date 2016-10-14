@@ -35,7 +35,7 @@ class DeliveryItem(business_model.Model):
 		'express_details',
 		'is_use_delivery_item_db_model',  # 出货单使用出货单db，即db层面有出货单
 		'with_logistics_trace',  # 是否使用快递100，对应于数据库里的is_100
-		'with_logistics'         # 是否使用物流
+		'with_logistics'  # 是否使用物流
 	)
 
 	def __init__(self, db_model):
@@ -373,6 +373,41 @@ class DeliveryItem(business_model.Model):
 
 		return True, ''
 
+	def apply_for_refunding(self, corp, cash, weizoom_card_money, coupon_money, integral):
+
+		action_text = u'退款'
+		from_status = self.status
+		to_status = mall_models.ORDER_STATUS_REFUNDING
+
+		self.status = to_status
+
+		self.__record_operation_log(self.bid, corp.username, action_text)
+		self.__recode_status_log(self.bid, corp.username, from_status, to_status)
+		self.__save()
+
+		if self.is_use_delivery_item_db_model:
+			# 只有自营出货单开启高端退款（然而并不知道用什么词替代"高端"
+			integral_strategy = corp.mall_config_repository.get_integral_strategy()
+			integral_each_yuan = integral_strategy.integral_each_yuan
+			integral_money = round(integral / integral_each_yuan, 2)
+
+			total = cash + weizoom_card_money + coupon_money + integral_money
+
+			self.refunding_info = {
+				"cash": cash,
+				"weizoom_card_money": weizoom_card_money,
+				"coupon_money": coupon_money,
+				"integral": integral,
+				"integral_money": integral_money,
+				"total": total
+			}
+
+		self.__send_msg_to_topic('apply_for_refunding_delivery_item')
+		process_order_after_delivery_item_service = ProcessOrderAfterDeliveryItemService.get(corp)
+		process_order_after_delivery_item_service.process_order(self)
+
+		return True, ''
+
 	def __record_operation_log(self, bid, operator_name, action_text):
 		mall_models.OrderOperationLog.create(order_id=bid, operator=operator_name, action=action_text)
 
@@ -400,4 +435,18 @@ class DeliveryItem(business_model.Model):
 		db_model.express_number = self.express_number
 		db_model.leader_name = self.leader_name
 		db_model.is_100 = self.with_logistics_trace
+
+		if self.refunding_info:
+			mall_models.OrderHasRefund.create(
+				origin_order_id=self.origin_order_id,
+				delivery_item_id=self.id,
+				cash=self.refunding_info['cash'],
+				weizoom_card_money=self.refunding_info['weizoom_card_money'],
+				integral=self.refunding_info['integral'],
+				integral_money=self.refunding_info['integral_money'],
+				coupon_money=self.refunding_info['coupon_money'],
+				total=self.refunding_info['total'],
+				finished=False
+			)
+
 		db_model.save()

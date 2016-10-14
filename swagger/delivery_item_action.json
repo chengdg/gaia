@@ -45,6 +45,171 @@
 					}
 				}
 			}
+		},
+		"/order/shipped_delivery_items": {
+			"put": {
+				"summary": "批量创建已发货的出货单，即批量发货",
+				"parameters": [
+					{
+						"name": "corp_id",
+						"in": "body",
+						"description": "",
+						"required": true,
+						"type": "string"
+					},
+					{
+						"name": "ship_infos",
+						"required": true,
+						"description": "json字符串",
+						"type": "array",
+						"items": {
+							"$ref": "#/definitions/ship_info"
+						}
+					}
+				],
+				"tags": [
+					"order",
+					"delivery_item"
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+									"type": "array",
+									"items": {
+										"type": "object",
+										"properties": {
+											"delivery_item_bid": {
+												"description": "订单编号，原样返回"
+											},
+											"is_success": {
+												"type": "boolean",
+												"description": "是否发货成功"
+											},
+											"error_info": {
+												"type": "string",
+												"description": "错误原因文字描述"
+											}
+										}
+									}
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/order/refunding_delivery_item": {
+			"put": {
+				"summary": "创建退款中的出货单，即申请退款出货单",
+				"parameters": [
+					{
+						"name": "corp_id",
+						"required": true
+					},
+					{
+						"name": "delivery_item_id",
+						"required": true
+					},
+					{
+						"name": "cash",
+						"required": false,
+						"description": "申请退款的现金"
+					},
+					{
+						"name": "weizoom_card_money",
+						"required": false,
+						"description": "申请退款的微众卡金额"
+					},
+					{
+						"name": "coupon_money",
+						"required": false,
+						"description": "申请退款的优惠券金额"
+					},
+					{
+						"name": "integral",
+						"required": "false",
+						"description": "申请退款的积分数值"
+					}
+				],
+				"tags": [
+					"order",
+					"delivery_item"
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"definitions": {
+		"ship_info": {
+			"type": "object",
+			"description": "商品的支付信息",
+			"properties": {
+				"delivery_item_bid": {
+					"type": "integer",
+					"description": "出货单编号,兼容含有-的改价后编号",
+					"required":true
+				},
+				"with_logistics": {
+					"type": "boolean",
+					"description": "是否使用物流",
+					"required":true
+				},
+				"with_logistics_trace": {
+					"type": "integer",
+					"description": "是否启用物流追踪，只要不是用其他时候就是使用物流追踪",
+					"required":true
+				},
+				"company_name_value": {
+					"type": "string",
+					"description": "物流公司的代号，当不用物流追踪时候，则直接为用户填写内容",
+					"required":true
+				},
+				"express_number": {
+					"type": "string",
+					"description": "快递编号",
+					"required":true
+				},
+				"leader_name": {
+					"type": "string",
+					"description": "发货人",
+					"required":true
+				}
+			}
 		}
 	}
 }
