@@ -213,7 +213,7 @@
 					}
 				}
 			}
-		},
+		}
 	},
 	"definitions": {
 		"ship_info": {
