@@ -87,6 +87,7 @@
 		},
 		"/order/shipped_delivery_items": {
 			"put": {
+				"summary": "批量创建已发货的出货单，即批量发货",
 				"parameters": [
 					{
 						"name": "corp_id",
@@ -101,7 +102,6 @@
 						"description": "json字符串",
 						"type": "array",
 						"items": {
-							"type": "object",
 							"$ref": "#/definitions/ship_info"
 						}
 					}
@@ -121,18 +121,21 @@
 									"format": "int32"
 								},
 								"data": {
-									"type":"array",
-									"items":{
-										"delivery_item_bid":{
-											"description":"订单编号，原样返回"
-										},
-										"is_success":{
-											"type":"boolean",
-											"description":"是否发货成功"
-										},
-										"error_info":{
-											"type":"string",
-											"description":"错误原因文字描述"
+									"type": "array",
+									"items": {
+										"type": "object",
+										"properties": {
+											"delivery_item_bid": {
+												"description": "订单编号，原样返回"
+											},
+											"is_success": {
+												"type": "boolean",
+												"description": "是否发货成功"
+											},
+											"error_info": {
+												"type": "string",
+												"description": "错误原因文字描述"
+											}
 										}
 									}
 								},
