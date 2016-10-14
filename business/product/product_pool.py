@@ -141,6 +141,10 @@ class ProductPool(business_model.Model):
 			result.append(id2product[product_id])
 		return result
 
+	def __compatible_delete_products(self, product_ids):
+		#[compatibility]: 兼容老的apiserver，在apiserver升级到支持ProductPool，本函数应该删除
+		mall_models.Product.update(is_deleted=True).dj_where(id__in=product_ids).execute()
+
 	def delete_products(self, product_ids):
 		"""
 		从商品池删除商品
@@ -152,6 +156,8 @@ class ProductPool(business_model.Model):
 				display_index=NEW_PRODUCT_DISPLAY_INDEX,
 				status=mall_models.PP_STATUS_DELETE
 			).dj_where(product_id__in=product_ids, woid=self.corp_id).execute()
+
+			self.__compatible_delete_products(product_ids)
 
 			topic_name = TOPIC['product']
 			msg_name = 'delete_product_from_pool'

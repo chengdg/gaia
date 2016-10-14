@@ -41,6 +41,14 @@ class ProductShelf(business_model.Model):
 		else:
 			raise ProductShelfError('Product Shelf Type Error!')
 
+	def __compatible_change_product_shelve_type(self, product_ids):
+		#[compatibility]：兼容老的apiserver，在apiserver升级到支持ProductPool，下面的代码应该删除
+			if self.type == 'in_sale':
+				shelve_type = mall_models.PRODUCT_SHELVE_TYPE_ON
+			elif self.type == 'for_sale':
+				shelve_type = mall_models.PRODUCT_SHELVE_TYPE_OFF
+			mall_models.Product.update(shelve_type=shelve_type).dj_where(id__in=product_ids).execute()
+
 	def add_products(self, product_ids):
 		"""
 		在货架上添加商品
@@ -58,6 +66,8 @@ class ProductShelf(business_model.Model):
 				status=product_shelf_type,
 				display_index=NEW_PRODUCT_DISPLAY_INDEX
 			).dj_where(product_id__in=product_ids, woid=self.corp.id, status__gt=mall_models.PP_STATUS_DELETE).execute()
+
+			self.__compatible_change_product_shelve_type(product_ids)
 
 			self.__send_msg_to_topic(product_ids, msg_name)
 		return product_ids
