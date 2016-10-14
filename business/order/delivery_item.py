@@ -82,7 +82,7 @@ class DeliveryItem(business_model.Model):
 			delivery_items.append(delivery_item)
 			delivery_item_ids.append(delivery_item.id)
 
-		if fill_options:
+		if fill_options and delivery_items:
 			if fill_options.get('with_products'):
 				DeliveryItem.__fill_products(delivery_items)
 

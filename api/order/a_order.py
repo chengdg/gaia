@@ -41,7 +41,10 @@ class AOrder(api_resource.ApiResource):
 
 		order = order_repository.get_order(id, fill_options)
 		# todo 显式声明
-		return {'order': order.to_dict()}
+		if order:
+			return {'order': order.to_dict()}
+		else:
+			return 500, {}
 
 	@param_required(['id'])
 	def post(args):

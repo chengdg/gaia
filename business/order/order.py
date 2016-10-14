@@ -153,7 +153,7 @@ class Order(business_model.Model):
 
 			orders.append(order)
 
-		if fill_options:
+		if fill_options and orders:
 			with_member = fill_options.get('with_member')
 			# with_delivery_items = fill_options.get('with_delivery_items')
 			with_delivery_items = 'with_delivery_items' in fill_options
