@@ -1,0 +1,208 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "Hermes Mall Notify API"
+    },
+    "paths": {
+        "/mall/email_notifications/": {
+            "get": {
+                "summary": "获得邮件通知集合",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "mall_notify"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/EmailNotificationList"
+                        }
+                    }
+                }
+            }
+        },
+        "/mall/email_notification/": {
+            "get": {
+                "summary": "获取指定的邮件通知",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "邮件通知的id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "mall_notify"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                          "$ref": "#/definitions/EmailNotification"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "修改邮件通知的内容",
+                "parameters": [
+                    {
+                        "name": "",
+                        "in": "body",
+                        "description": "更新的数据",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/UpdateEmailNotification"
+                        }
+                    }
+                ],
+                "tags": [
+                    "mall_notify"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        },
+        "/mall/email_notification_activity/": {
+            "post": {
+                "summary": "修改邮件通知的开启状态",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "type": "string",
+                        "in": "formData",
+                        "description": "",
+                        "required": true
+                    },
+                    {
+                        "name": "id",
+                        "type": "string",
+                        "in": "formData",
+                        "description": "待修改的邮件通知的id",
+                        "required": true
+                    },
+                    {
+                        "name": "activity",
+                        "type": "string",
+                        "in": "formData",
+                        "description": "待修改的邮件通知的开启状态",
+                        "format": "取值：on(开启)|off(关闭)",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "mall_notify"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "EmailNotificationList": {
+            "type": "object",
+            "properties": {
+              "email_notifications": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/EmailNotification"
+                }
+              }
+            }
+        },
+        "EmailNotification": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "number",
+                    "description": "邮件通知的id"
+                },
+                "type": {
+                    "type": "string",
+                    "description": "邮件通知的类型",
+                    "format": "after_create_order|after_pay_order|after_ship_order|after_finish_order|after_cancel_order"
+                },
+                "is_active": {
+                    "type": "boolean",
+                    "description": "是否启用"
+                },
+                "email_addresses": {
+                    "type": "array",
+                    "description": "收件人邮件地址的集合",
+                    "items": {
+                      "type": "string"
+                    }
+                },
+                "black_member_ids": {
+                    "type": "array",
+                    "description": "收件人邮件地址的集合",
+                    "items": {
+                      "type": "string"
+                    }
+                },
+            }
+        },
+        "UpdateEmailNotification": {
+            "type": "object",
+            "properties": {
+                "corp_id": {
+                    "type": "number",
+                },
+                "id": {
+                    "type": "string",
+                    "description": "邮件通知的id"
+                },
+                "email_addresses": {
+                    "type": "array",
+                    "description": "收件人邮件地址的集合",
+                    "items": {
+                      "type": "string"
+                    }
+                },
+                "black_member_ids": {
+                    "type": "array",
+                    "description": "收件人邮件地址的集合",
+                    "items": {
+                      "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}

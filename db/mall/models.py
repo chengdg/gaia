@@ -1366,3 +1366,22 @@ class Image(models.Model):
 		verbose_name = '商城图片'
 		verbose_name_plural = '商城图片'
 
+
+PLACE_ORDER = 0  # 下单
+PAY_ORDER = 1  # 付款
+SHIP_ORDER = 2  # 发货
+SUCCESSED_ORDER = 3  # 完成
+CANCEL_ORDER = 4  # 已取消
+class UserOrderNotifySettings(models.Model):
+	"""
+	发送订单邮件信息配置
+	"""
+	user = models.ForeignKey(User)
+	emails = models.TextField(default='')  # '|'分割
+	black_member_ids = models.TextField(default='')  # '|'分割，会员id
+	status = models.IntegerField(default=0)
+	is_active = models.BooleanField(default=False)
+	created_at = models.DateTimeField(auto_now_add=True)
+
+	class Meta(object):
+		db_table = 'user_order_notify_setting'
