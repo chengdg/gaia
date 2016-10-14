@@ -53,3 +53,6 @@ class ProcessOrderAfterDeliveryItemService(business_model.Service):
 
 			if to_status == mall_models.ORDER_STATUS_REFUNDING:
 				order.apply_for_refunding(self.corp, only_send_message)
+
+			if to_status == mall_models.ORDER_STATUS_REFUNDED:
+				order.refund(self.corp, only_send_message)

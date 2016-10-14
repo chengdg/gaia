@@ -172,7 +172,48 @@
 					}
 				}
 			}
-		}
+		},
+		"/order/refunded_delivery_item": {
+			"put": {
+				"summary": "创建已退款的出货单，即退款完成出货单",
+				"parameters": [
+					{
+						"name": "corp_id",
+						"required": true
+					},
+					{
+						"name": "delivery_item_id",
+						"required": true
+					}
+				],
+				"tags": [
+					"order",
+					"delivery_item"
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
 	},
 	"definitions": {
 		"ship_info": {

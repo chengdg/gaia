@@ -383,7 +383,6 @@ class DeliveryItem(business_model.Model):
 
 		self.__record_operation_log(self.bid, corp.username, action_text)
 		self.__recode_status_log(self.bid, corp.username, from_status, to_status)
-		self.__save()
 
 		if self.is_use_delivery_item_db_model:
 			# 只有自营出货单开启高端退款（然而并不知道用什么词替代"高端"
@@ -399,10 +398,41 @@ class DeliveryItem(business_model.Model):
 				"coupon_money": coupon_money,
 				"integral": integral,
 				"integral_money": integral_money,
-				"total": total
+				"total": total,
+				"finished": False
 			}
+		self.__save()
 
 		self.__send_msg_to_topic('apply_for_refunding_delivery_item')
+		process_order_after_delivery_item_service = ProcessOrderAfterDeliveryItemService.get(corp)
+		process_order_after_delivery_item_service.process_order(self)
+
+		return True, ''
+
+	def refund(self, corp):
+
+		action_text = u'退款完成'
+		from_status = self.status
+		to_status = mall_models.ORDER_STATUS_REFUNDED
+
+		self.status = to_status
+
+		self.__record_operation_log(self.bid, corp.username, action_text)
+		self.__recode_status_log(self.bid, corp.username, from_status, to_status)
+
+		if self.is_use_delivery_item_db_model:
+			# 只有自营出货单开启高端退款（然而并不知道用什么词替代"高端"
+			DeliveryItem.__fill_refunding_info([self], [self.id])
+
+			self.refunding_info['finished'] = True
+
+			# 更新订单的金额信息
+			mall_models.Order.update(mall_models.Order.final_price - self.refunding_info['cash'],
+			                         mall_models.Order.weizoom_card_money - self.context[
+				                         'weizoom_card_money']).dj_where(id=self.origin_order_id).execute()
+		self.__save()
+
+		self.__send_msg_to_topic('refund_delivery_item')
 		process_order_after_delivery_item_service = ProcessOrderAfterDeliveryItemService.get(corp)
 		process_order_after_delivery_item_service.process_order(self)
 
@@ -436,7 +466,7 @@ class DeliveryItem(business_model.Model):
 		db_model.leader_name = self.leader_name
 		db_model.is_100 = self.with_logistics_trace
 
-		if self.refunding_info:
+		if self.refunding_info and self.refunding_info['finished'] is False:
 			mall_models.OrderHasRefund.create(
 				origin_order_id=self.origin_order_id,
 				delivery_item_id=self.id,
@@ -448,5 +478,7 @@ class DeliveryItem(business_model.Model):
 				total=self.refunding_info['total'],
 				finished=False
 			)
+		elif self.refunding_info and self.refunding_info['finished'] is True:
+			mall_models.OrderHasRefund.update().dj_where(delivery_item_id=self.id).update(finished=True).execute()
 
 		db_model.save()
