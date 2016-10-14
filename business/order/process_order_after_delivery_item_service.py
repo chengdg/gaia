@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
-
+"""
+根据业务暴露订单、出货单接口
+如果用户操作订单，则系统自动完成操作出货单；如果用户操作出货单，则根据业务系统自动操作订单
+此处"操作"指会引起订单、出货单状态变化的用户行为
+此处"用户"指外部系统，如可能是hermes、panda、pay、快递100回调
+"""
 from business import model as business_model
 from db.mall import models as mall_models
 
