@@ -35,7 +35,8 @@ class DeliveryItem(business_model.Model):
 		'express_details',
 		'is_use_delivery_item_db_model',  # 出货单使用出货单db，即db层面有出货单
 		'with_logistics_trace',  # 是否使用快递100，对应于数据库里的is_100
-		'with_logistics'  # 是否使用物流
+		'with_logistics',  # 是否使用物流
+		'operation_logs'
 	)
 
 	def __init__(self, db_model):
@@ -94,6 +95,9 @@ class DeliveryItem(business_model.Model):
 
 			if fill_options.get('with_supplier'):
 				DeliveryItem.__fill_supplier(delivery_items, delivery_item_ids)
+
+			if fill_options.get('with_operation_logs'):
+				DeliveryItem.__fill_operation_logs(delivery_items, delivery_item_ids)
 
 		return delivery_items
 
@@ -199,6 +203,33 @@ class DeliveryItem(business_model.Model):
 		for delivery_item in delivery_items:
 			delivery_item.products = delivery_item_id2products[delivery_item.id]
 			delivery_item.total_origin_product_price = sum([p.total_origin_price for p in delivery_item.products])
+
+	@staticmethod
+	def __fill_operation_logs(delivery_items, delivery_item_ids):
+		bids = [item.bid for item in delivery_items]
+
+		logs = mall_models.OrderOperationLog.select().dj_where(order_id__in=bids)
+
+		bid2logs = {}
+
+		for log in logs:
+			if log.order_id in bid2logs:
+				bid2logs[log.order_id].append({
+					'action_text': log.action,
+					'time': log.created_at,
+					'operator': log.operator
+				})
+			else:
+				bid2logs[log.order_id] = [{
+					'action_text': log.action,
+					'time': log.created_at,
+					'operator': log.operator
+				}]
+
+		for item in delivery_items:
+			item.operation_logs = bid2logs.get(item.bid, [])
+			for log in item.operation_logs:
+				log['operator'] = item.leader_name
 
 	def to_dict(self, *extras):
 

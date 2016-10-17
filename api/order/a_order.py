@@ -29,12 +29,14 @@ class AOrder(api_resource.ApiResource):
 			'with_member': True,
 			'with_group_info': True,
 			'with_full_money_info': True,
-			'status_logs': True,
+			'with_status_logs': True,
+			'with_operation_logs': True,
 			'with_delivery_items': {
 				'with_products': True,
 				'with_refunding_info': True,
 				'with_express_details': True,
-				'with_supplier': True
+				'with_supplier': True,
+				'with_operation_logs': True
 			}
 
 		}

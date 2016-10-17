@@ -600,6 +600,26 @@
 														}
 													}
 												},
+												"operation_logs": {
+													"description": "操作,按照时间排序",
+													"type": "array",
+													"items": {
+														"type": "object",
+														"properties": {
+															"action_text": {
+																"type": "string",
+																"description": "操作"
+															},
+															"operator": {
+																"type": "string",
+																"description": "操作人"
+															},
+															"time": {
+																"type": "string"
+															}
+														}
+													}
+												},
 												"delivery_items": {
 													"description": "出货单列表",
 													"type": "array",
@@ -623,6 +643,26 @@
 																			"type": "string"
 																		},
 																		"ftime": {
+																			"type": "string"
+																		}
+																	}
+																}
+															},
+															"operation_logs": {
+																"description": "操作,按照时间排序",
+																"type": "array",
+																"items": {
+																	"type": "object",
+																	"properties": {
+																		"action_text": {
+																			"type": "string",
+																			"description": "操作"
+																		},
+																		"operator": {
+																			"type": "string",
+																			"description": "操作人"
+																		},
+																		"time": {
 																			"type": "string"
 																		}
 																	}
