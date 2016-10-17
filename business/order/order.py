@@ -571,7 +571,8 @@ class Order(business_model.Model):
 		topic_name = TOPIC['order']
 		data = {
 			"order_id": self.id,
-			"order_bid": self.bid
+			"order_bid": self.bid,
+			"corp_id": self.context['corp_id']
 		}
 		msgutil.send_message(topic_name, msg_name, data)
 
