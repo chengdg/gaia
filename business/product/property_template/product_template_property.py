@@ -15,7 +15,6 @@ from business import model as business_model
 from eaglet.core import watchdog
 from eaglet.core.exceptionutil import unicode_full_stack
 from settings import PANDA_IMAGE_DOMAIN
-from services.product_service.task import clear_sync_product_cache
 
 from business.decorator import cached_context_property
 

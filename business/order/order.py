@@ -98,7 +98,7 @@ class Order(business_model.Model):
 				order.bid_with_edit_money = order.bid
 			order.status = db_model.status
 			order.is_self_order = db_model.origin_order_id == -1  # todo 起个名
-			order.is_use_delivery_item_db_model = db_model.origin_order_id > 0
+			order.is_use_delivery_item_db_model = db_model.origin_order_id == -1
 			order.remark = db_model.remark
 			order.type = db_model.type
 			order.webapp_id = db_model.webapp_id
