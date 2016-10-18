@@ -11,7 +11,7 @@ MODE = 'develop'
 SERVICE_NAME = 'zeus'
 DEV_SERVER_MULTITHREADING = True
 WEAPP_DOMAIN = "weapp.weizoom.com"
-ZEUS_DB = os.environ.get('ZEUS_DB', None) or 'db.dev.com'
+ZEUS_DB = os.environ.get('ZEUS_DB', None) or '103.29.16.140'
 
 DATABASES = {
     'default': {

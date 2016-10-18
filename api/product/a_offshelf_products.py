@@ -76,6 +76,60 @@ class AOffshelfProducts(api_resource.ApiResource):
 
 		return categories
 
+	@staticmethod
+	def _get_supplier(product):
+		"""
+		获得商品的supplier集合
+		"""
+		supplier = product.supplier
+		if not supplier:
+			return None
+
+		data = {
+			'id': supplier.id,
+			'name': supplier.name,
+			'type': supplier.type,
+			'divide_type_info': None,
+			'retail_type_info': None
+		}
+
+		if supplier.is_divide_type():
+			divide_info = supplier.get_divide_info()
+			data['divide_type_info'] = {
+				"id": divide_info.id,
+				"divide_money": divide_info.divide_money,
+				"basic_rebate": divide_info.basic_rebate,
+				"rebate": divide_info.rebate
+			}
+		elif supplier.is_retail_type():
+			retail_info = supplier.get_retail_info()
+			data['retail_info'] = {
+				"id": retail_info.id,
+				"rebate": retail_info.rebate
+			}
+
+		return data
+
+	@staticmethod
+	def _get_classifications(product):
+		"""
+		获得商品的classification集合
+		"""
+		list_datas = []
+		for classification_list in product.classification_lists:
+			list_data = []
+
+			for classification in classification_list:
+				list_data.append({
+					"id": classification.id,
+					"level": classification.level,
+					"name": classification.name
+				})
+
+			list_datas.append(list_data)
+
+		return list_datas
+
 	@param_required(['corp_id'])
 	def get(args):
 		corp = args['corp']
@@ -101,7 +155,9 @@ class AOffshelfProducts(api_resource.ApiResource):
 				"sales": product.sales,
 				"created_at": product.created_at.strftime('%Y-%m-%d %H:%M'),
 				"is_use_custom_model": product.is_use_custom_model,
-				"display_index": product.display_index
+				"display_index": product.display_index,
+				'supplier': AOffshelfProducts._get_supplier(product),
+				'classifications': AOffshelfProducts._get_classifications(product)
 			}
 
 			if product.is_use_custom_model:

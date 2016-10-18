@@ -184,6 +184,45 @@ class FillProductDetailService(business_model.Service):
 				"value": product_property.value
 			})
 
+	def __fill_supplier_detail(self, corp, products, product_ids):
+		"""
+		填充供应商相关细节
+		"""
+		supplier_ids = list(set([product.supplier_id for product in products if product.supplier_id != 0]))
+		supplier2products = {}
+		for product in products:
+			supplier2products.setdefault(product.supplier_id, []).append(product)
+		
+		suppliers = corp.supplier_repository.get_suppliers_by_ids(supplier_ids)
+		for supplier in suppliers:
+			for product in supplier2products[supplier.id]:
+				product.supplier = supplier
+
+	def __fill_classification_detail(self, corp, products, product_ids, id2product):
+		"""
+		填充供应商相关细节
+		"""
+		relations = mall_models.ClassificationHasProduct.select().dj_where(product_id__in=product_ids)
+
+		classifications = corp.product_classification_repository.get_product_classifications()
+		id2classification = dict([(classification.id, classification) for classification in classifications])
+
+		for relation in relations:
+			classification_list = []
+			product = id2product[relation.product_id]
+			classification = id2classification[relation.classification_id]
+			classification_list.append(classification)
+
+			while True:
+				if classification.father_id == 0:
+					break
+
+				classification = id2classification[classification.father_id]
+				classification_list.append(classification)
+
+			classification_list.sort(lambda x,y: cmp(x.level, y.level))
+			product.classification_lists.append(classification_list)
+
 	def fill_detail(self, products, options):
 		"""填充各种细节信息
 
@@ -208,6 +247,7 @@ class FillProductDetailService(business_model.Service):
 			
 		is_enable_model_property_info = options.get('with_model_property_info',False)
 		product_ids = [product.id for product in products]
+		id2product = dict([(product.id, product) for product in products])
 
 		for product in products:
 			product.detail_link = '/mall/product/?id=%d&source=onshelf' % product.id
@@ -234,11 +274,12 @@ class FillProductDetailService(business_model.Service):
 
 		if options.get('with_category', False):
 			self.__fill_category_detail(self.corp, products, product_ids)
-			# Product.__fill_category_detail(
-			# 	corp,
-			# 	products,
-			# 	product_ids,
-			# 	True)
+
+		if options.get('with_supplier_info', False):
+			self.__fill_supplier_detail(self.corp, products, product_ids)
+
+		if options.get('with_classification', False):
+			self.__fill_classification_detail(self.corp, products, product_ids, id2product)
 
 		if options.get('with_sales', False):
 			Product.__fill_sales_detail(corp, products, product_ids)

@@ -102,7 +102,9 @@ class ProductShelf(business_model.Model):
 			'with_category': True,
 			'with_product_model': True,
 			'with_model_property_info': True,
-			'with_shelve_status': True
+			'with_shelve_status': True,
+			'with_supplier_info': True,
+			'with_classification': True
 		}
 
 		options = {

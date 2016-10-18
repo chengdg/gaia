@@ -6,7 +6,7 @@ from bdem import msgutil
 from eaglet.decorator import param_required
 
 from business import model as business_model
-from business.mall.supplier import Supplier
+from business.mall.supplier.supplier import Supplier
 from business.order.delivery_item_product_repository import DeliveryItemProductRepository
 from business.order.process_order_after_delivery_item_service import ProcessOrderAfterDeliveryItemService
 from db.express import models as express_models

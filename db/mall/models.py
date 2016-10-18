@@ -172,7 +172,6 @@ SUPPLIER_SETTLEMENT_PERIOD_MONTH = 1
 SUPPLIER_SETTLEMENT_PERIOD_15TH_DAY = 2
 SUPPLIER_SETTLEMENT_PERIOD_WEEK = 3
 
-
 class Supplier(models.Model):
 	owner = models.ForeignKey(User)
 	name = models.CharField(max_length=200)  # 供货商名称
@@ -191,7 +190,6 @@ class Supplier(models.Model):
 		db_table = "mall_supplier"
 
 
-
 class SupplierPostageConfig(models.Model):
 	supplier_id = models.IntegerField(default=0)
 	product_id = models.IntegerField(default=0)
@@ -208,6 +206,84 @@ class SupplierPostageConfig(models.Model):
 		db_table = 'mall_supplier_postage_config'
 		verbose_name = '供货商邮费配置'
 		verbose_name_plural = '供货商邮费配置'
+
+
+class SupplierDivideRebateInfo(models.Model):
+    """
+    供货商五五分成信息(不一定是五成)--目前只有首月五五分成,以后可能扩展成,不同额度不同返点.
+    """
+    # 供货商id
+    supplier_id = models.IntegerField()
+    # 钱额度
+    divide_money = models.IntegerField()
+    # 基础返点
+    basic_rebate = models.IntegerField()
+    # 在此额度内返点
+    rebate = models.IntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_deleted = models.BooleanField(default=False)
+
+    class Meta(object):
+        db_table = 'supplier_divide_rebate_info'
+
+
+class SupplierRetailRebateInfo(models.Model):
+    """
+    零售返点的供货商的返点信息(包括团购)
+    """
+    # 供货商id
+    supplier_id = models.IntegerField()
+    # 平台id(如果支持团购) 0的表示改供货商的基础扣点; 0的默认值表示改供货商的基础扣点
+    # 如果有owner_id说明该扣点是属于团购扣点
+    owner_id = models.IntegerField(default=0)
+    # 扣点
+    rebate = models.IntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_deleted = models.BooleanField(default=False)
+
+    class Meta(object):
+        db_table = 'supplier_retail_rebate_info'
+        
+
+
+# 一级分类
+FIRST_CLASSIFICATION = 1
+# 二级分类
+SECONDARY_CLASSIFICATION = 2
+# 分类上线（类似于未删除）
+CLASSIFICATION_ONLINE = 1
+# 分类下线（类似于删除）
+CLASSIFICATION_OFFLINE = 0
+class Classification(models.Model):
+	"""
+	商品分类
+	"""
+	name = models.CharField(max_length=1024) #分类名
+	level = models.IntegerField(default=FIRST_CLASSIFICATION) #分类等级
+	status = models.IntegerField(default=CLASSIFICATION_ONLINE)
+	father_id = models.IntegerField(default=-1) #父级分类id
+	created_at = models.DateTimeField(auto_now_add=True)  # 添加时间
+
+	class Meta(object):
+		verbose_name = "商品分类"
+		verbose_name_plural = "商品分类"
+		db_table = "mall_classification"
+
+
+class ClassificationHasProduct(models.Model):
+	"""
+	商品分类拥有商品的关系表
+	"""
+	classification = models.ForeignKey(Classification)
+	product_id = models.IntegerField(default=-1)
+	woid = models.IntegerField(default=-1)
+	display_index = models.IntegerField(default=-1)
+	created_at = models.DateTimeField(auto_now_add=True)  # 添加时间
+
+	class Meta(object):
+		verbose_name = "商品分类与商品的关系"
+		verbose_name_plural = "商品分类与商品的关系"
+		db_table = "mall_classification_has_product"
 		
 
 #########################################################################
@@ -1234,10 +1310,13 @@ PP_STATUS_ON = 1 #商品上架
 PP_STATUS_DELETE = -1 #商品删除 不在当前供应商显示
 PP_STATUS_ON_POOL = 2 #商品在商品池中显示
 
+PP_TYPE_SYNC = 1 #从其他商品池同步而来的商品
+PP_TYPE_CREATE = 2 #商户自身创建的商品
 class ProductPool(models.Model):
 	woid = models.IntegerField() #自营平台woid
 	product_id = models.IntegerField() #商品管理上传的商品id
 	status = models.IntegerField(default=PP_STATUS_ON_POOL) #商品状态
+	#type = models.IntegerField(default=PP_TYPE_SYNC) #商品类型
 	display_index = models.IntegerField()  # 显示的排序
 	created_at = models.DateTimeField(auto_now_add=True)  # 添加时间
 

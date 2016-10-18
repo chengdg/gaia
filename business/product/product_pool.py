@@ -94,19 +94,26 @@ class ProductPool(business_model.Model):
 		#TODO: dj_where支持{}
 		if product_pool_filter_values:
 			if 'order_by_display_index' in options:
-				product_ids = [model.product_id for model in mall_models.ProductPool.select().dj_where(**product_pool_filter_values).order_by(mall_models.ProductPool.display_index, mall_models.ProductPool.product_id)]
+				pool_product_models = mall_models.ProductPool.select().dj_where(**product_pool_filter_values).order_by(-mall_models.ProductPool.display_index, mall_models.ProductPool.product_id)
 			else:
-				product_ids = [model.product_id for model in mall_models.ProductPool.select().dj_where(**product_pool_filter_values)]
+				pool_product_models = mall_models.ProductPool.select().dj_where(**product_pool_filter_values)
 		else:
 			if 'order_by_display_index' in options:
-				product_ids = [model.product_id for model in mall_models.ProductPool.select().dj_where(status__not=mall_models.PP_STATUS_DELETE).order_by(mall_models.ProductPool.display_index, mall_models.ProductPool.product_id)]
+				pool_product_models = mall_models.ProductPool.select().dj_where(status__not=mall_models.PP_STATUS_DELETE).order_by(mall_models.ProductPool.display_index, mall_models.ProductPool.product_id)
 			else:
-				product_ids = [model.product_id for model in mall_models.ProductPool.select().dj_where(status__not=mall_models.PP_STATUS_DELETE)]
+				pool_product_models = mall_models.ProductPool.select().dj_where(status__not=mall_models.PP_STATUS_DELETE)
+		product_ids = [pool_product_model.product_id for pool_product_model in pool_product_models]
+		product2poolmodel = dict([(pool_product_model.id, pool_product_model) for pool_product_model in pool_product_models])
 
-		product_db_filter_values['id__in'] = product_ids
-		product_models = mall_models.Product.select().dj_where(**product_db_filter_values)
-		pageinfo, product_models = paginator.paginate(product_models, page_info.cur_page, page_info.count_per_page)
-		products = [Product.from_model({'model':model}) for model in product_models]
+		if product_db_filter_values:
+			product_db_filter_values['id__in'] = product_ids
+			product_models = mall_models.Product.select().dj_where(**product_db_filter_values)
+			pageinfo, product_models = paginator.paginate(product_models, page_info.cur_page, page_info.count_per_page)
+		else:
+			pageinfo, product_ids = paginator.paginate(product_ids, page_info.cur_page, page_info.count_per_page)
+			product_models = mall_models.Product.select().dj_where(id__in=product_ids)
+
+		products = [Product(model) for model in product_models]
 		if product_detail_filter_values:
 			products = self.__search_product(products, product_detail_filter_values)
 
@@ -118,7 +125,15 @@ class ProductPool(business_model.Model):
 		result = []
 		for product_id in product_ids:
 			product_id = int(product_id)
-			result.append(id2product[product_id])
+			#因为products中的结果是分页后的结果，所以并不是所有的product_id对应的商品都在products中，这里需要判断
+			product = id2product.get(product_id, None)
+			if product:
+				# pool_product_model = product2poolmodel[product.id]
+				# if pool_product_model.type == mall_models.PP_TYPE_SYNC:
+				# 	product.create_type = 'sync'
+				# else:
+				# 	product.create_type = 'create'
+				result.append(product)
 		return result, pageinfo
 
 	def get_products_by_ids(self, product_ids, fill_options={}):
@@ -128,7 +143,7 @@ class ProductPool(business_model.Model):
 		@return:
 		"""
 		product_models = mall_models.Product.select().dj_where(id__in=product_ids)
-		products = [Product.from_model({'model':model}) for model in product_models]
+		products = [Product(model) for model in product_models]
 
 		fill_product_detail_service = FillProductDetailService.get(self.corp)
 		fill_product_detail_service.fill_detail(products, fill_options)

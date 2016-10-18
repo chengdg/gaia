@@ -42,7 +42,9 @@ class AOnshelfProducts(api_resource.ApiResource):
 				"sales": product.sales,
 				"created_at": product.created_at.strftime('%Y-%m-%d %H:%M'),
 				"is_use_custom_model": product.is_use_custom_model,
-				"display_index": product.display_index
+				"display_index": product.display_index,
+				'supplier': AOffshelfProducts._get_supplier(product),
+				'classifications': AOffshelfProducts._get_classifications(product)
 			}
 
 			if product.is_use_custom_model:

@@ -3,9 +3,10 @@
 import a_config
 
 import a_store_name
+import a_suppliers
 import a_supplier
-import a_supplier_name
-import a_user_profile
+import a_product_classifications
+import a_product_classification
 
 import category
 import pay

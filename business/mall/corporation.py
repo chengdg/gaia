@@ -23,6 +23,8 @@ from business.mall.logistics.postage_config_repository import PostageConfigRepos
 from business.mall.logistics.express_delivery_repository import ExpressDeliveryRepository
 from business.mall.config.mall_config_repository import MallConfigRepository
 from business.mall.notify.notification_repository import NotificationRepository
+from business.mall.supplier.supplier_repository import SupplierRepository
+from business.mall.product_classification_repository import ProductClassificationRepository
 
 class Corporation(business_model.Model):
 	"""
@@ -118,3 +120,11 @@ class Corporation(business_model.Model):
 	@property
 	def notification_repository(self):
 		return NotificationRepository(self)
+
+	@property
+	def supplier_repository(self):
+		return SupplierRepository(self)
+
+	@property
+	def product_classification_repository(self):
+		return ProductClassificationRepository(self)
