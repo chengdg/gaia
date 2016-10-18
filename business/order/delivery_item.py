@@ -33,9 +33,10 @@ class DeliveryItem(business_model.Model):
 		'total_origin_product_price',
 		'supplier_info',
 		'express_details',
-		'is_use_delivery_item_db_model',  # 出货单使用出货单db，即db层面有出货单
+		'has_db_record',  # 出货单使用出货单db，即db层面有出货单
 		'with_logistics_trace',  # 是否使用快递100，对应于数据库里的is_100
-		'with_logistics'  # 是否使用物流
+		'with_logistics',  # 是否使用物流
+		'operation_logs'
 	)
 
 	def __init__(self, db_model):
@@ -49,7 +50,7 @@ class DeliveryItem(business_model.Model):
 		else:
 			self.origin_order_id = db_model.id
 
-		self.is_use_delivery_item_db_model = db_model.origin_order_id > 0  # 出货单使用出货单db，即db层面有出货单
+		self.has_db_record = db_model.origin_order_id > 0  # 出货单使用出货单db，即db层面有出货单
 
 		self.postage = db_model.postage
 
@@ -94,6 +95,9 @@ class DeliveryItem(business_model.Model):
 
 			if fill_options.get('with_supplier'):
 				DeliveryItem.__fill_supplier(delivery_items, delivery_item_ids)
+
+			if fill_options.get('with_operation_logs'):
+				DeliveryItem.__fill_operation_logs(delivery_items, delivery_item_ids)
 
 		return delivery_items
 
@@ -200,6 +204,33 @@ class DeliveryItem(business_model.Model):
 			delivery_item.products = delivery_item_id2products[delivery_item.id]
 			delivery_item.total_origin_product_price = sum([p.total_origin_price for p in delivery_item.products])
 
+	@staticmethod
+	def __fill_operation_logs(delivery_items, delivery_item_ids):
+		bids = [item.bid for item in delivery_items]
+
+		logs = mall_models.OrderOperationLog.select().dj_where(order_id__in=bids)
+
+		bid2logs = {}
+
+		for log in logs:
+			if log.order_id in bid2logs:
+				bid2logs[log.order_id].append({
+					'action_text': log.action,
+					'time': log.created_at,
+					'operator': log.operator
+				})
+			else:
+				bid2logs[log.order_id] = [{
+					'action_text': log.action,
+					'time': log.created_at,
+					'operator': log.operator
+				}]
+
+		for item in delivery_items:
+			item.operation_logs = bid2logs.get(item.bid, [])
+			for log in item.operation_logs:
+				log['operator'] = item.leader_name
+
 	def to_dict(self, *extras):
 
 		result = business_model.Model.to_dict(self, *extras)
@@ -270,7 +301,7 @@ class DeliveryItem(business_model.Model):
 		@return:
 		"""
 
-		if self.is_use_delivery_item_db_model:
+		if self.has_db_record:
 			action_text = u"支付"
 			from_status = self.status
 			to_status = mall_models.ORDER_STATUS_PAYED_NOT_SHIP
@@ -290,7 +321,7 @@ class DeliveryItem(business_model.Model):
 		@param corp:
 		@return:
 		"""
-		if self.is_use_delivery_item_db_model:
+		if self.has_db_record:
 			action_text = u"支付"
 			from_status = self.status
 			to_status = mall_models.ORDER_STATUS_PAYED_NOT_SHIP
@@ -384,7 +415,7 @@ class DeliveryItem(business_model.Model):
 		self.__record_operation_log(self.bid, corp.username, action_text)
 		self.__recode_status_log(self.bid, corp.username, from_status, to_status)
 
-		if self.is_use_delivery_item_db_model:
+		if self.has_db_record:
 			# 只有自营出货单开启高端退款（然而并不知道用什么词替代"高端"
 			integral_strategy = corp.mall_config_repository.get_integral_strategy()
 			integral_each_yuan = integral_strategy.integral_each_yuan
@@ -420,7 +451,7 @@ class DeliveryItem(business_model.Model):
 		self.__record_operation_log(self.bid, corp.username, action_text)
 		self.__recode_status_log(self.bid, corp.username, from_status, to_status)
 
-		if self.is_use_delivery_item_db_model:
+		if self.has_db_record:
 			# 只有自营出货单开启高端退款（然而并不知道用什么词替代"高端"
 			DeliveryItem.__fill_refunding_info([self], [self.id])
 

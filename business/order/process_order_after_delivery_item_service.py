@@ -25,7 +25,7 @@ class ProcessOrderAfterDeliveryItemService(business_model.Service):
 		@return:
 		"""
 
-		if delivery_item.is_use_delivery_item_db_model:
+		if delivery_item.has_db_record:
 			only_send_message = False
 			order_id = delivery_item.origin_order_id
 

@@ -656,6 +656,8 @@ ORDER_STATUS_GROUP_REFUNDED = 9 #团购退款完成
 
 
 # 权重小的优先
+# 订单状态优先级由低到高排序为：
+# 待支付->待发货->已发货->退款中->已完成->退款完成->已取消
 ORDER_STATUS2DELIVERY_ITEM_WEIGHT = {
 	ORDER_STATUS_NOT: 1,
 	ORDER_STATUS_PAYED_NOT_SHIP: 2,

@@ -55,7 +55,7 @@ class Order(business_model.Model):
 		'total_purchase_price',
 
 		'delivery_items',
-		'is_self_order',
+		'is_weizoom_order',
 		'remark',
 		'pay_money',
 		'promotion_saved_money',
@@ -68,8 +68,9 @@ class Order(business_model.Model):
 		'origin_weizoom_card_money',
 		'origin_final_price',
 		'status_logs',
+		'operation_logs',
 
-		'is_use_delivery_item_db_model'  # 对于老的同步订单，订单是出货单，此类订单不会再产生，业务只处理显示
+		'is_second_generation_order'  # 对于第二代的同步订单，db层面出货单就是订单，此类订单不会再产生，业务只处理显示
 	)
 
 	def __init__(self):
@@ -97,8 +98,8 @@ class Order(business_model.Model):
 			else:
 				order.bid_with_edit_money = order.bid
 			order.status = db_model.status
-			order.is_self_order = db_model.origin_order_id == -1  # todo 起个名
-			order.is_use_delivery_item_db_model = db_model.origin_order_id > 0
+			order.is_weizoom_order = db_model.origin_order_id == -1  # todo 起个名
+			order.is_second_generation_order = db_model.origin_order_id > 0
 			order.remark = db_model.remark
 			order.type = db_model.type
 			order.webapp_id = db_model.webapp_id
@@ -160,7 +161,8 @@ class Order(business_model.Model):
 			with_group_buy_info = fill_options.get('with_group_buy_info')
 			with_refunding_info = fill_options.get('with_refunding_info')
 			with_full_money_info = fill_options.get('with_full_money_info')  # 有依赖
-			with_status_logs = fill_options.get('status_logs')
+			with_status_logs = fill_options.get('with_status_logs')
+			with_operation_logs = fill_options.get('with_operation_logs')
 
 			if with_member:
 				webapp_user_id2member, _ = Member.from_webapp_user_ids({'webapp_user_ids': webapp_user_ids})
@@ -202,6 +204,9 @@ class Order(business_model.Model):
 			if with_status_logs:
 				Order.__fill_status_logs(orders, order_ids)
 
+			if with_operation_logs:
+				Order.__fill_operation_logs(orders, order_ids)
+
 		return orders
 
 	@staticmethod
@@ -225,9 +230,9 @@ class Order(business_model.Model):
 		for order in orders:
 			order_ids.append(order.id)
 
-			if order.is_self_order:
+			if order.is_weizoom_order:
 				self_order_ids.append(order.id)
-			elif order.is_use_delivery_item_db_model:
+			elif order.is_second_generation_order:
 				# 对于老同步订单，出货单在db层是出货单本身
 				delivery_item_db_models.append(order.context['db_model'])
 			else:
@@ -283,7 +288,7 @@ class Order(business_model.Model):
 	@staticmethod
 	def __fill_refunding_info(orders, order_ids):
 		for order in orders:
-			if order.is_self_order:
+			if order.is_weizoom_order:
 				order.refunding_info = {
 					'cash': sum([delivery_item.refund_info['cash'] for delivery_item in order.delivery_items if
 					             delivery_item.refund_info['finished']]),
@@ -327,6 +332,22 @@ class Order(business_model.Model):
 				order.origin_final_price,
 				2) - round(
 				order.origin_weizoom_card_money, 2)
+
+	@staticmethod
+	def __fill_operation_logs(orders, order_ids):
+
+		if len(orders) == 1:
+			order = orders[0]
+
+			logs = mall_models.OrderOperationLog.select().dj_where(order_id=order.bid)
+			order.operation_logs = []
+			for log in logs:
+				order.operation_logs.append({
+					'action_text': log.action,
+					'time': log.created_at,
+					'operator': log.operator
+				})
+
 
 	def to_dict(self, *extras):
 		result = business_model.Model.to_dict(self, *extras)
@@ -550,7 +571,8 @@ class Order(business_model.Model):
 		topic_name = TOPIC['order']
 		data = {
 			"order_id": self.id,
-			"order_bid": self.bid
+			"order_bid": self.bid,
+			"corp_id": self.context['corp_id']
 		}
 		msgutil.send_message(topic_name, msg_name, data)
 
