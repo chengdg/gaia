@@ -400,7 +400,6 @@ class Order(business_model.Model):
 		- 记录状态日志
 		- 记录操作日志
 
-		- 更新会员信息
 		- 更新销量
 		- 发送模板消息
 		- 发送运营邮件通知

@@ -22,11 +22,11 @@ class ADeliveryItem(api_resource.ApiResource):
 
 				with_logistics = new_ship_info['with_logistics'] == "true"
 				with_logistics_trace = new_ship_info['with_logistics_trace'] == "true"
-				company_name_value = new_ship_info['company_name_value']
+				express_company_name_value = new_ship_info['express_company_name_value']
 				leader_name = new_ship_info['leader_name']
 				express_number = new_ship_info['express_number']
 
-				is_success, msg = delivery_item.update_ship_info(corp, with_logistics_trace, company_name_value,
+				is_success, msg = delivery_item.update_ship_info(corp, with_logistics_trace, express_company_name_value,
 				                                                 express_number, leader_name)
 
 			else:
