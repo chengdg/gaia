@@ -49,4 +49,12 @@ class PaidOrderHandleService(business_model.Service):
 			"order_id": order.id,
 			"corp_id": self.corp.id
 		}
-		msgutil.send_message(topic_name, 'send_order_email', data)
+		msgutil.send_message(topic_name, 'send_order_email_task', data)
+
+		# 发送模板消息
+		topic_name = TOPIC['base_service']
+		data = {
+			"order_id": order.id,
+			"corp_id": self.corp.id
+		}
+		msgutil.send_message(topic_name, 'send_template_message_task', data)
