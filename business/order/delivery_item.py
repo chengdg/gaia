@@ -23,7 +23,7 @@ class DeliveryItem(business_model.Model):
 
 		'postage',
 		'status',
-		'express_company_name',
+		'express_company_name_value',
 		'express_number',
 		'leader_name',
 		'created_at',
@@ -58,7 +58,7 @@ class DeliveryItem(business_model.Model):
 		self.payment_time = db_model.payment_time
 
 		# 快递公司信息
-		self.express_company_name = db_model.express_company_name
+		self.express_company_name_value = db_model.express_company_name
 		self.express_number = db_model.express_number
 		self.leader_name = db_model.leader_name
 		self.created_at = db_model.created_at
@@ -138,16 +138,16 @@ class DeliveryItem(business_model.Model):
 		else:
 			other_delivery_items = delivery_items
 		if other_delivery_items:
-			express_company_names = []
+			express_company_name_values = []
 			express_numbers = []
 			for delivery_item in delivery_items:
-				express_company_names.append(delivery_item.express_company_name)
+				express_company_name_values.append(delivery_item.express_company_name_value)
 				express_numbers.append(delivery_item.express_number)
 
 				delivery_item.express_details = []
 
 			express_push_list = express_models.ExpressHasOrderPushStatus.select().dj_where(
-				express_company_name__in=express_company_names,
+				express_company_name__in=express_company_name_values,
 				express_number__in=express_numbers
 			)
 
@@ -169,7 +169,7 @@ class DeliveryItem(business_model.Model):
 
 			for delivery_item in delivery_items:
 				push_id = name_number2express_push_id.get(
-					str(delivery_item.express_company_name + '__' + delivery_item.express_number))
+					str(delivery_item.express_company_name_value + '__' + delivery_item.express_number))
 				if push_id:
 					express_details = express_push_id2details.get(push_id, [])
 
@@ -369,7 +369,7 @@ class DeliveryItem(business_model.Model):
 
 		return True, ''
 
-	def ship(self, corp, with_logistics_trace, company_name_value, express_number, leader_name):
+	def ship(self, corp, with_logistics_trace, express_company_name_value, express_number, leader_name):
 		"""
 		影响:
 		- 更新订单状态
@@ -377,7 +377,7 @@ class DeliveryItem(business_model.Model):
 		- 记录操作日志
 
 		"""
-		self.express_company_name = company_name_value
+		self.express_company_name_value = express_company_name_value
 		self.express_number = express_number
 		self.leader_name = leader_name
 		self.with_logistics_trace = with_logistics_trace
@@ -398,9 +398,9 @@ class DeliveryItem(business_model.Model):
 
 		return True, ''
 
-	def update_ship_info(self, corp, with_logistics_trace, company_name_value, express_number, leader_name):
+	def update_ship_info(self, corp, with_logistics_trace, express_company_name_value, express_number, leader_name):
 		action_text = u'修改发货信息'
-		self.express_company_name = company_name_value
+		self.express_company_name_value = express_company_name_value
 		self.express_number = express_number
 		self.leader_name = leader_name
 		self.with_logistics_trace = with_logistics_trace
@@ -410,6 +410,7 @@ class DeliveryItem(business_model.Model):
 		self.__send_msg_to_topic('update_delivery_item_ship_info')
 
 		self.__record_operation_log(self.bid, corp.username, action_text)
+		return True, ''
 
 	def apply_for_refunding(self, corp, cash, weizoom_card_money, coupon_money, integral):
 
@@ -499,7 +500,7 @@ class DeliveryItem(business_model.Model):
 		db_model = self.context['db_model']
 		db_model.status = self.status
 		db_model.payment_time = self.payment_time
-		db_model.express_company_name = self.express_company_name
+		db_model.express_company_name = self.express_company_name_value
 		db_model.express_number = self.express_number
 		db_model.leader_name = self.leader_name
 		db_model.is_100 = self.with_logistics_trace

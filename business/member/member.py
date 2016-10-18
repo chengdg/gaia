@@ -63,13 +63,10 @@ class Member(business_model.Model):
         'fans_count'
     )
 
-    @staticmethod
-    def from_models(query):
-        pass
 
     @staticmethod
-    @param_required(['model'])
-    def from_model(args):
+    @param_required(['models'])
+    def from_models(args):
         """
         工厂对象，根据member model获取Member业务对象
 
@@ -77,93 +74,13 @@ class Member(business_model.Model):
 
         @return Member业务对象
         """
-        model = args['model']
-
-        member = Member(model)
-        member._init_slot_from_model(model)
-        return member
-
-    @staticmethod
-    @param_required(['id'])
-    def from_id(args):
-        """
-                工厂对象，根据member id获取Member业务对象
-
-                @param[in] id: 会员的id
-
-                @return Member业务对象
-                """
-        member_id = args['id']
-        #try:
-        member_db_model = member_models.Member.get(id=member_id)
-        return Member.from_model({
-            #'webapp_owner': webapp_owner,
-            'model': member_db_model
-        })
-        # except:
-        #     return None
-
-    @staticmethod
-    @param_required(['webapp_id'])
-    def from_webapp_id(args):
-        """
-            工厂对象，根据 webapp_id 获取Member业务对象列表
-
-            @param[in] webapp_id: 渠道的webapp_id
-
-            @return: Member业务对象卸料
-        """
-        webapp_id = args['webapp_id']
-        member_db_models = member_models.Member.select().dj_where(webapp_id=webapp_id)
+        models = args['models']
         members = []
-        for model in member_db_models:
-            members.append(Member(model))
+        for model in models:
+
+            member = Member(model)
+            members.append(member)
         return members
-
-    # @staticmethod
-    # @param_required(['webapp_owner', 'token'])
-    # def from_tokens(args):
-    #     webapp_owner = args['webapp_owner']
-    #     token = args['token']
-    #     member_list = []
-
-    #     try:
-    #         # 如果token为空不执行查询 直接返回[]
-    #         if not token:
-    #             return member_list
-
-    #         member_db_models = member_models.Member.select().where(member_models.Member.token << token, member_models.Member.webapp_id==webapp_owner.webapp_id)
-    #         for member_db_model in member_db_models:
-    #             member = Member.from_model({
-    #                 'webapp_owner': webapp_owner,
-    #                 'model': member_db_model
-    #             })
-    #             member_list.append(member)
-    #         return member_list
-    #     except:
-    #         return member_list
-
-    # @staticmethod
-    # @param_required(['webapp_owner', 'token'])
-    # def from_token(args):
-    #     """
-    #     工厂对象，根据member id获取Member业务对象
-
-    #     @param[in] webapp_owner
-    #     @param[in] token: 会员的token
-
-    #     @return Member业务对象
-    #     """
-    #     webapp_owner = args['webapp_owner']
-    #     token = args['token']
-    #     try:
-    #         member_db_model = member_models.Member.get(webapp_id=webapp_owner.webapp_id,token=token)
-    #         return Member.from_model({
-    #             'webapp_owner': webapp_owner,
-    #             'model': member_db_model
-    #         })
-    #     except:
-    #         return None
 
     def __init__(self, model):
         business_model.Model.__init__(self)
@@ -179,13 +96,10 @@ class Member(business_model.Model):
         [property] 会员等级信息
         """
         member_model = self.context['db_model']
-        #webapp_owner = self.context['webapp_owner']
 
         if not member_model:
             return None
 
-        #member_grade_id = member_model.grade_id
-        #member_grade = webapp_owner.member2grade.get(member_grade_id, '')
         return member_model.grade
 
     @property
@@ -322,40 +236,6 @@ class Member(business_model.Model):
         """
         return self.context['db_model'].user_icon
 
-    # @cached_context_property
-    # def integral_info(self):
-    #     """
-    #     [property] 会员积分信息
-    #     """
-    #     member_model = self.context['db_model']
-    #     if member_model:
-    #         count = member_model.integral
-    #         grade = self.__grade
-    #         if grade:
-    #             usable_integral_percentage_in_order = grade.usable_integral_percentage_in_order
-    #         else:
-    #             usable_integral_percentage_in_order = 100
-    #     else:
-    #         count = 0
-    #         usable_integral_percentage_in_order = 100
-
-    #     integral_strategy_settings = self.context['webapp_owner'].integral_strategy_settings
-    #     return {
-    #         'count': count,
-    #         'count_per_yuan': integral_strategy_settings.integral_each_yuan,
-    #         'usable_integral_percentage_in_order' : usable_integral_percentage_in_order,
-    #         'usable_integral_or_conpon' : integral_strategy_settings.usable_integral_or_conpon
-    #     }
-
-    # @property
-    # def integral(self):
-    #     """
-    #     [property] 会员积分数值
-    #     """
-    #     member_model = self.context['db_model']
-    #
-    #     return member_model.integral
-
     @cached_context_property
     def username_for_html(self):
         """
@@ -434,23 +314,4 @@ class Member(business_model.Model):
             return self.username_for_html[:10]
 
 
-    @staticmethod
-    @param_required(['webapp_user_ids'])
-    def from_webapp_user_ids(args):
-        """
 
-        @param args:
-        @return:
-        """
-        webapp_user_ids = args['webapp_user_ids']
-        webappuser_id2member = dict([(u.id, u.member_id) for u in member_models.WebAppUser.select().dj_where(id__in=webapp_user_ids)])
-        member_ids = webappuser_id2member.values()
-        db_member_models = member_models.Member.select().dj_where(id__in=member_ids)
-
-        members = [Member.from_model({'model': db_member_model}) for db_member_model in db_member_models]
-        id2member = dict([(m.id, m) for m in members])
-
-        for webapp_user_id, member_id in webappuser_id2member.items():
-            webappuser_id2member[webapp_user_id] = id2member.get(member_id, None)
-
-        return webappuser_id2member, members

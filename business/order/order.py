@@ -2,6 +2,7 @@
 
 from business import model as business_model
 from business.member.member import Member
+from business.member.member_repository import MemebrRepository
 from business.order.delivery_item import DeliveryItem
 from db.mall import models as mall_models
 from zeus_conf import TOPIC
@@ -40,6 +41,7 @@ class Order(business_model.Model):
 		'coupon_id',
 
 		'status',
+		'status_text',
 
 		'customer_message',
 
@@ -98,6 +100,7 @@ class Order(business_model.Model):
 			else:
 				order.bid_with_edit_money = order.bid
 			order.status = db_model.status
+			order.status_text = mall_models.STATUS2TEXT[order.status]
 			order.is_weizoom_order = db_model.origin_order_id == -1  # todo 起个名
 			order.is_second_generation_order = db_model.origin_order_id > 0
 			order.remark = db_model.remark
@@ -165,7 +168,8 @@ class Order(business_model.Model):
 			with_operation_logs = fill_options.get('with_operation_logs')
 
 			if with_member:
-				webapp_user_id2member, _ = Member.from_webapp_user_ids({'webapp_user_ids': webapp_user_ids})
+				member_repository = MemebrRepository.get(corp)
+				webapp_user_id2member, _ = member_repository.get_members_from_webapp_user_ids(webapp_user_ids)
 			else:
 				webapp_user_id2member = {}
 
@@ -400,7 +404,6 @@ class Order(business_model.Model):
 		- 记录状态日志
 		- 记录操作日志
 
-		- 更新会员信息
 		- 更新销量
 		- 发送模板消息
 		- 发送运营邮件通知
@@ -435,7 +438,7 @@ class Order(business_model.Model):
 			delivery_item.pay(payment_time, corp)
 
 		self.__send_msg_to_topic('pay_order')
-		print('---send pay order message')
+
 		return True, ''
 
 	def cancel(self, corp):

@@ -34,7 +34,7 @@ class AShippedDeliveryItems(api_resource.ApiResource):
 				'delivery_item_bid': x['delivery_item_bid'],
 				'with_logistics': x['with_logistics'] == 'true',
 				'with_logistics_trace': x['with_logistics_trace'] == 'true',
-				'company_name_value': x['company_name_value'],
+				'company_name_value': x['express_company_name_value'],
 				'express_number': x['express_number'],
 				'leader_name': x['leader_name'],
 			} for x in infos]

@@ -11,7 +11,12 @@ MODE = 'develop'
 SERVICE_NAME = 'zeus'
 DEV_SERVER_MULTITHREADING = True
 WEAPP_DOMAIN = "weapp.weizoom.com"
+<<<<<<< HEAD
 ZEUS_DB = os.environ.get('ZEUS_DB', None) or '103.29.16.140'
+=======
+HERMES_DOMAIN = "weapp.weizoom.com"
+ZEUS_DB = os.environ.get('ZEUS_DB', None) or 'db.dev.com'
+>>>>>>> c1479a8e34779dd1cc5a6b9eadd00b499ebbf02b
 
 DATABASES = {
     'default': {
