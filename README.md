@@ -64,3 +64,5 @@ server {
 - 显式声明参数
   - api层返回结果
   - api层调用静态方法时的字典
+  
+MNS消息使用指南:https://git2.weizzz.com:84/weizoom/new_zeus/wikis/mns-guide
