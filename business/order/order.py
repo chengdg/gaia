@@ -435,6 +435,7 @@ class Order(business_model.Model):
 			delivery_item.pay(payment_time, corp)
 
 		self.__send_msg_to_topic('pay_order')
+		print('---send pay order message')
 		return True, ''
 
 	def cancel(self, corp):
@@ -572,7 +573,7 @@ class Order(business_model.Model):
 		data = {
 			"order_id": self.id,
 			"order_bid": self.bid,
-			"corp_id": self.context['corp_id']
+			"corp_id": self.context['corp'].id
 		}
 		msgutil.send_message(topic_name, msg_name, data)
 
