@@ -46,8 +46,7 @@ class PaidOrderHandleService(business_model.Service):
 		# 发送运营邮件通知
 		topic_name = TOPIC['base_service']
 		data = {
-			"delivery_item_id": order.id,
-			"delivery_item_bid": order.bid,
+			"order_id": order.id,
 			"corp_id": self.corp.id
 		}
 		msgutil.send_message(topic_name, 'send_order_email', data)

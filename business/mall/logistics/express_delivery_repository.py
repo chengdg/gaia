@@ -128,6 +128,14 @@ class ExpressDeliveryRepository(business_model.Service):
 
 		return companies
 
+	def get_company_by_value(self, value):
+		global COMPANIES
+		for company in COMPANIES:
+			if company['value'] == value:
+				return ExpressDeliveryCompany(company['id'], company['name'], company['value'], company['kdniao_value'])
+
+		return None
+
 	def get_company(self, id):
 		"""
 		根据id获取ExpressDeliveryCompany对象

@@ -2,9 +2,17 @@
 """
 处理已支付的订单
 """
+import time
+
+from eaglet.core.sendmail import sendmail
+
+import settings
+from business.mall.notify.notification_repository import NotificationRepository
 from service.service_register import register
 
 # -*- coding: utf-8 -*-
+from util.regional_util import get_str_value_by_string_ids
+
 """
 处理订单的消息service(演示)
 
@@ -18,9 +26,6 @@ from business.order.service.paid_order_handle_service import PaidOrderHandleServ
 from service.service_register import register
 from db.mall import models as mall_models
 
-
-
-
 ORDER_STATUS2NOTIFY_STATUS = {
 	mall_models.ORDER_STATUS_NOT: mall_models.PLACE_ORDER,
 	mall_models.ORDER_STATUS_PAYED_NOT_SHIP: mall_models.PAY_ORDER,
@@ -29,81 +34,96 @@ ORDER_STATUS2NOTIFY_STATUS = {
 	mall_models.ORDER_STATUS_CANCEL: mall_models.CANCEL_ORDER
 }
 
+
+def __send_email(emails, content_described, content):
+	for email in emails:
+		sendmail(email, content_described, content)
+
+
 @register("send_order_email")
 def process(data, recv_msg=None):
+	corp_id = data['corp_id']
+	order_id = data['order_id']
+
+	corp = Corporation(corp_id)
+
 	fill_options = {
+		'with_member': True,
 		'with_delivery_items': {
 			'with_products': True,
+
 		}
 
 	}
-	order = self.corp.order_repository.get_order(order_id, fill_options)
+	order = corp.order_repository.get_order(order_id, fill_options)
 	# 更新商品销量
-	product_infos = []
+	delivery_item_products = []
 	for item in order.delivery_items:
-		product_infos.extend(item.products)
-	# todo 赠品不计销量
-	# for product in products:
-	# 	if product.promotion != {'type_name': 'premium_sale:premium_product'}:
-	# 		product_sale_infos.append({
-	# 			'product_id': product.id,
-	# 			'purchase_count': product.purchase_count
-	# 		})
-	for product_info in product_infos:
-		product = self.corp.product_pool.get_products_by_ids([product_info.id])[0]
+		delivery_item_products.extend(item.products)
 
-		product.update_sales(product_info.count)
+	notification_repository = NotificationRepository.get(corp)
+	order_notify_type = ORDER_STATUS2NOTIFY_STATUS.get(order.status, -1)
+	order_notify = notification_repository.get_email_notification_by_type(order_notify_type)
 
+	if order_notify and order_notify.is_active and order.memebr_info['id'] not in order_notify.black_member_ids:
+		buy_count = ''
+		product_name = ''
+		product_pic_list = []
+		for delivery_item_product in delivery_item_products:
+			buy_count = buy_count + str(delivery_item_product.count) + ','
+			product_name = product_name + delivery_item_product.name + ','
+			product_pic_list.append(delivery_item_product.thumbnails_url)
+		buy_count = buy_count[:-1]
+		product_name = product_name[:-1]
 
+		content_list = []
+		content_described = u'微商城-%s-订单' % order.status_text
+		if order_id:
+			if product_name:
+				content_list.append(u'商品名称：%s' % product_name)
+			if product_pic_list:
+				pic_address = ''
+				for pic in product_pic_list:
+					if pic.find('http') < 0:
+						pic = "http://%s%s" % (settings.HERMES_DOMAIN, pic)
+					pic_address = pic_address + "<img src='%s' width='170px' height='200px'></img>" % (pic)
+				if pic_address != '':
+					content_list.append(pic_address)
+			content_list.append(u'订单号：%s' % order_id)
 
+			content_list.append(u'下单时间：%s' % time.strftime('%Y-%m-%d %H:%M', time.localtime(time.time())))
 
-	try:
-		# print(self.ship_area)
-		area = get_str_value_by_string_ids(self.ship_area)
-	except:
-		area = self.ship_area
+			content_list.append(u'订单状态：<font color="red">%s</font>' % order.status_text)
 
-	buyer_address = area + u" " + self.ship_address
-	order_status = self.status_text
+			# 从拆单之后，此处是未定义行为
+			# express_company_name = corp.express_delivery_repository.get_company_by_value(order.ex)
+			# express_company_name = 'xx' # todo
+			# if express_company_name:
+			# 	content_list.append(u'<font color="red">物流公司：%s</font>' % express_company_name)
+			# if order.express_number:
+			# 	content_list.append(u'<font color="red">物流单号：%s</font>' % order.express_number)
+			if buy_count:
+				content_list.append(u'订购数量：%s' % buy_count)
+			if order.final_price:
+				content_list.append(u'支付金额：%s' % order.final_price)
+			if order.integral:
+				content_list.append(u'使用积分：%s' % order.integral)
+			if order.coupon_id:
+				content_list.append(u'优惠券：%s' % order.coupon_id)
 
-	email_notify_status = ORDER_STATUS2NOTIFY_STATUS.get(self.status, -1)
-	try:
-		member = self.context['webapp_user'].member
-		if member is not None:
-			member_id = member.id
-		else:
-			member_id = -1
-	except:
-		member_id = -1
+			if order.postage:
+				content_list.append(u'邮费：%s' % order.postage)
 
-	express_company_name = self.readable_express_company_name
+			content_list.append(u'收货人：%s' % order.ship_name)
 
-	if self.express_number:
-		express_number = self.express_number
-	else:
-		express_number = ''
+			content_list.append(u'收货人电话：%s' % order.ship_tel)
 
-	notify_order_mail.delay(
-		user_id=self.context['webapp_owner'].id,
-		member_id=member_id,
-		status=email_notify_status,
-		oid=self.id,
-		order_id=self.order_id,
-		buyed_time=time.strftime('%Y-%m-%d %H:%M', time.localtime(time.time())),
-		order_status=order_status,
-		# buy_count=buy_count,
-		total_price=self.final_price,
-		bill='',
-		coupon=self.coupon_id,
-		coupon_money=self.coupon_money,
-		# product_name=product_name,
-		integral=self.integral,
-		buyer_name=self.ship_name,
-		buyer_address=buyer_address,
-		buyer_tel=self.ship_tel,
-		remark=self.customer_message,
-		# product_pic_list=product_pic_list,
-		postage=self.postage,
-		express_company_name=express_company_name,
-		express_number=express_number
-	)
+			area = get_str_value_by_string_ids(order.ship_area)
+			buyer_address = area + u" " + order.ship_address
+			content_list.append(u'收货人地址：%s' % buyer_address)
+			if order.customer_message:
+				content_list.append(u'顾客留言：%s' % order.customer_message)
+
+		content = u'<br> '.join(content_list)
+
+		__send_email(order_notify.email_addresses, content_described, content)
