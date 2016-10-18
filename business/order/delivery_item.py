@@ -23,7 +23,7 @@ class DeliveryItem(business_model.Model):
 
 		'postage',
 		'status',
-		'express_company_name',
+		'express_company_name_value',
 		'express_number',
 		'leader_name',
 		'created_at',
@@ -58,7 +58,7 @@ class DeliveryItem(business_model.Model):
 		self.payment_time = db_model.payment_time
 
 		# 快递公司信息
-		self.express_company_name = db_model.express_company_name
+		self.express_company_name_value = db_model.express_company_name
 		self.express_number = db_model.express_number
 		self.leader_name = db_model.leader_name
 		self.created_at = db_model.created_at
@@ -400,7 +400,7 @@ class DeliveryItem(business_model.Model):
 
 	def update_ship_info(self, corp, with_logistics_trace, company_name_value, express_number, leader_name):
 		action_text = u'修改发货信息'
-		self.express_company_name = company_name_value
+		self.express_company_name_value = company_name_value
 		self.express_number = express_number
 		self.leader_name = leader_name
 		self.with_logistics_trace = with_logistics_trace
@@ -500,7 +500,7 @@ class DeliveryItem(business_model.Model):
 		db_model = self.context['db_model']
 		db_model.status = self.status
 		db_model.payment_time = self.payment_time
-		db_model.express_company_name = self.express_company_name
+		db_model.express_company_name = self.express_company_name_value
 		db_model.express_number = self.express_number
 		db_model.leader_name = self.leader_name
 		db_model.is_100 = self.with_logistics_trace
