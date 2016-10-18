@@ -55,7 +55,7 @@ class Order(business_model.Model):
 		'total_purchase_price',
 
 		'delivery_items',
-		'is_self_order',
+		'is_weizoom_order',
 		'remark',
 		'pay_money',
 		'promotion_saved_money',
@@ -70,7 +70,7 @@ class Order(business_model.Model):
 		'status_logs',
 		'operation_logs',
 
-		'is_use_delivery_item_db_model'  # 对于老的同步订单，订单是出货单，此类订单不会再产生，业务只处理显示
+		'is_second_generation_order'  # 对于第二代的同步订单，db层面出货单就是订单，此类订单不会再产生，业务只处理显示
 	)
 
 	def __init__(self):
@@ -98,8 +98,8 @@ class Order(business_model.Model):
 			else:
 				order.bid_with_edit_money = order.bid
 			order.status = db_model.status
-			order.is_self_order = db_model.origin_order_id == -1  # todo 起个名
-			order.is_use_delivery_item_db_model = db_model.origin_order_id > 0
+			order.is_weizoom_order = db_model.origin_order_id == -1  # todo 起个名
+			order.is_second_generation_order = db_model.origin_order_id > 0
 			order.remark = db_model.remark
 			order.type = db_model.type
 			order.webapp_id = db_model.webapp_id
@@ -230,9 +230,9 @@ class Order(business_model.Model):
 		for order in orders:
 			order_ids.append(order.id)
 
-			if order.is_self_order:
+			if order.is_weizoom_order:
 				self_order_ids.append(order.id)
-			elif order.is_use_delivery_item_db_model:
+			elif order.is_second_generation_order:
 				# 对于老同步订单，出货单在db层是出货单本身
 				delivery_item_db_models.append(order.context['db_model'])
 			else:
@@ -288,7 +288,7 @@ class Order(business_model.Model):
 	@staticmethod
 	def __fill_refunding_info(orders, order_ids):
 		for order in orders:
-			if order.is_self_order:
+			if order.is_weizoom_order:
 				order.refunding_info = {
 					'cash': sum([delivery_item.refund_info['cash'] for delivery_item in order.delivery_items if
 					             delivery_item.refund_info['finished']]),

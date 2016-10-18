@@ -33,7 +33,7 @@ class DeliveryItem(business_model.Model):
 		'total_origin_product_price',
 		'supplier_info',
 		'express_details',
-		'is_use_delivery_item_db_model',  # 出货单使用出货单db，即db层面有出货单
+		'has_db_record',  # 出货单使用出货单db，即db层面有出货单
 		'with_logistics_trace',  # 是否使用快递100，对应于数据库里的is_100
 		'with_logistics',  # 是否使用物流
 		'operation_logs'
@@ -50,7 +50,7 @@ class DeliveryItem(business_model.Model):
 		else:
 			self.origin_order_id = db_model.id
 
-		self.is_use_delivery_item_db_model = db_model.origin_order_id > 0  # 出货单使用出货单db，即db层面有出货单
+		self.has_db_record = db_model.origin_order_id > 0  # 出货单使用出货单db，即db层面有出货单
 
 		self.postage = db_model.postage
 
@@ -301,7 +301,7 @@ class DeliveryItem(business_model.Model):
 		@return:
 		"""
 
-		if self.is_use_delivery_item_db_model:
+		if self.has_db_record:
 			action_text = u"支付"
 			from_status = self.status
 			to_status = mall_models.ORDER_STATUS_PAYED_NOT_SHIP
@@ -321,7 +321,7 @@ class DeliveryItem(business_model.Model):
 		@param corp:
 		@return:
 		"""
-		if self.is_use_delivery_item_db_model:
+		if self.has_db_record:
 			action_text = u"支付"
 			from_status = self.status
 			to_status = mall_models.ORDER_STATUS_PAYED_NOT_SHIP
@@ -415,7 +415,7 @@ class DeliveryItem(business_model.Model):
 		self.__record_operation_log(self.bid, corp.username, action_text)
 		self.__recode_status_log(self.bid, corp.username, from_status, to_status)
 
-		if self.is_use_delivery_item_db_model:
+		if self.has_db_record:
 			# 只有自营出货单开启高端退款（然而并不知道用什么词替代"高端"
 			integral_strategy = corp.mall_config_repository.get_integral_strategy()
 			integral_each_yuan = integral_strategy.integral_each_yuan
@@ -451,7 +451,7 @@ class DeliveryItem(business_model.Model):
 		self.__record_operation_log(self.bid, corp.username, action_text)
 		self.__recode_status_log(self.bid, corp.username, from_status, to_status)
 
-		if self.is_use_delivery_item_db_model:
+		if self.has_db_record:
 			# 只有自营出货单开启高端退款（然而并不知道用什么词替代"高端"
 			DeliveryItem.__fill_refunding_info([self], [self.id])
 
