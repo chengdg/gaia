@@ -231,7 +231,7 @@
 					"required":true
 				},
 				"with_logistics_trace": {
-					"type": "integer",
+					"type": "boolean",
 					"description": "是否启用物流追踪，只要不是用其他时候就是使用物流追踪",
 					"required":true
 				},
