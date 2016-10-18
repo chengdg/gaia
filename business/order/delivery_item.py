@@ -138,16 +138,16 @@ class DeliveryItem(business_model.Model):
 		else:
 			other_delivery_items = delivery_items
 		if other_delivery_items:
-			express_company_names = []
+			express_company_name_values = []
 			express_numbers = []
 			for delivery_item in delivery_items:
-				express_company_names.append(delivery_item.express_company_name)
+				express_company_name_values.append(delivery_item.express_company_name_value)
 				express_numbers.append(delivery_item.express_number)
 
 				delivery_item.express_details = []
 
 			express_push_list = express_models.ExpressHasOrderPushStatus.select().dj_where(
-				express_company_name__in=express_company_names,
+				express_company_name__in=express_company_name_values,
 				express_number__in=express_numbers
 			)
 
@@ -169,7 +169,7 @@ class DeliveryItem(business_model.Model):
 
 			for delivery_item in delivery_items:
 				push_id = name_number2express_push_id.get(
-					str(delivery_item.express_company_name + '__' + delivery_item.express_number))
+					str(delivery_item.express_company_name_value + '__' + delivery_item.express_number))
 				if push_id:
 					express_details = express_push_id2details.get(push_id, [])
 
