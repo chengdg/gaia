@@ -682,3 +682,17 @@ class Product(business_model.Model):
 	# 		return relation.mall_id
 	# 	except BaseException as e:
 	# 		return 0
+
+
+	def update_sales(self,count):
+		"""
+		added by ztq
+		更新商品销量
+		@param count: 正数表示增加销量，负数表示减少销量
+		@return:
+		"""
+		if mall_models.ProductSales.select().dj_where(product_id=self.id).first():
+			mall_models.ProductSales.update(
+				sales=mall_models.ProductSales.sales + count).dj_where(product_id=self.id).execute()
+		else:
+			mall_models.ProductSales.create(product=self.id, sales=self.count)

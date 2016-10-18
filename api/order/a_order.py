@@ -70,6 +70,10 @@ class AOrder(api_resource.ApiResource):
 				remark = args['new_remark'].strip()
 				is_success, msg = order.update_remark(corp, remark)
 
+			else:
+				is_success = False
+				msg = 'error args'
+
 			if is_success:
 				return {}
 			else:

@@ -376,12 +376,6 @@ class DeliveryItem(business_model.Model):
 		- 记录状态日志
 		- 记录操作日志
 
-		@param corp:
-		@param express_company_name:
-		@param express_number:
-		@param leader_name:
-		@param is_100:
-		@return:
 		"""
 		self.express_company_name = company_name_value
 		self.express_number = express_number
@@ -403,6 +397,19 @@ class DeliveryItem(business_model.Model):
 		process_order_after_delivery_item_service.process_order(self)
 
 		return True, ''
+
+	def update_ship_info(self, corp, with_logistics_trace, company_name_value, express_number, leader_name):
+		action_text = u'修改发货信息'
+		self.express_company_name = company_name_value
+		self.express_number = express_number
+		self.leader_name = leader_name
+		self.with_logistics_trace = with_logistics_trace
+
+		self.__save()
+
+		self.__send_msg_to_topic('update_delivery_item_ship_info')
+
+		self.__record_operation_log(self.bid, corp.username, action_text)
 
 	def apply_for_refunding(self, corp, cash, weizoom_card_money, coupon_money, integral):
 
