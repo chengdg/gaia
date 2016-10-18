@@ -156,6 +156,60 @@ class FreePostageConfig(models.Model):
 	class Meta(object):
 		db_table = 'mall_free_postage_config'
 
+
+# #######        供货商实现        ####
+# 五五分成
+SUPPLIER_TYPE_DIVIDE = 0
+# 零售返点
+SUPPLIER_TYPE_RETAIL = 1
+# 固定低价
+SUPPLIER_TYPE_FIXED = 2
+# 普通供货商
+SUPPLIER_TYPE_NORMAL = -1
+
+# 结算账期  1【自然月】   2【15天】   3【自然周】
+SUPPLIER_SETTLEMENT_PERIOD_MONTH = 1
+SUPPLIER_SETTLEMENT_PERIOD_15TH_DAY = 2
+SUPPLIER_SETTLEMENT_PERIOD_WEEK = 3
+
+
+class Supplier(models.Model):
+	owner = models.ForeignKey(User)
+	name = models.CharField(max_length=200)  # 供货商名称
+	responsible_person = models.CharField(max_length=100)  # 供货商负责人
+	supplier_tel = models.CharField(max_length=100)  # 供货商电话
+	supplier_address = models.CharField(max_length=256)  # 供货商地址
+	remark = models.CharField(max_length=256)  # 备注
+	type = models.IntegerField(default=SUPPLIER_TYPE_NORMAL)
+	is_delete = models.BooleanField(default=False)  # 是否已经删除
+	created_at = models.DateTimeField(auto_now_add=True)  # 添加时间
+	settlement_period = models.IntegerField(default=SUPPLIER_SETTLEMENT_PERIOD_MONTH)
+
+	class Meta(object):
+		verbose_name = "供货商"
+		verbose_name_plural = "供货商操作"
+		db_table = "mall_supplier"
+
+
+
+class SupplierPostageConfig(models.Model):
+	supplier_id = models.IntegerField(default=0)
+	product_id = models.IntegerField(default=0)
+	condition_type = models.CharField(
+		max_length=25,
+		default='money')  # 免邮条件类型, 共有'count', 'money'两种
+	condition_money = models.DecimalField(max_digits=65, decimal_places=2, null=True) #免邮的消费金额
+	condition_count = models.IntegerField(default=0)  # 免邮商品数量
+	postage = models.DecimalField(max_digits=65, decimal_places=2, null=True) #邮费
+	status = models.BooleanField(default=True) # 是否启用邮费配置
+	created_at = models.DateTimeField(auto_now_add=True)  # 添加时间
+
+	class Meta(object):
+		db_table = 'mall_supplier_postage_config'
+		verbose_name = '供货商邮费配置'
+		verbose_name_plural = '供货商邮费配置'
+		
+
 #########################################################################
 # 商品相关Model
 #########################################################################
@@ -1002,25 +1056,6 @@ class OrderStatusLog(models.Model):
 		db_table = 'mall_order_status_log'
 		verbose_name = '订单状态日志'
 		verbose_name_plural = '订单状态日志'
-
-
-########################################################################
-# Supplier:供货商信息
-########################################################################
-class Supplier(models.Model):
-	owner = models.ForeignKey(User)
-	name = models.CharField(max_length=16)  # 供货商名称
-	responsible_person = models.CharField(max_length=100) # 供货商负责人
-	supplier_tel = models.CharField(max_length=100) # 供货商电话
-	supplier_address = models.CharField(max_length=256) # 供货商地址
-	remark = models.CharField(max_length=256) # 备注
-	is_delete = models.BooleanField(default=False)  # 是否已经删除
-	created_at = models.DateTimeField(auto_now_add=True)  # 添加时间
-
-	class Meta(object):
-		verbose_name = "供货商"
-		verbose_name_plural = "供货商操作"
-		db_table = "mall_supplier"
 
 
 
