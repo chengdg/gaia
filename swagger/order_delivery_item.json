@@ -1,0 +1,55 @@
+{
+	"swagger": "2.0",
+	"info": {
+		"version": "0.0.1",
+		"title": "zeus API doc"
+	},
+	"paths": {
+		"/order/delivery_item": {
+			"post": {
+				"summary": "修改出货单信息，只支持修改物流",
+				"tags": [
+					"order","delivery_item"
+				],
+				"parameters": [
+					{
+						"name": "corp_id",
+						"required": true
+					},
+					{
+						"name": "delivery_item_id",
+						"required": true
+					},
+					{
+						"name": "new_ship_info",
+						"type": "string",
+						"required": false,
+						"description": "参数同批量发货，json字符串"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

@@ -410,6 +410,7 @@ class DeliveryItem(business_model.Model):
 		self.__send_msg_to_topic('update_delivery_item_ship_info')
 
 		self.__record_operation_log(self.bid, corp.username, action_text)
+		return True, ''
 
 	def apply_for_refunding(self, corp, cash, weizoom_card_money, coupon_money, integral):
 
