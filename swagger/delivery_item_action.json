@@ -235,7 +235,7 @@
 					"description": "是否启用物流追踪，只要不是用其他时候就是使用物流追踪",
 					"required":true
 				},
-				"company_name_value": {
+				"express_company_name_value": {
 					"type": "string",
 					"description": "物流公司的代号，当不用物流追踪时候，则直接为用户填写内容",
 					"required":true
