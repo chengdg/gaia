@@ -13,13 +13,7 @@ from service.service_register import register
 # -*- coding: utf-8 -*-
 from util.regional_util import get_str_value_by_string_ids
 
-"""
-处理订单的消息service(演示)
 
-@author Victor
-"""
-
-import logging
 
 from business.mall.corporation import Corporation
 from service.service_register import register

@@ -12,7 +12,7 @@ from business.order.process_order_after_delivery_item_service import ProcessOrde
 from db.express import models as express_models
 from db.mall import models as mall_models
 from zeus_conf import TOPIC
-
+import logging
 
 class DeliveryItem(business_model.Model):
 	__slots__ = (
@@ -20,6 +20,7 @@ class DeliveryItem(business_model.Model):
 		'bid',
 		'origin_order_id',
 		'products',
+		'webapp_id',
 
 		'postage',
 		'status',
@@ -28,6 +29,7 @@ class DeliveryItem(business_model.Model):
 		'leader_name',
 		'created_at',
 		'payment_time',
+		'area',
 
 		'refunding_info',
 		'total_origin_product_price',
@@ -53,9 +55,11 @@ class DeliveryItem(business_model.Model):
 		self.has_db_record = db_model.origin_order_id > 0  # 出货单使用出货单db，即db层面有出货单
 
 		self.postage = db_model.postage
+		self.webapp_id = db_model.webapp_id
 
 		self.status = db_model.status
 		self.payment_time = db_model.payment_time
+		self.area = db_model.area
 
 		# 快递公司信息
 		self.express_company_name_value = db_model.express_company_name
@@ -492,8 +496,10 @@ class DeliveryItem(business_model.Model):
 		topic_name = TOPIC['delivery_item']
 		data = {
 			"delivery_item_id": self.id,
-			"delivery_item_bid": self.bid
+			"delivery_item_bid": self.bid,
+			"corp_id": self.context['corp'].id
 		}
+		logging.info('send mns message:{}'.format(data))
 		msgutil.send_message(topic_name, msg_name, data)
 
 	def __save(self):
