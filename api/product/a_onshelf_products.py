@@ -33,6 +33,7 @@ class AOnshelfProducts(api_resource.ApiResource):
 			data = {
 				"id": product.id,
 				"name": product.name,
+				"create_type": product.create_type,
 				"image": product.thumbnails_url,
 				"models_info": AOffshelfProducts._get_models_info(product),
 				"user_code": -1,

@@ -18,7 +18,9 @@ class Command(BaseCommand):
 				mall_models.ProductPool.create(
 					woid = product.owner_id,
 					product_id = product.id,
-					status = mall_models.PP_STATUS_ON
+					status = mall_models.PP_STATUS_ON,
+					display_index = 9999999,
+					type = mall_models.PP_TYPE_CREATE
 				)
 		
 

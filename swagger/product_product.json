@@ -491,6 +491,11 @@
                     "description": "商品类型",
                     "format": "默认为object"
                 },
+                "create_type": {
+                    "type": "string",
+                    "description": "商品的创建类型",
+                    "format": "'create(自建商品)'或'sync(从商品池同步商品)'"
+                },
                 "bar_code": {
                     "type": "string",
                     "description": "商品条码"
@@ -693,6 +698,80 @@
                 }
             }
         },
+        "ReturnClassifications": {
+            "type": "array",
+            "description": "商品分类的集合",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number",
+                        "description": "商品分类的id"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "商品分类名"
+                    },
+                    "level": {
+                        "type": "number",
+                        "description": "商品分类的层级"
+                    }
+                }
+            }
+        },
+        "ReturnSupplier": {
+            "type": "object",
+            "description": "供应商信息",
+            "properties": {
+                "id": {
+                    "type": "number",
+                    "description": "供应商的id"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "供应商名"
+                },
+                "type": {
+                    "type": "string",
+                    "description": "供应商类型",
+                    "format": "'fixed(固定低价)', 'divide(分成模式)', 'retail(零售返点模式)'"
+                },
+                "divide_type_info": {
+                    "type": "object",
+                    "description": "当type为divide时，该字段有效，包含分成模式详细信息；否则，为null",
+                    "properties": {
+                        "id": {
+                            "type": "number"
+                        },
+                        "divide_money": {
+                            "type": "number",
+                            "description": "钱额度"
+                        },
+                        "basic_rebate": {
+                            "type": "number",
+                            "description": "基础返点"
+                        },
+                        "rebate": {
+                            "type": "number",
+                            "description": "在此额度内返点"
+                        }
+                    }
+                },
+                "retail_type_info": {
+                    "type": "object",
+                    "description": "当type为retail时，该字段有效，包含零售返点模式详细信息；否则，为null",
+                    "properties": {
+                        "id": {
+                            "type": "number"
+                        },
+                        "rebate": {
+                            "type": "number",
+                            "description": "扣点"
+                        }
+                    }
+                }
+            }
+        },
         "ProductInProductList": {
             "type": "object",
             "description": "商品信息",
@@ -705,6 +784,11 @@
                     "type": "string",
                     "description": "商品名"
                 },
+                "create_type": {
+                    "type": "string",
+                    "description": "商品的创建类型",
+                    "format": "'create(自建商品)'或'sync(从商品池同步商品)'"
+                },
                 "image": {
                     "type": "string",
                     "description": "商品缩略图的url"
@@ -715,6 +799,12 @@
                 },
                 "categories": {
                     "$ref": "#/definitions/ReturnCategories"
+                },
+                "classifications": {
+                    "$ref": "#/definitions/ReturnClassifications"
+                },
+                "supplier": {
+                    "$ref": "#/definitions/ReturnSupplier"
                 },
                 "price": {
                     "type": "string",

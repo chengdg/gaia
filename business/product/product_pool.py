@@ -94,7 +94,7 @@ class ProductPool(business_model.Model):
 		#TODO: dj_where支持{}
 		if product_pool_filter_values:
 			if 'order_by_display_index' in options:
-				pool_product_models = mall_models.ProductPool.select().dj_where(**product_pool_filter_values).order_by(-mall_models.ProductPool.display_index, mall_models.ProductPool.product_id)
+				pool_product_models = mall_models.ProductPool.select().dj_where(**product_pool_filter_values).order_by(mall_models.ProductPool.display_index, mall_models.ProductPool.product_id)
 			else:
 				pool_product_models = mall_models.ProductPool.select().dj_where(**product_pool_filter_values)
 		else:
@@ -103,7 +103,7 @@ class ProductPool(business_model.Model):
 			else:
 				pool_product_models = mall_models.ProductPool.select().dj_where(status__not=mall_models.PP_STATUS_DELETE)
 		product_ids = [pool_product_model.product_id for pool_product_model in pool_product_models]
-		product2poolmodel = dict([(pool_product_model.id, pool_product_model) for pool_product_model in pool_product_models])
+		product2poolmodel = dict([(pool_product_model.product_id, pool_product_model) for pool_product_model in pool_product_models])
 
 		if product_db_filter_values:
 			product_db_filter_values['id__in'] = product_ids
@@ -128,11 +128,11 @@ class ProductPool(business_model.Model):
 			#因为products中的结果是分页后的结果，所以并不是所有的product_id对应的商品都在products中，这里需要判断
 			product = id2product.get(product_id, None)
 			if product:
-				# pool_product_model = product2poolmodel[product.id]
-				# if pool_product_model.type == mall_models.PP_TYPE_SYNC:
-				# 	product.create_type = 'sync'
-				# else:
-				# 	product.create_type = 'create'
+				pool_product_model = product2poolmodel[product.id]
+				if pool_product_model.type == mall_models.PP_TYPE_SYNC:
+					product.create_type = 'sync'
+				else:
+					product.create_type = 'create'
 				result.append(product)
 		return result, pageinfo
 
@@ -147,6 +147,14 @@ class ProductPool(business_model.Model):
 
 		fill_product_detail_service = FillProductDetailService.get(self.corp)
 		fill_product_detail_service.fill_detail(products, fill_options)
+
+		pool_products = mall_models.ProductPool.select().dj_where(product_id__in=product_ids)
+		id2product = dict([(product.id, product) for product in products])
+		for pool_product in pool_products:
+			if pool_product.type == mall_models.PP_TYPE_SYNC:
+				product.create_type = 'sync'
+			else:
+				product.create_type = 'create'
 
 		#按照product_ids中id的顺序对products进行顺序调整
 		id2product = dict([(product.id, product) for product in products])

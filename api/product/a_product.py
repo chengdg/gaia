@@ -148,6 +148,8 @@ class AProduct(api_resource.ApiResource):
 				"id": product.id,
 				"base_info": {
 					"name": product.name,
+					"type": product.type,
+					"create_type": product.create_type,
 					"bar_code": product.bar_code,
 					"min_limit": product.min_limit,
 					"is_enable_bill": product.is_enable_bill,
