@@ -115,20 +115,19 @@ class AOffshelfProducts(api_resource.ApiResource):
 		"""
 		获得商品的classification集合
 		"""
-		list_datas = []
-		for classification_list in product.classification_lists:
-			list_data = []
+		datas = []
+
+		if len(product.classification_lists) > 0:
+			classification_list = product.classification_lists[0]
 
 			for classification in classification_list:
-				list_data.append({
+				datas.append({
 					"id": classification.id,
 					"level": classification.level,
 					"name": classification.name
 				})
 
-			list_datas.append(list_data)
-
-		return list_datas
+		return datas
 
 	@param_required(['corp_id'])
 	def get(args):
