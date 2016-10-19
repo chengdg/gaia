@@ -36,6 +36,7 @@ class Coupon(business_model.Model):
 		'valid_days',
 		'valid_time',
 		'invalid_reason',
+		'coupon_rule_id'
 	)
 
 	def __init__(self, model):
@@ -46,72 +47,33 @@ class Coupon(business_model.Model):
 			self._init_slot_from_model(model)
 			self.__check_coupon_status()
 
-
 	@staticmethod
-	@param_required(['id'])
-	def from_id(args):
-		try:
-			coupon_db_model = promotion_models.Coupon.get(id=args['id'])
-			coupons = Coupon.__create_coupons([coupon_db_model])
-			return coupons[0]
-		except:
-			return None
-
-
-	@staticmethod
-	@param_required(['coupon_id', 'webapp_owner_id'])
-	def from_coupon_id(args):
-		coupon_id = args['coupon_id']
-		webapp_owner_id = args['webapp_owner_id']
-		try:
-			coupon_db_model = promotion_models.Coupon.get(coupon_id=coupon_id, owner=webapp_owner_id)
-			coupons = Coupon.__create_coupons([coupon_db_model])
-			return coupons[0]
-		except:
-			return None
-
-	@staticmethod
-	@param_required(['webapp_user'])
-	def get_coupons_by_webapp_user(args):
-		"""
-		获取我所有的有效优惠券，过滤掉已经作废的优惠券
-		"""
-		webapp_user = args['webapp_user']
-		#过滤已经作废的优惠券
-		coupon_db_models = list(promotion_models.Coupon.select().dj_where(member_id=webapp_user.member.id, status__lt=promotion_models.COUPON_STATUS_DISCARD).order_by(promotion_models.Coupon.provided_time.desc()))
-		return Coupon.__create_coupons(coupon_db_models)
-
-	@staticmethod
-	@param_required(['webapp_user'])
-	def get_all_coupons_by_webapp_user(args):
-		"""
-		获取我所有的优惠券
-		"""
-		webapp_user = args['webapp_user']
-
-		coupon_db_models = list(promotion_models.Coupon.select().dj_where(member_id=webapp_user.member.id).order_by(promotion_models.Coupon.provided_time.desc()))
-		return Coupon.__create_coupons(coupon_db_models)
-
-	@staticmethod
-	@param_required(['id'])
-	def get_coupon_by_id(args):
-		"""
-		根据优惠券id获取优惠券
-		"""
-		if args['id'] == 0:
-			return None
-		coupon_db_models = promotion_models.Coupon.select().dj_where(id=args['id'])
-		if coupon_db_models.count() == 0:
-			return coupon_db_models.first()
-		return None
-
-
-	@staticmethod
-	@param_required(['db_model'])
+	@param_required(['db_model', 'corp'])
 	def from_model(args):
-		model = args['db_model']
-		coupon = Coupon(model)
+
+		coupon = Coupon(args['db_model'])
+		coupon.context['db_model'] = args['db_model']
+		coupon.context['corp'] = args['corp']
 		return coupon
+
+	def refund(self):
+		"""
+		取消、退款订单时返还优惠券
+		"""
+
+		if self.provided_time == promotion_models.DEFAULT_DATETIME:
+			self.status = promotion_models.COUPON_STATUS_UNGOT
+		else:
+			self.status = promotion_models.COUPON_STATUS_UNUSED
+		corp = self.context['corp']
+		coupon_rule = corp.coupon_rule_repository.get_coupon_rule_by_id(self.coupon_rule_id)
+		coupon_rule.update_use_count(-1)
+
+	def __save(self):
+		db_model = self.context['db_model']
+
+		db_model.status = self.status
+		db_model.save()
 
 	@staticmethod
 	def __create_coupons(coupon_db_models):
@@ -128,20 +90,21 @@ class Coupon(business_model.Model):
 		for coupon_db_model in coupon_db_models:
 			coupon = Coupon.from_model({"db_model": coupon_db_model})
 
-			#填充与coupon rule相关数据
+			# 填充与coupon rule相关数据
 			coupon_rule = id2coupon_rule[coupon_db_model.coupon_rule_id]
 			coupon.coupon_rule = coupon_rule
 			coupon.valid_restrictions = coupon_rule.valid_restrictions
-			coupon.limit_product_id = map(lambda x: int(x), coupon_rule.limit_product_id.split(',')) if coupon_rule.limit_product_id != '0' else 0
+			coupon.limit_product_id = map(lambda x: int(x), coupon_rule.limit_product_id.split(
+				',')) if coupon_rule.limit_product_id != '0' else 0
 			coupon.name = coupon_rule.name
 
-			#填充优惠券倒计时信息
+			# 填充优惠券倒计时信息
 			if coupon_db_model.expired_time > today:
 				valid_days = (coupon_db_model.expired_time - today).days
 				if valid_days > 0:
 					coupon.valid_time = '%d天' % valid_days
 				else:
-					#过期时间精确到分钟
+					# 过期时间精确到分钟
 					valid_seconds = (coupon_db_model.expired_time - today).seconds
 					if valid_seconds > 3600:
 						coupon.valid_time = '%d小时' % int(valid_seconds / 3600)
@@ -157,7 +120,8 @@ class Coupon(business_model.Model):
 			coupons.append(coupon)
 
 		if len(coupon_ids_need_expire) > 0:
-			promotion_models.Coupon.update(status=promotion_models.COUPON_STATUS_EXPIRED).dj_where(id__in=coupon_ids_need_expire).execute()
+			promotion_models.Coupon.update(status=promotion_models.COUPON_STATUS_EXPIRED).dj_where(
+				id__in=coupon_ids_need_expire).execute()
 
 		return coupons
 
@@ -172,7 +136,7 @@ class Coupon(business_model.Model):
 			self.display_status = 'used'
 		elif self.start_time > today:
 			msg = u'该优惠券活动尚未开始'
-			#兼容历史数据
+			# 兼容历史数据
 			if self.status == promotion_models.COUPON_STATUS_USED:
 				self.display_status = 'used'
 			else:
@@ -246,7 +210,7 @@ class Coupon(business_model.Model):
 
 				if self.valid_restrictions > price:
 					# 单品券限制购物金额
-						msg = u'该优惠券指定商品金额不满足使用条件'
+					msg = u'该优惠券指定商品金额不满足使用条件'
 		# 处理通用券
 		else:
 			product_ids = [product.id for product in reserved_products if product.can_use_coupon]
@@ -257,7 +221,8 @@ class Coupon(business_model.Model):
 
 			# 判断通用券是否满足金额限制
 			else:
-				products_sum_price = sum([product.price * product.purchase_count for product in reserved_products if product.can_use_coupon])
+				products_sum_price = sum(
+					[product.price * product.purchase_count for product in reserved_products if product.can_use_coupon])
 
 				if self.valid_restrictions > products_sum_price and self.valid_restrictions != -1:
 					msg = u'该优惠券不满足使用金额限制'
@@ -272,7 +237,7 @@ class Coupon(business_model.Model):
 		reserved_products = order.products
 		return self.is_can_use_for_products(webapp_user, reserved_products)
 
-	def to_dict(self,*extras):
+	def to_dict(self, *extras):
 		result = super(Coupon, self).to_dict()
 		if extras:
 			for extra in extras:

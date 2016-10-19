@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from business import model as business_model
-from business.member.member import Member
-from business.member.member_repository import MemebrRepository
 from business.order.delivery_item import DeliveryItem
 from db.mall import models as mall_models
 from zeus_conf import TOPIC
@@ -71,6 +69,7 @@ class Order(business_model.Model):
 		'origin_final_price',
 		'status_logs',
 		'operation_logs',
+		'weizoom_card_info',
 
 		'is_second_generation_order'  # 对于第二代的同步订单，db层面出货单就是订单，此类订单不会再产生，业务只处理显示
 	)
@@ -166,10 +165,10 @@ class Order(business_model.Model):
 			with_full_money_info = fill_options.get('with_full_money_info')  # 有依赖
 			with_status_logs = fill_options.get('with_status_logs')
 			with_operation_logs = fill_options.get('with_operation_logs')
+			with_weizoom_card = fill_options.get("with_weizoom_card")
 
 			if with_member:
-				member_repository = MemebrRepository.get(corp)
-				webapp_user_id2member, _ = member_repository.get_members_from_webapp_user_ids(webapp_user_ids)
+				webapp_user_id2member, _ = corp.member_repository.get_members_from_webapp_user_ids(webapp_user_ids)
 			else:
 				webapp_user_id2member = {}
 
@@ -195,6 +194,9 @@ class Order(business_model.Model):
 				delivery_items_fill_options = fill_options['with_delivery_items']
 				Order.__fill_delivery_items(orders, delivery_items_fill_options)
 
+			if with_weizoom_card:
+				Order.__fill_weizoom_card(orders, order_ids)
+
 			if with_group_buy_info:
 				Order.__fill_group_buy(orders, order_ids)
 
@@ -212,6 +214,23 @@ class Order(business_model.Model):
 				Order.__fill_operation_logs(orders, order_ids)
 
 		return orders
+
+	@staticmethod
+	def __fill_weizoom_card(orders, order_ids):
+		order_bids = [order.bid for order in orders]
+		infos = mall_models.OrderCardInfo.select().dj_where(order_id__in=order_bids)
+
+		bid2infos = {info.order_id: info for info in infos}
+
+		for order in orders:
+			info = bid2infos.get(order.bid)
+			if info:
+				order.weizoom_card_info = {
+					'trade_id': info.trade_id,
+					'used_card': info.used_card
+				}
+			else:
+				order.weizoom_card_info = {}
 
 	@staticmethod
 	def __fill_delivery_items(orders, fill_options):
@@ -351,7 +370,6 @@ class Order(business_model.Model):
 					'time': log.created_at,
 					'operator': log.operator
 				})
-
 
 	def to_dict(self, *extras):
 		result = business_model.Model.to_dict(self, *extras)
@@ -593,3 +611,18 @@ class Order(business_model.Model):
 		db_model.final_price = self.final_price
 		db_model.edit_money = self.edit_money
 		db_model.save()
+
+
+	def get_all_products(self):
+		delivery_item_products = []
+
+		for item in self.delivery_items:
+			delivery_item_products.extend(item.products)
+		# todo 赠品不计销量
+		# for product in products:
+		# 	if product.promotion != {'type_name': 'premium_sale:premium_product'}:
+		# 		product_sale_infos.append({
+		# 			'product_id': product.id,
+		# 			'purchase_count': product.purchase_count
+		# 		})
+		return delivery_item_products

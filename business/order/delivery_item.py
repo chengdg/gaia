@@ -30,6 +30,8 @@ class DeliveryItem(business_model.Model):
 		'created_at',
 		'payment_time',
 		'area',
+		'ship_name',
+		'supplier_id',
 
 		'refunding_info',
 		'total_origin_product_price',
@@ -39,6 +41,7 @@ class DeliveryItem(business_model.Model):
 		'with_logistics_trace',  # 是否使用快递100，对应于数据库里的is_100
 		'with_logistics',  # 是否使用物流
 		'operation_logs'
+
 	)
 
 	def __init__(self, db_model):
@@ -60,6 +63,8 @@ class DeliveryItem(business_model.Model):
 		self.status = db_model.status
 		self.payment_time = db_model.payment_time
 		self.area = db_model.area
+		self.supplier_id = db_model.supplier
+		self.ship_name = db_model.ship_name
 
 		# 快递公司信息
 		self.express_company_name_value = db_model.express_company_name

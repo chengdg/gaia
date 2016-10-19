@@ -5,7 +5,7 @@ from business.member.member import Member
 from db.member import models as member_models
 
 
-class MemebrRepository(business_model.Service):
+class MemberRepository(business_model.Service):
 	def get_member_by_id(self, member_id):
 		member_db_model = member_models.Member.get(id=member_id)
 
