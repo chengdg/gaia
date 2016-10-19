@@ -61,8 +61,39 @@ def process(data, recv_msg=None):
 	for item in order.delivery_items:
 		delivery_item_products.extend(item.products)
 
-	notification_repository = NotificationRepository.get(corp)
-	order_notify_type = ORDER_STATUS2NOTIFY_STATUS.get(order.status, -1)
-	order_notify = notification_repository.get_email_notification_by_type(order_notify_type)
+	# todo
 
-	pass
+	# webapp_owner = self.context['webapp_owner']
+	# webapp_user = self.context['webapp_user']
+	# # user_profile = UserProfile.objects.get(webapp_id=webapp_id)
+	# user_profile = webapp_owner.user_profile
+	# user = user_profile.user
+	# send_point = ORDER_STATUS2SEND_PONINT.get(self.status, '')
+	# # template_message = mall_models.MarketToolsTemplateMessageDetail.select().dj_where(owner=user, template_message__send_point=send_point, status=1).first()
+	# template_message = mall_models.MarketToolsTemplateMessageDetail.select().join(
+	# 	mall_models.MarketToolsTemplateMessage).where(mall_models.MarketToolsTemplateMessageDetail.owner == user,
+	#                                                   mall_models.MarketToolsTemplateMessage.send_point == send_point,
+	#                                                   mall_models.MarketToolsTemplateMessageDetail.status == 1).first()
+	#
+	# if user_profile and template_message and template_message.template_id:
+	# 	mpuser_access_token = webapp_owner.weixin_mp_user_access_token
+	# 	if mpuser_access_token:
+	# 		try:
+	# 			message = self.__get_order_send_message_dict(user_profile, template_message, self, send_point)
+	#
+	# 			mpuser_access_token_dict = mpuser_access_token.to_dict()
+	#
+	# 			del mpuser_access_token_dict['update_time']
+	# 			del mpuser_access_token_dict['expire_time']
+	# 			del mpuser_access_token_dict['created_at']
+	# 			send_template_message.delay(mpuser_access_token_dict, message)
+	# 			return True
+	# 		except:
+	# 			notify_message = u"发送模板消息异常, cause:\n{}".format(unicode_full_stack())
+	# 			watchdog.warning(notify_message)
+	# 			return False
+	# 	else:
+	# 		return False
+	# return True
+
+

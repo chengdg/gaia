@@ -12,7 +12,7 @@ from business.order.service.paid_order_handle_service import PaidOrderHandleServ
 from service.service_register import register
 
 
-@register("pay_order")
+@register("order_paid")
 def order_process(data, recv_msg=None):
 	"""
 	演示接收消息
@@ -23,8 +23,6 @@ def order_process(data, recv_msg=None):
 	order_bid = data['order_bid']
 
 	corp = Corporation(corp_id)
-
-
 
 	service = PaidOrderHandleService.get(corp)
 	try:
