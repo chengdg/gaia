@@ -51,7 +51,7 @@ Background:
 		}]
 		"""
 
-@mall @mall.product @mall.product_management @hermes @wip
+@mall @mall.product @mall.product_management @hermes
 Scenario:1 添加标准规格商品
 	job添加商品后：
 	1、能获得商品详情
@@ -85,6 +85,7 @@ Scenario:1 添加标准规格商品
 				"models": {
 					"standard": {
 						"price": 11.12,
+						"purchase_price": 1.11,
 						"weight": 5.0,
 						"stock_type": "无限"
 					}
@@ -120,6 +121,7 @@ Scenario:1 添加标准规格商品
 		"""
 		{
 			"name": "东坡肘子",
+			"create_type": "create",
 			"bar_code": "zhouzi_1",
 			"min_limit": 10,
 			"promotion_title": "促销的东坡肘子",
@@ -141,6 +143,7 @@ Scenario:1 添加标准规格商品
 				"models": {
 					"standard": {
 						"price": 11.12,
+						"purchase_price": 1.11,
 						"weight": 5.0,
 						"stock_type": "无限"
 					}
@@ -159,6 +162,7 @@ Scenario:1 添加标准规格商品
 		"""
 		{
 			"name": "叫花鸡",
+			"create_type": "create",
 			"swipe_images": [{
 				"url": "/static/test_resource_img/hangzhou2.jpg"
 			}],
@@ -178,6 +182,7 @@ Scenario:1 添加标准规格商品
 		"""
 		[{
 			"name": "东坡肘子",
+			"create_type": "create",
 			"bar_code": "zhouzi_1",
 			"categories": "分类1,分类2,分类3",
 			"price": 11.12,
@@ -186,6 +191,7 @@ Scenario:1 添加标准规格商品
 			"image": "/static/test_resource_img/hangzhou1.jpg"
 		}, {
 			"name": "叫花鸡",
+			"create_type": "create",
 			"price": 12.00,
 			"stocks": 3,
 			"sales": 0,
@@ -210,11 +216,13 @@ Scenario:1 添加定制规格商品
 				"models": {
 					"黑色 M": {
 						"price": 11.12,
+						"purchase_price": 1.1,
 						"weight": 5.0,
 						"stock_type": "无限"
 					},
 					"白色 S": {
 						"price": 21.12,
+						"purchase_price": 2.2,
 						"weight": 25.0,
 						"stock_type": "有限",
 						"stocks": 99
@@ -227,6 +235,7 @@ Scenario:1 添加定制规格商品
 				"models": {
 					"黑色 S": {
 						"price": 3.14,
+						"purchase_price": 1.3,
 						"weight": 3.14,
 						"stock_type": "无限"
 					}
@@ -243,11 +252,13 @@ Scenario:1 添加定制规格商品
 				"models": {
 					"黑色 M": {
 						"price": 11.12,
+						"purchase_price": 1.1,
 						"weight": 5.0,
 						"stock_type": "无限"
 					},
 					"白色 S": {
 						"price": 21.12,
+						"purchase_price": 2.2,
 						"weight": 25.0,
 						"stock_type": "有限",
 						"stocks": 99
@@ -265,6 +276,7 @@ Scenario:1 添加定制规格商品
 				"models": {
 					"黑色 S": {
 						"price": 3.14,
+						"purchase_price": 1.3,
 						"weight": 3.14,
 						"stock_type": "无限"
 					}

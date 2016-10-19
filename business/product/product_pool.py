@@ -79,6 +79,7 @@ class ProductPool(business_model.Model):
 				woid=self.corp_id,
 				product_id=product_id,
 				status=mall_models.PP_STATUS_ON_POOL,
+				type=mall_models.PP_TYPE_CREATE,
 				display_index=999
 			)
 		return True

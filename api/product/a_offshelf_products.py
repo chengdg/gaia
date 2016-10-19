@@ -36,6 +36,7 @@ class AOffshelfProducts(api_resource.ApiResource):
 				"id": standard_model.id,
 				"name": standard_model.name,
 				"price": standard_model.price,
+				"purchase_price": standard_model.purchase_price,
 				"weight": standard_model.weight,
 				"stock_type": standard_model.stock_type,
 				"stocks": standard_model.stocks,
@@ -51,6 +52,7 @@ class AOffshelfProducts(api_resource.ApiResource):
 					"id": custom_model.id,
 					"name": custom_model.name,
 					"price": custom_model.price,
+					"purchase_price": custom_model.purchase_price,
 					"weight": custom_model.weight,
 					"stock_type": custom_model.stock_type,
 					"stocks": custom_model.stocks,
@@ -145,6 +147,7 @@ class AOffshelfProducts(api_resource.ApiResource):
 			data = {
 				"id": product.id,
 				"name": product.name,
+				"create_type": product.create_type,
 				"image": product.thumbnails_url,
 				"models_info": AOffshelfProducts._get_models_info(product),
 				"user_code": -1,

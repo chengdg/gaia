@@ -34,6 +34,7 @@ class AProduct(api_resource.ApiResource):
 				"id": standard_model.id,
 				"name": standard_model.name,
 				"price": standard_model.price,
+				"purchase_price": standard_model.purchase_price,
 				"weight": standard_model.weight,
 				"stock_type": standard_model.stock_type,
 				"stocks": standard_model.stocks,
@@ -49,6 +50,7 @@ class AProduct(api_resource.ApiResource):
 					"id": custom_model.id,
 					"name": custom_model.name,
 					"price": custom_model.price,
+					"purchase_price": custom_model.purchase_price,
 					"weight": custom_model.weight,
 					"stock_type": custom_model.stock_type,
 					"stocks": custom_model.stocks,
@@ -123,6 +125,40 @@ class AProduct(api_resource.ApiResource):
 
 		return data
 
+	@staticmethod
+	def __get_supplier_info(product):
+		"""
+		获得商品的supplier集合
+		"""
+		supplier = product.supplier
+		if not supplier:
+			return None
+
+		data = {
+			'id': supplier.id,
+			'name': supplier.name,
+			'type': supplier.type,
+			'divide_type_info': None,
+			'retail_type_info': None
+		}
+
+		if supplier.is_divide_type():
+			divide_info = supplier.get_divide_info()
+			data['divide_type_info'] = {
+				"id": divide_info.id,
+				"divide_money": divide_info.divide_money,
+				"basic_rebate": divide_info.basic_rebate,
+				"rebate": divide_info.rebate
+			}
+		elif supplier.is_retail_type():
+			retail_info = supplier.get_retail_info()
+			data['retail_info'] = {
+				"id": retail_info.id,
+				"rebate": retail_info.rebate
+			}
+
+		return data
+
 	@param_required(['corp_id', 'id'])
 	def get(args):
 		"""
@@ -136,7 +172,8 @@ class AProduct(api_resource.ApiResource):
 			'with_image': True,
 			'with_product_model': True,
 			'with_model_property_info': True,
-			'with_property': True
+			'with_property': True,
+			'with_supplier_info': True
 		}
 		products = corp.product_pool.get_products_by_ids(ids, fill_options)
 		if len(products) == 0:
@@ -162,7 +199,8 @@ class AProduct(api_resource.ApiResource):
 				"models_info": AProduct.__get_models_info(product),
 				"pay_info": AProduct.__get_pay_info(product),
 				'properties': AProduct.__get_properties(product),
-				"logistics_info": AProduct.__get_logistics_info(product)
+				"logistics_info": AProduct.__get_logistics_info(product),
+				"supplier": AProduct.__get_supplier_info(product)
 			}
 
 			return data

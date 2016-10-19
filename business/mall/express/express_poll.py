@@ -59,14 +59,14 @@ class ExpressPoll(object):
 
 	'''
 
-	def __init__(self, order):
-		self.express_company_name = order.express_company_name if order.express_company_name else ''
-		self.express_number = order.express_number if order.express_number else ''
-		self.order = order
-		self.order_id = order.id
-		self.area = order.ship_area
+	def __init__(self, delivery_item):
+		self.express_company_name = delivery_item.express_company_name_value if delivery_item.express_company_name_value else ''
+		self.express_number = delivery_item.express_number if delivery_item.express_number else ''
+		self.delivery_item = delivery_item
+		self.delivery_item_id = delivery_item.id
+		self.area = delivery_item.area
 		self.express = None
-		self.webapp_id = order.webapp_id
+		self.webapp_id = delivery_item.webapp_id
 
 		self.express_config = ExpressConfig()
 		self.express_params = ExpressRequestParams
@@ -107,16 +107,16 @@ class ExpressPoll(object):
 			# print '-------------------------------------------'
 			# print param_data
 
-			if settings.IS_UNDER_BDD:
-				from test.bdd_util import WeappClient
-				bdd_client = WeappClient()
-				response = bdd_client.post('/tools/api/express/test_kuaidi_poll/?code=1', param_json_data)
-				verified_result = response.content
+			# if settings.IS_UNDER_BDD:
+			# 	from test.bdd_util import WeappClient
+			# 	bdd_client = WeappClient()
+			# 	response = bdd_client.post('/tools/api/express/test_kuaidi_poll/?code=1', param_json_data)
+			# 	verified_result = response.content
 
-			else:
-				request = urllib2.Request(self.express_config.get_api_url(), param_data)
-				response = urllib2.urlopen(request)
-				verified_result = response.read()
+			# else:
+			request = urllib2.Request(self.express_config.get_api_url(), param_data)
+			response = urllib2.urlopen(request)
+			verified_result = response.read()
 
 			watchdog.info(u"发送快递100 订阅请求 url: {},/n param_data: {}, /n response: {}".format(
 				self.express_config.get_api_url(), 
@@ -158,8 +158,8 @@ class ExpressPoll(object):
 		try:
 			pushs = ExpressHasOrderPushStatus.objects.filter(
 					# order_id = self.order_id,
-					express_company_name = self.order.express_company_name,
-					express_number = self.order.express_number
+					express_company_name = self.delivery_item.express_company_name_value,
+					express_number = self.delivery_item.express_number
 					)
 			if pushs.count() > 0:
 				push = pushs[0]
@@ -185,15 +185,15 @@ class ExpressPoll(object):
 
 			return False
 		except:
-			watchdog.error(u'快递100tool_express_has_order_push_status表异常，获取订单信息，express_company_name:{}，express_number:{}'.format(self.order.express_company_name, self.order.express_number), self.express_config.watchdog_type)
+			watchdog.error(u'快递100tool_express_has_order_push_status表异常，获取订单信息，express_company_name:{}，express_number:{}'.format(self.delivery_item.express_company_name_value, self.delivery_item.express_number), self.express_config.watchdog_type)
 			return False
 
 
 	def _save_poll_order_id(self):
 		# ExpressDetail.objects.filter(order_id=self.order_id).delete()
 		pushs = ExpressHasOrderPushStatus.select().dj_where(
-			express_company_name = self.order.express_company_name,
-			express_number = self.order.express_number
+			express_company_name = self.delivery_item.express_company_name_value,
+			express_number = self.delivery_item.express_number
 		)
 
 		if pushs.count() > 0:
@@ -203,8 +203,8 @@ class ExpressPoll(object):
 			express = ExpressHasOrderPushStatus.create(
 				order_id = -1,
 				status = EXPRESS_PULL_NOT_STATUS,
-				express_company_name = self.order.express_company_name,
-				express_number = self.order.express_number,
+				express_company_name = self.delivery_item.express_company_name_value,
+				express_number = self.delivery_item.express_number,
 				service_type = EXPRESS_100,
 				webapp_id = self.webapp_id,
 				abort_receive_message = ""
@@ -228,6 +228,7 @@ class ExpressPoll(object):
 		# 发送订阅请求
 		data = self._send_poll_requset()
 		result = True if data.get('result') == "true" or data.get('result') is True else False
+
 
 		if result:
 			# 修改快递信息状态

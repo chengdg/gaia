@@ -55,11 +55,13 @@ def __create_weizoom_corporation():
 	from db.account import models as account_models
 
 	try:
-		account_models.UserProfile.select().dj_where(webapp_type=account_models.WEBAPP_TYPE_WEIZOOM).get()
+		profile = account_models.UserProfile.select().dj_where(webapp_type=account_models.WEBAPP_TYPE_WEIZOOM).get()
+		account_models.User.update(username='weizoom').dj_where(id=profile.user_id).execute()
 		#已经存在，不再创建，直接返回
 	except:
 		user = account_models.User.create(
-			username = 'weizoom_corp'
+			username = 'weizoom_corp',
+			password = 'test'
 		)
 
 		profile = account_models.UserProfile.create(
@@ -68,6 +70,23 @@ def __create_weizoom_corporation():
 			webapp_type = account_models.WEBAPP_TYPE_WEIZOOM
 		)
 
+def __create_self_run_platform_account():
+	from db.account import models as account_models
+
+	try:
+		account_models.UserProfile.select().dj_where(webapp_type=account_models.WEBAPP_TYPE_WEIZOOM_MALL).get()
+		#已经存在，不再创建，直接返回
+	except:
+		user = account_models.User.create(
+			username = 'zhouxun',
+			password = 'test'
+		)
+
+		profile = account_models.UserProfile.create(
+			user = user,
+			webapp_id = 0,
+			webapp_type = account_models.WEBAPP_TYPE_WEIZOOM_MALL
+		)
 
 def before_all(context):
 	# cache_utils.clear_db()
@@ -77,6 +96,7 @@ def before_all(context):
 	# __create_system_user('tom')
 
 	__create_weizoom_corporation()
+	__create_self_run_platform_account()
 
 	#创建test case，使用assert
 	context.tc = unittest.TestCase('__init__')

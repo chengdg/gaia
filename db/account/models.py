@@ -12,8 +12,11 @@ class User(models.Model):
 	last_name = models.CharField(max_length=30, default='')
 	email = models.EmailField(default='')
 	is_staff = models.BooleanField(default=False)
-	is_active = models.BooleanField(default=True,)
+	is_active = models.BooleanField(default=True)
+	is_superuser = models.BooleanField(default=False)
+	password = models.CharField(max_length=120)
 	date_joined = models.DateTimeField(default=datetime.datetime.now)
+	last_login = models.DateTimeField(default=datetime.datetime.now)
 
 	class Meta:
 		db_table = 'auth_user'
@@ -88,6 +91,9 @@ class UserProfile(models.Model):
 	#wepage
 	is_use_wepage = models.BooleanField(default=False) #是否启用wepage
 	store_name = models.CharField(max_length=64, default="") #店铺名称
+	#结算账期
+	settlement_period = models.IntegerField(default=1)
+	is_formal = models.BooleanField(default=True) #账户类型是否是正式账号
 	class Meta(object):
 		db_table = 'account_user_profile'
 

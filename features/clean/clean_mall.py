@@ -48,7 +48,15 @@ def clean():
 	mall_models.OrderCardInfo.delete().execute()
 	mall_models.Order.delete().execute()
 
+	#供应商
+	mall_models.SupplierPostageConfig.delete().execute()
+	mall_models.SupplierDivideRebateInfo.delete().execute()
+	mall_models.SupplierRetailRebateInfo.delete().execute()
+	mall_models.Supplier.delete().execute()
+
 	#商品
+	mall_models.ClassificationHasProduct.delete().execute()
+	mall_models.Classification.delete().execute()
 	mall_models.ProductModelHasPropertyValue.delete().execute()
 	mall_models.ProductModel.delete().execute()
 	mall_models.ProductSwipeImage.delete().execute()

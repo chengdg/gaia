@@ -55,6 +55,7 @@ def __format_product_models_info(context, product):
             is_unlimit_stock = (model.get('stock_type', u'无限') == u'无限')
             data = {
                 "price": model.get('price', 1.0),
+                "purchase_price": model.get('purchase_price', 1.0),
                 "weight": model.get('weight', 2.0),
                 "stock_type": 'unlimit' if is_unlimit_stock else 'limit',
                 "stocks": -1 if is_unlimit_stock else model.get('stocks', 10),
@@ -83,6 +84,7 @@ def __format_product_models_info(context, product):
         models_info['standard_model'] = {
             "name": "standard",
             "price": 1.0,
+            "purchase_price": 1.0,
             "weight": 2.0,
             "stock_type": 'unlimit',
             "stocks": -1,
@@ -99,6 +101,11 @@ def __format_product_post_data(context, product):
     构造用于提交的product数据
     """
     #基本信息
+    if product.get('supplier', None):
+        supplier = mall_models.Supplier.select().dj_where(owner_id=context.corp.id, name=product['supplier']).get()
+        supplier_id = supplier.id
+    else:
+        supplier_id = 0
     base_info = {
         'name': product['name'], #商品名
         'type': product.get('type', 'object'),
@@ -108,6 +115,7 @@ def __format_product_post_data(context, product):
         'is_enable_bill': product.get('is_enable_bill', False), #是否使用发票
         'detail': product.get('detail', u'商品的详情'), #详情
         'is_member_product': product.get('is_member_product', False), #是否参与会员折扣
+        'supplier_id': supplier_id
     }
 
     #规格信息
@@ -183,13 +191,15 @@ def __get_product(context, name):
     product = {
         "id": resp_data['id'],
         "name": base_info['name'],
+        "create_type": base_info['create_type'],
         "bar_code": base_info['bar_code'],
         "min_limit": base_info['min_limit'],
         "promotion_title": base_info['promotion_title'],
         "detail": base_info['detail'],
         "is_member_product": base_info['is_member_product'],
         "is_enable_bill": base_info['is_enable_bill'],
-        "properties": resp_data['properties']
+        "properties": resp_data['properties'],
+        "supplier": resp_data['supplier']['name'] if resp_data['supplier'] else ""
     }
 
     #处理category
@@ -214,6 +224,7 @@ def __get_product(context, name):
             model_name = ' '.join(model_name_items)
             product['model']['models'][model_name] = {
                 "price": model['price'],
+                "purchase_price": model['purchase_price'],
                 "weight": model['weight'],
                 "stock_type": u'无限' if model['stock_type'] == 'unlimit' else u'有限',
                 "stocks": model['stocks']
@@ -223,6 +234,7 @@ def __get_product(context, name):
         model_name = model['name']
         product['model']['models'][model_name] = {
             "price": model['price'],
+            "purchase_price": model['purchase_price'],
             "weight": model['weight'],
             "stock_type": u'无限' if model['stock_type'] == 'unlimit' else u'有限',
             "stocks": model['stocks']
@@ -253,6 +265,7 @@ def __get_products(context, type_name=u'在售'):
     for product in response.data["products"]:
         data = {}
         data['name'] = product['name']
+        data['create_type'] = product['create_type']
         data['bar_code'] = product['bar_code']
         data['price'] = product['price']
         data['categories'] = ','.join([category['name'] for category in product['categories']])
@@ -260,6 +273,7 @@ def __get_products(context, type_name=u'在售'):
         data['image'] = product['image']
         data['sales'] = product['sales']
         data['display_index'] = product['display_index']
+        data["supplier"] = product['supplier']['name'] if product['supplier'] else ""
         products.append(data)
 
     return products
@@ -326,6 +340,8 @@ def step_impl(context, user, type_name):
 @when(u"{user}更新商品'{product_name}'")
 def step_impl(context, user, product_name):
     product = __get_product(context, product_name)
+
+    product['supplier'] = product['supplier'].name if product['supplier'] else None
 
     update_data = json.loads(context.text)
     for key, value in update_data.items():
@@ -409,3 +425,8 @@ def step_impl(context, user, product_name, position):
 
     response = context.client.post('/product/product_position/', data)
     bdd_util.assert_api_call_success(response)
+
+
+@when(u"{user}能够获取微众商品池商品列表")
+def step_impl(context, user):
+    pass

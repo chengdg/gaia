@@ -455,26 +455,29 @@
                     "type": "number",
                     "description": "商品的id"
                 },
-                "base_info(json字符串)": {
+                "base_info": {
                     "$ref": "#/definitions/BaseInfo"
                 },
-                "models_info(json字符串)": {
+                "models_info": {
                     "$ref": "#/definitions/ModelsInfo"
                 },
-                "image_info(json字符串)": {
+                "image_info": {
                     "$ref": "#/definitions/ImageInfo"
                 },
-                "logistics_info(json字符串)": {
+                "logistics_info": {
                     "$ref": "#/definitions/LogisticsInfo"
                 },
-                "pay_info(json字符串)": {
+                "pay_info": {
                     "$ref": "#/definitions/PayInfo"
                 },
-                "properties(json字符串)": {
+                "properties": {
                     "$ref": "#/definitions/ProductProperties"
                 },
-                "categories(json字符串)": {
+                "categories": {
                     "$ref": "#/definitions/ReturnCategories"
+                },
+                "supplier": {
+                    "$ref": "#/definitions/ReturnSupplier"
                 }
             }
         },
@@ -495,6 +498,10 @@
                     "type": "string",
                     "description": "商品的创建类型",
                     "format": "'create(自建商品)'或'sync(从商品池同步商品)'"
+                },
+                "supplier_id": {
+                    "type": "number",
+                    "description": "供应商的id"
                 },
                 "bar_code": {
                     "type": "string",
@@ -555,6 +562,10 @@
                 "price": {
                     "type": "number",
                     "description": "价格"
+                },
+                "purchase_price": {
+                    "type": "number",
+                    "description": "采购价格"
                 },
                 "weight": {
                     "type": "number",
