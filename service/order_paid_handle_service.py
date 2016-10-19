@@ -32,9 +32,7 @@ def process(data, recv_msg=None):
 	}
 	order = corp.order_repository.get_order(order_id, fill_options)
 	# 更新商品销量
-	product_infos = []
-	for item in order.delivery_items:
-		product_infos.extend(item.products)
+
 	# todo 赠品不计销量
 	# for product in products:
 	# 	if product.promotion != {'type_name': 'premium_sale:premium_product'}:
@@ -42,7 +40,9 @@ def process(data, recv_msg=None):
 	# 			'product_id': product.id,
 	# 			'purchase_count': product.purchase_count
 	# 		})
-	for product_info in product_infos:
+
+	delivery_item_products = order.get_all_products()
+	for product_info in delivery_item_products:
 		product = corp.product_pool.get_products_by_ids([product_info.id])[0]
 
 		product.update_sales(product_info.count)

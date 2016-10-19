@@ -22,7 +22,6 @@ from util.regional_util import get_str_value_by_string_ids
 import logging
 
 from business.mall.corporation import Corporation
-from business.order.service.paid_order_handle_service import PaidOrderHandleService
 from service.service_register import register
 from db.mall import models as mall_models
 

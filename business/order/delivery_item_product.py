@@ -31,7 +31,8 @@ class DeliveryItemProduct(business_model.Model):
 		'is_deleted',
 		'total_origin_price',
 		'promotion_result',
-		'product_model_names'
+		'product_model_names',
+		'product_model_name'
 
 	)
 

@@ -56,3 +56,26 @@ def send_captcha(phone_number, company_name=u'微众传媒'):
 	#result = True
 	result = send_phone_captcha(phone_number, content)
 	return result,captcha
+
+def send_chargeback_message(phones, content, send_time='', sent_type=1, post_fix_number='', account=ACCOUNT, password=PASSWORD, user_id=USER_ID):
+	params = urllib.urlencode({
+		'UserID': user_id,
+		'Account': account,
+		'Password': password,
+		'Phones': phones,
+		'Content': content.encode("utf-8"),
+		'SendTime':send_time,
+		'SendType': sent_type,
+		'PostFixNumber': post_fix_number
+		})
+	try:
+		response = urllib.urlopen(URL % params)
+		soup = BeautifulSoup(response.read())
+		if soup.retcode.text == SUCESS:
+			return True
+		else:
+			return False
+	except:
+		notify_msg = u"发送退单信息失败\n{}".format(unicode_full_stack())
+		watchdog_alert(notify_msg)
+		return False

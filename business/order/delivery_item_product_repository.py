@@ -64,6 +64,7 @@ class DeliveryItemProductRepository(business_model.Model):
 			delivery_item_product.sale_price = r.price
 			delivery_item_product.total_origin_price = r.total_price
 			delivery_item_product.count = r.number
+			delivery_item_product.product_model_name = r.product_model_name
 			delivery_item_product.delivery_item_id = r.order_id
 
 			if r.product_model_name == 'standard':

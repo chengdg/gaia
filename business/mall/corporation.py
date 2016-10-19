@@ -6,6 +6,9 @@ from eaglet.decorator import param_required
 from eaglet.utils.resource_client import Resource
 
 from business import model as business_model
+from business.coupon.coupon_repository import CouponRepository
+from business.coupon.coupon_rule_repository import CouponRuleRepository
+from business.member.member_repository import MemberRepository
 from business.order.delivery_item_repository import DeliveryItemRepository
 from business.order.order_repository import OrderRepository
 from db.account import models as account_model
@@ -155,3 +158,16 @@ class Corporation(business_model.Model):
 	@property
 	def product_classification_repository(self):
 		return ProductClassificationRepository(self)
+
+	@property
+	def coupon_repository(self):
+		return CouponRepository(self)
+
+	@property
+	def coupon_rule_repository(self):
+		return CouponRuleRepository(self)
+
+	@property
+	def member_repository(self):
+
+		return MemberRepository(self)
