@@ -66,7 +66,7 @@ class AOrder(api_resource.ApiResource):
 
 				is_success, msg = order.update_final_price(corp, new_final_price)
 
-			if 'new_remark' in args:
+			elif 'new_remark' in args:
 				remark = args['new_remark'].strip()
 				is_success, msg = order.update_remark(corp, remark)
 
