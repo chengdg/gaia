@@ -51,7 +51,7 @@ Background:
 		}]
 		"""
 
-@mall @mall.product @mall.product_management @hermes
+@mall @mall.product @mall.product_management @hermes @wip
 Scenario:1 添加标准规格商品
 	job添加商品后：
 	1、能获得商品详情

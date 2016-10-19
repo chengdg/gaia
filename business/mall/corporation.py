@@ -44,14 +44,41 @@ class Corporation(business_model.Model):
 		if owner_id:
 			_account_user_profile = account_model.UserProfile.select().dj_where(user_id=owner_id).first()
 			self.webapp_id = _account_user_profile.webapp_id
-			self.type = _account_user_profile.webapp_type  # todo 数字123到类型名称转换
-			# type：0普通商家，1自营平台，2微众托管账号，3多门店平台
+
+			if _account_user_profile.webapp_type == account_model.WEBAPP_TYPE_MALL:
+				self.type = 'normal'
+			elif _account_user_profile.webapp_type == account_model.WEBAPP_TYPE_WEIZOOM_MALL:
+				self.type = 'self_run'
+			elif _account_user_profile.webapp_type == account_model.WEBAPP_TYPE_WEIZOOM_MALL:
+				self.type = 'weizoom_corp'
+			elif _account_user_profile.webapp_type == account_model.WEBAPP_TYPE_MULTI_SHOP:
+				self.type = 'multi_shop'
+			else:
+				self.type = 'unknown'
 
 			_user = account_model.User.select().dj_where(id=owner_id).first()
 			self.username = _user.username
 		else:
 			self.webapp_id = 0
-			self.type = 0
+			self.type = 'normal'
+
+	def is_self_run_platform(self):
+		"""
+		判断是否是自营平台
+		"""
+		return self.type == 'self_run'
+
+	def is_weizoom_corp(self):
+		"""
+		判断是否是微众公司账号
+		"""
+		return self.type == 'weizoom_corp'
+
+	def is_multi_shop(self):
+		"""
+		判断是否是多门店公司
+		"""
+		return self.type == 'multi_shop'
 
 	@property
 	def insale_shelf(self):

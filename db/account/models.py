@@ -47,6 +47,8 @@ OPERATION_TYPE = {
 
 WEBAPP_TYPE_MALL = 0 #普通商城
 WEBAPP_TYPE_WEIZOOM_MALL = 1 #微众商城
+WEBAPP_TYPE_WEIZOOM = 2 #微众公司
+WEBAPP_TYPE_MULTI_SHOP = 3 #多门店
 
 class UserProfile(models.Model):
 	"""
@@ -56,13 +58,13 @@ class UserProfile(models.Model):
 	manager_id = models.IntegerField(default=0) #创建该用户的系统用户的id
 	webapp_id = models.CharField(max_length=16)
 	webapp_type = models.IntegerField(default=0) #商城类型
-	app_display_name = models.CharField(max_length=50, verbose_name='用于显示app名称')
+	app_display_name = models.CharField(max_length=50, verbose_name='用于显示app名称', default='')
 	is_active = models.BooleanField(default=True, verbose_name='用户是否有效')
 	note = models.CharField(max_length=1024, default='')
 	status = models.IntegerField(default=USER_STATUS_NORMAL)
 	is_mp_registered = models.BooleanField(default=False, verbose_name='是否已经接入了公众账号')
-	mp_token = models.CharField(max_length=50, verbose_name='绑定公众号使用的token')
-	mp_url = models.CharField(max_length=256, verbose_name='公众号绑定的url')
+	mp_token = models.CharField(max_length=50, verbose_name='绑定公众号使用的token', default='')
+	mp_url = models.CharField(max_length=256, verbose_name='公众号绑定的url', default='')
 	new_message_count = models.IntegerField(default=0) #新消息数
 	webapp_template = models.CharField(max_length=50, default='shop') #webapp的模板
 	is_customed = models.IntegerField(default=0) #是否客户自定义CSS样式：1：是；0：否
@@ -75,8 +77,8 @@ class UserProfile(models.Model):
 	system_name = models.CharField(max_length=64, default=u'微信营销管理系统', verbose_name='系统名称')
 	system_version = models.CharField(max_length=16, default=SYSTEM_VERSION_TYPE_BASE, verbose_name='系统版本')
 
-	homepage_template_name = models.CharField(max_length=250) #首页模板名
-	backend_template_name = models.CharField(max_length=250) #后端页面模板名
+	homepage_template_name = models.CharField(max_length=250, default='') #首页模板名
+	backend_template_name = models.CharField(max_length=250, default='') #后端页面模板名
 	homepage_workspace_id = models.IntegerField(default=0) #homepage workspace的id
 	#add by bert
 	account_type = models.IntegerField(default=SELF_OPERATION)#帐号类型

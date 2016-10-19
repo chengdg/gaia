@@ -51,12 +51,32 @@ def __create_system_user(username):
 	pass
 
 
+def __create_weizoom_corporation():
+	from db.account import models as account_models
+
+	try:
+		account_models.UserProfile.select().dj_where(webapp_type=account_models.WEBAPP_TYPE_WEIZOOM).get()
+		#已经存在，不再创建，直接返回
+	except:
+		user = account_models.User.create(
+			username = 'weizoom_corp'
+		)
+
+		profile = account_models.UserProfile.create(
+			user = user,
+			webapp_id = 0,
+			webapp_type = account_models.WEBAPP_TYPE_WEIZOOM
+		)
+
+
 def before_all(context):
 	# cache_utils.clear_db()
 	# __clear_all_account_data()
 	# __create_system_user('jobs')
 	# __create_system_user('bill')
 	# __create_system_user('tom')
+
+	__create_weizoom_corporation()
 
 	#创建test case，使用assert
 	context.tc = unittest.TestCase('__init__')
