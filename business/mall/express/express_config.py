@@ -30,6 +30,7 @@ class ExpressConfig(object):
 	app_key = "zKcFdoLd2775"
 
 	# 回调地址
+	# todo weapp被取代后需要修改
 	callback_url = "http://{}/tools/api/express/kuaidi/callback/?callbackid={}&version=2.0"
 
 	"""
