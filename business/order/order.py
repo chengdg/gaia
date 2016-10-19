@@ -380,7 +380,7 @@ class Order(business_model.Model):
 			self.__save()
 
 			self.__record_operation_log(self.bid, corp.username, action_text)
-			self.__send_msg_to_topic('update_order_final_price')
+			self.__send_msg_to_topic('order_final_price_updated')
 			return True, ''
 		else:
 			return True, ''
@@ -437,7 +437,7 @@ class Order(business_model.Model):
 		for delivery_item in self.delivery_items:
 			delivery_item.pay(payment_time, corp)
 
-		self.__send_msg_to_topic('pay_order')
+		self.__send_msg_to_topic('order_paid')
 
 		return True, ''
 
@@ -477,7 +477,7 @@ class Order(business_model.Model):
 		for delivery_item in self.delivery_items:
 			delivery_item.cancel(corp)
 
-		self.__send_msg_to_topic('cancel_order')
+		self.__send_msg_to_topic('order_cancelled')
 		return True, ''
 
 	def finish(self, corp, only_send_message):
@@ -497,7 +497,7 @@ class Order(business_model.Model):
 			self.__recode_status_log(self.bid, corp.username, from_status, to_status)
 			self.__save()
 
-		self.__send_msg_to_topic('finish_order')
+		self.__send_msg_to_topic('order_finished')
 		return True, ''
 
 	def ship(self, corp, only_send_message):
@@ -517,7 +517,7 @@ class Order(business_model.Model):
 			self.__recode_status_log(self.bid, corp.username, from_status, to_status)
 			self.__save()
 
-		self.__send_msg_to_topic('ship_order')
+		self.__send_msg_to_topic('order_shipped')
 		return True, ''
 
 	def apply_for_refunding(self, corp, only_send_message):
@@ -537,7 +537,7 @@ class Order(business_model.Model):
 			self.__recode_status_log(self.bid, corp.username, from_status, to_status)
 			self.__save()
 
-		self.__send_msg_to_topic('apply_for_refunding_order')
+		self.__send_msg_to_topic('order_applied_for_refunding')
 		return True, ''
 
 	def refund(self, corp, only_send_message):
@@ -557,7 +557,7 @@ class Order(business_model.Model):
 			self.__recode_status_log(self.bid, corp.username, from_status, to_status)
 			self.__save()
 
-		self.__send_msg_to_topic('refund_order')
+		self.__send_msg_to_topic('order_refunded')
 		return True, ''
 
 	def __record_operation_log(self, bid, operator_name, action_text):

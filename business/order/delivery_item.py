@@ -313,7 +313,7 @@ class DeliveryItem(business_model.Model):
 			self.__recode_status_log(self.bid, corp.username, from_status, to_status)
 			self.__save()
 
-		self.__send_msg_to_topic('pay_delivery_item')
+		self.__send_msg_to_topic('delivery_item_paid')
 
 	def cancel(self, corp):
 		"""
@@ -332,7 +332,7 @@ class DeliveryItem(business_model.Model):
 			self.__recode_status_log(self.bid, corp.username, from_status, to_status)
 			self.__save()
 
-		self.__send_msg_to_topic('cancel_delivery_item')
+		self.__send_msg_to_topic('delivery_item_cancelled')
 
 	def finish(self, corp):
 		"""
@@ -363,7 +363,7 @@ class DeliveryItem(business_model.Model):
 		self.__recode_status_log(self.bid, corp.username, from_status, to_status)
 		self.__save()
 
-		self.__send_msg_to_topic('finish_delivery_item')
+		self.__send_msg_to_topic('delivery_item_finished')
 		process_order_after_delivery_item_service = ProcessOrderAfterDeliveryItemService.get(corp)
 		process_order_after_delivery_item_service.process_order(self)
 
@@ -392,7 +392,7 @@ class DeliveryItem(business_model.Model):
 		self.__recode_status_log(self.bid, corp.username, from_status, to_status)
 		self.__save()
 
-		self.__send_msg_to_topic('ship_delivery_item')
+		self.__send_msg_to_topic('delivery_item_shipped')
 		process_order_after_delivery_item_service = ProcessOrderAfterDeliveryItemService.get(corp)
 		process_order_after_delivery_item_service.process_order(self)
 
@@ -407,7 +407,7 @@ class DeliveryItem(business_model.Model):
 
 		self.__save()
 
-		self.__send_msg_to_topic('update_delivery_item_ship_info')
+		self.__send_msg_to_topic('delivery_item_ship_info_updated')
 
 		self.__record_operation_log(self.bid, corp.username, action_text)
 		return True, ''
@@ -442,7 +442,7 @@ class DeliveryItem(business_model.Model):
 			}
 		self.__save()
 
-		self.__send_msg_to_topic('apply_for_refunding_delivery_item')
+		self.__send_msg_to_topic('delivery_item_applied_for_refunding')
 		process_order_after_delivery_item_service = ProcessOrderAfterDeliveryItemService.get(corp)
 		process_order_after_delivery_item_service.process_order(self)
 
@@ -471,7 +471,7 @@ class DeliveryItem(business_model.Model):
 				                         'weizoom_card_money']).dj_where(id=self.origin_order_id).execute()
 		self.__save()
 
-		self.__send_msg_to_topic('refund_delivery_item')
+		self.__send_msg_to_topic('delivery_item_refunded')
 		process_order_after_delivery_item_service = ProcessOrderAfterDeliveryItemService.get(corp)
 		process_order_after_delivery_item_service.process_order(self)
 
