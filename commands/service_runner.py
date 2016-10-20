@@ -55,7 +55,7 @@ class Command(BaseCommand):
 			#读取消息
 			try:
 				recv_msg = queue.receive_message(WAIT_SECONDS)
-				logging.info("Receive Message Succeed! ReceiptHandle:%s MessageBody:%s MessageID:%s" % (recv_msg.receipt_handle, recv_msg.message_body, recv_msg.message_id))
+				# logging.info("Receive Message Succeed! ReceiptHandle:%s MessageBody:%s MessageID:%s" % (recv_msg.receipt_handle, recv_msg.message_body, recv_msg.message_id))
 
 				# 处理消息(consume)
 				data = json.loads(recv_msg.message_body)
@@ -88,5 +88,9 @@ class Command(BaseCommand):
 				time.sleep(SLEEP_SECONDS)
 				continue
 			except Exception as e:
+				# print(type(e))
+				print('--------------------')
 				print u"Exception: {}".format(unicode_full_stack())
+				print('--------------------')
+
 		return

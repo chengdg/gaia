@@ -7,7 +7,6 @@ from eaglet.core import watchdog
 from business import model as business_model
 
 from business.account.user_profile import UserProfile
-from business.member.webapp_user import WebAppUser
 from business.market_tools.template_message.template_message import TemplateMessage
 from business.mall.order import Order
 from business.weixin.weixin_service import WeixinService

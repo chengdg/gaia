@@ -7,7 +7,7 @@ from service.service_register import register
 from util.send_phone_msg import send_chargeback_message
 
 
-@register("send_order_phone_message_task")
+@register("send_delivery_item_phone_message_task")
 def process(data, recv_msg=None):
 	corp_id = data['corp_id']
 	delivery_item_id = data['order_id']

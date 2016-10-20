@@ -17,6 +17,7 @@ from eaglet.core import watchdog
 from eaglet.core.cache import utils as cache_util
 
 import settings
+from business.account.integral import Integral
 from util import emojicons_util
 from db.member import models as member_models
 from business import model as business_model
@@ -75,10 +76,13 @@ class Member(business_model.Model):
         @return Member业务对象
         """
         models = args['models']
+        corp = args['corp']
         members = []
         for model in models:
 
             member = Member(model)
+            member.context['corp'] = corp
+            member.context['db_model'] = model
             members.append(member)
         return members
 
@@ -89,6 +93,50 @@ class Member(business_model.Model):
         self.context['db_model'] = model
         if model:
             self._init_slot_from_model(model)
+
+    def increase_integral_after_finish_order(self, order):
+        Integral.increase_after_order_payed_finsh({
+            'member': self,
+            'order': order,
+            'corp': self.context['corp']
+        })
+
+
+    def update_pay_info(self,order,from_status,to_status):
+        # todo order搜索完成后使用order_repository
+        from db.mall import models as mall_models
+
+        db_model = self.context['db_model']
+        if to_status == 'paid':
+            db_model.last_pay_time = order.payment_time
+
+        webapp_user_id = order.webapp_user_id
+
+        pay_money = 0
+        pay_times = 0
+
+        user_orders = mall_models.Order.select().dj_where(webapp_user_id=webapp_user_id)
+
+        if user_orders.dj_where(status__gte=mall_models.ORDER_STATUS_PAYED_SUCCESSED).count() > 0:
+            payment_time = user_orders.order_by(mall_models.Order.payment_time)[0].payment_time
+            db_model.last_pay_time = payment_time
+
+        for user_order in user_orders:
+            user_order.final_price = user_order.final_price + user_order.weizoom_card_money
+            if user_order.status == mall_models.ORDER_STATUS_SUCCESSED:
+                pay_money += user_order.final_price
+                pay_times += 1
+
+        db_model.pay_times = pay_times
+        db_model.pay_money = pay_money
+
+        if pay_times > 0:
+            db_model.unit_price = pay_money / pay_times
+        else:
+            db_model.unit_price = 0
+
+        db_model.save()
+
 
     @cached_context_property
     def __grade(self):

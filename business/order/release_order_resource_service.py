@@ -1,13 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-根据业务暴露订单、出货单接口
-如果用户操作订单，则系统自动完成操作出货单；如果用户操作出货单，则根据业务系统自动操作订单
-此处"操作"指会引起订单、出货单状态变化的用户行为
-此处"用户"指外部系统，如可能是hermes、panda、pay、快递100回调
 
-
-消息通知：
-订单和出货单分别有消息通知
 
 """
 from eaglet.utils.resource_client import Resource
@@ -19,11 +12,11 @@ from db.member import models as member_models
 
 
 class ReleaseOrderResourceService(business_model.Service):
-	def release(self, order_id):
+	def release(self, order_id,from_status,to_status):
 		"""
 		当处理的是出货单时，需要决策是否处理以及如何处理订单
 		对于db层面有没有出货单的订单，db操作已经在出货单完成，只用发送消息通知
-		@param delivery_item:
+		@param order_id:
 		@param from_status:
 		@param to_status:
 		@return:
@@ -39,7 +32,7 @@ class ReleaseOrderResourceService(business_model.Service):
 		corp = self.corp
 		order = corp.order_repository.get_order(order_id, fill_options)
 
-		is_paid = order.status != mall_models.ORDER_STATUS_NOT  # 已经支付过的订单，已增加过销量
+		is_paid = (mall_models.MEANINGFUL_WORD2ORDER_STATUS(from_status) != mall_models.ORDER_STATUS_NOT)  # 已经支付过的订单，已增加过销量
 
 		delivery_item_products = order.get_all_products()
 		product_ids = [p.id for p in delivery_item_products]
