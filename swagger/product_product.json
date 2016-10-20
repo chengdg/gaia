@@ -915,7 +915,7 @@
                 },
                 "sales": {
                     "type": "string",
-                    "description": "商品销量",
+                    "description": "商品销量"
                 },
                 "display_index": {
                     "type": "string",
