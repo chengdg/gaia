@@ -19,7 +19,6 @@
 					}
 				],
 				"tags": [
-					"order",
 					"delivery_item"
 				],
 				"responses": {
@@ -48,7 +47,7 @@
 		},
 		"/order/shipped_delivery_items": {
 			"put": {
-				"summary": "批量创建已发货的出货单，即批量发货",
+				"summary": "批量创建已发货的出货单，即批量发货出货单",
 				"parameters": [
 					{
 						"name": "corp_id",
@@ -68,7 +67,6 @@
 					}
 				],
 				"tags": [
-					"order",
 					"delivery_item"
 				],
 				"responses": {
@@ -146,7 +144,6 @@
 					}
 				],
 				"tags": [
-					"order",
 					"delivery_item"
 				],
 				"responses": {
@@ -187,7 +184,6 @@
 					}
 				],
 				"tags": [
-					"order",
 					"delivery_item"
 				],
 				"responses": {
