@@ -14,14 +14,27 @@ Scenario:1 添加供应商
 			"supplier_address": "苹果公司的地址"
 		}, {
 			"name": "微软",
+			"type": "首月55分成",
 			"responsible_person": "盖茨",
 			"supplier_tel": "13822222222",
-			"supplier_address": "微软的地址"
+			"supplier_address": "微软的地址",
+			"divide_info": {
+				"divide_money": 1.0,
+				"basic_rebate": 20,
+				"rebate": 30
+			}
 		}, {
 			"name": "谷歌",
+			"type": "零售返点",
 			"responsible_person": "谷歌老板",
 			"supplier_tel": "13833333333",
-			"supplier_address": "谷歌的地址"
+			"supplier_address": "谷歌的地址",
+			"retail_info": {
+				"rebate": 50
+			}
+		}, {
+			"name": "amazon",
+			"type": "固定低价"
 		}]
 		"""
 	Then jobs能获取供应商列表
@@ -33,14 +46,27 @@ Scenario:1 添加供应商
 			"supplier_address": "苹果公司的地址"
 		}, {
 			"name": "微软",
+			"type": "首月55分成",
 			"responsible_person": "盖茨",
 			"supplier_tel": "13822222222",
-			"supplier_address": "微软的地址"
+			"supplier_address": "微软的地址",
+			"divide_info": {
+				"divide_money": 1.0,
+				"basic_rebate": 20,
+				"rebate": 30
+			}
 		}, {
 			"name": "谷歌",
+			"type": "零售返点",
 			"responsible_person": "谷歌老板",
 			"supplier_tel": "13833333333",
-			"supplier_address": "谷歌的地址"
+			"supplier_address": "谷歌的地址",
+			"retail_info": {
+				"rebate": 50
+			}
+		}, {
+			"name": "amazon",
+			"type": "固定低价"
 		}]
 		"""
 	Given bill登录系统

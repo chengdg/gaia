@@ -478,6 +478,9 @@
                 },
                 "supplier": {
                     "$ref": "#/definitions/ReturnSupplier"
+                },
+                "classifications": {
+                    "$ref": "#/definitions/ReturnClassifications"
                 }
             }
         },
@@ -501,7 +504,13 @@
                 },
                 "supplier_id": {
                     "type": "number",
-                    "description": "供应商的id"
+                    "required": false,
+                    "description": "供应商的id，可以不提供，默认为0，表示是自建商品"
+                },
+                "classification_id": {
+                    "type": "number",
+                    "required": false,
+                    "description": "商品分组的id，可以不提供，默认为0，表示没有商品分组"
                 },
                 "bar_code": {
                     "type": "string",

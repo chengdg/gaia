@@ -1,22 +1,36 @@
 # -*- coding: utf-8 -*-
+import json
 
+from eaglet.core import watchdog
 
-from eaglet.core import api_resource
-from eaglet.decorator import param_required
+from business import model as business_model
 
-from business.product.product_factory import ProductFactory
-from business.product.update_product_service import UpdateProductService
-
-
-class AProduct(api_resource.ApiResource):
+class EncodeProductService(business_model.Service):
 	"""
-	商品
+	将Product对象转换为可输出dict的服务
 	"""
-	app = "product"
-	resource = "product"
+	def get_base_info(self, product):
+		"""
+		获得商品的基础信息
+		"""
+		data = {
+			"name": product.name,
+			"type": product.type,
+			"create_type": product.create_type,
+			"bar_code": product.bar_code,
+			"display_index": product.display_index,
+			"min_limit": product.min_limit,
+			"is_enable_bill": product.is_enable_bill,
+			"promotion_title": product.promotion_title,
+			"detail": product.detail,
+			"is_member_product": product.is_member_product,
+			"sync_at": product.sync_at.strftime('%Y-%m-%d %H:%M') if product.create_type == 'sync' else None,
+			"created_at": product.created_at.strftime('%Y-%m-%d %H:%M')
+		}
 
-	@staticmethod
-	def __get_models_info(product):
+		return data
+
+	def get_models_info(self, product):
 		"""
 		获得商品的models_info数据
 		"""
@@ -63,8 +77,7 @@ class AProduct(api_resource.ApiResource):
 
 		return models_info
 
-	@staticmethod
-	def __get_image_info(product):
+	def get_image_info(self, product):
 		"""
 		获得商品的image_info数据
 		"""
@@ -84,8 +97,7 @@ class AProduct(api_resource.ApiResource):
 
 		return image_info
 
-	@staticmethod
-	def __get_categories(product):
+	def get_categories(self, product):
 		"""
 		获得商品的category集合
 		"""
@@ -98,15 +110,13 @@ class AProduct(api_resource.ApiResource):
 
 		return categories
 
-	@staticmethod
-	def __get_pay_info(product):
+	def get_pay_info(self, product):
 		return {
 			'is_use_online_pay_interface': product.is_use_online_pay_interface,
 			'is_use_cod_pay_interface': product.is_use_cod_pay_interface
 		}
 
-	@staticmethod
-	def __get_properties(product):
+	def get_properties(self, product):
 		data = []
 		for product_property in product.properties:
 			data.append({
@@ -116,8 +126,7 @@ class AProduct(api_resource.ApiResource):
 
 		return data
 
-	@staticmethod
-	def __get_logistics_info(product):
+	def get_logistics_info(self, product):
 		data = {
 			'postage_type': product.postage_type,
 			'unified_postage_money': product.unified_postage_money
@@ -125,8 +134,7 @@ class AProduct(api_resource.ApiResource):
 
 		return data
 
-	@staticmethod
-	def __get_supplier_info(product):
+	def get_supplier_info(self, product):
 		"""
 		获得商品的supplier集合
 		"""
@@ -159,8 +167,7 @@ class AProduct(api_resource.ApiResource):
 
 		return data
 
-	@staticmethod
-	def __get_classifications(product):
+	def get_classifications(self, product):
 		"""
 		获得商品的classification集合
 		"""
@@ -178,73 +185,5 @@ class AProduct(api_resource.ApiResource):
 
 		return datas
 
-	@param_required(['corp_id', 'id'])
-	def get(args):
-		corp = args['corp']
-		ids = [args['id']]
-		fill_options = {
-			'with_category': True,
-			'with_image': True,
-			'with_product_model': True,
-			'with_model_property_info': True,
-			'with_property': True,
-			'with_supplier_info': True,
-			'with_classification': True
-		}
-		products = corp.product_pool.get_products_by_ids(ids, fill_options)
-		if len(products) == 0:
-			return {}
-		else:
-			product = products[0]
-
-			data = {
-				"id": product.id,
-				"base_info": {
-					"name": product.name,
-					"type": product.type,
-					"create_type": product.create_type,
-					"bar_code": product.bar_code,
-					"min_limit": product.min_limit,
-					"is_enable_bill": product.is_enable_bill,
-					"promotion_title": product.promotion_title,
-					"detail": product.detail,
-					"is_member_product": product.is_member_product,
-					"sync_at": product.sync_at.strftime('%Y-%m-%d %H:%M') if product.create_type == 'sync' else None,
-					"created_at": product.created_at.strftime('%Y-%m-%d %H:%M')
-				},
-				"categories": AProduct.__get_categories(product),
-				"image_info": AProduct.__get_image_info(product),
-				"models_info": AProduct.__get_models_info(product),
-				"pay_info": AProduct.__get_pay_info(product),
-				'properties': AProduct.__get_properties(product),
-				"logistics_info": AProduct.__get_logistics_info(product),
-				"supplier": AProduct.__get_supplier_info(product),
-				"classifications": AProduct.__get_classifications(product)
-			}
-
-			return data
-
-	@param_required(['corp_id', 'base_info', 'models_info', 'image_info', 'logistics_info', 'pay_info', 'categories', 'properties'])
-	def put(args):
-		"""
-		创建商品
-		@return:
-		"""
-		product_data = args
-		product_factory = ProductFactory.get(args['corp'])
-		product_factory.create_product(product_data)
-
-		return {}
-
-	@param_required(['corp_id', 'id', 'base_info', 'models_info', 'image_info', 'logistics_info', 'pay_info', 'categories', 'properties'])
-	def post(args):
-		product_data = args
-		product_id = product_data['id']
-		update_product_service = UpdateProductService.get(args['corp'])
-		update_product_service.update_product(product_id, product_data)
-
-		return {}
-
-	@param_required(['ids'])
-	def delete(args):
+	def encode(self, product):
 		pass

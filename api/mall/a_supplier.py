@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import json
 
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
@@ -24,6 +25,8 @@ class ASupplier(api_resource.ApiResource):
         remark = args.get('remark', '')
         type = args.get('type', 'normal')
         settlement_period = args.get('settlement_period', 'month')
+        divide_info = json.loads(args['divide_info']) if 'divide_info' in args else None
+        retail_info = json.loads(args['retail_info']) if 'retail_info' in args else None
 
         supplier = Supplier.create({
             'name': name,
@@ -32,7 +35,9 @@ class ASupplier(api_resource.ApiResource):
             'supplier_tel': supplier_tel,
             'supplier_address': supplier_address,
             'responsible_person': responsible_person,
-            'remark': remark
+            'remark': remark,
+            'divide_info': divide_info,
+            'retail_info': retail_info
         })
 
         return {

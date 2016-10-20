@@ -42,6 +42,7 @@ class AOnshelfProducts(api_resource.ApiResource):
 				"price": None,
 				"sales": product.sales,
 				"created_at": product.created_at.strftime('%Y-%m-%d %H:%M'),
+				"sync_at": product.sync_at.strftime('%Y-%m-%d %H:%M') if product.create_type == 'sync' else None,
 				"is_use_custom_model": product.is_use_custom_model,
 				"display_index": product.display_index,
 				'supplier': AOffshelfProducts._get_supplier(product),

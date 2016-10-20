@@ -48,7 +48,6 @@ class Product(business_model.Model):
 		'categories',
 		'id2category',
 		'properties',
-		'created_at',
 
 		#供应商信息
 		'supplier_id',
@@ -92,7 +91,11 @@ class Product(business_model.Model):
 		'weight',
 		'stock_type',
 		'limit_zone_type',
-		'limit_zone'
+		'limit_zone',
+
+		#时间信息
+		'created_at',
+		'sync_at'
 	)
 
 	def __init__(self, model=None):

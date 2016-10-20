@@ -22,6 +22,7 @@ def step_impl(context, user):
             response = context.client.put('/mall/product_classification/', data)
             bdd_util.assert_api_call_success(response)
             father_id = response.data['id']
+            level += 1
 
 
 @then(u"{user}能获取商品分类列表")

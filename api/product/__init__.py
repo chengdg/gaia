@@ -8,6 +8,7 @@ import a_product_position
 import a_offshelf_products
 import a_onshelf_products
 import a_deleted_products
+import a_weizoom_pooled_products
 
 import property_template
 import model_property

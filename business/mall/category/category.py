@@ -52,8 +52,6 @@ class Category(business_model.Model):
 		mall_models.CategoryHasProduct.delete().dj_where(category_id=self.id, product_id=product_id).execute()
 
 		mall_models.ProductCategory.update(product_count=mall_models.ProductCategory.product_count-1).dj_where(id=self.id).execute()
-		#self.context['db_model'].product_count = int(self.context['db_model'].product_count) - 1
-		#self.context['db_model'].save()
 
 	def add_products(self, product_ids):
 		"""

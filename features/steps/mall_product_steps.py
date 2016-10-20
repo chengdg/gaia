@@ -106,6 +106,13 @@ def __format_product_post_data(context, product):
         supplier_id = supplier.id
     else:
         supplier_id = 0
+
+    if product.get('classification', None):
+        classification = mall_models.Classification.select().dj_where(name=product['classification']).get()
+        classification_id = classification.id
+    else:
+        classification_id = 0
+
     base_info = {
         'name': product['name'], #商品名
         'type': product.get('type', 'object'),
@@ -115,7 +122,8 @@ def __format_product_post_data(context, product):
         'is_enable_bill': product.get('is_enable_bill', False), #是否使用发票
         'detail': product.get('detail', u'商品的详情'), #详情
         'is_member_product': product.get('is_member_product', False), #是否参与会员折扣
-        'supplier_id': supplier_id
+        'supplier_id': supplier_id,
+        'classification_id': classification_id
     }
 
     #规格信息
@@ -245,13 +253,23 @@ def __get_product(context, name):
     product['postage_type'] = u'统一运费' if logistics_info['postage_type'] == 'unified_postage_type' else u'运费模板'
     product['unified_postage_money'] = logistics_info['unified_postage_money']
 
+    #处理商品分类信息
+    if len(resp_data['classifications']) == 0:
+        product['classification'] = ''
+    else:
+        items = []
+        for classification in resp_data['classifications']:
+            items.append(classification['name'])
+        product['classification'] = '-'.join(items)
+
     return product
 
 
 def __get_products(context, type_name=u'在售'):
     TYPE2URL = {
       u'待售': '/product/offshelf_products/?corp_id=%d' % context.corp.id,
-      u'在售': '/product/onshelf_products/?corp_id=%d' % context.corp.id
+      u'在售': '/product/onshelf_products/?corp_id=%d' % context.corp.id,
+      u'微众商品池': '/product/weizoom_pooled_products/?corp_id=%d' % context.corp.id
     }
     url = TYPE2URL[type_name]
     response = context.client.get(url)
@@ -266,14 +284,59 @@ def __get_products(context, type_name=u'在售'):
         data = {}
         data['name'] = product['name']
         data['create_type'] = product['create_type']
-        data['bar_code'] = product['bar_code']
-        data['price'] = product['price']
-        data['categories'] = ','.join([category['name'] for category in product['categories']])
-        data['stocks'] = u'无限' if product['stock_type'] == 'unlimit' else product['stocks']
+        data['bar_code'] = product['bar_code']        
+
+        #分类
+        if 'categories' in product:
+            data['categories'] = ','.join([category['name'] for category in product['categories']])
+
+        #规格
+        if 'models_info' in product:
+            models_info = product['models_info']
+            if not models_info['is_use_custom_model']:
+                model = models_info['standard_model']
+                data['price'] = model['price']
+                data['stocks'] = u'无限' if model['stock_type'] == 'unlimit' else model['stocks']
+                data['gross_profit'] = model['price'] - model['purchase_price']
+            else:
+                price_items = []
+                gross_profit_items = []
+                for model in models_info['custom_models']:
+                    price_items.append(model['price'])
+                    gross_profit_items.append(model['price'] - model['purchase_price'])
+
+                price_items.sort()
+                gross_profit_items.sort()
+                data['price'] = '%.2f~%.2f' % (price_items[0], price_items[-1])
+                data['gross_profit'] = '%.2f~%.2f' % (gross_profit_items[0], gross_profit_items[-1])
+                data['stocks'] = ""
+
         data['image'] = product['image']
-        data['sales'] = product['sales']
+        data['sales'] = product.get('sales', 0)
         data['display_index'] = product['display_index']
-        data["supplier"] = product['supplier']['name'] if product['supplier'] else ""
+
+        #供应商
+        data['supplier'] = ""
+        data['supplier_type'] = ""
+        if product['supplier']:
+            data["supplier"] = product['supplier']['name']
+            supplier_type = product['supplier']['type']
+            if supplier_type == 'fixed':
+                data['supplier_type'] = u'固定低价'
+            elif supplier_type == 'divide':
+                data['supplier_type'] = u'首月55分成'
+            elif supplier_type == 'retail':
+                data['supplier_type'] = u'零售返点'
+
+        #商品分类信息
+        if len(product['classifications']) == 0:
+            data['classification'] = ''
+        else:
+            items = []
+            for classification in product['classifications']:
+                items.append(classification['name'])
+            data['classification'] = '-'.join(items)
+
         products.append(data)
 
     return products
@@ -425,8 +488,3 @@ def step_impl(context, user, product_name, position):
 
     response = context.client.post('/product/product_position/', data)
     bdd_util.assert_api_call_success(response)
-
-
-@when(u"{user}能够获取微众商品池商品列表")
-def step_impl(context, user):
-    pass

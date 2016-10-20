@@ -53,6 +53,21 @@ class ProductFactory(business_model.Service):
 				product = product.id
 			)
 
+	def __add_product_to_classification(self, product, base_info):
+		"""
+		将商品加入到多个商品分类中
+		"""
+		classification_id = int(base_info.get('classification_id', 0))
+		if classification_id == 0:
+			return
+
+		mall_models.ClassificationHasProduct.create(
+			classification = classification_id,
+			product_id = product.id,
+			woid = self.corp.id,
+			display_index = 0
+		)
+
 	def __set_product_models(self, product, models_info):
 		# 处理standard商品规格
 		is_delete_standard_model = (models_info.get('is_use_custom_model', 'false') == 'true')
@@ -152,6 +167,7 @@ class ProductFactory(business_model.Service):
 
 		product = self.__create_product(base_info, image_info, logistics_info, pay_info)
 		self.__add_product_to_categories(product, categories)
+		self.__add_product_to_classification(product, base_info)
 		self.__add_images_to_product(product, image_info)
 		self.__set_product_models(product, models_info)
 		self.__add_properties_to_product(product, properties)

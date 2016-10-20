@@ -323,7 +323,7 @@ Scenario:2 单独修改商品库存
 		}
 		"""
 	
-@mall @mall.product @mall.product_management @hermes @wip
+@mall @mall.product @mall.product_management @hermes
 Scenario:2 单独修改商品的排序
 
 	Given jobs登录系统

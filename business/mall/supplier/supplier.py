@@ -88,7 +88,7 @@ class Supplier(business_model.Model):
 			self.context['__retail_info'] = retail_info
 			return retail_info
 
-	def __set_retail_info(self, retail_info):
+	def set_retail_info(self, retail_info):
 		self.context['__retail_info'] = retail_info
 
 	@staticmethod
@@ -127,6 +127,26 @@ class Supplier(business_model.Model):
 			type = supplier_type,
 			settlement_period = settlement_period
 		)
+		supplier = Supplier(model)
 
-		return Supplier(model)
+		if args['type'] == 'divide':
+			#创建divide info
+			divide_info = args['divide_info']
+			divide_rebate_info_model = mall_models.SupplierDivideRebateInfo.create(
+				supplier_id = model.id,
+				divide_money = divide_info['divide_money'],
+				basic_rebate = divide_info['basic_rebate'],
+				rebate = divide_info['rebate']
+			)
+			supplier.set_divide_info(DivideRebateInfo(divide_rebate_info_model))
+		elif args['type'] == 'retail':
+			#创建retail info
+			retail_info = args['retail_info']
+			retail_rebate_info_model = mall_models.SupplierRetailRebateInfo.create(
+				supplier_id = model.id,
+				rebate = retail_info['rebate']
+			)
+			supplier.set_retail_info(RetailRebateInfo(retail_rebate_info_model))
+
+		return supplier
 

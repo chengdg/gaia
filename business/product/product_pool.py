@@ -92,7 +92,6 @@ class ProductPool(business_model.Model):
 		"""
 		product_pool_filter_values, product_db_filter_values, product_detail_filter_values = self.__init_filter_values(filter_values)
 
-		#TODO: dj_where支持{}
 		if product_pool_filter_values:
 			if 'order_by_display_index' in options:
 				pool_product_models = mall_models.ProductPool.select().dj_where(**product_pool_filter_values).order_by(mall_models.ProductPool.display_index, mall_models.ProductPool.product_id)
@@ -132,6 +131,7 @@ class ProductPool(business_model.Model):
 				pool_product_model = product2poolmodel[product.id]
 				if pool_product_model.type == mall_models.PP_TYPE_SYNC:
 					product.create_type = 'sync'
+					product.sync_at = pool_product_model.sync_at
 				else:
 					product.create_type = 'create'
 				result.append(product)
@@ -154,6 +154,7 @@ class ProductPool(business_model.Model):
 		for pool_product in pool_products:
 			if pool_product.type == mall_models.PP_TYPE_SYNC:
 				product.create_type = 'sync'
+				product.sync_at = pool_product.sync_at
 			else:
 				product.create_type = 'create'
 
