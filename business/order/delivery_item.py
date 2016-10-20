@@ -14,6 +14,7 @@ from db.mall import models as mall_models
 from zeus_conf import TOPIC
 import logging
 
+
 class DeliveryItem(business_model.Model):
 	__slots__ = (
 		'id',
@@ -309,11 +310,10 @@ class DeliveryItem(business_model.Model):
 		支付出货单，只由pay_order触发
 		@return:
 		"""
-
+		from_status = self.status
+		to_status = mall_models.ORDER_STATUS_PAYED_NOT_SHIP
 		if self.has_db_record:
 			action_text = u"支付"
-			from_status = self.status
-			to_status = mall_models.ORDER_STATUS_PAYED_NOT_SHIP
 
 			self.payment_time = payment_time
 			self.status = to_status
@@ -322,7 +322,7 @@ class DeliveryItem(business_model.Model):
 			self.__recode_status_log(self.bid, corp.username, from_status, to_status)
 			self.__save()
 
-		self.__send_msg_to_topic('delivery_item_paid')
+		self.__send_msg_to_topic('delivery_item_paid', from_status, to_status)
 
 	def cancel(self, corp):
 		"""
@@ -330,10 +330,10 @@ class DeliveryItem(business_model.Model):
 		@param corp:
 		@return:
 		"""
+		from_status = self.status
+		to_status = mall_models.ORDER_STATUS_PAYED_NOT_SHIP
 		if self.has_db_record:
 			action_text = u"支付"
-			from_status = self.status
-			to_status = mall_models.ORDER_STATUS_PAYED_NOT_SHIP
 
 			self.status = to_status
 
@@ -341,7 +341,7 @@ class DeliveryItem(business_model.Model):
 			self.__recode_status_log(self.bid, corp.username, from_status, to_status)
 			self.__save()
 
-		self.__send_msg_to_topic('delivery_item_cancelled')
+		self.__send_msg_to_topic('delivery_item_cancelled', from_status, to_status)
 
 	def finish(self, corp):
 		"""
@@ -372,7 +372,7 @@ class DeliveryItem(business_model.Model):
 		self.__recode_status_log(self.bid, corp.username, from_status, to_status)
 		self.__save()
 
-		self.__send_msg_to_topic('delivery_item_finished')
+		self.__send_msg_to_topic('delivery_item_finished', from_status, to_status)
 		process_order_after_delivery_item_service = ProcessOrderAfterDeliveryItemService.get(corp)
 		process_order_after_delivery_item_service.process_order(self)
 
@@ -401,7 +401,7 @@ class DeliveryItem(business_model.Model):
 		self.__recode_status_log(self.bid, corp.username, from_status, to_status)
 		self.__save()
 
-		self.__send_msg_to_topic('delivery_item_shipped')
+		self.__send_msg_to_topic('delivery_item_shipped', from_status, to_status)
 		process_order_after_delivery_item_service = ProcessOrderAfterDeliveryItemService.get(corp)
 		process_order_after_delivery_item_service.process_order(self)
 
@@ -416,7 +416,7 @@ class DeliveryItem(business_model.Model):
 
 		self.__save()
 
-		self.__send_msg_to_topic('delivery_item_ship_info_updated')
+		self.__send_msg_to_topic('delivery_item_ship_info_updated', self.status, self.status)
 
 		self.__record_operation_log(self.bid, corp.username, action_text)
 		return True, ''
@@ -451,7 +451,7 @@ class DeliveryItem(business_model.Model):
 			}
 		self.__save()
 
-		self.__send_msg_to_topic('delivery_item_applied_for_refunding')
+		self.__send_msg_to_topic('delivery_item_applied_for_refunding', from_status, to_status)
 		process_order_after_delivery_item_service = ProcessOrderAfterDeliveryItemService.get(corp)
 		process_order_after_delivery_item_service.process_order(self)
 
@@ -480,7 +480,7 @@ class DeliveryItem(business_model.Model):
 				                         'weizoom_card_money']).dj_where(id=self.origin_order_id).execute()
 		self.__save()
 
-		self.__send_msg_to_topic('delivery_item_refunded')
+		self.__send_msg_to_topic('delivery_item_refunded', from_status, to_status)
 		process_order_after_delivery_item_service = ProcessOrderAfterDeliveryItemService.get(corp)
 		process_order_after_delivery_item_service.process_order(self)
 
@@ -497,12 +497,14 @@ class DeliveryItem(business_model.Model):
 			operator=operator_name
 		)
 
-	def __send_msg_to_topic(self, msg_name):
+	def __send_msg_to_topic(self, msg_name, from_status, to_status):
 		topic_name = TOPIC['delivery_item']
 		data = {
 			"delivery_item_id": self.id,
 			"delivery_item_bid": self.bid,
-			"corp_id": self.context['corp'].id
+			"corp_id": self.context['corp'].id,
+			"from_status": mall_models.ORDER_STATUS2MEANINGFUL_WORD[from_status],
+			"to_status": mall_models.ORDER_STATUS2MEANINGFUL_WORD[to_status]
 		}
 		logging.info('send mns message:{}'.format(data))
 		msgutil.send_message(topic_name, msg_name, data)

@@ -27,7 +27,6 @@ from business import model as business_model
 # from business.spread.member_shared_factory import MemberSharedUrlFactory
 from business.account.integral import Integral
 # from business.account.webapp_user_factory import WebAppUserFactory
-from business.member.webapp_user import WebAppUser
 # from business.account.system_account import SystemAccount
 
 import logging

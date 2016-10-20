@@ -10,7 +10,8 @@ class MemberRepository(business_model.Service):
 		member_db_model = member_models.Member.get(id=member_id)
 
 		members = Member.from_models({
-			'models': member_db_model
+			'models': member_db_model,
+			'corp': self.corp
 		})
 
 		if members:
@@ -18,8 +19,7 @@ class MemberRepository(business_model.Service):
 		else:
 			return None
 
-
-	def get_members_from_webapp_user_ids(self,webapp_user_ids):
+	def get_members_from_webapp_user_ids(self, webapp_user_ids):
 		"""
 
 		@param args:
@@ -31,7 +31,7 @@ class MemberRepository(business_model.Service):
 		member_ids = webappuser_id2member.values()
 		db_member_models = member_models.Member.select().dj_where(id__in=member_ids)
 
-		members = Member.from_models({'models': db_member_models})
+		members = Member.from_models({'models': db_member_models,'corp':self.corp})
 		id2member = dict([(m.id, m) for m in members])
 
 		for webapp_user_id, member_id in webappuser_id2member.items():

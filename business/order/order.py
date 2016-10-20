@@ -398,7 +398,7 @@ class Order(business_model.Model):
 			self.__save()
 
 			self.__record_operation_log(self.bid, corp.username, action_text)
-			self.__send_msg_to_topic('order_final_price_updated')
+			self.__send_msg_to_topic('order_final_price_updated', self.status, self.status)
 			return True, ''
 		else:
 			return True, ''
@@ -455,7 +455,7 @@ class Order(business_model.Model):
 		for delivery_item in self.delivery_items:
 			delivery_item.pay(payment_time, corp)
 
-		self.__send_msg_to_topic('order_paid')
+		self.__send_msg_to_topic('order_paid', from_status, to_status)
 
 		return True, ''
 
@@ -495,7 +495,7 @@ class Order(business_model.Model):
 		for delivery_item in self.delivery_items:
 			delivery_item.cancel(corp)
 
-		self.__send_msg_to_topic('order_cancelled')
+		self.__send_msg_to_topic('order_cancelled', from_status, to_status)
 		return True, ''
 
 	def finish(self, corp, only_send_message):
@@ -505,17 +505,17 @@ class Order(business_model.Model):
 		@param corp:
 		@return:
 		"""
+		from_status = self.status
+		to_status = mall_models.ORDER_STATUS_SUCCESSED
 		if not only_send_message:
 			action_text = u"完成"
-			from_status = self.status
-			to_status = mall_models.ORDER_STATUS_SUCCESSED
 			self.status = to_status
 
 			self.__record_operation_log(self.bid, corp.username, action_text)
 			self.__recode_status_log(self.bid, corp.username, from_status, to_status)
 			self.__save()
 
-		self.__send_msg_to_topic('order_finished')
+		self.__send_msg_to_topic('order_finished', from_status, to_status)
 		return True, ''
 
 	def ship(self, corp, only_send_message):
@@ -525,17 +525,18 @@ class Order(business_model.Model):
 		@param corp:
 		@return:
 		"""
+		from_status = self.status
+		to_status = mall_models.ORDER_STATUS_PAYED_SHIPED
 		if not only_send_message:
 			action_text = u"订单发货"
-			from_status = self.status
-			to_status = mall_models.ORDER_STATUS_PAYED_SHIPED
+
 			self.status = to_status
 
 			self.__record_operation_log(self.bid, corp.username, action_text)
 			self.__recode_status_log(self.bid, corp.username, from_status, to_status)
 			self.__save()
 
-		self.__send_msg_to_topic('order_shipped')
+		self.__send_msg_to_topic('order_shipped', from_status, to_status)
 		return True, ''
 
 	def apply_for_refunding(self, corp, only_send_message):
@@ -545,17 +546,18 @@ class Order(business_model.Model):
 		@param corp:
 		@return:
 		"""
+		from_status = self.status
+		to_status = mall_models.ORDER_STATUS_REFUNDING
 		if not only_send_message:
 			action_text = u"退款"
-			from_status = self.status
-			to_status = mall_models.ORDER_STATUS_REFUNDING
+
 			self.status = to_status
 
 			self.__record_operation_log(self.bid, corp.username, action_text)
 			self.__recode_status_log(self.bid, corp.username, from_status, to_status)
 			self.__save()
 
-		self.__send_msg_to_topic('order_applied_for_refunding')
+		self.__send_msg_to_topic('order_applied_for_refunding', from_status, to_status)
 		return True, ''
 
 	def refund(self, corp, only_send_message):
@@ -565,17 +567,18 @@ class Order(business_model.Model):
 		@param only_send_message:
 		@return:
 		"""
+		from_status = self.status
+		to_status = mall_models.ORDER_STATUS_REFUNDING
 		if not only_send_message:
 			action_text = u"退款完成"
-			from_status = self.status
-			to_status = mall_models.ORDER_STATUS_REFUNDING
+
 			self.status = to_status
 
 			self.__record_operation_log(self.bid, corp.username, action_text)
 			self.__recode_status_log(self.bid, corp.username, from_status, to_status)
 			self.__save()
 
-		self.__send_msg_to_topic('order_refunded')
+		self.__send_msg_to_topic('order_refunded', from_status, to_status)
 		return True, ''
 
 	def __record_operation_log(self, bid, operator_name, action_text):
@@ -589,12 +592,14 @@ class Order(business_model.Model):
 			operator=operator_name
 		)
 
-	def __send_msg_to_topic(self, msg_name):
+	def __send_msg_to_topic(self, msg_name, from_status, to_status):
 		topic_name = TOPIC['order']
 		data = {
 			"order_id": self.id,
 			"order_bid": self.bid,
-			"corp_id": self.context['corp'].id
+			"corp_id": self.context['corp'].id,
+			"from_status": mall_models.ORDER_STATUS2MEANINGFUL_WORD[from_status],
+			"to_status": mall_models.ORDER_STATUS2MEANINGFUL_WORD[to_status]
 		}
 		msgutil.send_message(topic_name, msg_name, data)
 
@@ -611,7 +616,6 @@ class Order(business_model.Model):
 		db_model.final_price = self.final_price
 		db_model.edit_money = self.edit_money
 		db_model.save()
-
 
 	def get_all_products(self):
 		delivery_item_products = []

@@ -719,6 +719,8 @@ class TemplateProperty(models.Model):
 #########################################################################
 # 订单相关Model
 #########################################################################
+
+
 ORDER_STATUS_NOT = 0  # 待支付：已下单，未付款
 ORDER_STATUS_CANCEL = 1  # 已取消：取消订单(回退销量)
 ORDER_STATUS_PAYED_SUCCESSED = 2  # 已支付：已下单，已付款，已不存此状态
@@ -729,6 +731,29 @@ ORDER_STATUS_REFUNDING = 6  # 退款中
 ORDER_STATUS_REFUNDED = 7  # 退款完成(回退销量)
 ORDER_STATUS_GROUP_REFUNDING = 8 #团购退款（没有退款完成按钮）
 ORDER_STATUS_GROUP_REFUNDED = 9 #团购退款完成
+
+MEANINGFUL_WORD2ORDER_STATUS = {
+	"created": ORDER_STATUS_NOT,
+	"cancelled": ORDER_STATUS_CANCEL,
+	"paid": ORDER_STATUS_PAYED_NOT_SHIP,
+	"shipped": ORDER_STATUS_PAYED_SHIPED,
+	"finished": ORDER_STATUS_SUCCESSED,
+	"refunding": ORDER_STATUS_REFUNDING,
+	"refunded": ORDER_STATUS_REFUNDED,
+
+}
+ORDER_STATUS2MEANINGFUL_WORD = {
+	ORDER_STATUS_NOT: "created",
+	ORDER_STATUS_CANCEL: "cancelled",
+	ORDER_STATUS_PAYED_NOT_SHIP: "paid",
+	ORDER_STATUS_PAYED_SHIPED: "shipped",
+	ORDER_STATUS_SUCCESSED: "finished",
+	ORDER_STATUS_REFUNDING: "refunding",
+	ORDER_STATUS_REFUNDED: "refunded",
+	ORDER_STATUS_GROUP_REFUNDING: "refunding",
+	ORDER_STATUS_GROUP_REFUNDED: "refunded"
+}
+
 
 
 # 权重小的优先

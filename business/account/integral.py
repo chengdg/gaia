@@ -22,8 +22,6 @@ from eaglet.decorator import cached_context_property
 from eaglet.core import watchdog
 from eaglet.core.exceptionutil import unicode_full_stack
 
-from business.member.webapp_user import WebAppUser
-
 class Integral(business_model.Model):
 	"""
 	会员积分
@@ -185,9 +183,17 @@ class Integral(business_model.Model):
 
 	@staticmethod
 	def increase_after_order_payed_finsh(args):
-		order_id = args['order_id']
-		webapp_user = args['webapp_user']
-		member = webapp_user.member
+		order = args['order']
+		member = args['member']
+		corp = args['corp']
+
+
+		order_id = order.id
+		member = member
+		# order_id = args['order_id']
+		webapp_user_id = order.webapp_user_id
+		# member = webapp_user.member
+
 		integral_strategy = member_models.IntegralStrategySettings.select().dj_where(webapp_id=member.webapp_id).first()
 		order = mall_models.Order.get(id=order_id)
 		# print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.3',order_id
@@ -242,7 +248,7 @@ class Integral(business_model.Model):
 					#print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.81:',integral_strategy.buy_award_count_for_buyer
 					Integral.increase_member_integral({
 						'integral_increase_count': integral_strategy.buy_award_count_for_buyer,
-						'webapp_user': webapp_user,
+						'webapp_user_id': webapp_user_id,
 						'member': member,
 						'event_type':  member_models.BUY_AWARD
 						})
@@ -259,7 +265,7 @@ class Integral(business_model.Model):
 						#self.increase_member_integral(member, increase_count_integral, BUY_AWARD)
 						Integral.increase_member_integral({
 							'integral_increase_count': increase_count_integral,
-							'webapp_user': webapp_user,
+							'webapp_user_id': webapp_user_id,
 							'member': member,
 							'event_type':  member_models.BUY_AWARD
 							})
@@ -276,16 +282,18 @@ class Integral(business_model.Model):
 						father_member = None
 
 					if father_member:
-						father_webapp_user = WebAppUser.from_member_id({
-							'webapp_owner': webapp_owner,
-							'member_id': father_member.id
-							})
+						# father_webapp_user = WebAppUser.from_member_id({
+						# 	'webapp_owner': webapp_owner,
+						# 	'member_id': father_member.id
+						# 	})
+
+						father_webapp_user_id = member_models.WebAppUser.get(member_id=father_member.id).id
 						if integral_strategy.buy_via_offline_increase_count_for_author > 0:
 							#self.increase_member_integral(father_member, integral_strategy.buy_via_offline_increase_count_for_author, BUY_INCREST_COUNT_FOR_FATHER)
 
 							Integral.increase_member_integral({
 								'integral_increase_count': integral_strategy.buy_via_offline_increase_count_for_author,
-								'webapp_user': father_webapp_user,
+								'webapp_user_id': father_webapp_user_id,
 								'member': father_member,
 								'event_type':  member_models.BUY_INCREST_COUNT_FOR_FATHER
 								})
@@ -298,7 +306,7 @@ class Integral(business_model.Model):
 								#self.increase_member_integral(father_member, integral_count, BUY_INCREST_COUNT_FOR_FATHER)
 								Integral.increase_member_integral({
 									'integral_increase_count': integral_count,
-									'webapp_user': father_webapp_user,
+									'webapp_user_id': father_webapp_user_id,
 									'member': father_member,
 									'event_type':  member_models.BUY_INCREST_COUNT_FOR_FATHER
 									})

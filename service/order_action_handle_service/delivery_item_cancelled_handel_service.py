@@ -17,10 +17,13 @@ from db.express import models as express_models
 from zeus_conf import TOPIC
 
 
-@register("delivery_item_shipped")
+@register("delivery_item_cancelled")
 def process(data, recv_msg=None):
 	"""
-	发货出货单的消息处理
+	已完成
+	@param data:
+	@param recv_msg:
+	@return:
 	"""
 
 	corp_id = data['corp_id']
@@ -32,16 +35,4 @@ def process(data, recv_msg=None):
 		"delivery_item_id": delivery_item_id,
 		"corp_id": corp_id
 	}
-	msgutil.send_message(topic_name, 'notify_kuaidi_task', data)
-
-	# 发送模板消息
-	# todo
-
-	# 发送通知邮件
-	topic_name = TOPIC['base_service']
-	data = {
-		"type": "delivery_item",
-		"delivery_item_id": delivery_item_id,
-		"corp_id": corp_id
-	}
-	msgutil.send_message(topic_name, 'send_order_email_task', data)
+	msgutil.send_message(topic_name, 'send_delivery_item_phone_message_task', data)
