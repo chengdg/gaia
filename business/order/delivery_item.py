@@ -256,6 +256,9 @@ class DeliveryItem(business_model.Model):
 		delivery_item_id2refund_info = {refund_info.delivery_item_id: refund_info for refund_info in refund_info_list}
 
 		for delivery_item in delivery_items:
+			total_product_sale_price = 0
+			for product in delivery_item.products:
+				total_product_sale_price += product.sale_price * product.count
 			refunding_info = delivery_item_id2refund_info.get(delivery_item.id)
 			if refunding_info:
 				delivery_item.refunding_info = {
@@ -265,7 +268,8 @@ class DeliveryItem(business_model.Model):
 					'integral_money': refunding_info.integral_money,
 					'coupon_money': refunding_info.coupon_money,
 					'total': refunding_info.total,
-					'finished': refunding_info.finished
+					'finished': refunding_info.finished,
+					'total_can_refund': round(total_product_sale_price + delivery_item.postage, 2)
 				}
 			else:
 				delivery_item.refunding_info = {
@@ -275,7 +279,8 @@ class DeliveryItem(business_model.Model):
 					'integral_money': 0,
 					'coupon_money': 0,
 					'total': 0,
-					'finished': False
+					'finished': False,
+					'total_can_refund': 0
 				}
 
 	@staticmethod
