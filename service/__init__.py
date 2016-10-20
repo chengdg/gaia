@@ -1,11 +1,10 @@
 # coding: utf8
 
 import notify_kuaidi_task
+import send_delivery_item_phone_message_task
 import send_order_email_task
-import send_order_phone_message_task
 import send_order_template_message_task
-import service.order_action_handle_service.order_cancelled_handle_service
-import service.order_action_handle_service.order_paid_handle_service
+
 
 from order_action_handle_service import delivery_item_applied_for_redfunding_handle_service
 from order_action_handle_service import delivery_item_cancelled_handel_service
