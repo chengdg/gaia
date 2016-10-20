@@ -12,6 +12,13 @@ class ProductClassificationRepository(business_model.Service):
 		models = mall_models.Classification.select()
 		return [ProductClassification(model) for model in models]
 
+	def get_child_product_classifications(self, father_id):
+		"""
+		获得子分类集合
+		"""
+		models = mall_models.Classification.select().dj_where(father_id=father_id)
+		return [ProductClassification(model) for model in models]
+
 	def delete_product_classification(self, id):
 		"""
 		删除指定的供货商

@@ -15,15 +15,13 @@ class AProductClassification(api_resource.ApiResource):
     app = "mall"
     resource = "product_classification"
 
-    @param_required(['name', 'level', 'father_id'])
+    @param_required(['name', 'father_id'])
     def put(args):
         name = args['name']
-        level = args['level']
         father_id = args['father_id']
 
         product_classification = ProductClassification.create({
             'name': name,
-            'level': level,
             'father_id': father_id
         })
 

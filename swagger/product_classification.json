@@ -1,0 +1,162 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "Hermes Product Classification API"
+    },
+    "paths": {
+        "/mall/product_classifications/": {
+            "get": {
+                "summary": "获得商品分类列表",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product_classification"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/ClassificationList"
+                        }
+                    }
+                }
+            }
+        },
+        "/mall/child_product_classifications/": {
+            "get": {
+                "summary": "获得商品分类的子分类集合",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "classification_id",
+                        "in": "query",
+                        "description": "分类的id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product_classification"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/ClassificationList"
+                        }
+                    }
+                }
+            }
+        },
+        "/mall/classification/": {
+            "put": {
+                "summary": "创建商品分类",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "formData",
+                        "description": "商品分类名",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "father_id",
+                        "in": "formData",
+                        "description": "分类的父分类id, 如果father_id为0，则创建一级分类",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product_classification"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "删除商品分类",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "type": "string",
+                        "required": true,
+                        "description": "待删除的商品分类的id"
+                    }
+                ],
+                "tags": [
+                    "product_category"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "ClassificationList": {
+            "type": "object",
+            "properties": {
+                "product_classifications": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Classification"
+                    },
+                    "minItems": 0
+                }
+            }
+        },
+        "Classification": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": ""
+                },
+                "name": {
+                    "type": "string",
+                    "description": "分类名"
+                },
+                "level": {
+                    "type": "number",
+                    "description": "分类所处的层级"
+                },
+                "father_id": {
+                    "type": "number",
+                    "description": "分类的父id，如果father_id为0，则当前分类为一级分类"
+                }
+            }
+        }
+    }
+}

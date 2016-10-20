@@ -39,10 +39,19 @@ Background:
 		"""
 	When weizoom添加商品分类
 		"""
-		[
-			["分类11", "分类12", "分类13"],
-			["分类21", "分类22"]
-		]
+		{
+			"分类11": {
+				"分类21": null,
+				"分类22": null,
+				"分类23": {
+					"分类31": null
+				}
+			},
+			"分类12": {
+				"分类24": null
+			},
+			"分类13": null
+		}
 		"""
 	When weizoom添加供应商
 		"""
@@ -78,11 +87,11 @@ Scenario:1 创建供应商供应的商品
 		[{
 			"name": "东坡肘子",
 			"supplier": "苹果",
-			"classification": "分类13"
+			"classification": "分类31"
 		}, {
 			"name": "叫花鸡",
 			"supplier": "微软",
-			"classification": "分类22"
+			"classification": "分类24"
 		}, {
 			"name": "黄桥烧饼"
 		}]
@@ -92,7 +101,7 @@ Scenario:1 创建供应商供应的商品
 		{
 			"name": "东坡肘子",
 			"supplier": "苹果",
-			"classification": "分类11-分类12-分类13"
+			"classification": "分类11-分类23-分类31"
 		}
 		"""
 	Then weizoom能获取商品'叫花鸡'
@@ -100,7 +109,7 @@ Scenario:1 创建供应商供应的商品
 		{
 			"name": "叫花鸡",
 			"supplier": "微软",
-			"classification": "分类21-分类22"
+			"classification": "分类12-分类24"
 		}
 		"""
 	Then weizoom能获取商品'黄桥烧饼'
@@ -117,12 +126,12 @@ Scenario:1 创建供应商供应的商品
 			"name": "东坡肘子",
 			"create_type": "create",
 			"supplier": "苹果",
-			"classification": "分类11-分类12-分类13"
+			"classification": "分类11-分类23-分类31"
 		}, {
 			"name": "叫花鸡",
 			"create_type": "create",
 			"supplier": "微软",
-			"classification": "分类21-分类22"
+			"classification": "分类12-分类24"
 		}, {
 			"name": "黄桥烧饼",
 			"create_type": "create",
@@ -143,7 +152,7 @@ Scenario:1 创建供应商供应的商品
 		[{
 			"name": "东坡肘子",
 			"supplier": "苹果",
-			"classification": "分类13",
+			"classification": "分类31",
 			"swipe_images": [{
 				"url": "/static/test_resource_img/hangzhou1.jpg"
 			}, {
@@ -163,7 +172,7 @@ Scenario:1 创建供应商供应的商品
 		}, {
 			"name": "叫花鸡",
 			"supplier": "微软",
-			"classification": "分类22",
+			"classification": "分类24",
 			"swipe_images": [{
 				"url": "/static/test_resource_img/hangzhou2.jpg"
 			}],
@@ -207,7 +216,7 @@ Scenario:1 创建供应商供应的商品
 			"name": "东坡肘子",
 			"supplier": "苹果",
 			"supplier_type": "固定低价",
-			"classification": "分类11-分类12-分类13",
+			"classification": "分类11-分类23-分类31",
 			"price": 11.12,
 			"stocks": "无限",
 			"gross_profit": 10.02, 
@@ -216,7 +225,7 @@ Scenario:1 创建供应商供应的商品
 			"name": "叫花鸡",
 			"supplier": "微软",
 			"supplier_type": "首月55分成(20%)",
-			"classification": "分类21-分类22",
+			"classification": "分类12-分类24",
 			"price": "10.10~20.20",
 			"stocks": "",
 			"gross_profit": "8.90~19.00",

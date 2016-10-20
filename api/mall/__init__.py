@@ -6,6 +6,7 @@ import a_store_name
 import a_suppliers
 import a_supplier
 import a_product_classifications
+import a_child_product_classifications
 import a_product_classification
 
 import category

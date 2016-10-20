@@ -41,17 +41,24 @@ class ProductClassification(business_model.Model):
 		return ProductClassification(model)
 
 	@staticmethod
-	@param_required(['name', 'father_id', 'level'])
+	@param_required(['name', 'father_id'])
 	def create(args):
 		"""
 		保存信息
 		"""
 		corp_id = CorporationFactory.get().id
 
+		father_id = int(args['father_id'])
+		if father_id == 0:
+			level = 1		
+		else:
+			father_model = mall_models.Classification.select().dj_where(id=father_id).get()
+			level = father_model.level + 1
+
 		model = mall_models.Classification.create(
 			name = args['name'],
 			father_id = args['father_id'],
-			level = args['level']
+			level = level
 		)
 
 		return ProductClassification(model)
