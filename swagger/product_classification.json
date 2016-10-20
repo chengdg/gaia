@@ -47,7 +47,7 @@
                     {
                         "name": "classification_id",
                         "in": "query",
-                        "description": "分类的id",
+                        "description": "分类的id, 如果classification_id为0，则获取一级分类集合",
                         "required": true,
                         "type": "string"
                     }
