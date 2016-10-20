@@ -295,6 +295,10 @@
 																					"finished": {
 																						"type": "boolean",
 																						"description": "是否已经退款完成"
+																					},
+																					"total_can_refund":{
+																						"type":"number",
+																						"description": "出货单应退总额"
 																					}
 																				}
 																			},
