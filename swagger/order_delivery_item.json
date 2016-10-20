@@ -9,7 +9,7 @@
 			"post": {
 				"summary": "修改出货单信息，只支持修改物流",
 				"tags": [
-					"order","delivery_item"
+					"delivery_item"
 				],
 				"parameters": [
 					{
