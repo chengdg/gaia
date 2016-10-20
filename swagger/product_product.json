@@ -175,6 +175,43 @@
                 }
             }
         },
+        "/product/weizoom_pooled_products/": {
+            "get": {
+                "summary": "获取微众商品池中的商品集合",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "products": {
+                                    "$ref": "#/definitions/ProductInProductList"
+                                },
+                                "pageinfo": {
+                                    "type": "object",
+                                    "description": "分页信息"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/product/onshelf_products/": {
             "get": {
                 "summary": "获取在售商品集合",
@@ -456,7 +493,7 @@
                     "description": "商品的id"
                 },
                 "base_info": {
-                    "$ref": "#/definitions/BaseInfo"
+                    "$ref": "#/definitions/ReturnBaseInfo"
                 },
                 "models_info": {
                     "$ref": "#/definitions/ModelsInfo"
@@ -504,12 +541,10 @@
                 },
                 "supplier_id": {
                     "type": "number",
-                    "required": false,
                     "description": "供应商的id，可以不提供，默认为0，表示是自建商品"
                 },
                 "classification_id": {
                     "type": "number",
-                    "required": false,
                     "description": "商品分组的id，可以不提供，默认为0，表示没有商品分组"
                 },
                 "bar_code": {
@@ -535,6 +570,58 @@
                 "detail": {
                     "type": "string",
                     "description": "商品详情"
+                }
+            }
+        },
+        "ReturnBaseInfo": {
+            "type": "object",
+            "description": "商品的基本信息",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "商品名"
+                },
+                "type": {
+                    "type": "string",
+                    "description": "商品类型",
+                    "format": "默认为object"
+                },
+                "create_type": {
+                    "type": "string",
+                    "description": "商品的创建类型",
+                    "format": "'create(自建商品)'或'sync(从商品池同步商品)'"
+                },
+                "bar_code": {
+                    "type": "string",
+                    "description": "商品条码"
+                },
+                "min_limit": {
+                    "type": "number",
+                    "description": "起购数量"
+                },
+                "promotion_title": {
+                    "type": "string",
+                    "description": "促销标题"
+                },
+                "is_enable_bill": {
+                    "type": "boolean",
+                    "description": "是否出具发票"
+                },
+                "is_member_product": {
+                    "type": "boolean",
+                    "description": "是否参与会员折扣"
+                },
+                "detail": {
+                    "type": "string",
+                    "description": "商品详情"
+                },
+                "sync_at": {
+                    "type": "string",
+                    "description": "从微众商品池同步时间"
+                },
+                "created_at": {
+                    "type": "string",
+                    "description": "创建时间"
                 }
             }
         },
@@ -826,31 +913,13 @@
                 "supplier": {
                     "$ref": "#/definitions/ReturnSupplier"
                 },
-                "price": {
-                    "type": "string",
-                    "description": "商品价格"
-                },
                 "sales": {
                     "type": "string",
-                    "description": "商品销量"
-                },
-                "is_use_custom_model": {
-                    "type": "boolean",
-                    "description": "商品是否使用定制规格"
+                    "description": "商品销量",
                 },
                 "display_index": {
                     "type": "string",
                     "description": "商品显示的顺序"
-                },
-                "stock_type": {
-                    "type": "string",
-                    "description": "商品库存类型",
-                    "format": "如果使用定制规格，stock_type='combined'；否则，为标准规格的stock_type值"
-                },
-                "stocks": {
-                    "type": "number",
-                    "description": "商品库存数量",
-                    "format": "如果使用定制规格，stocks=-1；否则，为标准规格的stocks值"
                 },
                 "models_info": {
                     "$ref": "#/definitions/ModelsInfo"

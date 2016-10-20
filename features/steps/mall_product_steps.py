@@ -324,7 +324,8 @@ def __get_products(context, type_name=u'在售'):
             if supplier_type == 'fixed':
                 data['supplier_type'] = u'固定低价'
             elif supplier_type == 'divide':
-                data['supplier_type'] = u'首月55分成'
+                divide_info = product['supplier']['divide_type_info']
+                data['supplier_type'] = u'首月55分成(%s%%)' % divide_info['basic_rebate']
             elif supplier_type == 'retail':
                 data['supplier_type'] = u'零售返点'
 

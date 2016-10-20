@@ -215,7 +215,7 @@ Scenario:1 创建供应商供应的商品
 		}, {
 			"name": "叫花鸡",
 			"supplier": "微软",
-			"supplier_type": "首月55分成",
+			"supplier_type": "首月55分成(20%)",
 			"classification": "分类21-分类22",
 			"price": "10.10~20.20",
 			"stocks": "",

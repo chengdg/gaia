@@ -8,7 +8,7 @@ from business.product.product import Product
 from business.product.product_shelf import ProductShelf
 from business.common.page_info import PageInfo
 
-from a_offshelf_products import AOffshelfProducts
+from business.product.encode_product_service import EncodeProductService
 
 class AOnshelfProducts(api_resource.ApiResource):
 	"""
@@ -28,36 +28,34 @@ class AOnshelfProducts(api_resource.ApiResource):
 
 		products, pageinfo = corp.insale_shelf.get_products(target_page)
 
+		encode_product_service = EncodeProductService.get(corp)
 		datas = []
 		for product in products:
+			base_info = encode_product_service.get_base_info(product)
+			models_info = encode_product_service.get_models_info(product)
+			supplier = encode_product_service.get_supplier_info(product)
+			classifications = encode_product_service.get_classifications(product)
+			image_info = encode_product_service.get_image_info(product)
+			categories = encode_product_service.get_categories(product)
+
 			data = {
 				"id": product.id,
-				"name": product.name,
-				"create_type": product.create_type,
-				"image": product.thumbnails_url,
-				"models_info": AOffshelfProducts._get_models_info(product),
-				"user_code": -1,
-				"bar_code": product.bar_code,
-				"categories": AOffshelfProducts._get_categories(product),
-				"price": None,
-				"sales": product.sales,
-				"created_at": product.created_at.strftime('%Y-%m-%d %H:%M'),
-				"sync_at": product.sync_at.strftime('%Y-%m-%d %H:%M') if product.create_type == 'sync' else None,
-				"is_use_custom_model": product.is_use_custom_model,
-				"display_index": product.display_index,
-				'supplier': AOffshelfProducts._get_supplier(product),
-				'classifications': AOffshelfProducts._get_classifications(product)
+				"name": base_info['name'],
+				"create_type": base_info['create_type'],
+				"image": image_info['thumbnails_url'],
+				"models_info": models_info,
+				"bar_code": base_info['bar_code'],
+				"display_index": base_info['display_index'],
+				'supplier': supplier,
+				'classifications': classifications,
+				"categories": categories,
+				"sales": base_info['sales'],
+				"created_at": base_info['created_at'],
+				"sync_at": base_info['sync_at'],
+				"display_index": base_info['display_index'],
+				'supplier': supplier,
+				'classifications': classifications
 			}
-
-			if product.is_use_custom_model:
-				data['stock_type'] = 'combined'
-				data['stocks'] = -1
-				data['price'] = 'todo'
-			else:
-				standard_model = product.standard_model
-				data['stock_type'] = standard_model.stock_type
-				data['stocks'] = standard_model.stocks
-				data['price'] = standard_model.price
 
 			datas.append(data)
 
