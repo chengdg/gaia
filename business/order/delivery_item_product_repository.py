@@ -38,9 +38,9 @@ class DeliveryItemProductRepository(business_model.Model):
 		ohp_list = mall_models.OrderHasProduct.select().dj_where(order_id__in=delivery_item_ids)
 		product_ids = [p.product_id for p in ohp_list]
 
-		products = self.corp.product_pool.get_products_by_ids(product_ids, {"with_product_model": True,"with_property":True})
+		products = self.corp.product_pool.get_products_by_ids(product_ids,
+		                                                      {"with_product_model": True, "with_property": True})
 		product_id2product = {p.id: p for p in products}
-
 
 		origin_order_ids = [delivery_item.origin_order_id for delivery_item in delivery_items]
 		id2promotion = {r.promotion_id: r for r in
@@ -102,7 +102,6 @@ class DeliveryItemProductRepository(business_model.Model):
 
 		return delivery_item_products
 
-
 	def set_products_for_delivery_items(self, delivery_items, with_premium_sale):
 		"""
 		设置订单的商品，性能攸关
@@ -111,12 +110,12 @@ class DeliveryItemProductRepository(business_model.Model):
 		@return:
 		"""
 
-		# ohp_db_model_list = mall_models.OrderHasProduct.select().dj_where(order_id__in=delivery_item_ids)
+		# ohs_db_model_list = mall_models.OrderHasProduct.select().dj_where(order_id__in=delivery_item_ids)
 
 
 		# delivery_item_id2ohs_list = {}
 		#
-		# for ohs in ohp_db_model_list:
+		# for ohs in ohs_db_model_list:
 		# 	if ohs.order_id in delivery_item_id2ohs_list:
 		# 		delivery_item_id2ohs_list[ohs.order_id].append(ohs)
 		# 	else:
@@ -156,9 +155,9 @@ class DeliveryItemProductRepository(business_model.Model):
 
 
 		delivery_item_ids = [delivery_item.id for delivery_item in delivery_items]
-		ohp_db_model_list = mall_models.OrderHasProduct.select().dj_where(order_id__in=delivery_item_ids)
+		ohs_db_model_list = mall_models.OrderHasProduct.select().dj_where(order_id__in=delivery_item_ids)
 
-		product_ids = [p.product_id for p in ohp_db_model_list]
+		product_ids = [p.product_id for p in ohs_db_model_list]
 
 		products = self.corp.product_pool.get_products_by_ids(product_ids,
 		                                                      {"with_product_model": True, "with_property": True})
@@ -166,12 +165,21 @@ class DeliveryItemProductRepository(business_model.Model):
 
 		origin_order_ids = [delivery_item.origin_order_id for delivery_item in delivery_items]
 
+		id2promotion = {r.promotion_id: r for r in mall_models.OrderHasPromotion.select().dj_where(order_id__in=origin_order_ids)}
 
-		id2promotion = {r.promotion_id: r for r in
-		                mall_models.OrderHasPromotion.select().dj_where(order_id__in=origin_order_ids)}
+		# [compatibility]: 兼容apiserver产生的出货单的order_has_prduct时候，total_price和price写入的采购价
+		origin_ohs_list = mall_models.OrderHasProduct.select().dj_where(order_id__in=origin_order_ids)
+
+		delivery_item_ohs_id2origin_order_ohs = {}
+
+		for delivery_item_ohs in ohs_db_model_list:
+			for origin_ohs in origin_ohs_list:
+				if delivery_item_ohs.order_id == origin_ohs.order_id and delivery_item_ohs.product_id == origin_ohs.product_id:
+					delivery_item_ohs_id2origin_order_ohs[delivery_item_ohs.id] = origin_ohs
+					break
 
 		delivery_item_products = []
-		for r in ohp_db_model_list:
+		for r in ohs_db_model_list:
 			product = product_id2product[r.product_id]
 
 			promotion = id2promotion.get(r.promotion_id, None)
@@ -185,8 +193,15 @@ class DeliveryItemProductRepository(business_model.Model):
 			delivery_item_product = DeliveryItemProduct()
 			delivery_item_product.name = product.name
 			delivery_item_product.id = r.product_id
-			delivery_item_product.origin_price = r.total_price / r.number
-			delivery_item_product.sale_price = r.price
+			# delivery_item_product.origin_price = r.total_price / r.number
+			# delivery_item_product.sale_price = r.price
+
+			# [compatibility]: 兼容apiserver产生的出货单的order_has_prduct时候，total_price和price写入的采购价
+			origin_ohs = delivery_item_ohs_id2origin_order_ohs.get(r.id, r)
+
+			delivery_item_product.origin_price = origin_ohs.total_price / r.number
+			delivery_item_product.sale_price = origin_ohs.price
+
 			delivery_item_product.total_origin_price = r.total_price
 			delivery_item_product.count = r.number
 			delivery_item_product.product_model_name = r.product_model_name
