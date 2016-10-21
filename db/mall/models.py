@@ -1527,3 +1527,18 @@ class UserOrderNotifySettings(models.Model):
 
 	class Meta(object):
 		db_table = 'user_order_notify_setting'
+
+class ProductLimitZoneTemplate(models.Model):
+	"""
+	商品仅售和禁售的模板
+	"""
+	owner = models.ForeignKey(User)
+	name = models.CharField(max_length=64)  # 模板名称
+	provinces = models.CharField(max_length=1024) # 所有省id
+	cities = models.CharField(max_length=4096) # 所有城市id
+	created_at = models.DateTimeField(auto_now_add=True)  # 添加时间
+
+	class Meta(object):
+		verbose_name = "商品仅售和禁售的模板"
+		verbose_name_plural = "商品仅售和禁售的模板"
+		db_table = "mall_product_limit_zone_template"
