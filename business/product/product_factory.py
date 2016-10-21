@@ -157,6 +157,9 @@ class ProductFactory(business_model.Service):
 			)
 
 	def create_product(self, args):
+		"""
+		创建自营商品
+		"""
 		base_info = json.loads(args['base_info'])
 		models_info = json.loads(args['models_info'])
 		image_info = json.loads(args['image_info'])
@@ -176,6 +179,18 @@ class ProductFactory(business_model.Service):
 		#将商品放入product pool
 		corp.product_pool.add_products([product.id])
 		#将商品放入待售shelf
+		corp.forsale_shelf.add_products([product.id])
+
+		return product
+
+	def create_consignment_product(self, args):
+		"""
+		创建代售商品
+		"""
+		corp = self.corp
+		#将代售商品放入product pool
+		corp.product_pool.add_consignment_products([product.id])
+		#将代售商品放入待售shelf
 		corp.forsale_shelf.add_products([product.id])
 
 		return product

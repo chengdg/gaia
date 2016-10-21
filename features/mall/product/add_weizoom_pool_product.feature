@@ -210,6 +210,10 @@ Scenario:1 创建供应商供应的商品
 		}]
 		"""
 	Given jobs登录系统
+	Then jobs能获得'待售'商品列表
+		"""
+		[]
+		"""
 	Then jobs能获得'微众商品池'商品列表
 		"""
 		[{
@@ -239,5 +243,21 @@ Scenario:1 创建供应商供应的商品
 			"stocks": 30,
 			"gross_profit": 29.10,
 			"image": "/static/test_resource_img/hangzhou3.jpg"
+		}]
+		"""
+	When jobs添加代售商品
+		"""
+		[{
+			"name": "东坡肘子"
+		}, {
+			"name": "叫花鸡"
+		}]
+		"""
+	Then jobs能获得'在售'商品列表
+		"""
+		[{
+			"name": "东坡肘子"
+		}, {
+			"name": "叫花鸡"
 		}]
 		"""

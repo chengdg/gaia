@@ -1,14 +1,15 @@
 # coding=utf-8
 # -*- utf-8 -*-
+from datetime import datetime
+
 from eaglet.decorator import param_required
+from eaglet.core import paginator
 
 from bdem import msgutil
 from business import model as business_model
-
 from business.product.product import Product
 from db.mall import models as mall_models
 from zeus_conf import TOPIC
-from eaglet.core import paginator
 from fill_product_detail_service import FillProductDetailService
 from business.mall.corporation_factory import CorporationFactory
 
@@ -71,8 +72,6 @@ class ProductPool(business_model.Model):
 	def add_products(self, product_ids):
 		"""
 		添加商品到商品池
-		@param product_ids:
-		@return:
 		"""
 		for product_id in product_ids:
 			mall_models.ProductPool.create(
@@ -80,7 +79,23 @@ class ProductPool(business_model.Model):
 				product_id=product_id,
 				status=mall_models.PP_STATUS_ON_POOL,
 				type=mall_models.PP_TYPE_CREATE,
-				display_index=999
+				display_index=NEW_PRODUCT_DISPLAY_INDEX
+			)
+		return True
+
+	def add_consignment_products(self, product_ids):
+		"""
+		添加代售商品到商品池
+		"""
+
+		for product_id in product_ids:
+			mall_models.ProductPool.create(
+				woid=self.corp_id,
+				product_id=product_id,
+				status=mall_models.PP_STATUS_ON,
+				type=mall_models.PP_TYPE_SYNC,
+				display_index=NEW_PRODUCT_DISPLAY_INDEX,
+				sync_at=datetime.now()
 			)
 		return True
 

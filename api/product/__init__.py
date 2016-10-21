@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import a_product
+import a_consignment_product
 import a_product_creation_option
 import a_product_price
 import a_product_stock

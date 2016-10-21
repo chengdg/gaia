@@ -90,6 +90,36 @@
                 }
             }
         },
+        "/product/consignment_product/": {
+            "put": {
+                "summary": "创建代售商品",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true
+                    },
+                    {
+                        "name": "product_id",
+                        "in": "query",
+                        "description": "微众商品池中商品的id",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "product"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        },
         "/product/product_creation_option/": {
             "get": {
                 "summary": "获取商品创建参数",

@@ -489,3 +489,18 @@ def step_impl(context, user, product_name, position):
 
     response = context.client.post('/product/product_position/', data)
     bdd_util.assert_api_call_success(response)
+
+
+@when(u"{user}添加代售商品")
+def step_impl(context, user):
+    products = json.loads(context.text)
+    for product in products:
+        db_product = mall_models.Product.select().dj_where(name=product['name']).get()
+
+        data = {
+            "corp_id": context.corp.id,
+            "product_id": db_product.id
+        }
+
+        response = context.client.put('/product/consignment_product/', data)
+        bdd_util.assert_api_call_success(response)
