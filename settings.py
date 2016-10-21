@@ -161,7 +161,7 @@ else:
     MNS_ENDPOINT = 'https://1615750970594173.mns.cn-beijing.aliyuncs.com/'
     MNS_SECURITY_TOKEN = ''
     SUBSCRIBE_QUEUE_NAME = 'new-zeus-test'
-    MESSAGE_DEBUG_MODE = True
+    MESSAGE_DEBUG_MODE = False
 
 # BDD_SERVER相关配置
 BDD_SERVER2PORT = {

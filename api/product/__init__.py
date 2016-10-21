@@ -12,3 +12,4 @@ import a_weizoom_pooled_products
 
 import property_template
 import model_property
+import a_product_sale
