@@ -340,6 +340,18 @@ class Order(business_model.Model):
 					'total': 0,
 				}
 
+
+	def __get_total_origin_product_price(self):
+
+		total_origin_product_price = 0
+
+		for delivery_item in self.delivery_items:
+			for product in delivery_item.products:
+				total_origin_product_price += product.total_origin_price
+
+		return total_origin_product_price
+
+
 	@staticmethod
 	def __fill_full_money_info(orders, order_ids):
 
@@ -348,8 +360,7 @@ class Order(business_model.Model):
 				'weizoom_card_money']
 			order.origin_final_price = order.final_price + order.refunding_info['cash']
 
-			total_product_origin_price = sum(
-				[delivery_item.total_origin_product_price for delivery_item in order.delivery_items])
+			total_product_origin_price = order.__get_total_origin_product_price()
 
 			order.save_money = round(total_product_origin_price, 2) + round(order.postage, 2) - round(
 				order.origin_final_price,
