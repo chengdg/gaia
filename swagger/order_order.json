@@ -226,7 +226,7 @@
 																			"type":"string"
 																		},
 																		"type":{
-																			"description":"优惠券类型,通用券all_products_coupon / 多商品券 multi_products_coupon"
+																			"description":"优惠券类型,通用券all_products_coupon / 多商品券 multi_products_coupon",
 																			"type":"string"
 																		}
 																	}
