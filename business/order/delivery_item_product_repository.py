@@ -160,7 +160,7 @@ class DeliveryItemProductRepository(business_model.Model):
 		product_ids = [p.product_id for p in ohs_db_model_list]
 
 		products = self.corp.product_pool.get_products_by_ids(product_ids,
-		                                                      {"with_product_model": True, "with_property": True})
+		                                                      {"with_product_model": True, "with_property": True,"with_model_property_info":True})
 		product_id2product = {p.id: p for p in products}
 
 		origin_order_ids = [delivery_item.origin_order_id for delivery_item in delivery_items]
@@ -210,7 +210,12 @@ class DeliveryItemProductRepository(business_model.Model):
 			if r.product_model_name == 'standard':
 				delivery_item_product.product_model_names = []
 			else:
-				delivery_item_product.product_model_names = ['todo1', 'todo2']
+				for custom_model in product.custom_models:
+					if r.product_model_name == custom_model.name:
+						delivery_item_product.product_model_names = []
+						for value in custom_model.property_values:
+							delivery_item_product.product_model_names.append(value['name'])
+						break
 			delivery_item_product.thumbnails_url = product.thumbnails_url
 			delivery_item_product.is_deleted = product.is_deleted
 
