@@ -15,28 +15,39 @@ class Coupon(business_model.Model):
 	"""
 
 	__slots__ = (
-		'id',
-		'coupon_rule',
-		'member_id',
-		'coupon_record_id',
-		'status',
-		'display_status',
-		'coupon_id',
-		'limit_product',
-		'limit_product_id',  # 多商品券的限制商品id列表
-		'provided_time',
-		'start_time',
-		'expired_time',
-		'money',
-		'is_manual_generated',
-		'webapp_user',
+		# 'id',
+		# 'coupon_rule',
+		# 'member_id',
+		# 'coupon_record_id',
+		# 'status',
+		# 'display_status',
+		# 'bid',
+		# 'limit_product',
+		# 'limit_product_id',  # 多商品券的限制商品id列表
+		# 'provided_time',
+		# 'start_time',
+		# 'expired_time',
+		# 'money',
+		# 'is_manual_generated',
+		# 'webapp_user',
+		#
+		# 'valid_restrictions',
+		# 'name',
+		# 'valid_days',
+		# 'valid_time',
+		# 'invalid_reason',
+		# 'coupon_rule_id',
+		# 'type'
 
-		'valid_restrictions',
-		'name',
-		'valid_days',
-		'valid_time',
-		'invalid_reason',
-		'coupon_rule_id'
+		'id',
+		'bid',
+		'status',
+		'created_at',
+		'provided_time',
+		'money',
+
+		'member',
+		'rule'
 	)
 
 	def __init__(self, model):
@@ -45,16 +56,37 @@ class Coupon(business_model.Model):
 		self.context['db_model'] = model
 		if model:
 			self._init_slot_from_model(model)
-			self.__check_coupon_status()
+			self.bid = model.coupon_id
+		# self.__check_coupon_status()
 
 	@staticmethod
-	@param_required(['db_model', 'corp'])
-	def from_model(args):
+	@param_required(['db_models', 'corp'])
+	def from_models(args):
+		db_models = args['db_models']
+		corp = args['corp']
+		coupon_rule_ids = []
+		coupons = []
+		for db_model in db_models:
+			coupon = Coupon(db_model)
+			coupon.context['db_model'] = db_model
+			coupon.context['corp'] = corp
 
-		coupon = Coupon(args['db_model'])
-		coupon.context['db_model'] = args['db_model']
-		coupon.context['corp'] = args['corp']
-		return coupon
+			coupon_rule_ids.append(db_model.coupon_rule_id)
+
+			coupons.append(coupon)
+
+		# member_ids =
+		# todo 填充会员信息
+
+		# 填充规则信息
+		rules = corp.coupon_rule_repository.get_coupon_rule_by_ids(coupon_rule_ids)
+
+		rule_id2rule = {rule.id: rule for rule in rules}
+
+		for coupon in coupons:
+			coupon.rule = rule_id2rule[coupon.context['db_model'].coupon_rule_id]
+
+		return coupons
 
 	def refund(self):
 		"""

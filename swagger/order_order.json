@@ -217,6 +217,20 @@
 																	"type": "boolean",
 																	"description": "改价金额"
 																},
+																"extra_coupon_info":{
+																	"description":"额外的优惠券信息",
+																	"type":"object",
+																	"properties":{
+																		"bid":{
+																			"description":"优惠码",
+																			"type":"string"
+																		},
+																		"type":{
+																			"description":"优惠券类型,通用券all_products_coupon / 多商品券 multi_products_coupon"
+																			"type":"string"
+																		}
+																	}
+																},
 																"delivery_items": {
 																	"description": "出货单列表",
 																	"type": "array",

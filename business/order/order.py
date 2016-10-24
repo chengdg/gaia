@@ -70,6 +70,7 @@ class Order(business_model.Model):
 		'status_logs',
 		'operation_logs',
 		'weizoom_card_info',
+		'extra_coupon_info',
 
 		'is_second_generation_order'  # 对于第二代的同步订单，db层面出货单就是订单，此类订单不会再产生，业务只处理显示
 	)
@@ -106,6 +107,8 @@ class Order(business_model.Model):
 			order.type = db_model.type
 			order.webapp_id = db_model.webapp_id
 			order.webapp_user_id = db_model.webapp_user_id
+
+			order.coupon_id = db_model.coupon_id
 
 			order.created_at = db_model.created_at
 			# 支付信息
@@ -152,6 +155,7 @@ class Order(business_model.Model):
 			order.context['db_model'] = db_model
 			order.context['corp'] = corp
 
+
 			order_ids.append(db_model.id)
 
 			orders.append(order)
@@ -166,6 +170,7 @@ class Order(business_model.Model):
 			with_status_logs = fill_options.get('with_status_logs')
 			with_operation_logs = fill_options.get('with_operation_logs')
 			with_weizoom_card = fill_options.get("with_weizoom_card")
+			with_coupon = fill_options.get("with_coupon")
 
 			if with_member:
 				webapp_user_id2member, _ = corp.member_repository.get_members_from_webapp_user_ids(webapp_user_ids)
@@ -213,7 +218,38 @@ class Order(business_model.Model):
 			if with_operation_logs:
 				Order.__fill_operation_logs(orders, order_ids)
 
+			if with_coupon:
+				Order.__fill_coupon(orders, order_ids)
+
 		return orders
+
+	@staticmethod
+	def __fill_coupon(orders, order_ids):
+		corp = orders[0].context['corp']
+		coupon_ids = [order.coupon_id for order in orders if order.coupon_id]
+		print('----1', coupon_ids)
+		coupons = corp.coupon_repository.get_coupon_by_ids(coupon_ids)
+
+		id2coupon = {coupon.id: coupon for coupon in coupons}
+
+		print('----2',id2coupon)
+
+		for order in orders:
+			if order.coupon_id:
+				coupon = id2coupon[order.coupon_id]
+				order.extra_coupon_info = {
+					'bid': coupon.bid,
+					'id': coupon.id,
+					'type': coupon.rule.type
+
+				}
+
+			else:
+				order.extra_coupon_info = {
+					'bid': '',
+					'id': '',
+					'type': ''
+				}
 
 	@staticmethod
 	def __fill_weizoom_card(orders, order_ids):
@@ -340,7 +376,6 @@ class Order(business_model.Model):
 					'total': 0,
 				}
 
-
 	def __get_total_origin_product_price(self):
 
 		total_origin_product_price = 0
@@ -350,7 +385,6 @@ class Order(business_model.Model):
 				total_origin_product_price += product.total_origin_price
 
 		return total_origin_product_price
-
 
 	@staticmethod
 	def __fill_full_money_info(orders, order_ids):
