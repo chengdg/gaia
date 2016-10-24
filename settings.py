@@ -169,3 +169,5 @@ BDD_SERVER2PORT = {
     'weizoom_card': 8171,
     'apiserver': 8172
 }
+
+PROMOTION_RESULT_VERSION = '2' #促销结果数据版本号
