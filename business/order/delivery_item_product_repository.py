@@ -131,7 +131,7 @@ class DeliveryItemProductRepository(business_model.Model):
 				# type种类:flash_sale、integral_sale、premium_sale
 				promotion_info['type'] = promotion.promotion_type
 			else:
-				promotion_result = {}
+				promotion_info = {}
 
 			delivery_item_product = DeliveryItemProduct()
 			delivery_item_product.name = product.name
@@ -158,7 +158,7 @@ class DeliveryItemProductRepository(business_model.Model):
 					if r.product_model_name == custom_model.name:
 						delivery_item_product.product_model_name_texts = []
 						for value in custom_model.property_values:
-							delivery_item_product.product_model_names.append(value['name'])
+							delivery_item_product.product_model_name_texts.append(value['name'])
 						break
 			delivery_item_product.thumbnails_url = product.thumbnails_url
 			delivery_item_product.is_deleted = product.is_deleted
@@ -167,10 +167,10 @@ class DeliveryItemProductRepository(business_model.Model):
 			if promotion and promotion.promotion_type == 'premium_sale':
 				# 将premium_product转换为order product
 
-				db_promotion_result_version = promotion_result.get('version', '0')
+				db_promotion_result_version = db_promotion_result.get('version', '0')
 
 				# 兼容weapp少量遗留订单产生错误数据，使得手机端和后台显示一致
-				if not promotion_result.get('premium_products'):
+				if not db_promotion_result.get('premium_products'):
 					continue
 				for premium_product in db_promotion_result['premium_products']:
 					premium_delivery_item_product = DeliveryItemProduct()
