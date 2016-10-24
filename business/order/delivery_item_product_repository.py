@@ -92,12 +92,14 @@ class DeliveryItemProductRepository(business_model.Model):
 		product_ids = [p.product_id for p in ohs_db_model_list]
 
 		products = self.corp.product_pool.get_products_by_ids(product_ids,
-		                                                      {"with_product_model": True, "with_property": True,"with_model_property_info":True})
+		                                                      {"with_product_model": True, "with_property": True,
+		                                                       "with_model_property_info": True})
 		product_id2product = {p.id: p for p in products}
 
 		origin_order_ids = [delivery_item.origin_order_id for delivery_item in delivery_items]
 
-		id2promotion = {r.promotion_id: r for r in mall_models.OrderHasPromotion.select().dj_where(order_id__in=origin_order_ids)}
+		id2promotion = {r.promotion_id: r for r in
+		                mall_models.OrderHasPromotion.select().dj_where(order_id__in=origin_order_ids)}
 
 		# [compatibility]: 兼容apiserver产生的出货单的order_has_prduct时候，total_price和price写入的采购价
 		origin_ohs_list = mall_models.OrderHasProduct.select().dj_where(order_id__in=origin_order_ids)
@@ -112,15 +114,24 @@ class DeliveryItemProductRepository(business_model.Model):
 
 		delivery_item_products = []
 		for r in ohs_db_model_list:
+
+			promotion_info = {
+				'type': '',
+				'integral_money': 0,
+				'integral_count': 0,
+				'grade_discount_money': 0,
+				'promotion_saved_money': 0
+			}
+
 			product = product_id2product[r.product_id]
 
 			promotion = id2promotion.get(r.promotion_id, None)
 			if promotion:
-				promotion_result = json.loads(promotion.promotion_result_json)
+				db_promotion_result = json.loads(promotion.promotion_result_json)
 				# type种类:flash_sale、integral_sale、premium_sale
-				promotion_result['type'] = promotion.promotion_type
+				promotion_info['type'] = promotion.promotion_type
 			else:
-				promotion_result = None
+				promotion_result = {}
 
 			delivery_item_product = DeliveryItemProduct()
 			delivery_item_product.name = product.name
@@ -141,40 +152,44 @@ class DeliveryItemProductRepository(business_model.Model):
 			delivery_item_product.context['index'] = r.id
 
 			if r.product_model_name == 'standard':
-				delivery_item_product.product_model_names = []
+				delivery_item_product.product_model_name_texts = []
 			else:
 				for custom_model in product.custom_models:
 					if r.product_model_name == custom_model.name:
-						delivery_item_product.product_model_names = []
+						delivery_item_product.product_model_name_texts = []
 						for value in custom_model.property_values:
 							delivery_item_product.product_model_names.append(value['name'])
 						break
 			delivery_item_product.thumbnails_url = product.thumbnails_url
 			delivery_item_product.is_deleted = product.is_deleted
 
-			delivery_item_product.promotion_result = promotion_result
-
 			promotion = id2promotion.get(r.promotion_id, None)
 			if promotion and promotion.promotion_type == 'premium_sale':
-				#将premium_product转换为order product
-				promotion_result = json.loads(promotion.promotion_result_json)
-				promotion_result_version = promotion_result.get('version', '0')
+				# 将premium_product转换为order product
+
+				db_promotion_result_version = promotion_result.get('version', '0')
 
 				# 兼容weapp少量遗留订单产生错误数据，使得手机端和后台显示一致
 				if not promotion_result.get('premium_products'):
 					continue
-				for premium_product in promotion_result['premium_products']:
+				for premium_product in db_promotion_result['premium_products']:
 					premium_delivery_item_product = DeliveryItemProduct()
 					premium_delivery_item_product.name = premium_product['name']
-					if promotion_result_version == settings.PROMOTION_RESULT_VERSION:
+					if db_promotion_result_version == settings.PROMOTION_RESULT_VERSION:
 						premium_delivery_item_product.count = premium_product['premium_count']
-						premium_delivery_item_product.thumbnails_url = '%s%s' % (settings.IMAGE_HOST, premium_product['thumbnails_url']) if premium_product['thumbnails_url'].find('http') == -1 else premium_product['thumbnails_url']
+						premium_delivery_item_product.thumbnails_url = '%s%s' % (
+							settings.IMAGE_HOST, premium_product['thumbnails_url']) if premium_product[
+								                                                           'thumbnails_url'].find(
+							'http') == -1 else premium_product['thumbnails_url']
 					else:
 						premium_delivery_item_product.count = premium_product['count']
-						premium_delivery_item_product.thumbnails_url = '%s%s' % (settings.IMAGE_HOST, premium_product['thumbnails_url']) if premium_product['thumbnails_url'].find('http') == -1 else premium_product['thumbnails_url']
+						premium_delivery_item_product.thumbnails_url = '%s%s' % (
+							settings.IMAGE_HOST, premium_product['thumbnails_url']) if premium_product[
+								                                                           'thumbnails_url'].find(
+							'http') == -1 else premium_product['thumbnails_url']
 					premium_delivery_item_product.id = premium_product['id']
 
-					premium_delivery_item_product.promotion_result = {
+					premium_delivery_item_product.promotion_info = {
 						'type_name': 'premium_sale:premium_product',
 						'type': 'premium_sale:premium_product'
 					}
@@ -185,9 +200,26 @@ class DeliveryItemProductRepository(business_model.Model):
 					premium_delivery_item_product.origin_price = 0
 					premium_delivery_item_product.sale_price = 0
 					premium_delivery_item_product.total_origin_price = 0
-					premium_delivery_item_product.product_model_names = []
+					premium_delivery_item_product.product_model_name_texts = []
 
 					delivery_item_products.append(premium_delivery_item_product)
+
+			# 填充限时抢购金额
+			if promotion and promotion.promotion_type == "flash_sale":
+				promotion_info['promotion_saved_money'] = db_promotion_result['promotion_saved_money']
+
+			# 填充会员等级价金额
+			if r.grade_discounted_money:
+				promotion_info['grade_discounted_money'] = r.grade_discounted_money
+
+			# 填充积分应用
+			integral_product_info = db_promotion_result.get('integral_product_info')
+			if integral_product_info:
+				if integral_product_info == str(delivery_item_product.id) + '-' + delivery_item_product.product_model_name:
+					promotion_info['integral_money'] = promotion.integral_money
+					promotion_info['integral_count'] = promotion.integral_count
+
+			delivery_item_product.promotion_info = promotion_info
 
 			# delivery_item_product_info = {
 			# 	'rid': r.id,
@@ -214,6 +246,7 @@ class DeliveryItemProductRepository(business_model.Model):
 
 		delivery_item_id2products = {}
 
+		# 把delivery_item_product分配给相应出货单
 		for product in delivery_item_products:
 			if product.delivery_item_id in delivery_item_id2products:
 				delivery_item_id2products[product.delivery_item_id].append(product)
@@ -223,4 +256,5 @@ class DeliveryItemProductRepository(business_model.Model):
 		for delivery_item in delivery_items:
 			delivery_item.products = delivery_item_id2products[delivery_item.id]
 
+			# 排序
 			delivery_item.products.sort(lambda x, y: cmp(x.context["index"], y.context["index"]))

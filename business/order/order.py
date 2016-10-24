@@ -72,6 +72,8 @@ class Order(business_model.Model):
 		'weizoom_card_info',
 		'extra_coupon_info',
 
+		'integral_type',  # 订单中使用积分的类型。'order':整单抵扣,'product':积分应用
+
 		'is_second_generation_order'  # 对于第二代的同步订单，db层面出货单就是订单，此类订单不会再产生，业务只处理显示
 	)
 
@@ -155,7 +157,6 @@ class Order(business_model.Model):
 			order.context['db_model'] = db_model
 			order.context['corp'] = corp
 
-
 			order_ids.append(db_model.id)
 
 			orders.append(order)
@@ -171,6 +172,7 @@ class Order(business_model.Model):
 			with_operation_logs = fill_options.get('with_operation_logs')
 			with_weizoom_card = fill_options.get("with_weizoom_card")
 			with_coupon = fill_options.get("with_coupon")
+			with_extra_promotion_info = fill_options.get("extra_promotion_info")
 
 			if with_member:
 				webapp_user_id2member, _ = corp.member_repository.get_members_from_webapp_user_ids(webapp_user_ids)
@@ -221,18 +223,39 @@ class Order(business_model.Model):
 			if with_coupon:
 				Order.__fill_coupon(orders, order_ids)
 
+			if with_extra_promotion_info:
+				# 需要填充product
+				Order.__fill_extra_promotion(orders, order_ids)
+
 		return orders
+
+	@staticmethod
+	def __fill_extra_promotion(orders, order_ids):
+		"""
+
+		@param orders:
+		@param order_ids:
+		@return:
+		"""
+		# 判断订单的积分是整单抵扣还是积分应用
+		for order in orders:
+			for delivery_item in order.delivery_items:
+				if not order.integral_type:
+					for product in delivery_item.products:
+						if not order.integral_type:
+							if product.promotion_info['integral_count']:
+								order.integral_type = 'product'
+
+			if order.integral_type != 'product' and order.integral:
+				order.integral_type = 'order'
 
 	@staticmethod
 	def __fill_coupon(orders, order_ids):
 		corp = orders[0].context['corp']
 		coupon_ids = [order.coupon_id for order in orders if order.coupon_id]
-		print('----1', coupon_ids)
 		coupons = corp.coupon_repository.get_coupon_by_ids(coupon_ids)
 
 		id2coupon = {coupon.id: coupon for coupon in coupons}
-
-		print('----2',id2coupon)
 
 		for order in orders:
 			if order.coupon_id:

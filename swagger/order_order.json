@@ -132,6 +132,10 @@
 																	"type": "boolean",
 																	"description": "是否是首单"
 																},
+																"integral_type": {
+																	"type": "string",
+																	"description": "订单中使用的积分类型，'order':整单抵扣,'product':积分应用"
+																},
 																"refunding_info": {
 																	"type": "object",
 																	"properties": {
@@ -217,17 +221,17 @@
 																	"type": "boolean",
 																	"description": "改价金额"
 																},
-																"extra_coupon_info":{
-																	"description":"额外的优惠券信息",
-																	"type":"object",
-																	"properties":{
-																		"bid":{
-																			"description":"优惠码",
-																			"type":"string"
+																"extra_coupon_info": {
+																	"description": "额外的优惠券信息",
+																	"type": "object",
+																	"properties": {
+																		"bid": {
+																			"description": "优惠码",
+																			"type": "string"
 																		},
-																		"type":{
-																			"description":"优惠券类型,通用券all_products_coupon / 多商品券 multi_products_coupon",
-																			"type":"string"
+																		"type": {
+																			"description": "优惠券类型,通用券all_products_coupon / 多商品券 multi_products_coupon",
+																			"type": "string"
 																		}
 																	}
 																},
@@ -310,8 +314,8 @@
 																						"type": "boolean",
 																						"description": "是否已经退款完成"
 																					},
-																					"total_can_refund":{
-																						"type":"number",
+																					"total_can_refund": {
+																						"type": "number",
 																						"description": "出货单应退总额"
 																					}
 																				}
@@ -346,18 +350,34 @@
 																							"type": "string",
 																							"description": "商品名"
 																						},
-																						"product_model_names": {
+																						"product_model_name_texts": {
 																							"type": "array",
 																							"items": {
 																								"type": "string"
 																							}
 																						},
-																						"promotion_result": {
+																						"promotion_info": {
 																							"type": "object",
+																							"description": "该商品的促销信息",
 																							"properties": {
-																								"description": "促销结果，如果没促销则为null",
-																								"name": {
-																									"type": "促销类型"
+																								"type": {
+																									"description": "促销类型，flash_sale、integral_sale、premium_sale",
+																									"type": "string"
+																								},
+																								"integral_money": {
+																									"description": "积分抵扣金额",
+																									"type": "number"
+																								},
+																								"integral_count": {
+																									"description": "使用积分数",
+																									"type": "number"
+																								},
+																								"grade_discount_money": {
+																									"description": "会员等级价优惠金额",
+																									"type": "number"
+																								},
+																								"promotion_saved_money": {
+																									"description": "促销优惠的金额，仅用于限时抢购"
 																								}
 																							}
 																						},
@@ -783,18 +803,34 @@
 																			"type": "string",
 																			"description": "商品名"
 																		},
-																		"product_model_names": {
+																		"product_model_name_texts": {
 																			"type": "array",
 																			"items": {
 																				"type": "string"
 																			}
 																		},
-																		"promotion_result": {
+																		"promotion_info": {
 																			"type": "object",
+																			"description": "该商品的促销信息",
 																			"properties": {
-																				"description": "促销结果，如果没促销则为null",
-																				"name": {
-																					"type": "促销类型"
+																				"type": {
+																					"description": "促销类型，flash_sale、integral_sale、premium_sale",
+																					"type": "string"
+																				},
+																				"integral_money": {
+																					"description": "积分抵扣金额",
+																					"type": "number"
+																				},
+																				"integral_count": {
+																					"description": "使用积分数",
+																					"type": "number"
+																				},
+																				"grade_discount_money": {
+																					"description": "会员等级价优惠金额",
+																					"type": "number"
+																				},
+																				"promotion_saved_money": {
+																					"description": "促销优惠的金额，仅用于限时抢购"
 																				}
 																			}
 																		},

@@ -947,7 +947,7 @@ class OrderHasProduct(models.Model):
 	created_at = models.DateTimeField(auto_now_add=True)  # 添加时间
 	promotion_id = models.IntegerField(default=0)  # 促销信息id
 	promotion_money = models.FloatField(default=0.0)  # 促销抵扣金额
-	grade_discounted_money = models.FloatField(default=0.0)  # 折扣金额
+	grade_discounted_money = models.FloatField(default=0.0)  # 折扣金额,会员等级价折扣金额
 	integral_sale_id = models.IntegerField(default=0) #使用的积分应用的id
 	origin_order_id = models.IntegerField(default=0) # 原始(母)订单id，用于微众精选拆单
 	purchase_price = models.FloatField(default=0)  # 采购单价

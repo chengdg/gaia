@@ -30,8 +30,8 @@ class DeliveryItemProduct(business_model.Model):
 		'thumbnails_url',
 		'is_deleted',
 		'total_origin_price',
-		'promotion_result',
-		'product_model_names',
+		'promotion_info',
+		'product_model_name_texts',
 		'product_model_name'
 
 	)
