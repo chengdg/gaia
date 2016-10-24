@@ -201,20 +201,19 @@ class DeliveryItem(business_model.Model):
 			delivery_items=delivery_items,
 			with_premium_sale=True)
 
-
-		# delivery_items_products = delivery_item_product_repository.get_products_for_delivery_items(
-		# 	delivery_items=delivery_items,
-		# 	with_premium_sale=True)
-		#
-		# delivery_item_id2products = {}
-		# for product in delivery_items_products:
-		# 	if product.delivery_item_id in delivery_item_id2products:
-		# 		delivery_item_id2products[product.delivery_item_id].append(product)
-		# 	else:
-		# 		delivery_item_id2products[product.delivery_item_id] = [product]
-		#
-		# for delivery_item in delivery_items:
-		# 	delivery_item.products = delivery_item_id2products[delivery_item.id]
+	# delivery_items_products = delivery_item_product_repository.get_products_for_delivery_items(
+	# 	delivery_items=delivery_items,
+	# 	with_premium_sale=True)
+	#
+	# delivery_item_id2products = {}
+	# for product in delivery_items_products:
+	# 	if product.delivery_item_id in delivery_item_id2products:
+	# 		delivery_item_id2products[product.delivery_item_id].append(product)
+	# 	else:
+	# 		delivery_item_id2products[product.delivery_item_id] = [product]
+	#
+	# for delivery_item in delivery_items:
+	# 	delivery_item.products = delivery_item_id2products[delivery_item.id]
 
 
 	@staticmethod
@@ -289,21 +288,26 @@ class DeliveryItem(business_model.Model):
 	@staticmethod
 	def __fill_supplier(delivery_items, delivery_item_ids):
 		# todo 性能优化
+
+
+		supplier_ids = [delivery_item.context['db_model'].supplier for delivery_item in delivery_items if
+		                delivery_item.context['db_model'].supplier]
+
+		corp = delivery_items[0].context['corp']
+
+		suppliers = corp.supplier_repository.get_suppliers_by_ids(supplier_ids)
+
+		id2supplier = {supplier.id: supplier for supplier in suppliers}
+
 		for delivery_item in delivery_items:
 			db_model = delivery_item.context['db_model']
-			supplier = None
 			if db_model.supplier_user_id:
-				supplier = Supplier.from_id({
-					'id': db_model.supplier_user_id,
-					'type': 'user'
-				})
+				delivery_item.supplier_info = {
+					'name': 'todo',  # todo
+					'type': 'todo'
+				}
 			elif db_model.supplier:
-				supplier = Supplier.from_id({
-					'id': db_model.supplier_user_id,
-					'type': 'supplier'
-				})
-
-			if supplier:
+				supplier = id2supplier.get(db_model.supplier, None)
 				delivery_item.supplier_info = {
 					'name': supplier.name,
 					'type': supplier.type
