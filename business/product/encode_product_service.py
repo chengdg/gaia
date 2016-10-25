@@ -188,6 +188,14 @@ class EncodeProductService(business_model.Service):
 
 		return datas
 
+	def get_labels(self, product):
+		"""
+		获取商品标签的集合
+		"""
+		datas = []
+		for label in product.labels:
+			datas.append(label.name)
+		return datas
 
 	def encode(self, product):
 		pass

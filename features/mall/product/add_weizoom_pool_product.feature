@@ -140,7 +140,7 @@ Scenario:1 创建供应商供应的商品
 		}]
 		"""
 
-@mall @mall.product @mall.product_management @hermes @wip
+@mall @mall.product @mall.product_management @hermes @wip @eugeneTMP
 Scenario:1 创建供应商供应的商品
 	job添加商品后：
 	1、能获得商品详情

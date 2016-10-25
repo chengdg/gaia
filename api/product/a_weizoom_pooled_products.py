@@ -31,7 +31,8 @@ class AWeizoomPooledProducts(api_resource.ApiResource):
 			'with_model_property_info': True,
 			'with_shelve_status': True,
 			'with_supplier_info': True,
-			'with_classification': True
+			'with_classification': True,
+			'with_product_label': True,
 		}
 		options = {
 			'order_by_display_index': True
@@ -52,6 +53,7 @@ class AWeizoomPooledProducts(api_resource.ApiResource):
 			supplier = encode_product_service.get_supplier_info(product)
 			classifications = encode_product_service.get_classifications(product)
 			image_info = encode_product_service.get_image_info(product)
+			labels = encode_product_service.get_labels(product)
 
 			data = {
 				"id": product.id,
@@ -62,7 +64,8 @@ class AWeizoomPooledProducts(api_resource.ApiResource):
 				"bar_code": base_info['bar_code'],
 				"display_index": base_info['display_index'],
 				'supplier': supplier,
-				'classifications': classifications
+				'classifications': classifications,
+				'labels': labels
 			}
 
 			if product.is_use_custom_model:

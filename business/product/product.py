@@ -48,6 +48,7 @@ class Product(business_model.Model):
 		'categories',
 		'id2category',
 		'properties',
+		'labels',
 
 		#供应商信息
 		'supplier_id',

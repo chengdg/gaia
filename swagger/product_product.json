@@ -962,8 +962,15 @@
                 },
                 "models_info": {
                     "$ref": "#/definitions/ModelsInfo"
+                },
+                "labels": {
+                    "$ref": "#/definitions/Lables"
                 }
             }
+        },
+        "Lables": {
+            "type": "array",
+            "description": "标签名列表"
         }
     }
 }

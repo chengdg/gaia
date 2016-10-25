@@ -29,6 +29,7 @@ from business.mall.config.mall_config_repository import MallConfigRepository
 from business.mall.notify.notification_repository import NotificationRepository
 from business.mall.supplier.supplier_repository import SupplierRepository
 from business.mall.product_classification_repository import ProductClassificationRepository
+from business.mall.product_label_repository import ProductLabelRepository
 
 class Corporation(business_model.Model):
 	"""
@@ -176,3 +177,7 @@ class Corporation(business_model.Model):
 	@property
 	def limit_zone_repository(self):
 		return LimitZoneRepository(self)
+
+	@property
+	def product_label_repository(self):
+		return ProductLabelRepository(self)
