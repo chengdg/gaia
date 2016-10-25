@@ -130,8 +130,6 @@ class DeliveryItemProductRepository(business_model.Model):
 				db_promotion_result = json.loads(promotion.promotion_result_json)
 				# type种类:flash_sale、integral_sale、premium_sale
 				promotion_info['type'] = promotion.promotion_type
-			else:
-				promotion_info = {}
 
 			delivery_item_product = DeliveryItemProduct()
 			delivery_item_product.name = product.name
