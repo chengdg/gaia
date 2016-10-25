@@ -130,8 +130,6 @@ class DeliveryItemProductRepository(business_model.Model):
 				db_promotion_result = json.loads(promotion.promotion_result_json)
 				# type种类:flash_sale、integral_sale、premium_sale
 				promotion_info['type'] = promotion.promotion_type
-			else:
-				promotion_info = {}
 
 			delivery_item_product = DeliveryItemProduct()
 			delivery_item_product.name = product.name
@@ -190,8 +188,11 @@ class DeliveryItemProductRepository(business_model.Model):
 					premium_delivery_item_product.id = premium_product['id']
 
 					premium_delivery_item_product.promotion_info = {
-						'type_name': 'premium_sale:premium_product',
-						'type': 'premium_sale:premium_product'
+						'type': 'premium_sale:premium_product',
+						'integral_money': 0,
+						'integral_count': 0,
+						'grade_discount_money': 0,
+						'promotion_saved_money': 0
 					}
 
 					premium_delivery_item_product.delivery_item_id = r.order_id
@@ -205,19 +206,20 @@ class DeliveryItemProductRepository(business_model.Model):
 					delivery_item_products.append(premium_delivery_item_product)
 
 			# 填充限时抢购金额
-			if promotion and promotion.promotion_type == "flash_sale":
-				promotion_info['promotion_saved_money'] = db_promotion_result['promotion_saved_money']
+			if promotion:
+				if promotion.promotion_type == "flash_sale":
+					promotion_info['promotion_saved_money'] = db_promotion_result['promotion_saved_money']
 
-			# 填充会员等级价金额
-			if r.grade_discounted_money:
-				promotion_info['grade_discounted_money'] = r.grade_discounted_money
+				# 填充会员等级价金额
+				if r.grade_discounted_money:
+					promotion_info['grade_discounted_money'] = r.grade_discounted_money
 
-			# 填充积分应用
-			integral_product_info = db_promotion_result.get('integral_product_info')
-			if integral_product_info:
-				if integral_product_info == str(delivery_item_product.id) + '-' + delivery_item_product.product_model_name:
-					promotion_info['integral_money'] = promotion.integral_money
-					promotion_info['integral_count'] = promotion.integral_count
+				# 填充积分应用
+				integral_product_info = db_promotion_result.get('integral_product_info')
+				if integral_product_info:
+					if integral_product_info == str(delivery_item_product.id) + '-' + delivery_item_product.product_model_name:
+						promotion_info['integral_money'] = promotion.integral_money
+						promotion_info['integral_count'] = promotion.integral_count
 
 			delivery_item_product.promotion_info = promotion_info
 

@@ -60,14 +60,13 @@ class OrderRepository(business_model.Model):
 
 	def __get_db_models_for_corp(self):
 		webapp_id = self.corp.webapp_id
-		webapp_type = self.corp.type
 		user_id = self.corp.id
 		sync_able_status_list = [mall_models.ORDER_STATUS_PAYED_SUCCESSED,
 		                         mall_models.ORDER_STATUS_PAYED_NOT_SHIP,
 		                         mall_models.ORDER_STATUS_PAYED_SHIPED,
 		                         mall_models.ORDER_STATUS_SUCCESSED]
 
-		if webapp_type:
+		if self.corp.type != 'normal' and self.corp.type != 'multi_shop':
 			db_models = mall_models.Order.select().dj_where(webapp_id=webapp_id, origin_order_id__lte=0,
 			                                                webapp_user_id__gt=0)
 		else:
