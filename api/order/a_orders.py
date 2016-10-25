@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import json
 
 from eaglet.core import api_resource
 from eaglet.core import watchdog
@@ -16,7 +17,7 @@ class AOrderList(api_resource.ApiResource):
 
 	@param_required(['corp'])
 	def get(args):
-		filter_values = args.get('filter_values', '')
+		filters = json.loads(args.get('filters', '{}'))
 
 		corp = args['corp']
 		order_repository = corp.order_repository
@@ -39,7 +40,7 @@ class AOrderList(api_resource.ApiResource):
 			}
 
 		}
-		pageinfo, orders = order_repository.get_orders(filter_values, target_page, fill_options)
+		pageinfo, orders = order_repository.get_orders(filters, target_page, fill_options)
 
 		order_dicts = [order.to_dict() for order in orders]
 		return {
