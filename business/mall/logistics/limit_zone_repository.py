@@ -14,7 +14,6 @@ class LimitZoneRepository(busniess_model.Service):
 		limit_zone_models = mall_models.ProductLimitZoneTemplate.select().dj_where(owner_id=self.corp.id).order_by(-mall_models.ProductLimitZoneTemplate.id)
 		datas = []
 		for model in limit_zone_models:
-			print model.id, "++++++"
 			limit_zone = LimitZone(model)
 			data = {
 				"id": limit_zone.id,

@@ -777,6 +777,15 @@
                 "unified_postage_money": {
                     "type": "number",
                     "description": "当postage_type为unified_postage_type时，指定运费的数值"
+                },
+                "limit_zone_type": {
+                    "type": "number",
+                    "description": "限定区域类型",
+                    "format": "0不限制 1禁售 2仅售"
+                },
+                "limit_zone_id": {
+                    "type": "number",
+                    "description": "限定区域id"
                 }
             }
         },

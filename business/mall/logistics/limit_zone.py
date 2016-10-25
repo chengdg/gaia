@@ -101,7 +101,6 @@ class LimitZone(busness_model.Model):
 					'city_name': city.name
 				})
 			provinces.append(province_info)
-			print province_info
 			if province_info['zone_name'] not in zone_names:
 				zone_names.append(province_info['zone_name'])
 		limit_zone_detail = []

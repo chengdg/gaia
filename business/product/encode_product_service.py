@@ -131,6 +131,8 @@ class EncodeProductService(business_model.Service):
 		data = {
 			'postage_type': product.postage_type,
 			'unified_postage_money': product.unified_postage_money,
+			'limit_zone_type': product.limit_zone_type,
+			'limit_zone_id': product.limit_zone
 		}
 
 		return data
@@ -185,6 +187,7 @@ class EncodeProductService(business_model.Service):
 				})
 
 		return datas
+
 
 	def encode(self, product):
 		pass

@@ -111,5 +111,4 @@ def step_impl(context, user, name):
     url = "/mall/limit_zone/?_method=delete"
 
     response = context.client.post(url, {'id': template_id, 'corp_id': context.corp.id})
-    print response
     bdd_util.assert_api_call_success(response)

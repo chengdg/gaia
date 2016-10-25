@@ -64,6 +64,20 @@ class AProductCreationOption(api_resource.ApiResource):
 
 		return datas
 
+	@staticmethod
+	def __load_limit_zones(corp):
+		"""
+		获取限定区域信息
+		"""
+		limit_zones = corp.limit_zone_repository.get_limit_zones()
+		datas = []
+		for limit_zone in limit_zones:
+			print limit_zone
+			datas.append({
+				"id": limit_zone['id'],
+				"name": limit_zone['name']
+			})
+		return datas
 
 	@param_required(['corp_id'])
 	def get(args):
@@ -81,5 +95,8 @@ class AProductCreationOption(api_resource.ApiResource):
 
 		#分类信息
 		config['categories'] = AProductCreationOption.__load_categories(corp)
+
+		#限定区域信息
+		config['limit_zones'] = AProductCreationOption.__load_limit_zones(corp)
 
 		return config
