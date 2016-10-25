@@ -203,19 +203,20 @@ class DeliveryItemProductRepository(business_model.Model):
 					delivery_item_products.append(premium_delivery_item_product)
 
 			# 填充限时抢购金额
-			if promotion and promotion.promotion_type == "flash_sale":
-				promotion_info['promotion_saved_money'] = db_promotion_result['promotion_saved_money']
+			if promotion:
+				if promotion.promotion_type == "flash_sale":
+					promotion_info['promotion_saved_money'] = db_promotion_result['promotion_saved_money']
 
-			# 填充会员等级价金额
-			if r.grade_discounted_money:
-				promotion_info['grade_discounted_money'] = r.grade_discounted_money
+				# 填充会员等级价金额
+				if r.grade_discounted_money:
+					promotion_info['grade_discounted_money'] = r.grade_discounted_money
 
-			# 填充积分应用
-			integral_product_info = db_promotion_result.get('integral_product_info')
-			if integral_product_info:
-				if integral_product_info == str(delivery_item_product.id) + '-' + delivery_item_product.product_model_name:
-					promotion_info['integral_money'] = promotion.integral_money
-					promotion_info['integral_count'] = promotion.integral_count
+				# 填充积分应用
+				integral_product_info = db_promotion_result.get('integral_product_info')
+				if integral_product_info:
+					if integral_product_info == str(delivery_item_product.id) + '-' + delivery_item_product.product_model_name:
+						promotion_info['integral_money'] = promotion.integral_money
+						promotion_info['integral_count'] = promotion.integral_count
 
 			delivery_item_product.promotion_info = promotion_info
 
