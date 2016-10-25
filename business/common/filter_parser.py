@@ -25,6 +25,8 @@ class FilterParser(object):
             return '%s__lte' % name
         elif match_strategy == 'range':
             return '%s__range' % name
+        elif match_strategy == 'gt':
+            return '%s__gt' % name
         else:
             return name
 
