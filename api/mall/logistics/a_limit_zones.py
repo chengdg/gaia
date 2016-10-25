@@ -11,20 +11,10 @@ class ALimitZones(api_resource.ApiResource):
 	app = 'mall'
 	resource = 'limit_zones'
 
-	@param_required(['corp'])
+	@param_required(['corp_id'])
 	def get(args):
 		corp = args['corp']
 		limit_zones = corp.limit_zone_repository.get_limit_zones()
-		datas = []
-		for limit_zone in limit_zones:
-			datas.append(
-				{
-					'id': limit_zone.id,
-					'name': limit_zone.name,
-					'limit_provinces': limit_zone.provinces.split(','),
-					'limit_cities': limit_zone.cities.split(',')
-				}
-			)
-		return datas
+		return {"limit_zones": limit_zones}
 
 

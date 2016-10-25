@@ -10,7 +10,7 @@ import a_express_delivery_display_index
 import a_express_deliveries
 import a_express_delivery_companies
 
-import a_limit_zone.py
-import a_limit_zones.py
+import a_limit_zone
+import a_limit_zones
 
 

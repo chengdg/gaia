@@ -130,7 +130,7 @@ class EncodeProductService(business_model.Service):
 	def get_logistics_info(self, product):
 		data = {
 			'postage_type': product.postage_type,
-			'unified_postage_money': product.unified_postage_money
+			'unified_postage_money': product.unified_postage_money,
 		}
 
 		return data

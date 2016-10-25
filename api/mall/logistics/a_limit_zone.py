@@ -13,17 +13,11 @@ class ALimitZone(api_resource.ApiResource):
 	app = 'mall'
 	resource = 'limit_zone'
 
-	@param_required(['corp', 'id'])
+	@param_required(['corp_id', 'id'])
 	def get(args):
 		corp = args['corp']
 		limit_zone = corp.limit_zone_repository.get_limit_zone(args['id'])
-		data = {
-			'id': limit_zone.id,
-			'name': limit_zone.name,
-			'limit_provinces': limit_zone.provinces.split(','),
-			'limit_cities': limit_zone.cities.split(',')
-		}
-		return data
+		return limit_zone
 
 	@param_required(['corp_id', 'name', 'limit_provinces', 'limit_cities'])
 	def put(args):
@@ -31,10 +25,9 @@ class ALimitZone(api_resource.ApiResource):
 		name = args['name']
 		limit_provinces = json.loads(args.get('limit_provinces', '[]'))
 		limit_cities = json.loads(args('limit_cities', '[]'))
-		LimitZone.create({'corp_id': corp.id, 'name': name, 'limit_provinces': limit_provinces, 'limit_cities': limit_cities})
+		LimitZone.create(
+			{'corp_id': corp.id, 'name': name, 'limit_provinces': limit_provinces, 'limit_cities': limit_cities})
 		return []
-
-
 
 	@param_required(['corp_id', 'id', 'name', 'limit_provinces', 'limit_cities'])
 	def post(args):
@@ -43,12 +36,17 @@ class ALimitZone(api_resource.ApiResource):
 		name = args['name']
 		limit_provinces = json.loads(args.get('limit_provinces', '[]'))
 		limit_cities = json.loads(args('limit_cities', '[]'))
-		LimitZone.update(
-			{'corp_id': corp.id, 'id': id, 'name': name, 'limit_provinces': limit_provinces, 'limit_cities': limit_cities})
+		LimitZone.update({
+				'corp_id': corp.id,
+				'id': id,
+				'name': name,
+				'limit_provinces': limit_provinces,
+				'limit_cities': limit_cities
+			})
 		return []
 
-	@parm_required(['corp', 'id'])
+	@param_required(['corp', 'id'])
 	def delete(args):
 		corp = args['corp']
 		corp.limit_zone_repository.delete_limit_zone(args['id'])
-
+		return []

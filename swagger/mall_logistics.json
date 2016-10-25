@@ -208,6 +208,152 @@
                     }
                 }
             }
+        },
+        "/mall/limit_zones/": {
+            "get": {
+                "description": "获取限定区域列表",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "limit_zone"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "title": "limit_zones",
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/LimitZones"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/mall/limit_zone": {
+            "get": {
+                "description": "获取指定的限定区域详情",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "limit zone的id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "limit_zone"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/LimitZone"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "创建限定区域详情",
+                "parameters": [
+                    {
+                        "name": "",
+                        "in": "body",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/NewLimitZone"
+                        }
+                    }
+                ],
+                "tags": [
+                    "limit zone"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            },
+            "post": {
+                "description": "修改运费配置详情",
+                "parameters": [
+                    {
+                        "name": "",
+                        "in": "body",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/UpdateLimitZone"
+                        }
+                    }
+                ],
+                "tags": [
+                    "limit zone"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            },
+            "delete": {
+                "description": "删除限定区域配置",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "type": "string",
+                        "required": true,
+                        "description": "待删除的限定区域配置的id"
+                    }
+                ],
+                "tags": [
+                    "logistics"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -400,6 +546,118 @@
                         "$ref": "#/definitions/FreeConfig"
                     },
                     "minItems": 0
+                }
+            }
+        },
+        "NewLimitZone": {
+            "type": "object",
+            "properties": {
+                "corp_id": {
+                    "type": "string",
+                    "description": ""
+                },
+                "name": {
+                    "type": "string",
+                    "description": "运费配置的名字"
+                },
+                "limit_provinces": {
+                    "type": "array"
+                },
+                "limit_cities": {
+                    "type": "array"
+                }
+            }
+        },
+        "UpdateLimitZone": {
+            "type": "object",
+            "properties": {
+                "corp_id": {
+                    "type": "string",
+                    "description": ""
+                },
+                "id": {
+                    "type": "string",
+                    "description": "限定区域的id"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "运费配置的名字"
+                },
+                "limit_provinces": {
+                    "type": "array"
+                },
+                "limit_cities": {
+                    "type": "array"
+                }
+            }
+        },
+        "LimitZones": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "number",
+                    "description": "id"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "限定区域配置的名字"
+                },
+                "limit_zone": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/LimitZone"
+                    },
+                    "minItems": 0
+                }
+            }
+        },
+        "LimitZone": {
+            "type": "object",
+            "properties": {
+                "zone_name": {
+                    "type": "string",
+                    "description": "省、市所在的地区的名称"
+                },
+                "provinces": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Province"
+                    },
+                    "minItems": 0
+                }
+            }
+        },
+        "Province": {
+            "zone_name": {
+                "type": "string",
+                "description": "省、市所在的地区的名称"
+            },
+            "province_id": {
+                "type": "number",
+                "description": "省、市id"
+            },
+            "province_name": {
+                "type": "string",
+                "description": "省、市名称"
+            },
+            "cities": {
+                "type": "array",
+                "items": {
+                    "$ref": "#/definitions/City"
+                },
+                "minItems": 0
+            }
+        },
+        "City": {
+            "type": "object",
+            "properties": {
+                "city_id": {
+                    "type": "number",
+                    "description": "城市id"
+                },
+                "city_name": {
+                    "type": "string",
+                    "description": "城市名称"
                 }
             }
         }
