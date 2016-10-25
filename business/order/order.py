@@ -372,22 +372,22 @@ class Order(business_model.Model):
 		for order in orders:
 			if order.is_weizoom_order:
 				order.refunding_info = {
-					'cash': sum([delivery_item.refund_info['cash'] for delivery_item in order.delivery_items if
-					             delivery_item.refund_info['finished']]),
+					'cash': sum([delivery_item.refunding_info['cash'] for delivery_item in order.delivery_items if
+					             delivery_item.refunding_info['finished']]),
 					'weizoom_card_money': sum(
-						[delivery_item.refund_info['weizoom_card_money'] for delivery_item in order.delivery_items if
-						 delivery_item.refund_info['finished']]),
+						[delivery_item.refunding_info['weizoom_card_money'] for delivery_item in order.delivery_items if
+						 delivery_item.refunding_info['finished']]),
 					'integral_money': sum(
-						[delivery_item.refund_info['integral_money'] for delivery_item in order.delivery_items if
-						 delivery_item.refund_info['finished']]),
+						[delivery_item.refunding_info['integral_money'] for delivery_item in order.delivery_items if
+						 delivery_item.refunding_info['finished']]),
 					'integral': sum(
-						[delivery_item.refund_info['integral'] for delivery_item in order.delivery_items if
-						 delivery_item.refund_info['finished']]),
+						[delivery_item.refunding_info['integral'] for delivery_item in order.delivery_items if
+						 delivery_item.refunding_info['finished']]),
 					'coupon_money': sum(
-						[delivery_item.refund_info['coupon_money'] for delivery_item in order.delivery_items if
-						 delivery_item.refund_info['finished']]),
-					'total': sum([delivery_item.refund_info['total'] for delivery_item in order.delivery_items if
-					              delivery_item.refund_info['finished']]),
+						[delivery_item.refunding_info['coupon_money'] for delivery_item in order.delivery_items if
+						 delivery_item.refunding_info['finished']]),
+					'total': sum([delivery_item.refunding_info['total'] for delivery_item in order.delivery_items if
+					              delivery_item.refunding_info['finished']]),
 				}
 			else:
 				order.refunding_info = {
