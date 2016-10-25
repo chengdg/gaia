@@ -52,7 +52,7 @@ class Corporation(business_model.Model):
 				self.type = 'normal'
 			elif _account_user_profile.webapp_type == account_model.WEBAPP_TYPE_WEIZOOM_MALL:
 				self.type = 'self_run'
-			elif _account_user_profile.webapp_type == account_model.WEBAPP_TYPE_WEIZOOM_MALL:
+			elif _account_user_profile.webapp_type == account_model.WEBAPP_TYPE_WEIZOOM:
 				self.type = 'weizoom_corp'
 			elif _account_user_profile.webapp_type == account_model.WEBAPP_TYPE_MULTI_SHOP:
 				self.type = 'multi_shop'
