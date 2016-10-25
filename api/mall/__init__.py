@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import a_config
+import a_default_configs
 
 import a_store_name
 import a_suppliers

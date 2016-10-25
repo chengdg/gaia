@@ -28,7 +28,10 @@ class MallConfigRepository(business_model.Service):
 		# 	type=promotion_models.PROMOTION_TYPE_INTEGRAL_SALE
 		# ).exists()
 		integral_strategy_settings = member_models.IntegralStrategySettings.select().dj_where(webapp_id=self.corp.webapp_id).first()
-		return IntegralStrategy(integral_strategy_settings)
+		if not integral_strategy_settings:
+			return MallConfigFactory.get(self.corp).create_default_integral_strategy()
+		else:
+			return IntegralStrategy(integral_strategy_settings)
 
 	def get_webapp_config(self):
 		"""
@@ -36,7 +39,7 @@ class MallConfigRepository(business_model.Service):
 		"""
 		mall_config = mall_models.MallConfig.select().dj_where(owner_id=self.corp.id).first()
 		if not mall_config:
-			return MallConfigFactory.create_default_webapp_config()
+			return MallConfigFactory.get(self.corp).create_default_webapp_config()
 		else:
 			return WebappConfig(mall_config)
 
