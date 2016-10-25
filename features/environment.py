@@ -44,6 +44,15 @@ def __clear_all_app_data():
 	for clean_module in clean_modules:
 		clean_module.clean()
 
+def __make_password(raw_password):
+	import hashlib
+
+	algorithm = 'sha1'
+	salt = '69e44'
+	hash = hashlib.sha1(salt + raw_password).hexdigest()
+	return "%s$%s$%s" % (algorithm, salt, hash)
+
+
 ######################################################################################
 # __create_system_user: 创建系统用户
 ######################################################################################
@@ -59,7 +68,8 @@ def __create_system_user(username):
 	except:
 		user = account_models.User.create(
 			username = username,
-			password = 'test'
+			first_name = username,
+			password = __make_password('test')
 		)
 
 		profile = account_models.UserProfile.create(
@@ -88,7 +98,7 @@ def __create_weizoom_corporation():
 	except:
 		user = account_models.User.create(
 			username = 'weizoom_corp',
-			password = 'test'
+			password = __make_password('test')
 		)
 
 		profile = account_models.UserProfile.create(
@@ -107,7 +117,7 @@ def __create_self_run_platform_account():
 	except:
 		user = account_models.User.create(
 			username = 'zhouxun',
-			password = 'test'
+			password = __make_password('test')
 		)
 
 		profile = account_models.UserProfile.create(
