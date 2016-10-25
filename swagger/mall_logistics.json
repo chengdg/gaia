@@ -561,10 +561,12 @@
                     "description": "运费配置的名字"
                 },
                 "limit_provinces": {
-                    "type": "array"
+                    "type": "string",
+                    "description": "限定省市的idjson数组"
                 },
                 "limit_cities": {
-                    "type": "array"
+                    "type": "string",
+                    "description": "限定城市的idjson数组"
                 }
             }
         },
@@ -584,10 +586,16 @@
                     "description": "运费配置的名字"
                 },
                 "limit_provinces": {
-                    "type": "array"
+                    "type": "string",
+                    "format": "限定省市的idjson数组",
+                    "items": {
+                    }
                 },
                 "limit_cities": {
-                    "type": "array"
+                    "type": "string",
+                    "format": "限定城市的idjson数组",
+                    "items": {
+                    }
                 }
             }
         },
@@ -628,24 +636,27 @@
             }
         },
         "Province": {
-            "zone_name": {
-                "type": "string",
-                "description": "省、市所在的地区的名称"
-            },
-            "province_id": {
-                "type": "number",
-                "description": "省、市id"
-            },
-            "province_name": {
-                "type": "string",
-                "description": "省、市名称"
-            },
-            "cities": {
-                "type": "array",
-                "items": {
-                    "$ref": "#/definitions/City"
+            "type": "object",
+            "properties": {
+                "zone_name": {
+                    "type": "string",
+                    "description": "省、市所在的地区的名称"
                 },
-                "minItems": 0
+                "province_id": {
+                    "type": "number",
+                    "description": "省、市id"
+                },
+                "province_name": {
+                    "type": "string",
+                    "description": "省、市名称"
+                },
+                "cities": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/City"
+                    },
+                    "minItems": 0
+                }
             }
         },
         "City": {

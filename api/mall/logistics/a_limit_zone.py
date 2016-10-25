@@ -24,7 +24,7 @@ class ALimitZone(api_resource.ApiResource):
 		corp = args['corp']
 		name = args['name']
 		limit_provinces = json.loads(args.get('limit_provinces', '[]'))
-		limit_cities = json.loads(args('limit_cities', '[]'))
+		limit_cities = json.loads(args.get('limit_cities', '[]'))
 		LimitZone.create(
 			{'corp_id': corp.id, 'name': name, 'limit_provinces': limit_provinces, 'limit_cities': limit_cities})
 		return []
@@ -35,7 +35,7 @@ class ALimitZone(api_resource.ApiResource):
 		id = args['id']
 		name = args['name']
 		limit_provinces = json.loads(args.get('limit_provinces', '[]'))
-		limit_cities = json.loads(args('limit_cities', '[]'))
+		limit_cities = json.loads(args.get('limit_cities', '[]'))
 		LimitZone.update({
 				'corp_id': corp.id,
 				'id': id,
