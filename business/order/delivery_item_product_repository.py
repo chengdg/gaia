@@ -188,8 +188,11 @@ class DeliveryItemProductRepository(business_model.Model):
 					premium_delivery_item_product.id = premium_product['id']
 
 					premium_delivery_item_product.promotion_info = {
-						'type_name': 'premium_sale:premium_product',
-						'type': 'premium_sale:premium_product'
+						'type': 'premium_sale:premium_product',
+						'integral_money': 0,
+						'integral_count': 0,
+						'grade_discount_money': 0,
+						'promotion_saved_money': 0
 					}
 
 					premium_delivery_item_product.delivery_item_id = r.order_id
