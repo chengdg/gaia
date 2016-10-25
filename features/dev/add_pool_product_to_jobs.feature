@@ -1,6 +1,6 @@
 Feature: 从微众商品池中选择商品进行上架
 """
-	zhouxun能通过管理系统从微众商品池中选择商品进行上架
+	设置jobs为自营平台，并同步商品
 """
 
 Background:
@@ -74,73 +74,9 @@ Background:
 			}
 		}]
 		"""
+    Given jobs成为自营平台
 
-@mall @mall.product @mall.product_management @hermes
-Scenario:1 创建供应商供应的商品
-	job添加商品后：
-	1、能获得商品详情
-	2、在待售商品列表能看到商品
-
-	Given weizoom登录系统
-	When weizoom添加商品
-		"""
-		[{
-			"name": "东坡肘子",
-			"supplier": "苹果",
-			"classification": "分类31"
-		}, {
-			"name": "叫花鸡",
-			"supplier": "微软",
-			"classification": "分类24"
-		}, {
-			"name": "黄桥烧饼"
-		}]
-		"""
-	Then weizoom能获取商品'东坡肘子'
-		"""
-		{
-			"name": "东坡肘子",
-			"supplier": "苹果",
-			"classification": "分类11-分类23-分类31"
-		}
-		"""
-	Then weizoom能获取商品'叫花鸡'
-		"""
-		{
-			"name": "叫花鸡",
-			"supplier": "微软",
-			"classification": "分类12-分类24"
-		}
-		"""
-	Then weizoom能获取商品'黄桥烧饼'
-		"""
-		{
-			"name": "黄桥烧饼",
-			"supplier": "",
-			"classification": ""
-		}
-		"""
-	Then weizoom能获得'待售'商品列表
-		"""
-		[{
-			"name": "东坡肘子",
-			"create_type": "create",
-			"supplier": "苹果",
-			"classification": "分类11-分类23-分类31"
-		}, {
-			"name": "叫花鸡",
-			"create_type": "create",
-			"supplier": "微软",
-			"classification": "分类12-分类24"
-		}, {
-			"name": "黄桥烧饼",
-			"create_type": "create",
-			"supplier": "",
-			"classification": ""
-		}]
-		"""
-
-@mall @mall.product @mall.product_management @hermes @wip
+@mall @mall.product @mall.product_management @hermes @wip @ztqdev
 Scenario:1 创建供应商供应的商品
 	job添加商品后：
 	1、能获得商品详情
