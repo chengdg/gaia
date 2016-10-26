@@ -81,6 +81,7 @@ class OrderRepository(business_model.Model):
 			if should_in_order_ids:
 				db_models = db_models.dj_where(id__in=should_in_order_ids)
 		print('-----db_models-x', db_models)
+
 		print(db_models)
 		# print('-----db_models-count',db_models.count())
 		return db_models
