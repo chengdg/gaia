@@ -43,10 +43,6 @@ class OrderRepository(business_model.Model):
 		use_should_in_order_bids = False
 		db_models = self.__get_db_models_for_corp()
 
-		order_ids = [db_model for db_model in db_models]
-
-		ohs_list = mall_models.OrderHasProduct.select().dj_where(order_id__in=order_ids)
-
 		if filters:
 			# 处理订单中的值搜索
 			order_filter_parse_result = {}
@@ -97,6 +93,9 @@ class OrderRepository(business_model.Model):
 
 			# 关联表
 			if '__f-product_name-contain' in filters:
+				order_ids = [db_model.id for db_model in db_models]
+
+				ohs_list = mall_models.OrderHasProduct.select().dj_where(order_id__in=order_ids)
 				filter_parse_result = FilterParser.get().parse_key(filters, '__f-product_name-contain',
 				                                                   {'product_name': 'name'})
 				target_page = PageInfo.get_max_page()
@@ -224,7 +223,7 @@ class OrderRepository(business_model.Model):
 				else:
 					pass
 
-			self.context['search_temporary_data']['successful_group_order_bids'] = successful_group_order_bids
+			self.context['valid_group_order_bids'] = successful_group_order_bids
 
 			# 忽略的团购订单
 			ignored_group_orders = db_models.where(
