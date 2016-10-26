@@ -94,7 +94,6 @@ class LimitZone(busness_model.Model):
 				'zone_name': PROVINCE_ID2ZONE[province.id],
 				'cities': []
 			}
-			province_info = self.__rename_province(province_info)
 			for city in filter(lambda city: city.province_id == province.id, limit_zone_cities):
 				province_info['cities'].append({
 					'city_id': city.id,
@@ -111,22 +110,3 @@ class LimitZone(busness_model.Model):
 									provinces)
 			})
 		return limit_zone_detail
-
-	def __rename_province(self, province):
-		if province['province_id'] == 5:
-			province['province_name'] = u'内蒙古'
-		elif province['province_id'] == 20:
-			province['province_name'] = u'广西'
-		elif province['province_id'] == 26:
-			province['province_name'] = u'西藏'
-		elif province['province_id'] == 30:
-			province['province_name'] = u'宁夏'
-		elif province['province_id'] == 31:
-			province['province_name'] = u'新疆'
-		elif province['province_id'] == 32:
-			province['province_name'] = u'香港'
-		elif province['province_id'] == 33:
-			province['province_name'] = u'澳门'
-		elif province['province_id'] == 34:
-			province['province_name'] = u'台湾'
-		return province
