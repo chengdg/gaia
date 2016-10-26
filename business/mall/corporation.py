@@ -25,6 +25,7 @@ from business.mall.pay.pay_interface_repository import PayInterfaceRepository
 from business.mall.logistics.postage_config_repository import PostageConfigRepository
 from business.mall.logistics.express_delivery_repository import ExpressDeliveryRepository
 from business.mall.logistics.limit_zone_repository import LimitZoneRepository
+from business.mall.logistics.province_city_repository import ProvinceCityRepository
 from business.mall.config.mall_config_repository import MallConfigRepository
 from business.mall.notify.notification_repository import NotificationRepository
 from business.mall.supplier.supplier_repository import SupplierRepository
@@ -181,3 +182,7 @@ class Corporation(business_model.Model):
 	@property
 	def product_label_repository(self):
 		return ProductLabelRepository(self)
+
+	@property
+	def province_city_repository(self):
+		return ProvinceCityRepository(self)

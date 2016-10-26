@@ -222,7 +222,7 @@
                     }
                 ],
                 "tags": [
-                    "limit_zone"
+                    "limit_zone", "logistics"
                 ],
                 "produces": [
                     "application/json"
@@ -261,7 +261,7 @@
                     }
                 ],
                 "tags": [
-                    "limit_zone"
+                    "limit_zone", "logistics"
                 ],
                 "produces": [
                     "application/json"
@@ -289,7 +289,7 @@
                     }
                 ],
                 "tags": [
-                    "limit zone"
+                    "limit zone", "logistics"
                 ],
                 "produces": [
                     "application/json"
@@ -314,7 +314,7 @@
                     }
                 ],
                 "tags": [
-                    "limit zone"
+                    "limit zone", "logistics"
                 ],
                 "produces": [
                     "application/json"
@@ -351,6 +351,38 @@
                 "responses": {
                     "200": {
                         "description": "success"
+                    }
+                }
+            }
+        },
+        "/mall/province_city": {
+            "get": {
+                "description": "获取省市地区列表",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "logistics"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "title": "zones",
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/LimitZone"
+                            }
+                        }
                     }
                 }
             }
