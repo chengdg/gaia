@@ -207,3 +207,16 @@ Scenario: 安装完整测试数据
 			}
 		}]	
 		"""
+		When jobs添加支付方式
+		"""
+		[{
+			"type": "微信支付",
+			"is_active": "启用",
+			"version": 3,
+			"weixin_appid": "app_id_1",
+			"mch_id": "mch_id_1",
+			"api_key": "api_key_1",
+			"paysign_key": "paysign_key_1"
+		}]
+		"""
+

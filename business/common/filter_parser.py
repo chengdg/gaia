@@ -30,6 +30,8 @@ class FilterParser(object):
             return '%s__notin' % name
         elif match_strategy == 'in':
             return '%s__in' % name
+        elif match_strategy == 'gt':
+            return '%s__gt' % name
         else:
             return name
 
