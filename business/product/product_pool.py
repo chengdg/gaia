@@ -9,7 +9,7 @@ from bdem import msgutil
 from business import model as business_model
 from business.product.product import Product
 from db.mall import models as mall_models
-from zeus_conf import TOPIC
+from gaia_conf import TOPIC
 from fill_product_detail_service import FillProductDetailService
 from business.mall.corporation_factory import CorporationFactory
 from business.common.filter_parser import FilterParser

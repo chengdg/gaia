@@ -6,7 +6,7 @@ from eaglet.decorator import param_required
 
 from db.mall import models as mall_models
 from business import model as business_model
-from zeus_conf import TOPIC
+from gaia_conf import TOPIC
 from product_pool import ProductPool
 
 NEW_PRODUCT_DISPLAY_INDEX = 9999999

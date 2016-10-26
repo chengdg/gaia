@@ -15,7 +15,7 @@ from business.mall.express.kdniao_express_poll import KdniaoExpressPoll
 from business.order.release_delivery_item_resource import ReleaseDeliveryItemResourceService
 from service.service_register import register
 from db.express import models as express_models
-from zeus_conf import TOPIC
+from gaia_conf import TOPIC
 
 
 @register("delivery_item_refunded")

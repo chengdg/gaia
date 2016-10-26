@@ -11,7 +11,7 @@ from business.order.delivery_item_product_repository import DeliveryItemProductR
 from business.order.process_order_after_delivery_item_service import ProcessOrderAfterDeliveryItemService
 from db.express import models as express_models
 from db.mall import models as mall_models
-from zeus_conf import TOPIC
+from gaia_conf import TOPIC
 import logging
 
 
