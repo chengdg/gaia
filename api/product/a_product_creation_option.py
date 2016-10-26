@@ -72,10 +72,9 @@ class AProductCreationOption(api_resource.ApiResource):
 		limit_zones = corp.limit_zone_repository.get_limit_zones()
 		datas = []
 		for limit_zone in limit_zones:
-			print limit_zone
 			datas.append({
-				"id": limit_zone['id'],
-				"name": limit_zone['name']
+				"id": limit_zone.id,
+				"name": limit_zone.name
 			})
 		return datas
 
