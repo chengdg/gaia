@@ -20,7 +20,7 @@ class AOnshelfProducts(api_resource.ApiResource):
 	@param_required(['corp_id'])
 	def get(args):
 		corp = args['corp']
-		
+
 		target_page = PageInfo.create({
 			"cur_page": int(args.get('cur_page', 1)),
 			"count_per_page": int(args.get('count_per_page', 10))

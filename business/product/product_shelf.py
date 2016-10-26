@@ -89,14 +89,8 @@ class ProductShelf(business_model.Model):
 		"""
 		product_pool = self.corp.product_pool
 		#TODO: get_products不应泄露DB层信息
-		if self.type == 'in_sale':
-			query = {
-				"status": mall_models.PP_STATUS_ON
-			}
-		else:
-			query = {
-				"status": mall_models.PP_STATUS_OFF
-			}
+		filters = {}
+		filters['__f-status-equal'] = mall_models.PP_STATUS_ON if self.type == 'in_sale' else mall_models.PP_STATUS_OFF
 
 		fill_options = {
 			'with_category': True,
@@ -111,7 +105,32 @@ class ProductShelf(business_model.Model):
 			'order_by_display_index': True
 		}
 
-		products, pageinfo = product_pool.get_products(query, page_info, fill_options, options)
+		products, pageinfo = product_pool.get_products(page_info, fill_options, options, filters)
+
+		return products, pageinfo
+
+	def search_products(self, filters, page_info):
+		"""
+		获得货架上的商品集合
+		"""
+		product_pool = self.corp.product_pool
+		#TODO: get_products不应泄露DB层信息
+		filters['__f-status-equal'] = mall_models.PP_STATUS_ON if self.type == 'in_sale' else mall_models.PP_STATUS_OFF
+
+		fill_options = {
+			'with_category': True,
+			'with_product_model': True,
+			'with_model_property_info': True,
+			'with_shelve_status': True,
+			'with_supplier_info': True,
+			'with_classification': True
+		}
+
+		options = {
+			'order_by_display_index': True
+		}
+
+		products, pageinfo = product_pool.get_products(page_info, fill_options, options, filters)
 
 		return products, pageinfo
 

@@ -47,6 +47,7 @@ Scenario: 安装完整测试数据
 			"name": "东坡肘子",
 			"categories": ["分类1", "分类2", "分类3"],
 			"detail": "东坡肘子的详情",
+			"bar_code": "111",
 			"swipe_images": [{
 				"url": "/static/test_resource_img/hangzhou1.jpg"
 			}, {
@@ -67,6 +68,7 @@ Scenario: 安装完整测试数据
 			"name": "叫花鸡",
 			"categories": ["分类1"],
 			"detail": "叫花鸡的详情",
+			"bar_code": "222",
 			"swipe_images": [{
 				"url": "/static/test_resource_img/hangzhou2.jpg"
 			}],
@@ -84,6 +86,7 @@ Scenario: 安装完整测试数据
 			"name": "水晶虾仁",
 			"categories": ["分类2", "分类3"],
 			"detail": "水晶虾仁的详情",
+			"bar_code": "333",
 			"swipe_images": [{
 				"url": "/static/test_resource_img/hangzhou3.jpg"
 			}],
@@ -112,6 +115,7 @@ Scenario: 安装完整测试数据
 			"name": "莲藕排骨汤",
 			"categories": ["分类3"],
 			"detail": "莲藕排骨汤的详情",
+			"bar_code": "444",
 			"swipe_images": [{
 				"url": "/static/test_resource_img/tang1.jpg"
 			}],
@@ -126,6 +130,7 @@ Scenario: 安装完整测试数据
 			"name": "冬荫功汤",
 			"categories": ["分类3"],
 			"detail": "冬荫功汤的详情",
+			"bar_code": "555",
 			"swipe_images": [{
 				"url": "/static/test_resource_img/tang2.jpg"
 			}],
@@ -140,6 +145,7 @@ Scenario: 安装完整测试数据
 			"name": "松鼠桂鱼",
 			"categories": ["分类3"],
 			"detail": "松鼠桂鱼的详情",
+			"bar_code": "666",
 			"swipe_images": [{
 				"url": "/static/test_resource_img/yu3.jpg"
 			}],
@@ -159,6 +165,7 @@ Scenario: 安装完整测试数据
 		}, {
 			"name": "武昌鱼",
 			"detail": "武昌鱼的详情",
+			"bar_code": "777",
 			"swipe_images": [{
 				"url": "/static/test_resource_img/yu1.jpg"
 			}],

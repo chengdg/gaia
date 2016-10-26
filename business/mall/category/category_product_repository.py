@@ -88,26 +88,19 @@ class CategoryProductRepository(object):
 			'with_shelve_status': True
 		}
 
-		#搜索条件
-		filter_parse_result = FilterParser.get().parse(filters)
-
 		if category_id == '0' or category_id == 0:
-			#没有指定category，获取全部商品
-			query = {}
-			if filter_parse_result:
-				query.update(filter_parse_result)
-			products, pageinfo = CorporationFactory().get().product_pool.get_products(query, target_page, fill_options)
+			products, pageinfo = CorporationFactory().get().product_pool.get_products(target_page, fill_options, filters=filters)
 		else:
 			#获取category的可选商品
 			product_relations = mall_models.CategoryHasProduct.select().dj_where(category_id=category_id)
 			product_ids = [relation.product_id for relation in product_relations]
 
-			query = {
-				'id__notin': product_ids
+			enhanced_filters = {
+				'__f-id-notin': product_ids
 			}
-			if filter_parse_result:
-				query.update(filter_parse_result)
-			products, pageinfo = CorporationFactory().get().product_pool.get_products(query, target_page, fill_options)
+			if filters:
+				enhanced_filters.update(filters)
+			products, pageinfo = CorporationFactory().get().product_pool.get_products(target_page, fill_options, filters=enhanced_filters)
 
 		#创建CategoryProduct对象
 		category_products = []
