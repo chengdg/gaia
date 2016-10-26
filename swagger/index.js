@@ -27,7 +27,7 @@ host = '';
 
 var info = {
     "version": "1.0.0",
-    "title": projectName + " API",
+    "title": Gaia + " API",
     "description":"1.请求中的bool值用'true'/'false'字符串表示"
 };
 
