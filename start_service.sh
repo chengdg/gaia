@@ -1,5 +1,5 @@
 #!/bin/bash
-PORT=${1:-8002}
+PORT=${1:-8003}
 cd register_service
 python register.py --port $PORT
 cd ..

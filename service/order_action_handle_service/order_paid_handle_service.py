@@ -9,7 +9,7 @@ from bdem import msgutil
 
 from business.mall.corporation import Corporation
 from service.service_register import register
-from zeus_conf import TOPIC
+from gaia_conf import TOPIC
 
 
 @register("order_paid")

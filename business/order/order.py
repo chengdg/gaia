@@ -3,7 +3,7 @@
 from business import model as business_model
 from business.order.delivery_item import DeliveryItem
 from db.mall import models as mall_models
-from zeus_conf import TOPIC
+from gaia_conf import TOPIC
 from bdem import msgutil
 from datetime import datetime, timedelta
 

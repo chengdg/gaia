@@ -42,6 +42,7 @@ class AOrderList(api_resource.ApiResource):
 		}
 		pageinfo, orders = order_repository.get_orders(filters, target_page, fill_options)
 
+		# todo 手工展开
 		order_dicts = [order.to_dict() for order in orders]
 		return {
 			'page_info': pageinfo.to_dict(),
