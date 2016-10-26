@@ -15,29 +15,16 @@ class LimitZoneRepository(busniess_model.Service):
 		datas = []
 		for model in limit_zone_models:
 			limit_zone = LimitZone(model)
-			data = {
-				"id": limit_zone.id,
-				"name": limit_zone.name,
-				"limit_zone": limit_zone.fill_limit_zone_detail()
-			}
-			datas.append(data)
+			datas.append(limit_zone)
 		return datas
 
 	def get_limit_zone(self, limit_zone_id):
 		"""
 		获取指定的limit zone
 		"""
-		try:
-			limit_zone_model = mall_models.ProductLimitZoneTemplate.select().dj_where(owner_id=self.corp.id, id=limit_zone_id).get()
-		except:
-			return {}
+		limit_zone_model = mall_models.ProductLimitZoneTemplate.select().dj_where(owner_id=self.corp.id, id=limit_zone_id).get()
 		limit_zone = LimitZone(limit_zone_model)
-		data = {
-			"id": limit_zone.id,
-			"name": limit_zone.name,
-			"limit_zone": limit_zone.fill_limit_zone_detail()
-		}
-		return data
+		return limit_zone
 
 	def delete_limit_zone(self, limit_zone_id):
 		"""

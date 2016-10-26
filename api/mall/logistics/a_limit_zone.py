@@ -17,7 +17,12 @@ class ALimitZone(api_resource.ApiResource):
 	def get(args):
 		corp = args['corp']
 		limit_zone = corp.limit_zone_repository.get_limit_zone(args['id'])
-		return limit_zone
+		data = {
+			'id': limit_zone.id,
+			'name': limit_zone.name,
+			'zones': limit_zone.zones
+		}
+		return data
 
 	@param_required(['corp_id', 'name', 'limit_provinces', 'limit_cities'])
 	def put(args):
@@ -36,13 +41,8 @@ class ALimitZone(api_resource.ApiResource):
 		name = args['name']
 		limit_provinces = json.loads(args.get('limit_provinces', '[]'))
 		limit_cities = json.loads(args.get('limit_cities', '[]'))
-		LimitZone.update({
-				'corp_id': corp.id,
-				'id': id,
-				'name': name,
-				'limit_provinces': limit_provinces,
-				'limit_cities': limit_cities
-			})
+		limit_zone = corp.limit_zone_repository.get_limit_zone(id)
+		limit_zone.update(name, limit_provinces, limit_cities)
 		return []
 
 	@param_required(['corp', 'id'])

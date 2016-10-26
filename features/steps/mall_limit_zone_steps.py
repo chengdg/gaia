@@ -21,7 +21,7 @@ def step_impl(context, user):
         template_data = {}
         template_data['name'] = limit_zone['name']
         limit_area = []
-        for zone in limit_zone['limit_zone']:
+        for zone in limit_zone['zones']:
             zone_data = {}
             if zone['zone_name'] in [u'直辖市', u'其它']:
                 zone_data['area'] = zone['zone_name']

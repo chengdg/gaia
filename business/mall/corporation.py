@@ -31,6 +31,8 @@ from business.mall.notify.notification_repository import NotificationRepository
 from business.mall.supplier.supplier_repository import SupplierRepository
 from business.mall.product_classification_repository import ProductClassificationRepository
 from business.mall.product_label_repository import ProductLabelRepository
+from business.mall.product_label_group_repository import ProductLabelGroupRepositroy
+
 
 class Corporation(business_model.Model):
 	"""
@@ -182,6 +184,10 @@ class Corporation(business_model.Model):
 	@property
 	def product_label_repository(self):
 		return ProductLabelRepository(self)
+
+	@property
+	def product_label_group_repository(self):
+		return ProductLabelGroupRepositroy(self)
 
 	@property
 	def province_city_repository(self):

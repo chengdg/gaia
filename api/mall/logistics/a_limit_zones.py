@@ -15,6 +15,14 @@ class ALimitZones(api_resource.ApiResource):
 	def get(args):
 		corp = args['corp']
 		limit_zones = corp.limit_zone_repository.get_limit_zones()
-		return {"limit_zones": limit_zones}
+		datas = []
+		for limit_zone in limit_zones:
+			data = {
+				'id': limit_zone.id,
+				'name': limit_zone.name,
+				'zones': limit_zone.zones
+			}
+			datas.append(data)
+		return {"limit_zones": datas}
 
 

@@ -270,7 +270,7 @@
                     "200": {
                         "description": "success",
                         "schema": {
-                            "$ref": "#/definitions/LimitZone"
+                            "$ref": "#/definitions/Zones"
                         }
                     }
                 }
@@ -380,7 +380,7 @@
                             "title": "zones",
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/LimitZone"
+                                "$ref": "#/definitions/Zones"
                             }
                         }
                     }
@@ -642,16 +642,16 @@
                     "type": "string",
                     "description": "限定区域配置的名字"
                 },
-                "limit_zone": {
+                "zones": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/LimitZone"
+                        "$ref": "#/definitions/Zones"
                     },
                     "minItems": 0
                 }
             }
         },
-        "LimitZone": {
+        "Zones": {
             "type": "object",
             "properties": {
                 "zone_name": {

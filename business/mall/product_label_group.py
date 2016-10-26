@@ -10,26 +10,19 @@ class ProductLabelGroup(business_model.Model):
 	__slots__ = (
 		'id',
 		'name',
-		'owner_id',
 		'labels',
-		'created_at',
-		'is_deleted'
+		'created_at'
 	)
 
 	def __init__(self, model):
 		business_model.Model.__init__(self)
 
-		self.context['db_model'] = model
 		if model:
 			self._init_slot_from_model(model)
-			self.labels = self.__fill_labels()
 
-	def __fill_labels(self):
-		label_models = mall_models.ProductLabel.select().dj_where(label_group_id=self.id, is_deleted=False, owner_id=self.owner_id)
+	def get_labels(self):
+		label_models = mall_models.ProductLabel.select().dj_where(label_group_id=self.id, is_deleted=False)
 		labels = []
 		for model in label_models:
-			labels.append({
-				'label_id': model.id,
-				'label_name': model.name
-			})
+			labels.append(ProductLabel(model))
 		return labels

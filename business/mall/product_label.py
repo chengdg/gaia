@@ -10,8 +10,7 @@ class ProductLabel(business_model.Model):
 		'name',
 		'label_group_id',
 		'owner_id',
-		'created_at',
-		'is_deleted'
+		'created_at'
 	)
 
 	def __init__(self, model):

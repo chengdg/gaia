@@ -50,17 +50,16 @@ class LimitZone(busness_model.Model):
 	__slots__ = (
 		'id',
 		'name',
-		'provinces',
-		'cities'
+		'zones'
 	)
 
 	def __init__(self, model):
 		busness_model.Model.__init__(self)
 
+		self.context['db_model'] = model
 		if model:
 			self._init_slot_from_model(model)
-			self.provinces = self.provinces.split(',')
-			self.cities = self.cities.split(',') if self.cities else []
+			self.zones = self.__get_zones()
 
 	@staticmethod
 	@param_required(['corp_id', 'name', 'limit_provinces', 'limit_cities'])
@@ -73,18 +72,21 @@ class LimitZone(busness_model.Model):
 		)
 		return limit_zone
 
-	@staticmethod
-	@param_required(['corp_id', 'id', 'name', 'limit_provinces', 'limit_cities'])
-	def update(args):
+	def update(self, name='', limit_provinces=[], limit_cities=[]):
+		"""
+		更新限定区域
+		"""
 		mall_models.ProductLimitZoneTemplate.update(
-			name=args['name'],
-			provinces=','.join(args['limit_provinces']),
-			cities=','.join(args['limit_cities'])
-		).dj_where(owner_id=args['corp_id'], id=args['id']).execute()
+			name=name,
+			provinces=','.join(limit_provinces),
+			cities=','.join(limit_cities)
+		).dj_where(id=self.id).execute()
 
-	def fill_limit_zone_detail(self):
-		limit_zone_provinces = mall_models.Province.select().dj_where(id__in=self.provinces)
-		limit_zone_cities = mall_models.City.select().dj_where(id__in=self.cities)
+	def __get_zones(self):
+		province_ids = self.context['db_model'].provinces.split(',')
+		city_ids = self.context['db_model'].cities.split(',') if self.context['db_model'].cities else []
+		limit_zone_provinces = mall_models.Province.select().dj_where(id__in=province_ids)
+		limit_zone_cities = mall_models.City.select().dj_where(id__in=city_ids)
 		provinces = []
 		zone_names = []
 		for province in limit_zone_provinces:
@@ -102,11 +104,11 @@ class LimitZone(busness_model.Model):
 			provinces.append(province_info)
 			if province_info['zone_name'] not in zone_names:
 				zone_names.append(province_info['zone_name'])
-		limit_zone_detail = []
+		zones = []
 		for zone_name in zone_names:
-			limit_zone_detail.append({
+			zones.append({
 				'zone_name': zone_name,
 				'provinces': filter(lambda province: province['zone_name'] == zone_name,
 									provinces)
 			})
-		return limit_zone_detail
+		return zones
