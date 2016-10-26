@@ -40,8 +40,6 @@ class AWeizoomPooledProducts(api_resource.ApiResource):
 		#将公司设置为weizoom corp
 		CorporationFactory.set(weizoom_corp)
 		filters = json.loads(args.get('filters', '{}'))
-		print filters
-		raw_input()
 		products, pageinfo = weizoom_corp.product_pool.get_products(target_page, fill_options, options, filters)
 		#恢复当前公司
 		CorporationFactory.set(corp)
