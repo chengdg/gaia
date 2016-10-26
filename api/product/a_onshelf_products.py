@@ -26,7 +26,11 @@ class AOnshelfProducts(api_resource.ApiResource):
 			"count_per_page": int(args.get('count_per_page', 10))
 		})
 
-		products, pageinfo = corp.insale_shelf.get_products(target_page)
+		filters = json.loads(args.get('filters', '{}'))
+		if filters:
+			products, pageinfo = corp.insale_shelf.search_products(filters, target_page)
+		else:
+			products, pageinfo = corp.insale_shelf.get_products(target_page)
 
 		encode_product_service = EncodeProductService.get(corp)
 		datas = []

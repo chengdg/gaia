@@ -223,6 +223,17 @@ class FillProductDetailService(business_model.Service):
 			classification_list.sort(lambda x,y: cmp(x.level, y.level))
 			product.classification_lists.append(classification_list)
 
+	def __fill_sales_detail(slef, corp, products, product_ids, id2product):
+		"""填充商品销售情况相关细节
+		"""
+		for product in products:
+			product.sales = 0
+
+		for sales in mall_models.ProductSales.select().dj_where(product_id__in=product_ids):
+			product_id = sales.product_id
+			if id2product.has_key(product_id):
+				id2product[product_id].sales = sales.sales
+
 	def fill_detail(self, products, options):
 		"""填充各种细节信息
 
@@ -282,4 +293,4 @@ class FillProductDetailService(business_model.Service):
 			self.__fill_classification_detail(self.corp, products, product_ids, id2product)
 
 		if options.get('with_sales', False):
-			Product.__fill_sales_detail(corp, products, product_ids)
+			self.__fill_sales_detail(self.corp, products, product_ids, id2product)

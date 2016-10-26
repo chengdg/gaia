@@ -28,8 +28,6 @@ class AOffshelfProducts(api_resource.ApiResource):
 		})
 
 		filters = json.loads(args.get('filters', '{}'))
-		print filters
-		raw_input()
 		if filters:
 			products, pageinfo = corp.forsale_shelf.search_products(filters, target_page)
 		else:

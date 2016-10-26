@@ -39,7 +39,10 @@ class AWeizoomPooledProducts(api_resource.ApiResource):
 		#TODO: 寻找更优雅的切换公司的解决方案
 		#将公司设置为weizoom corp
 		CorporationFactory.set(weizoom_corp)
-		products, pageinfo = weizoom_corp.product_pool.get_products(target_page, fill_options, options)
+		filters = json.loads(args.get('filters', '{}'))
+		print filters
+		raw_input()
+		products, pageinfo = weizoom_corp.product_pool.get_products(target_page, fill_options, options, filters)
 		#恢复当前公司
 		CorporationFactory.set(corp)
 

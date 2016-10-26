@@ -78,6 +78,9 @@ class ProductPool(business_model.Model):
 		product_db_filter_values = {}
 		product_model_filter_values = {}
 		product_category_filter_values = {}
+		product_sales_filter_values = {}
+		product_supplier_filter_values = {}
+		product_classification_filter_values = {}
 
 		filter_parse_result = FilterParser.get().parse(filters)
 
@@ -88,6 +91,7 @@ class ProductPool(business_model.Model):
 
 			#按表将filter分散到不同的list中
 			filter_category = None
+			should_ignore_field = False #是否略过该field不处理
 			if filter_field == 'status' or filter_field == 'id':
 				filter_category = product_pool_filter_values
 			elif filter_field == 'name' or filter_field == 'bar_code' or filter_field == 'created_at':
@@ -96,28 +100,66 @@ class ProductPool(business_model.Model):
 				filter_category = product_model_filter_values
 			elif filter_field == 'category':
 				filter_category = product_category_filter_values
-			filter_category[filter_field_op] = filter_value
+			elif filter_field == 'sales':
+				filter_category = product_sales_filter_values
+			elif filter_field == 'supplier_type':
+				filter_field_op = 'type'
+				filter_category = product_supplier_filter_values
+				if filter_value == 'fixed':
+					filter_value = mall_models.SUPPLIER_TYPE_FIXED
+				elif filter_value == 'divide':
+					filter_value = mall_models.SUPPLIER_TYPE_DIVIDE
+				elif filter_value == 'retail':
+					filter_value = mall_models.SUPPLIER_TYPE_RETAIL
+			elif filter_field == 'supplier':
+				filter_field_op = 'name__icontains'
+				filter_category = product_supplier_filter_values
+			elif filter_field == 'secondary_classification':
+				child_category_ids = [child.id for child in self.corp.product_classification_repository.get_children_product_classifications(filter_value)]
+				filter_field_op = 'classification_id__in'
+				filter_value = child_category_ids
+				filter_category = product_classification_filter_values
+			elif filter_field == 'first_classification':
+				if not 'secondary_classification' in filter_parse_result:
+					child_category_ids = [child.id for child in self.corp.product_classification_repository.get_children_product_classifications(filter_value)]
+					filter_field_op = 'classification_id__in'
+					filter_value = child_category_ids
+					filter_category = product_classification_filter_values
+				else:
+					should_ignore_field = True
+
+			if not should_ignore_field:
+				filter_category[filter_field_op] = filter_value
 
 		#补充条件
 		product_pool_filter_values['woid'] = CorporationFactory.get().id
 		if not 'status' in product_pool_filter_values:
 			product_pool_filter_values['status__not'] = mall_models.PP_STATUS_DELETE
 
-		return product_pool_filter_values, product_db_filter_values, product_model_filter_values, product_category_filter_values
+		return {
+			'product_pool': product_pool_filter_values,
+			'product_info': product_db_filter_values,
+			'product_model': product_model_filter_values,
+			'product_category': product_category_filter_values,
+			'product_sales': product_sales_filter_values,
+			'product_supplier': product_supplier_filter_values,
+			'product_classification': product_classification_filter_values
+		}
 
 	def get_products(self, page_info, fill_options=None, options={}, filters={}):
 		"""
 		根据条件在商品池搜索商品
 		@return:
 		"""
-		product_pool_filter_values, product_db_filter_values, product_model_filter_values, product_category_filter_values = self.__split_filters(filters)
+		type2filters = self.__split_filters(filters)
 
 		#在product_pool表中进行过滤
-		if product_pool_filter_values:
+		product_pool_filters = type2filters['product_pool']
+		if product_pool_filters:
 			if 'order_by_display_index' in options:
-				pool_product_models = mall_models.ProductPool.select().dj_where(**product_pool_filter_values).order_by(mall_models.ProductPool.display_index, mall_models.ProductPool.product_id)
+				pool_product_models = mall_models.ProductPool.select().dj_where(**product_pool_filters).order_by(mall_models.ProductPool.display_index, mall_models.ProductPool.product_id)
 			else:
-				pool_product_models = mall_models.ProductPool.select().dj_where(**product_pool_filter_values)
+				pool_product_models = mall_models.ProductPool.select().dj_where(**product_pool_filters)
 		else:
 			if 'order_by_display_index' in options:
 				pool_product_models = mall_models.ProductPool.select().dj_where(status__not=mall_models.PP_STATUS_DELETE).order_by(mall_models.ProductPool.display_index, mall_models.ProductPool.product_id)
@@ -127,24 +169,45 @@ class ProductPool(business_model.Model):
 		product2poolmodel = dict([(pool_product_model.product_id, pool_product_model) for pool_product_model in pool_product_models])
 
 		#在mall_product_model中进行过滤
-		if product_model_filter_values:
-			product_model_filter_values['product_id__in'] = product_ids
-			product_model_models = mall_models.ProductModel.select().dj_where(**product_model_filter_values)
+		product_model_filters = type2filters['product_model']
+		if product_model_filters:
+			product_model_filters['product_id__in'] = product_ids
+			product_model_models = mall_models.ProductModel.select().dj_where(**product_model_filters)
 			product_ids = [model.product_id for model in product_model_models]
 
 		#在mall_category_has_product中进行过滤
-		if product_category_filter_values:
-			product_category_filter_values['product_id__in'] = product_ids
-			relations = mall_models.CategoryHasProduct.select().dj_where(**product_category_filter_values)
+		product_category_filters = type2filters['product_category']
+		if product_category_filters:
+			product_category_filters['product_id__in'] = product_ids
+			relations = mall_models.CategoryHasProduct.select().dj_where(**product_category_filters)
 			product_ids = [relation.product_id for relation in relations]
 
+		#在mall_product_sales中进行过滤
+		product_sales_filters = type2filters['product_sales']
+		if product_sales_filters:
+			product_sales_filters['product_id__in'] = product_ids
+			models = mall_models.ProductSales.select().dj_where(**product_sales_filters)
+			product_ids = [model.product_id for model in models]
+
+		#根据供应商进行过滤
+		product_supplier_filters = type2filters['product_supplier']
+		supplier_ids = None
+		if product_supplier_filters:
+			supplier_ids = [supplier.id for supplier in mall_models.Supplier.select().dj_where(**product_supplier_filters)]
+
+		#根据商品分类进行过滤
+		product_classification_filters = type2filters['product_classification']
+		if product_classification_filters:
+			product_ids = [relation.product_id for relation in mall_models.ClassificationHasProduct.select().dj_where(**product_classification_filters)]
+			
 		#在mall_product表中进行过滤
-		if product_db_filter_values:
-			product_db_filter_values['id__in'] = product_ids
-			product_models = mall_models.Product.select().dj_where(**product_db_filter_values)
+		product_info_filters = type2filters['product_info']
+		if supplier_ids:
+			product_info_filters['supplier_id__in'] = supplier_ids
+		if product_info_filters:
+			product_info_filters['id__in'] = product_ids
+			product_models = mall_models.Product.select().dj_where(**product_info_filters)
 			pageinfo, product_models = paginator.paginate(product_models, page_info.cur_page, page_info.count_per_page)
-			print product_db_filter_values
-			raw_input()
 		else:
 			pageinfo, product_ids = paginator.paginate(product_ids, page_info.cur_page, page_info.count_per_page)
 			product_models = mall_models.Product.select().dj_where(id__in=product_ids)

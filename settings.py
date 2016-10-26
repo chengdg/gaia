@@ -70,7 +70,7 @@ if MODE == 'develop':
     H5_HOST = "http://h5.weapp.com/"
 
     DUMP_READABLE_EXCEPTION_STACK = True
-    ENABLE_SQL_LOG = True #是否dump peewee产生的sql查询
+    ENABLE_SQL_LOG = False #是否dump peewee产生的sql查询
 else:
     # 真实环境暂时关闭
     #WAPI_LOGGER_ENABLED = False
