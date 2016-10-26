@@ -33,7 +33,7 @@ class ProvinceCityRepository(busniess_model.Service):
 		zones = []
 		for zone_name in ZONE_NAMES:
 			zones.append({
-				'zoneName': zone_name,
+				'zone_name': zone_name,
 				'provinces': filter(lambda province: PROVINCE_ID2ZONE[province['province_id']] == zone_name, provinces)
 			})
 		return zones
