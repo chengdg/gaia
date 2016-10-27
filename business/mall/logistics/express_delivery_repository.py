@@ -129,12 +129,17 @@ class ExpressDeliveryRepository(business_model.Service):
 		return companies
 
 	def get_company_by_value(self, value):
+		"""
+		如果是系统支持的快递公司，则返回名称，否则原样返回
+		@param value:
+		@return:
+		"""
 		global COMPANIES
 		for company in COMPANIES:
 			if company['value'] == value:
 				return ExpressDeliveryCompany(company['id'], company['name'], company['value'], company['kdniao_value'])
+		return value
 
-		return None
 
 	def get_company(self, id):
 		"""

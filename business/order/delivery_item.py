@@ -3,6 +3,7 @@
 出货单
 """
 from bdem import msgutil
+from eaglet.decorator import cached_context_property
 from eaglet.decorator import param_required
 
 from business import model as business_model
@@ -22,6 +23,7 @@ class DeliveryItem(business_model.Model):
 		'origin_order_id',
 		'products',
 		'webapp_id',
+		'webapp_user_id',
 
 		'postage',
 		'status',
@@ -44,6 +46,10 @@ class DeliveryItem(business_model.Model):
 
 	)
 
+	@cached_context_property
+	def express_company_name_text(self):
+		self.context['corp'].express_delivery_repository.get_company_by_value(self.express_company_name_value)
+
 	def __init__(self, db_model):
 		business_model.Model.__init__(self)
 
@@ -59,6 +65,7 @@ class DeliveryItem(business_model.Model):
 
 		self.postage = db_model.postage
 		self.webapp_id = db_model.webapp_id
+		self.webapp_user_id = db_model.webapp_user_id
 
 		self.status = db_model.status
 		self.payment_time = db_model.payment_time
@@ -74,6 +81,21 @@ class DeliveryItem(business_model.Model):
 		self.with_logistics_trace = db_model.is_100
 		self.with_logistics = bool(db_model.express_company_name)
 		self.context['db_model'] = db_model
+
+
+
+	@cached_context_property
+	def product_statistics_info(self):
+		if not self.products:
+			raise RuntimeError("You should fill products!")
+		total_sale_price = 0
+		product_names = []
+		total_count = 0
+
+		for product in self.products:
+			total_sale_price += product.sale_price * product.count
+			product_names.append(product.name)
+			total_count += product.count
 
 	@staticmethod
 	@param_required(['models'])

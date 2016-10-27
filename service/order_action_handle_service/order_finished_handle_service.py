@@ -58,7 +58,7 @@ def process(data, recv_msg=None):
 		"order_id": order.id,
 		"corp_id": corp.id
 	}
-	msgutil.send_message(topic_name, 'send_template_message_task', data)
+	msgutil.send_message(topic_name, 'send_order_template_message_task', data)
 
 	member = corp.member_repository.get_member_by_id(order.member_info['id'])
 

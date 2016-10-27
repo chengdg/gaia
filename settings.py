@@ -144,10 +144,13 @@ else:
 
 if 'develop' == MODE:
     DOMAIN = 'dev.weapp.com'
+    H5_DOMAIN = 'mall.weizoom.com'
 elif 'test' == MODE:
     DOMAIN = 'testweapp.weizoom.com'
+    H5_DOMAIN = 'mall.weizoom.com'
 else:
     DOMAIN = 'weapp.weizoom.com'
+    H5_DOMAIN = 'mall.weizoom.com'
 
 
 if 'deploy' == MODE:
