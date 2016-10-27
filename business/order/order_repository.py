@@ -105,18 +105,18 @@ class OrderRepository(business_model.Model):
 				use_should_in_order_ids = True
 				should_in_order_ids.extend([ohs.order_id for ohs in ohs_list])
 
-			if '__f-type-equal' in filters:
-				if filters['__f-type-equal'] == 'group_buy':
+			if '__f-is_group_buy-equal' in filters:
+				if filters['__f-is_group_buy-equal'] == 'true':
 					use_should_in_order_bids = True
 					should_in_order_bids.extend(self.context['valid_group_order_bids'])
 
-			if 'status_list' in filters:
+			if '__f-status-in' in filters:
 				status_params = []
 
 				refunding_status_list = [mall_models.ORDER_STATUS_REFUNDING, mall_models.ORDER_STATUS_GROUP_REFUNDING]
 				refunded_status_list = [mall_models.ORDER_STATUS_REFUNDED, mall_models.ORDER_STATUS_GROUP_REFUNDED]
 				use_wtf_refund = False
-				for status in filters['status_list']:
+				for status in filters['__f-status-in']:
 					if status == mall_models.ORDER_STATUS_REFUNDING:
 						use_wtf_refund = True
 						status_list = refunding_status_list

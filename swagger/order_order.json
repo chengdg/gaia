@@ -28,7 +28,7 @@
 						"name":"filters",
 						"required": false,
 						"in": "query",
-						"description": "json字符串，<__f-ship_tel-equal>,<__f-ship_name-equal>,<__f-bid-equal>,<__f-weizoom_card_money-gt>,<__f-is_first_order-equal:'true' or 'false'>,<__f-pay_interface_type-equal>,<__f-created_at-range>,<__f-express_number-equal>,<__f-product_name-contain>,<__f-type-equal:目前只支持'group_buy'>,<status_list:状态数值列表>"
+						"description": "json字符串，<__f-ship_tel-equal>,<__f-ship_name-equal>,<__f-bid-equal>,<__f-weizoom_card_money-gt>,<__f-is_first_order-equal:'true' or 'false'>,<__f-pay_interface_type-equal>,<__f-created_at-range>,<__f-express_number-equal>,<__f-product_name-contain>,<__f-is_group_buy-equal'>,<__f-status-in:状态数值列表>"
 					}
 				],
 				"tags": [
