@@ -59,7 +59,6 @@ class UpdateProductService(business_model.Service):
 		"""
 		is_delete_standard_model = (models_info.get('is_use_custom_model', 'false') == 'true')
 		corp_id = self.corp.id
-
 		if is_delete_standard_model:
 			mall_models.ProductModel.update(
 				price=0.0,
@@ -67,6 +66,7 @@ class UpdateProductService(business_model.Service):
 				stock_type=mall_models.PRODUCT_STOCK_TYPE_UNLIMIT,
 				stocks=-1,
 				user_code='',
+				purchase_price=0,
 				is_deleted=True
 			).dj_where(owner_id=corp_id, product_id=product_id, name='standard').execute()
 		else:
@@ -77,6 +77,7 @@ class UpdateProductService(business_model.Service):
 				stock_type=mall_models.PRODUCT_STOCK_TYPE_UNLIMIT if standard_model['stock_type'] == 'unlimit' else mall_models.PRODUCT_STOCK_TYPE_LIMIT,
 				stocks=standard_model['stocks'],
 				user_code=standard_model['user_code'],
+				purchase_price=standard_model['purchase_price'],
 				is_deleted=False
 			).dj_where(owner_id=corp_id, product_id=product_id, name='standard').execute()
 
@@ -95,7 +96,8 @@ class UpdateProductService(business_model.Service):
 				weight=custom_model['weight'],
 				stock_type=mall_models.PRODUCT_STOCK_TYPE_UNLIMIT if custom_model['stock_type'] == 'unlimit' else mall_models.PRODUCT_STOCK_TYPE_LIMIT,
 				stocks=custom_model['stocks'],
-				user_code=custom_model['user_code']
+				user_code=custom_model['user_code'],
+				purchase_price=custom_model['purchase_price']
 			)
 
 			for property in custom_model['properties']:
@@ -115,7 +117,8 @@ class UpdateProductService(business_model.Service):
 				weight=new_model['weight'],
 				stock_type=mall_models.PRODUCT_STOCK_TYPE_UNLIMIT if new_model['stock_type'] == 'unlimit' else mall_models.PRODUCT_STOCK_TYPE_LIMIT,
 				stocks=new_model['stocks'],
-				user_code=new_model['user_code']
+				user_code=new_model['user_code'],
+				purchase_price=new_model['purchase_price']
 			).dj_where(owner_id=self.corp.id, id=new_model['id']).execute()
 
 	def __delete_custom_models(self, need_delete_ids):
@@ -132,9 +135,8 @@ class UpdateProductService(business_model.Service):
 		更新定制规格
 		"""
 		custom_models = models_info['custom_models']
-		existed_models = [model for model in  mall_models.ProductModel.select().dj_where(product_id=product_id, is_deleted=False) if not model.is_standard]
+		existed_models = [model for model in mall_models.ProductModel.select().dj_where(product_id=product_id, is_deleted=False) if not model.is_standard]
 		existed_model_ids = set([model.id for model in existed_models])
-
 		if len(custom_models) == 0:
 			if len(existed_models) == 0:
 				pass
