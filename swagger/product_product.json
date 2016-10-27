@@ -970,7 +970,23 @@
         },
         "Lables": {
             "type": "array",
-            "description": "标签名列表"
+            "items": {
+                "$ref": "#/definitions/Lable"
+            },
+            "minItems": 0
+        },
+        "Lable": {
+            "type": "object",
+            "properties": {
+                "label_id": {
+                    "type": "number",
+                    "description": "商品标签id"
+                },
+                "label_name": {
+                    "type": "string",
+                    "description": "商品标签名称"
+                }
+            }
         }
     }
 }

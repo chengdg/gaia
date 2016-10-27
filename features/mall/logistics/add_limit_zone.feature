@@ -10,7 +10,7 @@ Feature: 添加限定区域配置
 Background:
 	Given jobs登录系统
 
-@mall @product.limit_area @eugene
+@gaia @mall @product.logistics @eugene
 Scenario:1 添加限定区域配置
 	Jobs添加"限定区域配置"
 	1. jobs能获得限定区域配置列表

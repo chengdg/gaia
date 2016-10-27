@@ -49,7 +49,7 @@ Background:
 		}]	
 		"""
 
-@mall @mall.product @mall.product_model_property @hermes
+@gaia @mall @mall.product @mall.product_model_property @hermes
 Scenario:1 删除商品规格
 	Jobs更新商品规格后
 	1. jobs不能能获得删除后的商品规格

@@ -9,7 +9,6 @@ class ProductLabel(business_model.Model):
 		'id',
 		'name',
 		'label_group_id',
-		'owner_id',
 		'created_at'
 	)
 

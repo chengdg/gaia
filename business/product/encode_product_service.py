@@ -194,7 +194,10 @@ class EncodeProductService(business_model.Service):
 		"""
 		datas = []
 		for label in product.labels:
-			datas.append(label.name)
+			datas.append({
+				'label_id': label.id,
+				'label_name': label.name
+			})
 		return datas
 
 	def encode(self, product):

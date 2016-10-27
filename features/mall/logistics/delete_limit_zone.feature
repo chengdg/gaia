@@ -46,7 +46,7 @@ Background:
 			}]
 		}
 		"""
-@mall @product.limit_area @eugene
+@gaia @mall @product.logistics @eugene
 Scenario:1 删除未使用的限定区域配置
 	Jobs删除"限定区域配置"
 	1. jobs能获得删除后的限定区域列表

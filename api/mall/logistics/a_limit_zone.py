@@ -32,7 +32,7 @@ class ALimitZone(api_resource.ApiResource):
 		limit_cities = json.loads(args.get('limit_cities', '[]'))
 		LimitZone.create(
 			{'corp_id': corp.id, 'name': name, 'limit_provinces': limit_provinces, 'limit_cities': limit_cities})
-		return []
+		return {}
 
 	@param_required(['corp_id', 'id', 'name', 'limit_provinces', 'limit_cities'])
 	def post(args):
@@ -43,10 +43,10 @@ class ALimitZone(api_resource.ApiResource):
 		limit_cities = json.loads(args.get('limit_cities', '[]'))
 		limit_zone = corp.limit_zone_repository.get_limit_zone(id)
 		limit_zone.update(name, limit_provinces, limit_cities)
-		return []
+		return {}
 
 	@param_required(['corp', 'id'])
 	def delete(args):
 		corp = args['corp']
 		corp.limit_zone_repository.delete_limit_zone(args['id'])
-		return []
+		return {}

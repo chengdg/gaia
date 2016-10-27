@@ -238,7 +238,8 @@ class FillProductDetailService(business_model.Service):
 		id2label = dict([(label.id, label)for label in labels])
 		for product in products:
 			product.labels = []
-			if product.id not in product_id2label_ids: continue
+			if product.id not in product_id2label_ids:
+				continue
 			product_label_ids = product_id2label_ids[product.id]
 			for label_id in product_label_ids:
 				product.labels.append(id2label[label_id])

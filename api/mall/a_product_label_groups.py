@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from eaglet.core import api_resource
+from eaglet.decorator import param_required
+
 
 class AProductLableGroups(api_resource.ApiResource):
 	"""
@@ -9,6 +11,7 @@ class AProductLableGroups(api_resource.ApiResource):
 	app = 'mall'
 	resource = 'product_label_groups'
 
+	@param_required(['corp_id'])
 	def get(args):
 		corp = args['corp']
 		product_label_groups = corp.product_label_group_repository.get_label_groups()

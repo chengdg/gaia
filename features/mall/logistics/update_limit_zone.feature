@@ -35,7 +35,7 @@ Background:
 		}
 		"""
 
-@mall @product.limit_area @eugene
+@gaia @mall @product.limit_area @eugene
 Scenario:1 更新未使用的限定区域配置
 	Jobs更新"限定区域配置"
 	1. jobs能获得更新后的限定区域列表
