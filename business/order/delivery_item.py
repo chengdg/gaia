@@ -11,7 +11,7 @@ from business.order.delivery_item_product_repository import DeliveryItemProductR
 from business.order.process_order_after_delivery_item_service import ProcessOrderAfterDeliveryItemService
 from db.express import models as express_models
 from db.mall import models as mall_models
-from zeus_conf import TOPIC
+from gaia_conf import TOPIC
 import logging
 
 
@@ -35,7 +35,6 @@ class DeliveryItem(business_model.Model):
 		'supplier_id',
 
 		'refunding_info',
-		'total_origin_product_price',
 		'supplier_info',
 		'express_details',
 		'has_db_record',  # 出货单使用出货单db，即db层面有出货单
@@ -191,28 +190,31 @@ class DeliveryItem(business_model.Model):
 
 	@staticmethod
 	def __fill_products(delivery_items):
-		# delivery_items_products = DeliveryItemsProducts.get_for_delivery_items(delivery_items=delivery_items,
-		#                                                                        with_premium_sale=True)
+
 		if delivery_items:
 			corp = delivery_items[0].context['corp']
 		else:
 			corp = None
 		delivery_item_product_repository = DeliveryItemProductRepository.get({'corp': corp})
 
-		delivery_items_products = delivery_item_product_repository.get_products_for_delivery_items(
+		delivery_item_product_repository.set_products_for_delivery_items(
 			delivery_items=delivery_items,
 			with_premium_sale=True)
 
-		delivery_item_id2products = {}
-		for product in delivery_items_products:
-			if product.delivery_item_id in delivery_item_id2products:
-				delivery_item_id2products[product.delivery_item_id].append(product)
-			else:
-				delivery_item_id2products[product.delivery_item_id] = [product]
+	# delivery_items_products = delivery_item_product_repository.get_products_for_delivery_items(
+	# 	delivery_items=delivery_items,
+	# 	with_premium_sale=True)
+	#
+	# delivery_item_id2products = {}
+	# for product in delivery_items_products:
+	# 	if product.delivery_item_id in delivery_item_id2products:
+	# 		delivery_item_id2products[product.delivery_item_id].append(product)
+	# 	else:
+	# 		delivery_item_id2products[product.delivery_item_id] = [product]
+	#
+	# for delivery_item in delivery_items:
+	# 	delivery_item.products = delivery_item_id2products[delivery_item.id]
 
-		for delivery_item in delivery_items:
-			delivery_item.products = delivery_item_id2products[delivery_item.id]
-			delivery_item.total_origin_product_price = sum([p.total_origin_price for p in delivery_item.products])
 
 	@staticmethod
 	def __fill_operation_logs(delivery_items, delivery_item_ids):
@@ -286,21 +288,26 @@ class DeliveryItem(business_model.Model):
 	@staticmethod
 	def __fill_supplier(delivery_items, delivery_item_ids):
 		# todo 性能优化
+
+
+		supplier_ids = [delivery_item.context['db_model'].supplier for delivery_item in delivery_items if
+		                delivery_item.context['db_model'].supplier]
+
+		corp = delivery_items[0].context['corp']
+
+		suppliers = corp.supplier_repository.get_suppliers_by_ids(supplier_ids)
+
+		id2supplier = {supplier.id: supplier for supplier in suppliers}
+
 		for delivery_item in delivery_items:
 			db_model = delivery_item.context['db_model']
-			supplier = None
 			if db_model.supplier_user_id:
-				supplier = Supplier.from_id({
-					'id': db_model.supplier_user_id,
-					'type': 'user'
-				})
+				delivery_item.supplier_info = {
+					'name': 'todo',  # todo
+					'type': 'todo'
+				}
 			elif db_model.supplier:
-				supplier = Supplier.from_id({
-					'id': db_model.supplier_user_id,
-					'type': 'supplier'
-				})
-
-			if supplier:
+				supplier = id2supplier.get(db_model.supplier, None)
 				delivery_item.supplier_info = {
 					'name': supplier.name,
 					'type': supplier.type

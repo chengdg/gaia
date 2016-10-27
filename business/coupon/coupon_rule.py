@@ -22,12 +22,12 @@ class CouponRule(business_model.Model):
 		'count',
 		'remained_count',
 		'limit_counts',
-		'limit_product',
 		'limit_product_id',
 		'remark',
 		'get_person_count',
 		'get_count',
-		'use_count'
+		'use_count',
+		'type'  # 通用券all_products_coupon / 多商品券 multi_products_coupon
 	)
 
 	def __init__(self, model):
@@ -43,6 +43,10 @@ class CouponRule(business_model.Model):
 		coupon_rule._init_slot_from_model(model)
 		coupon_rule.context['db_model'] = args['db_model']
 		coupon_rule.context['corp'] = args['corp']
+		if coupon_rule.limit_product_id:
+			coupon_rule.type = 'multi_products_coupon'
+		else:
+			coupon_rule.type = 'all_products_coupon'
 		return coupon_rule
 
 	def update_use_count(self):

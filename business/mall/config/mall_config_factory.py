@@ -28,6 +28,6 @@ class MallConfigFactory(business_model.Service):
 		"""
 		创建默认的WebappConfig对象
 		"""
-		mall_config = mall_models.MallConfig.objects(owner=self.corp.id, order_expired_day=24)
+		mall_config = mall_models.MallConfig.create(owner=self.corp.id, order_expired_day=24)
 		return WebappConfig(mall_config)
 

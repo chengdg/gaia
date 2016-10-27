@@ -31,6 +31,8 @@ class AOrder(api_resource.ApiResource):
 			'with_full_money_info': True,
 			'with_status_logs': True,
 			'with_operation_logs': True,
+			'with_coupon': True,
+			'extra_promotion_info': True,
 			'with_delivery_items': {
 				'with_products': True,
 				'with_refunding_info': True,

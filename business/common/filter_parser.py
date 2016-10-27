@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import settings
+import json
 
 class FilterParser(object):
     """
@@ -25,12 +26,18 @@ class FilterParser(object):
             return '%s__lte' % name
         elif match_strategy == 'range':
             return '%s__range' % name
+        elif match_strategy == 'notin':
+            return '%s__notin' % name
+        elif match_strategy == 'in':
+            return '%s__in' % name
+        elif match_strategy == 'gt':
+            return '%s__gt' % name
         else:
             return name
 
-    def get_filter_value(key, filter_options):
+    def get_filter_value(self, key, filter_options):
         _, _, match_strategy = key[2:].split('-')
-        if match_strategy == 'range':
+        if match_strategy == 'range' or match_strategy == 'in' or match_strategy == 'notin':
             value = json.loads(filter_options[key])
             return tuple(value)
         else:
@@ -49,7 +56,10 @@ class FilterParser(object):
                 continue
 
             key = self.get_filter_key(filter_express, filter2field)
-            peewee_query[key] = value
+
+            if value:
+                #当value有效时，才记录其为过滤项，可以解决dj_where(id__in=[])的问题
+                peewee_query[key] = self.get_filter_value(filter_express, filters)
 
         return peewee_query
 
@@ -69,6 +79,17 @@ class FilterParser(object):
         peewee_query[key] = value
 
         return peewee_query
+
+    def extract_by_keys(self, filters, key_map):
+        """
+        获取filters中的由key_map指定的子集
+        """
+        result = {}
+        for key, maped_key in key_map.items():
+            if not maped_key:
+                maped_key = key
+            result[maped_key] = filters[key]
+        return result
 
     @staticmethod
     def get():

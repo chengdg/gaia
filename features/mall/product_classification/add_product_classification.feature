@@ -3,7 +3,7 @@ Feature: 添加商品分类
 	Jobs能通过管理系统为管理商城添加的"商品分类"
 """
 
-@mall @mall.product @mall.product_classification @hermes @wip2
+@mall @mall.product @mall.product_classification @hermes
 Scenario:1 添加无商品的商品分类
 
 	Given jobs登录系统

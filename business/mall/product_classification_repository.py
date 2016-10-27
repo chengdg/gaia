@@ -14,7 +14,7 @@ class ProductClassificationRepository(business_model.Service):
 
 	def get_child_product_classifications(self, father_id):
 		"""
-		获得子分类集合
+		获得下一级子分类集合
 		"""
 		models = mall_models.Classification.select().dj_where(father_id=father_id)
 		return [ProductClassification(model) for model in models]
@@ -24,3 +24,20 @@ class ProductClassificationRepository(business_model.Service):
 		删除指定的供货商
 		"""
 		mall_models.Classification.update(status=mall_models.CLASSIFICATION_OFFLINE).dj_where(id=id).execute()
+
+	def get_children_product_classifications(self, father_id):
+		"""
+		获得所有子分类集合(包括子级和子级的子级)
+		"""
+		father_id = int(father_id)
+		models = list(mall_models.Classification.select())
+		children = []
+		child_ids = set()
+
+		models.sort(lambda x,y: cmp(x.father_id, y.father_id))
+		for model in models:
+			if (model.father_id in child_ids) or (model.id == father_id):
+				children.append(model)
+				child_ids.add(model.id)
+
+		return children

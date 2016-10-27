@@ -3,7 +3,7 @@ Feature: 更新wbapp配置
 Background:
 	Given jobs登录系统
 
-@mall @mall.config @hermes
+@mall @mall.config @hermes @wip
 Scenario:1 更新webapp配置
 	When jobs更新Webapp配置为
 		"""

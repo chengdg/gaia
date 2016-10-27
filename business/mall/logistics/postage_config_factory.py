@@ -66,6 +66,23 @@ class PostageConfigFactory(object):
 
 		return postage_config
 
+	def make_sure_default_postage_config_exists(self):
+		"""
+		确保默认的免运费的运费配置存在
+		"""
+		if mall_models.PostageConfig.select().dj_where(owner_id=self.corp.id, name=u'免运费').count() == 0:
+			#创建默认的“免运费”配置
+			mall_models.PostageConfig.create(
+				owner = self.corp.id,
+				name = u'免运费',
+				added_weight = "0.0",
+				is_enable_added_weight = False,
+				is_enable_special_config = False,
+				is_enable_free_config = False,
+				is_used = True,
+				is_system_level_config = True
+			)
+
 	def update(self, args):
 		id = args['id']
 		name = args['name']

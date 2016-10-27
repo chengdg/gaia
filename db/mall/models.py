@@ -113,6 +113,7 @@ class PostageConfig(models.Model):
 	is_enable_special_config = models.BooleanField(default=True)  # 是否启用续重机制
 	is_enable_free_config = models.BooleanField(default=True)  # 是否启用包邮机制
 	is_deleted = models.BooleanField(default=False) #是否删除
+	supplier_id = models.IntegerField(default=0) # 供货商的id
 
 	class Meta(object):
 		db_table = 'mall_postage_config'
@@ -947,7 +948,7 @@ class OrderHasProduct(models.Model):
 	created_at = models.DateTimeField(auto_now_add=True)  # 添加时间
 	promotion_id = models.IntegerField(default=0)  # 促销信息id
 	promotion_money = models.FloatField(default=0.0)  # 促销抵扣金额
-	grade_discounted_money = models.FloatField(default=0.0)  # 折扣金额
+	grade_discounted_money = models.FloatField(default=0.0)  # 折扣金额,会员等级价折扣金额
 	integral_sale_id = models.IntegerField(default=0) #使用的积分应用的id
 	origin_order_id = models.IntegerField(default=0) # 原始(母)订单id，用于微众精选拆单
 	purchase_price = models.FloatField(default=0)  # 采购单价

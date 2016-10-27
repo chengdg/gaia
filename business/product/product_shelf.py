@@ -6,7 +6,7 @@ from eaglet.decorator import param_required
 
 from db.mall import models as mall_models
 from business import model as business_model
-from zeus_conf import TOPIC
+from gaia_conf import TOPIC
 from product_pool import ProductPool
 
 NEW_PRODUCT_DISPLAY_INDEX = 9999999
@@ -87,16 +87,36 @@ class ProductShelf(business_model.Model):
 		"""
 		获得货架上的商品集合
 		"""
+		return self.search_products({}, page_info)
+		# product_pool = self.corp.product_pool
+		# #TODO: get_products不应泄露DB层信息
+		# filters = {}
+		# filters['__f-status-equal'] = mall_models.PP_STATUS_ON if self.type == 'in_sale' else mall_models.PP_STATUS_OFF
+
+		# fill_options = {
+		# 	'with_category': True,
+		# 	'with_product_model': True,
+		# 	'with_model_property_info': True,
+		# 	'with_shelve_status': True,
+		# 	'with_supplier_info': True,
+		# 	'with_classification': True
+		# }
+
+		# options = {
+		# 	'order_by_display_index': True
+		# }
+
+		# products, pageinfo = product_pool.get_products(page_info, fill_options, options, filters)
+
+		# return products, pageinfo
+
+	def search_products(self, filters, page_info):
+		"""
+		获得货架上的商品集合
+		"""
 		product_pool = self.corp.product_pool
 		#TODO: get_products不应泄露DB层信息
-		if self.type == 'in_sale':
-			query = {
-				"status": mall_models.PP_STATUS_ON
-			}
-		else:
-			query = {
-				"status": mall_models.PP_STATUS_OFF
-			}
+		filters['__f-status-equal'] = mall_models.PP_STATUS_ON if self.type == 'in_sale' else mall_models.PP_STATUS_OFF
 
 		fill_options = {
 			'with_category': True,
@@ -104,14 +124,15 @@ class ProductShelf(business_model.Model):
 			'with_model_property_info': True,
 			'with_shelve_status': True,
 			'with_supplier_info': True,
-			'with_classification': True
+			'with_classification': True,
+			'with_sales': True
 		}
 
 		options = {
 			'order_by_display_index': True
 		}
 
-		products, pageinfo = product_pool.get_products(query, page_info, fill_options, options)
+		products, pageinfo = product_pool.get_products(page_info, fill_options, options, filters)
 
 		return products, pageinfo
 

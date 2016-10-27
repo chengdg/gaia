@@ -70,6 +70,7 @@ if MODE == 'develop':
     H5_HOST = "http://h5.weapp.com/"
 
     DUMP_READABLE_EXCEPTION_STACK = True
+    ENABLE_SQL_LOG = False #是否dump peewee产生的sql查询
 else:
     # 真实环境暂时关闭
     #WAPI_LOGGER_ENABLED = False
@@ -83,6 +84,7 @@ else:
     ENABLE_SQL_LOG = False
     WEAPP_HOST = "http://weapp.weizoom.com/"
     H5_HOST = "http://mall.weizoom.com/"
+    ENABLE_SQL_LOG = False #是否dump peewee产生的sql查询
 
 #缓存相关配置
 REDIS_HOST = 'redis.weapp.com'
@@ -169,3 +171,5 @@ BDD_SERVER2PORT = {
     'weizoom_card': 8171,
     'apiserver': 8172
 }
+
+PROMOTION_RESULT_VERSION = '2' #促销结果数据版本号

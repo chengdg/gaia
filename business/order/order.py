@@ -3,7 +3,7 @@
 from business import model as business_model
 from business.order.delivery_item import DeliveryItem
 from db.mall import models as mall_models
-from zeus_conf import TOPIC
+from gaia_conf import TOPIC
 from bdem import msgutil
 from datetime import datetime, timedelta
 
@@ -70,6 +70,9 @@ class Order(business_model.Model):
 		'status_logs',
 		'operation_logs',
 		'weizoom_card_info',
+		'extra_coupon_info',
+
+		'integral_type',  # 订单中使用积分的类型。'order':整单抵扣,'product':积分应用
 
 		'is_second_generation_order'  # 对于第二代的同步订单，db层面出货单就是订单，此类订单不会再产生，业务只处理显示
 	)
@@ -106,6 +109,8 @@ class Order(business_model.Model):
 			order.type = db_model.type
 			order.webapp_id = db_model.webapp_id
 			order.webapp_user_id = db_model.webapp_user_id
+
+			order.coupon_id = db_model.coupon_id
 
 			order.created_at = db_model.created_at
 			# 支付信息
@@ -166,6 +171,8 @@ class Order(business_model.Model):
 			with_status_logs = fill_options.get('with_status_logs')
 			with_operation_logs = fill_options.get('with_operation_logs')
 			with_weizoom_card = fill_options.get("with_weizoom_card")
+			with_coupon = fill_options.get("with_coupon")
+			with_extra_promotion_info = fill_options.get("extra_promotion_info")
 
 			if with_member:
 				webapp_user_id2member, _ = corp.member_repository.get_members_from_webapp_user_ids(webapp_user_ids)
@@ -213,7 +220,59 @@ class Order(business_model.Model):
 			if with_operation_logs:
 				Order.__fill_operation_logs(orders, order_ids)
 
+			if with_coupon:
+				Order.__fill_coupon(orders, order_ids)
+
+			if with_extra_promotion_info:
+				# 需要填充product
+				Order.__fill_extra_promotion(orders, order_ids)
+
 		return orders
+
+	@staticmethod
+	def __fill_extra_promotion(orders, order_ids):
+		"""
+
+		@param orders:
+		@param order_ids:
+		@return:
+		"""
+		# 判断订单的积分是整单抵扣还是积分应用
+		for order in orders:
+			for delivery_item in order.delivery_items:
+				if not order.integral_type:
+					for product in delivery_item.products:
+						if not order.integral_type:
+							if product.promotion_info['integral_count']:
+								order.integral_type = 'product'
+
+			if order.integral_type != 'product' and order.integral:
+				order.integral_type = 'order'
+
+	@staticmethod
+	def __fill_coupon(orders, order_ids):
+		corp = orders[0].context['corp']
+		coupon_ids = [order.coupon_id for order in orders if order.coupon_id]
+		coupons = corp.coupon_repository.get_coupon_by_ids(coupon_ids)
+
+		id2coupon = {coupon.id: coupon for coupon in coupons}
+
+		for order in orders:
+			if order.coupon_id:
+				coupon = id2coupon[order.coupon_id]
+				order.extra_coupon_info = {
+					'bid': coupon.bid,
+					'id': coupon.id,
+					'type': coupon.rule.type
+
+				}
+
+			else:
+				order.extra_coupon_info = {
+					'bid': '',
+					'id': '',
+					'type': ''
+				}
 
 	@staticmethod
 	def __fill_weizoom_card(orders, order_ids):
@@ -313,22 +372,22 @@ class Order(business_model.Model):
 		for order in orders:
 			if order.is_weizoom_order:
 				order.refunding_info = {
-					'cash': sum([delivery_item.refund_info['cash'] for delivery_item in order.delivery_items if
-					             delivery_item.refund_info['finished']]),
+					'cash': sum([delivery_item.refunding_info['cash'] for delivery_item in order.delivery_items if
+					             delivery_item.refunding_info['finished']]),
 					'weizoom_card_money': sum(
-						[delivery_item.refund_info['weizoom_card_money'] for delivery_item in order.delivery_items if
-						 delivery_item.refund_info['finished']]),
+						[delivery_item.refunding_info['weizoom_card_money'] for delivery_item in order.delivery_items if
+						 delivery_item.refunding_info['finished']]),
 					'integral_money': sum(
-						[delivery_item.refund_info['integral_money'] for delivery_item in order.delivery_items if
-						 delivery_item.refund_info['finished']]),
+						[delivery_item.refunding_info['integral_money'] for delivery_item in order.delivery_items if
+						 delivery_item.refunding_info['finished']]),
 					'integral': sum(
-						[delivery_item.refund_info['integral'] for delivery_item in order.delivery_items if
-						 delivery_item.refund_info['finished']]),
+						[delivery_item.refunding_info['integral'] for delivery_item in order.delivery_items if
+						 delivery_item.refunding_info['finished']]),
 					'coupon_money': sum(
-						[delivery_item.refund_info['coupon_money'] for delivery_item in order.delivery_items if
-						 delivery_item.refund_info['finished']]),
-					'total': sum([delivery_item.refund_info['total'] for delivery_item in order.delivery_items if
-					              delivery_item.refund_info['finished']]),
+						[delivery_item.refunding_info['coupon_money'] for delivery_item in order.delivery_items if
+						 delivery_item.refunding_info['finished']]),
+					'total': sum([delivery_item.refunding_info['total'] for delivery_item in order.delivery_items if
+					              delivery_item.refunding_info['finished']]),
 				}
 			else:
 				order.refunding_info = {
@@ -340,6 +399,16 @@ class Order(business_model.Model):
 					'total': 0,
 				}
 
+	def __get_total_origin_product_price(self):
+
+		total_origin_product_price = 0
+
+		for delivery_item in self.delivery_items:
+			for product in delivery_item.products:
+				total_origin_product_price += product.total_origin_price
+
+		return total_origin_product_price
+
 	@staticmethod
 	def __fill_full_money_info(orders, order_ids):
 
@@ -348,8 +417,7 @@ class Order(business_model.Model):
 				'weizoom_card_money']
 			order.origin_final_price = order.final_price + order.refunding_info['cash']
 
-			total_product_origin_price = sum(
-				[delivery_item.total_origin_product_price for delivery_item in order.delivery_items])
+			total_product_origin_price = order.__get_total_origin_product_price()
 
 			order.save_money = round(total_product_origin_price, 2) + round(order.postage, 2) - round(
 				order.origin_final_price,

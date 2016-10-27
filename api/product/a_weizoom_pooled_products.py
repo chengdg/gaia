@@ -25,7 +25,6 @@ class AWeizoomPooledProducts(api_resource.ApiResource):
 			"count_per_page": int(args.get('count_per_page', 10))
 		})
 
-		query = {}
 		fill_options = {
 			'with_product_model': True,
 			'with_model_property_info': True,
@@ -41,7 +40,8 @@ class AWeizoomPooledProducts(api_resource.ApiResource):
 		#TODO: 寻找更优雅的切换公司的解决方案
 		#将公司设置为weizoom corp
 		CorporationFactory.set(weizoom_corp)
-		products, pageinfo = weizoom_corp.product_pool.get_products(query, target_page, fill_options, options)
+		filters = json.loads(args.get('filters', '{}'))
+		products, pageinfo = weizoom_corp.product_pool.get_products(target_page, fill_options, options, filters)
 		#恢复当前公司
 		CorporationFactory.set(corp)
 

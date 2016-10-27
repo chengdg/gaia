@@ -44,11 +44,48 @@ def __clear_all_app_data():
 	for clean_module in clean_modules:
 		clean_module.clean()
 
+def __make_password(raw_password):
+	import hashlib
+
+	algorithm = 'sha1'
+	salt = '69e44'
+	hash = hashlib.sha1(salt + raw_password).hexdigest()
+	return "%s$%s$%s" % (algorithm, salt, hash)
+
+
 ######################################################################################
 # __create_system_user: 创建系统用户
 ######################################################################################
 def __create_system_user(username):
-	pass
+	"""
+	创建系统用户
+	"""
+	from db.account import models as account_models
+
+	try:
+		user = account_models.User.select().dj_where(username=username).get()
+		#已经存在，不再创建
+	except:
+		user = account_models.User.create(
+			username = username,
+			first_name = username,
+			password = __make_password('test')
+		)
+
+		profile = account_models.UserProfile.create(
+			user = user,
+			webapp_id = 0,
+			webapp_type = account_models.WEBAPP_TYPE_MALL
+		)
+
+	client = bdd_util.login(user)
+	data = {
+		'corp_id': user.id
+	}
+	response = client.put('/mall/default_configs/', data)
+	bdd_util.assert_api_call_success(response)
+
+	return user
 
 
 def __create_weizoom_corporation():
@@ -61,7 +98,7 @@ def __create_weizoom_corporation():
 	except:
 		user = account_models.User.create(
 			username = 'weizoom_corp',
-			password = 'test'
+			password = __make_password('test')
 		)
 
 		profile = account_models.UserProfile.create(
@@ -69,6 +106,7 @@ def __create_weizoom_corporation():
 			webapp_id = 0,
 			webapp_type = account_models.WEBAPP_TYPE_WEIZOOM
 		)
+
 
 def __create_self_run_platform_account():
 	from db.account import models as account_models
@@ -79,7 +117,7 @@ def __create_self_run_platform_account():
 	except:
 		user = account_models.User.create(
 			username = 'zhouxun',
-			password = 'test'
+			password = __make_password('test')
 		)
 
 		profile = account_models.UserProfile.create(
@@ -91,9 +129,10 @@ def __create_self_run_platform_account():
 def before_all(context):
 	# cache_utils.clear_db()
 	# __clear_all_account_data()
-	# __create_system_user('jobs')
-	# __create_system_user('bill')
-	# __create_system_user('tom')
+	
+	__create_system_user('jobs')
+	__create_system_user('bill')
+	__create_system_user('tom')
 
 	__create_weizoom_corporation()
 	__create_self_run_platform_account()

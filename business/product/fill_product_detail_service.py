@@ -8,7 +8,7 @@ from business import model as business_model
 from business.product.product import Product
 from business.product.model.product_model_generator import ProductModelGenerator
 from db.mall import models as mall_models
-from zeus_conf import TOPIC
+from gaia_conf import TOPIC
 
 import settings
 
@@ -243,6 +243,16 @@ class FillProductDetailService(business_model.Service):
 			for label_id in product_label_ids:
 				product.labels.append(id2label[label_id])
 
+	def __fill_sales_detail(slef, corp, products, product_ids, id2product):
+		"""填充商品销售情况相关细节
+		"""
+		for product in products:
+			product.sales = 0
+
+		for sales in mall_models.ProductSales.select().dj_where(product_id__in=product_ids):
+			product_id = sales.product_id
+			if id2product.has_key(product_id):
+				id2product[product_id].sales = sales.sales
 
 	def fill_detail(self, products, options):
 		"""填充各种细节信息
@@ -303,7 +313,8 @@ class FillProductDetailService(business_model.Service):
 			self.__fill_classification_detail(self.corp, products, product_ids, id2product)
 
 		if options.get('with_sales', False):
-			Product.__fill_sales_detail(self.corp, products, product_ids)
+			self.__fill_sales_detail(self.corp, products, product_ids, id2product)
 
 		if options.get('with_product_label', False):
 			self.__fill_label_detail(self.corp, products, product_ids)
+

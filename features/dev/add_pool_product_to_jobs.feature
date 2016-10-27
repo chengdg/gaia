@@ -1,11 +1,11 @@
 Feature: 从微众商品池中选择商品进行上架
 """
-	zhouxun能通过管理系统从微众商品池中选择商品进行上架
+	设置jobs为自营平台，并同步商品
 """
 
-Background:
-	Given weizoom登录系统
-	And weizoom已添加商品分组
+  Background:
+    Given weizoom登录系统
+    And weizoom已添加商品分组
 		"""
 		[{
 			"name": "分类1"
@@ -15,7 +15,7 @@ Background:
 			"name": "分类3"
 		}]
 		"""
-	And weizoom已添加商品规格
+    And weizoom已添加商品规格
 		"""
 		[{
 			"name": "颜色",
@@ -37,7 +37,7 @@ Background:
 			}]
 		}]
 		"""
-	When weizoom添加商品分类
+    When weizoom添加商品分类
 		"""
 		{
 			"分类11": {
@@ -53,7 +53,7 @@ Background:
 			"分类13": null
 		}
 		"""
-	When weizoom添加供应商
+    When weizoom添加供应商
 		"""
 		[{
 			"name": "苹果",
@@ -74,12 +74,13 @@ Background:
 			}
 		}]
 		"""
+    Given jobs成为自营平台
 
-@mall @mall.product @mall.product_management @hermes
-Scenario:1 创建供应商供应的商品
-	job添加商品后：
-	1、能获得商品详情
-	2、在待售商品列表能看到商品
+  @mall @mall.product @mall.product_management @hermes @wip @ztqdev
+  Scenario:1 创建供应商供应的商品
+  job添加商品后：
+  1、能获得商品详情
+  2、在待售商品列表能看到商品
 
 	Given weizoom登录系统
 	When weizoom添加商品
@@ -140,7 +141,7 @@ Scenario:1 创建供应商供应的商品
 		}]
 		"""
 
-@mall @mall.product @mall.product_management @hermes @abcde
+@mall @mall.product @mall.product_management @hermes @wip @abcd
 Scenario:1 创建供应商供应的商品
 	job添加商品后：
 	1、能获得商品详情
@@ -209,12 +210,24 @@ Scenario:1 创建供应商供应的商品
 			}
 		}]
 		"""
-	Given jobs登录系统
-	Then jobs能获得'待售'商品列表
+    Given jobs登录系统
+    When jobs添加支付方式
+		"""
+		[{
+			"type": "微信支付",
+			"is_active": "启用",
+			"version": 3,
+			"weixin_appid": "app_id_1",
+			"mch_id": "mch_id_1",
+			"api_key": "api_key_1",
+			"paysign_key": "paysign_key_1"
+		}]
+		"""
+    Then jobs能获得'待售'商品列表
 		"""
 		[]
 		"""
-	Then jobs能获得'微众商品池'商品列表
+    Then jobs能获得'微众商品池'商品列表
 		"""
 		[{
 			"name": "东坡肘子",
@@ -223,7 +236,7 @@ Scenario:1 创建供应商供应的商品
 			"classification": "分类11-分类23-分类31",
 			"price": 11.12,
 			"stocks": "无限",
-			"gross_profit": 10.02, 
+			"gross_profit": 10.02,
 			"image": "/static/test_resource_img/hangzhou1.jpg"
 		}, {
 			"name": "叫花鸡",
@@ -245,7 +258,7 @@ Scenario:1 创建供应商供应的商品
 			"image": "/static/test_resource_img/hangzhou3.jpg"
 		}]
 		"""
-	When jobs添加代售商品
+    When jobs添加代售商品
 		"""
 		[{
 			"name": "东坡肘子"
@@ -253,7 +266,7 @@ Scenario:1 创建供应商供应的商品
 			"name": "叫花鸡"
 		}]
 		"""
-	Then jobs能获得'在售'商品列表
+    Then jobs能获得'在售'商品列表
 		"""
 		[{
 			"name": "东坡肘子"

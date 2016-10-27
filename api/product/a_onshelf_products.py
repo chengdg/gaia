@@ -20,13 +20,17 @@ class AOnshelfProducts(api_resource.ApiResource):
 	@param_required(['corp_id'])
 	def get(args):
 		corp = args['corp']
-		
+
 		target_page = PageInfo.create({
 			"cur_page": int(args.get('cur_page', 1)),
 			"count_per_page": int(args.get('count_per_page', 10))
 		})
 
-		products, pageinfo = corp.insale_shelf.get_products(target_page)
+		filters = json.loads(args.get('filters', '{}'))
+		if filters:
+			products, pageinfo = corp.insale_shelf.search_products(filters, target_page)
+		else:
+			products, pageinfo = corp.insale_shelf.get_products(target_page)
 
 		encode_product_service = EncodeProductService.get(corp)
 		datas = []

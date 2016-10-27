@@ -163,7 +163,7 @@ class EncodeProductService(business_model.Service):
 			}
 		elif supplier.is_retail_type():
 			retail_info = supplier.get_retail_info()
-			data['retail_info'] = {
+			data['retail_type_info'] = {
 				"id": retail_info.id,
 				"rebate": retail_info.rebate
 			}

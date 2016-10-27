@@ -13,3 +13,8 @@ class CouponRepository(business_model.Service):
 		coupon = Coupon.from_model({"db_model": db_model, 'corp': self.corp})
 
 		return coupon
+
+	def get_coupon_by_ids(self, coupon_ids):
+		db_models = promotion_models.Coupon.select().dj_where(id__in=coupon_ids, owner_id=self.corp.id)
+		coupons = Coupon.from_models({"db_models": db_models, 'corp': self.corp})
+		return coupons
