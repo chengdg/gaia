@@ -2,7 +2,7 @@ Feature: 创建商品规格
 	Jobs通过管理系统在商城中新增供商品使用的"商品规格"
 
 
-@mall @mall.product @mall.product_model_property @hermes
+@gaia @mall @mall.product @mall.product_model_property @hermes
 Scenario:1 添加商品规格信息
 	Given jobs登录系统
 	When jobs添加商品规格

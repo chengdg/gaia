@@ -3,7 +3,7 @@ Feature: 更新图片分组
 Background:
 	Given jobs登录系统
 
-@mall @mall.product @mall.image_group @hermes
+@gaia @mall @mall.product @mall.image_group @hermes
 Scenario:1 删除图片分组
 	Jobs添加图片分组后
 	1. jobs能删除图片分组

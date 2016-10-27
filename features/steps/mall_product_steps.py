@@ -100,6 +100,11 @@ def __format_product_post_data(context, product):
     """
     构造用于提交的product数据
     """
+    LIMIT_ZONE_TYPE = {
+        u'不限制': 0,
+        u'禁售': 1,
+        u'仅售': 2
+    }
     #基本信息
     if product.get('supplier', None):
         supplier = mall_models.Supplier.select().dj_where(owner_id=context.corp.id, name=product['supplier']).get()
@@ -137,9 +142,17 @@ def __format_product_post_data(context, product):
 
     #运费信息
     postage_type = 'unified_postage_type' if (product.get('postage_type', u'统一运费') == u'统一运费') else 'custom_postage_type'
+    limit_zone_type = LIMIT_ZONE_TYPE[product.get('limit_zone_type', u'不限制')]
+    limit_zone_name = product.get('limit_zone_name', u'')
+    if limit_zone_name:
+        limit_zone_id = mall_models.ProductLimitZoneTemplate.select().dj_where(owner=context.corp.id, name=limit_zone_name).first().id
+    else:
+        limit_zone_id = 0
     logistics_info = {
         'unified_postage_money': product.get('unified_postage_money', '0.0'), #统一运费金额
         'postage_type': postage_type, #运费类型
+        'limit_zone_type': limit_zone_type,
+        'limit_zone_id': limit_zone_id
     }
 
     #图片信息
@@ -185,6 +198,11 @@ def __create_product(context, product):
 
 
 def __get_product(context, name):
+    LIMIT_ZONE_TYPE_NUMBER2STR = {
+        0: u'不限制',
+        1: u'禁售',
+        2: u'仅售'
+    }
     product_model = mall_models.Product.select().dj_where(owner_id=context.corp.id, name=name).get()
     data = {
         "corp_id": context.corp.id,
@@ -252,7 +270,8 @@ def __get_product(context, name):
     logistics_info = resp_data['logistics_info']
     product['postage_type'] = u'统一运费' if logistics_info['postage_type'] == 'unified_postage_type' else u'运费模板'
     product['unified_postage_money'] = logistics_info['unified_postage_money']
-
+    product['limit_zone_type'] = LIMIT_ZONE_TYPE_NUMBER2STR[logistics_info['limit_zone_type']]
+    product['limit_zone_name'] = mall_models.ProductLimitZoneTemplate.select().dj_where(id=logistics_info['limit_zone_id']).first().name if logistics_info['limit_zone_id'] else ''
     #处理商品分类信息
     if len(resp_data['classifications']) == 0:
         product['classification'] = ''

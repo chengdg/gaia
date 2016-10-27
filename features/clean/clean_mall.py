@@ -67,3 +67,6 @@ def clean():
 	mall_models.ProductSales.delete().execute()
 	mall_models.Product.delete().execute()
 	mall_models.ProductPool.delete().execute()
+
+	#限定区域
+	mall_models.ProductLimitZoneTemplate.delete().execute()

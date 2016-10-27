@@ -1,6 +1,6 @@
 Feature: 添加供应商
 
-@mall @mall.product @mall.supplier @hermes
+@gaia @mall @mall.product @mall.supplier @hermes
 Scenario:1 添加供应商
 	Jobs添加一组"供应商"后，能获得供应商列表
 

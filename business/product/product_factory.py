@@ -35,7 +35,7 @@ class ProductFactory(business_model.Service):
 			is_enable_bill=base_info['is_enable_bill'],
 			is_delivery=base_info.get('is_delivery', 'false') == 'true',
 			limit_zone_type=int(logistics_info.get('limit_zone_type', '0')),
-			limit_zone=int(logistics_info.get('limit_zone_template', '0'))
+			limit_zone=int(logistics_info.get('limit_zone_id', '0'))
 		)
 		
 		return product

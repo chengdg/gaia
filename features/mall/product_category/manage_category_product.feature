@@ -3,7 +3,7 @@ Feature: 管理分组中的商品
 	Jobs能通过管理系统管理分组中的商品
 """
 
-@mall @mall.product @mall.product_category @hermes
+@gaia @mall @mall.product @mall.product_category @hermes
 Scenario:1 从分组中删除商品
 
 	Given jobs登录系统
@@ -50,7 +50,7 @@ Scenario:1 从分组中删除商品
 		}]
 		"""
 
-@mall @mall.product @mall.product_category @hermes
+@gaia @mall @mall.product @mall.product_category @hermes
 Scenario:2 调整分组中商品排序
 
 	Given jobs登录系统
@@ -113,7 +113,7 @@ Scenario:2 调整分组中商品排序
 		}]
 		"""
 
-@mall @mall.product @mall.product_category @hermes
+@gaia @mall @mall.product @mall.product_category @hermes
 Scenario:3 向分组中增加商品
 
 	Given jobs登录系统

@@ -1,0 +1,80 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "Hermes Product Model Property API"
+    },
+    "paths": {
+        "/mall/product_label_groups/": {
+            "get": {
+                "description": "获得商品标签",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product_label"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "product_label_groups": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/ProductLabelLists"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "ProductLabelLists": {
+            "type": "object",
+            "properties": {
+                "label_group_id": {
+                    "type": "number",
+                    "description": "标签组的id"
+                },
+                "label_group_name": {
+                    "type": "string",
+                    "description": "标签组的名字"
+                },
+                "labels": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ProductLabels"
+                    },
+                    "minItems": 0
+                }
+            }
+        },
+	  	"ProductLabels": {
+		  	"type": "object",
+		  	"properties": {
+			  	"label_id": {
+				  	"type": "number",
+                    "description": "商品标签的id"
+				},
+			  	"label_name": {
+				  	"type": "string",
+                    "description": "商品标签的名字"
+				}
+			}
+		}
+    }
+}

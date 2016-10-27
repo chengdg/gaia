@@ -125,7 +125,7 @@ Background:
 		}]
 		"""
 
-@mall @mall.product @mall.product_management @hermes
+@gaia @mall @mall.product @mall.product_management @hermes
 Scenario:1 修改商品基本信息
 	job修改商品基本信息后：
 	1、能获得修改后的商品信息(name, bar_code, min_limit, promotion_title, detail)

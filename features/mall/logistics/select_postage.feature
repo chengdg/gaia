@@ -22,7 +22,7 @@ Background:
 		}]
 		"""
 
-@mall @mall.logistics @hermes
+@gaia @mall @mall.logistics @hermes
 Scenario:1 选择邮费配置
 	Jobs选择"邮费配置"
 	1. jobs能获得更新后的邮费配置
