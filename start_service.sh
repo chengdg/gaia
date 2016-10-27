@@ -7,5 +7,5 @@ cd ../..
 if [ "$_WEIZOOM_PRODUCTION" == "1" ]; then
 	uwsgi service.ini
 else
-	python manage.py runserver 0.0.0.0:$PORT
+	python manage.py runserver 0.0.0.0 $PORT
 fi
