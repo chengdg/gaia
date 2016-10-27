@@ -43,4 +43,4 @@ def process(data, recv_msg=None):
 		"order_id": order_id,
 		"corp_id": corp.id
 	}
-	msgutil.send_message(topic_name, 'send_template_message_task', data)
+	msgutil.send_message(topic_name, 'send_order_template_message_task', data)
