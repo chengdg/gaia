@@ -56,6 +56,9 @@ def load_config_from_json_file():
 		locations.append("location / { proxy_pass http://%s; }" % service_name)
 	config['locations'] = locations
 
+	if not config['server_name'] and service_name:
+		config['server_name'] = 'dev.%s.com' % service_name
+
 	return config
 
 def load_config_from_etcd(client, key):
