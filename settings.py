@@ -165,7 +165,7 @@ else:
     MNS_ACCESS_KEY_SECRET = 'bPKU71c0cfrui4bWgGPO96tLiOJ0PZ'
     MNS_ENDPOINT = 'https://1615750970594173.mns.cn-beijing.aliyuncs.com/'
     MNS_SECURITY_TOKEN = ''
-    SUBSCRIBE_QUEUE_NAME = 'test-topic'
+    SUBSCRIBE_QUEUE_NAME = 'test-gaia'
     MESSAGE_DEBUG_MODE = True
 
 # BDD_SERVER相关配置
