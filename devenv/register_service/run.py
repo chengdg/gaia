@@ -82,25 +82,46 @@ def load_service_name():
 		content = f.read()
 		return json.loads(content)['name']
 
+WSGI_PROXY_DIRECTIVE = """ {
+		rewrite ^%s(.*) /$1 break;
+		include uwsgi_params;
+		uwsgi_pass uwsgi://%s;
+	}
+"""
+
+HTTP_PROXY_DIRECTIVE = """ {
+		rewrite ^%s(.*) /$1 break;
+		proxy_pass http://%s;
+	}
+"""
+
 def register_to_other_service(client, current_service):
 	"""
 	检查json config中是否有需要添加到其他host的信息, 比如passproxy
 	"""
 	config = load_config_from_json_file()
-	if 'passproxy_locations' in config:
-		for passproxy_location in config['passproxy_locations']:
-			service_name = passproxy_location['service']
+	if 'proxy_locations' in config:
+		for proxy_location in config['proxy_locations']:
+			service_name = proxy_location['service']
 			key = "/service/%s" % service_name
 			service_config = load_config_from_etcd(client, key)
 			if not service_config:
 				print '[register] ERROR: Need service `%s` exists in etcd. But it is NOT EXISTED!!!' % service_name
 				sys.exit(1)
 
-			location = "location %s { proxy_pass http://%s; }" % (passproxy_location['path'], current_service)
+			if proxy_location['type'] == 'api_proxy':
+				if '_WEIZOOM_PRODUCTION' in os.environ:
+					pass_directive = WSGI_PROXY_DIRECTIVE % (proxy_location['path'], current_service)
+				else:
+					pass_directive = HTTP_PROXY_DIRECTIVE % (proxy_location['path'], current_service)
+			else:
+				pass
+
+			location = "location %s %s" % (proxy_location['path'], pass_directive)
 			if not location in service_config['locations']:
 				service_config['locations'].append(location)
 			client.set(key, json.dumps(service_config))
-			print '[register] add proxypass into %s' % service_name
+			print '[register] add proxy directive into %s' % service_name
 
 def do_register():
 	client = etcd.Client(host='etcd.weizoom.com')

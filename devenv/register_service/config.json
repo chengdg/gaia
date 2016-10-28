@@ -4,5 +4,10 @@
 	"locations": [{
 		"path": "/static",
 		"root": "."
+	}],
+	"proxy_locations": [{
+		"service": "api-gateway",
+		"path": "/gaia/",
+		"type": "api_proxy"
 	}]
 }
