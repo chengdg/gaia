@@ -25,10 +25,10 @@
 						"required": true
 					},
 					{
-						"name":"filters",
+						"name": "filters",
 						"required": false,
 						"in": "query",
-						"description": "json字符串，<__f-ship_tel-equal>,<__f-ship_name-equal>,<__f-bid-equal>,<__f-weizoom_card_money-gt>,<__f-is_first_order-equal:'true' or 'false'>,<__f-pay_interface_type-equal>,<__f-created_at-range>,<__f-express_number-equal>,<__f-product_name-contain>,<__f-is_group_buy-equal'>,<__f-status-in:状态数值列表>"
+						"description": "json字符串，<__f-ship_tel-equal>,<__f-ship_name-equal>,<__f-bid-equal>,<__f-weizoom_card_money-gt>,<__f-is_first_order-equal:'true' or 'false'>,<__f-pay_interface_type-equal:字符串>,<__f-created_at-range>,<__f-express_number-equal>,<__f-product_name-contain>,<__f-is_group_buy-equal'>,<__f-status-in:状态字符串>"
 					}
 				],
 				"tags": [
@@ -114,13 +114,13 @@
 																},
 																"member_info": {
 																},
-																"status": {
-																	"type": "integer",
-																	"description": "状态"
+																"status_code": {
+																	"type": "string",
+																	"description": "订单状态，created（待支付）, cancelled（已取消）, paid（已支付）,shipped（已发货）,finished（已完成）,refunding（退款中）,refunded（退款成功）"
 																},
-																"pay_interface_type": {
-																	"type": "integer",
-																	"description": "支付方式"
+																"pay_interface_type_code": {
+																	"type": "string",
+																	"description": "支付方式，unknown（天知道），preference（优惠抵扣），alipay（支付宝），tenpay（财付通），weixin_pay（微信支付），cod（货到付款），weizoom_coin（微众卡支付），best_pay（翼支付），kangou_pay（看购支付）"
 																},
 																"save_money": {
 																	"type": "number",
@@ -251,9 +251,9 @@
 																				"type": "number",
 																				"description": "运费"
 																			},
-																			"status": {
-																				"type": "integer",
-																				"description": "状态"
+																			"status_code": {
+																				"type": "string",
+																				"description": "订单状态，created（待支付）, cancelled（已取消）, paid（已支付）,shipped（已发货）,finished（已完成）,refunding（退款中）,refunded（退款成功）"
 																			},
 																			"supplier_info": {
 																				"type": "object",
@@ -520,13 +520,13 @@
 												},
 												"member_info": {
 												},
-												"status": {
-													"type": "integer",
-													"description": "状态"
+												"status_code": {
+													"type": "string",
+													"description": "订单状态，created（待支付）, cancelled（已取消）, paid（已支付）,shipped（已发货）,finished（已完成）,refunding（退款中）,refunded（退款成功）"
 												},
-												"pay_interface_type": {
-													"type": "integer",
-													"description": "支付方式"
+												"pay_interface_type_code": {
+													"type": "string",
+													"description": "支付方式，unknown（未知），preference（优惠抵扣），alipay（支付宝），tenpay（财付通），weixin_pay（微信支付），cod（货到付款），weizoom_coin（微众卡支付），best_pay（翼支付），kangou_pay（看购支付）"
 												},
 												"save_money": {
 													"type": "number",
@@ -674,9 +674,9 @@
 																"type": "number",
 																"description": "运费"
 															},
-															"status": {
-																"type": "integer",
-																"description": "状态"
+															"status_code": {
+																"type": "string",
+																"description": "订单状态，created（待支付）, cancelled（已取消）, paid（已支付）,shipped（已发货）,finished（已完成）,refunding（退款中）,refunded（退款成功）"
 															},
 															"express_details": {
 																"type": "array",
