@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
+from bdem import msgutil
 
 from eaglet.core import watchdog
 from eaglet.decorator import param_required
@@ -8,6 +9,7 @@ from eaglet.utils.resource_client import Resource
 from business import model as business_model
 from db.account import models as account_model
 from db.mall import models as mall_models
+from gaia_conf import TOPIC
 
 
 class PostageConfigFactory(object):
@@ -63,7 +65,8 @@ class PostageConfigFactory(object):
 					condition=free_config.get('condition', 'count'),
 					condition_value=free_config.get('value', '')
 				)
-
+		# 发送更新缓存的消息
+		msgutil.send_message(TOPIC['product'], 'postage_config_updated', {'corp_id': corp_id})
 		return postage_config
 
 	def make_sure_default_postage_config_exists(self):
@@ -126,3 +129,5 @@ class PostageConfigFactory(object):
 					condition=free_config.get('condition', 'count'),
 					condition_value=free_config.get('value', '')
 				)
+		# 发送更新缓存的消息
+		msgutil.send_message(TOPIC['product'], 'postage_config_updated', {'corp_id': corp_id})

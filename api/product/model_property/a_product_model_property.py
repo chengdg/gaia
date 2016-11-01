@@ -82,7 +82,7 @@ class AProductModelProperty(api_resource.ApiResource):
 
         field = args['field']
         value = args['value']
-        product_model_property.update(field, value)
+        product_model_property.update(field, value, corp)
 
         return {}
 

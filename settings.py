@@ -165,8 +165,8 @@ else:
     MNS_ACCESS_KEY_SECRET = 'bPKU71c0cfrui4bWgGPO96tLiOJ0PZ'
     MNS_ENDPOINT = 'https://1615750970594173.mns.cn-beijing.aliyuncs.com/'
     MNS_SECURITY_TOKEN = ''
-    SUBSCRIBE_QUEUE_NAME = 'new-zeus-test'
-    MESSAGE_DEBUG_MODE = True
+    SUBSCRIBE_QUEUE_NAME = 'test-gaia'
+    MESSAGE_DEBUG_MODE = False
 
 # BDD_SERVER相关配置
 BDD_SERVER2PORT = {

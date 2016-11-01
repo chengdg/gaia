@@ -30,7 +30,7 @@ class ACategoryProduct(api_resource.ApiResource):
 	def delete(args):
 		corp = args['corp']
 		category = corp.category_repository.get_category(args['category_id'])
-		category.delete_product(args['product_id'])
+		category.delete_product(args['product_id'], corp)
 
 		return {}
 

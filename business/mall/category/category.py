@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging
 from copy import copy, deepcopy
+from bdem import msgutil
 
 from eaglet.decorator import param_required
 from eaglet.core import api_resource
@@ -11,6 +12,7 @@ from eaglet.core import paginator
 from business.product.product import Product
 from business.mall.corporation_factory import CorporationFactory
 from business.mall.category.category_product_repository import CategoryProductRepository
+from gaia_conf import TOPIC
 
 
 class Category(business_model.Model):
@@ -45,15 +47,25 @@ class Category(business_model.Model):
 		"""
 		mall_models.CategoryHasProduct.update(display_index=new_position).dj_where(category_id=self.id, product_id=product_id).execute()
 
-	def delete_product(self, product_id):
+	def delete_product(self, product_id, corp):
 		"""
 		删除指定分组中的商品
 		"""
 		mall_models.CategoryHasProduct.delete().dj_where(category_id=self.id, product_id=product_id).execute()
 
 		mall_models.ProductCategory.update(product_count=mall_models.ProductCategory.product_count-1).dj_where(id=self.id).execute()
+		msgutil.send_message(
+			TOPIC['product'],
+			'delete_product_from_category',
+			{
+				'corp_id': corp.id,
+				'product_id': product_id,
+				'category_id': self.id
+			}
+		)
 
-	def add_products(self, product_ids):
+
+	def add_products(self, product_ids, corp):
 		"""
 		向分组中添加一组商品
 		"""
@@ -64,7 +76,15 @@ class Category(business_model.Model):
 					category = self.id
 				)
 			mall_models.ProductCategory.update(product_count=mall_models.ProductCategory.product_count+len(product_ids)).dj_where(id=self.id).execute()
-
+		msgutil.send_message(
+			TOPIC['product'],
+			'add_products_to_category',
+			{
+				'corp_id': corp.id,
+				'product_ids': product_ids,
+				'category_id': self.id
+			}
+		)
 	def update_name(self, name):
 		"""
 		更新分组名
@@ -102,6 +122,16 @@ class Category(business_model.Model):
 					product = product_id,
 					category = category_model.id
 				)
+
+			msgutil.send_message(
+				TOPIC['product'],
+				'add_products_to_category',
+				{
+					'corp_id': corp.id,
+					'product_ids': product_ids,
+					'category_id': category_model.id
+				}
+			)
 
 		return Category.from_model({
 			"db_model": category_model
