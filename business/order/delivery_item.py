@@ -27,6 +27,7 @@ class DeliveryItem(business_model.Model):
 
 		'postage',
 		'status',
+		'status_code',
 		'express_company_name_value',
 		'express_number',
 		'leader_name',
@@ -68,6 +69,8 @@ class DeliveryItem(business_model.Model):
 		self.webapp_user_id = db_model.webapp_user_id
 
 		self.status = db_model.status
+		self.status_code = mall_models.ORDER_STATUS2MEANINGFUL_WORD[self.status]
+
 		self.payment_time = db_model.payment_time
 		self.area = db_model.area
 		self.supplier_id = db_model.supplier

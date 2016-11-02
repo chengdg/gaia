@@ -8,7 +8,7 @@ DEBUG = True
 PROJECT_HOME = os.path.dirname(os.path.abspath(__file__))
 
 MODE = 'develop'
-SERVICE_NAME = 'zeus'
+SERVICE_NAME = 'gaia'
 DEV_SERVER_MULTITHREADING = True
 WEAPP_DOMAIN = "weapp.weizoom.com"
 HERMES_DOMAIN = "weapp.weizoom.com"
@@ -166,7 +166,7 @@ else:
     MNS_ENDPOINT = 'https://1615750970594173.mns.cn-beijing.aliyuncs.com/'
     MNS_SECURITY_TOKEN = ''
     SUBSCRIBE_QUEUE_NAME = 'test-gaia'
-    MESSAGE_DEBUG_MODE = False
+    MESSAGE_DEBUG_MODE = True
 
 # BDD_SERVER相关配置
 BDD_SERVER2PORT = {

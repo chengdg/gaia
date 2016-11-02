@@ -71,6 +71,7 @@ class OrderRepository(business_model.Model):
 				order_filter_parse_result.update(filter_parse_result)
 
 			if '__f-pay_interface_type-equal' in filters:
+				filters['__f-pay_interface_type-equal'] = mall_models.PAYSTR2TYPE
 				filter_parse_result = FilterParser.get().parse_key(filters, '__f-pay_interface_type-equal')
 				order_filter_parse_result.update(filter_parse_result)
 
@@ -111,12 +112,17 @@ class OrderRepository(business_model.Model):
 					should_in_order_bids.extend(self.context['valid_group_order_bids'])
 
 			if '__f-status-in' in filters:
+				# 需要使用meaningful_word搜索
+				args_status = []
+				for s in filters['__f-status-in']:
+					args_status.append(mall_models.MEANINGFUL_WORD2ORDER_STATUS[s])
+
 				status_params = []
 
 				refunding_status_list = [mall_models.ORDER_STATUS_REFUNDING, mall_models.ORDER_STATUS_GROUP_REFUNDING]
 				refunded_status_list = [mall_models.ORDER_STATUS_REFUNDED, mall_models.ORDER_STATUS_GROUP_REFUNDED]
 				use_wtf_refund = False
-				for status in filters['__f-status-in']:
+				for status in args_status:
 					if status == mall_models.ORDER_STATUS_REFUNDING:
 						use_wtf_refund = True
 						status_list = refunding_status_list

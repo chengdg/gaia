@@ -49,7 +49,15 @@ def load_config_from_json_file():
 			root = os.path.abspath(os.path.join(base_dir, location['root']))
 			locations.append("location %s { root %s; }" % (location['path'], root))
 
+	service_name = load_service_name()
+	if '_WEIZOOM_PRODUCTION' in os.environ:
+		locations.append("location / { include uwsgi_params; uwsgi_pass uwsgi://%s; }" % service_name)
+	else:
+		locations.append("location / { proxy_pass http://%s; }" % service_name)
 	config['locations'] = locations
+
+	if not config['server_name'] and service_name:
+		config['server_name'] = 'dev.%s.com' % service_name
 
 	return config
 
@@ -73,14 +81,19 @@ def load_config(client, key):
 		print '[register] use new config from config.json'
 		return load_config_from_json_file()
 
+_SERVICE_NAME = None
 def load_service_name():
 	"""
 	load service_name from service.json
 	"""
-	service_json_path = '../../service.json'
-	with open(service_json_path, 'rb') as f:
-		content = f.read()
-		return json.loads(content)['name']
+	global _SERVICE_NAME
+	if not _SERVICE_NAME:
+		service_json_path = '../../service.json'
+		with open(service_json_path, 'rb') as f:
+			content = f.read()
+			_SERVICE_NAME = json.loads(content)['name']
+
+	return _SERVICE_NAME
 
 WSGI_PROXY_DIRECTIVE = """ {
 		rewrite ^%s(.*) /$1 break;
@@ -166,6 +179,7 @@ def check_etcd_exists():
 		return False
 	else:
 		return True
+
 
 if __name__ == '__main__':
 	if check_etcd_exists():
