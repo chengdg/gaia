@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging
 from copy import copy, deepcopy
+from bdem import msgutil
 
 from eaglet.decorator import param_required
 from eaglet.core import api_resource
@@ -13,6 +14,8 @@ from db.mall import promotion_models
 from business.mall.config.integral_strategy import IntegralStrategy
 from business.mall.config.webapp_config import WebappConfig
 from business import model as business_model
+from gaia_conf import TOPIC
+
 
 class MallConfigFactory(business_model.Service):
 	def create_default_integral_strategy(self):
@@ -29,5 +32,6 @@ class MallConfigFactory(business_model.Service):
 		创建默认的WebappConfig对象
 		"""
 		mall_config = mall_models.MallConfig.create(owner=self.corp.id, order_expired_day=24)
+		msgutil.send_message(TOPIC['product'], 'mall_config_created', {'corp_id': self.corp.id})
 		return WebappConfig(mall_config)
 

@@ -8,7 +8,7 @@ import string
 import urllib
 from BeautifulSoup import BeautifulSoup
 
-from core.exceptionutil import unicode_full_stack
+from eaglet.core.exceptionutil import unicode_full_stack
 from eaglet.core import watchdog
 
 URL = "http://www.mxtong.net.cn/GateWay/Services.asmx/DirectSend?%s"

@@ -8,7 +8,7 @@ DEBUG = True
 PROJECT_HOME = os.path.dirname(os.path.abspath(__file__))
 
 MODE = 'develop'
-SERVICE_NAME = 'zeus'
+SERVICE_NAME = 'gaia'
 DEV_SERVER_MULTITHREADING = True
 WEAPP_DOMAIN = "weapp.weizoom.com"
 HERMES_DOMAIN = "weapp.weizoom.com"
