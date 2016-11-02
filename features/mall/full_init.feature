@@ -485,22 +485,22 @@ Scenario: 安装完整测试数据
 		"""
 		[{
 			"product_name": "东坡肘子-weizoom",
-			"promote_money": 10,
+			"promote_money": "10.0",
 			"promote_stock": "50",
 			"promote_time_from": "2016-01-01",
-			"promote_time_to": "2019-01-01",
+			"promote_time_to": "2019-01-01"
 
 		}, {
 			"product_name": "叫花鸡-weizoom",
-			"promote_money": 10,
+			"promote_money": 10.0,
 			"promote_stock": "50",
 			"promote_time_from": "2016-01-01",
-			"promote_time_to": "2019-02-01",
+			"promote_time_to": "2019-02-01"
 		}, {
 			"product_name": "水晶虾仁-weizoom",
-			"promote_money": 10,
-			"promote_stock": "50",
+			"promote_money": 10.0,
+			"promote_stock": 50,
 			"promote_time_from": "2016-01-01",
-			"promote_time_to": "2019-03-01",
+			"promote_time_to": "2019-03-01"
 		}]
 		"""
