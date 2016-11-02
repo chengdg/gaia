@@ -57,7 +57,7 @@ class UpdateProductService(business_model.Service):
 		"""
 		更新标准规格
 		"""
-		is_delete_standard_model = (models_info.get('is_use_custom_model', 'false') == 'true')
+		is_delete_standard_model = models_info.get('is_use_custom_model', False)
 		corp_id = self.corp.id
 		if is_delete_standard_model:
 			mall_models.ProductModel.update(
