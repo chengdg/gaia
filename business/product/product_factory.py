@@ -70,7 +70,7 @@ class ProductFactory(business_model.Service):
 
 	def __set_product_models(self, product, models_info):
 		# 处理standard商品规格
-		is_delete_standard_model = (models_info.get('is_use_custom_model', 'false') == 'true')
+		is_delete_standard_model = models_info.get('is_use_custom_model', False)
 		corp_id = self.corp.id
 
 		#在任何情况下，都创建一个的standard model
