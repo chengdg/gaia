@@ -92,7 +92,7 @@ class AProductModelProperty(api_resource.ApiResource):
         property_id = args['id']
         product_model_property = corp.product_model_property_repository.get_property(property_id)
         if product_model_property.is_used():
-            return 500, {'error_code': -1}
+            return 500, {'error_msg': 'model_property_is_used'}
         corp.product_model_property_repository.delete_property(property_id)
         return {}
 

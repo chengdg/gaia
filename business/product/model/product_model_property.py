@@ -98,23 +98,14 @@ class ProductModelProperty(business_model.Model):
 
     def is_used(self):
         corp = CorporationFactory.get()
-        is_using_product_model_id = []
-        product_ids = [model.product_id for model in mall_models.ProductPool.select().dj_where(
-            woid=corp.id,
-            status__in=[mall_models.PP_STATUS_OFF, mall_models.PP_STATUS_ON])]
-        product_model_data_models = mall_models.ProductModel.select().dj_where(
-            product_id__in=product_ids,
-            name__not='standard',
-            is_deleted=0
-        )
-        for model in product_model_data_models:
-            product_model_datas = model.name.split('_')
-            for product_model_data in product_model_datas:
-                product_model_id = product_model_data.split(':')[0]
-                if product_model_id not in is_using_product_model_id:
-                    is_using_product_model_id.append(product_model_id)
-
-        if str(self.id) in is_using_product_model_id:
-            return True
-        else:
-            return False
+        relation_models = mall_models.ProductModelHasPropertyValue.select().dj_where(property_id=self.id)
+        if relation_models.count() > 0:
+            product_model_ids = [relation_model.model_id for relation_model in relation_models]
+            product_model_data_models = mall_models.ProductModel.select().dj_where(id__in=product_model_ids, is_deleted=0)
+            if product_model_data_models.count() > 0:
+                product_ids = [model_data.product_id for model_data in product_model_data_models]
+                product_pool_relations = mall_models.ProductPool.select().dj_where(woid=corp.id,
+                        product_id__in=product_ids, status__in=[mall_models.PP_STATUS_OFF, mall_models.PP_STATUS_ON])
+                if product_pool_relations.count() > 0:
+                    return True
+        return False
