@@ -6,6 +6,7 @@ from eaglet.decorator import param_required
 from business import model as business_model
 from db.mall import models as mall_models
 from business.product.model.product_model_property import ProductModelProperty
+from business.product.model.product_model_property_value import ProductModelPropertyValue
 from gaia_conf import TOPIC
 
 
@@ -31,6 +32,10 @@ class ProductModelPropertyRepository(business_model.Service):
         """
         property_model = mall_models.ProductModelProperty.select().dj_where(owner_id=self.corp.id, id=property_id).get()
         return ProductModelProperty.from_model(property_model)
+
+    def get_property_value(self, property_value_id):
+        property_value_model = mall_models.ProductModelPropertyValue.select().dj_where(id=property_value_id).get()
+        return ProductModelPropertyValue(property_value_model)
 
     def delete_property(self, property_id):
         """
