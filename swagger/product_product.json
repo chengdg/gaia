@@ -726,9 +726,25 @@
                     "type": "number",
                     "description": "model使用的model property的id"
                 },
-                "property_value_id": {
+                "property_name": {
+                    "type": "string",
+                    "description": "model使用的model property的name"
+                },
+                "property_type": {
+                    "type": "string",
+                    "description": "model使用的model property的type"
+                },
+                "id": {
                     "type": "number",
                     "description": "model使用的model property value的id"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "model使用的model property value的name"
+                },
+                "image": {
+                    "type": "string",
+                    "description": "model使用的model property value的image地址"
                 }
             }
         },
@@ -929,6 +945,10 @@
                 "name": {
                     "type": "string",
                     "description": "商品名"
+                },
+                "is_member_product": {
+                    "type": "boolean",
+                    "description": "是否为会员商品"
                 },
                 "create_type": {
                     "type": "string",

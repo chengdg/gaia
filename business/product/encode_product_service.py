@@ -25,6 +25,7 @@ class EncodeProductService(business_model.Service):
 			"detail": product.detail,
 			"sales": product.sales,
 			"is_member_product": product.is_member_product,
+			"is_delivery": product.is_delivery,
 			"sync_at": product.sync_at.strftime('%Y-%m-%d %H:%M') if product.create_type == 'sync' else None,
 			"created_at": product.created_at.strftime('%Y-%m-%d %H:%M')
 		}
