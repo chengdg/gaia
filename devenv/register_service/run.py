@@ -41,15 +41,19 @@ def load_config_from_json_file():
 	with open('./config.json', 'rb') as f:
 		content = f.read()
 
+	service_name = load_service_name()
 	base_dir = os.path.join('.', '../..')
 	config = json.loads(content)
 	locations = []
 	if 'locations' in config:
 		for location in config['locations']:
 			root = os.path.abspath(os.path.join(base_dir, location['root']))
+
+			if ('_WEIZOOM_PRODUCTION' in os.environ) and ('/static' in location['path']):
+				root = '/tmp/static/%s_static/' % service_name
+
 			locations.append("location %s { root %s; }" % (location['path'], root))
 
-	service_name = load_service_name()
 	if '_WEIZOOM_PRODUCTION' in os.environ:
 		locations.append("location / { include uwsgi_params; uwsgi_pass uwsgi://%s; }" % service_name)
 	else:
@@ -141,7 +145,10 @@ def do_register():
 	service_name = load_service_name()
 	key = "/service/%s" % service_name
 	config = load_config(client, key)
-	host = '%s:%s' % (get_local_ip(), options.port)
+	port = options.port
+	if '_SERVICE_HOST_PORT' in os.environ:
+		port = os.environ['_SERVICE_HOST_PORT']
+	host = '%s:%s' % (get_local_ip(), port)
 
 	register_to_other_service(client, service_name)
 
@@ -155,10 +162,6 @@ def do_register():
 
 def register():
 	do_register()
-	#if '_IS_WEIZOOM_DEV_VM' in os.environ:
-	#	do_register()
-	#else:
-	#	print 'not in weizoom dev vm, do nothing'
 
 def check_server_exists(domain_name, port):
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -182,6 +185,9 @@ def check_etcd_exists():
 
 
 if __name__ == '__main__':
-	if check_etcd_exists():
-		options, args = parser.parse_args()
-		register()
+	if ('_IS_WEIZOOM_DEV_VM' in os.environ) or ('_REGISTER_SERVICE' in os.environ):
+		if check_etcd_exists():
+			options, args = parser.parse_args()
+			register()
+	else:
+		print 'not in weizoom dev vm, do nothing'

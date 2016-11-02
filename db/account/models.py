@@ -98,9 +98,9 @@ class UserProfile(models.Model):
 		db_table = 'account_user_profile'
 
 
-class ZeusApp(models.Model):
+class GaiaApp(models.Model):
 	"""
-	【Zeus用】ZeusApp
+	【Gaia用】GaiaApp
 	"""
 	name = models.CharField(max_length=20, db_index=True)
 	app_key = models.CharField(max_length=50, unique=True)
@@ -108,20 +108,20 @@ class ZeusApp(models.Model):
 	is_deleted = models.BooleanField(default=False)
 
 	class Meta(object):
-		db_table = "zeus_app"
+		db_table = "gaia_app"
 
 
 class AccessToken(models.Model):
 	"""
-	【Zeus用】存储access token （Weapp不应访问此库）
+	【Gaia用】存储access token （Weapp不应访问此库）
 	"""
 	access_token = models.CharField(max_length=50, unique=True) # unique implies the creation of an index
 	corp_id = models.CharField(max_length=50, default='')
 	used_count = models.IntegerField(default=0) # 使用过次数
 	created_at = models.DateTimeField(auto_now_add=True)
 	expire_time = models.DateTimeField() # 失效时间
-	app = models.ForeignKey(ZeusApp)
+	app = models.ForeignKey(GaiaApp)
 	is_active = models.BooleanField(default=True)
 
 	class Meta(object):
-		db_table = "zeus_access_token"
+		db_table = "gaia_access_token"

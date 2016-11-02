@@ -1,4 +1,4 @@
-FROM reg.weizzz.com:5000/wz/python27:1.0
+FROM registry.weapp.weizom.com/wzbase/python27:1.0
 MAINTAINER gaia-team
 
 EXPOSE 8003

@@ -55,7 +55,6 @@ class ProductPool(business_model.Model):
 		"""
 		添加代售商品到商品池
 		"""
-
 		for product_id in product_ids:
 			mall_models.ProductPool.create(
 				woid=self.corp_id,
@@ -281,7 +280,7 @@ class ProductPool(business_model.Model):
 			self.__compatible_delete_products(product_ids)
 
 			topic_name = TOPIC['product']
-			msg_name = 'delete_product_from_pool'
+			msg_name = 'product_deleted'
 			data = {
 				"product_ids": product_ids
 			}

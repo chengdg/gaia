@@ -1,22 +1,25 @@
 # -*- coding: utf-8 -*-
 import json
+from bdem import msgutil
 
 from eaglet.core import watchdog
 from eaglet.decorator import param_required
 from eaglet.utils.resource_client import Resource
 
 from business import model as business_model
+from business.mall.corporation_factory import CorporationFactory
 from db.account import models as account_model
 from db.mall import models as mall_models
 
 from business.decorator import cached_context_property
 from business.mall.logistics.area_postage_config import AreaPostageConfig
 from business.mall.logistics.free_postage_config import FreePostageConfig
+from gaia_conf import TOPIC
 
 
 class PostageConfig(business_model.Model):
 	"""
-	订单
+	运费配置
 	"""
 
 	__slots__ = (
@@ -86,3 +89,8 @@ class PostageConfig(business_model.Model):
 		"""
 		mall_models.PostageConfig.update(is_used=False).dj_where(id__not=self.id).execute()
 		mall_models.PostageConfig.update(is_used=True).dj_where(id=self.id).execute()
+		msgutil.send_message(
+			TOPIC['product'],
+			'postage_config_set_used',
+			{'corp_id': CorporationFactory.get().id, 'postage_config_id': self.id}
+		)
