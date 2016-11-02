@@ -16,7 +16,7 @@ from business.mall.logistics.free_postage_config import FreePostageConfig
 
 class PostageConfig(business_model.Model):
 	"""
-	订单
+	运费配置
 	"""
 
 	__slots__ = (

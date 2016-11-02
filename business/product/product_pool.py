@@ -55,7 +55,6 @@ class ProductPool(business_model.Model):
 		"""
 		添加代售商品到商品池
 		"""
-
 		for product_id in product_ids:
 			mall_models.ProductPool.create(
 				woid=self.corp_id,
