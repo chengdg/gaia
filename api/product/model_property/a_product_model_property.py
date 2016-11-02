@@ -92,7 +92,7 @@ class AProductModelProperty(api_resource.ApiResource):
         property_id = args['id']
         product_model_property = corp.product_model_property_repository.get_property(property_id)
         if product_model_property.is_product_used(corp):
-            return 500, {'err_msg': u'该规格正在被在售或待售商品使用，不能删除！'}
+            return 500, {'error_code': -1}
         corp.product_model_property_repository.delete_property(property_id)
         return {}
 
