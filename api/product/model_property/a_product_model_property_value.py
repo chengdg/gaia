@@ -23,7 +23,7 @@ class AProductModelPropertyValue(api_resource.ApiResource):
 
         name = args.get('name', '')
         pic_url = args.get('pic_url', '')
-        property_value = model_property.add_property_value(name, pic_url, corp)
+        property_value = model_property.add_property_value(name, pic_url)
 
         return {
             "id": property_value.id

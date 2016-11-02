@@ -17,7 +17,7 @@ class AActivePostageConfig(api_resource.ApiResource):
 	def put(args):
 		corp = args['corp']
 		postage_config_id = args['postage_config_id']
-		corp.postage_config_repository.get_postage_config(postage_config_id).set_used(corp)
+		corp.postage_config_repository.get_postage_config(postage_config_id).set_used()
 
 		return {
 			'id': postage_config_id

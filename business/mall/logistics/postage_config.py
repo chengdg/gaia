@@ -7,6 +7,7 @@ from eaglet.decorator import param_required
 from eaglet.utils.resource_client import Resource
 
 from business import model as business_model
+from business.mall.corporation_factory import CorporationFactory
 from db.account import models as account_model
 from db.mall import models as mall_models
 
@@ -82,10 +83,14 @@ class PostageConfig(business_model.Model):
 
 		return self._free_configs
 
-	def set_used(self, corp):
+	def set_used(self):
 		"""
 		将当前postage config设置为"使用"
 		"""
 		mall_models.PostageConfig.update(is_used=False).dj_where(id__not=self.id).execute()
 		mall_models.PostageConfig.update(is_used=True).dj_where(id=self.id).execute()
-		msgutil.send_message(TOPIC['product'], 'postage_config_set_used', {'corp_id': corp.id})
+		msgutil.send_message(
+			TOPIC['product'],
+			'postage_config_set_used',
+			{'corp_id': CorporationFactory.get().id, 'postage_config_id': self.id}
+		)

@@ -23,7 +23,7 @@ class ACategoryProducts(api_resource.ApiResource):
 
 		for category_id in category_ids:
 			category = corp.category_repository.get_category(category_id)
-			category.add_products(product_ids, corp)
+			category.add_products(product_ids)
 
 		return {}
 

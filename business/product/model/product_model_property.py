@@ -5,6 +5,7 @@ from bdem import msgutil
 from eaglet.decorator import param_required
 
 from business import model as business_model
+from business.mall.corporation_factory import CorporationFactory
 from db.mall import models as mall_models
 from business.product.model.product_model_property_value import ProductModelPropertyValue
 from gaia_conf import TOPIC
@@ -51,7 +52,7 @@ class ProductModelProperty(business_model.Model):
             }))
         return property_values
 
-    def update(self, field, value, corp):
+    def update(self, field, value):
         """
         更新商品规格属性
         """
@@ -65,9 +66,16 @@ class ProductModelProperty(business_model.Model):
                 model_type = mall_models.PRODUCT_MODEL_PROPERTY_TYPE_IMAGE
             mall_models.ProductModelProperty.update(type=model_type).dj_where(id=self.id).execute()
         # 发送更新缓存的消息
-        msgutil.send_message(TOPIC['product'], 'product_model_property_updated', {'corp_id': corp.id})
+        msgutil.send_message(
+            TOPIC['product'],
+            'product_model_property_updated',
+            {
+                'corp_id': CorporationFactory.get().id,
+                'product_model_property_id': self.id
+            }
+        )
 
-    def add_property_value(self, name, pic_url, corp):
+    def add_property_value(self, name, pic_url):
         """
         向商品规格属性中添加一个property value（规格值）
         """
@@ -76,7 +84,11 @@ class ProductModelProperty(business_model.Model):
             name = name,
             pic_url = pic_url
         )
-        msgutil.send_message(TOPIC['product'], 'product_model_property_value_created', {'corp_id': corp.id})
+        msgutil.send_message(
+            TOPIC['product'],
+            'product_model_property_value_created',
+            {'corp_id': CorporationFactory.get().id, 'product_model_property_value_id': property_value.id}
+        )
         return property_value
 
     @staticmethod
@@ -93,7 +105,11 @@ class ProductModelProperty(business_model.Model):
                             owner=args['corp'].id
                         )
         # 发送更新缓存的消息
-        msgutil.send_message(TOPIC['product'], 'product_model_property_created', {'corp_id': args['corp'].id})
+        msgutil.send_message(
+            TOPIC['product'],
+            'product_model_property_created',
+            {'corp_id': args['corp'].id, 'product_model_property_id': product_model.id}
+        )
         if product_model:
             model = ProductModelProperty(product_model)
             return model

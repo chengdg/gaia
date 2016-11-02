@@ -47,7 +47,7 @@ class Category(business_model.Model):
 		"""
 		mall_models.CategoryHasProduct.update(display_index=new_position).dj_where(category_id=self.id, product_id=product_id).execute()
 
-	def delete_product(self, product_id, corp):
+	def delete_product(self, product_id):
 		"""
 		删除指定分组中的商品
 		"""
@@ -58,14 +58,14 @@ class Category(business_model.Model):
 			TOPIC['product'],
 			'delete_product_from_category',
 			{
-				'corp_id': corp.id,
+				'corp_id': CorporationFactory.get().id,
 				'product_id': product_id,
 				'category_id': self.id
 			}
 		)
 
 
-	def add_products(self, product_ids, corp):
+	def add_products(self, product_ids):
 		"""
 		向分组中添加一组商品
 		"""
@@ -80,7 +80,7 @@ class Category(business_model.Model):
 			TOPIC['product'],
 			'add_products_to_category',
 			{
-				'corp_id': corp.id,
+				'corp_id': CorporationFactory.get().id,
 				'product_ids': product_ids,
 				'category_id': self.id
 			}

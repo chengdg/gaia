@@ -66,7 +66,10 @@ class PostageConfigFactory(object):
 					condition_value=free_config.get('value', '')
 				)
 		# 发送更新缓存的消息
-		msgutil.send_message(TOPIC['product'], 'postage_config_updated', {'corp_id': corp_id})
+		msgutil.send_message(
+			TOPIC['product'],
+			'postage_config_updated',
+			{'corp_id': corp_id, 'postage_config_id': postage_config.id})
 		return postage_config
 
 	def make_sure_default_postage_config_exists(self):
@@ -130,4 +133,4 @@ class PostageConfigFactory(object):
 					condition_value=free_config.get('value', '')
 				)
 		# 发送更新缓存的消息
-		msgutil.send_message(TOPIC['product'], 'postage_config_updated', {'corp_id': corp_id})
+		msgutil.send_message(TOPIC['product'], 'postage_config_updated', {'corp_id': corp_id, 'postage_config_id': id})

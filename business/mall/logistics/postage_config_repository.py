@@ -60,4 +60,7 @@ class PostageConfigRepository(business_model.Service):
 		删除指定的postage config
 		"""
 		mall_models.PostageConfig.update(is_deleted=True).dj_where(id=postage_config_id, owner_id=self.corp.id).execute()
-		msgutil.send_message(TOPIC['product'], 'postage_config_updated', {'corp_id': self.corp.id})
+		msgutil.send_message(
+			TOPIC['product'],
+			'postage_config_updated',
+			{'corp_id': self.corp.id, 'postage_config_id': postage_config_id})
