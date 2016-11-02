@@ -1528,3 +1528,28 @@ class UserOrderNotifySettings(models.Model):
 
 	class Meta(object):
 		db_table = 'user_order_notify_setting'
+
+
+PROMOTING = 1  # 推广中
+PROMOTE_OVER = 2  # 推广结束
+
+
+class PromoteDetail(models.Model):
+    """
+	推广信息
+    """
+    product_id = models.IntegerField()
+    # 推广状态 （未推广，推广中，已结束）   推广设置中展示：未推广，已结束。推广明细中：推广中，已结束
+    promote_status = models.IntegerField(default=PROMOTING)
+
+    promote_money = models.FloatField(default=0, help_text=u'推广费用/件')
+    promote_stock = models.IntegerField(default=1, help_text=u'推广库存')
+    promote_time_from = models.DateTimeField(auto_now_add=True)
+    promote_time_to = models.DateTimeField(auto_now_add=True)
+    promote_sale_count = models.IntegerField(default=0, help_text=u'推广销量')
+    promote_total_money = models.FloatField(default=0, help_text=u'推广费用总费用')
+    is_new = models.BooleanField(default=True, help_text=u'是否已读')  # 是否已读
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta(object):
+        db_table = 'mall_promote_detail'

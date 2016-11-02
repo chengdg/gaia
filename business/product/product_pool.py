@@ -127,6 +127,8 @@ class ProductPool(business_model.Model):
 					filter_category = product_classification_filter_values
 				else:
 					should_ignore_field = True
+			elif filter_field == 'product_id':
+				filter_category = product_pool_filter_values
 
 			if not should_ignore_field:
 				filter_category[filter_field_op] = filter_value

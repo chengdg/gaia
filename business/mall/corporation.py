@@ -28,6 +28,7 @@ from business.mall.config.mall_config_repository import MallConfigRepository
 from business.mall.notify.notification_repository import NotificationRepository
 from business.mall.supplier.supplier_repository import SupplierRepository
 from business.mall.product_classification_repository import ProductClassificationRepository
+from business.cps.product_promote_repository import ProductPromoteRepository
 
 class Corporation(business_model.Model):
 	"""
@@ -171,3 +172,7 @@ class Corporation(business_model.Model):
 	def member_repository(self):
 
 		return MemberRepository(self)
+
+	@property
+	def product_promote_repository(self):
+		return ProductPromoteRepository.get(self)

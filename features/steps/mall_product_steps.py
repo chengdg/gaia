@@ -264,6 +264,17 @@ def __get_product(context, name):
 
     return product
 
+def __create_promote(promotes):
+    for promote in promotes:
+        product = mall_models.Product.select().dj_where(name=promote.get('product_name')).first()
+
+        if product:
+            mall_models.PromoteDetail.create(promote_money=promote.get('promote_money'),
+                                             promote_time_from=promote.get('promote_time_from'),
+                                             promote_time_to=promote.get('promote_time_to'),
+                                             promote_stock=promote.get('promote_stock'),
+                                             product_id=product.id)
+
 
 def __get_products(context, type_name=u'在售'):
     TYPE2URL = {
@@ -504,3 +515,12 @@ def step_impl(context, user):
 
         response = context.client.put('/product/consignment_product/', data)
         bdd_util.assert_api_call_success(response)
+
+@when(u"{user}添加推广")
+def step_add_property(context, user):
+
+    promotes = json.loads(context.text)
+    if isinstance(promotes, dict):
+        promotes = [promotes]
+
+    __create_promote(promotes)
