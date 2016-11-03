@@ -54,7 +54,7 @@ class FillProductDetailService(business_model.Service):
 	def __fill_category_detail(self, corp, products, product_ids):
 		"""填充商品分类信息相关细节
 		"""
-		categories = list(mall_models.ProductCategory.select().dj_where(owner=7).order_by('id'))
+		categories = list(mall_models.ProductCategory.select().dj_where(owner=corp.id).order_by('id'))
 
 		# 获取product关联的category集合
 		id2product = {}
