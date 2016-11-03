@@ -5,11 +5,18 @@
         "title": "Hermes Product Promote API"
     },
     "paths": {
-       "/cps/product_promote/": {
+       "/product/product_promote/": {
 
             "post": {
                 "summary": "修改商品推广信息",
                 "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "商品 owner_id",
+                        "required": true,
+                        "type": "integer"
+                    },
                     {
                         "name": "product_id",
                         "in": "query",
@@ -18,56 +25,44 @@
                         "type": "integer"
                     },
                     {
-                        "name": "promote_detail_id",
+                        "name": "promotion_id",
                         "in": "query",
                         "description": "推广信息id",
                         "required": true,
                         "type": "integer"
                     },
                     {
-                        "name": "promote_money",
+                        "name": "status",
+                        "in": "query",
+                        "description": "推广状态 PROMOTING: 推广中 PROMOTE_OVER: # 推广结束",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "money",
                         "in": "query",
                         "description": "推广单价",
                         "required": false,
                         "type": "string"
                     },
                     {
-                        "name": "promote_stock",
+                        "name": "stock",
                         "in": "query",
                         "description": "推广库存",
                         "required": false,
                         "type": "integer"
                     },
+
                     {
-                        "name": "promote_time_from",
-                        "in": "query",
-                        "description": "推广开始时间%Y-%m-%d %H:%M:%S",
-                        "required": false,
-                        "type": "string"
-                    },
-                    {
-                        "name": "promote_time_to",
-                        "in": "query",
-                        "description": "推广结束时间%Y-%m-%d %H:%M:%S",
-                        "required": false,
-                        "type": "string"
-                    },
-                    {
-                        "name": "promote_sale_count",
+                        "name": "sale_count",
                         "in": "query",
                         "description": "推广销量",
                         "required": false,
                         "type": "integer"
                     },
-                     {
-                        "name": "promote_status",
-                        "in": "query",
-                        "description": "推广状态 PROMOTING: 推广中 PROMOTE_OVER: # 推广结束",
-                        "required": false,
-                        "type": "string"
-                    },
+
                     {
-                        "name": "promote_total_money",
+                        "name": "total_money",
                         "in": "query",
                         "description": "推广费用总费用",
                         "required": false,
@@ -85,8 +80,15 @@
                 }
             },
             "put": {
-                "summary": "添加商品推广信息",
+                "summary": "添加推广商品",
                 "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "商品 owner_id",
+                        "required": true,
+                        "type": "integer"
+                    },
                     {
                         "name": "product_id",
                         "in": "query",
@@ -95,42 +97,42 @@
                         "type": "integer"
                     },
                     {
-                        "name": "promote_money",
+                        "name": "money",
                         "in": "query",
                         "description": "推广单价",
                         "required": true,
                         "type": "string"
                     },
                     {
-                        "name": "promote_stock",
+                        "name": "stock",
                         "in": "query",
                         "description": "推广库存",
                         "required": true,
                         "type": "integer"
                     },
                     {
-                        "name": "promote_time_from",
+                        "name": "time_from",
                         "in": "query",
                         "description": "推广开始时间%Y-%m-%d %H:%M:%S",
                         "required": true,
                         "type": "string"
                     },
                     {
-                        "name": "promote_time_to",
+                        "name": "time_to",
                         "in": "query",
                         "description": "推广结束时间%Y-%m-%d %H:%M:%S",
                         "required": true,
                         "type": "string"
                     },
                     {
-                        "name": "promote_sale_count",
+                        "name": "sale_count",
                         "in": "query",
                         "description": "推广销量",
                         "required": false,
                         "type": "integer"
                     },
                     {
-                        "name": "promote_total_money",
+                        "name": "total_money",
                         "in": "query",
                         "description": "推广费用总费用",
                         "required": false,
@@ -170,9 +172,9 @@
                 }
             }
         },
-       "/cps/product_pool_promotes/":{
+       "/product/cps_promoted_products/":{
             "get": {
-                "summary": "获得商品池推广商品",
+                "summary": "获得推广商品",
                 "parameters": [
                     {
                         "name": "corp_id",
@@ -182,13 +184,21 @@
                         "type": "string"
                     },
                     {
+                        "name": "product_status",
+                        "in": "query",
+                        "description": "商品状态 insale: 在售, forsale: 下架 , pool: 商品池列表",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
                         "name": "filters",
                         "in": "query",
                         "description": "查询条件(json字符串)",
-                        "required": true,
+                        "required": false,
                         "type": "string",
                         "format": "类似{'__f-name-contains':'abc', '__f-product_name-contains':'def'}这样的查询对象"
                     }
+
                 ],
                 "tags": [
                     "product_promote"
@@ -200,50 +210,15 @@
                     "200": {
                         "description": "success",
                         "schema": {
-                            "$ref": "#/definitions/ProductPromoteList"
+                            "$ref": "#/definitions/PromotedProductsList"
                         }
                     }
                 }
             }
 
        },
-       "/cps/on_shelf_product_promotes": {
-            "get": {
-                "summary": "获得在售推广商品",
-                "parameters": [
-                    {
-                        "name": "corp_id",
-                        "in": "query",
-                        "description": "",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "name": "filters",
-                        "in": "query",
-                        "description": "查询条件(json字符串)",
-                        "required": true,
-                        "type": "string",
-                        "format": "类似{'__f-name-contains':'abc', '__f-product_name-contains':'def'}这样的查询对象"
-                    }
-                ],
-                "tags": [
-                    "product_promote"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "success",
-                        "schema": {
-                            "$ref": "#/definitions/ProductPromoteList"
-                        }
-                    }
-                }
-            }
-       },
-       "/cps/new_promote_count": {
+
+       "/product/new_cps_promoted_products_count": {
             "get": {
                 "summary": "获得新曾推广数量",
                 "parameters": [
@@ -255,9 +230,9 @@
                         "type": "string"
                     },
                     {
-                        "name": "status",
+                        "name": "product_status",
                         "in": "query",
-                        "description": "推广的销售状态 insale:销售, offsale:待售, pool: 商品池 ",
+                        "description": "推广的销售状态 insale:销售, forsale:待售, pool: 商品池 ",
                         "required": true,
                         "type": "string"
                     }
@@ -293,10 +268,8 @@
                         }
                     }
                 }
-            }
-       },
-       "/cps/update_new_promote": {
-            "post": {
+            },
+             "post": {
                 "summary": "获得新曾推广数量",
                 "parameters": [
                      {
@@ -307,9 +280,9 @@
                         "type": "string"
                     },
                     {
-                        "name": "status",
+                        "name": "product_status",
                         "in": "query",
-                        "description": "推广的销售状态 insale:销售, offsale:待售, pool: 商品池 ",
+                        "description": "推广的销售状态 insale:销售, forsale:待售, pool: 商品池 ",
                         "required": true,
                         "type": "string"
                     }
@@ -329,9 +302,10 @@
                 }
             }
        }
+
     },
     "definitions": {
-        "ProductPromoteList": {
+        "PromotedProductsList": {
             "type": "object",
             "properties": {
                 "pageinfo": {
@@ -341,7 +315,7 @@
                 "product_promotes": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/ProductPromoteInList"
+                        "$ref": "#/definitions/PromotedProductInList"
                     },
                     "minItems": 0
                 }
@@ -395,92 +369,72 @@
 
             }
         },
-        "ProductPromoteInList":{
+        "PromotedProductInList":{
             "type": "object",
             "properties": {
-                "promote_info": {
-                    "$ref": "#/definitions/ProductPromote"
-                },
-
-                "product_info": {
-                    "$ref": "#/definitions/ProductInfo"
-                }
-
-
-            }
-        },
-        "ProductInfo": {
-            "type": "object",
-            "description": "商品的信息",
-            "properties": {
-                "name": {
-                    "type": "string",
-                    "description": "商品名"
-                },
-                "type": {
-                    "type": "string",
-                    "description": "商品类型",
-                    "format": "默认为object"
-                },
-                "create_type": {
-                    "type": "string",
-                    "description": "商品的创建类型",
-                    "format": "'create(自建商品)'或'sync(从商品池同步商品)'"
-                },
-                "supplier_id": {
+                "id": {
                     "type": "number",
-                    "description": "供应商的id，可以不提供，默认为0，表示是自建商品"
+                    "description": "商品的id"
                 },
-                "classification_id": {
-                    "type": "number",
-                    "description": "商品分组的id，可以不提供，默认为0，表示没有商品分组"
+                "base_info": {
+                    "$ref": "#/definitions/ReturnBaseInfo"
                 },
-                "bar_code": {
-                    "type": "string",
-                    "description": "商品条码"
-                },
-                "min_limit": {
-                    "type": "number",
-                    "description": "起购数量"
-                },
-                "promotion_title": {
-                    "type": "string",
-                    "description": "促销标题"
-                },
-                "is_enable_bill": {
-                    "type": "boolean",
-                    "description": "是否出具发票"
-                },
-                "is_member_product": {
-                    "type": "boolean",
-                    "description": "是否参与会员折扣"
-                },
-                "detail": {
-                    "type": "string",
-                    "description": "商品详情"
-                },
-                "product_models_info": {
+                "models_info": {
                     "$ref": "#/definitions/ModelsInfo"
                 },
-                 "labels": {
-                    "$ref": "#/definitions/Lables"
-                },
-                "image": {
-                    "type": "string",
-                    "description": "商品缩略图的url"
+                "image_info": {
+                    "$ref": "#/definitions/ImageInfo"
                 },
 
                 "categories": {
                     "$ref": "#/definitions/ReturnCategories"
                 },
+                "supplier": {
+                    "$ref": "#/definitions/ReturnSupplier"
+                },
                 "classifications": {
                     "$ref": "#/definitions/ReturnClassifications"
                 },
-                "supplier": {
-                    "$ref": "#/definitions/ReturnSupplier"
+                "cps_promotion_info":{
+                    "$ref": "#/definitions/CpsPromotionInfo"
+                }
+            }
+        },
+        "CpsPromotionInfo": {
+            "type": "object",
+            "description": "商品cps推广信息",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "推广id"
+                },
+                "money": {
+                    "type": "string",
+                    "description": "cps推广单价"
+                },
+                "time_from": {
+                    "type": "string",
+                    "description": "cps推广start时间"
+                },
+                "time_to": {
+                    "type": "string",
+                    "description": "cps推广end时间"
+                },
+                "sale_count": {
+                    "type": "string",
+                    "description": "cps推广销量"
+                },
+                "total_money": {
+                    "type": "string",
+                    "description": "cps推广总金额"
+                },
+                "stock": {
+                    "type": "string",
+                    "description": "cps库存"
                 }
             }
         }
+
 
     }
 }

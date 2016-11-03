@@ -192,3 +192,22 @@ class ProductShelf(business_model.Model):
 		products, pageinfo = product_pool.get_products(page_info, fill_options, options, filters)
 
 		return products, pageinfo
+
+	def get_new_promoted_products_count(self):
+		"""
+
+		"""
+		product_pool = self.corp.product_pool
+		if self.type == 'in_sale':
+			count = product_pool.get_new_promoted_products_count(product_status=mall_models.PP_STATUS_ON)
+		else:
+			count = product_pool.get_new_promoted_products_count(product_status=mall_models.PP_STATUS_OFF)
+		return count
+
+	def update_new_promoted_products_count(self):
+		product_pool = self.corp.product_pool
+		if self.type == 'in_sale':
+			count = product_pool.update_new_promoted_products_count(product_status=mall_models.PP_STATUS_ON)
+		else:
+			count = product_pool.update_new_promoted_products_count(product_status=mall_models.PP_STATUS_OFF)
+		return count

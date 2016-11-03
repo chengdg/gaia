@@ -403,6 +403,10 @@ class Product(business_model.Model):
 	# 		self.supplier = None
 
 	def update_cps_promotion_info(self, promotion_id, money, stock, sale_count, total_money, status):
+		"""
+		:param status 推广状态 PROMOTING: 推广中 PROMOTE_OVER: # 推广结束"
+
+		"""
 		mall_models.PromoteDetail.update(promote_money=money,
 										 promote_sale_count=sale_count,
 										 promote_total_money=total_money,

@@ -325,3 +325,21 @@ class ProductPool(business_model.Model):
 		products, pageinfo = product_pool.get_products(page_info, fill_options, options, filters)
 
 		return products, pageinfo
+
+	def get_new_promoted_products_count(self, product_status=mall_models.PP_STATUS_ON_POOL):
+		"""
+
+		"""
+		pool_product_models = mall_models.ProductPool.select().dj_where(status=product_status,
+																		woid=self.corp.id)
+		pool_product_ids = [pool_product_model.product_id for pool_product_model in pool_product_models]
+		new_promoted_product = mall_models.PromoteDetail.select().dj_where(is_new=True, product_id__in=pool_product_ids,
+																		   promote_status=mall_models.PROMOTING)
+		return new_promoted_product.count()
+
+	def update_new_promoted_products_count(self, product_status=mall_models.PP_STATUS_ON_POOL):
+		pool_product_models = mall_models.ProductPool.select().dj_where(status=product_status,
+																		woid=self.corp.id)
+		pool_product_ids = [pool_product_model.product_id for pool_product_model in pool_product_models]
+		mall_models.PromoteDetail.update(is_new=False).dj_where(is_new=True, product_id__in=pool_product_ids,
+													promote_status=mall_models.PROMOTING).execute()

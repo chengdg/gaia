@@ -481,7 +481,7 @@ Scenario: 安装完整测试数据
 		}]	
 		"""
 
-	When weizoom添加推广
+	When weizoom将商品加入CPS推广
 		"""
 		[{
 			"product_name": "东坡肘子-weizoom",

@@ -158,6 +158,9 @@ class ProductFactory(business_model.Service):
 			)
 
 	def __apply_cps_promotion(self, product_id, money, stock, time_from, time_to, sale_count, total_money):
+		if mall_models.PromoteDetail.select().dj_where(product_id=product_id,
+													   promote_status=mall_models.PROMOTING).count() > 0:
+			return False
 		mall_models.PromoteDetail.create(product_id=product_id,
 										 promote_money=money,
 										 promote_time_from=time_from,
@@ -165,6 +168,7 @@ class ProductFactory(business_model.Service):
 										 promote_sale_count=sale_count,
 										 promote_total_money=total_money,
 										 promote_stock=stock)
+		return True
 
 	def create_product(self, args):
 		"""
@@ -215,7 +219,9 @@ class ProductFactory(business_model.Service):
 		total_money = args.get('total_money')
 		product_pool = self.corp.product_pool
 
-		self.__apply_cps_promotion(product_id, money, stock, time_from, time_to, sale_count, total_money)
+		if self.__apply_cps_promotion(product_id, money, stock, time_from, time_to, sale_count, total_money):
 
-		product = product_pool.get_products_by_ids(self, product_ids=[product_id])[0]
-		return product
+			product = product_pool.get_products_by_ids([product_id], fill_options={'with_cps_promotion_info': True})[0]
+			return product
+		else:
+			return None

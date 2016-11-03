@@ -35,16 +35,22 @@ class ACPSPromotedProduct(api_resource.ApiResource):
 																			'sale_count': sale_count,
 																			'total_money': total_money,
 																			})
-		return {
-			'id': cps_promoted_product.id,
-			'promotion_info': {
-				'id': cps_promoted_product.cps_promoted_info.id
+		if cps_promoted_product:
+			return {
+				'id': cps_promoted_product.id,
+				'promotion_info': {
+					'id': cps_promoted_product.get('cps_promoted_info').get('id')
+				}
 			}
-		}
+		else:
+			return 500, {}
 
-	@param_required(['corp_id', 'product_id', 'money', 'stock', 'promotion_id'])
+	@param_required(['corp_id', 'product_id', 'money', 'stock', 'promotion_id', 'status'])
 	def post(args):
+		"""
+		status 推广状态 PROMOTING: 推广中 PROMOTE_OVER: # 推广结束"
 
+		"""
 		product_id = args.get('product_id')
 		promotion_id = args.get('promotion_id')
 		money = args.get('money')
