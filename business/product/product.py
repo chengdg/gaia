@@ -93,6 +93,9 @@ class Product(business_model.Model):
 		'limit_zone_type',
 		'limit_zone',
 
+		# cps推广信息
+		'cps_promoted_info',
+
 		#时间信息
 		'created_at',
 		'sync_at'
@@ -398,3 +401,12 @@ class Product(business_model.Model):
 	# 	"""
 	# 	if self.supplier == 0:
 	# 		self.supplier = None
+
+	def update_cps_promotion_info(self, promotion_id, money, stock, sale_count, total_money, status):
+		mall_models.PromoteDetail.update(promote_money=money,
+										 promote_sale_count=sale_count,
+										 promote_total_money=total_money,
+										 promote_status=status,
+										 promote_stock=stock)\
+			.dj_where(product_id=self.id,
+					  id=promotion_id).execute()

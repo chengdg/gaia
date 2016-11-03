@@ -54,7 +54,7 @@ class FillProductDetailService(business_model.Service):
 	def __fill_category_detail(self, corp, products, product_ids):
 		"""填充商品分类信息相关细节
 		"""
-		categories = list(mall_models.ProductCategory.select().dj_where(owner=corp.id).order_by('id'))
+		categories = list(mall_models.ProductCategory.select().dj_where(owner=7).order_by('id'))
 
 		# 获取product关联的category集合
 		id2product = {}
@@ -234,6 +234,32 @@ class FillProductDetailService(business_model.Service):
 			if id2product.has_key(product_id):
 				id2product[product_id].sales = sales.sales
 
+	def __fill_cps_promoteion_info(self, corp, products, product_ids, id2product):
+		"""
+		填充商品的cps推广信息
+		"""
+		promotion_infos = mall_models.PromoteDetail.select().dj_where(product_id__in=product_ids)
+		for promotion in promotion_infos:
+			product = id2product.get(promotion.product_id)
+			# product_id = product_id,
+			# promote_money = money,
+			# promote_time_from = time_from,
+			# promote_time_to = time_to,
+			# promote_sale_count = sale_count,
+			# promote_total_money = total_money,
+			# promote_stock = stock
+			promotion_info = {
+				'money': promotion.promote_money,
+				'time_from': promotion.promote_time_from,
+				'time_to': promotion.promote_time_to,
+				'sale_count': promotion.promote_sale_count,
+				'total_money': promotion.promote_total_money,
+				'stock': promotion.promote_stock,
+				'id': promotion.id
+			}
+			product.cps_promoted_info = promotion_info
+
+
 	def fill_detail(self, products, options):
 		"""填充各种细节信息
 
@@ -249,6 +275,7 @@ class FillProductDetailService(business_model.Service):
 			with_selected_category: 填充选中的分类信息
 			with_all_category: 填充所有商品分类详情
 			with_sales: 填充商品销售详情
+			with_cps_promotion_info: 填充商品cps推广信息
 		"""
 		if len(products) == 0:
 			return
@@ -294,3 +321,6 @@ class FillProductDetailService(business_model.Service):
 
 		if options.get('with_sales', False):
 			self.__fill_sales_detail(self.corp, products, product_ids, id2product)
+
+		if options.get('with_cps_promotion_info', False):
+			self.__fill_cps_promoteion_info(self.corp, products, product_ids, id2product)

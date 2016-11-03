@@ -81,6 +81,7 @@ class ProductPool(business_model.Model):
 		product_sales_filter_values = {}
 		product_supplier_filter_values = {}
 		product_classification_filter_values = {}
+		product_promotion_filter_values = {}
 
 		filter_parse_result = FilterParser.get().parse(filters)
 
@@ -127,8 +128,9 @@ class ProductPool(business_model.Model):
 					filter_category = product_classification_filter_values
 				else:
 					should_ignore_field = True
-			elif filter_field == 'product_id':
-				filter_category = product_pool_filter_values
+			elif filter_field == 'promotion_status':
+				filter_field_op = 'promote_status'
+				filter_category = product_promotion_filter_values
 
 			if not should_ignore_field:
 				filter_category[filter_field_op] = filter_value
@@ -145,7 +147,8 @@ class ProductPool(business_model.Model):
 			'product_category': product_category_filter_values,
 			'product_sales': product_sales_filter_values,
 			'product_supplier': product_supplier_filter_values,
-			'product_classification': product_classification_filter_values
+			'product_classification': product_classification_filter_values,
+			'product_promotion': product_promotion_filter_values,
 		}
 
 	def get_products(self, page_info, fill_options=None, options={}, filters={}):
@@ -201,7 +204,16 @@ class ProductPool(business_model.Model):
 		product_classification_filters = type2filters['product_classification']
 		if product_classification_filters:
 			product_ids = [relation.product_id for relation in mall_models.ClassificationHasProduct.select().dj_where(**product_classification_filters)]
-			
+
+		# 根据cps推广进行过滤
+		product_promotion_filter_values = type2filters['product_promotion']
+		if product_promotion_filter_values:
+			if product_ids:
+				product_promotion_filter_values.update({'product_id__in': product_ids})
+				product_ids = [promote.product_id for promote in mall_models.PromoteDetail.select().dj_where(**product_promotion_filter_values)]
+				# product_ids = list(set(product_ids) - set(promoted_product_ids))
+
+
 		#在mall_product表中进行过滤
 		product_info_filters = type2filters['product_info']
 		if supplier_ids:
@@ -289,3 +301,27 @@ class ProductPool(business_model.Model):
 			}
 			msgutil.send_message(topic_name, msg_name, data)
 		return True
+
+	def search_promoted_products(self, filters, page_info):
+		product_pool = self.corp.product_pool
+
+		filters['__f-status-equal'] = mall_models.PP_STATUS_ON_POOL
+		filters['__f-promotion_status-equal'] = mall_models.PROMOTING
+		fill_options = {
+			'with_category': True,
+			'with_product_model': True,
+			'with_model_property_info': True,
+			'with_shelve_status': True,
+			'with_supplier_info': True,
+			'with_classification': True,
+			'with_sales': True,
+			'with_cps_promotion_info': True
+		}
+
+		options = {
+			'order_by_display_index': True
+		}
+
+		products, pageinfo = product_pool.get_products(page_info, fill_options, options, filters)
+
+		return products, pageinfo

@@ -186,5 +186,18 @@ class EncodeProductService(business_model.Service):
 
 		return datas
 
+	def get_cps_promotion_info(self, product):
+		cps_promotion_info = product.cps_promoted_info
+		data = {
+			'money': cps_promotion_info['money'],
+			'time_from': cps_promotion_info['time_from'],
+			'time_to': cps_promotion_info['time_to'],
+			'sale_count': cps_promotion_info['sale_count'],
+			'total_money': cps_promotion_info['total_money'],
+			'stock': cps_promotion_info['stock'],
+			'id': cps_promotion_info['id']
+		}
+		return data
+
 	def encode(self, product):
 		pass

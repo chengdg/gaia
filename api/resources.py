@@ -7,4 +7,3 @@ import member
 import order
 import product
 import auth
-import cps
