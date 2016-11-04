@@ -112,7 +112,7 @@ def __create_self_run_platform_account():
 	from db.account import models as account_models
 
 	try:
-		account_models.UserProfile.select().dj_where(webapp_type=account_models.WEBAPP_TYPE_WEIZOOM_MALL).get()
+		account_models.User.select().dj_where(username='zhouxun').get()
 		#已经存在，不再创建，直接返回
 	except:
 		user = account_models.User.create(

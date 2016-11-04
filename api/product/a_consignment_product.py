@@ -18,3 +18,5 @@ class AConsignmentProduct(api_resource.ApiResource):
 		corp = args['corp']
 		product_ids = [args['product_id']]
 		corp.product_pool.add_consignment_products(product_ids)
+
+		return {}

@@ -36,8 +36,7 @@ class ACPSPromotedProducts(api_resource.ApiResource):
 		# with_all_category: 填充所有商品分类详情
 		# with_sales: 填充商品销售详情
 		# with_cps_promotion_info: 填充商品cps推广信息
-		weizoom_corp = CorporationFactory.get_weizoom_corporation()
-		CorporationFactory.set(weizoom_corp)
+
 		if product_status == 'insale':
 			insale_shelf = corp.insale_shelf
 
@@ -50,7 +49,7 @@ class ACPSPromotedProducts(api_resource.ApiResource):
 			products, pageinfo = corp.product_pool.search_promoted_products(filters, target_page)
 
 		encode_product_service = EncodeProductService.get(corp)
-		CorporationFactory.set(corp)
+
 		datas = []
 		for product in products:
 			base_info = encode_product_service.get_base_info(product)

@@ -26,18 +26,16 @@ class ACPSPromotedProduct(api_resource.ApiResource):
 		sale_count = args.get('sale_count', 0)
 		total_money = args.get('total_money', 0)
 
-		products = corp.product_pool.get_products_by_ids([product_id], fill_options={'with_cps_promotion_info': True})
-		if products:
-			product = products[0]
-			promoted_result = product.apply_cps_promotion(money, stock, time_from, time_to, sale_count, total_money)
+		product = corp.product_pool.get_products_by_id(product_id)
+		if product:
+			product.apply_cps_promotion(money, stock, time_from, time_to, sale_count, total_money)
 			encode_product_service = EncodeProductService.get(corp)
 
 			cps_promotion_info = encode_product_service.get_cps_promotion_info(product)
-			if promoted_result:
-				return {
-					'id': product.id,
-					'cps_promotion_info': cps_promotion_info
-				}
+			return {
+				'id': product.id,
+				'cps_promotion_info': cps_promotion_info
+			}
 		return 500, {}
 
 	@param_required(['corp_id', 'product_id', 'money', 'stock', 'promotion_id', 'status'])

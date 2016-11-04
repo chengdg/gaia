@@ -159,7 +159,7 @@ def __format_product_post_data(context, product):
     if category_names:
         for category_name in category_names:
             db_category = mall_models.ProductCategory.select().dj_where(
-                owner_id = context.corp.id, 
+                owner_id = context.corp.id,
                 name = category_name
             ).get()
             categories.append(db_category.id)
@@ -282,6 +282,23 @@ def __create_promote(promotes, context, user):
             response = context.client.put('/product/cps_promoted_product/', data)
             bdd_util.assert_api_call_success(response)
 
+
+def __create_consignment_product(product_names, user, context):
+    user = mall_models.User.select().dj_where(username=user).first()
+    for product_name in product_names:
+        product = mall_models.Product.select().dj_where(name=product_name).first()
+
+        if product:
+
+            corp_id = user.id
+            data = {
+                'corp_id': corp_id,
+                'product_id': product.id,
+
+            }
+            response = context.client.put('/product/consignment_product/', data)
+
+            bdd_util.assert_api_call_success(response)
 
 def __get_products(context, type_name=u'在售'):
     TYPE2URL = {
@@ -531,3 +548,13 @@ def step_impl(context, user):
         promotes = [promotes]
 
     __create_promote(promotes, context, user)
+
+
+@when(u"{user}创建代售商品")
+def step_impl(context, user):
+
+    product_names = json.loads(context.text)
+    print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
+    print user
+    print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
+    __create_consignment_product(product_names=product_names, user=user, context=context)

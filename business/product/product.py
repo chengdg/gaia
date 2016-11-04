@@ -419,11 +419,23 @@ class Product(business_model.Model):
 		if mall_models.PromoteDetail.select().dj_where(product_id=self.id,
 													   promote_status=mall_models.PROMOTING).count() > 0:
 			return False
-		mall_models.PromoteDetail.create(product_id=self.id,
-										 promote_money=money,
-										 promote_time_from=time_from,
-										 promote_time_to=time_to,
-										 promote_sale_count=sale_count,
-										 promote_total_money=total_money,
-										 promote_stock=stock)
+
+		promotion_model = mall_models.PromoteDetail.create(product_id=self.id,
+														   promote_money=money,
+														   promote_time_from=time_from,
+														   promote_time_to=time_to,
+														   promote_sale_count=sale_count,
+														   promote_total_money=total_money,
+														   promote_stock=stock)
+		cps_promotion_info = {
+			'money': money,
+			'time_from': time_from,
+			'time_to': time_to,
+			'sale_count': sale_count,
+			'total_money': total_money,
+			'stock': stock,
+			'id': promotion_model.id
+		}
+		self.cps_promoted_info = cps_promotion_info
+
 		return True

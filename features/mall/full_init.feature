@@ -504,3 +504,7 @@ Scenario: 安装完整测试数据
 			"promote_time_to": "2019-03-01"
 		}]
 		"""
+	When zhouxun创建代售商品
+		"""
+		["东坡肘子-weizoom", "叫花鸡-weizoom", "水晶虾仁-weizoom"]
+		"""

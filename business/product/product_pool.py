@@ -60,10 +60,9 @@ class ProductPool(business_model.Model):
 			mall_models.ProductPool.create(
 				woid=self.corp_id,
 				product_id=product_id,
-				status=mall_models.PP_STATUS_ON,
+				status=mall_models.PP_STATUS_ON_POOL,
 				type=mall_models.PP_TYPE_SYNC,
 				display_index=NEW_PRODUCT_DISPLAY_INDEX,
-				sync_at=datetime.now()
 			)
 		return True
 
@@ -275,6 +274,9 @@ class ProductPool(business_model.Model):
 			product_id = int(product_id)
 			result.append(id2product[product_id])
 		return result
+
+	def get_products_by_id(self, product_id, fill_options={}):
+		return self.get_products_by_ids([product_id], fill_options=fill_options)[0]
 
 	def __compatible_delete_products(self, product_ids):
 		#[compatibility]: 兼容老的apiserver，在apiserver升级到支持ProductPool，本函数应该删除

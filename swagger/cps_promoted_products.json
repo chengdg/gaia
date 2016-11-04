@@ -312,7 +312,7 @@
                     "type": "object",
                     "description": "分页信息"
                 },
-                "product_promotes": {
+                "products": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/PromotedProductInList"

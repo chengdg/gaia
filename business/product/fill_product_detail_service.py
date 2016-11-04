@@ -51,20 +51,20 @@ class FillProductDetailService(business_model.Service):
 		product_model_generator = ProductModelGenerator.get(corp)
 		product_model_generator.fill_models_for_products(products, is_enable_model_property_info)
 
-	def __fill_category_detail(self, corp, products, product_ids):
+	def __fill_category_detail(self, product_ids, id2product):
 		"""填充商品分类信息相关细节
 		"""
-		categories = list(mall_models.ProductCategory.select().dj_where(owner=corp.id).order_by('id'))
 
 		# 获取product关联的category集合
-		id2product = {}
-		for product in products:
+		for key, product in id2product.items():
 			product.categories = []
-			id2product[product.id] = product
 
-		category_ids = [category.id for category in categories]
+		relations = mall_models.CategoryHasProduct.select().dj_where(product_id__in=product_ids).order_by('id')
+		catagory_ids = [relation.category_id for relation in relations]
+		categories = list(mall_models.ProductCategory.select().dj_where(id__in=catagory_ids).order_by('id'))
+
 		id2category = dict([(category.id, category) for category in categories])
-		for relation in mall_models.CategoryHasProduct.select().dj_where(product_id__in=product_ids).order_by('id'):
+		for relation in relations:
 			category_id = relation.category_id
 			product_id = relation.product_id
 			# if not category_id in id2category:
@@ -259,7 +259,6 @@ class FillProductDetailService(business_model.Service):
 			}
 			product.cps_promoted_info = promotion_info
 
-
 	def fill_detail(self, products, options):
 		"""填充各种细节信息
 
@@ -311,7 +310,7 @@ class FillProductDetailService(business_model.Service):
 			self.__fill_property_detail(self.corp, products, product_ids)
 
 		if options.get('with_category', False):
-			self.__fill_category_detail(self.corp, products, product_ids)
+			self.__fill_category_detail(product_ids, id2product)
 
 		if options.get('with_supplier_info', False):
 			self.__fill_supplier_detail(self.corp, products, product_ids)
