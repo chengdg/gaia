@@ -27,7 +27,8 @@ class AProduct(api_resource.ApiResource):
 			'with_model_property_info': True,
 			'with_property': True,
 			'with_supplier_info': True,
-			'with_classification': True
+			'with_classification': True,
+			'with_product_promotion': args.get('with_product_promotion', False)
 		}
 		products = corp.product_pool.get_products_by_ids(ids, fill_options)
 		if len(products) == 0:

@@ -7,7 +7,9 @@ from business import model as business_model
 
 from business.product.product import Product
 from business.product.model.product_model_generator import ProductModelGenerator
+from business.mall.promotion.fill_promotion_detail_service import FillPromotionDetailService
 from db.mall import models as mall_models
+from db.mall import promotion_models
 from gaia_conf import TOPIC
 
 import settings
@@ -255,6 +257,49 @@ class FillProductDetailService(business_model.Service):
 			if id2product.has_key(product_id):
 				id2product[product_id].sales = sales.sales
 
+	def __fill_promotion_detail(self, corp, products, product_ids, id2product):
+		"""
+		填充商品促销的信息
+		"""
+		product_promotion_relations = promotion_models.ProductHasPromotion.select().dj_where(product_id__in=product_ids)
+		promotion_ids = list()
+		promotion2product = dict()
+		for relation in product_promotion_relations:
+			promotion_ids.append(relation.promotion_id)
+			promotion2product[relation.promotion_id] = relation.product_id
+
+		promotion_db_models = promotion_models.Promotion.select().dj_where(id__in=promotion_ids).where(
+			promotion_models.Promotion.type != promotion_models.PROMOTION_TYPE_COUPON)
+		promotions = []
+		for promotion_db_model in promotion_db_models:
+			if (promotion_db_model.status != promotion_models.PROMOTION_STATUS_STARTED) and (promotion_db_model.status != promotion_models.PROMOTION_STATUS_NOT_START):
+				#跳过已结束、已删除的促销活动
+				continue
+
+			if promotion_db_model.owner_id != corp.id:
+				continue
+
+			promotion = corp.PromotionRepository.get_promotion(promotion_db_model)
+			promotions.append(promotion)
+		fill_promotion_detail_service = FillPromotionDetailService.get(corp)
+		fill_promotion_detail_service.fill_detail(promotions)
+
+		#为所有的product设置product.promotion
+		for promotion in promotions:
+			product_id = promotion2product.get(promotion.id, None)
+			if not product_id:
+				continue
+
+			product = id2product.get(product_id, None)
+			if not product:
+				continue
+
+			if promotion.type_name == 'integral_sale':
+				product.integral_sale = promotion
+			else:
+				product.promotion = promotion
+
+
 	def fill_detail(self, products, options):
 		"""填充各种细节信息
 
@@ -296,7 +341,7 @@ class FillProductDetailService(business_model.Service):
 			self.__fill_shelve_status(self.corp, products)
 
 		if options.get('with_product_promotion', False):
-			Product.__fill_promotion_detail(corp, products, product_ids)
+			Product.__fill_promotion_detail(self.corp, products, product_ids, id2product)
 
 		if options.get('with_image', False):
 			self.__fill_image_detail(self.corp, products, product_ids)

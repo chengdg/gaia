@@ -197,3 +197,7 @@ class Corporation(business_model.Model):
 	@property
 	def wepage_project(self):
 		return WepageProjectRepository(self)
+
+	@property
+	def promotion_repository(self):
+		return PromotionRepository(self)
