@@ -12,8 +12,8 @@ SERVICE_NAME = 'gaia'
 DEV_SERVER_MULTITHREADING = True
 WEAPP_DOMAIN = "weapp.weizoom.com"
 HERMES_DOMAIN = "weapp.weizoom.com"
-#ZEUS_DB = os.environ.get('ZEUS_DB', None) or '103.29.16.140'
-ZEUS_DB = os.environ.get('ZEUS_DB', None) or 'db.dev.com'
+ZEUS_DB = os.environ.get('ZEUS_DB', None) or '103.29.16.148'
+#ZEUS_DB = os.environ.get('ZEUS_DB', None) or 'db.dev.com'
 
 DATABASES = {
     'default': {
@@ -23,7 +23,7 @@ DATABASES = {
         'USER': 'weapp',
         'PASSWORD': 'weizoom',
         'HOST': ZEUS_DB,
-        'PORT': '',
+        'PORT': '33306',
         'CONN_MAX_AGE': 100
     }
     #,
