@@ -270,7 +270,7 @@ def __create_promote(promotes, context, user):
 
         if product:
 
-            corp_id = mall_models.User.select().dj_where(username=user)
+            corp_id = context.corp.id
             data = {
                 'corp_id': corp_id,
                 'product_id': product.id,

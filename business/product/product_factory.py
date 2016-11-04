@@ -157,19 +157,6 @@ class ProductFactory(business_model.Service):
 				value=product_property['value']
 			)
 
-	def __apply_cps_promotion(self, product_id, money, stock, time_from, time_to, sale_count, total_money):
-		if mall_models.PromoteDetail.select().dj_where(product_id=product_id,
-													   promote_status=mall_models.PROMOTING).count() > 0:
-			return False
-		mall_models.PromoteDetail.create(product_id=product_id,
-										 promote_money=money,
-										 promote_time_from=time_from,
-										 promote_time_to=time_to,
-										 promote_sale_count=sale_count,
-										 promote_total_money=total_money,
-										 promote_stock=stock)
-		return True
-
 	def create_product(self, args):
 		"""
 		创建自营商品
@@ -208,20 +195,3 @@ class ProductFactory(business_model.Service):
 		corp.forsale_shelf.add_products([product.id])
 
 		return product
-
-	def create_cps_promoted_product(self, args):
-		product_id = args.get('product_id')
-		money = args.get('money')
-		stock = args.get('stock')
-		time_from = args.get('time_from')
-		time_to = args.get('time_to')
-		sale_count = args.get('sale_count')
-		total_money = args.get('total_money')
-		product_pool = self.corp.product_pool
-
-		if self.__apply_cps_promotion(product_id, money, stock, time_from, time_to, sale_count, total_money):
-
-			product = product_pool.get_products_by_ids([product_id], fill_options={'with_cps_promotion_info': True})[0]
-			return product
-		else:
-			return None

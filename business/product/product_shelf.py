@@ -193,21 +193,20 @@ class ProductShelf(business_model.Model):
 
 		return products, pageinfo
 
-	def get_new_promoted_products_count(self):
+	def unprocessed_cps_promoted_products_count(self):
 		"""
 
 		"""
 		product_pool = self.corp.product_pool
 		if self.type == 'in_sale':
-			count = product_pool.get_new_promoted_products_count(product_status=mall_models.PP_STATUS_ON)
+			count = product_pool.unprocessed_cps_promoted_products_count(product_status=mall_models.PP_STATUS_ON)
 		else:
-			count = product_pool.get_new_promoted_products_count(product_status=mall_models.PP_STATUS_OFF)
+			count = product_pool.unprocessed_cps_promoted_products_count(product_status=mall_models.PP_STATUS_OFF)
 		return count
 
-	def update_new_promoted_products_count(self):
+	def set_cps_promoted_products_processed(self):
 		product_pool = self.corp.product_pool
 		if self.type == 'in_sale':
-			count = product_pool.update_new_promoted_products_count(product_status=mall_models.PP_STATUS_ON)
+			product_pool.set_cps_promoted_products_processed(product_status=mall_models.PP_STATUS_ON)
 		else:
-			count = product_pool.update_new_promoted_products_count(product_status=mall_models.PP_STATUS_OFF)
-		return count
+			product_pool.set_cps_promoted_products_processed(product_status=mall_models.PP_STATUS_OFF)

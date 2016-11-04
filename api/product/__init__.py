@@ -16,4 +16,5 @@ import model_property
 
 import a_cps_promoted_product
 import a_cps_promoted_products
-import a_new_cps_promoted_products_count
+import a_unprocessed_cps_promoted_products_count
+import a_processed_cps_promoted_products

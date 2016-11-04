@@ -2,7 +2,7 @@
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
 
-from business.product.product_factory import ProductFactory
+from business.product.encode_product_service import EncodeProductService
 
 
 class ACPSPromotedProduct(api_resource.ApiResource):
@@ -26,24 +26,19 @@ class ACPSPromotedProduct(api_resource.ApiResource):
 		sale_count = args.get('sale_count', 0)
 		total_money = args.get('total_money', 0)
 
-		product_factory = ProductFactory.get(corp=corp)
-		cps_promoted_product = product_factory.create_cps_promoted_product({'product_id': product_id,
-																			'money': money,
-																			'stock': stock,
-																			'time_from': time_from,
-																			'time_to': time_to,
-																			'sale_count': sale_count,
-																			'total_money': total_money,
-																			})
-		if cps_promoted_product:
-			return {
-				'id': cps_promoted_product.id,
-				'promotion_info': {
-					'id': cps_promoted_product.get('cps_promoted_info').get('id')
+		products = corp.product_pool.get_products_by_ids([product_id], fill_options={'with_cps_promotion_info': True})
+		if products:
+			product = products[0]
+			promoted_result = product.apply_cps_promotion(money, stock, time_from, time_to, sale_count, total_money)
+			encode_product_service = EncodeProductService.get(corp)
+
+			cps_promotion_info = encode_product_service.get_cps_promotion_info(product)
+			if promoted_result:
+				return {
+					'id': product.id,
+					'cps_promotion_info': cps_promotion_info
 				}
-			}
-		else:
-			return 500, {}
+		return 500, {}
 
 	@param_required(['corp_id', 'product_id', 'money', 'stock', 'promotion_id', 'status'])
 	def post(args):
@@ -62,7 +57,7 @@ class ACPSPromotedProduct(api_resource.ApiResource):
 		total_money = args.get('total_money', 0)
 
 		corp = args['corp']
-		promoted_product = corp.product_pool.get_products_by_ids(product_ids=[product_id])
-		promoted_product.update_cps_promotion_info(promotion_id, money, stock, sale_count, total_money, status)
+		promoted_products = corp.product_pool.get_products_by_ids(product_ids=[product_id])
+		promoted_products[0].update_cps_promotion_info(promotion_id, money, stock, sale_count, total_money, status)
 
 		return {}

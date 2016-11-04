@@ -414,3 +414,16 @@ class Product(business_model.Model):
 										 promote_stock=stock)\
 			.dj_where(product_id=self.id,
 					  id=promotion_id).execute()
+
+	def apply_cps_promotion(self, money, stock, time_from, time_to, sale_count, total_money):
+		if mall_models.PromoteDetail.select().dj_where(product_id=self.id,
+													   promote_status=mall_models.PROMOTING).count() > 0:
+			return False
+		mall_models.PromoteDetail.create(product_id=self.id,
+										 promote_money=money,
+										 promote_time_from=time_from,
+										 promote_time_to=time_to,
+										 promote_sale_count=sale_count,
+										 promote_total_money=total_money,
+										 promote_stock=stock)
+		return True
