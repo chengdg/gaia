@@ -1,6 +1,7 @@
 {
 	"name": "gaia",
 	"type": "python-service",
+	"default_port": 8003,
 	"envs": {
 		"production": [
 			"_SERVICE_HOST_PORT"
