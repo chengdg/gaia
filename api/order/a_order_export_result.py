@@ -21,35 +21,47 @@ class AOrderExportResult(api_resource.ApiResource):
 
 		corp = args['corp']
 
-		topic_name = TOPIC['order']
-		data = {
-			"corp_id": corp.id,
-			"filters": filters,
-			# "job_id": ""
-		}
-
 		order_export_job = OrderExportJob.create({
 			'corp_id': corp.id,
-			'filters': filters,
-			'type': args['type']
+			'type': args['type'],
+			'filters': args['filters']
 		})
 
-		msgutil.send_message(topic_name, "export_order", data)
+		topic_name = TOPIC['order']
+		data = {
+			"job_id": order_export_job.id
+		}
+
+		msgutil.send_message(topic_name, "order_export_job_created", data)
 
 		return {
 			"job_id": order_export_job.id
 		}
 
 	@param_required(['corp', 'type'])
-	def get(self):
-		return {
-			'is_finished': '',
-			'percentage': 0,
-			'file_url': '',
-			'job_id': 0
+	def get(args):
+		corp = args['corp']
+		type = args['type']
 
-		}
+		job = corp.order_export_job_repository.get_order_export_job_by_type(type)
+
+		if job.is_valid:
+			return {
+				'is_existent': True,
+				'is_finished': job.is_finished,
+				'percentage': job.percentage,
+				'file_path': job.file_path
+			}
+
+		else:
+			return {
+				'is_existent': False,
+				'is_finished': '',
+				'percentage': 0,
+				'file_url': ''
+
+			}
 
 	@param_required(['corp', 'job_id'])
-	def delete(self):
+	def delete(args):
 		pass

@@ -1615,12 +1615,17 @@ class ProductHasLabel(models.Model):
 #########################################################################
 # ExportJob: 导出任务
 #########################################################################
+WORD2EXPORT_JOB_TYPE = {
+	'all_orders': 1,
+	'financial_audit_orders': 3
+}
+
 class ExportJob(models.Model):
 	woid = models.IntegerField()
 	type = models.IntegerField(default=0)
-	status = models.BooleanField(default=False)
-	processed_count = models.IntegerField()
-	count = models.IntegerField()
+	status = models.BooleanField(default=False) # 其实是表示是否完成的bool
+	processed_count = models.IntegerField() # 已处理数量
+	count = models.IntegerField()   # 总数量
 	is_download = models.BooleanField(default=False, verbose_name='是否下载')
 	param = models.CharField(max_length=1024)
 	file_path = models.CharField(max_length=256)

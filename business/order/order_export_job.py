@@ -17,25 +17,33 @@ class OrderExportJob(business_model.Model):
 	__slots__ = (
 		'id',
 		'corp_id',
-		'count',
-		'processed_count'
+		'percentage',
+		'is_finished',
+		'is_valid',
+		'file_path'
 	)
 
 	def __init__(self, db_model):
 		business_model.Model.__init__(self)
-		self.corp_id = db_model.woid
-		self.id = db_model.woid
-		self.processed_count = db_model.processed_count
-		self.count = db_model.count
-		self.context['db_model'] = db_model
+
+		if db_model:
+			self.corp_id = db_model.woid
+			self.id = db_model.woid
+			self.percentage = db_model.processed_count * 100 / db_model.count
+			self.is_finished = db_model.status
+			self.is_valid = True
+			self.context['db_model'] = db_model
+			self.file_path = db_model.file_path
+		else:
+			self.is_valid = False
 
 	@staticmethod
 	def create(args):
 		db_model = mall_models.ExportJob.objects.create(
 			woid=args['corp_id'],
 			type=args['type'],
-			status=0,
-			param=json.dumps(args['filter']),
+			status=False,
+			param=args['filter'],
 			created_at=datetime.now(),
 			processed_count=0,
 			count=0,

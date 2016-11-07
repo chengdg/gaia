@@ -26,16 +26,6 @@ DATABASES = {
         'PORT': '',
         'CONN_MAX_AGE': 100
     }
-    #,
-    # 'watchdog': {
-    #     'ENGINE': 'mysql+retry',
-    #     'NAME': 'weapp',
-    #     'USER': 'weapp',
-    #     'PASSWORD': 'weizoom',
-    #     'HOST': 'db.zeus.com',
-    #     'PORT': '',
-    #     'CONN_MAX_AGE': 100
-    # }
 }
 
 

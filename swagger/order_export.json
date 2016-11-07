@@ -40,26 +40,21 @@
 								"data": {
 									"type": "object",
 									"properties": {
-										"status": {
-											"type": "string",
-											"description": "状态",
-											"enum": [
-												"processing",
-												"processed",
-												"none"
-											]
+										"is_existent": {
+											"type": "boolean",
+											"description": "是否存在任务"
+										},
+										"is_finished": {
+											"type": "boolean",
+											"description": "是否完成"
 										},
 										"percentage": {
 											"type": "integer",
 											"description": "完成百分比，注意是整数，不带%"
 										},
-										"file_url": {
+										"file_path": {
 											"type": "string",
 											"description": "文件url"
-										},
-										"job_id": {
-											"type": "integer",
-											"description": "如果整体为none时则为0"
 										}
 									}
 								},
@@ -131,10 +126,6 @@
 					{
 						"name": "corp_id",
 						"required": true
-					},
-					{
-						"name": "job_id",
-						"required": "true"
 					}
 				],
 				"responses": {
