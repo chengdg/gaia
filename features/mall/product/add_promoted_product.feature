@@ -130,4 +130,4 @@ Scenario:1 weizoom已经有了推广商品
 		"""
 
 
-	Then zhouxun可以看到商品池推广商品列表有'热干面-weizoom'
+	Then zhouxun可以看到商品池推广商品列表有'水晶虾仁-weizoom'
