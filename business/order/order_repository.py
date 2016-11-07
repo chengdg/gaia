@@ -97,10 +97,10 @@ class OrderRepository(business_model.Model):
 				order_ids = [db_model.id for db_model in db_models]
 
 				ohs_list = mall_models.OrderHasProduct.select().dj_where(order_id__in=order_ids)
-				filter_parse_result = FilterParser.get().parse_key(filters, '__f-product_name-contain',
-				                                                   {'product_name': 'name'})
+
 				target_page = PageInfo.get_max_page()
-				products, pageinfo = self.corp.product_pool.get_products(filter_parse_result, target_page)
+				product_filters = {'__f-name-contain': filters['__f-product_name-contain']}
+				products, pageinfo = self.corp.product_pool.get_products(target_page, filters=product_filters)
 				product_ids = [product.id for product in products]
 				ohs_list = ohs_list.dj_where(product_id__in=product_ids)
 				use_should_in_order_ids = True

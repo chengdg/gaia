@@ -193,8 +193,8 @@ class DeliveryItem(business_model.Model):
 				express_push_ids.append(push.id)
 
 			express_details = express_models.ExpressDetail.select().dj_where(express_id__in=express_push_ids)
-			express_push_id2details = {detail.express_id: detail for detail in express_details}
-
+			# express_push_id2details = {detail.express_id: detail for detail in express_details}
+			express_push_id2details = {}
 			for detail in express_details:
 				if detail.express_id in express_push_id2details:
 					express_push_id2details[detail.express_id].append(detail)

@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-import json
-
-from eaglet.core import watchdog
-from eaglet.decorator import param_required
-from eaglet.utils.resource_client import Resource
 
 from business import model as business_model
 from business.coupon.coupon_repository import CouponRepository
@@ -11,10 +6,11 @@ from business.coupon.coupon_rule_repository import CouponRuleRepository
 from business.deprecated.wepage_project_repository import WepageProjectRepository
 from business.member.member_repository import MemberRepository
 from business.order.delivery_item_repository import DeliveryItemRepository
+from business.order.order_export_job_repository import OrderExportJobRepository
 from business.order.order_repository import OrderRepository
 from business.order.config.order_config_repository import OrderConfigRepository
 from db.account import models as account_model
-from db.mall import models as mall_models
+
 
 from business.product.product_shelf import ProductShelf
 from business.product.product_pool import ProductPool
@@ -202,3 +198,7 @@ class Corporation(business_model.Model):
 	@property
 	def order_config_repository(self):
 		return OrderConfigRepository(self)
+
+	@property
+	def order_export_job_repository(self):
+		return OrderExportJobRepository(self)
