@@ -56,14 +56,12 @@ class ProductPool(business_model.Model):
 		添加代售商品到商品池
 		"""
 		for product_id in product_ids:
-			mall_models.ProductPool.create(
-				woid=self.corp_id,
-				product_id=product_id,
+			mall_models.ProductPool.update(
 				status=mall_models.PP_STATUS_ON,
 				type=mall_models.PP_TYPE_SYNC,
 				display_index=NEW_PRODUCT_DISPLAY_INDEX,
 				sync_at=datetime.now()
-			)
+			).dj_where(woid=self.corp_id, product_id=product_id).execute()
 		return True
 
 	def __split_filters(self, filters):

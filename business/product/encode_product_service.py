@@ -13,7 +13,6 @@ class EncodeProductService(business_model.Service):
 		"""
 		获得商品的基础信息
 		"""
-		print '>>>>>>>>>>>>>>>>>>>> product_id: ', product.id
 		data = {
 			"name": product.name,
 			"type": product.type,
