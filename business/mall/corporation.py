@@ -8,6 +8,7 @@ from eaglet.utils.resource_client import Resource
 from business import model as business_model
 from business.coupon.coupon_repository import CouponRepository
 from business.coupon.coupon_rule_repository import CouponRuleRepository
+from business.deprecated.wepage_project_repository import WepageProjectRepository
 from business.member.member_repository import MemberRepository
 from business.order.delivery_item_repository import DeliveryItemRepository
 from business.order.order_repository import OrderRepository
@@ -193,6 +194,10 @@ class Corporation(business_model.Model):
 	@property
 	def province_city_repository(self):
 		return ProvinceCityRepository(self)
+
+	@property
+	def wepage_project(self):
+		return WepageProjectRepository(self)
 
 	@property
 	def order_config_repository(self):

@@ -57,8 +57,8 @@ class FilterParser(object):
 
             key = self.get_filter_key(filter_express, filter2field)
 
-            if value:
-                #当value有效时，才记录其为过滤项，可以解决dj_where(id__in=[])的问题
+            if value or value == 0:
+                # 当value有效时，才记录其为过滤项，可以解决dj_where(id__in=[])的问题
                 peewee_query[key] = self.get_filter_value(filter_express, filters)
 
         return peewee_query

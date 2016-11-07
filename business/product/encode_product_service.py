@@ -13,6 +13,7 @@ class EncodeProductService(business_model.Service):
 		"""
 		获得商品的基础信息
 		"""
+		print '>>>>>>>>>>>>>>>>>>>> product_id: ', product.id
 		data = {
 			"name": product.name,
 			"type": product.type,
@@ -25,7 +26,8 @@ class EncodeProductService(business_model.Service):
 			"detail": product.detail,
 			"sales": product.sales,
 			"is_member_product": product.is_member_product,
-			"sync_at": product.sync_at.strftime('%Y-%m-%d %H:%M') if product.create_type == 'sync' else None,
+			"is_delivery": product.is_delivery,
+			"sync_at": product.sync_at.strftime('%Y-%m-%d %H:%M') if (product.create_type == 'sync' and product.sync_at) else None,
 			"created_at": product.created_at.strftime('%Y-%m-%d %H:%M')
 		}
 

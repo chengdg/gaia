@@ -31,9 +31,11 @@ class AAccessToken(api_resource.ApiResource):
 
 		# 生成access token
 		access_token = AccessToken.generate(args)
-
-		return {
-			"access_token": access_token.access_token,
-			"expire_time": access_token.expire_time,
-			#"app_key": access_token.app.app_key
-		}
+		if access_token:
+			return {
+				"access_token": access_token.access_token,
+				"expire_time": access_token.expire_time,
+				#"app_key": access_token.app.app_key
+			}
+		else:
+			return 500,{}

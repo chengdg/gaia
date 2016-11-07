@@ -35,6 +35,9 @@ class AProductModelPropertyValue(api_resource.ApiResource):
         """
         corp = args['corp']
         property_value_id = args['id']
+        product_model_property_value = corp.product_model_property_repository.get_property_value(property_value_id)
+        if product_model_property_value.is_used():
+            return 500, {'error_msg': 'model_property_value_is_used'}
         corp.product_model_property_repository.delete_property_value(property_value_id)
-        
         return {}
+

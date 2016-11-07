@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 import json
 
+from bdem import msgutil
 from eaglet.core import watchdog
 
 from business import model as business_model
 from business.product.product import Product
 from db.mall import models as mall_models
 from eaglet.decorator import param_required
+from gaia_conf import TOPIC
 
 
 class UpdateProductService(business_model.Service):
@@ -57,7 +59,7 @@ class UpdateProductService(business_model.Service):
 		"""
 		更新标准规格
 		"""
-		is_delete_standard_model = (models_info.get('is_use_custom_model', 'false') == 'true')
+		is_delete_standard_model = models_info.get('is_use_custom_model', False)
 		corp_id = self.corp.id
 		if is_delete_standard_model:
 			mall_models.ProductModel.update(
@@ -206,6 +208,14 @@ class UpdateProductService(business_model.Service):
 				value=product_property['value']
 			)
 
+	def __send_msg_to_topic(self, product_id, msg_name):
+		topic_name = TOPIC['product']
+		data = {
+			"product_id": product_id,
+			"corp_id": self.corp.id
+		}
+		msgutil.send_message(topic_name, msg_name, data)
+
 	def update_product(self, product_id, args):
 		"""
 		更新商品
@@ -223,7 +233,8 @@ class UpdateProductService(business_model.Service):
 		self.__update_product_images(product_id, image_info)
 		self.__update_product_models(product_id, models_info)
 		self.__update_product_properties(product_id, properties)
-
+		# 更新缓存
+		self.__send_msg_to_topic(product_id, "product_updated")
 		return product
 
 	def update_product_price(self, product_id, price_infos):
@@ -234,6 +245,8 @@ class UpdateProductService(business_model.Service):
 			model_id = price_info['model_id']
 			price = price_info['price']
 			mall_models.ProductModel.update(price=price).dj_where(owner_id=self.corp.id, id=model_id).execute()
+		# 发送更新缓存的消息
+		self.__send_msg_to_topic(product_id, "product_updated")
 
 	def update_product_stock(self, product_id, stock_infos):
 		"""
@@ -247,6 +260,6 @@ class UpdateProductService(business_model.Service):
 
 	def update_product_position(self, product_id, position):
 		"""
-		更新商品库存
+		更新商品排序的顺序
 		"""
 		mall_models.ProductPool.update(display_index=position).dj_where(woid=self.corp.id, product_id=product_id).execute()

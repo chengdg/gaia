@@ -67,9 +67,9 @@ class FillProductDetailService(business_model.Service):
 		for relation in mall_models.CategoryHasProduct.select().dj_where(product_id__in=product_ids).order_by('id'):
 			category_id = relation.category_id
 			product_id = relation.product_id
-			# if not category_id in id2category:
-			# 	# 微众商城分类，在商户中没有
-			# 	continue
+			if not category_id in id2category:
+				# 微众商城分类，在商户中没有
+				continue
 			category = id2category[category_id]
 			id2product[product_id].categories.append({
 				'id': category.id,

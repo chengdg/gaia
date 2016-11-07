@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
 __author__ = 'charles'
+from bdem import msgutil
 
 from eaglet.decorator import param_required
 
 from business import model as business_model
+from business.mall.corporation_factory import CorporationFactory
 from db.mall import models as mall_models
+from business.mall.corporation_factory import CorporationFactory
 from business.product.model.product_model_property_value import ProductModelPropertyValue
+from gaia_conf import TOPIC
 
 
 class ProductModelProperty(business_model.Model):
@@ -62,6 +66,15 @@ class ProductModelProperty(business_model.Model):
             if value == 'image':
                 model_type = mall_models.PRODUCT_MODEL_PROPERTY_TYPE_IMAGE
             mall_models.ProductModelProperty.update(type=model_type).dj_where(id=self.id).execute()
+        # 发送更新缓存的消息
+        msgutil.send_message(
+            TOPIC['product'],
+            'product_model_property_updated',
+            {
+                'corp_id': CorporationFactory.get().id,
+                'product_model_property_id': self.id
+            }
+        )
 
     def add_property_value(self, name, pic_url):
         """
@@ -72,7 +85,11 @@ class ProductModelProperty(business_model.Model):
             name = name,
             pic_url = pic_url
         )
-
+        msgutil.send_message(
+            TOPIC['product'],
+            'product_model_property_value_created',
+            {'corp_id': CorporationFactory.get().id, 'product_model_property_value_id': property_value.id}
+        )
         return property_value
 
     @staticmethod
@@ -88,9 +105,28 @@ class ProductModelProperty(business_model.Model):
                             type=type,
                             owner=args['corp'].id
                         )
-
+        # 发送更新缓存的消息
+        msgutil.send_message(
+            TOPIC['product'],
+            'product_model_property_created',
+            {'corp_id': args['corp'].id, 'product_model_property_id': product_model.id}
+        )
         if product_model:
             model = ProductModelProperty(product_model)
             return model
         else:
             return None
+
+    def is_used(self):
+        corp = CorporationFactory.get()
+        relation_models = mall_models.ProductModelHasPropertyValue.select().dj_where(property_id=self.id)
+        if relation_models.count() > 0:
+            product_model_ids = [relation_model.model_id for relation_model in relation_models]
+            product_model_data_models = mall_models.ProductModel.select().dj_where(id__in=product_model_ids, is_deleted=0)
+            if product_model_data_models.count() > 0:
+                product_ids = [model_data.product_id for model_data in product_model_data_models]
+                product_pool_relations = mall_models.ProductPool.select().dj_where(woid=corp.id,
+                        product_id__in=product_ids, status__in=[mall_models.PP_STATUS_OFF, mall_models.PP_STATUS_ON])
+                if product_pool_relations.count() > 0:
+                    return True
+        return False
