@@ -19,5 +19,9 @@
 		],
 		"production": [
 		]
+	},
+	"dev": {
+		"rebuild": "no",
+		"init": "$standard"
 	}
 }
