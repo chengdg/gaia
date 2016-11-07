@@ -7,7 +7,7 @@ from business.product.product_factory import ProductFactory
 
 class AUnprocessedCPSPromotedProductsCount(api_resource.ApiResource):
 	"""
-	自营平台未处理的新增cps推广商品的数量
+	自营平台未处理的cps推广商品的数量
 	"""
 	app = 'product'
 	resource = 'unprocessed_cps_promoted_products_count'

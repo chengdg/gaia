@@ -7,7 +7,7 @@ from eaglet.decorator import param_required
 
 class AProcessedCPSPromotedProducts(api_resource.ApiResource):
 	"""
-	自营平台处理过的新增cps推广商品的数量
+	自营平台处理cps推广商品
 	"""
 	app = 'product'
 	resource = 'processed_cps_promoted_products'

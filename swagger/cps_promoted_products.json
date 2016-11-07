@@ -218,21 +218,14 @@
 
        },
 
-       "/product/new_cps_promoted_products_count": {
+       "/product/unprocessed_cps_promoted_products_count": {
             "get": {
-                "summary": "获得新曾推广数量",
+                "summary": "自营平台未处理的cps推广商品的数量",
                 "parameters": [
                      {
                         "name": "corp_id",
                         "in": "query",
                         "description": "",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "name": "product_status",
-                        "in": "query",
-                        "description": "推广的销售状态 insale:销售, forsale:待售, pool: 商品池 ",
                         "required": true,
                         "type": "string"
                     }
@@ -268,9 +261,11 @@
                         }
                     }
                 }
-            },
-             "post": {
-                "summary": "获得新曾推广数量",
+            }
+       },
+         "/product/processed_cps_promoted_products": {
+            "put": {
+                "summary": "自营平台处理cps推广商品",
                 "parameters": [
                      {
                         "name": "corp_id",
@@ -280,9 +275,9 @@
                         "type": "string"
                     },
                     {
-                        "name": "product_status",
+                        "name": "product_ids",
                         "in": "query",
-                        "description": "推广的销售状态 insale:销售, forsale:待售, pool: 商品池 ",
+                        "description": "[product_id....]格式 ",
                         "required": true,
                         "type": "string"
                     }
@@ -296,7 +291,6 @@
                 "responses": {
                     "200": {
                         "description": "success"
-
 
                     }
                 }
