@@ -554,7 +554,5 @@ def step_impl(context, user):
 def step_impl(context, user):
 
     product_names = json.loads(context.text)
-    print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
-    print user
-    print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
+
     __create_consignment_product(product_names=product_names, user=user, context=context)
