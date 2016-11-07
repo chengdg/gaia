@@ -50,7 +50,7 @@
                                     "description": "分享描述"
                                 },
                                 "material_id": {
-                                    "type": "string",
+                                    "type": "integer",
                                     "description": "图文素材id"
                                 },
                                 "title": {
@@ -103,7 +103,7 @@
                     {
                         "name": "material_id",
                         "required": true,
-                        "type": "string",
+                        "type": "integer",
                         "description": "图文素材id"
                     }
                 ],
@@ -115,7 +115,40 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "success"
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "order_expired_day": {
+                                    "type": "integer",
+                                    "description": "未付款订单过期时间"
+                                },
+                                "is_share_page": {
+                                    "type": "boolean",
+                                    "description": "是否提示分享挣积分"
+                                },
+                                "background_image": {
+                                    "type": "string",
+                                    "description": "弹层背景图片"
+                                },
+                                "share_image": {
+                                    "type": "string",
+                                    "description": "分享图片"
+                                },
+                                "share_describe": {
+                                    "type": "string",
+                                    "description": "分享描述"
+                                },
+                                "material_id": {
+                                    "type": "integer",
+                                    "description": "图文素材id"
+                                },
+                                "title": {
+                                    "type": "string",
+                                    "description": "图文素材标题"
+                                }
+                            }
+                        }
                     }
                 }
             }

@@ -12,6 +12,7 @@ from business.deprecated.wepage_project_repository import WepageProjectRepositor
 from business.member.member_repository import MemberRepository
 from business.order.delivery_item_repository import DeliveryItemRepository
 from business.order.order_repository import OrderRepository
+from business.order.config.order_config_repository import OrderConfigRepository
 from db.account import models as account_model
 from db.mall import models as mall_models
 
@@ -197,3 +198,7 @@ class Corporation(business_model.Model):
 	@property
 	def wepage_project(self):
 		return WepageProjectRepository(self)
+
+	@property
+	def order_config_repository(self):
+		return OrderConfigRepository(self)
