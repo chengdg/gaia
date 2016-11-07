@@ -192,21 +192,3 @@ class ProductShelf(business_model.Model):
 		products, pageinfo = product_pool.get_products(page_info, fill_options, options, filters)
 
 		return products, pageinfo
-
-	def unprocessed_cps_promoted_products_count(self):
-		"""
-
-		"""
-		product_pool = self.corp.product_pool
-		if self.type == 'in_sale':
-			count = product_pool.unprocessed_cps_promoted_products_count(product_status=mall_models.PP_STATUS_ON)
-		else:
-			count = product_pool.unprocessed_cps_promoted_products_count(product_status=mall_models.PP_STATUS_OFF)
-		return count
-
-	def set_cps_promoted_products_processed(self):
-		product_pool = self.corp.product_pool
-		if self.type == 'in_sale':
-			product_pool.set_cps_promoted_products_processed(product_status=mall_models.PP_STATUS_ON)
-		else:
-			product_pool.set_cps_promoted_products_processed(product_status=mall_models.PP_STATUS_OFF)

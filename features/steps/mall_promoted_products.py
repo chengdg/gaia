@@ -14,14 +14,18 @@ def __get_cps_promoted_products(context, user, cps_promoted_product):
         'product_status': 'pool'
     }
     response = context.client.get('/product/cps_promoted_products/', data)
-    return response
+
     cps_promoted_products = response.data.get('products')
+    assert_success = False
     for product in cps_promoted_products:
-        if product.get('name') == cps_promoted_product:
-            assert True
-    assert False
+
+        if product.get('base_info').get('name') == cps_promoted_product:
+            assert_success = True
+            break
+    assert assert_success
 
 
 @then(u"{user}可以看到商品池推广商品列表有'{cps_promoted_product}'")
 def step_impl(context, user, cps_promoted_product):
     __get_cps_promoted_products(context, user, cps_promoted_product)
+

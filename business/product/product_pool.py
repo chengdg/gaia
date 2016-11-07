@@ -328,7 +328,7 @@ class ProductPool(business_model.Model):
 
 		return products, pageinfo
 
-	def unprocessed_cps_promoted_products_count(self, product_status=mall_models.PP_STATUS_ON_POOL):
+	def unprocessed_cps_promoted_products_count(self):
 		"""
 
 		"""
@@ -336,22 +336,17 @@ class ProductPool(business_model.Model):
 		new_promoted_product = mall_models.PromoteDetail.select().dj_where(is_new=True,
 																		   promote_status=mall_models.PROMOTING)
 		promoting_product_ids = [promoted_product.product_id for promoted_product in new_promoted_product]
-		pool_product_models = mall_models.ProductPool.select().dj_where(status=product_status,
+		pool_product_models = mall_models.ProductPool.select().dj_where(status__in=[mall_models.PP_STATUS_ON_POOL,
+																					mall_models.PP_STATUS_ON,
+																					mall_models.PP_STATUS_OFF],
 																		woid=self.corp.id,
+																		is_cps_promotion_processed=False,
 																		product_id__in=promoting_product_ids)
 
 		return pool_product_models.count()
 
-	def set_cps_promoted_products_processed(self, product_status=mall_models.PP_STATUS_ON_POOL):
+	def set_cps_promoted_products_processed(self, product_ids):
 
-		unprocess_promoted_products = mall_models.PromoteDetail.select().dj_where(is_new=True,
-																				  promote_status=mall_models.PROMOTING)
-		unprocess_promoted_product_ids = [p.product_id for p in unprocess_promoted_products]
-
-		pool_product_models = mall_models.ProductPool.select().dj_where(status=product_status,
-																		woid=self.corp.id,
-																		product_id__in=unprocess_promoted_product_ids)
-
-		pool_product_ids = [pool_product_model.product_id for pool_product_model in pool_product_models]
-		mall_models.PromoteDetail.update(is_new=False).dj_where(is_new=True, product_id__in=pool_product_ids,
-													promote_status=mall_models.PROMOTING).execute()
+		mall_models.ProductPool.update(is_cps_promotion_processed=True)\
+			.dj_where(product_id__in=product_ids,
+					  woid=self.corp.id).execute()

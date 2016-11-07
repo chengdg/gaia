@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
+import json
+
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
-
-from business.product.product_factory import ProductFactory
 
 
 class AProcessedCPSPromotedProducts(api_resource.ApiResource):
@@ -12,17 +12,13 @@ class AProcessedCPSPromotedProducts(api_resource.ApiResource):
 	app = 'product'
 	resource = 'processed_cps_promoted_products'
 
-	@param_required(['corp_id', 'product_status'])
+	@param_required(['corp_id', 'product_ids'])
 	def put(args):
 		"""
-		product_status 推广的销售状态 insale:销售, forsale:待售, pool: 商品池
+		product_ids [product_id, ......]
 		"""
 		corp = args['corp']
-		product_status = args['product_status']
-		if product_status == 'insale':
-			corp.insale_shelf.set_cps_promoted_products_processed()
-		elif product_status == 'forsale':
-			corp.forsale_shelf.set_cps_promoted_products_processed()
-		else:
-			corp.product_pool.set_cps_promoted_products_processed()
+		product_ids = args['product_ids']
+		product_ids = json.loads(product_ids)
+		corp.product_pool.set_cps_promoted_products_processed(product_ids)
 		return {}
