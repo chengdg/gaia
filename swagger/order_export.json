@@ -1,0 +1,165 @@
+{
+	"swagger": "2.0",
+	"info": {
+		"version": "0.0.1",
+		"title": "zeus API doc"
+	},
+	"paths": {
+		"/order/order_export_result": {
+			"get": {
+				"summary": "获得导出结果",
+				"parameters": [
+					{
+						"name": "corp_id",
+						"required": true
+					},
+					{
+						"name": "type",
+						"required": "true",
+						"description": "",
+						"enum": [
+							"all",
+							"financial audit"
+						]
+					}
+				],
+				"tags": [
+					"order"
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32",
+									"description": "当存在正在执行或未下载的任务时，创建失败返回500"
+								},
+								"data": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"type": "string",
+											"description": "状态",
+											"enum": [
+												"processing",
+												"processed",
+												"none"
+											]
+										},
+										"percentage": {
+											"type": "integer",
+											"description": "完成百分比，注意是整数，不带%"
+										},
+										"file_url": {
+											"type": "string",
+											"description": "文件url"
+										},
+										"job_id": {
+											"type": "integer",
+											"description": "如果整体为none时则为0"
+										}
+									}
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			},
+			"put": {
+				"summary": "创建订单导出结果，即发起导出任务",
+				"tags": [
+					"order"
+				],
+				"parameters": [
+					{
+						"name": "corp_id",
+						"required": true
+					},
+					{
+						"name": "type",
+						"required": "true",
+						"description": "",
+						"enum": [
+							"all",
+							"financial audit"
+						]
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+									"properties": {
+										"job_id": {
+											"type": "integer"
+										}
+									}
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"summary": "删除导出结果",
+				"tags": [
+					"order"
+				],
+				"parameters": [
+					{
+						"name": "corp_id",
+						"required": true
+					},
+					{
+						"name": "job_id",
+						"required": "true"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
