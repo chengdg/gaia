@@ -37,7 +37,6 @@ class APooledProducts(api_resource.ApiResource):
 		}
 
 		filters = json.loads(args.get('filters', '{}'))
-		filters['__f-status-equal'] = 2
 		products, pageinfo = corp.product_pool.get_products(target_page, fill_options, options, filters)
 
 		encode_product_service = EncodeProductService.get(corp)
