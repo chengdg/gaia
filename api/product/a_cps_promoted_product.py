@@ -55,7 +55,7 @@ class ACPSPromotedProduct(api_resource.ApiResource):
 		total_money = args.get('total_money', 0)
 
 		corp = args['corp']
-		promoted_products = corp.product_pool.get_products_by_ids(product_ids=[product_id])
-		promoted_products[0].update_cps_promotion_info(promotion_id, money, stock, sale_count, total_money, status)
+		promoted_product = corp.product_pool.get_products_by_id(product_id)
+		promoted_product.update_cps_promotion_info(promotion_id, money, stock, sale_count, total_money, status)
 
 		return {}

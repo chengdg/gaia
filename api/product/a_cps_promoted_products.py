@@ -62,21 +62,12 @@ class ACPSPromotedProducts(api_resource.ApiResource):
 
 			data = {
 				"id": product.id,
-				"name": base_info['name'],
-				"create_type": base_info['create_type'],
-				"image": image_info['thumbnails_url'],
 				"models_info": models_info,
-				"bar_code": base_info['bar_code'],
-				"display_index": base_info['display_index'],
 				'supplier': supplier,
-				'classifications': classifications,
+				'image_info': image_info,
 				"categories": categories,
-				"sales": base_info['sales'],
-				"created_at": base_info['created_at'],
-				"sync_at": base_info['sync_at'],
-				"display_index": base_info['display_index'],
-				'supplier': supplier,
 				'classifications': classifications,
+				'base_info': base_info,
 				'cps_promotion_info': cps_promotion_info,
 			}
 
