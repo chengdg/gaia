@@ -5,7 +5,7 @@
         "title": "Hermes Product Promote API"
     },
     "paths": {
-       "/product/product_promote/": {
+       "/product/cps_promoted_product/": {
 
             "post": {
                 "summary": "修改商品推广信息",
@@ -163,6 +163,9 @@
                                         "id": {
                                             "type": "string",
                                             "description": "weapp这边新增的推广信息id"
+                                        },
+                                        "cps_promotion_info":{
+                                            "$ref": "#/definitions/CpsPromotionInfo"
                                         }
                                   }
                                 }
@@ -421,6 +424,10 @@
                 "total_money": {
                     "type": "string",
                     "description": "cps推广总金额"
+                },
+                "is_cps_promotion_processed": {
+                    "type": "boolean",
+                    "description": "是否处理过改推广商品"
                 },
                 "stock": {
                     "type": "string",

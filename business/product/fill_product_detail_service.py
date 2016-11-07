@@ -239,6 +239,8 @@ class FillProductDetailService(business_model.Service):
 		填充商品的cps推广信息
 		"""
 		promotion_infos = mall_models.PromoteDetail.select().dj_where(product_id__in=product_ids)
+		pool_product_models = mall_models.ProductPool.select().dj_where(product_id__in=product_ids)
+		id2pool_products = dict([(pool.product_id, pool) for pool in pool_product_models])
 		for promotion in promotion_infos:
 			product = id2product.get(promotion.product_id)
 			# product_id = product_id,
@@ -248,6 +250,7 @@ class FillProductDetailService(business_model.Service):
 			# promote_sale_count = sale_count,
 			# promote_total_money = total_money,
 			# promote_stock = stock
+			pool_product_model = id2pool_products[promotion.product_id]
 			promotion_info = {
 				'money': promotion.promote_money,
 				'time_from': promotion.promote_time_from,
@@ -255,6 +258,7 @@ class FillProductDetailService(business_model.Service):
 				'sale_count': promotion.promote_sale_count,
 				'total_money': promotion.promote_total_money,
 				'stock': promotion.promote_stock,
+				'is_cps_promotion_processed': pool_product_model.is_cps_promotion_processed,
 				'id': promotion.id
 			}
 			product.cps_promoted_info = promotion_info
