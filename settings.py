@@ -12,8 +12,8 @@ SERVICE_NAME = 'gaia'
 DEV_SERVER_MULTITHREADING = True
 WEAPP_DOMAIN = "weapp.weizoom.com"
 HERMES_DOMAIN = "weapp.weizoom.com"
-GAIA_DB = os.environ.get('GAIA_DB', None) or '103.29.16.148'
-#GAIA_DB = os.environ.get('GAIA_DB', None) or 'db.dev.com'
+# GAIA_DB = os.environ.get('GAIA_DB', None) or '103.29.16.148'
+GAIA_DB = os.environ.get('GAIA_DB', None) or 'db.dev.com'
 
 DATABASES = {
     'default': {
