@@ -177,3 +177,29 @@ class ProductShelf(business_model.Model):
 				status=mall_models.PP_STATUS_ON_POOL
 			).dj_where(product_id__in=product_ids, woid=self.corp.id).execute()
 
+
+	def search_cps_promoted_products(self, filters, page_info):
+		"""
+		获得货架上的商品集合
+		"""
+		product_pool = self.corp.product_pool
+
+		filters['__f-status-equal'] = mall_models.PP_STATUS_ON if self.type == 'in_sale' else mall_models.PP_STATUS_OFF
+		filters['__f-promotion_status-equal'] = mall_models.PROMOTING
+		fill_options = {
+			'with_category': True,
+			'with_product_model': True,
+			'with_model_property_info': True,
+			'with_supplier_info': True,
+			'with_classification': True,
+			'with_image': True,
+			'with_cps_promotion_info': True
+		}
+
+		options = {
+			'order_by_display_index': True
+		}
+
+		products, pageinfo = product_pool.get_products(page_info, fill_options, options, filters)
+
+		return products, pageinfo

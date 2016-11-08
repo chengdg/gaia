@@ -94,6 +94,9 @@ class Product(business_model.Model):
 		'limit_zone_type',
 		'limit_zone',
 
+		# cps推广信息
+		'cps_promoted_info',
+
 		#时间信息
 		'created_at',
 		'sync_at'
@@ -400,3 +403,44 @@ class Product(business_model.Model):
 	# 	"""
 	# 	if self.supplier == 0:
 	# 		self.supplier = None
+
+	def update_cps_promotion_info(self, promotion_id, money, stock, sale_count, total_money, status):
+		"""
+		:param status 推广状态 PROMOTING: 推广中 PROMOTE_OVER: # 推广结束"
+
+		"""
+		mall_models.PromoteDetail.update(promote_money=money,
+										 promote_sale_count=sale_count,
+										 promote_total_money=total_money,
+										 promote_status=status,
+										 promote_stock=stock)\
+			.dj_where(product_id=self.id,
+					  id=promotion_id).execute()
+
+	def apply_cps_promotion(self, money, stock, time_from, time_to, sale_count, total_money):
+		# 如果商品正在推广,那么就不能再次推广
+		if mall_models.PromoteDetail.select().dj_where(product_id=self.id,
+													   promote_status=mall_models.PROMOTING).count() > 0:
+			return False
+
+		promotion_model = mall_models.PromoteDetail.create(product_id=self.id,
+														   promote_money=money,
+														   promote_time_from=time_from,
+														   promote_time_to=time_to,
+														   promote_sale_count=sale_count,
+														   promote_total_money=total_money,
+														   promote_stock=stock)
+		# 将所有代销该商品的平台,都更新成未处理
+		mall_models.ProductPool.update(is_cps_promotion_processed=False).dj_where(product_id=self.id).execute()
+		cps_promotion_info = {
+			'money': money,
+			'time_from': time_from,
+			'time_to': time_to,
+			'sale_count': sale_count,
+			'total_money': total_money,
+			'stock': stock,
+			'id': promotion_model.id
+		}
+		self.cps_promoted_info = cps_promotion_info
+
+		return True

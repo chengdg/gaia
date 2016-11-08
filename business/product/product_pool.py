@@ -55,13 +55,15 @@ class ProductPool(business_model.Model):
 		"""
 		添加代售商品到商品池
 		"""
+
 		for product_id in product_ids:
-			mall_models.ProductPool.update(
-				status=mall_models.PP_STATUS_ON,
+			mall_models.ProductPool.create(
+				woid=self.corp_id,
+				product_id=product_id,
+				status=mall_models.PP_STATUS_ON_POOL,
 				type=mall_models.PP_TYPE_SYNC,
 				display_index=NEW_PRODUCT_DISPLAY_INDEX,
-				sync_at=datetime.now()
-			).dj_where(woid=self.corp_id, product_id=product_id).execute()
+			)
 		return True
 
 	def __split_filters(self, filters):
@@ -78,6 +80,7 @@ class ProductPool(business_model.Model):
 		product_sales_filter_values = {}
 		product_supplier_filter_values = {}
 		product_classification_filter_values = {}
+		product_promotion_filter_values = {}
 
 		filter_parse_result = FilterParser.get().parse(filters)
 
@@ -124,6 +127,9 @@ class ProductPool(business_model.Model):
 					filter_category = product_classification_filter_values
 				else:
 					should_ignore_field = True
+			elif filter_field == 'promotion_status':
+				filter_field_op = 'promote_status'
+				filter_category = product_promotion_filter_values
 
 			if not should_ignore_field:
 				filter_category[filter_field_op] = filter_value
@@ -140,7 +146,8 @@ class ProductPool(business_model.Model):
 			'product_category': product_category_filter_values,
 			'product_sales': product_sales_filter_values,
 			'product_supplier': product_supplier_filter_values,
-			'product_classification': product_classification_filter_values
+			'product_classification': product_classification_filter_values,
+			'product_promotion': product_promotion_filter_values,
 		}
 
 	def get_products(self, page_info, fill_options=None, options={}, filters={}):
@@ -196,7 +203,16 @@ class ProductPool(business_model.Model):
 		product_classification_filters = type2filters['product_classification']
 		if product_classification_filters:
 			product_ids = [relation.product_id for relation in mall_models.ClassificationHasProduct.select().dj_where(**product_classification_filters)]
-			
+
+		# 根据cps推广进行过滤
+		product_promotion_filter_values = type2filters['product_promotion']
+		if product_promotion_filter_values:
+			if product_ids:
+				product_promotion_filter_values.update({'product_id__in': product_ids})
+				product_ids = [promote.product_id for promote in mall_models.PromoteDetail.select().dj_where(**product_promotion_filter_values)]
+				# product_ids = list(set(product_ids) - set(promoted_product_ids))
+
+
 		#在mall_product表中进行过滤
 		product_info_filters = type2filters['product_info']
 		if supplier_ids:
@@ -259,6 +275,9 @@ class ProductPool(business_model.Model):
 			result.append(id2product[product_id])
 		return result
 
+	def get_products_by_id(self, product_id, fill_options={}):
+		return self.get_products_by_ids([product_id], fill_options=fill_options)[0]
+
 	def __compatible_delete_products(self, product_ids):
 		#[compatibility]: 兼容老的apiserver，在apiserver升级到支持ProductPool，本函数应该删除
 		mall_models.Product.update(is_deleted=True).dj_where(id__in=product_ids).execute()
@@ -284,3 +303,50 @@ class ProductPool(business_model.Model):
 			}
 			msgutil.send_message(topic_name, msg_name, data)
 		return True
+
+	def search_promoted_products(self, filters, page_info):
+		product_pool = self.corp.product_pool
+
+		filters['__f-status-equal'] = mall_models.PP_STATUS_ON_POOL
+		filters['__f-promotion_status-equal'] = mall_models.PROMOTING
+		fill_options = {
+			'with_category': True,
+			'with_product_model': True,
+			'with_model_property_info': True,
+			'with_shelve_status': True,
+			'with_supplier_info': True,
+			'with_classification': True,
+			'with_sales': True,
+			'with_cps_promotion_info': True
+		}
+
+		options = {
+			'order_by_display_index': True
+		}
+
+		products, pageinfo = product_pool.get_products(page_info, fill_options, options, filters)
+
+		return products, pageinfo
+
+	def get_unprocessed_cps_promoted_products_count(self):
+		"""
+
+		"""
+
+		new_promoted_product = mall_models.PromoteDetail.select().dj_where(is_new=True,
+																		   promote_status=mall_models.PROMOTING)
+		promoting_product_ids = [promoted_product.product_id for promoted_product in new_promoted_product]
+		pool_product_models = mall_models.ProductPool.select().dj_where(status__in=[mall_models.PP_STATUS_ON_POOL,
+																					mall_models.PP_STATUS_ON,
+																					mall_models.PP_STATUS_OFF],
+																		woid=self.corp.id,
+																		is_cps_promotion_processed=False,
+																		product_id__in=promoting_product_ids)
+
+		return pool_product_models.count()
+
+	def set_cps_promoted_products_processed(self, product_ids):
+
+		mall_models.ProductPool.update(is_cps_promotion_processed=True)\
+			.dj_where(product_id__in=product_ids,
+					  woid=self.corp.id).execute()

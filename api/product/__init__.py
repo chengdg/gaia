@@ -15,3 +15,8 @@ import a_unshelf_consignment_products
 
 import property_template
 import model_property
+
+import a_cps_promoted_product
+import a_cps_promoted_products
+import a_unprocessed_cps_promoted_products_count
+import a_processed_cps_promoted_products

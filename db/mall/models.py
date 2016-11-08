@@ -1359,6 +1359,8 @@ class ProductPool(models.Model):
 	display_index = models.IntegerField()  # 显示的排序
 	created_at = models.DateTimeField(auto_now_add=True)  # 添加时间
 	sync_at = models.DateTimeField(null=True, blank=True)  # 上架时间
+	# 是否处理过cps推广
+	is_cps_promotion_processed = models.BooleanField(default=False)
 
 	class Meta(object):
 		verbose_name = "商品池商品"
@@ -1634,3 +1636,28 @@ class ExportJob(models.Model):
 
 	class Meta(object):
 		db_table = 'export_job'
+
+
+PROMOTING = 1  # 推广中
+PROMOTE_OVER = 2  # 推广结束
+
+
+class PromoteDetail(models.Model):
+    """
+	推广信息
+    """
+    product_id = models.IntegerField()
+    # 推广状态 （未推广，推广中，已结束）   推广设置中展示：未推广，已结束。推广明细中：推广中，已结束
+    promote_status = models.IntegerField(default=PROMOTING)
+
+    promote_money = models.FloatField(default=0, help_text=u'推广费用/件')
+    promote_stock = models.IntegerField(default=1, help_text=u'推广库存')
+    promote_time_from = models.DateTimeField(auto_now_add=True)
+    promote_time_to = models.DateTimeField(auto_now_add=True)
+    promote_sale_count = models.IntegerField(default=0, help_text=u'推广销量')
+    promote_total_money = models.FloatField(default=0, help_text=u'推广费用总费用')
+    is_new = models.BooleanField(default=True, help_text=u'是否已读')  # 是否已读
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta(object):
+        db_table = 'mall_promote_detail'
