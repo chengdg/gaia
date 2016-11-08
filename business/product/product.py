@@ -418,6 +418,7 @@ class Product(business_model.Model):
 					  id=promotion_id).execute()
 
 	def apply_cps_promotion(self, money, stock, time_from, time_to, sale_count, total_money):
+		# 如果商品正在推广,那么就不能再次推广
 		if mall_models.PromoteDetail.select().dj_where(product_id=self.id,
 													   promote_status=mall_models.PROMOTING).count() > 0:
 			return False
@@ -429,6 +430,7 @@ class Product(business_model.Model):
 														   promote_sale_count=sale_count,
 														   promote_total_money=total_money,
 														   promote_stock=stock)
+		# 将所有代销该商品的平台,都更新成未处理
 		mall_models.ProductPool.update(is_cps_promotion_processed=False).dj_where(product_id=self.id).execute()
 		cps_promotion_info = {
 			'money': money,
