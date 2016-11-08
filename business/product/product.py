@@ -439,7 +439,8 @@ class Product(business_model.Model):
 			'sale_count': sale_count,
 			'total_money': total_money,
 			'stock': stock,
-			'id': promotion_model.id
+			'id': promotion_model.id,
+			'is_cps_promotion_processed': True
 		}
 		self.cps_promoted_info = cps_promotion_info
 

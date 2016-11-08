@@ -242,9 +242,6 @@ def __get_product(context, name):
     }
     resp_models_info = resp_data['models_info']
     product['is_use_custom_model'] = u'是' if resp_models_info['is_use_custom_model'] else u'否'
-    print resp_models_info
-    print resp_models_info['is_use_custom_model']
-    print resp_models_info['standard_model']
     if resp_models_info['is_use_custom_model']:
         for model in resp_models_info['custom_models']:
             model_name_items = []
