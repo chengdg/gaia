@@ -9,7 +9,7 @@ PROJECT_HOME = os.path.dirname(os.path.abspath(__file__))
 
 MODE = os.environ.get('MODE', 'develop')
 SERVICE_NAME = 'gaia'
-DEV_SERVER_MULTITHREADING = True
+DEV_SERVER_MULTITHREADING = False
 WEAPP_DOMAIN = "weapp.weizoom.com"
 HERMES_DOMAIN = "weapp.weizoom.com"
 # GAIA_DB = os.environ.get('GAIA_DB', None) or '103.29.16.148'
