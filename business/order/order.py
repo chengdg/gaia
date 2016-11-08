@@ -341,7 +341,8 @@ class Order(business_model.Model):
 				order_id2delivery_items[item.origin_order_id] = [item]
 
 		for order in orders:
-			order.delivery_items = order_id2delivery_items[order.id]
+			# order.delivery_items = order_id2delivery_items[order.id]
+			order.delivery_items = order_id2delivery_items.get(order.id, [])
 
 	@staticmethod
 	def __fill_status_logs(orders, order_ids):
