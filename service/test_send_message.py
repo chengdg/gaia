@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from bdem import msgutil
 
-topic_name = 'new-zeus-test'
+topic_name = 'test-topic'
 
 for i in xrange(10):
 	data = {

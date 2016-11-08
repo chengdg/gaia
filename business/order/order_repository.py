@@ -71,6 +71,7 @@ class OrderRepository(business_model.Model):
 				order_filter_parse_result.update(filter_parse_result)
 
 			if '__f-pay_interface_type-equal' in filters:
+				filters['__f-pay_interface_type-equal'] = mall_models.PAYSTR2TYPE
 				filter_parse_result = FilterParser.get().parse_key(filters, '__f-pay_interface_type-equal')
 				order_filter_parse_result.update(filter_parse_result)
 
@@ -96,10 +97,10 @@ class OrderRepository(business_model.Model):
 				order_ids = [db_model.id for db_model in db_models]
 
 				ohs_list = mall_models.OrderHasProduct.select().dj_where(order_id__in=order_ids)
-				filter_parse_result = FilterParser.get().parse_key(filters, '__f-product_name-contain',
-				                                                   {'product_name': 'name'})
+
 				target_page = PageInfo.get_max_page()
-				products, pageinfo = self.corp.product_pool.get_products(filter_parse_result, target_page)
+				product_filters = {'__f-name-contain': filters['__f-product_name-contain']}
+				products, pageinfo = self.corp.product_pool.get_products(target_page, filters=product_filters)
 				product_ids = [product.id for product in products]
 				ohs_list = ohs_list.dj_where(product_id__in=product_ids)
 				use_should_in_order_ids = True
@@ -111,12 +112,17 @@ class OrderRepository(business_model.Model):
 					should_in_order_bids.extend(self.context['valid_group_order_bids'])
 
 			if '__f-status-in' in filters:
+				# 需要使用meaningful_word搜索
+				args_status = []
+				for s in filters['__f-status-in']:
+					args_status.append(mall_models.MEANINGFUL_WORD2ORDER_STATUS[s])
+
 				status_params = []
 
 				refunding_status_list = [mall_models.ORDER_STATUS_REFUNDING, mall_models.ORDER_STATUS_GROUP_REFUNDING]
 				refunded_status_list = [mall_models.ORDER_STATUS_REFUNDED, mall_models.ORDER_STATUS_GROUP_REFUNDED]
 				use_wtf_refund = False
-				for status in filters['__f-status-in']:
+				for status in args_status:
 					if status == mall_models.ORDER_STATUS_REFUNDING:
 						use_wtf_refund = True
 						status_list = refunding_status_list

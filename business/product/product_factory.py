@@ -36,7 +36,7 @@ class ProductFactory(business_model.Service):
 			is_enable_bill=base_info['is_enable_bill'],
 			is_delivery=base_info.get('is_delivery', 'false') == 'true',
 			limit_zone_type=int(logistics_info.get('limit_zone_type', '0')),
-			limit_zone=int(logistics_info.get('limit_zone_template', '0'))
+			limit_zone=int(logistics_info.get('limit_zone_id', '0'))
 		)
 		
 		return product
@@ -71,7 +71,7 @@ class ProductFactory(business_model.Service):
 
 	def __set_product_models(self, product, models_info):
 		# 处理standard商品规格
-		is_delete_standard_model = (models_info.get('is_use_custom_model', 'false') == 'true')
+		is_delete_standard_model = models_info.get('is_use_custom_model', False)
 		corp_id = self.corp.id
 
 		#在任何情况下，都创建一个的standard model

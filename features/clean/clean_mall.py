@@ -3,7 +3,6 @@ import logging
 
 from db.mall import models as mall_models
 from db.mall import promotion_models
-from django.db import connection
 
 def clean():
 	logging.info('clean database for mall')
@@ -67,3 +66,6 @@ def clean():
 	mall_models.ProductSales.delete().execute()
 	mall_models.Product.delete().execute()
 	mall_models.ProductPool.delete().execute()
+
+	#限定区域
+	mall_models.ProductLimitZoneTemplate.delete().execute()

@@ -68,7 +68,7 @@ class ProductShelf(business_model.Model):
 			).dj_where(product_id__in=product_ids, woid=self.corp.id, status__gt=mall_models.PP_STATUS_DELETE).execute()
 
 			self.__compatible_change_product_shelve_type(product_ids)
-
+			# 上下架消息
 			self.__send_msg_to_topic(product_ids, msg_name)
 		return product_ids
 
@@ -163,9 +163,20 @@ class ProductShelf(business_model.Model):
 	def __send_msg_to_topic(self, product_ids, msg_name):
 		topic_name = TOPIC['product']
 		data = {
-			"product_ids": product_ids
+			"product_ids": product_ids,
+			"corp_id": self.corp.id
 		}
 		msgutil.send_message(topic_name, msg_name, data)
+
+	def delete_products(self, product_ids):
+		"""
+		从货架上删除商品(放入商品池)
+		"""
+		if product_ids:
+			mall_models.ProductPool.update(
+				status=mall_models.PP_STATUS_ON_POOL
+			).dj_where(product_id__in=product_ids, woid=self.corp.id).execute()
+
 
 	def search_cps_promoted_products(self, filters, page_info):
 		"""

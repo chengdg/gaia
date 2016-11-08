@@ -18,6 +18,7 @@ class Order(business_model.Model):
 		'bid',
 		'type',
 		'pay_interface_type',
+		'pay_interface_type_code',
 		'payment_time',
 		'final_price',
 		'product_price',
@@ -39,6 +40,7 @@ class Order(business_model.Model):
 		'coupon_id',
 
 		'status',
+		'status_code',
 		'status_text',
 
 		'customer_message',
@@ -102,6 +104,7 @@ class Order(business_model.Model):
 			else:
 				order.bid_with_edit_money = order.bid
 			order.status = db_model.status
+			order.status_code = mall_models.ORDER_STATUS2MEANINGFUL_WORD[order.status]
 			order.status_text = mall_models.STATUS2TEXT[order.status]
 			order.is_weizoom_order = db_model.origin_order_id == -1  # todo 起个名
 			order.is_second_generation_order = db_model.origin_order_id > 0
@@ -115,6 +118,7 @@ class Order(business_model.Model):
 			order.created_at = db_model.created_at
 			# 支付信息
 			order.pay_interface_type = db_model.pay_interface_type
+			order.pay_interface_type_code = mall_models.PAYTYPE2STR[order.pay_interface_type]
 			order.payment_time = db_model.payment_time
 
 			# 金额信息
@@ -337,7 +341,8 @@ class Order(business_model.Model):
 				order_id2delivery_items[item.origin_order_id] = [item]
 
 		for order in orders:
-			order.delivery_items = order_id2delivery_items[order.id]
+			# order.delivery_items = order_id2delivery_items[order.id]
+			order.delivery_items = order_id2delivery_items.get(order.id, [])
 
 	@staticmethod
 	def __fill_status_logs(orders, order_ids):

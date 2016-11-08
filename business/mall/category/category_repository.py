@@ -4,6 +4,7 @@ from copy import copy, deepcopy
 
 from eaglet.decorator import param_required
 from eaglet.core import api_resource
+from bdem import msgutil
 from business import model as business_model
 from db.mall import models as mall_models
 from eaglet.core import paginator
@@ -11,6 +12,8 @@ from business.common.page_info import PageInfo
 
 from business.mall.category.category import Category
 from business.common.filter_parser import FilterParser
+from gaia_conf import TOPIC
+
 
 class CategoryRepository(business_model.Service):
 	"""
@@ -68,3 +71,4 @@ class CategoryRepository(business_model.Service):
 	def delete_category(self, category_id):
 		mall_models.CategoryHasProduct.delete().dj_where(category=category_id).execute()
 		mall_models.ProductCategory.delete().dj_where(owner_id=self.corp.id, id=category_id).execute()
+		msgutil.send_message(TOPIC['product'], 'category_deleted', {'category_id': category_id, 'corp_id': self.corp.id})

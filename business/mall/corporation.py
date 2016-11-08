@@ -1,18 +1,16 @@
 # -*- coding: utf-8 -*-
-import json
-
-from eaglet.core import watchdog
-from eaglet.decorator import param_required
-from eaglet.utils.resource_client import Resource
 
 from business import model as business_model
 from business.coupon.coupon_repository import CouponRepository
 from business.coupon.coupon_rule_repository import CouponRuleRepository
+from business.deprecated.wepage_project_repository import WepageProjectRepository
 from business.member.member_repository import MemberRepository
 from business.order.delivery_item_repository import DeliveryItemRepository
+from business.order.order_export_job_repository import OrderExportJobRepository
 from business.order.order_repository import OrderRepository
+from business.order.config.order_config_repository import OrderConfigRepository
 from db.account import models as account_model
-from db.mall import models as mall_models
+
 
 from business.product.product_shelf import ProductShelf
 from business.product.product_pool import ProductPool
@@ -24,10 +22,15 @@ from business.mall.image_group.image_group_repository import ImageGroupRepositor
 from business.mall.pay.pay_interface_repository import PayInterfaceRepository
 from business.mall.logistics.postage_config_repository import PostageConfigRepository
 from business.mall.logistics.express_delivery_repository import ExpressDeliveryRepository
+from business.mall.logistics.limit_zone_repository import LimitZoneRepository
+from business.mall.logistics.province_city_repository import ProvinceCityRepository
 from business.mall.config.mall_config_repository import MallConfigRepository
 from business.mall.notify.notification_repository import NotificationRepository
 from business.mall.supplier.supplier_repository import SupplierRepository
 from business.mall.product_classification_repository import ProductClassificationRepository
+from business.mall.product_label_repository import ProductLabelRepository
+from business.mall.product_label_group_repository import ProductLabelGroupRepositroy
+
 
 class Corporation(business_model.Model):
 	"""
@@ -171,3 +174,31 @@ class Corporation(business_model.Model):
 	def member_repository(self):
 
 		return MemberRepository(self)
+
+	@property
+	def limit_zone_repository(self):
+		return LimitZoneRepository(self)
+
+	@property
+	def product_label_repository(self):
+		return ProductLabelRepository(self)
+
+	@property
+	def product_label_group_repository(self):
+		return ProductLabelGroupRepositroy(self)
+
+	@property
+	def province_city_repository(self):
+		return ProvinceCityRepository(self)
+
+	@property
+	def wepage_project(self):
+		return WepageProjectRepository(self)
+
+	@property
+	def order_config_repository(self):
+		return OrderConfigRepository(self)
+
+	@property
+	def order_export_job_repository(self):
+		return OrderExportJobRepository(self)

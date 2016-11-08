@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 __author__ = 'charles'
-
+from bdem import msgutil
 from eaglet.decorator import param_required
 
 from business import model as business_model
 from db.mall import models as mall_models
 from business.product.model.product_model_property import ProductModelProperty
+from business.product.model.product_model_property_value import ProductModelPropertyValue
+from gaia_conf import TOPIC
 
 
 class ProductModelPropertyRepository(business_model.Service):
@@ -31,14 +33,30 @@ class ProductModelPropertyRepository(business_model.Service):
         property_model = mall_models.ProductModelProperty.select().dj_where(owner_id=self.corp.id, id=property_id).get()
         return ProductModelProperty.from_model(property_model)
 
+    def get_property_value(self, property_value_id):
+        property_value_model = mall_models.ProductModelPropertyValue.select().dj_where(id=property_value_id).get()
+        return ProductModelPropertyValue(property_value_model)
+
     def delete_property(self, property_id):
         """
         删除指定的商品规格属性
         """
         mall_models.ProductModelProperty.update(is_deleted=True).dj_where(owner_id=self.corp.id, id=property_id).execute()
+        # 发送更新缓存的消息
+        msgutil.send_message(
+            TOPIC['product'],
+            'product_model_property_deleted',
+            {'corp_id': self.corp.id, 'product_model_property_id': property_id}
+        )
 
     def delete_property_value(self, property_value_id):
         """
         删除指定的商品规格属性的属性值
         """
         mall_models.ProductModelPropertyValue.update(is_deleted=True).dj_where(id=property_value_id).execute()
+        # 发送更新缓存的消息
+        msgutil.send_message(
+            TOPIC['product'],
+            'product_model_property_value_deleted',
+            {'corp_id': self.corp.id, 'product_model_property_value': property_value_id}
+        )

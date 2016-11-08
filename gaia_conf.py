@@ -7,10 +7,10 @@ CACHE_KEY = {
 
 # 消息队列topic
 TOPIC = {
-	'product': 'new-zeus-test',
-	'order': 'new-zeus-test',
-	'delivery_item': 'new-zeus-test',
-	'base_service': 'new-zeus-test'  # 基础的异步化服务，如邮件，模板消息等
+	'product': 'test-topic',
+	'order': 'test-topic',
+	'delivery_item': 'test-topic',
+	'base_service': 'test-topic'  # 基础的异步化服务，如邮件，模板消息等
 }
 
 # 消息队列message_name

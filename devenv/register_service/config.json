@@ -1,8 +1,13 @@
 {
-	"server_name": "dev.zeus.com",
+	"server_name": "",
 	"hosts": [],
 	"locations": [{
 		"path": "/static",
 		"root": "."
+	}],
+	"proxy_locations": [{
+		"service": "api-gateway",
+		"path": "/gaia/",
+		"type": "api_proxy"
 	}]
 }

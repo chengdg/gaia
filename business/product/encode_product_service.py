@@ -25,6 +25,7 @@ class EncodeProductService(business_model.Service):
 			"detail": product.detail,
 			"sales": product.sales,
 			"is_member_product": product.is_member_product,
+			"is_delivery": product.is_delivery,
 			"sync_at": product.sync_at.strftime('%Y-%m-%d %H:%M') if (product.create_type == 'sync' and product.sync_at) else None,
 			"created_at": product.created_at.strftime('%Y-%m-%d %H:%M')
 		}
@@ -130,7 +131,9 @@ class EncodeProductService(business_model.Service):
 	def get_logistics_info(self, product):
 		data = {
 			'postage_type': product.postage_type,
-			'unified_postage_money': product.unified_postage_money
+			'unified_postage_money': product.unified_postage_money,
+			'limit_zone_type': product.limit_zone_type,
+			'limit_zone_id': product.limit_zone
 		}
 
 		return data
@@ -184,6 +187,18 @@ class EncodeProductService(business_model.Service):
 					"name": classification.name
 				})
 
+		return datas
+
+	def get_labels(self, product):
+		"""
+		获取商品标签的集合
+		"""
+		datas = []
+		for label in product.labels:
+			datas.append({
+				'label_id': label.id,
+				'label_name': label.name
+			})
 		return datas
 
 	def get_cps_promotion_info(self, product):

@@ -527,6 +527,19 @@ PAYTYPE2STR = {
 	PAY_INTERFACE_KANGOU: u"kangou_pay"
 }
 
+PAYSTR2TYPE = {
+	u'unknown': -1,
+	u'preference': PAY_INTERFACE_PREFERENCE,
+	u'alipay': PAY_INTERFACE_ALIPAY,
+	u'tenpay': PAY_INTERFACE_TENPAY,
+	u'weixin_pay': PAY_INTERFACE_WEIXIN_PAY,
+	u'cod': PAY_INTERFACE_COD,
+	u"weizoom_coin": PAY_INTERFACE_WEIZOOM_COIN,
+	u"best_pay": PAY_INTERFACE_BEST_PAY,
+	u"kangou_pay": PAY_INTERFACE_KANGOU
+}
+
+
 VALID_PAY_INTERFACES = [
 	PAY_INTERFACE_WEIXIN_PAY,
 	PAY_INTERFACE_COD,
@@ -1530,6 +1543,99 @@ class UserOrderNotifySettings(models.Model):
 
 	class Meta(object):
 		db_table = 'user_order_notify_setting'
+
+class ProductLimitZoneTemplate(models.Model):
+	"""
+	商品仅售和禁售的模板
+	"""
+	owner = models.ForeignKey(User)
+	name = models.CharField(max_length=64)  # 模板名称
+	provinces = models.CharField(max_length=1024) # 所有省id
+	cities = models.CharField(max_length=4096) # 所有城市id
+	created_at = models.DateTimeField(auto_now_add=True)  # 添加时间
+
+	class Meta(object):
+		verbose_name = "商品仅售和禁售的模板"
+		verbose_name_plural = "商品仅售和禁售的模板"
+		db_table = "mall_product_limit_zone_template"
+
+class ProductLabelGroup(models.Model):
+	"""
+	商品标签的分类（分组）
+	"""
+	owner_id = models.IntegerField(default=0)
+	name = models.CharField(max_length=256, null=True)
+	is_deleted = models.BooleanField(default=False)
+	created_at = models.DateTimeField(auto_now_add=True)
+
+	class Meta(object):
+		db_table = 'mall_product_label_group'
+		verbose_name = '标签分类'
+
+
+class ProductLabel(models.Model):
+	"""
+	商品标签
+	"""
+	label_group_id = models.IntegerField(default=0)
+	owner_id = models.IntegerField(default=0)
+	name = models.CharField(max_length=256)
+	created_at = models.DateTimeField(auto_now_add=True)
+	is_deleted = models.BooleanField(default=False)
+
+	class Meta(object):
+		db_table = 'mall_product_label'
+		verbose_name = '标签'
+
+class ClassificationHasLabel(models.Model):
+	"""
+	商品类目（分类)有什么标签
+	"""
+	classification_id = models.IntegerField(default=-1)
+	label_id = models.CharField(max_length=1024, default='')
+	created_at = models.DateTimeField(auto_now_add=True)
+
+	class Meta(object):
+		db_table = 'mall_classification_has_label'
+
+class ProductHasLabel(models.Model):
+	"""
+	商品有哪些标签
+	"""
+	product_id = models.IntegerField(null=False)
+	label_id = models.IntegerField(null=False)
+	# -1表示改标签是商品自己的标签不是类目的标签
+	classification_id = models.IntegerField(default=-1)
+	created_at = models.DateTimeField(auto_now_add=True)
+
+	class Meta(object):
+		db_table = 'mall_product_has_label'
+
+
+#status: 0未完成,1完成,2失败
+#type: 0会员,1所有订单 2商品评价导出 3财务审核 4在售商品 5待售商品
+#########################################################################
+# ExportJob: 导出任务
+#########################################################################
+WORD2EXPORT_JOB_TYPE = {
+	'all_orders': 1,
+	'financial_audit_orders': 3
+}
+
+class ExportJob(models.Model):
+	woid = models.IntegerField()
+	type = models.IntegerField(default=0)
+	status = models.BooleanField(default=False) # 其实是表示是否完成的bool
+	processed_count = models.IntegerField() # 已处理数量
+	count = models.IntegerField()   # 总数量
+	is_download = models.BooleanField(default=False, verbose_name='是否下载')
+	param = models.CharField(max_length=1024)
+	file_path = models.CharField(max_length=256)
+	update_at = models.DateTimeField(verbose_name='更新时间', auto_now=True)
+	created_at = models.DateTimeField(verbose_name='创建时间')
+
+	class Meta(object):
+		db_table = 'export_job'
 
 
 PROMOTING = 1  # 推广中

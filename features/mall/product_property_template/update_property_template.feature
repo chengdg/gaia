@@ -45,7 +45,7 @@ Background:
 		}]
 		"""
 
-@mall @mall.product @mall.product_property_template @hermes
+@gaia @mall @mall.product @mall.product_property_template @hermes
 Scenario:1 更新属性模板
 	jobs更新属性模板的名称和属性后
 	1. job的属性模板更新

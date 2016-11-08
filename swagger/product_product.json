@@ -378,6 +378,74 @@
                 }
             }
         },
+        "/product/unshelf_consigncomment_products/": {
+            "get": {
+                "summary": "获取未在货架上的代销商品",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "products": {
+                                    "$ref": "#/definitions/ProductInProductList"
+                                },
+                                "pageinfo": {
+                                    "type": "object",
+                                    "description": "分页信息"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "summary": "将商品从货架放回代销商品",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "formData",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "product_ids",
+                        "in": "formData",
+                        "description": "商品的id集合的json字符串",
+                        "format": "'[1, 2, 3]'",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        },
         "/product/deleted_products/": {
             "put": {
                 "summary": "将商品集合删除",
@@ -726,9 +794,25 @@
                     "type": "number",
                     "description": "model使用的model property的id"
                 },
-                "property_value_id": {
+                "property_name": {
+                    "type": "string",
+                    "description": "model使用的model property的name"
+                },
+                "property_type": {
+                    "type": "string",
+                    "description": "model使用的model property的type"
+                },
+                "id": {
                     "type": "number",
                     "description": "model使用的model property value的id"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "model使用的model property value的name"
+                },
+                "image": {
+                    "type": "string",
+                    "description": "model使用的model property value的image地址"
                 }
             }
         },
@@ -777,6 +861,15 @@
                 "unified_postage_money": {
                     "type": "number",
                     "description": "当postage_type为unified_postage_type时，指定运费的数值"
+                },
+                "limit_zone_type": {
+                    "type": "number",
+                    "description": "限定区域类型",
+                    "format": "0不限制 1禁售 2仅售"
+                },
+                "limit_zone_id": {
+                    "type": "number",
+                    "description": "限定区域id"
                 }
             }
         },
@@ -921,6 +1014,10 @@
                     "type": "string",
                     "description": "商品名"
                 },
+                "is_member_product": {
+                    "type": "boolean",
+                    "description": "是否为会员商品"
+                },
                 "create_type": {
                     "type": "string",
                     "description": "商品的创建类型",
@@ -953,6 +1050,29 @@
                 },
                 "models_info": {
                     "$ref": "#/definitions/ModelsInfo"
+                },
+                "labels": {
+                    "$ref": "#/definitions/Lables"
+                }
+            }
+        },
+        "Lables": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/Lable"
+            },
+            "minItems": 0
+        },
+        "Lable": {
+            "type": "object",
+            "properties": {
+                "label_id": {
+                    "type": "number",
+                    "description": "商品标签id"
+                },
+                "label_name": {
+                    "type": "string",
+                    "description": "商品标签名称"
                 }
             }
         }

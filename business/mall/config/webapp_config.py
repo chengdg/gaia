@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging
 from copy import copy, deepcopy
+from bdem import msgutil
 
 from eaglet.decorator import param_required
 from eaglet.core import api_resource
@@ -11,6 +12,7 @@ from db.member import models as member_models
 from db.account import models as account_models
 from db.mall import promotion_models
 from business.mall.corporation_factory import CorporationFactory
+from gaia_conf import TOPIC
 
 
 class WebappConfig(business_model.Model):
@@ -56,3 +58,8 @@ class WebappConfig(business_model.Model):
 
 		corp = CorporationFactory.get()
 		mall_models.MallConfig.update(**update_params).dj_where(owner_id=corp.id).execute()
+		msgutil.send_message(
+				TOPIC['product'],
+				'mall_config_updated',
+				{'corp_id': corp.id}
+		)

@@ -14,9 +14,9 @@ def invoke(command):
 	print '***** finish output for %s *****' % command
 
 def run():
-	print '[rebuild] start...'
-	cmd = "bash devenv/rebuild/rebuild.sh"
-	invoke(cmd)
+	print "[rebuild] use weapp's db, no need to rebuild."
+	#cmd = "bash devenv/rebuild/rebuild.sh"
+	#invoke(cmd)
 
 if __name__ == '__main__':
 	if '_IS_WEIZOOM_DEV_VM' in os.environ:

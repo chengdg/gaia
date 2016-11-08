@@ -49,7 +49,7 @@ Background:
 		}]
 		"""
 
-@mall @mall.product @mall.product_model_property @hermes
+@gaia @mall @mall.product @mall.product_model_property @hermes
 Scenario:1 更新商品规格信息
 	Jobs更新商品规格后, 更新包括：
 		1.增加规格属性值

@@ -7,13 +7,13 @@ import logging
 DEBUG = True
 PROJECT_HOME = os.path.dirname(os.path.abspath(__file__))
 
-MODE = 'develop'
-SERVICE_NAME = 'zeus'
-DEV_SERVER_MULTITHREADING = True
+MODE = os.environ.get('MODE', 'develop')
+SERVICE_NAME = 'gaia'
+DEV_SERVER_MULTITHREADING = False
 WEAPP_DOMAIN = "weapp.weizoom.com"
 HERMES_DOMAIN = "weapp.weizoom.com"
-#ZEUS_DB = os.environ.get('ZEUS_DB', None) or '103.29.16.140'
-ZEUS_DB = os.environ.get('ZEUS_DB', None) or 'db.dev.com'
+# GAIA_DB = os.environ.get('GAIA_DB', None) or '103.29.16.148'
+GAIA_DB = os.environ.get('GAIA_DB', None) or 'db.dev.com'
 
 DATABASES = {
     'default': {
@@ -22,20 +22,10 @@ DATABASES = {
         'NAME': 'weapp',
         'USER': 'weapp',
         'PASSWORD': 'weizoom',
-        'HOST': ZEUS_DB,
+        'HOST': GAIA_DB,
         'PORT': '',
         'CONN_MAX_AGE': 100
     }
-    #,
-    # 'watchdog': {
-    #     'ENGINE': 'mysql+retry',
-    #     'NAME': 'weapp',
-    #     'USER': 'weapp',
-    #     'PASSWORD': 'weizoom',
-    #     'HOST': 'db.zeus.com',
-    #     'PORT': '',
-    #     'CONN_MAX_AGE': 100
-    # }
 }
 
 
@@ -144,10 +134,13 @@ else:
 
 if 'develop' == MODE:
     DOMAIN = 'dev.weapp.com'
+    H5_DOMAIN = 'mall.weizoom.com'
 elif 'test' == MODE:
     DOMAIN = 'testweapp.weizoom.com'
+    H5_DOMAIN = 'mall.weizoom.com'
 else:
     DOMAIN = 'weapp.weizoom.com'
+    H5_DOMAIN = 'mall.weizoom.com'
 
 
 if 'deploy' == MODE:
@@ -162,7 +155,7 @@ else:
     MNS_ACCESS_KEY_SECRET = 'bPKU71c0cfrui4bWgGPO96tLiOJ0PZ'
     MNS_ENDPOINT = 'https://1615750970594173.mns.cn-beijing.aliyuncs.com/'
     MNS_SECURITY_TOKEN = ''
-    SUBSCRIBE_QUEUE_NAME = 'new-zeus-test'
+    SUBSCRIBE_QUEUE_NAME = 'test-gaia'
     MESSAGE_DEBUG_MODE = True
 
 # BDD_SERVER相关配置

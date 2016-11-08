@@ -48,6 +48,7 @@ class Product(business_model.Model):
 		'categories',
 		'id2category',
 		'properties',
+		'labels',
 
 		#供应商信息
 		'supplier_id',
@@ -115,6 +116,7 @@ class Product(business_model.Model):
 			self.swipe_images = []
 			self.categories = []
 			self.properties = []
+			self.labels = []
 			self.classification_lists = []
 			self.sales = 0
 			self.supplier_id = self.supplier

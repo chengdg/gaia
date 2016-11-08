@@ -6,7 +6,7 @@ Access Token
 #from eaglet.core.cache import utils as cache_util
 from eaglet.decorator import param_required
 from business import model as business_model
-from zeus_app import ZeusApp
+from gaia_app import GaiaApp
 from db.account import models as account_models
 import logging
 import hashlib
@@ -60,8 +60,8 @@ class AccessToken(business_model.Model):
 		#woid = args['woid']
 		logging.info("authenticate with app_key:{}, app_secret:{}".format(app_key, app_secret))
 
-		app = ZeusApp.get_by_key_secret(app_key, app_secret)
-		if app:
+		app = GaiaApp.get_by_key_secret(app_key, app_secret)
+		if app.is_available:
 			# 生成AccessToken
 			timestamp = int(time.time())
 			noncestr = 'weizoom'

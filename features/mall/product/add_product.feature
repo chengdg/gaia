@@ -50,8 +50,18 @@ Background:
 			"is_active": "启用"
 		}]
 		"""
+	When jobs添加限定区域配置
+		"""
+		{
+			"name": "禁售地区",
+			"limit_area": [{
+				"area": "直辖市",
+				"province": ["北京市","天津市"]
+			}]
+		}
+		"""
 
-@mall @mall.product @mall.product_management @hermes
+@gaia @mall @mall.product @mall.product_management @hermes @product_create
 Scenario:1 添加标准规格商品
 	job添加商品后：
 	1、能获得商品详情
@@ -199,7 +209,7 @@ Scenario:1 添加标准规格商品
 		}]
 		"""
 
-@mall @mall.product @mall.product_management @hermes
+@gaia @mall @mall.product @mall.product_management @hermes
 Scenario:1 添加定制规格商品
 	job添加商品后：
 	1、能获得商品详情
@@ -286,7 +296,7 @@ Scenario:1 添加定制规格商品
 		"""
 	
 
-@ignore
+@gaia @ignore
 Scenario:2 添加商品时选择分类，能在分类中看到该商品
 	Jobs添加一组"商品分类"后，"商品分类列表"会按照添加的顺序倒序排列
 
@@ -366,4 +376,116 @@ Scenario:2 添加商品时选择分类，能在分类中看到该商品
 			"name": "分类3",
 			"products": []
 		}]
+		"""
+
+@gaia @mall @mall.product @mall.product_management @hermes
+Scenario:3 添加带有禁售地区的商品商品
+	job添加商品后：
+	1、能获得商品详情中可以看到限定区域的信息
+	2、在待售商品列表能看到商品
+
+	Given jobs登录系统
+	When jobs添加商品
+		#东坡肘子(有分类，上架，无限库存，多轮播图), 包含其他所有信息
+		#叫花鸡(无分类，下架，有限库存，单轮播图)
+		"""
+		[{
+			"name": "东坡肘子-禁售",
+			"bar_code": "zhouzi_1",
+			"min_limit": 10,
+			"promotion_title": "促销的东坡肘子",
+			"categories": ["分类1", "分类2", "分类3"],
+			"detail": "东坡肘子的详情",
+			"status": "待售",
+			"is_member_product": true,
+			"is_enable_bill": true,
+			"postage_type": "统一运费",
+			"unified_postage_money": 3.1,
+			"limit_zone_type": "禁售",
+			"limit_zone_name": "禁售地区",
+			"swipe_images": [{
+				"url": "/static/test_resource_img/hangzhou1.jpg"
+			}, {
+				"url": "/static/test_resource_img/hangzhou2.jpg"
+			}, {
+				"url": "/static/test_resource_img/hangzhou3.jpg"
+			}],
+			"model": {
+				"models": {
+					"standard": {
+						"price": 11.12,
+						"purchase_price": 1.11,
+						"weight": 5.0,
+						"stock_type": "无限"
+					}
+				}
+			},
+			"properties": [{
+				"name": "产地",
+				"value": "南京"
+			}, {
+				"name": "品质",
+				"value": "优"
+			}]
+		}, {
+			"name": "叫花鸡",
+			"detail": "叫花鸡的详情",
+			"status": "待售",
+			"swipe_images": [{
+				"url": "/static/test_resource_img/hangzhou2.jpg"
+			}],
+			"model": {
+				"models": {
+					"standard": {
+						"price": 12.00,
+						"weight": 5.5,
+						"stock_type": "有限",
+						"stocks": 3
+					}
+				}
+			}
+		}]
+		"""
+	Then jobs能获取商品'东坡肘子-禁售'
+		"""
+		{
+			"name": "东坡肘子-禁售",
+			"create_type": "create",
+			"bar_code": "zhouzi_1",
+			"min_limit": 10,
+			"promotion_title": "促销的东坡肘子",
+			"categories": ["分类1", "分类2", "分类3"],
+			"detail": "东坡肘子的详情",
+			"is_member_product": true,
+			"is_enable_bill": true,
+			"postage_type": "统一运费",
+			"unified_postage_money": 3.1,
+			"limit_zone_type": "禁售",
+			"limit_zone_name": "禁售地区",
+			"swipe_images": [{
+				"url": "/static/test_resource_img/hangzhou1.jpg"
+			}, {
+				"url": "/static/test_resource_img/hangzhou2.jpg"
+			}, {
+				"url": "/static/test_resource_img/hangzhou3.jpg"
+			}],
+			"is_use_custom_model": "否",
+			"model": {
+				"models": {
+					"standard": {
+						"price": 11.12,
+						"purchase_price": 1.11,
+						"weight": 5.0,
+						"stock_type": "无限"
+					}
+				}
+			},
+			"properties": [{
+				"name": "产地",
+				"value": "南京"
+			}, {
+				"name": "品质",
+				"value": "优"
+			}]
+		}
 		"""

@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 import json
 
+from bdem import msgutil
 from eaglet.core import watchdog
 
 from business import model as business_model
 from business.product.product import Product
 from db.mall import models as mall_models
 from eaglet.decorator import param_required
+from gaia_conf import TOPIC
 
 
 class UpdateProductService(business_model.Service):
@@ -34,7 +36,7 @@ class UpdateProductService(business_model.Service):
 			is_enable_bill=base_info['is_enable_bill'],
 			is_delivery=base_info.get('is_delivery', 'false') == 'true',
 			limit_zone_type=int(logistics_info.get('limit_zone_type', '0')),
-			limit_zone=int(logistics_info.get('limit_zone_template', '0'))
+			limit_zone=int(logistics_info.get('limit_zone_id', '0'))
 		).dj_where(owner_id=self.corp.id, id=product_id).execute()
 		
 		return product
@@ -57,9 +59,8 @@ class UpdateProductService(business_model.Service):
 		"""
 		更新标准规格
 		"""
-		is_delete_standard_model = (models_info.get('is_use_custom_model', 'false') == 'true')
+		is_delete_standard_model = models_info.get('is_use_custom_model', False)
 		corp_id = self.corp.id
-
 		if is_delete_standard_model:
 			mall_models.ProductModel.update(
 				price=0.0,
@@ -67,6 +68,7 @@ class UpdateProductService(business_model.Service):
 				stock_type=mall_models.PRODUCT_STOCK_TYPE_UNLIMIT,
 				stocks=-1,
 				user_code='',
+				purchase_price=0,
 				is_deleted=True
 			).dj_where(owner_id=corp_id, product_id=product_id, name='standard').execute()
 		else:
@@ -77,6 +79,7 @@ class UpdateProductService(business_model.Service):
 				stock_type=mall_models.PRODUCT_STOCK_TYPE_UNLIMIT if standard_model['stock_type'] == 'unlimit' else mall_models.PRODUCT_STOCK_TYPE_LIMIT,
 				stocks=standard_model['stocks'],
 				user_code=standard_model['user_code'],
+				purchase_price=standard_model['purchase_price'],
 				is_deleted=False
 			).dj_where(owner_id=corp_id, product_id=product_id, name='standard').execute()
 
@@ -95,7 +98,8 @@ class UpdateProductService(business_model.Service):
 				weight=custom_model['weight'],
 				stock_type=mall_models.PRODUCT_STOCK_TYPE_UNLIMIT if custom_model['stock_type'] == 'unlimit' else mall_models.PRODUCT_STOCK_TYPE_LIMIT,
 				stocks=custom_model['stocks'],
-				user_code=custom_model['user_code']
+				user_code=custom_model['user_code'],
+				purchase_price=custom_model['purchase_price']
 			)
 
 			for property in custom_model['properties']:
@@ -115,7 +119,8 @@ class UpdateProductService(business_model.Service):
 				weight=new_model['weight'],
 				stock_type=mall_models.PRODUCT_STOCK_TYPE_UNLIMIT if new_model['stock_type'] == 'unlimit' else mall_models.PRODUCT_STOCK_TYPE_LIMIT,
 				stocks=new_model['stocks'],
-				user_code=new_model['user_code']
+				user_code=new_model['user_code'],
+				purchase_price=new_model['purchase_price']
 			).dj_where(owner_id=self.corp.id, id=new_model['id']).execute()
 
 	def __delete_custom_models(self, need_delete_ids):
@@ -132,9 +137,8 @@ class UpdateProductService(business_model.Service):
 		更新定制规格
 		"""
 		custom_models = models_info['custom_models']
-		existed_models = [model for model in  mall_models.ProductModel.select().dj_where(product_id=product_id, is_deleted=False) if not model.is_standard]
+		existed_models = [model for model in mall_models.ProductModel.select().dj_where(product_id=product_id, is_deleted=False) if not model.is_standard]
 		existed_model_ids = set([model.id for model in existed_models])
-
 		if len(custom_models) == 0:
 			if len(existed_models) == 0:
 				pass
@@ -204,6 +208,14 @@ class UpdateProductService(business_model.Service):
 				value=product_property['value']
 			)
 
+	def __send_msg_to_topic(self, product_id, msg_name):
+		topic_name = TOPIC['product']
+		data = {
+			"product_id": product_id,
+			"corp_id": self.corp.id
+		}
+		msgutil.send_message(topic_name, msg_name, data)
+
 	def update_product(self, product_id, args):
 		"""
 		更新商品
@@ -221,7 +233,8 @@ class UpdateProductService(business_model.Service):
 		self.__update_product_images(product_id, image_info)
 		self.__update_product_models(product_id, models_info)
 		self.__update_product_properties(product_id, properties)
-
+		# 更新缓存
+		self.__send_msg_to_topic(product_id, "product_updated")
 		return product
 
 	def update_product_price(self, product_id, price_infos):
@@ -232,6 +245,8 @@ class UpdateProductService(business_model.Service):
 			model_id = price_info['model_id']
 			price = price_info['price']
 			mall_models.ProductModel.update(price=price).dj_where(owner_id=self.corp.id, id=model_id).execute()
+		# 发送更新缓存的消息
+		self.__send_msg_to_topic(product_id, "product_updated")
 
 	def update_product_stock(self, product_id, stock_infos):
 		"""
@@ -245,6 +260,6 @@ class UpdateProductService(business_model.Service):
 
 	def update_product_position(self, product_id, position):
 		"""
-		更新商品库存
+		更新商品排序的顺序
 		"""
 		mall_models.ProductPool.update(display_index=position).dj_where(woid=self.corp.id, product_id=product_id).execute()
