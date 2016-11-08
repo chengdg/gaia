@@ -176,7 +176,7 @@ Background:
 		Given bill关注jobs的公众号
 
 
-@gaia @order @allOrder
+@todo @order @allOrder
 Scenario:1 待支付订单-单规格商品；单商品；统一运费（0.00）；微信支付
 	When bill访问jobs的webapp::apiserver
 	When bill购买jobs的商品::apiserver
@@ -231,7 +231,7 @@ Scenario:1 待支付订单-单规格商品；单商品；统一运费（0.00）�
 		}]
 		"""
 
-@gaia @order @allOrder
+@todo @order @allOrder
 Scenario:2 待支付订单-单规格商品；单商品；发票;统一运费；支付宝
 	When bill访问jobs的webapp::apiserver
 	When bill购买jobs的商品::apiserver
@@ -290,7 +290,7 @@ Scenario:2 待支付订单-单规格商品；单商品；发票;统一运费；�
 		}]
 		"""
 
-@gaia @order @allOrder
+@todo @order @allOrder
 Scenario:3 待支付订单-多规格商品；单商品；配送时间；系统运费‘顺丰’；支付宝
 	#添加运费配置
 		Given jobs登录系统
@@ -403,7 +403,7 @@ Scenario:3 待支付订单-多规格商品；单商品；配送时间；系统�
 		}]
 		"""
 
-@gaia @order @allOrder
+@todo @order @allOrder
 Scenario:4 待支付订单-多规格，单规格；多商品；系统运费，微信支付
 	#添加运费配置
 		Given jobs登录系统
@@ -536,7 +536,7 @@ Scenario:4 待支付订单-多规格，单规格；多商品；系统运费，�
 		}]
 		"""
 
-@gaia @order @allOrder
+@todo @order @allOrder
 Scenario:5 待支付订单-单规格商品；单商品；会员价；统一运费；微信支付
 	#系统默认存在普通会员等级
 		Given jobs登录系统
@@ -610,7 +610,7 @@ Scenario:5 待支付订单-单规格商品；单商品；会员价；统一运�
 		}]
 		"""
 
-@gaia @order @allOrder
+@todo @order @allOrder
 Scenario:6 待支付订单-单规格商品；单商品；统一运费（0.00）；微众卡部分支付
 	When bill访问jobs的webapp::apiserver
 	When bill购买jobs的商品::apiserver

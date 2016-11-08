@@ -48,7 +48,7 @@ Background:
 		Given bill关注jobs的公众号::apiserver
 
 
-@gaia @order @allOrder @ztqb
+@todo @order @allOrder @ztqb
 Scenario:1 待支付订单-单规格商品；单商品；统一运费（0.00）；微信支付
 	When bill访问jobs的webapp::apiserver
 	When bill购买jobs的商品::apiserver

@@ -125,7 +125,7 @@ Background:
 		}]
 		"""
 
-@gaia @mall @mall.product @mall.product_management @hermes
+@gaia @mall @mall.product @mall.product_management
 Scenario:1 单独修改商品价格
 
 	Given jobs登录系统
@@ -204,7 +204,7 @@ Scenario:1 单独修改商品价格
 		"""
 
 
-@gaia @mall @mall.product @mall.product_management @hermes
+@gaia @mall @mall.product @mall.product_management
 Scenario:2 单独修改商品库存
 
 	Given jobs登录系统
@@ -323,7 +323,7 @@ Scenario:2 单独修改商品库存
 		}
 		"""
 	
-@gaia @mall @mall.product @mall.product_management @hermes
+@gaia @mall @mall.product @mall.product_management
 Scenario:2 单独修改商品的排序
 
 	Given jobs登录系统

@@ -3,7 +3,7 @@ Feature: 添加商品分组
 	Jobs能通过管理系统为管理商城添加的"商品分组"
 """
 
-@gaia @mall @mall.product @mall.product_category @hermes
+@gaia @mall @mall.product @mall.product_category
 Scenario:1 添加无商品的商品分组
 	Jobs添加一组"商品分组"后，"商品分组列表"会按照添加的顺序倒序排列
 
@@ -35,7 +35,7 @@ Scenario:1 添加无商品的商品分组
 		"""
 
 
-@gaia @mall @mall.product @mall.product_category @hermes
+@gaia @mall @mall.product @mall.product_category
 Scenario:2 添加包含商品的商品分组
 
 	Given jobs登录系统
@@ -160,7 +160,7 @@ Scenario:2 添加包含商品的商品分组
 		"""
 
 
-@gaia @mall @mall.product @mall.product_category @hermes
+@gaia @mall @mall.product @mall.product_category @wip
 Scenario:3 添加商品时获取分组的可选商品集合
 
 	Given jobs登录系统

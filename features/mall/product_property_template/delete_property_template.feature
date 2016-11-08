@@ -45,7 +45,7 @@ Background:
 		}]
 		"""
 
-@gaia @mall @mall.product @mall.product_property_template @hermes
+@gaia @mall @mall.product @mall.product_property_template
 Scenario:1 删除属性模板
 	jobs删除属性模板后
 	1. jobs的属性模板发生变化

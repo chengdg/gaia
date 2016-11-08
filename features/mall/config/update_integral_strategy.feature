@@ -3,7 +3,7 @@ Feature: 更新积分规则
 Background:
 	Given jobs登录系统
 
-@gaia @mall @mall.config @hermes
+@gaia @mall @mall.config
 Scenario:1 更新积分规则
 	When jobs更新积分规则为
 		"""

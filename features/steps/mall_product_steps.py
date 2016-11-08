@@ -46,7 +46,7 @@ def __parse_model_name(context, model_name):
 def __format_product_models_info(context, product):
     #规格信息
     models_info = {
-        'is_use_custom_model': 'false', #是否使用定制规格
+        'is_use_custom_model': False, #是否使用定制规格
         'standard_model': {},
         'custom_models': []
     }
@@ -91,7 +91,7 @@ def __format_product_models_info(context, product):
             "user_code": 'user_code'
         }
     if len(models_info['custom_models']) > 0:
-        models_info['is_use_custom_model'] = 'true'
+        models_info['is_use_custom_model'] = True
 
     return models_info
 
@@ -242,6 +242,9 @@ def __get_product(context, name):
     }
     resp_models_info = resp_data['models_info']
     product['is_use_custom_model'] = u'是' if resp_models_info['is_use_custom_model'] else u'否'
+    print resp_models_info
+    print resp_models_info['is_use_custom_model']
+    print resp_models_info['standard_model']
     if resp_models_info['is_use_custom_model']:
         for model in resp_models_info['custom_models']:
             model_name_items = []
@@ -323,9 +326,15 @@ def __get_products(context, type_name=u'在售'):
     TYPE2URL = {
       u'待售': '/product/offshelf_products/?corp_id=%d' % context.corp.id,
       u'在售': '/product/onshelf_products/?corp_id=%d' % context.corp.id,
-      u'微众商品池': '/product/weizoom_pooled_products/?corp_id=%d' % context.corp.id
+      u'corp_tmpl': '/product/pooled_products/?corp_id=%d'
     }
-    url = TYPE2URL[type_name]
+
+    if u'商品池' in type_name:
+        other_corp_name = type_name[:-3]
+        other_corp_id = bdd_util.get_user_id_for(other_corp_name)
+        url = TYPE2URL['corp_tmpl'] % other_corp_id
+    else:
+        url = TYPE2URL[type_name]
     response = context.client.get(url)
     bdd_util.assert_api_call_success(response)
     

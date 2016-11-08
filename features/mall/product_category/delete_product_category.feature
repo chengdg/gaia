@@ -28,7 +28,7 @@ Background:
 		"""
 
 
-@gaia @mall @mall.product @mall.product_category @hermes
+@gaia @mall @mall.product @mall.product_category
 Scenario:1 Jobs删除已存在的商品分组
 	Given jobs登录系统
 	When jobs删除商品分组'分类2'

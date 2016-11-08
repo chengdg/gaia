@@ -38,7 +38,9 @@ class FilterParser(object):
     def get_filter_value(self, key, filter_options):
         _, _, match_strategy = key[2:].split('-')
         if match_strategy == 'range' or match_strategy == 'in' or match_strategy == 'notin':
-            value = json.loads(filter_options[key])
+            value = filter_options[key]
+            if type(value) == str:
+                value = json.loads(filter_options[key])
             return tuple(value)
         else:
             return filter_options[key]

@@ -22,7 +22,7 @@ Background:
 		}]
 		"""
 
-@gaia @mall @mall.logistics @hermes
+@gaia @mall @mall.logistics
 Scenario:1 删除邮费配置
 	Jobs删除"邮费配置"
 	1. jobs能获得更新后的邮费配置

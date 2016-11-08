@@ -88,11 +88,17 @@ class ProductPool(business_model.Model):
 			#获得过滤的field
 			items = filter_field_op.split('__')
 			filter_field = items[0]
+			op = None
+			if len(items) > 1:
+				op = items[1]
 
 			#按表将filter分散到不同的list中
 			filter_category = None
 			should_ignore_field = False #是否略过该field不处理
-			if filter_field == 'status' or filter_field == 'id':
+			if filter_field == 'id':
+				filter_field_op = 'product_id'
+				filter_category = product_pool_filter_values
+			elif filter_field == 'status':
 				filter_category = product_pool_filter_values
 			elif filter_field == 'name' or filter_field == 'bar_code' or filter_field == 'created_at':
 				filter_category = product_db_filter_values
@@ -132,6 +138,8 @@ class ProductPool(business_model.Model):
 				filter_category = product_promotion_filter_values
 
 			if not should_ignore_field:
+				if op:
+					filter_field_op = '%s__%s' % (filter_field_op, op)
 				filter_category[filter_field_op] = filter_value
 
 		#补充条件

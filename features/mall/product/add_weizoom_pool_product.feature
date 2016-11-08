@@ -75,7 +75,7 @@ Background:
 		}]
 		"""
 
-@mall @mall.product @mall.product_management @hermes
+@gaia @mall @mall.product @mall.product_management
 Scenario:1 创建供应商供应的商品
 	job添加商品后：
 	1、能获得商品详情
@@ -120,27 +120,8 @@ Scenario:1 创建供应商供应的商品
 			"classification": ""
 		}
 		"""
-	Then weizoom能获得'待售'商品列表
-		"""
-		[{
-			"name": "东坡肘子",
-			"create_type": "create",
-			"supplier": "苹果",
-			"classification": "分类11-分类23-分类31"
-		}, {
-			"name": "叫花鸡",
-			"create_type": "create",
-			"supplier": "微软",
-			"classification": "分类12-分类24"
-		}, {
-			"name": "黄桥烧饼",
-			"create_type": "create",
-			"supplier": "",
-			"classification": ""
-		}]
-		"""
 
-@gaia @mall @mall.product @mall.product_management @hermes @abcde
+@gaia @mall @mall.product @mall.product_management
 Scenario:1 创建供应商供应的商品
 	job添加商品后：
 	1、能获得商品详情
@@ -214,7 +195,7 @@ Scenario:1 创建供应商供应的商品
 		"""
 		[]
 		"""
-	Then jobs能获得'微众商品池'商品列表
+	Then jobs能获得'weizoom商品池'商品列表
 		"""
 		[{
 			"name": "东坡肘子",
@@ -253,7 +234,7 @@ Scenario:1 创建供应商供应的商品
 			"name": "叫花鸡"
 		}]
 		"""
-	Then jobs能获得'在售'商品列表
+	Then jobs能获得'jobs商品池'商品列表
 		"""
 		[{
 			"name": "东坡肘子"

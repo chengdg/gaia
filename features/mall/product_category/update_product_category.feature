@@ -3,7 +3,7 @@ Feature: 添加商品分组
 	Jobs能通过管理系统为管理商城添加的"商品分组"
 """
 
-@gaia @mall @mall.product @mall.product_category @hermes
+@gaia @mall @mall.product @mall.product_category
 Scenario:1 修改商品分组名
 
 	Given jobs登录系统
