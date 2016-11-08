@@ -427,6 +427,7 @@ class Product(business_model.Model):
 														   promote_sale_count=sale_count,
 														   promote_total_money=total_money,
 														   promote_stock=stock)
+		mall_models.ProductPool.update(is_cps_promotion_processed=False).dj_where(product_id=self.id).execute()
 		cps_promotion_info = {
 			'money': money,
 			'time_from': time_from,
