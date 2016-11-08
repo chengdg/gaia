@@ -7,7 +7,7 @@ import logging
 DEBUG = True
 PROJECT_HOME = os.path.dirname(os.path.abspath(__file__))
 
-MODE = 'develop'
+MODE = os.environ.get('MODE', 'develop')
 SERVICE_NAME = 'gaia'
 DEV_SERVER_MULTITHREADING = True
 WEAPP_DOMAIN = "weapp.weizoom.com"
