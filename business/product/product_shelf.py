@@ -167,3 +167,13 @@ class ProductShelf(business_model.Model):
 			"corp_id": self.corp.id
 		}
 		msgutil.send_message(topic_name, msg_name, data)
+
+	def delete_products(self, product_ids):
+		"""
+		从货架上删除商品(放入商品池)
+		"""
+		if product_ids:
+			mall_models.ProductPool.update(
+				status=mall_models.PP_STATUS_ON_POOL
+			).dj_where(product_id__in=product_ids, woid=self.corp.id).execute()
+
