@@ -284,25 +284,3 @@ class ProductPool(business_model.Model):
 			}
 			msgutil.send_message(topic_name, msg_name, data)
 		return True
-
-	def search_unshelf_consignment_product(self, filters, page_info):
-		product_pool = self.corp.product_pool
-		filters['__f-status-equal'] = mall_models.PP_STATUS_ON_POOL
-
-		fill_options = {
-			'with_category': True,
-			'with_product_model': True,
-			'with_model_property_info': True,
-			'with_shelve_status': True,
-			'with_supplier_info': True,
-			'with_classification': True,
-			'with_sales': True
-		}
-
-		options = {
-			'order_by_display_index': True
-		}
-
-		products, pageinfo = product_pool.get_products(page_info, fill_options, options, filters)
-
-		return products, pageinfo

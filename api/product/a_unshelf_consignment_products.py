@@ -5,10 +5,9 @@ import json
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
 
-from business.product.product import Product
-from business.product.product_shelf import ProductShelf
 from business.common.page_info import PageInfo
 from business.product.encode_product_service import EncodeProductService
+from db.mall import models as mall_models
 
 
 class AUnshelfConsignmentProducts(api_resource.ApiResource):
@@ -28,7 +27,23 @@ class AUnshelfConsignmentProducts(api_resource.ApiResource):
 		})
 
 		filters = json.loads(args.get('filters', '{}'))
-		products, pageinfo = corp.product_pool.search_unshelf_consignment_product(filters, target_page)
+		filters['__f-status-equal'] = mall_models.PP_STATUS_ON_POOL
+
+		fill_options = {
+			'with_category': True,
+			'with_product_model': True,
+			'with_model_property_info': True,
+			'with_shelve_status': True,
+			'with_supplier_info': True,
+			'with_classification': True,
+			'with_sales': True
+		}
+
+		options = {
+			'order_by_display_index': True
+		}
+
+		products, pageinfo = corp.product_pool.get_products(target_page, fill_options, options, filters)
 
 		encode_product_service = EncodeProductService.get(corp)
 		datas = []
