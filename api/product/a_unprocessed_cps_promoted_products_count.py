@@ -19,7 +19,7 @@ class AUnprocessedCPSPromotedProductsCount(api_resource.ApiResource):
 		"""
 		corp = args['corp']
 
-		count = corp.product_pool.unprocessed_cps_promoted_products_count()
+		count = corp.product_pool.get_unprocessed_cps_promoted_products_count()
 		return {
 			'count': count
 		}

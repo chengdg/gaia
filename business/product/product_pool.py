@@ -328,7 +328,7 @@ class ProductPool(business_model.Model):
 
 		return products, pageinfo
 
-	def unprocessed_cps_promoted_products_count(self):
+	def get_unprocessed_cps_promoted_products_count(self):
 		"""
 
 		"""
