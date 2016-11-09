@@ -98,6 +98,7 @@ class ProductPool(business_model.Model):
 			should_ignore_field = False #是否略过该field不处理
 			if filter_field == 'id':
 				filter_field = 'product_id'
+				filter_field_op = 'product_id'
 				filter_category = product_pool_filter_values
 			elif filter_field == 'status':
 				should_add_default_status = False
