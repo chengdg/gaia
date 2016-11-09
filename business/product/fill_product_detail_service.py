@@ -146,8 +146,8 @@ class FillProductDetailService(business_model.Service):
 					product.price_info = {
 						#'display_price': price_range,
 						#'display_original_price': price_range,
-						'display_price': min_price,
-						'display_original_price': min_price,
+						'display_price': str("%.2f" % min_price),
+						'display_original_price': str("%.2f" % min_price),
 						'display_market_price': market_price_range,
 						'min_price': min_price,
 						'max_price': max_price,
