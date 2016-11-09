@@ -10,7 +10,7 @@ TOPIC = {
 	'product': 'test-topic',
 	'order': 'test-topic',
 	'delivery_item': 'test-topic',
-	'mall_config': "mall_config",
+	'mall_config': "test-topic",
 	'base_service': 'test-topic'  # 基础的异步化服务，如邮件，模板消息等
 }
 
