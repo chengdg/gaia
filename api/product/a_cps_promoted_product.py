@@ -26,7 +26,7 @@ class ACPSPromotedProduct(api_resource.ApiResource):
 		sale_count = args.get('sale_count', 0)
 		total_money = args.get('total_money', 0)
 
-		product = corp.product_pool.get_products_by_id(product_id)
+		product = corp.product_pool.get_product_by_id(product_id)
 		if product:
 			product.apply_cps_promotion(money, stock, time_from, time_to, sale_count, total_money)
 			encode_product_service = EncodeProductService.get(corp)
@@ -55,7 +55,7 @@ class ACPSPromotedProduct(api_resource.ApiResource):
 		total_money = args.get('total_money', 0)
 
 		corp = args['corp']
-		promoted_product = corp.product_pool.get_products_by_id(product_id)
+		promoted_product = corp.product_pool.get_product_by_id(product_id)
 		promoted_product.update_cps_promotion_info(promotion_id, money, stock, sale_count, total_money, status)
 
 		return {}
