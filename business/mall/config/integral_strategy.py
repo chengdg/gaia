@@ -2,6 +2,7 @@
 import logging
 from copy import copy, deepcopy
 
+from bdem import msgutil
 from eaglet.decorator import param_required
 from eaglet.core import api_resource
 from business import model as business_model
@@ -11,6 +12,7 @@ from db.member import models as member_models
 from db.account import models as account_models
 from db.mall import promotion_models
 from business.mall.corporation_factory import CorporationFactory
+from gaia_conf import TOPIC
 
 
 class IntegralStrategy(business_model.Model):
@@ -62,3 +64,12 @@ class IntegralStrategy(business_model.Model):
 			use_ceiling = update_params['use_ceiling'],
 			review_increase = update_params['review_increase']
 		).dj_where(webapp_id=corp.webapp_id).execute()
+
+		msg_name = 'webapp_owner_info_updated'
+		topic_name = TOPIC['mall_config']
+		data = {
+			"corp_id": corp.id,
+
+		}
+		msgutil.send_message(topic_name, msg_name, data)
+
