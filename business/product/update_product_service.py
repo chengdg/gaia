@@ -9,7 +9,7 @@ from business.product.product import Product
 from db.mall import models as mall_models
 from eaglet.decorator import param_required
 from gaia_conf import TOPIC
-
+from business.product import product_pool
 
 class UpdateProductService(business_model.Service):
 	"""
@@ -262,4 +262,8 @@ class UpdateProductService(business_model.Service):
 		"""
 		更新商品排序的顺序
 		"""
+		#将以前display_index是position的商品，设置为product_pool.NEW_PRODUCT_DISPLAY_INDEX
+		mall_models.ProductPool.update(display_index=product_pool.NEW_PRODUCT_DISPLAY_INDEX).dj_where(woid=self.corp.id, display_index=position).execute()
+
+		#设置指定商品的position
 		mall_models.ProductPool.update(display_index=position).dj_where(woid=self.corp.id, product_id=product_id).execute()
