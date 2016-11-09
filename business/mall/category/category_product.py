@@ -35,6 +35,10 @@ class CategoryProduct(business_model.Model):
 			self._init_slot_from_model(product)
 			if product.is_on_shelve():
 				self.status = 'on_shelf'
+			elif product.shelve_type == 'in_pool':
+				self.status = 'in_pool'
+			elif product.shelve_type == 'deleted':
+				self.status = 'deleted'
 			else:
 				self.status = 'off_shelf'
 
