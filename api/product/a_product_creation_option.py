@@ -33,6 +33,18 @@ class AProductCreationOption(api_resource.ApiResource):
 		return datas
 
 	@staticmethod
+	def __load_postag_config(corp):
+		"""
+		获取商城默认邮费配置
+		"""
+		postage_config = corp.postage_config_repository.get_used_postage_config()
+		return {
+			'id': postage_config.id,
+			'name': postage_config.name
+		}
+
+
+	@staticmethod
 	def __load_product_property_templates(corp):
 		"""
 		获取商品属性模板集合
@@ -87,7 +99,7 @@ class AProductCreationOption(api_resource.ApiResource):
 		config['pay_interfaces'] = AProductCreationOption.__load_pay_interfaces(corp)
 
 		#运费模板
-		config['postage_config_info'] = None
+		config['postage_config_info'] = AProductCreationOption.__load_postag_config(corp)
 
 		#属性模板
 		config['property_templates'] = AProductCreationOption.__load_product_property_templates(corp)

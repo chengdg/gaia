@@ -165,6 +165,19 @@
                                         }
                                     }
                                 },
+                                "postage_config_info": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "string",
+                                            "description": "运费配置模板id"
+                                        },
+                                        "name": {
+                                            "type": "string",
+                                            "description": "运费配置模板名称"
+                                        }
+                                    }
+                                },
                                 "property_templates": {
                                     "type": "array",
                                     "description": "商品属性模板集合",
@@ -198,7 +211,24 @@
                                             }
                                         }
                                     }
-                                }
+                                },
+                                "limit_zones": {
+                                    "type": "array",
+                                    "description": "限定区域模板集合",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "id": {
+                                                "type": "string",
+                                                "description": "限定区域模板id"
+                                            },
+                                            "name": {
+                                                "type": "string",
+                                                "description": "限定区域模板名字"
+                                            }
+                                        }
+                                    }
+                                },
                             }
                         }
                     }
