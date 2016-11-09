@@ -112,8 +112,8 @@ Scenario:2 添加包含商品的商品分组
 		[{
 			"name": "分组1",
 			"products": [{
-				"name": "东坡肘子",
-				"price": 11.12,
+				"name": "莲藕排骨汤",
+				"price": 1.1,
 				"sales": 0,
 				"status": "待售"
 			}, {
@@ -122,8 +122,8 @@ Scenario:2 添加包含商品的商品分组
 				"sales": 0,
 				"status": "待售"
 			}, {
-				"name": "莲藕排骨汤",
-				"price": 1.1,
+				"name": "东坡肘子",
+				"price": 11.12,
 				"sales": 0,
 				"status": "待售"
 			}]
@@ -138,11 +138,11 @@ Scenario:2 添加包含商品的商品分组
 		{
 			"name": "分组1",
 			"products": [{
-				"name": "东坡肘子",
-				"price": 11.12,
+				"name": "莲藕排骨汤",
+				"price": 1.1,
 				"sales": 0,
 				"status": "待售",
-				"categories": ["分组1", "分组2", "分组3"]
+				"categories": ["分组1"]
 			}, {
 				"name": "叫花鸡",
 				"price": 12.00,
@@ -150,11 +150,11 @@ Scenario:2 添加包含商品的商品分组
 				"status": "待售",
 				"categories": ["分组1"]
 			}, {
-				"name": "莲藕排骨汤",
-				"price": 1.1,
+				"name": "东坡肘子",
+				"price": 11.12,
 				"sales": 0,
 				"status": "待售",
-				"categories": ["分组1"]
+				"categories": ["分组1", "分组2", "分组3"]
 			}]
 		}
 		"""

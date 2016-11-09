@@ -64,7 +64,6 @@ class Category(business_model.Model):
 			}
 		)
 
-
 	def add_products(self, product_ids):
 		"""
 		向分组中添加一组商品
@@ -85,6 +84,7 @@ class Category(business_model.Model):
 				'category_id': self.id
 			}
 		)
+		
 	def update_name(self, name):
 		"""
 		更新分组名

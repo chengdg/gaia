@@ -29,11 +29,11 @@ Scenario:1 从分组中删除商品
 		[{
 			"name": "分组1",
 			"products": [{
-				"name": "东坡肘子"
+				"name": "莲藕排骨汤"
 			}, {
 				"name": "叫花鸡"
 			}, {
-				"name": "莲藕排骨汤"
+				"name": "东坡肘子"
 			}]
 		}]
 		"""
@@ -43,9 +43,9 @@ Scenario:1 从分组中删除商品
 		[{
 			"name": "分组1",
 			"products": [{
-				"name": "东坡肘子"
-			}, {
 				"name": "莲藕排骨汤"
+			}, {
+				"name": "东坡肘子"
 			}]
 		}]
 		"""
@@ -76,11 +76,11 @@ Scenario:2 调整分组中商品排序
 		[{
 			"name": "分组1",
 			"products": [{
-				"name": "东坡肘子"
+				"name": "莲藕排骨汤"
 			}, {
 				"name": "叫花鸡"
 			}, {
-				"name": "莲藕排骨汤"
+				"name": "东坡肘子"
 			}]
 		}]
 		"""
@@ -92,9 +92,9 @@ Scenario:2 调整分组中商品排序
 			"products": [{
 				"name": "叫花鸡"
 			}, {
-				"name": "东坡肘子"
-			}, {
 				"name": "莲藕排骨汤"
+			}, {
+				"name": "东坡肘子"
 			}]
 		}]
 		"""
@@ -113,7 +113,7 @@ Scenario:2 调整分组中商品排序
 		}]
 		"""
 
-@gaia @mall @mall.product @mall.product_category
+@gaia @mall @mall.product @mall.product_category @wip
 Scenario:3 向分组中增加商品
 
 	Given jobs登录系统
@@ -141,9 +141,9 @@ Scenario:3 向分组中增加商品
 		[{
 			"name": "分组1",
 			"products": [{
-				"name": "东坡肘子"
-			}, {
 				"name": "叫花鸡"
+			}, {
+				"name": "东坡肘子"
 			}]
 		}]
 		"""
@@ -156,13 +156,13 @@ Scenario:3 向分组中增加商品
 		[{
 			"name": "分组1",
 			"products": [{
-				"name": "东坡肘子"
-			}, {
-				"name": "叫花鸡"
+				"name": "黄桥烧饼"
 			}, {
 				"name": "莲藕排骨汤"
 			}, {
-				"name": "黄桥烧饼"
+				"name": "叫花鸡"
+			}, {
+				"name": "东坡肘子"
 			}]
 		}]
 		"""

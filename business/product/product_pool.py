@@ -230,7 +230,6 @@ class ProductPool(business_model.Model):
 				product_ids = [promote.product_id for promote in mall_models.PromoteDetail.select().dj_where(**product_promotion_filter_values)]
 				# product_ids = list(set(product_ids) - set(promoted_product_ids))
 
-
 		#在mall_product表中进行过滤
 		product_info_filters = type2filters['product_info']
 		if supplier_ids:
