@@ -59,7 +59,7 @@ class PostageConfigRepository(business_model.Service):
 		"""
 		获取正在使用运费模板
 		"""
-		postage_config_model = mall_models.PostageConfig.select().dj_where(owner_id=self.corp.id, is_used=True).get()
+		postage_config_model = mall_models.PostageConfig.select().dj_where(owner_id=self.corp.id, is_used=True).first()
 
 		config = PostageConfig(postage_config_model)
 		return config
