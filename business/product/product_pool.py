@@ -141,7 +141,7 @@ class ProductPool(business_model.Model):
 
 			if not should_ignore_field:
 				if op:
-					filter_field_op = '%s__%s' % (filter_field_op, op)
+					filter_field_op = '%s__%s' % (filter_field, op)
 				filter_category[filter_field_op] = filter_value
 
 		#补充条件
