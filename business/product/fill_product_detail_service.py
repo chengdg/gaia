@@ -30,13 +30,13 @@ class FillProductDetailService(business_model.Service):
 			product = id2product[p.product_id]
 			if p.status == mall_models.PP_STATUS_ON:
 				product.set_shelve_type('on_shelf')
-				product.display_index = p.display_index
 			elif p.status == mall_models.PP_STATUS_OFF:
 				product.set_shelve_type('off_shelf')
-				product.display_index = p.display_index
-			else:
+			elif p.status == mall_models.PP_STATUS_ON_POOL:
 				product.set_shelve_type('in_pool')
-				product.display_index = p.display_index
+			else:
+				product.set_shelve_type('deleted')
+			product.display_index = p.display_index
 
 	def __fill_model_detail(self, corp, products, is_enable_model_property_info=False):
 		"""填充商品规格相关细节

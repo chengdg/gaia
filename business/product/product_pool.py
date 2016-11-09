@@ -306,10 +306,14 @@ class ProductPool(business_model.Model):
 		@return:
 		"""
 		if product_ids:
+			#在product pool中删除
 			mall_models.ProductPool.update(
 				display_index=NEW_PRODUCT_DISPLAY_INDEX,
 				status=mall_models.PP_STATUS_DELETE
 			).dj_where(product_id__in=product_ids, woid=self.corp_id).execute()
+
+			#从分组中删除
+			mall_models.CategoryHasProduct.delete().dj_where(product_id__in=product_ids).execute()
 
 			self.__compatible_delete_products(product_ids)
 

@@ -77,20 +77,11 @@ class CategoryProductRepository(object):
 		category_products, _ = self.get_products(target_page)
 		return category_products
 
-	def get_products_bak(self, target_page):
-		"""
-		获得商品分组中的商品集合
-		"""
-		#获得目标商品id集合
-
-		product_relations = mall_models.CategoryHasProduct.select().dj_where(category_id=self.category.id).order_by(mall_models.CategoryHasProduct.display_index)
-		pageinfo, product_relations = paginator.paginate(product_relations, target_page.cur_page, target_page.count_per_page)
-
-		category_products = self.__get_category_products_for_category_product_relations(product_relations)
-
-		return category_products, pageinfo
-
 	def get_products(self, target_page):
+		"""
+		获得category中的商品集合
+		"""
+		#由于历史数据库设计不合理，导致sql语句太复杂，这里使用raw sql进行查询
 		sql = """
 		SELECT c.id as id, c.category_id as category_id, c.product_id as product_id, p.status as status, c.display_index as display_index 
 		FROM mall_category_has_product as c INNER JOIN product_pool as p
