@@ -88,8 +88,16 @@ class CategoryProductRepository(object):
 			'with_shelve_status': True
 		}
 
+		if filters is None:
+			filters = {}
+		filters['__f-status-in'] = [mall_models.PP_STATUS_OFF, mall_models.PP_STATUS_ON]
+
+		options = {
+			'order_by_status': True
+		}
+
 		if category_id == '0' or category_id == 0:
-			products, pageinfo = CorporationFactory().get().product_pool.get_products(target_page, fill_options, filters=filters)
+			products, pageinfo = CorporationFactory().get().product_pool.get_products(target_page, fill_options, filters=filters, options=options)
 		else:
 			#获取category的可选商品
 			product_relations = mall_models.CategoryHasProduct.select().dj_where(category_id=category_id)
@@ -100,7 +108,7 @@ class CategoryProductRepository(object):
 			}
 			if filters:
 				enhanced_filters.update(filters)
-			products, pageinfo = CorporationFactory().get().product_pool.get_products(target_page, fill_options, filters=enhanced_filters)
+			products, pageinfo = CorporationFactory().get().product_pool.get_products(target_page, fill_options, filters=enhanced_filters, options=options)
 
 		#创建CategoryProduct对象
 		category_products = []

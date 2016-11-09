@@ -121,7 +121,7 @@ Scenario:1 创建供应商供应的商品
 		}
 		"""
 
-@gaia @mall @mall.product @mall.product_management
+@gaia @mall @mall.product @mall.product_management @wip
 Scenario:1 创建供应商供应的商品
 	job添加商品后：
 	1、能获得商品详情

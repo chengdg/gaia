@@ -84,6 +84,7 @@ class ProductPool(business_model.Model):
 
 		filter_parse_result = FilterParser.get().parse(filters)
 
+		should_add_default_status = True #是否添加默认的商品status条件
 		for filter_field_op, filter_value in filter_parse_result.items():
 			#获得过滤的field
 			items = filter_field_op.split('__')
@@ -99,6 +100,7 @@ class ProductPool(business_model.Model):
 				filter_field_op = 'product_id'
 				filter_category = product_pool_filter_values
 			elif filter_field == 'status':
+				should_add_default_status = False
 				filter_category = product_pool_filter_values
 			elif filter_field == 'name' or filter_field == 'bar_code' or filter_field == 'created_at':
 				filter_category = product_db_filter_values
@@ -139,12 +141,12 @@ class ProductPool(business_model.Model):
 
 			if not should_ignore_field:
 				if op:
-					filter_field_op = '%s__%s' % (filter_field, op)
+					filter_field_op = '%s__%s' % (filter_field_op, op)
 				filter_category[filter_field_op] = filter_value
 
 		#补充条件
 		product_pool_filter_values['woid'] = CorporationFactory.get().id
-		if not 'status' in product_pool_filter_values:
+		if should_add_default_status:
 			product_pool_filter_values['status__not'] = mall_models.PP_STATUS_DELETE
 
 		return {
@@ -165,18 +167,26 @@ class ProductPool(business_model.Model):
 		"""
 		type2filters = self.__split_filters(filters)
 
+		#构建排序策略
+		order_options = []
+		if 'order_by_display_index' in options:
+			order_options.append(mall_models.ProductPool.display_index)
+			order_options.append(mall_models.ProductPool.product_id)
+		elif 'order_by_status' in options:
+			order_options.append(mall_models.ProductPool.status.desc())
+			order_options.append(mall_models.ProductPool.product_id)
+
 		#在product_pool表中进行过滤
 		product_pool_filters = type2filters['product_pool']
+		#进行查询
 		if product_pool_filters:
-			if 'order_by_display_index' in options:
-				pool_product_models = mall_models.ProductPool.select().dj_where(**product_pool_filters).order_by(mall_models.ProductPool.display_index, mall_models.ProductPool.product_id)
-			else:
-				pool_product_models = mall_models.ProductPool.select().dj_where(**product_pool_filters)
+			pool_product_models = mall_models.ProductPool.select().dj_where(**product_pool_filters)			
 		else:
-			if 'order_by_display_index' in options:
-				pool_product_models = mall_models.ProductPool.select().dj_where(status__not=mall_models.PP_STATUS_DELETE).order_by(mall_models.ProductPool.display_index, mall_models.ProductPool.product_id)
-			else:
-				pool_product_models = mall_models.ProductPool.select().dj_where(status__not=mall_models.PP_STATUS_DELETE)
+			pool_product_models = mall_models.ProductPool.select().dj_where(status__not=mall_models.PP_STATUS_DELETE)			
+		if len(order_options) > 0:
+			pool_product_models = pool_product_models.order_by(*order_options)
+
+		#获取查询结果
 		product_ids = [pool_product_model.product_id for pool_product_model in pool_product_models]
 		product2poolmodel = dict([(pool_product_model.product_id, pool_product_model) for pool_product_model in pool_product_models])
 

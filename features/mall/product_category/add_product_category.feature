@@ -160,8 +160,9 @@ Scenario:2 添加包含商品的商品分组
 		"""
 
 
-@gaia @mall @mall.product @mall.product_category @wip
+@gaia @mall @mall.product @mall.product_category
 Scenario:3 添加商品时获取分组的可选商品集合
+	#TODO: 加上在售、待售的排序特性
 
 	Given jobs登录系统
 	When jobs添加商品

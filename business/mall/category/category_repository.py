@@ -34,11 +34,11 @@ class CategoryRepository(business_model.Service):
 		pageinfo = None
 		result_categories = None
 		if '__f-product_name-contain' in filters:
-			filters = FilterParser.get().extract_by_keys(filters, {
+			product_filters = FilterParser.get().extract_by_keys(filters, {
 				'__f-product_name-contain': '__f-name-contain'
 			})
 			target_page = PageInfo.get_max_page()
-			products, pageinfo = self.corp.product_pool.get_products(target_page, filters=filters)
+			products, pageinfo = self.corp.product_pool.get_products(target_page, filters=product_filters)
 			product_ids = [product.id for product in products]
 			category_ids = [relation.category_id for relation in mall_models.CategoryHasProduct.select().dj_where(product_id__in=product_ids)]
 			result_categories = list(mall_models.ProductCategory.select().dj_where(id__in=category_ids))
