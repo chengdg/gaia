@@ -292,7 +292,7 @@ class ProductPool(business_model.Model):
 			result.append(id2product[product_id])
 		return result
 
-	def get_products_by_id(self, product_id, fill_options={}):
+	def get_product_by_id(self, product_id, fill_options={}):
 		return self.get_products_by_ids([product_id], fill_options=fill_options)[0]
 
 	def __compatible_delete_products(self, product_ids):

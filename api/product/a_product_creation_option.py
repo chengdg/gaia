@@ -33,15 +33,26 @@ class AProductCreationOption(api_resource.ApiResource):
 		return datas
 
 	@staticmethod
-	def __load_postag_config(corp):
+	def __load_postag_config(corp, product_id=None):
 		"""
-		获取商城默认邮费配置
+		获取创建/查看商品时候,运费模板配置信息
 		"""
-		postage_config = corp.postage_config_repository.get_used_postage_config()
-		return {
-			'id': postage_config.id,
-			'name': postage_config.name
-		}
+		# 普通平台,商品使用平台设置的,自应平台应该显示商品的供货商的默认运费模板
+		if not corp.is_self_run_platform():
+			postage_config = corp.postage_config_repository.get_corp_used_postage_config()
+			return {
+				'id': postage_config.id,
+				'name': postage_config.name
+			}
+		else:
+			if not product_id:
+				return {'id': '', 'name': ''}
+			product = corp.product_pool.get_product_by_id(product_id)
+			postage_config = corp.postage_config_repository.get_supplier_used_postage_config(product.supplier_id)
+			return {
+				'id': postage_config.id,
+				'name': postage_config.name
+			}
 
 
 	@staticmethod
@@ -93,13 +104,15 @@ class AProductCreationOption(api_resource.ApiResource):
 	@param_required(['corp_id'])
 	def get(args):
 		corp = args['corp']
+		# 查看商品
+		product_id = args.get('product_id')
 		config = {}
 
 		#支付接口配置
 		config['pay_interfaces'] = AProductCreationOption.__load_pay_interfaces(corp)
 
 		#运费模板
-		config['postage_config_info'] = AProductCreationOption.__load_postag_config(corp)
+		config['postage_config_info'] = AProductCreationOption.__load_postag_config(corp, product_id=product_id)
 
 		#属性模板
 		config['property_templates'] = AProductCreationOption.__load_product_property_templates(corp)

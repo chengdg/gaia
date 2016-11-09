@@ -55,7 +55,7 @@ class PostageConfigRepository(business_model.Service):
 		config = PostageConfig(postage_config_model)
 		return config
 
-	def get_used_postage_config(self):
+	def get_corp_used_postage_config(self):
 		"""
 		获取正在使用运费模板
 		"""
@@ -73,3 +73,13 @@ class PostageConfigRepository(business_model.Service):
 			TOPIC['product'],
 			'postage_config_updated',
 			{'corp_id': self.corp.id, 'postage_config_id': postage_config_id})
+
+
+	def get_supplier_used_postage_config(self, supplier_id):
+		"""
+		获取正在使用运费模板
+		"""
+		postage_config_model = mall_models.PostageConfig.select().dj_where(supplier_id=supplier_id, is_used=True).first()
+
+		config = PostageConfig(postage_config_model)
+		return config
