@@ -149,14 +149,16 @@ if 'deploy' == MODE:
     MNS_ENDPOINT = 'http://1615750970594173.mns.cn-hangzhou.aliyuncs.com/'
     MNS_SECURITY_TOKEN = ''
     SUBSCRIBE_QUEUE_NAME = 'redmine-agent'
-    MESSAGE_DEBUG_MODE = False
+
 else:
     MNS_ACCESS_KEY_ID = 'LTAICKQ4rQBofAhF'
     MNS_ACCESS_KEY_SECRET = 'bPKU71c0cfrui4bWgGPO96tLiOJ0PZ'
     MNS_ENDPOINT = 'https://1615750970594173.mns.cn-beijing.aliyuncs.com/'
     MNS_SECURITY_TOKEN = ''
     SUBSCRIBE_QUEUE_NAME = 'test-gaia'
-    MESSAGE_DEBUG_MODE = True
+
+if 'develop' != MODE:
+    MESSAGE_DEBUG_MODE = False
 
 # BDD_SERVER相关配置
 BDD_SERVER2PORT = {
