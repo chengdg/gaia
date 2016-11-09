@@ -312,6 +312,7 @@ class ProductPool(business_model.Model):
 			topic_name = TOPIC['product']
 			msg_name = 'product_deleted'
 			data = {
+				"corp_id": self.corp.id,
 				"product_ids": product_ids
 			}
 			msgutil.send_message(topic_name, msg_name, data)
