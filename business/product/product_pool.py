@@ -124,6 +124,7 @@ class ProductPool(business_model.Model):
 					filter_value = mall_models.SUPPLIER_TYPE_RETAIL
 			elif filter_field == 'supplier':
 				filter_field_op = 'name__icontains'
+				op = None
 				filter_category = product_supplier_filter_values
 			elif filter_field == 'secondary_classification':
 				child_category_ids = [child.id for child in self.corp.product_classification_repository.get_children_product_classifications(filter_value)]
