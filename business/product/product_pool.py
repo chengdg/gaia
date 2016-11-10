@@ -227,6 +227,7 @@ class ProductPool(business_model.Model):
 		#根据商品分类进行过滤
 		product_classification_filters = type2filters['product_classification']
 		if product_classification_filters:
+			product_classification_filters['product_id__in'] = product_ids
 			product_ids = [relation.product_id for relation in mall_models.ClassificationHasProduct.select().dj_where(**product_classification_filters)]
 
 		# 根据cps推广进行过滤
