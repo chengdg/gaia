@@ -667,7 +667,10 @@
 													"items": {
 														"type": "object",
 														"properties": {
-															"status": {
+															"to_status_code": {
+																"type": "integer"
+															},
+															"from_status_code": {
 																"type": "integer"
 															},
 															"time": {
