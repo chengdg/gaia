@@ -2,8 +2,7 @@
 
 import demo
 import mall
-import account
-import member
+# import member
 import order
 import product
 import auth
