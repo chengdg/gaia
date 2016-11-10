@@ -276,9 +276,9 @@
 																						"type": "string",
 																						"description": "供货商名称"
 																					},
-																					"type": {
+																					"supplier_type": {
 																						"type": "类型",
-																						"description": "supplier/user"
+																						"description": "supplier/supplier_user/None"
 																					}
 																				}
 																			},
@@ -755,9 +755,9 @@
 																		"type": "string",
 																		"description": "供货商名称"
 																	},
-																	"type": {
+																	"supplier_type": {
 																		"type": "类型",
-																		"description": "supplier/user"
+																		"description": "supplier/supplier_user/None"
 																	}
 																}
 															},

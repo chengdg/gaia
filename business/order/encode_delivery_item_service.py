@@ -78,6 +78,6 @@ class EncodeDeliveryItemService(business_model.Service):
 		return {
 			'supplier_info': {
 				'name': delivery_item.supplier_info['name'],
-				'type': delivery_item.supplier_info['type']
+				'supplier_type': delivery_item.supplier_info['supplier_type']
 			}
 		}

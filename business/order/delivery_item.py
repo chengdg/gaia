@@ -8,6 +8,7 @@ from eaglet.decorator import param_required
 
 from business import model as business_model
 from business.mall.supplier.supplier import Supplier
+from business.mall.supplier.user_supplier import UserSupplier
 from business.order.delivery_item_product_repository import DeliveryItemProductRepository
 from business.order.process_order_after_delivery_item_service import ProcessOrderAfterDeliveryItemService
 from db.express import models as express_models
@@ -308,35 +309,48 @@ class DeliveryItem(business_model.Model):
 
 	@staticmethod
 	def __fill_supplier(delivery_items, delivery_item_ids):
-		# todo 性能优化
 
+		# supplier_ids = [delivery_item.context['db_model'].supplier for delivery_item in delivery_items if
+		#                 delivery_item.context['db_model'].supplier]
 
-		supplier_ids = [delivery_item.context['db_model'].supplier for delivery_item in delivery_items if
-		                delivery_item.context['db_model'].supplier]
+		supplier_ids = []
+		supplier_user_ids = []
+		for delivery_item in delivery_items:
+			if delivery_item.context['db_model'].supplier:
+				supplier_ids.append(delivery_item.context['db_model'].supplier)
+
+			elif delivery_item.context['db_model'].supplier_user_id:
+				supplier_user_ids.append(delivery_item.context['db_model'].supplier_user_id)
 
 		corp = delivery_items[0].context['corp']
 
+		# supplier
 		suppliers = corp.supplier_repository.get_suppliers_by_ids(supplier_ids)
-
 		id2supplier = {supplier.id: supplier for supplier in suppliers}
+
+		# supplier
+		supplier_users = UserSupplier.get_user_supplier_by_user_ids(supplier_user_ids)
+		id2supplier_user = {supplier_user.id:supplier_user for supplier_user in supplier_users}
 
 		for delivery_item in delivery_items:
 			db_model = delivery_item.context['db_model']
-			if db_model.supplier_user_id:
+			supplier_user = id2supplier_user.get(db_model.supplier_user_id, None)
+			supplier = id2supplier.get(db_model.supplier, None)
+			if supplier_user:
 				delivery_item.supplier_info = {
-					'name': 'todo',  # todo
-					'type': 'todo'
+					'name': supplier_user.name,
+					'supplier_type': 'supplier_user'
 				}
-			elif db_model.supplier:
+			elif supplier:
 				supplier = id2supplier.get(db_model.supplier, None)
 				delivery_item.supplier_info = {
 					'name': supplier.name,
-					'type': supplier.type
+					'supplier_type': 'supplier'
 				}
 			else:
 				delivery_item.supplier_info = {
 					'name': '',
-					'type': ''
+					'supplier_type': 'None'
 				}
 
 	def pay(self, payment_time, corp):
