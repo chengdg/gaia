@@ -109,6 +109,8 @@ class AProductCreationOption(api_resource.ApiResource):
 				return []
 			# 自应平台查看商品
 			product = corp.product_pool.get_product_by_id(product_id)
+			if not product.limit_zone:
+				return []
 			weizoom_corp = CorporationFactory.get_weizoom_corporation()
 			CorporationFactory.set(weizoom_corp)
 			limit_zone = weizoom_corp.limit_zone_repository.get_limit_zone_by_id(product.limit_zone)
