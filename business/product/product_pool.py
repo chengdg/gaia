@@ -103,6 +103,8 @@ class ProductPool(business_model.Model):
 			elif filter_field == 'status':
 				should_add_default_status = False
 				filter_category = product_pool_filter_values
+			elif filter_field == 'sync_at':
+				filter_category = product_pool_filter_values
 			elif filter_field == 'name' or filter_field == 'bar_code' or filter_field == 'created_at':
 				filter_category = product_db_filter_values
 			elif filter_field == 'price' or filter_field == 'stocks':
