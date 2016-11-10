@@ -68,10 +68,8 @@ class AUnshelfConsignmentProducts(api_resource.ApiResource):
 				"categories": categories,
 				"sales": base_info['sales'],
 				"created_at": base_info['created_at'],
-				"sync_at": base_info['sync_at'],
-				"display_index": base_info['display_index'],
-				'supplier': supplier,
-				'classifications': classifications
+				"sync_at": base_info['sync_at']
+
 			}
 
 			datas.append(data)

@@ -83,6 +83,8 @@ class LimitZone(busness_model.Model):
 		).dj_where(id=self.id).execute()
 
 	def __get_zones(self):
+		if not self.context['db_model'].provinces:
+			return []
 		province_ids = self.context['db_model'].provinces.split(',')
 		city_ids = self.context['db_model'].cities.split(',') if self.context['db_model'].cities else []
 		limit_zone_provinces = mall_models.Province.select().dj_where(id__in=province_ids)

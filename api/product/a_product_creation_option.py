@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 
-
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
 
-from business.mall.product_config import ProductConfig
+from business.mall.corporation_factory import CorporationFactory
 from business.common.page_info import PageInfo
 
 
@@ -47,8 +46,11 @@ class AProductCreationOption(api_resource.ApiResource):
 		else:
 			if not product_id:
 				return {'id': '', 'name': ''}
+			weizoom_corp = CorporationFactory.get_weizoom_corporation()
+			CorporationFactory.set(weizoom_corp)
 			product = corp.product_pool.get_product_by_id(product_id)
-			postage_config = corp.postage_config_repository.get_supplier_used_postage_config(product.supplier_id)
+			postage_config = weizoom_corp.postage_config_repository.get_supplier_used_postage_config(product.supplier_id)
+			CorporationFactory.set(corp)
 			return {
 				'id': postage_config.id,
 				'name': postage_config.name
@@ -88,18 +90,30 @@ class AProductCreationOption(api_resource.ApiResource):
 		return datas
 
 	@staticmethod
-	def __load_limit_zones(corp):
+	def __load_limit_zones(corp, product_id=None):
 		"""
 		获取限定区域信息
 		"""
-		limit_zones = corp.limit_zone_repository.get_limit_zones()
-		datas = []
-		for limit_zone in limit_zones:
-			datas.append({
-				"id": limit_zone.id,
-				"name": limit_zone.name
-			})
-		return datas
+		if not corp.is_self_run_platform():
+			limit_zones = corp.limit_zone_repository.get_limit_zones()
+			datas = []
+			for limit_zone in limit_zones:
+				datas.append({
+					"id": limit_zone.id,
+					"name": limit_zone.name
+				})
+			return datas
+		else:
+			# 自营平台创建商品
+			if not product_id:
+				return []
+			# 自应平台查看商品
+			product = corp.product_pool.get_product_by_id(product_id)
+			weizoom_corp = CorporationFactory.get_weizoom_corporation()
+			CorporationFactory.set(weizoom_corp)
+			limit_zone = weizoom_corp.limit_zone_repository.get_limit_zone_by_id(product.limit_zone)
+			CorporationFactory.set(corp)
+			return [{"id": limit_zone.id, "name": limit_zone.name}]
 
 	@param_required(['corp_id'])
 	def get(args):
@@ -121,6 +135,6 @@ class AProductCreationOption(api_resource.ApiResource):
 		config['categories'] = AProductCreationOption.__load_categories(corp)
 
 		#限定区域信息
-		config['limit_zones'] = AProductCreationOption.__load_limit_zones(corp)
+		config['limit_zones'] = AProductCreationOption.__load_limit_zones(corp, product_id=product_id)
 
 		return config

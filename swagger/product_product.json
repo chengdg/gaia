@@ -130,6 +130,13 @@
                         "description": "",
                         "required": true,
                         "type": "string"
+                    },
+                    {
+                        "name": "product_id",
+                        "in": "query",
+                        "description": "查看商品详情的时候传递",
+                        "required": false,
+                        "type": "string"
                     }
                 ],
                 "tags": [
