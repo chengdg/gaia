@@ -198,6 +198,7 @@ class ProductPool(business_model.Model):
 		product_model_filters = type2filters['product_model']
 		if product_model_filters:
 			product_model_filters['product_id__in'] = product_ids
+			product_model_filters['is_deleted'] = 0
 			product_model_models = mall_models.ProductModel.select().dj_where(**product_model_filters)
 			product_ids = [model.product_id for model in product_model_models]
 
