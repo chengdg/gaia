@@ -1,6 +1,7 @@
 # coding=utf-8
 # -*- utf-8 -*-
 from bdem import msgutil
+from datetime import datetime
 from eaglet.utils.resource_client import Resource
 from eaglet.decorator import param_required
 
@@ -66,6 +67,9 @@ class ProductShelf(business_model.Model):
 				status=product_shelf_type,
 				display_index=NEW_PRODUCT_DISPLAY_INDEX
 			).dj_where(product_id__in=product_ids, woid=self.corp.id, status__gt=mall_models.PP_STATUS_DELETE).execute()
+			if self.type == 'in_sale':
+				mall_models.ProductPool.update(sync_at=datetime.now()).dj_where(
+					product_id__in=product_ids, woid=self.corp.id, status=product_shelf_type, sync_at=None).execute()
 
 			self.__compatible_change_product_shelve_type(product_ids)
 			# 上下架消息
