@@ -35,7 +35,7 @@ class ACategories(api_resource.ApiResource):
 			data = {
 				"id": category.id,
 				"name": category.name,
-				
+				"product_count": category.product_count,
 				"products": [],
 				"created_at": category.created_at.strftime('%Y-%m-%d %H:%M')
 			}

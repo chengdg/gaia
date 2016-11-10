@@ -422,6 +422,10 @@
                     "type": "string",
                     "description": "分组名"
                 },
+                "product_count": {
+                    "type": "number",
+                    "description": "商品数量"
+                },
                 "products": {
                     "type": "array",
                     "items": {
