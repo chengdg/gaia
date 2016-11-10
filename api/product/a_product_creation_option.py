@@ -105,7 +105,7 @@ class AProductCreationOption(api_resource.ApiResource):
 			return datas
 		else:
 			# 自营平台创建商品
-			if not product_id or int(product_id) > 0:
+			if not product_id or int(product_id) <= 0:
 				return []
 			# 自应平台查看商品
 			product = corp.product_pool.get_product_by_id(product_id)
