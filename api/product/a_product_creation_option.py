@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 
-
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
 
-from business.mall.product_config import ProductConfig
+from business.mall.corporation_factory import CorporationFactory
 from business.common.page_info import PageInfo
 
 
@@ -47,8 +46,11 @@ class AProductCreationOption(api_resource.ApiResource):
 		else:
 			if not product_id:
 				return {'id': '', 'name': ''}
+			weizoom_corp = CorporationFactory.get_weizoom_corporation()
+			CorporationFactory.set(weizoom_corp)
 			product = corp.product_pool.get_product_by_id(product_id)
-			postage_config = corp.postage_config_repository.get_supplier_used_postage_config(product.supplier_id)
+			postage_config = weizoom_corp.postage_config_repository.get_supplier_used_postage_config(product.supplier_id)
+			CorporationFactory.set(corp)
 			return {
 				'id': postage_config.id,
 				'name': postage_config.name
@@ -107,7 +109,10 @@ class AProductCreationOption(api_resource.ApiResource):
 				return []
 			# 自应平台查看商品
 			product = corp.product_pool.get_product_by_id(product_id)
-			limit_zone = corp.limit_zone_repository.get_limit_zone_by_id(product.limit_zone)
+			weizoom_corp = CorporationFactory.get_weizoom_corporation()
+			CorporationFactory.set(weizoom_corp)
+			limit_zone = weizoom_corp.limit_zone_repository.get_limit_zone_by_id(product.limit_zone)
+			CorporationFactory.set(corp)
 			return [{"id": limit_zone.id, "name": limit_zone.name}]
 
 	@param_required(['corp_id'])
