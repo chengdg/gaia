@@ -21,7 +21,6 @@ class DeliveryItem(business_model.Model):
 		'id',
 		'bid',
 		'origin_order_id',
-		'products',
 		'webapp_id',
 		'webapp_user_id',
 
@@ -43,7 +42,8 @@ class DeliveryItem(business_model.Model):
 		'has_db_record',  # 出货单使用出货单db，即db层面有出货单
 		'with_logistics_trace',  # 是否使用快递100，对应于数据库里的is_100
 		'with_logistics',  # 是否使用物流
-		'operation_logs'
+		'operation_logs',
+		'products'
 
 	)
 
@@ -84,8 +84,6 @@ class DeliveryItem(business_model.Model):
 		self.with_logistics_trace = db_model.is_100
 		self.with_logistics = bool(db_model.express_company_name)
 		self.context['db_model'] = db_model
-
-
 
 	@cached_context_property
 	def product_statistics_info(self):
@@ -222,9 +220,7 @@ class DeliveryItem(business_model.Model):
 			corp = None
 		delivery_item_product_repository = DeliveryItemProductRepository.get({'corp': corp})
 
-		delivery_item_product_repository.set_products_for_delivery_items(
-			delivery_items=delivery_items,
-			with_premium_sale=True)
+		delivery_item_product_repository.set_products_for_delivery_items(delivery_items)
 
 	# delivery_items_products = delivery_item_product_repository.get_products_for_delivery_items(
 	# 	delivery_items=delivery_items,
@@ -339,7 +335,8 @@ class DeliveryItem(business_model.Model):
 				}
 			else:
 				delivery_item.supplier_info = {
-
+					'name': '',
+					'type': ''
 				}
 
 	def pay(self, payment_time, corp):

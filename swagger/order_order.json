@@ -115,6 +115,21 @@
 																	"description": "类型"
 																},
 																"member_info": {
+																	"type": "object",
+																	"properties": {
+																		"id": {
+																			"type": "integer",
+																			"description": "id"
+																		},
+																		"is_subscribed":{
+																			"type":"boolean",
+																			"description":"是否关注"
+																		},
+																		"name":{
+																			"type":"string",
+																			"description":"携带emoji的HTML的名称"
+																		}
+																	}
 																},
 																"status_code": {
 																	"type": "string",
@@ -139,10 +154,6 @@
 																"is_first_order": {
 																	"type": "boolean",
 																	"description": "是否是首单"
-																},
-																"integral_type": {
-																	"type": "string",
-																	"description": "订单中使用的积分类型，'order':整单抵扣,'product':积分应用"
 																},
 																"refunding_info": {
 																	"type": "object",
@@ -221,7 +232,7 @@
 																	"type": "integer",
 																	"description": "webapp_user的主键id"
 																},
-																"is_self_order": {
+																"is_weizoom_order": {
 																	"type": "boolean",
 																	"description": "是否是自营订单"
 																},
@@ -484,6 +495,10 @@
 													"type": "string",
 													"description": "收货地址地区"
 												},
+												"integral_type": {
+													"type": "string",
+													"description": "订单中使用的积分类型，'order':整单抵扣,'product':积分应用"
+												},
 												"ship_name": {
 													"type": "string",
 													"description": "收货人姓名"
@@ -521,6 +536,21 @@
 													"description": "类型"
 												},
 												"member_info": {
+													"type": "object",
+													"properties": {
+														"name": {
+															"type": "string",
+															"description": "携带emoji的html的用户名"
+														},
+														"id":{
+															"type":"integer",
+															"description":"id"
+														},
+														"is_subscribed":{
+															"type":"boolean",
+															"description":"是否已关注"
+														}
+													}
 												},
 												"status_code": {
 													"type": "string",
@@ -623,7 +653,7 @@
 													"type": "integer",
 													"description": "webapp_user的主键id"
 												},
-												"is_self_order": {
+												"is_weizoom_order": {
 													"type": "boolean",
 													"description": "是否是自营订单"
 												},

@@ -14,6 +14,8 @@ class Order(business_model.Model):
 	"""
 
 	__slots__ = (
+
+		# 基本数据
 		'id',
 		'bid',
 		'type',
@@ -54,7 +56,6 @@ class Order(business_model.Model):
 		'delivery_time',  # 配送时间字符串
 		'is_first_order',
 		'supplier_user_id',
-		'total_purchase_price',
 
 		'delivery_items',
 		'is_weizoom_order',
@@ -62,7 +63,7 @@ class Order(business_model.Model):
 		'pay_money',
 		'promotion_saved_money',
 
-		# 他表数据
+		# 他表数据，由填充选项增加
 		'member_info',
 		'is_group_buy',
 		'refunding_info',
@@ -266,7 +267,6 @@ class Order(business_model.Model):
 				coupon = id2coupon[order.coupon_id]
 				order.extra_coupon_info = {
 					'bid': coupon.bid,
-					'id': coupon.id,
 					'type': coupon.rule.type
 
 				}
@@ -274,7 +274,6 @@ class Order(business_model.Model):
 			else:
 				order.extra_coupon_info = {
 					'bid': '',
-					'id': '',
 					'type': ''
 				}
 
@@ -352,9 +351,22 @@ class Order(business_model.Model):
 			order = orders[0]
 			order.status_logs = []
 			# 下单时没状态日志
-			order.status_logs.append({'status': mall_models.ORDER_STATUS_NOT, 'time': order.created_at})
+			order.status_logs.append(
+				{
+					'from_status': None,
+					'from_status_code': None,
+					'to_status': mall_models.ORDER_STATUS_NOT,
+					'to_status_code': mall_models.ORDER_STATUS2MEANINGFUL_WORD[mall_models.ORDER_STATUS_NOT],
+					'time': order.created_at})
 			for log in logs:
-				order.status_logs.append({'status': log.to_staus, 'time': log.created_at})
+				order.status_logs.append(
+					{
+						'from_status': log.from_status,
+						'from_status_code': mall_models.ORDER_STATUS2MEANINGFUL_WORD[log.from_status],
+						'to_status': log.to_staus,
+						'to_status_code': mall_models.ORDER_STATUS2MEANINGFUL_WORD[log.to_staus],
+						'time': log.created_at
+					})
 
 	@staticmethod
 	def __fill_group_buy(orders, order_ids):
@@ -444,12 +456,12 @@ class Order(business_model.Model):
 					'operator': log.operator
 				})
 
-	def to_dict(self, *extras):
-		result = business_model.Model.to_dict(self, *extras)
-		if self.delivery_items:
-			result['delivery_items'] = [delivery_item.to_dict() for delivery_item in self.delivery_items]
-
-		return result
+	# def to_dict(self, *extras):
+	# 	result = business_model.Model.to_dict(self, *extras)
+	# 	if self.delivery_items:
+	# 		result['delivery_items'] = [delivery_item.to_dict() for delivery_item in self.delivery_items]
+	#
+	# 	return result
 
 	def update_final_price(self, corp, new_final_price):
 		"""

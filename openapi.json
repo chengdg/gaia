@@ -6563,10 +6563,6 @@
 					"type": "string",
 					"description": "供货商id"
 				},
-				"total_purchase_price": {
-					"type": "string",
-					"description": "采购价"
-				},
 				"is_group_buying": {
 					"type": "boolean",
 					"description": "是否团购订单"
