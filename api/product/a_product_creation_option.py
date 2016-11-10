@@ -88,18 +88,27 @@ class AProductCreationOption(api_resource.ApiResource):
 		return datas
 
 	@staticmethod
-	def __load_limit_zones(corp):
+	def __load_limit_zones(corp, product_id=None):
 		"""
 		获取限定区域信息
 		"""
-		limit_zones = corp.limit_zone_repository.get_limit_zones()
-		datas = []
-		for limit_zone in limit_zones:
-			datas.append({
-				"id": limit_zone.id,
-				"name": limit_zone.name
-			})
-		return datas
+		if not corp.is_self_run_platform():
+			limit_zones = corp.limit_zone_repository.get_limit_zones()
+			datas = []
+			for limit_zone in limit_zones:
+				datas.append({
+					"id": limit_zone.id,
+					"name": limit_zone.name
+				})
+			return datas
+		else:
+			# 自营平台创建商品
+			if not product_id:
+				return []
+			# 自应平台查看商品
+			product = corp.product_pool.get_product_by_id(product_id)
+			limit_zone = corp.limit_zone_repository.get_limit_zone_by_id(product.limit_zone)
+			return [{"id": limit_zone.id, "name": limit_zone.name}]
 
 	@param_required(['corp_id'])
 	def get(args):
@@ -121,6 +130,6 @@ class AProductCreationOption(api_resource.ApiResource):
 		config['categories'] = AProductCreationOption.__load_categories(corp)
 
 		#限定区域信息
-		config['limit_zones'] = AProductCreationOption.__load_limit_zones(corp)
+		config['limit_zones'] = AProductCreationOption.__load_limit_zones(corp, product_id=product_id)
 
 		return config

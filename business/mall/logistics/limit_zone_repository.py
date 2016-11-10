@@ -18,11 +18,11 @@ class LimitZoneRepository(busniess_model.Service):
 			datas.append(limit_zone)
 		return datas
 
-	def get_limit_zone(self, limit_zone_id):
+	def get_limit_zone_by_id(self, limit_zone_id):
 		"""
 		获取指定的limit zone
 		"""
-		limit_zone_model = mall_models.ProductLimitZoneTemplate.select().dj_where(owner_id=self.corp.id, id=limit_zone_id).get()
+		limit_zone_model = mall_models.ProductLimitZoneTemplate.select().dj_where(id=limit_zone_id).get()
 		limit_zone = LimitZone(limit_zone_model)
 		return limit_zone
 
