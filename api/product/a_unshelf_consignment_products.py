@@ -36,7 +36,8 @@ class AUnshelfConsignmentProducts(api_resource.ApiResource):
 			'with_shelve_status': True,
 			'with_supplier_info': True,
 			'with_classification': True,
-			'with_sales': True
+			'with_sales': True,
+			'with_product_label': True
 		}
 
 		options = {
@@ -54,6 +55,7 @@ class AUnshelfConsignmentProducts(api_resource.ApiResource):
 			classifications = encode_product_service.get_classifications(product)
 			image_info = encode_product_service.get_image_info(product)
 			categories = encode_product_service.get_categories(product)
+			labels = encode_product_service.get_labels(product)
 
 			data = {
 				"id": product.id,
@@ -68,7 +70,8 @@ class AUnshelfConsignmentProducts(api_resource.ApiResource):
 				"categories": categories,
 				"sales": base_info['sales'],
 				"created_at": base_info['created_at'],
-				"sync_at": base_info['sync_at']
+				"sync_at": base_info['sync_at'],
+				'labels': labels
 
 			}
 
