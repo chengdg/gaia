@@ -26,7 +26,7 @@ class FillProductDetailService(business_model.Service):
 
 		product_ids = [product.id for product in products]
 		id2product = dict([(product.id, product) for product in products])
-		for p in mall_models.ProductPool.select().dj_where(product_id__in=product_ids):
+		for p in mall_models.ProductPool.select().dj_where(product_id__in=product_ids, woid=self.corp.id):
 			product = id2product[p.product_id]
 			if p.status == mall_models.PP_STATUS_ON:
 				product.set_shelve_type('on_shelf')
@@ -261,7 +261,7 @@ class FillProductDetailService(business_model.Service):
 		填充商品的cps推广信息
 		"""
 		promotion_infos = mall_models.PromoteDetail.select().dj_where(product_id__in=product_ids)
-		pool_product_models = mall_models.ProductPool.select().dj_where(product_id__in=product_ids)
+		pool_product_models = mall_models.ProductPool.select().dj_where(product_id__in=product_ids, woid=self.corp.id)
 		id2pool_products = dict([(pool.product_id, pool) for pool in pool_product_models])
 		for promotion in promotion_infos:
 			product = id2product.get(promotion.product_id)

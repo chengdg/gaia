@@ -82,14 +82,16 @@ class CategoryProductRepository(object):
 		"""
 		获得category中的商品集合
 		"""
+		corp_id = int(CorporationFactory.get().id)
+
 		#由于历史数据库设计不合理，导致sql语句太复杂，这里使用raw sql进行查询
 		sql = """
 		SELECT c.id as id, c.category_id as category_id, c.product_id as product_id, p.status as status, c.display_index as display_index 
 		FROM mall_category_has_product as c INNER JOIN product_pool as p
-		WHERE c.category_id = %d AND c.product_id = p.product_id ORDER BY status desc, display_index, id desc
+		WHERE c.category_id = %d AND p.woid = %d AND c.product_id = p.product_id AND p.status in (0, 1) ORDER BY status desc, display_index, id desc
 		LIMIT %d
 		OFFSET %d
-		""" % (self.category.id, target_page.count_per_page, (target_page.cur_page-1)*target_page.count_per_page)
+		""" % (self.category.id, corp_id, target_page.count_per_page, (target_page.cur_page-1)*target_page.count_per_page)
 
 		db = eaglet_db.db
 		cursor = db.execute_sql(sql, ())
