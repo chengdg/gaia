@@ -49,7 +49,8 @@ class CategoryProductRepository(object):
 			'with_price': True,
 			'with_product_model': True,
 			'with_shelve_status': True,
-			'with_category': True
+			'with_category': True,
+			'with_sales': True
 		}
 		products = CorporationFactory.get().product_pool.get_products_by_ids(product_ids, fill_options)
 		category_products = []
