@@ -24,7 +24,7 @@ class CategoryProduct(business_model.Model):
 		'status',
 		'sales',
 		'categories',
-		'created_at'
+		'created_at' #商品加入分类的时间
 	)
 
 	def __init__(self, product=None):
@@ -51,3 +51,6 @@ class CategoryProduct(business_model.Model):
 
 	def set_display_index(self, index):
 		self.display_index = index
+
+	def set_created_at(self, created_at):
+		self.created_at = created_at

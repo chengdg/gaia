@@ -56,7 +56,9 @@ class CategoryProductRepository(object):
 		category_products = []
 		for product in products:
 			category_product = CategoryProduct(product)
-			category_product.set_display_index(product2relation[product.id].display_index)
+			relation = product2relation[product.id]
+			category_product.set_display_index(relation.display_index)
+			category_product.set_created_at(relation.created_at)
 			category_products.append(category_product)
 
 		return category_products
