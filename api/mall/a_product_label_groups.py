@@ -3,6 +3,8 @@
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
 
+from business.mall.corporation_factory import CorporationFactory
+
 
 class AProductLableGroups(api_resource.ApiResource):
 	"""
@@ -14,7 +16,8 @@ class AProductLableGroups(api_resource.ApiResource):
 	@param_required(['corp_id'])
 	def get(args):
 		corp = args['corp']
-		product_label_groups = corp.product_label_group_repository.get_label_groups()
+		weizoom_corp = CorporationFactory.get_weizoom_corporation()
+		product_label_groups = weizoom_corp.product_label_group_repository.get_label_groups()
 
 		datas = []
 		for group in product_label_groups:
@@ -25,7 +28,6 @@ class AProductLableGroups(api_resource.ApiResource):
 				'label_group_name': group.name,
 				'labels': labels
 			})
-
 		return {
 			'product_label_groups': datas
 		}
