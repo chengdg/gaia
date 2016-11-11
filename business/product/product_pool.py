@@ -81,9 +81,9 @@ class ProductPool(business_model.Model):
 		product_supplier_filter_values = {}
 		product_classification_filter_values = {}
 		product_promotion_filter_values = {}
+		product_label_filter_values = {}
 
 		filter_parse_result = FilterParser.get().parse(filters)
-
 		should_add_default_status = True #是否添加默认的商品status条件
 		for filter_field_op, filter_value in filter_parse_result.items():
 			#获得过滤的field
@@ -142,6 +142,9 @@ class ProductPool(business_model.Model):
 			elif filter_field == 'promotion_status':
 				filter_field_op = 'promote_status'
 				filter_category = product_promotion_filter_values
+			elif filter_field == 'labels':
+				filter_category = product_label_filter_values
+				filter_field = 'label_id'
 
 			if not should_ignore_field:
 				if op:
@@ -162,6 +165,7 @@ class ProductPool(business_model.Model):
 			'product_supplier': product_supplier_filter_values,
 			'product_classification': product_classification_filter_values,
 			'product_promotion': product_promotion_filter_values,
+			'product_label': product_label_filter_values
 		}
 
 	def get_products(self, page_info, fill_options=None, options={}, filters={}):
@@ -230,6 +234,12 @@ class ProductPool(business_model.Model):
 		if product_classification_filters:
 			product_classification_filters['product_id__in'] = product_ids
 			product_ids = [relation.product_id for relation in mall_models.ClassificationHasProduct.select().dj_where(**product_classification_filters)]
+
+		#根据商品标签进行过滤
+		product_label_filters = type2filters['product_label']
+		if product_label_filters:
+			product_label_filters['product_id__in'] = product_ids
+			product_ids = [relation.product_id for relation in mall_models.ProductHasLabel.select().dj_where(**product_label_filters)]
 
 		# 根据cps推广进行过滤
 		product_promotion_filter_values = type2filters['product_promotion']
