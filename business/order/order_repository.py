@@ -243,4 +243,6 @@ class OrderRepository(business_model.Model):
 				set(all_order_bids).difference(set(invalid_group_order_bids)))
 
 			db_models = db_models.dj_where(order_id__notin=invalid_group_order_bids)
+
+		db_models = db_models.order_by(mall_models.Order.id.desc())
 		return db_models
