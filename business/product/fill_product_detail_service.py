@@ -227,7 +227,8 @@ class FillProductDetailService(business_model.Service):
 		"""
 		填充商品标签的信息
 		"""
-		relations = mall_models.ProductHasLabel.select().dj_where(product_id__in=product_ids)
+		relations = mall_models.ProductHasLabel.select().dj_where(product_id__in=product_ids,
+																  label_id__gt=0)
 		label_ids = []
 		product_id2label_ids = {}
 		for relation in relations:
@@ -348,7 +349,6 @@ class FillProductDetailService(business_model.Service):
 
 		if options.get('with_product_label', False):
 			self.__fill_label_detail(self.corp, products, product_ids)
-
 
 		if options.get('with_cps_promotion_info', False):
 			self.__fill_cps_promoteion_info(self.corp, products, product_ids, id2product)
