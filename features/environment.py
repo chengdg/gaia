@@ -97,7 +97,7 @@ def __create_weizoom_corporation():
 		#已经存在，不再创建，直接返回
 	except:
 		user = account_models.User.create(
-			username = 'weizoom_corp',
+			username = 'weizoom',
 			password = __make_password('test')
 		)
 
@@ -108,15 +108,15 @@ def __create_weizoom_corporation():
 		)
 
 
-def __create_self_run_platform_account():
+def __create_self_run_platform_account(username):
 	from db.account import models as account_models
 
 	try:
-		account_models.User.select().dj_where(username='zhouxun').get()
+		user = account_models.User.select().dj_where(username=username).get()
 		#已经存在，不再创建，直接返回
 	except:
 		user = account_models.User.create(
-			username = 'zhouxun',
+			username = username,
 			password = __make_password('test')
 		)
 
@@ -135,7 +135,8 @@ def before_all(context):
 	__create_system_user('tom')
 
 	__create_weizoom_corporation()
-	__create_self_run_platform_account()
+	__create_self_run_platform_account('zhouxun')
+	__create_self_run_platform_account('yangmi')
 
 	#创建test case，使用assert
 	context.tc = unittest.TestCase('__init__')

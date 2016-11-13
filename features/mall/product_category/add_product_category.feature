@@ -37,6 +37,7 @@ Scenario:1 添加无商品的商品分组
 
 @gaia @mall @mall.product @mall.product_category
 Scenario:2 添加包含商品的商品分组
+	添加商品后，分组内商品按加入分组时间排序
 
 	Given jobs登录系统
 	And jobs已添加商品规格
@@ -62,8 +63,6 @@ Scenario:2 添加包含商品的商品分组
 		}]
 		"""
 	When jobs添加商品
-		#东坡肘子(有分类，上架，无限库存，多轮播图), 包含其他所有信息
-		#叫花鸡(无分类，下架，有限库存，单轮播图)
 		"""
 		[{
 			"name": "东坡肘子",

@@ -319,17 +319,21 @@ def __create_consignment_product(product_names, user, context):
 
             bdd_util.assert_api_call_success(response)
 
-def __get_products(context, type_name=u'在售'):
+def __get_products(context, corp_name, type_name=u'在售'):
     TYPE2URL = {
       u'待售': '/product/offshelf_products/?corp_id=%d' % context.corp.id,
       u'在售': '/product/onshelf_products/?corp_id=%d' % context.corp.id,
-      u'corp_tmpl': '/product/pooled_products/?corp_id=%d'
+      u'same_corp_tmpl': '/product/unshelf_pooled_products/?corp_id=%d',
+      u'different_corp_tmpl': '/product/pooled_products/?corp_id=%d'
     }
 
     if u'商品池' in type_name:
         other_corp_name = type_name[:-3]
         other_corp_id = bdd_util.get_user_id_for(other_corp_name)
-        url = TYPE2URL['corp_tmpl'] % other_corp_id
+        if corp_name == other_corp_name:
+            url = TYPE2URL['same_corp_tmpl'] % other_corp_id
+        else:
+            url = TYPE2URL['different_corp_tmpl'] % other_corp_id
     else:
         url = TYPE2URL[type_name]
     response = context.client.get(url)
@@ -430,7 +434,7 @@ def step_add_property(context, user, product_name):
 
 @then(u"{user}能获得'{type_name}'商品列表")
 def step_impl(context, user, type_name):
-    actual = __get_products(context, type_name)
+    actual = __get_products(context, user, type_name)
     context.products = actual
 
     if hasattr(context, 'caller_step_text'):
@@ -575,9 +579,61 @@ def step_impl(context, user):
     __create_promote(promotes, context, user)
 
 
-@when(u"{user}创建代售商品")
+@when(u"{user}添加代销商品")
 def step_impl(context, user):
 
     product_names = json.loads(context.text)
 
-    __create_consignment_product(product_names=product_names, user=user, context=context)
+    for product_name in product_names:
+        db_product = mall_models.Product.select().dj_where(name=product_name).get()
+
+        data = {
+            "corp_id": context.corp.id,
+            "product_id": db_product.id
+        }
+
+        response = context.client.put('/product/consignment_product/', data)
+        bdd_util.assert_api_call_success(response)
+
+
+@when(u"{user}将商品移动到'{shelf_name}'货架")
+def step_impl(context, user, shelf_name):
+    product_names = json.loads(context.text)
+    product_ids = []
+    for product_name in product_names:
+        db_product = mall_models.Product.select().dj_where(name=product_name).get()
+        product_ids.append(db_product.id)
+
+    if shelf_name == u'在售':
+        data = {
+            'corp_id': context.corp.id,
+            'product_ids': json.dumps(product_ids)
+        }
+
+        response = context.client.put('/product/onshelf_products/', data)
+        bdd_util.assert_api_call_success(response)
+    elif shelf_name == u'待售':
+        data = {
+            'corp_id': context.corp.id,
+            'product_ids': json.dumps(product_ids)
+        }
+
+        response = context.client.put('/product/offshelf_products/', data)
+        bdd_util.assert_api_call_success(response)
+
+
+@when(u"{user}从货架删除商品")
+def step_impl(context, user):
+    product_names = json.loads(context.text)
+    product_ids = []
+    for product_name in product_names:
+        db_product = mall_models.Product.select().dj_where(name=product_name).get()
+        product_ids.append(db_product.id)
+
+    data = {
+        'corp_id': context.corp.id,
+        'product_ids': json.dumps(product_ids)
+    }
+
+    response = context.client.put('/product/deleted_products/', data)
+    bdd_util.assert_api_call_success(response)

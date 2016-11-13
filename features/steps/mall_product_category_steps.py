@@ -26,7 +26,7 @@ def step_impl(context, user):
         if 'products' in product_category:
             product_ids = []
             for product_name in product_category['products']:
-                product_model = mall_models.Product.select().dj_where(owner_id=context.corp.id, name=product_name).get()
+                product_model = mall_models.Product.select().dj_where(name=product_name).get()
                 product_ids.append(product_model.id)
             data['product_ids'] = product_ids
 
@@ -41,11 +41,15 @@ def step_get_category(context, user):
     for category in response.data['categories']:
         for product in category['products']:
             if product['status'] == 'off_shelf':
-                product['status'] = u'待售'
+                product['status'] = u'待售' 
             elif product['status'] == 'on_shelf':
                 product['status'] = u'在售'
             else:
                 pass
+
+            if product['display_index'] == 9999999:
+                product['display_index'] = 0
+
     actual = response.data['categories']
 
     expected = json.loads(context.text)

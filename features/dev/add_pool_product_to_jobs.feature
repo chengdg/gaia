@@ -258,13 +258,9 @@ Scenario:1 创建供应商供应的商品
 			"image": "/static/test_resource_img/hangzhou3.jpg"
 		}]
 		"""
-    When jobs添加代售商品
+    When jobs添加代销商品
 		"""
-		[{
-			"name": "东坡肘子"
-		}, {
-			"name": "叫花鸡"
-		}]
+		["东坡肘子", "叫花鸡"]
 		"""
     Then jobs能获得'在售'商品列表
 		"""

@@ -124,7 +124,7 @@ Scenario:1 weizoom已经有了推广商品
 			"promote_time_to": "2019-03-01"
 		}]
 		"""
-	When zhouxun创建代售商品
+	When zhouxun添加代销商品
 		"""
 		["东坡肘子-weizoom", "叫花鸡-weizoom", "水晶虾仁-weizoom"]
 		"""

@@ -121,7 +121,7 @@ Scenario:1 创建供应商供应的商品
 		}
 		"""
 
-@gaia @mall @mall.product @mall.product_management @wip
+@gaia @mall @mall.product @mall.product_management
 Scenario:1 创建供应商供应的商品
 	job添加商品后：
 	1、能获得商品详情
@@ -190,12 +190,12 @@ Scenario:1 创建供应商供应的商品
 			}
 		}]
 		"""
-	Given jobs登录系统
-	Then jobs能获得'待售'商品列表
+	Given zhouxun登录系统
+	Then zhouxun能获得'待售'商品列表
 		"""
 		[]
 		"""
-	Then jobs能获得'weizoom商品池'商品列表
+	Then zhouxun能获得'weizoom商品池'商品列表
 		"""
 		[{
 			"name": "东坡肘子",
@@ -226,15 +226,11 @@ Scenario:1 创建供应商供应的商品
 			"image": "/static/test_resource_img/hangzhou3.jpg"
 		}]
 		"""
-	When jobs添加代售商品
+	When zhouxun添加代销商品
 		"""
-		[{
-			"name": "东坡肘子"
-		}, {
-			"name": "叫花鸡"
-		}]
+		["东坡肘子", "叫花鸡"]
 		"""
-	Then jobs能获得'jobs商品池'商品列表
+	Then zhouxun能获得'zhouxun商品池'商品列表
 		"""
 		[{
 			"name": "东坡肘子"

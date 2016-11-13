@@ -171,13 +171,9 @@ Then jobs能获得'weizoom商品池'商品列表
 		"image": "/static/test_resource_img/hangzhou3.jpg"
 	}]
 	"""
-When jobs添加代售商品
+When jobs添加代销商品
 	"""
-	[{
-		"name": "东坡肘子"
-	}, {
-		"name": "叫花鸡"
-	}]
+	["东坡肘子", "叫花鸡"]
 	"""
 Then jobs能获得'jobs商品池'商品列表
 	"""
