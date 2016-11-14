@@ -122,7 +122,8 @@ class CategoryProductRepository(object):
 		#商品详情填充选项
 		fill_options = {
 			'with_price': True,
-			'with_shelve_status': True
+			'with_shelve_status': True,
+			'with_sales': True
 		}
 
 		if filters is None:
