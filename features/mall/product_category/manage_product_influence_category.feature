@@ -205,7 +205,7 @@ Scenario:1 改变代销商品货架状态，影响分组内商品排序
 		"""
 		["东坡肘子", "叫花鸡", "黄桥烧饼", "莲藕排骨汤", "水晶虾仁"]
 		"""
-	When jobs将商品移动到'待售'货架
+	When zhouxun将商品移动到'待售'货架
 		"""
 		["东坡肘子", "叫花鸡", "黄桥烧饼", "莲藕排骨汤", "水晶虾仁"]
 		"""
@@ -289,5 +289,126 @@ Scenario:1 改变代销商品货架状态，影响分组内商品排序
 			}]
 		}]
 		"""
-	
+	#zhouxun移动货架，不影响yangmi
+	Given zhouxun登录系统
+	When zhouxun将商品移动到'在售'货架
+		"""
+		["叫花鸡"]
+		"""
+	Then zhouxun能获取商品分组列表
+		"""
+		[{
+			"name": "分组1",
+			"products": [{
+				"name": "叫花鸡",
+				"status": "在售"
+			}, {
+				"name": "水晶虾仁",
+				"status": "待售"
+			}, {
+				"name": "莲藕排骨汤",
+				"status": "待售"
+			}, {
+				"name": "东坡肘子",
+				"status": "待售"
+			}]
+		}]
+		"""
+	Then zhouxun能获得商品分组'分组1'详情
+		"""
+		{
+			"name": "分组1",
+			"products": [{
+				"name": "叫花鸡",
+				"status": "在售"
+			}, {
+				"name": "水晶虾仁",
+				"status": "待售"
+			}, {
+				"name": "莲藕排骨汤",
+				"status": "待售"
+			}, {
+				"name": "东坡肘子",
+				"status": "待售"
+			}]
+		}
+		"""
+	Given yangmi登录系统
+	Then yangmi能获取商品分组列表
+		"""
+		[{
+			"name": "分组1",
+			"products": [{
+				"name": "黄桥烧饼",
+				"status": "待售"
+			}, {
+				"name": "莲藕排骨汤",
+				"status": "待售"
+			}, {
+				"name": "叫花鸡",
+				"status": "待售"
+			}, {
+				"name": "东坡肘子",
+				"status": "待售"
+			}]
+		}]
+		"""
+	#zhouxun从货架删除商品，不影响yangmi
+	Given zhouxun登录系统
+	When zhouxun从货架删除商品
+		"""
+		["叫花鸡"]
+		"""
+	Then zhouxun能获取商品分组列表
+		"""
+		[{
+			"name": "分组1",
+			"products": [{
+				"name": "水晶虾仁",
+				"status": "待售"
+			}, {
+				"name": "莲藕排骨汤",
+				"status": "待售"
+			}, {
+				"name": "东坡肘子",
+				"status": "待售"
+			}]
+		}]
+		"""
+	Then zhouxun能获得商品分组'分组1'详情
+		"""
+		{
+			"name": "分组1",
+			"products": [{
+				"name": "水晶虾仁",
+				"status": "待售"
+			}, {
+				"name": "莲藕排骨汤",
+				"status": "待售"
+			}, {
+				"name": "东坡肘子",
+				"status": "待售"
+			}]
+		}
+		"""
+	Given yangmi登录系统
+	Then yangmi能获取商品分组列表
+		"""
+		[{
+			"name": "分组1",
+			"products": [{
+				"name": "黄桥烧饼",
+				"status": "待售"
+			}, {
+				"name": "莲藕排骨汤",
+				"status": "待售"
+			}, {
+				"name": "叫花鸡",
+				"status": "待售"
+			}, {
+				"name": "东坡肘子",
+				"status": "待售"
+			}]
+		}]
+		"""
 	

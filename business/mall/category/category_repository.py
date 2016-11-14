@@ -72,3 +72,11 @@ class CategoryRepository(business_model.Service):
 		mall_models.CategoryHasProduct.delete().dj_where(category=category_id).execute()
 		mall_models.ProductCategory.delete().dj_where(owner_id=self.corp.id, id=category_id).execute()
 		msgutil.send_message(TOPIC['product'], 'category_deleted', {'category_id': category_id, 'corp_id': self.corp.id})
+
+	def delete_products_in_categories(self, product_ids):
+		"""
+		从corp的所有分类中都删除product_ids中指定的商品
+		"""
+		categories = mall_models.ProductCategory.select().dj_where(owner_id=self.corp.id)
+		category_ids = [category.id for category in categories]
+		mall_models.CategoryHasProduct.delete().dj_where(product_id__in=product_ids, category_id__in=category_ids).execute()

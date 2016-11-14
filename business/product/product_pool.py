@@ -334,14 +334,14 @@ class ProductPool(business_model.Model):
 			).dj_where(product_id__in=product_ids, woid=self.corp_id).execute()
 
 			#从分组中删除
-			mall_models.CategoryHasProduct.delete().dj_where(product_id__in=product_ids).execute()
-
-			self.__compatible_delete_products(product_ids)
+			self.corp.category_repository.delete_products_in_categories(product_ids)
 
 			#对于代销商品，重新将其放回商品池
 			mall_models.ProductPool.update(
 				status=mall_models.PP_STATUS_ON_POOL
 			).dj_where(product_id__in=product_ids, woid=self.corp_id, type=mall_models.PP_TYPE_SYNC).execute()
+
+			self.__compatible_delete_products(product_ids)
 
 			topic_name = TOPIC['product']
 			msg_name = 'product_deleted'
