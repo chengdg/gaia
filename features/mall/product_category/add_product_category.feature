@@ -159,9 +159,11 @@ Scenario:2 添加包含商品的商品分组
 		"""
 
 
-@gaia @mall @mall.product @mall.product_category
+@gaia @mall @mall.product @mall.product_category @wip
 Scenario:3 添加商品时获取分组的可选商品集合
-	#TODO: 加上在售、待售的排序特性
+	获取可选商品集合时，需要符合以下条件：
+	1. 只选择在货架上的商品
+	2. 排序按“在售、待售”排序
 
 	Given jobs登录系统
 	When jobs添加商品
@@ -193,7 +195,19 @@ Scenario:3 添加商品时获取分组的可选商品集合
 					}
 				}
 			}
+		}, {
+			"name": "黄桥烧饼"
+		}, {
+			"name": "水晶虾仁"
 		}]
+		"""
+	When jobs从货架删除商品
+		"""
+		["水晶虾仁"]
+		"""
+	When jobs从商品池删除商品
+		"""
+		["黄桥烧饼"]
 		"""
 	When jobs添加商品分组
 		"""
@@ -259,6 +273,27 @@ Scenario:3 添加商品时获取分组的可选商品集合
 			"status": "待售"
 		}]
 		"""
+	#调整货架，影响可选商品的排序
+	When jobs将商品移动到'在售'货架
+		"""
+		["莲藕排骨汤"]
+		"""
+	Then jobs能获得商品分组'分组2'的可选商品集合为
+		#有商品的分组，可以获取剩余商品
+		"""
+		[{
+			"name": "莲藕排骨汤",
+			"price": 1.1,
+			"sales": 0,
+			"status": "在售"
+		}, {
+			"name": "叫花鸡",
+			"price": 12.00,
+			"sales": 0,
+			"status": "待售"
+		}]
+		"""
+
 
 
 @ignore

@@ -182,7 +182,7 @@ Scenario:1 改变自建商品货架状态，影响分组内商品排序
 		"""
 
 
-@gaia @mall @mall.product @mall.product_category @wip
+@gaia @mall @mall.product @mall.product_category
 Scenario:1 改变代销商品货架状态，影响分组内商品排序
 
 	Given weizoom登录系统

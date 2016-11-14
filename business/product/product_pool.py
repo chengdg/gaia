@@ -352,6 +352,27 @@ class ProductPool(business_model.Model):
 			msgutil.send_message(topic_name, msg_name, data)
 		return True
 
+	def restore_products(self, product_ids):
+		"""
+		将商品放回到商品池中
+		"""
+		if product_ids:
+			mall_models.ProductPool.update(
+				display_index=NEW_PRODUCT_DISPLAY_INDEX,
+				status=mall_models.PP_STATUS_ON_POOL
+			).dj_where(product_id__in=product_ids, woid=self.corp.id).execute()
+
+			#从分组中删除
+			self.corp.category_repository.delete_products_in_categories(product_ids)
+
+			topic_name = TOPIC['product']
+			msg_name = 'product_deleted'
+			data = {
+				"corp_id": self.corp.id,
+				"product_ids": product_ids
+			}
+			msgutil.send_message(topic_name, msg_name, data)
+
 	def search_promoted_products(self, filters, page_info):
 		product_pool = self.corp.product_pool
 

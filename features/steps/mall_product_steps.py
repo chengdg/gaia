@@ -622,7 +622,7 @@ def step_impl(context, user, shelf_name):
         bdd_util.assert_api_call_success(response)
 
 
-@when(u"{user}从货架删除商品")
+@when(u"{user}从商品池删除商品")
 def step_impl(context, user):
     product_names = json.loads(context.text)
     product_ids = []
@@ -636,4 +636,21 @@ def step_impl(context, user):
     }
 
     response = context.client.put('/product/deleted_products/', data)
+    bdd_util.assert_api_call_success(response)
+
+
+@when(u"{user}从货架删除商品")
+def step_impl(context, user):
+    product_names = json.loads(context.text)
+    product_ids = []
+    for product_name in product_names:
+        db_product = mall_models.Product.select().dj_where(name=product_name).get()
+        product_ids.append(db_product.id)
+
+    data = {
+        'corp_id': context.corp.id,
+        'product_ids': json.dumps(product_ids)
+    }
+
+    response = context.client.put('/product/unshelf_pooled_products/', data)
     bdd_util.assert_api_call_success(response)
