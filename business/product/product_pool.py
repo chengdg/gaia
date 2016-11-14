@@ -316,9 +316,11 @@ class ProductPool(business_model.Model):
 
 	def __compatible_delete_products(self, product_ids):
 		#[compatibility]: 兼容老的apiserver，在apiserver升级到支持ProductPool，本函数应该删除
-		if self.corp.type == 'normal':
-			# 在当前阶段，只有normal家的商品才执行删除
-			mall_models.Product.update(is_deleted=True).dj_where(id__in=product_ids).execute()
+
+		# if self.corp.type == 'normal':
+		# 在当前阶段，只有自建商品执行此删除
+		mall_models.Product.update(is_deleted=True).dj_where(id__in=product_ids,
+															 owner_id=self.corp.id).execute()
 
 	def delete_products(self, product_ids):
 		"""
