@@ -380,7 +380,7 @@
 																							"description": "该商品的促销信息",
 																							"properties": {
 																								"type": {
-																									"description": "促销类型，flash_sale、integral_sale、premium_sale",
+																									"description": "促销类型，flash_sale、integral_sale、premium_sale、premium_sale(买赠主商品)、premium_sale:premium_product(买赠的赠品)",
 																									"type": "string"
 																								},
 																								"integral_money": {
@@ -855,7 +855,7 @@
 																			"description": "该商品的促销信息",
 																			"properties": {
 																				"type": {
-																					"description": "促销类型，flash_sale、integral_sale、premium_sale",
+																					"description": "促销类型，flash_sale、integral_sale、premium_sale(买赠主商品)、premium_sale:premium_product(买赠的赠品)",
 																					"type": "string"
 																				},
 																				"integral_money": {
