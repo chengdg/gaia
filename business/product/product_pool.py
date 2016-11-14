@@ -85,6 +85,7 @@ class ProductPool(business_model.Model):
 
 		filter_parse_result = FilterParser.get().parse(filters)
 		should_add_default_status = True #是否添加默认的商品status条件
+		should_add_default_stock_type = False   # 是否添加默认的商品stock_type类型，当以库存数量搜索时，只搜索有限库存的商品
 		for filter_field_op, filter_value in filter_parse_result.items():
 			#获得过滤的field
 			items = filter_field_op.split('__')
@@ -108,6 +109,8 @@ class ProductPool(business_model.Model):
 			elif filter_field == 'name' or filter_field == 'bar_code' or filter_field == 'created_at':
 				filter_category = product_db_filter_values
 			elif filter_field == 'price' or filter_field == 'stocks':
+				if filter_field == 'stocks':
+					should_add_default_stock_type = True
 				filter_category = product_model_filter_values
 			elif filter_field == 'category':
 				filter_category = product_category_filter_values
@@ -155,6 +158,9 @@ class ProductPool(business_model.Model):
 		product_pool_filter_values['woid'] = CorporationFactory.get().id
 		if should_add_default_status:
 			product_pool_filter_values['status__not'] = mall_models.PP_STATUS_DELETE
+
+		if should_add_default_stock_type:
+			product_model_filter_values['stock_type'] = mall_models.PRODUCT_STOCK_TYPE_LIMIT
 
 		return {
 			'product_pool': product_pool_filter_values,
