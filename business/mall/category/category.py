@@ -73,23 +73,34 @@ class Category(business_model.Model):
 	def add_products(self, product_ids):
 		"""
 		向分组中添加一组商品
+
+		先过滤出CategoryHasProduct表中已经存在的<category_id, product_id>对，只向表中添加新的<category_id, product_id>对
 		"""
 		if product_ids:
-			for product_id in product_ids:
-				mall_models.CategoryHasProduct.create(
-					product = product_id,
-					category = self.id
+			relations = mall_models.CategoryHasProduct.select().dj_where(product_id__in=product_ids, category_id=self.id)
+			existed_product_ids = set([relation.product_id for relation in relations])
+
+			product_ids = set(product_ids)
+			new_product_ids = product_ids - existed_product_ids
+
+			if new_product_ids:
+				for product_id in new_product_ids:
+					mall_models.CategoryHasProduct.create(
+						product = product_id,
+						category = self.id
+					)
+				
+				mall_models.ProductCategory.update(product_count=mall_models.ProductCategory.product_count+len(new_product_ids)).dj_where(id=self.id).execute()
+				
+				msgutil.send_message(
+					TOPIC['product'],
+					'add_products_to_category',
+					{
+						'corp_id': CorporationFactory.get().id,
+						'product_ids': new_product_ids,
+						'category_id': self.id
+					}
 				)
-			mall_models.ProductCategory.update(product_count=mall_models.ProductCategory.product_count+len(product_ids)).dj_where(id=self.id).execute()
-		msgutil.send_message(
-			TOPIC['product'],
-			'add_products_to_category',
-			{
-				'corp_id': CorporationFactory.get().id,
-				'product_ids': product_ids,
-				'category_id': self.id
-			}
-		)
 		
 	def update_name(self, name):
 		"""
