@@ -214,6 +214,7 @@ class ProductPool(business_model.Model):
 			product_model_filters['is_deleted'] = 0
 			product_model_models = mall_models.ProductModel.select().dj_where(**product_model_filters)
 			product_ids = [model.product_id for model in product_model_models]
+			product_ids = list(set(product_ids))
 
 		#在mall_category_has_product中进行过滤
 		product_category_filters = type2filters['product_category']
