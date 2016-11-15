@@ -214,7 +214,21 @@ class ProductPool(business_model.Model):
 		if product_sales_filters:
 			product_sales_filters['product_id__in'] = product_ids
 			models = mall_models.ProductSales.select().dj_where(**product_sales_filters)
+			sales__lte = product_sales_filters.get('sales__lte', 0)
+			sales__gte = product_sales_filters.get('sales__gte', 0)
+			# 不在mall_product_sales 的product
+			temp_product_ids = []
+			# 在mall_product_sales中没有数据的商品销量也是0
+			if int(sales__gte) <= 0 and int(sales__lte) >= 0:
+				all_product_sales_models = mall_models.ProductSales.select().dj_where(product_id__in=product_ids)
+				all_product_ids = [sales_model.product_id for sales_model in all_product_sales_models]
+
+				temp_product_ids = list(set(product_ids) - set(all_product_ids))
+
 			product_ids = [model.product_id for model in models]
+			if temp_product_ids:
+				product_ids += temp_product_ids
+
 
 		#根据供应商进行过滤
 		product_supplier_filters = type2filters['product_supplier']
