@@ -204,7 +204,7 @@ class FillProductDetailService(business_model.Service):
 		"""
 		填充供应商相关细节
 		"""
-		relations = mall_models.ClassificationHasProduct.select().dj_where(product_id__in=product_ids)
+		relations = mall_models.ClassificationHasProduct.select().dj_where(product_id__in=product_ids, woid=self.corp.id)
 
 		classifications = corp.product_classification_repository.get_product_classifications()
 		id2classification = dict([(classification.id, classification) for classification in classifications])
