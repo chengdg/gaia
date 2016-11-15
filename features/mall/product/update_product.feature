@@ -468,6 +468,7 @@ Scenario:6 修改商品分组信息
 			"categories": ["分类2"]
 		}
 		"""
+		
 
 @gaia @mall @mall.product @mall.product_management
 Scenario:7 修改物流信息

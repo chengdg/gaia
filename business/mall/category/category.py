@@ -43,6 +43,16 @@ class Category(business_model.Model):
 		category = Category(model)
 		return category
 
+	@staticmethod
+	def update_product_count(category_id):
+		"""
+		更新category中的product count
+
+		TODO: 将其改造为非static方案
+		"""
+		new_count = mall_models.CategoryHasProduct.select().dj_where(id=category_id).count()
+		mall_models.ProductCategory.update(product_count=new_count).dj_where(id=category_id).execute()
+
 	def update_product_position(self, product_id, new_position):
 		"""
 		更新商品在分类中的排序位置
@@ -53,20 +63,13 @@ class Category(business_model.Model):
 		#将目标商品的position置为new_position
 		mall_models.CategoryHasProduct.update(display_index=new_position).dj_where(category_id=self.id, product_id=product_id).execute()
 
-	def __update_product_count(self):
-		"""
-		更新category中的product count
-		"""
-		new_count = mall_models.CategoryHasProduct.select().dj_where(id=self.id).count()
-		mall_models.ProductCategory.update(product_count=new_count).dj_where(id=self.id).execute()
-
 	def delete_product(self, product_id):
 		"""
 		删除指定分组中的商品
 		"""
 		mall_models.CategoryHasProduct.delete().dj_where(category_id=self.id, product_id=product_id).execute()
 
-		self.__update_product_count()
+		Category.update_product_count(self.id)
 
 		msgutil.send_message(
 			TOPIC['product'],
@@ -98,7 +101,7 @@ class Category(business_model.Model):
 						category = self.id
 					)
 				
-				self.__update_product_count()
+				Category.update_product_count(self.id)
 				
 				msgutil.send_message(
 					TOPIC['product'],
@@ -147,6 +150,8 @@ class Category(business_model.Model):
 					product = product_id,
 					category = category_model.id
 				)
+
+			Category.update_product_count(category_model.id)
 
 			msgutil.send_message(
 				TOPIC['product'],

@@ -83,3 +83,6 @@ class CategoryRepository(business_model.Service):
 		categories = mall_models.ProductCategory.select().dj_where(owner_id=self.corp.id)
 		category_ids = [category.id for category in categories]
 		mall_models.CategoryHasProduct.delete().dj_where(product_id__in=product_ids, category_id__in=category_ids).execute()
+
+		for category_id in category_ids:
+			Category.update_product_count(category_id)
