@@ -228,7 +228,10 @@ class ProductPool(business_model.Model):
 		product_model_filters = type2filters['product_model']
 		if product_model_filters:
 			product_model_filters['product_id__in'] = product_ids
-			product_model_filters['is_deleted'] = 0
+			# 只设置库存最小值，不设置库存最大值的情况下，才能将库存为无限的商品查询出来
+			stocks__lte = product_model_filters.get('stocks__lte')
+			if stocks__lte and stocks__lte != u'999999999':
+				product_model_filters['stock_type'] = mall_models.PRODUCT_STOCK_TYPE_LIMIT
 			product_model_models = mall_models.ProductModel.select().dj_where(**product_model_filters)
 			product_ids = [model.product_id for model in product_model_models]
 			product_ids = list(set(product_ids))
@@ -245,7 +248,20 @@ class ProductPool(business_model.Model):
 		if product_sales_filters:
 			product_sales_filters['product_id__in'] = product_ids
 			models = mall_models.ProductSales.select().dj_where(**product_sales_filters)
+			sales__lte = product_sales_filters.get('sales__lte')
+			sales__gte = product_sales_filters.get('sales__gte')
+			# 不在mall_product_sales 的product
+			temp_product_ids = []
+			# 在mall_product_sales中没有数据的商品销量也是0
+			if int(sales__gte) <= 0 and int(sales__lte) >= 0:
+				all_product_sales_models = mall_models.ProductSales.select().dj_where(product_id__in=product_ids)
+				all_product_ids = [sales_model.product_id for sales_model in all_product_sales_models]
+
+				temp_product_ids = list(set(product_ids) - set(all_product_ids))
+
 			product_ids = [model.product_id for model in models]
+			if temp_product_ids:
+				product_ids += temp_product_ids
 
 		#根据供应商进行过滤
 		product_supplier_filters = type2filters['product_supplier']
