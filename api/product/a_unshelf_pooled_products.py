@@ -41,7 +41,7 @@ class AUnshelfPooledProducts(api_resource.ApiResource):
 		}
 
 		options = {
-			'order_by_display_index': True
+			'order_options': ['display_index', '-id']
 		}
 
 		products, pageinfo = corp.product_pool.get_products(target_page, fill_options, options, filters)

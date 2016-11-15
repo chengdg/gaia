@@ -327,30 +327,34 @@ Scenario:2 单独修改商品库存
 Scenario:2 单独修改商品的排序
 
 	Given jobs登录系统
-	Then jobs能获得'待售'商品列表
+	When jobs将商品移动到'在售'货架
+		"""
+		["东坡肘子", "叫花鸡", "莲藕排骨汤"]
+		"""
+	Then jobs能获得'在售'商品列表
 		"""
 		[{
-			"name": "东坡肘子",
+			"name": "莲藕排骨汤",
 			"display_index": 9999999
 		}, {
 			"name": "叫花鸡",
 			"display_index": 9999999
 		}, {
-			"name": "莲藕排骨汤",
+			"name": "东坡肘子",
 			"display_index": 9999999
 		}]
 		"""
 	When jobs修改商品'叫花鸡'的显示排序为'2'
-	Then jobs能获得'待售'商品列表
+	Then jobs能获得'在售'商品列表
 		"""
 		[{
 			"name": "叫花鸡",
 			"display_index": 2
 		}, {
-			"name": "东坡肘子",
+			"name": "莲藕排骨汤",
 			"display_index": 9999999
 		}, {
-			"name": "莲藕排骨汤",
+			"name": "东坡肘子",
 			"display_index": 9999999
 		}]
 		"""

@@ -33,7 +33,7 @@ class APooledProducts(api_resource.ApiResource):
 			'with_product_label': True,
 		}
 		options = {
-			'order_by_display_index': True
+			'order_options': ['display_index', '-id']
 		}
 
 		filters = json.loads(args.get('filters', '{}'))

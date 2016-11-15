@@ -174,6 +174,32 @@ class ProductPool(business_model.Model):
 			'product_label': product_label_filter_values
 		}
 
+	def __get_product_order_fields(self, options):
+		"""
+		获得商品排序field集合
+		"""
+		type2field = {
+			'display_index': mall_models.ProductPool.display_index,
+			'status': mall_models.ProductPool.status,
+			'onshelf_time': mall_models.ProductPool.sync_at,
+			'id': mall_models.ProductPool.product_id
+		}
+
+		fields = []
+		for order_type in options.get('order_options', []):
+			is_desc = False
+			if order_type[0] == '-':
+				is_desc = True
+				order_type = order_type[1:]
+
+			field = type2field[order_type]
+			if is_desc:
+				field = field.desc()
+
+			fields.append(field)
+
+		return fields
+
 	def get_products(self, page_info, fill_options=None, options={}, filters={}):
 		"""
 		根据条件在商品池搜索商品
@@ -181,17 +207,8 @@ class ProductPool(business_model.Model):
 		"""
 		type2filters = self.__split_filters(filters)
 
-		print filters
-		print type2filters
-
 		#构建排序策略
-		order_options = []
-		if 'order_by_display_index' in options:
-			order_options.append(mall_models.ProductPool.display_index)
-			order_options.append(mall_models.ProductPool.product_id)
-		elif 'order_by_status' in options:
-			order_options.append(mall_models.ProductPool.status.desc())
-			order_options.append(mall_models.ProductPool.product_id)
+		order_fields = self.__get_product_order_fields(options)
 
 		#在product_pool表中进行过滤
 		product_pool_filters = type2filters['product_pool']
@@ -200,8 +217,8 @@ class ProductPool(business_model.Model):
 			pool_product_models = mall_models.ProductPool.select().dj_where(**product_pool_filters)			
 		else:
 			pool_product_models = mall_models.ProductPool.select().dj_where(status__not=mall_models.PP_STATUS_DELETE)			
-		if len(order_options) > 0:
-			pool_product_models = pool_product_models.order_by(*order_options)
+		if len(order_fields) > 0:
+			pool_product_models = pool_product_models.order_by(*order_fields)
 
 		#获取查询结果
 		product_ids = [pool_product_model.product_id for pool_product_model in pool_product_models]
@@ -283,9 +300,9 @@ class ProductPool(business_model.Model):
 				pool_product_model = product2poolmodel[product.id]
 				if pool_product_model.type == mall_models.PP_TYPE_SYNC:
 					product.create_type = 'sync'
-					product.sync_at = pool_product_model.sync_at
 				else:
 					product.create_type = 'create'
+				product.sync_at = pool_product_model.sync_at
 				result.append(product)
 		return result, pageinfo
 
@@ -399,7 +416,7 @@ class ProductPool(business_model.Model):
 		}
 
 		options = {
-			'order_by_display_index': True
+			'order_options': ['display_index', '-id']
 		}
 
 		products, pageinfo = product_pool.get_products(page_info, fill_options, options, filters)

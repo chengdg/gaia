@@ -34,7 +34,7 @@ class AWeizoomPooledProducts(api_resource.ApiResource):
 			'with_product_label': True,
 		}
 		options = {
-			'order_by_display_index': True
+			'order_options': ['display_index', '-id']
 		}
 
 		#TODO: 寻找更优雅的切换公司的解决方案

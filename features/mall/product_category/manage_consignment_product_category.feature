@@ -1,6 +1,6 @@
 Feature: 管理代销商品的分组信息
 
-@gaia @mall @mall.product @mall.product_category @wip
+@gaia @mall @mall.product @mall.product_category
 Scenario:1 多个渠道为商品创建代销商品，各自管理商品分组
 	多个渠道创建代销商品后，各自独立维护分组信息
 

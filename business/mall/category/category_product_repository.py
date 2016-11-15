@@ -131,7 +131,7 @@ class CategoryProductRepository(object):
 		filters['__f-status-in'] = [mall_models.PP_STATUS_OFF, mall_models.PP_STATUS_ON]
 
 		options = {
-			'order_by_status': True
+			'order_options': ['-status', '-id']
 		}
 
 		if category_id == '0' or category_id == 0:

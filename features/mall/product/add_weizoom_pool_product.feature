@@ -122,10 +122,12 @@ Scenario:1 创建供应商供应的商品
 		"""
 
 @gaia @mall @mall.product @mall.product_management
-Scenario:1 创建供应商供应的商品
-	job添加商品后：
-	1、能获得商品详情
-	2、在待售商品列表能看到商品
+Scenario:1 创建代销的商品
+	weizoom添加商品后：
+	1、zhouxun能获得weizoom商品池商品（创建时间倒序排列）
+
+	zhouxun创建代销商品后:
+	1、zhouxun在商品池商品列表能看到代销商品（创建时间倒序排列）
 
 	Given weizoom登录系统
 	When weizoom添加商品
@@ -198,14 +200,14 @@ Scenario:1 创建供应商供应的商品
 	Then zhouxun能获得'weizoom商品池'商品列表
 		"""
 		[{
-			"name": "东坡肘子",
-			"supplier": "苹果",
-			"supplier_type": "固定低价",
-			"classification": "分类11-分类23-分类31",
-			"price": 11.12,
-			"stocks": "无限",
-			"gross_profit": 10.02, 
-			"image": "/static/test_resource_img/hangzhou1.jpg"
+			"name": "黄桥烧饼",
+			"supplier": "",
+			"supplier_type": "",
+			"classification": "",
+			"price": 30.1,
+			"stocks": 30,
+			"gross_profit": 29.10,
+			"image": "/static/test_resource_img/hangzhou3.jpg"
 		}, {
 			"name": "叫花鸡",
 			"supplier": "微软",
@@ -216,14 +218,14 @@ Scenario:1 创建供应商供应的商品
 			"gross_profit": "8.90~19.00",
 			"image": "/static/test_resource_img/hangzhou2.jpg"
 		}, {
-			"name": "黄桥烧饼",
-			"supplier": "",
-			"supplier_type": "",
-			"classification": "",
-			"price": 30.1,
-			"stocks": 30,
-			"gross_profit": 29.10,
-			"image": "/static/test_resource_img/hangzhou3.jpg"
+			"name": "东坡肘子",
+			"supplier": "苹果",
+			"supplier_type": "固定低价",
+			"classification": "分类11-分类23-分类31",
+			"price": 11.12,
+			"stocks": "无限",
+			"gross_profit": 10.02, 
+			"image": "/static/test_resource_img/hangzhou1.jpg"
 		}]
 		"""
 	When zhouxun添加代销商品
@@ -233,8 +235,8 @@ Scenario:1 创建供应商供应的商品
 	Then zhouxun能获得'zhouxun商品池'商品列表
 		"""
 		[{
-			"name": "东坡肘子"
-		}, {
 			"name": "叫花鸡"
+		}, {
+			"name": "东坡肘子"
 		}]
 		"""
