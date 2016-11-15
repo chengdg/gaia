@@ -41,7 +41,7 @@ class CategoryRepository(business_model.Service):
 			products, _ = self.corp.product_pool.get_products(max_page, filters=product_filters)
 			product_ids = [product.id for product in products]
 			category_ids = [relation.category_id for relation in mall_models.CategoryHasProduct.select().dj_where(product_id__in=product_ids)]
-			result_categories = mall_models.ProductCategory.select().dj_where(id__in=category_ids)
+			result_categories = mall_models.ProductCategory.select().dj_where(id__in=category_ids, owner_id=self.corp.id)
 			pageinfo, result_categories = paginator.paginate(result_categories, target_page.cur_page, target_page.count_per_page)
 
 		if '__f-name-contain' in filters:
