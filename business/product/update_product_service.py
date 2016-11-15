@@ -46,9 +46,6 @@ class UpdateProductService(business_model.Service):
 		"""
 		更新商品分组
 		"""
-		if len(category_ids) == 0:
-			return
-
 		#由于不同渠道创建的代销商品，在ProductCategory表中的product_id，所以这里要筛选出当前公司（渠道）拥有的category，进行选择性删除
 		#不能只根据product_id进行删除
 		existed_category_ids = [category.id for category in mall_models.ProductCategory.select().dj_where(owner_id=self.corp.id)]

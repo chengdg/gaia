@@ -433,15 +433,15 @@ Scenario:5 修改商品的定制商品规格
 		"""
 
 
-@gaia @mall @mall.product @mall.product_management
+@gaia @mall @mall.product @mall.product_management @wip
 Scenario:6 修改商品分组信息
 	jobs进行如下操作：
 	1. 对已经有分组的商品，对分组进行删除、新增
 	2. 对无分组的商品，添加分组
 
 	Given jobs登录系统
+	#有分组的修改分组
 	When jobs更新商品'东坡肘子'
-		#有分组的修改分组
 		"""
 		{
 			"categories": ["分类2", "分类3"]
@@ -454,8 +454,8 @@ Scenario:6 修改商品分组信息
 			"categories": ["分类2", "分类3"]
 		}
 		"""
+	#无分组的增加分组
 	When jobs更新商品'叫花鸡'
-		#无分组的增加分组
 		"""
 		{
 			"categories": ["分类2"]
@@ -466,6 +466,20 @@ Scenario:6 修改商品分组信息
 		{
 			"name": "叫花鸡",
 			"categories": ["分类2"]
+		}
+		"""
+	#清空分组
+	When jobs更新商品'叫花鸡'
+		"""
+		{
+			"categories": []
+		}
+		"""
+	Then jobs能获取商品'叫花鸡'
+		"""
+		{
+			"name": "叫花鸡",
+			"categories": []
 		}
 		"""
 		
