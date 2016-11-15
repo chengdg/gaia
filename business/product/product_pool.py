@@ -214,8 +214,8 @@ class ProductPool(business_model.Model):
 		if product_sales_filters:
 			product_sales_filters['product_id__in'] = product_ids
 			models = mall_models.ProductSales.select().dj_where(**product_sales_filters)
-			sales__lte = product_sales_filters.get('sales__lte', 0)
-			sales__gte = product_sales_filters.get('sales__gte', 0)
+			sales__lte = product_sales_filters.get('sales__lte')
+			sales__gte = product_sales_filters.get('sales__gte')
 			# 不在mall_product_sales 的product
 			temp_product_ids = []
 			# 在mall_product_sales中没有数据的商品销量也是0
