@@ -224,6 +224,7 @@ class ProductPool(business_model.Model):
 			product_model_filters['product_id__in'] = product_ids
 			# 只设置库存最小值，不设置库存最大值的情况下，才能将库存为无限的商品查询出来
 			stocks__lte = product_model_filters.get('stocks__lte')
+			# 补充搜索条件,含有业务逻辑判断
 			if stocks__lte and stocks__lte != u'999999999':
 				product_model_filters['stock_type'] = mall_models.PRODUCT_STOCK_TYPE_LIMIT
 
