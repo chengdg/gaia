@@ -53,13 +53,21 @@ class Category(business_model.Model):
 		#将目标商品的position置为new_position
 		mall_models.CategoryHasProduct.update(display_index=new_position).dj_where(category_id=self.id, product_id=product_id).execute()
 
+	def __update_product_count(self):
+		"""
+		更新category中的product count
+		"""
+		new_count = mall_models.CategoryHasProduct.select().dj_where(id=self.id).count()
+		mall_models.ProductCategory.update(product_count=new_count).dj_where(id=self.id).execute()
+
 	def delete_product(self, product_id):
 		"""
 		删除指定分组中的商品
 		"""
 		mall_models.CategoryHasProduct.delete().dj_where(category_id=self.id, product_id=product_id).execute()
 
-		mall_models.ProductCategory.update(product_count=mall_models.ProductCategory.product_count-1).dj_where(id=self.id).execute()
+		self.__update_product_count()
+
 		msgutil.send_message(
 			TOPIC['product'],
 			'delete_product_from_category',
@@ -90,7 +98,7 @@ class Category(business_model.Model):
 						category = self.id
 					)
 				
-				mall_models.ProductCategory.update(product_count=mall_models.ProductCategory.product_count+len(new_product_ids)).dj_where(id=self.id).execute()
+				self.__update_product_count()
 				
 				msgutil.send_message(
 					TOPIC['product'],

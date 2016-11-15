@@ -26,7 +26,7 @@ class ACategories(api_resource.ApiResource):
 
 		filters = json.loads(args.get('filters', '{}'))
 		if filters:
-			categories, pageinfo = corp.category_repository.search_categories(filters)
+			categories, pageinfo = corp.category_repository.search_categories(filters, target_page)
 		else:
 			categories, pageinfo = corp.category_repository.get_all_categories(target_page)
 
