@@ -229,7 +229,6 @@ class ProductPool(business_model.Model):
 			if temp_product_ids:
 				product_ids += temp_product_ids
 
-
 		#根据供应商进行过滤
 		product_supplier_filters = type2filters['product_supplier']
 		supplier_ids = None
