@@ -160,6 +160,7 @@ class ProductPool(business_model.Model):
 			product_pool_filter_values['status__not'] = mall_models.PP_STATUS_DELETE
 
 		if should_add_default_stock_type:
+			# 该条件(库存)在使用的时候仍然有时候需要判断值条件,如在get_products里边搜索
 			product_model_filter_values['stock_type'] = mall_models.PRODUCT_STOCK_TYPE_LIMIT
 
 		return {
@@ -232,6 +233,8 @@ class ProductPool(business_model.Model):
 			stocks__lte = product_model_filters.get('stocks__lte')
 			if stocks__lte and stocks__lte != u'999999999':
 				product_model_filters['stock_type'] = mall_models.PRODUCT_STOCK_TYPE_LIMIT
+			else:
+				product_model_filters.pop('stock_type')
 			product_model_models = mall_models.ProductModel.select().dj_where(**product_model_filters)
 			product_ids = [model.product_id for model in product_model_models]
 			product_ids = list(set(product_ids))
