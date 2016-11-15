@@ -216,7 +216,7 @@ Scenario:3 向分组中增加商品
 		"""
 
 
-@gaia @mall @mall.product @mall.product_category @wip
+@gaia @mall @mall.product @mall.product_category
 Scenario:4 向分组中增加商品，影响商品的分组信息
 
 	Given jobs登录系统

@@ -159,7 +159,7 @@ Scenario:2 添加包含商品的商品分组
 		"""
 
 
-@gaia @mall @mall.product @mall.product_category @wip
+@gaia @mall @mall.product @mall.product_category
 Scenario:3 添加商品时获取分组的可选商品集合
 	获取可选商品集合时，需要符合以下条件：
 	1. 只选择在货架上的商品

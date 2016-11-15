@@ -203,7 +203,7 @@ def __get_product(context, name):
         1: u'禁售',
         2: u'仅售'
     }
-    product_model = mall_models.Product.select().dj_where(owner_id=context.corp.id, name=name).get()
+    product_model = mall_models.Product.select().dj_where(name=name).get()
     data = {
         "corp_id": context.corp.id,
         "id": product_model.id

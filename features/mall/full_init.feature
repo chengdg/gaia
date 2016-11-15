@@ -480,7 +480,6 @@ Scenario: 安装完整测试数据
 			}
 		}]	
 		"""
-
 	When weizoom将商品加入CPS推广
 		"""
 		[{
@@ -504,7 +503,13 @@ Scenario: 安装完整测试数据
 			"promote_time_to": "2019-03-01"
 		}]
 		"""
+	Given zhouxun登录系统
 	When zhouxun添加代销商品
 		"""
 		["东坡肘子-weizoom", "叫花鸡-weizoom", "水晶虾仁-weizoom"]
+		"""
+	Given yangmi登录系统
+	When yangmi添加代销商品
+		"""
+		["东坡肘子-weizoom", "叫花鸡-weizoom", "黄桥烧饼-weizoom"]
 		"""
