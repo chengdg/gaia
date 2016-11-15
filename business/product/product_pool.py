@@ -198,7 +198,10 @@ class ProductPool(business_model.Model):
 		product_model_filters = type2filters['product_model']
 		if product_model_filters:
 			product_model_filters['product_id__in'] = product_ids
-			product_model_filters['is_deleted'] = 0
+			# 只设置库存最小值，不设置库存最大值的情况下，才能将库存为无限的商品查询出来
+			stocks__lte = product_model_filters.get('stocks__lte')
+			if stocks__lte and stocks__lte != u'999999999':
+				product_model_filters['stock_type'] = mall_models.PRODUCT_STOCK_TYPE_LIMIT
 			product_model_models = mall_models.ProductModel.select().dj_where(**product_model_filters)
 			product_ids = [model.product_id for model in product_model_models]
 
