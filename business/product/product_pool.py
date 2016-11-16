@@ -172,6 +172,7 @@ class ProductPool(business_model.Model):
 		"""
 		获得商品排序field集合
 		"""
+		options = {} if not options else options
 		type2field = {
 			'display_index': mall_models.ProductPool.display_index,
 			'status': mall_models.ProductPool.status,
