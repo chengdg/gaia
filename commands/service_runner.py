@@ -69,6 +69,7 @@ class Command(BaseCommand):
 					except:
 						logging.info(u"Service Exception: {}".format(unicode_full_stack()))
 				else:
+					queue.delete_message(recv_msg.receipt_handle)
 					#TODO: 这里是否需要删除消息？
 					logging.info(u"Error: no such service found : {}".format(message_name))
 
