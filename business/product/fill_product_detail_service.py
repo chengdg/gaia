@@ -203,7 +203,8 @@ class FillProductDetailService(business_model.Service):
 		"""
 		填充供应商相关细节
 		"""
-		relations = mall_models.ClassificationHasProduct.select().dj_where(product_id__in=product_ids, woid=self.corp.id)
+		# 如果已经下线的分类还在使用,就是错误数据,这里的woid没有目前没有作用
+		relations = mall_models.ClassificationHasProduct.select().dj_where(product_id__in=product_ids)
 
 		classifications = corp.product_classification_repository.get_product_classifications()
 		id2classification = dict([(classification.id, classification) for classification in classifications])
@@ -262,8 +263,7 @@ class FillProductDetailService(business_model.Service):
 		填充商品的cps推广信息
 		"""
 		promotion_infos = mall_models.PromoteDetail.select().dj_where(product_id__in=product_ids,
-																	  promote_status=mall_models.PROMOTING,
-																	  promote_time_to__gt=datetime.datetime.now())
+																	  promote_status=mall_models.PROMOTING)
 		pool_product_models = mall_models.ProductPool.select().dj_where(product_id__in=product_ids, woid=self.corp.id)
 		id2pool_products = dict([(pool.product_id, pool) for pool in pool_product_models])
 		for promotion in promotion_infos:

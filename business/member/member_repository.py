@@ -10,7 +10,7 @@ class MemberRepository(business_model.Service):
 		member_db_model = member_models.Member.get(id=member_id)
 
 		members = Member.from_models({
-			'models': member_db_model,
+			'models': [member_db_model],
 			'corp': self.corp
 		})
 
