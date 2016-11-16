@@ -38,7 +38,9 @@ class FilterParser(object):
     def get_filter_value(self, key, filter_options):
         _, _, match_strategy = key[2:].split('-')
         if match_strategy == 'range' or match_strategy == 'in' or match_strategy == 'notin':
-            value = json.loads(filter_options[key])
+            value = filter_options[key]
+            if type(value) == str or type(value) == unicode:
+                value = json.loads(filter_options[key])
             return tuple(value)
         else:
             return filter_options[key]
@@ -57,8 +59,8 @@ class FilterParser(object):
 
             key = self.get_filter_key(filter_express, filter2field)
 
-            if value:
-                #当value有效时，才记录其为过滤项，可以解决dj_where(id__in=[])的问题
+            if value or value == 0:
+                # 当value有效时，才记录其为过滤项，可以解决dj_where(id__in=[])的问题
                 peewee_query[key] = self.get_filter_value(filter_express, filters)
 
         return peewee_query

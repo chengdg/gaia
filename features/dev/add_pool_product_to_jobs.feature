@@ -76,7 +76,7 @@ Feature: 从微众商品池中选择商品进行上架
 		"""
     Given jobs成为自营平台
 
-  @mall @mall.product @mall.product_management @hermes @wip @ztqdev
+  @dev
   Scenario:1 创建供应商供应的商品
   job添加商品后：
   1、能获得商品详情
@@ -141,7 +141,7 @@ Feature: 从微众商品池中选择商品进行上架
 		}]
 		"""
 
-@mall @mall.product @mall.product_management @hermes @wip @abcd
+@dev
 Scenario:1 创建供应商供应的商品
 	job添加商品后：
 	1、能获得商品详情
@@ -258,13 +258,9 @@ Scenario:1 创建供应商供应的商品
 			"image": "/static/test_resource_img/hangzhou3.jpg"
 		}]
 		"""
-    When jobs添加代售商品
+    When jobs添加代销商品
 		"""
-		[{
-			"name": "东坡肘子"
-		}, {
-			"name": "叫花鸡"
-		}]
+		["东坡肘子", "叫花鸡"]
 		"""
     Then jobs能获得'在售'商品列表
 		"""

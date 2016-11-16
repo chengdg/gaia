@@ -14,6 +14,8 @@ from business.mall.corporation_factory import CorporationFactory
 from business.mall.category.category_product_repository import CategoryProductRepository
 from gaia_conf import TOPIC
 
+MAX_DISPLAY_INDEX = 9999999
+
 
 class Category(business_model.Model):
 	"""
@@ -45,6 +47,10 @@ class Category(business_model.Model):
 		"""
 		更新商品在分类中的排序位置
 		"""
+		#将已经占用new_position的商品置为MAX_DISPLAY_INDEX
+		mall_models.CategoryHasProduct.update(display_index=MAX_DISPLAY_INDEX).dj_where(category_id=self.id, display_index=new_position).execute()
+
+		#将目标商品的position置为new_position
 		mall_models.CategoryHasProduct.update(display_index=new_position).dj_where(category_id=self.id, product_id=product_id).execute()
 
 	def delete_product(self, product_id):
@@ -63,7 +69,6 @@ class Category(business_model.Model):
 				'category_id': self.id
 			}
 		)
-
 
 	def add_products(self, product_ids):
 		"""
@@ -85,6 +90,7 @@ class Category(business_model.Model):
 				'category_id': self.id
 			}
 		)
+		
 	def update_name(self, name):
 		"""
 		更新分组名

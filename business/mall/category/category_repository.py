@@ -34,11 +34,11 @@ class CategoryRepository(business_model.Service):
 		pageinfo = None
 		result_categories = None
 		if '__f-product_name-contain' in filters:
-			filters = FilterParser.get().extract_by_keys(filters, {
+			product_filters = FilterParser.get().extract_by_keys(filters, {
 				'__f-product_name-contain': '__f-name-contain'
 			})
 			target_page = PageInfo.get_max_page()
-			products, pageinfo = self.corp.product_pool.get_products(target_page, filters=filters)
+			products, pageinfo = self.corp.product_pool.get_products(target_page, filters=product_filters)
 			product_ids = [product.id for product in products]
 			category_ids = [relation.category_id for relation in mall_models.CategoryHasProduct.select().dj_where(product_id__in=product_ids)]
 			result_categories = list(mall_models.ProductCategory.select().dj_where(id__in=category_ids))
@@ -72,3 +72,11 @@ class CategoryRepository(business_model.Service):
 		mall_models.CategoryHasProduct.delete().dj_where(category=category_id).execute()
 		mall_models.ProductCategory.delete().dj_where(owner_id=self.corp.id, id=category_id).execute()
 		msgutil.send_message(TOPIC['product'], 'category_deleted', {'category_id': category_id, 'corp_id': self.corp.id})
+
+	def delete_products_in_categories(self, product_ids):
+		"""
+		从corp的所有分类中都删除product_ids中指定的商品
+		"""
+		categories = mall_models.ProductCategory.select().dj_where(owner_id=self.corp.id)
+		category_ids = [category.id for category in categories]
+		mall_models.CategoryHasProduct.delete().dj_where(product_id__in=product_ids, category_id__in=category_ids).execute()

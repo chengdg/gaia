@@ -24,7 +24,7 @@ class CategoryProduct(business_model.Model):
 		'status',
 		'sales',
 		'categories',
-		'created_at'
+		'created_at' #商品加入分类的时间
 	)
 
 	def __init__(self, product=None):
@@ -35,6 +35,10 @@ class CategoryProduct(business_model.Model):
 			self._init_slot_from_model(product)
 			if product.is_on_shelve():
 				self.status = 'on_shelf'
+			elif product.shelve_type == 'in_pool':
+				self.status = 'in_pool'
+			elif product.shelve_type == 'deleted':
+				self.status = 'deleted'
 			else:
 				self.status = 'off_shelf'
 
@@ -47,3 +51,6 @@ class CategoryProduct(business_model.Model):
 
 	def set_display_index(self, index):
 		self.display_index = index
+
+	def set_created_at(self, created_at):
+		self.created_at = created_at

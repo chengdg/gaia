@@ -3,7 +3,6 @@ import logging
 
 from db.mall import models as mall_models
 from db.mall import promotion_models
-from django.db import connection
 
 def clean():
 	logging.info('clean database for mall')

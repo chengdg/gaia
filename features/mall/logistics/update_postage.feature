@@ -26,7 +26,7 @@ Background:
 		}]
 		"""
 
-@gaia @mall @mall.logistics @hermes
+@gaia @mall @mall.logistics
 Scenario:1 更新邮费配置
 	Jobs更新"邮费配置"
 	修改策略为：

@@ -6,7 +6,8 @@ from eaglet.core import watchdog
 from business import model as business_model
 from business.product.product import Product
 from db.mall import models as mall_models
-from eaglet.decorator import param_required
+from product_pool import ProductPool
+
 
 
 class ProductFactory(business_model.Service):

@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-
+from bdem import msgutil
 from eaglet.core import watchdog
 from eaglet.decorator import param_required
 
 from business import model as business_model
+from business.mall.corporation_factory import CorporationFactory
 from db.mall import models as mall_models
 
 from business.mall.pay.pay_interface import PayInterface
@@ -12,6 +13,7 @@ from business.mall.pay.ali_pay_interface import AliPayInterface
 from business.decorator import cached_context_property
 from business.mall.pay.weixin_pay_v2_config import WeixinPayV2Config
 from business.mall.pay.ali_pay_config import AliPayConfig
+from gaia_conf import TOPIC
 
 
 class PayInterfaceRepository(business_model.Service):
@@ -32,6 +34,7 @@ class PayInterfaceRepository(business_model.Service):
 						'paysign_key': ''
 					})
 					mall_models.PayInterface.update(related_config_id = config.id).dj_where(id=pay_interface_model.id).execute()
+					self.__send_message_to_topic()
 			elif pay_interface_model.type == mall_models.PAY_INTERFACE_ALIPAY:
 				if pay_interface_model.related_config_id == 0:
 					config = AliPayConfig.create({
@@ -42,6 +45,8 @@ class PayInterfaceRepository(business_model.Service):
 						'seller_email': ''
 					})
 					mall_models.PayInterface.update(related_config_id = config.id).dj_where(id=pay_interface_model.id).execute()
+					self.__send_message_to_topic()
+
 			else:
 				pass
 
@@ -131,3 +136,13 @@ class PayInterfaceRepository(business_model.Service):
 		model = mall_models.PayInterface.select().dj_where(owner_id=self.corp.id, type=mall_models.PAY_INTERFACE_ALIPAY).get()
 
 		return AliPayInterface(PayInterface(model))
+
+	def __send_message_to_topic(self):
+		corp_id = CorporationFactory.get().id
+		msg_name = 'webapp_owner_info_updated'
+		topic_name = TOPIC['mall_config']
+		data = {
+			"corp_id": corp_id,
+
+		}
+		msgutil.send_message(topic_name, msg_name, data)

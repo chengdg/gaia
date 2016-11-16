@@ -125,7 +125,7 @@ Background:
 		}]
 		"""
 
-@gaia @mall @mall.product @mall.product_management @hermes
+@gaia @mall @mall.product @mall.product_management
 Scenario:1 修改商品基本信息
 	job修改商品基本信息后：
 	1、能获得修改后的商品信息(name, bar_code, min_limit, promotion_title, detail)
@@ -183,7 +183,7 @@ Scenario:1 修改商品基本信息
 		"""
 	
 	
-@mall @mall.product @mall.product_management @hermes
+@gaia @mall @mall.product @mall.product_management
 Scenario:2 修改商品图片信息
 	jobs进行如下的图片操作：
 	1. 增加图片
@@ -233,7 +233,7 @@ Scenario:2 修改商品图片信息
 		}
 		"""
 
-@mall @mall.product @mall.product_management @hermes
+@gaia @mall @mall.product @mall.product_management
 Scenario:3 修改商品的标准规格
 	
 	Given jobs登录系统
@@ -300,7 +300,7 @@ Scenario:3 修改商品的标准规格
 		}
 		"""
 
-@mall @mall.product @mall.product_management @hermes
+@gaia @mall @mall.product @mall.product_management
 Scenario:4 修改商品的商品规格，在标准规格和定制规格之间切换
 
 	Given jobs登录系统
@@ -379,7 +379,7 @@ Scenario:4 修改商品的商品规格，在标准规格和定制规格之间切
 		}
 		"""
 
-@mall @mall.product @mall.product_management @hermes
+@gaia @mall @mall.product @mall.product_management
 Scenario:5 修改商品的定制商品规格
 	jobs进行以下操作
 	1. 添加定制规格
@@ -433,7 +433,7 @@ Scenario:5 修改商品的定制商品规格
 		"""
 
 
-@mall @mall.product @mall.product_management @hermes
+@gaia @mall @mall.product @mall.product_management
 Scenario:6 修改商品分组信息
 	jobs进行如下操作：
 	1. 对已经有分组的商品，对分组进行删除、新增
@@ -469,7 +469,7 @@ Scenario:6 修改商品分组信息
 		}
 		"""
 
-@mall @mall.product @mall.product_management @hermes
+@gaia @mall @mall.product @mall.product_management
 Scenario:7 修改物流信息
 	jobs进行如下操作：
 	1. 修改邮费配置
@@ -505,7 +505,7 @@ Scenario:7 修改物流信息
 		}
 		"""
 
-@mall @mall.product @mall.product_management @hermes
+@gaia @mall @mall.product @mall.product_management
 Scenario:7 修改商品属性信息
 	jobs进行如下操作：
 	1. 修改邮费配置
@@ -535,86 +535,4 @@ Scenario:7 修改商品属性信息
 				"value": "n4"
 			}]
 		}
-		"""
-
-@ignore
-Scenario:2 添加商品时选择分类，能在分类中看到该商品
-	Jobs添加一组"商品分类"后，"商品分类列表"会按照添加的顺序倒序排列
-
-	Given jobs登录系统
-	When jobs已添加商品分组
-		"""
-		[{
-			"name": "分类1"
-		}, {
-			"name": "分类2"
-		}, {
-			"name": "分类3"
-		}]
-		"""
-	Given jobs已添加商品
-		#东坡肘子(有分类，上架，无限库存，多轮播图), 叫花鸡(无分类，下架，有限库存，单轮播图)
-		"""
-		[{
-			"name": "东坡肘子",
-			"status": "待售",
-			"categories": "分类1,分类2",
-			"model": {
-				"models": {
-					"standard": {
-						"price": 11.12,
-						"stock_type": "无限"
-					}
-				}
-			}
-		}, {
-			"name": "叫花鸡",
-			"status": "待售",
-			"categories": "分类1",
-			"model": {
-				"models": {
-					"standard": {
-						"price": 12.00,
-						"stock_type": "有限",
-						"stocks": 3
-					}
-				}
-			}
-		}, {
-			"name": "水晶虾仁",
-			"status": "待售",
-			"categories": "",
-			"model": {
-				"models": {
-					"standard": {
-						"price": 3.00
-					}
-				}
-			}
-		}]
-		"""
-	Then jobs能获取商品分类列表
-		"""
-		[{
-			"name": "分类1",
-			"products": [{
-				"name": "叫花鸡",
-				"display_price": 12.00,
-				"status": "待售"
-			}, {
-				"name": "东坡肘子",
-				"display_price": 11.12,
-				"status": "待售"
-			}]
-		}, {
-			"name": "分类2",
-			"products": [{
-				"name": "东坡肘子",
-				"display_price": 11.12,
-				"status": "待售"
-			}]
-		}, {
-			"name": "分类3",
-			"products": []
-		}]
 		"""

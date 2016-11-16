@@ -1,5 +1,5 @@
 {
-	"server_name": "dev.gaia.com",
+	"server_name": "",
 	"hosts": [],
 	"locations": [{
 		"path": "/static",

@@ -1,4 +1,31 @@
 {
 	"name": "gaia",
-	"type": "python-service"
+	"type": "python-service",
+	"default_port": 8003,
+	"envs": {
+		"production": [
+			"_SERVICE_HOST_PORT",
+			"GAIA_DB",
+			"_USE_WSGI_PROTOCAL",
+			"MODE"
+		],
+		"dev": [
+			"_IS_WEIZOOM_DEV_VM",
+			"_SERVICE_HOST_PORT"
+		]
+	},
+	"hosts": {
+		"always": [
+			"etcd.weizoom.com"
+		],
+		"dev": [
+			"db.dev.com"
+		],
+		"production": [
+		]
+	},
+	"dev": {
+		"rebuild": "no",
+		"init": "$standard"
+	}
 }

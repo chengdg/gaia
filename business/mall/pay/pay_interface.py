@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+from bdem import msgutil
 from eaglet.core import watchdog
 from eaglet.decorator import param_required
 
@@ -7,6 +7,8 @@ from business import model as business_model
 from db.mall import models as mall_models
 
 from business.mall.corporation_factory import CorporationFactory
+from gaia_conf import TOPIC
+
 
 class PayInterface(business_model.Model):
 	"""
@@ -38,6 +40,7 @@ class PayInterface(business_model.Model):
 		设置支付接口的具体配置
 		"""
 		mall_models.PayInterface.update(related_config_id=config.id).dj_where(id=self.id).execute()
+		self.__send_message_to_topic()
 
 	def is_weixin_pay(self):
 		"""
@@ -57,6 +60,7 @@ class PayInterface(business_model.Model):
 		"""
 		corp_id = CorporationFactory.get().id
 		mall_models.PayInterface.update(is_active=True).dj_where(owner_id=corp_id, id=self.id).execute()
+		self.__send_message_to_topic()
 
 	def disable(self):
 		"""
@@ -64,3 +68,14 @@ class PayInterface(business_model.Model):
 		"""
 		corp_id = CorporationFactory.get().id
 		mall_models.PayInterface.update(is_active=False).dj_where(owner_id=corp_id, id=self.id).execute()
+		self.__send_message_to_topic()
+
+	def __send_message_to_topic(self):
+		corp_id = CorporationFactory.get().id
+		msg_name = 'webapp_owner_info_updated'
+		topic_name = TOPIC['mall_config']
+		data = {
+			"corp_id": corp_id,
+
+		}
+		msgutil.send_message(topic_name, msg_name, data)

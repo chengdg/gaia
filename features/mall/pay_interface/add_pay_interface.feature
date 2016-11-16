@@ -1,7 +1,7 @@
 Feature:添加支付方式
 	Jobs能通过管理系统添加"支付方式"
 
-@gaia @mall @mall.pay_interface @hermes
+@gaia @mall @mall.pay_interface
 Scenario:1 添加支付方式:微信支付 v3
 	
 	Given jobs登录系统
@@ -38,7 +38,7 @@ Scenario:1 添加支付方式:微信支付 v3
 		}
 		"""
 
-@gaia @mall @mall.pay_interface @hermes
+@gaia @mall @mall.pay_interface
 Scenario:2 添加支付方式:支付宝支付
 	
 	Given jobs登录系统
@@ -75,7 +75,7 @@ Scenario:2 添加支付方式:支付宝支付
 		}
 		"""
 
-@gaia @mall @mall.pay_interface @hermes
+@gaia @mall @mall.pay_interface
 Scenario:3 添加支付方式:货到付款
 
 	Given jobs登录系统
@@ -102,7 +102,7 @@ Scenario:3 添加支付方式:货到付款
 		}
 		"""
 
-@gaia @mall @mall.pay_interface @hermes
+@gaia @mall @mall.pay_interface
 Scenario:4 获得多个支付方式，改变支付接口启用状态
 
 	Given jobs登录系统

@@ -17,7 +17,7 @@ class Model(object):
 	def _init_slot_from_model(self, model, slots=None):
 		if not slots:
 			slots = self.__slots__
-			
+
 		for slot in slots:
 			value = getattr(model, slot, None)
 			if value != None:

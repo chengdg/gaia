@@ -25,6 +25,13 @@ class MallConfigFactory(business_model.Service):
 		integral_strategy_settings = member_models.IntegralStrategySettings.create(
 			webapp_id=self.corp.webapp_id
 		)
+		msg_name = 'webapp_owner_info_updated'
+		topic_name = TOPIC['mall_config']
+		data = {
+			"corp_id": self.corp.id,
+
+		}
+		msgutil.send_message(topic_name, msg_name, data)
 		return IntegralStrategy(integral_strategy_settings)
 
 	def create_default_webapp_config(self):

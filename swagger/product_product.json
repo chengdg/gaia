@@ -130,6 +130,13 @@
                         "description": "",
                         "required": true,
                         "type": "string"
+                    },
+                    {
+                        "name": "product_id",
+                        "in": "query",
+                        "description": "查看商品详情的时候传递",
+                        "required": false,
+                        "type": "string"
                     }
                 ],
                 "tags": [
@@ -165,6 +172,19 @@
                                         }
                                     }
                                 },
+                                "postage_config_info": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "string",
+                                            "description": "运费配置模板id"
+                                        },
+                                        "name": {
+                                            "type": "string",
+                                            "description": "运费配置模板名称"
+                                        }
+                                    }
+                                },
                                 "property_templates": {
                                     "type": "array",
                                     "description": "商品属性模板集合",
@@ -195,6 +215,23 @@
                                             "name": {
                                                 "type": "string",
                                                 "description": "商品分组的名字"
+                                            }
+                                        }
+                                    }
+                                },
+                                "limit_zones": {
+                                    "type": "array",
+                                    "description": "限定区域模板集合",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "id": {
+                                                "type": "string",
+                                                "description": "限定区域模板id"
+                                            },
+                                            "name": {
+                                                "type": "string",
+                                                "description": "限定区域模板名字"
                                             }
                                         }
                                     }
@@ -360,6 +397,74 @@
                         "name": "product_ids",
                         "in": "formData",
                         "description": "待下架的商品的id集合的json字符串",
+                        "format": "'[1, 2, 3]'",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        },
+        "/product/unshelf_consigncomment_products/": {
+            "get": {
+                "summary": "获取未在货架上的代销商品",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "products": {
+                                    "$ref": "#/definitions/ProductInProductList"
+                                },
+                                "pageinfo": {
+                                    "type": "object",
+                                    "description": "分页信息"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "summary": "将商品从货架放回代销商品",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "formData",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "product_ids",
+                        "in": "formData",
+                        "description": "商品的id集合的json字符串",
                         "format": "'[1, 2, 3]'",
                         "required": true,
                         "type": "string"

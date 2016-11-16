@@ -26,7 +26,7 @@ class EncodeProductService(business_model.Service):
 			"sales": product.sales,
 			"is_member_product": product.is_member_product,
 			"is_delivery": product.is_delivery,
-			"sync_at": product.sync_at.strftime('%Y-%m-%d %H:%M') if product.create_type == 'sync' else None,
+			"sync_at": product.sync_at.strftime('%Y-%m-%d %H:%M') if (product.create_type == 'sync' and product.sync_at) else None,
 			"created_at": product.created_at.strftime('%Y-%m-%d %H:%M')
 		}
 
@@ -200,6 +200,22 @@ class EncodeProductService(business_model.Service):
 				'label_name': label.name
 			})
 		return datas
+
+	def get_cps_promotion_info(self, product):
+		cps_promotion_info = product.cps_promoted_info
+		if cps_promotion_info:
+			data = {
+				'money': cps_promotion_info['money'],
+				'time_from': cps_promotion_info['time_from'],
+				'time_to': cps_promotion_info['time_to'],
+				'sale_count': cps_promotion_info['sale_count'],
+				'total_money': cps_promotion_info['total_money'],
+				'stock': cps_promotion_info['stock'],
+				'is_cps_promotion_processed': cps_promotion_info['is_cps_promotion_processed'],
+				'id': cps_promotion_info['id']
+			}
+			return data
+		return None
 
 	def encode(self, product):
 		pass

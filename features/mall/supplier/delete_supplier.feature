@@ -28,7 +28,7 @@ Background:
 		"""
 
 
-@gaia @mall @mall.product @mall.product_category @hermes
+@gaia @mall @mall.product @mall.product_category
 Scenario:1 Jobs删除已存在的供应商
 	Given jobs登录系统
 	When jobs删除供应商'微软'

@@ -10,6 +10,14 @@ import a_offshelf_products
 import a_onshelf_products
 import a_deleted_products
 import a_weizoom_pooled_products
+import a_pooled_products
+import a_unshelf_consignment_products
+import a_unshelf_pooled_products
 
 import property_template
 import model_property
+
+import a_cps_promoted_product
+import a_cps_promoted_products
+import a_unprocessed_cps_promoted_products_count
+import a_processed_cps_promoted_products

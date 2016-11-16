@@ -20,5 +20,3 @@ class PremiumSale(promotion.Promotion):
 
 		if promotion_model:
 			self._init_promotion_slot_from_model(promotion_model)
-
-		self.type_name = 'premium_sale'

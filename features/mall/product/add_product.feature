@@ -61,7 +61,7 @@ Background:
 		}
 		"""
 
-@gaia @mall @mall.product @mall.product_management @hermes @product_create
+@gaia @mall @mall.product @mall.product_management @product_create
 Scenario:1 添加标准规格商品
 	job添加商品后：
 	1、能获得商品详情
@@ -209,7 +209,7 @@ Scenario:1 添加标准规格商品
 		}]
 		"""
 
-@gaia @mall @mall.product @mall.product_management @hermes
+@gaia @mall @mall.product @mall.product_management
 Scenario:1 添加定制规格商品
 	job添加商品后：
 	1、能获得商品详情
@@ -296,7 +296,7 @@ Scenario:1 添加定制规格商品
 		"""
 	
 
-@gaia @ignore
+@todo @ignore
 Scenario:2 添加商品时选择分类，能在分类中看到该商品
 	Jobs添加一组"商品分类"后，"商品分类列表"会按照添加的顺序倒序排列
 
@@ -378,7 +378,7 @@ Scenario:2 添加商品时选择分类，能在分类中看到该商品
 		}]
 		"""
 
-@gaia @mall @mall.product @mall.product_management @hermes
+@gaia @mall @mall.product @mall.product_management
 Scenario:3 添加带有禁售地区的商品商品
 	job添加商品后：
 	1、能获得商品详情中可以看到限定区域的信息

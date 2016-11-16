@@ -55,14 +55,14 @@ class ProductPool(business_model.Model):
 		"""
 		添加代售商品到商品池
 		"""
+
 		for product_id in product_ids:
 			mall_models.ProductPool.create(
 				woid=self.corp_id,
 				product_id=product_id,
-				status=mall_models.PP_STATUS_ON,
+				status=mall_models.PP_STATUS_ON_POOL,
 				type=mall_models.PP_TYPE_SYNC,
 				display_index=NEW_PRODUCT_DISPLAY_INDEX,
-				sync_at=datetime.now()
 			)
 		return True
 
@@ -80,18 +80,30 @@ class ProductPool(business_model.Model):
 		product_sales_filter_values = {}
 		product_supplier_filter_values = {}
 		product_classification_filter_values = {}
+		product_promotion_filter_values = {}
+		product_label_filter_values = {}
 
 		filter_parse_result = FilterParser.get().parse(filters)
-
+		should_add_default_status = True #是否添加默认的商品status条件
 		for filter_field_op, filter_value in filter_parse_result.items():
 			#获得过滤的field
 			items = filter_field_op.split('__')
 			filter_field = items[0]
+			op = None
+			if len(items) > 1:
+				op = items[1]
 
 			#按表将filter分散到不同的list中
 			filter_category = None
 			should_ignore_field = False #是否略过该field不处理
-			if filter_field == 'status' or filter_field == 'id':
+			if filter_field == 'id':
+				filter_field = 'product_id'
+				filter_field_op = 'product_id'
+				filter_category = product_pool_filter_values
+			elif filter_field == 'status':
+				should_add_default_status = False
+				filter_category = product_pool_filter_values
+			elif filter_field == 'sync_at':
 				filter_category = product_pool_filter_values
 			elif filter_field == 'name' or filter_field == 'bar_code' or filter_field == 'created_at':
 				filter_category = product_db_filter_values
@@ -112,6 +124,7 @@ class ProductPool(business_model.Model):
 					filter_value = mall_models.SUPPLIER_TYPE_RETAIL
 			elif filter_field == 'supplier':
 				filter_field_op = 'name__icontains'
+				op = None
 				filter_category = product_supplier_filter_values
 			elif filter_field == 'secondary_classification':
 				child_category_ids = [child.id for child in self.corp.product_classification_repository.get_children_product_classifications(filter_value)]
@@ -126,13 +139,21 @@ class ProductPool(business_model.Model):
 					filter_category = product_classification_filter_values
 				else:
 					should_ignore_field = True
+			elif filter_field == 'promotion_status':
+				filter_field_op = 'promote_status'
+				filter_category = product_promotion_filter_values
+			elif filter_field == 'labels':
+				filter_category = product_label_filter_values
+				filter_field = 'label_id'
 
 			if not should_ignore_field:
+				if op:
+					filter_field_op = '%s__%s' % (filter_field, op)
 				filter_category[filter_field_op] = filter_value
 
 		#补充条件
 		product_pool_filter_values['woid'] = CorporationFactory.get().id
-		if not 'status' in product_pool_filter_values:
+		if should_add_default_status:
 			product_pool_filter_values['status__not'] = mall_models.PP_STATUS_DELETE
 
 		return {
@@ -142,7 +163,9 @@ class ProductPool(business_model.Model):
 			'product_category': product_category_filter_values,
 			'product_sales': product_sales_filter_values,
 			'product_supplier': product_supplier_filter_values,
-			'product_classification': product_classification_filter_values
+			'product_classification': product_classification_filter_values,
+			'product_promotion': product_promotion_filter_values,
+			'product_label': product_label_filter_values
 		}
 
 	def get_products(self, page_info, fill_options=None, options={}, filters={}):
@@ -152,18 +175,29 @@ class ProductPool(business_model.Model):
 		"""
 		type2filters = self.__split_filters(filters)
 
+		print filters
+		print type2filters
+
+		#构建排序策略
+		order_options = []
+		if 'order_by_display_index' in options:
+			order_options.append(mall_models.ProductPool.display_index)
+			order_options.append(mall_models.ProductPool.product_id)
+		elif 'order_by_status' in options:
+			order_options.append(mall_models.ProductPool.status.desc())
+			order_options.append(mall_models.ProductPool.product_id)
+
 		#在product_pool表中进行过滤
 		product_pool_filters = type2filters['product_pool']
+		#进行查询
 		if product_pool_filters:
-			if 'order_by_display_index' in options:
-				pool_product_models = mall_models.ProductPool.select().dj_where(**product_pool_filters).order_by(mall_models.ProductPool.display_index, mall_models.ProductPool.product_id)
-			else:
-				pool_product_models = mall_models.ProductPool.select().dj_where(**product_pool_filters)
+			pool_product_models = mall_models.ProductPool.select().dj_where(**product_pool_filters)			
 		else:
-			if 'order_by_display_index' in options:
-				pool_product_models = mall_models.ProductPool.select().dj_where(status__not=mall_models.PP_STATUS_DELETE).order_by(mall_models.ProductPool.display_index, mall_models.ProductPool.product_id)
-			else:
-				pool_product_models = mall_models.ProductPool.select().dj_where(status__not=mall_models.PP_STATUS_DELETE)
+			pool_product_models = mall_models.ProductPool.select().dj_where(status__not=mall_models.PP_STATUS_DELETE)			
+		if len(order_options) > 0:
+			pool_product_models = pool_product_models.order_by(*order_options)
+
+		#获取查询结果
 		product_ids = [pool_product_model.product_id for pool_product_model in pool_product_models]
 		product2poolmodel = dict([(pool_product_model.product_id, pool_product_model) for pool_product_model in pool_product_models])
 
@@ -171,6 +205,7 @@ class ProductPool(business_model.Model):
 		product_model_filters = type2filters['product_model']
 		if product_model_filters:
 			product_model_filters['product_id__in'] = product_ids
+			product_model_filters['is_deleted'] = 0
 			product_model_models = mall_models.ProductModel.select().dj_where(**product_model_filters)
 			product_ids = [model.product_id for model in product_model_models]
 
@@ -197,8 +232,23 @@ class ProductPool(business_model.Model):
 		#根据商品分类进行过滤
 		product_classification_filters = type2filters['product_classification']
 		if product_classification_filters:
+			product_classification_filters['product_id__in'] = product_ids
 			product_ids = [relation.product_id for relation in mall_models.ClassificationHasProduct.select().dj_where(**product_classification_filters)]
-			
+
+		#根据商品标签进行过滤
+		product_label_filters = type2filters['product_label']
+		if product_label_filters:
+			product_label_filters['product_id__in'] = product_ids
+			product_ids = [relation.product_id for relation in mall_models.ProductHasLabel.select().dj_where(**product_label_filters)]
+
+		# 根据cps推广进行过滤
+		product_promotion_filter_values = type2filters['product_promotion']
+		if product_promotion_filter_values:
+			if product_ids:
+				product_promotion_filter_values.update({'product_id__in': product_ids})
+				product_ids = [promote.product_id for promote in mall_models.PromoteDetail.select().dj_where(**product_promotion_filter_values)]
+				# product_ids = list(set(product_ids) - set(promoted_product_ids))
+
 		#在mall_product表中进行过滤
 		product_info_filters = type2filters['product_info']
 		if supplier_ids:
@@ -261,9 +311,14 @@ class ProductPool(business_model.Model):
 			result.append(id2product[product_id])
 		return result
 
+	def get_product_by_id(self, product_id, fill_options={}):
+		return self.get_products_by_ids([product_id], fill_options=fill_options)[0]
+
 	def __compatible_delete_products(self, product_ids):
 		#[compatibility]: 兼容老的apiserver，在apiserver升级到支持ProductPool，本函数应该删除
-		mall_models.Product.update(is_deleted=True).dj_where(id__in=product_ids).execute()
+		if self.corp.type == 'normal':
+			# 在当前阶段，只有normal家的商品才执行删除
+			mall_models.Product.update(is_deleted=True).dj_where(id__in=product_ids).execute()
 
 	def delete_products(self, product_ids):
 		"""
@@ -272,17 +327,95 @@ class ProductPool(business_model.Model):
 		@return:
 		"""
 		if product_ids:
+			#在product pool中删除
 			mall_models.ProductPool.update(
 				display_index=NEW_PRODUCT_DISPLAY_INDEX,
 				status=mall_models.PP_STATUS_DELETE
 			).dj_where(product_id__in=product_ids, woid=self.corp_id).execute()
+
+			#从分组中删除
+			self.corp.category_repository.delete_products_in_categories(product_ids)
+
+			#对于代销商品，重新将其放回商品池
+			mall_models.ProductPool.update(
+				status=mall_models.PP_STATUS_ON_POOL
+			).dj_where(product_id__in=product_ids, woid=self.corp_id, type=mall_models.PP_TYPE_SYNC).execute()
 
 			self.__compatible_delete_products(product_ids)
 
 			topic_name = TOPIC['product']
 			msg_name = 'product_deleted'
 			data = {
+				"corp_id": self.corp.id,
 				"product_ids": product_ids
 			}
 			msgutil.send_message(topic_name, msg_name, data)
 		return True
+
+	def restore_products(self, product_ids):
+		"""
+		将商品放回到商品池中
+		"""
+		if product_ids:
+			mall_models.ProductPool.update(
+				display_index=NEW_PRODUCT_DISPLAY_INDEX,
+				status=mall_models.PP_STATUS_ON_POOL
+			).dj_where(product_id__in=product_ids, woid=self.corp.id).execute()
+
+			#从分组中删除
+			self.corp.category_repository.delete_products_in_categories(product_ids)
+
+			topic_name = TOPIC['product']
+			msg_name = 'product_deleted'
+			data = {
+				"corp_id": self.corp.id,
+				"product_ids": product_ids
+			}
+			msgutil.send_message(topic_name, msg_name, data)
+
+	def search_promoted_products(self, filters, page_info):
+		product_pool = self.corp.product_pool
+
+		filters['__f-status-equal'] = mall_models.PP_STATUS_ON_POOL
+		filters['__f-promotion_status-equal'] = mall_models.PROMOTING
+		fill_options = {
+			'with_category': True,
+			'with_product_model': True,
+			'with_model_property_info': True,
+			'with_shelve_status': True,
+			'with_supplier_info': True,
+			'with_classification': True,
+			'with_sales': True,
+			'with_cps_promotion_info': True
+		}
+
+		options = {
+			'order_by_display_index': True
+		}
+
+		products, pageinfo = product_pool.get_products(page_info, fill_options, options, filters)
+
+		return products, pageinfo
+
+	def get_unprocessed_cps_promoted_products_count(self):
+		"""
+
+		"""
+
+		new_promoted_product = mall_models.PromoteDetail.select().dj_where(is_new=True,
+																		   promote_status=mall_models.PROMOTING)
+		promoting_product_ids = [promoted_product.product_id for promoted_product in new_promoted_product]
+		pool_product_models = mall_models.ProductPool.select().dj_where(status__in=[mall_models.PP_STATUS_ON_POOL,
+																					mall_models.PP_STATUS_ON,
+																					mall_models.PP_STATUS_OFF],
+																		woid=self.corp.id,
+																		is_cps_promotion_processed=False,
+																		product_id__in=promoting_product_ids)
+
+		return pool_product_models.count()
+
+	def set_cps_promoted_products_processed(self, product_ids):
+
+		mall_models.ProductPool.update(is_cps_promotion_processed=True)\
+			.dj_where(product_id__in=product_ids,
+					  woid=self.corp.id).execute()

@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 
-
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
 
-from business.mall.product_config import ProductConfig
+from business.mall.corporation_factory import CorporationFactory
 from business.common.page_info import PageInfo
 
 
@@ -31,6 +30,32 @@ class AProductCreationOption(api_resource.ApiResource):
 			datas.append(data)
 
 		return datas
+
+	@staticmethod
+	def __load_postag_config(corp, product_id=None):
+		"""
+		获取创建/查看商品时候,运费模板配置信息
+		"""
+		# 普通平台,商品使用平台设置的,自应平台应该显示商品的供货商的默认运费模板
+		if not corp.is_self_run_platform():
+			postage_config = corp.postage_config_repository.get_corp_used_postage_config()
+			return {
+				'id': postage_config.id,
+				'name': postage_config.name
+			}
+		else:
+			if not product_id:
+				return {'id': '', 'name': ''}
+			weizoom_corp = CorporationFactory.get_weizoom_corporation()
+			CorporationFactory.set(weizoom_corp)
+			product = corp.product_pool.get_product_by_id(product_id)
+			postage_config = weizoom_corp.postage_config_repository.get_supplier_used_postage_config(product.supplier_id)
+			CorporationFactory.set(corp)
+			return {
+				'id': postage_config.id,
+				'name': postage_config.name
+			}
+
 
 	@staticmethod
 	def __load_product_property_templates(corp):
@@ -65,29 +90,45 @@ class AProductCreationOption(api_resource.ApiResource):
 		return datas
 
 	@staticmethod
-	def __load_limit_zones(corp):
+	def __load_limit_zones(corp, product_id=None):
 		"""
 		获取限定区域信息
 		"""
-		limit_zones = corp.limit_zone_repository.get_limit_zones()
-		datas = []
-		for limit_zone in limit_zones:
-			datas.append({
-				"id": limit_zone.id,
-				"name": limit_zone.name
-			})
-		return datas
+		if not corp.is_self_run_platform():
+			limit_zones = corp.limit_zone_repository.get_limit_zones()
+			datas = []
+			for limit_zone in limit_zones:
+				datas.append({
+					"id": limit_zone.id,
+					"name": limit_zone.name
+				})
+			return datas
+		else:
+			# 自营平台创建商品
+			if not product_id or int(product_id) <= 0:
+				return []
+			# 自应平台查看商品
+			product = corp.product_pool.get_product_by_id(product_id)
+			if not product.limit_zone:
+				return []
+			weizoom_corp = CorporationFactory.get_weizoom_corporation()
+			CorporationFactory.set(weizoom_corp)
+			limit_zone = weizoom_corp.limit_zone_repository.get_limit_zone_by_id(product.limit_zone)
+			CorporationFactory.set(corp)
+			return [{"id": limit_zone.id, "name": limit_zone.name}]
 
 	@param_required(['corp_id'])
 	def get(args):
 		corp = args['corp']
+		# 查看商品
+		product_id = args.get('product_id')
 		config = {}
 
 		#支付接口配置
 		config['pay_interfaces'] = AProductCreationOption.__load_pay_interfaces(corp)
 
 		#运费模板
-		config['postage_config_info'] = None
+		config['postage_config_info'] = AProductCreationOption.__load_postag_config(corp, product_id=product_id)
 
 		#属性模板
 		config['property_templates'] = AProductCreationOption.__load_product_property_templates(corp)
@@ -96,6 +137,6 @@ class AProductCreationOption(api_resource.ApiResource):
 		config['categories'] = AProductCreationOption.__load_categories(corp)
 
 		#限定区域信息
-		config['limit_zones'] = AProductCreationOption.__load_limit_zones(corp)
+		config['limit_zones'] = AProductCreationOption.__load_limit_zones(corp, product_id=product_id)
 
 		return config

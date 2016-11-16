@@ -34,11 +34,10 @@ class DeliveryItemProductRepository(business_model.Model):
 
 		return DeliveryItemProductRepository(corp)
 
-	def set_products_for_delivery_items(self, delivery_items, with_premium_sale):
+	def set_products_for_delivery_items(self, delivery_items):
 		"""
 		设置订单的商品，性能攸关
 		@param delivery_items:
-		@param with_premium_sale:
 		@return:
 		"""
 

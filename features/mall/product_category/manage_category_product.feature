@@ -3,7 +3,7 @@ Feature: 管理分组中的商品
 	Jobs能通过管理系统管理分组中的商品
 """
 
-@gaia @mall @mall.product @mall.product_category @hermes
+@gaia @mall @mall.product @mall.product_category
 Scenario:1 从分组中删除商品
 
 	Given jobs登录系统
@@ -29,11 +29,11 @@ Scenario:1 从分组中删除商品
 		[{
 			"name": "分组1",
 			"products": [{
-				"name": "东坡肘子"
+				"name": "莲藕排骨汤"
 			}, {
 				"name": "叫花鸡"
 			}, {
-				"name": "莲藕排骨汤"
+				"name": "东坡肘子"
 			}]
 		}]
 		"""
@@ -43,14 +43,14 @@ Scenario:1 从分组中删除商品
 		[{
 			"name": "分组1",
 			"products": [{
-				"name": "东坡肘子"
-			}, {
 				"name": "莲藕排骨汤"
+			}, {
+				"name": "东坡肘子"
 			}]
 		}]
 		"""
 
-@gaia @mall @mall.product @mall.product_category @hermes
+@gaia @mall @mall.product @mall.product_category
 Scenario:2 调整分组中商品排序
 
 	Given jobs登录系统
@@ -76,11 +76,14 @@ Scenario:2 调整分组中商品排序
 		[{
 			"name": "分组1",
 			"products": [{
-				"name": "东坡肘子"
+				"name": "莲藕排骨汤",
+				"display_index": 0
 			}, {
-				"name": "叫花鸡"
+				"name": "叫花鸡",
+				"display_index": 0
 			}, {
-				"name": "莲藕排骨汤"
+				"name": "东坡肘子",
+				"display_index": 0
 			}]
 		}]
 		"""
@@ -90,11 +93,14 @@ Scenario:2 调整分组中商品排序
 		[{
 			"name": "分组1",
 			"products": [{
-				"name": "叫花鸡"
+				"name": "叫花鸡",
+				"display_index": 2
 			}, {
-				"name": "东坡肘子"
+				"name": "莲藕排骨汤",
+				"display_index": 0
 			}, {
-				"name": "莲藕排骨汤"
+				"name": "东坡肘子",
+				"display_index": 0
 			}]
 		}]
 		"""
@@ -104,16 +110,37 @@ Scenario:2 调整分组中商品排序
 		[{
 			"name": "分组1",
 			"products": [{
-				"name": "莲藕排骨汤"
+				"name": "莲藕排骨汤",
+				"display_index": 1
 			}, {
-				"name": "叫花鸡"
+				"name": "叫花鸡",
+				"display_index": 2
 			}, {
-				"name": "东坡肘子"
+				"name": "东坡肘子",
+				"display_index": 0
+			}]
+		}]
+		"""
+	#更新一个商品为new_position，会重置之前diaplay_index为new_position的商品
+	When jobs更新商品分组'分组1'中商品'东坡肘子'的排序为'1'
+	Then jobs能获取商品分组列表
+		"""
+		[{
+			"name": "分组1",
+			"products": [{
+				"name": "东坡肘子",
+				"display_index": 1
+			}, {
+				"name": "叫花鸡",
+				"display_index": 2
+			}, {
+				"name": "莲藕排骨汤",
+				"display_index": 0
 			}]
 		}]
 		"""
 
-@gaia @mall @mall.product @mall.product_category @hermes
+@gaia @mall @mall.product @mall.product_category
 Scenario:3 向分组中增加商品
 
 	Given jobs登录系统
@@ -141,9 +168,9 @@ Scenario:3 向分组中增加商品
 		[{
 			"name": "分组1",
 			"products": [{
-				"name": "东坡肘子"
-			}, {
 				"name": "叫花鸡"
+			}, {
+				"name": "东坡肘子"
 			}]
 		}]
 		"""
@@ -156,13 +183,13 @@ Scenario:3 向分组中增加商品
 		[{
 			"name": "分组1",
 			"products": [{
-				"name": "东坡肘子"
-			}, {
-				"name": "叫花鸡"
+				"name": "黄桥烧饼"
 			}, {
 				"name": "莲藕排骨汤"
 			}, {
-				"name": "黄桥烧饼"
+				"name": "叫花鸡"
+			}, {
+				"name": "东坡肘子"
 			}]
 		}]
 		"""

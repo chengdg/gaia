@@ -1,0 +1,441 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "Hermes Product Promote API"
+    },
+    "paths": {
+       "/product/cps_promoted_product/": {
+
+            "post": {
+                "summary": "修改商品推广信息",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "商品 owner_id",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "product_id",
+                        "in": "query",
+                        "description": "商品id",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "promotion_id",
+                        "in": "query",
+                        "description": "推广信息id",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "推广状态 PROMOTING: 推广中 PROMOTE_OVER: # 推广结束",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "money",
+                        "in": "query",
+                        "description": "推广单价",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "stock",
+                        "in": "query",
+                        "description": "推广库存",
+                        "required": false,
+                        "type": "integer"
+                    },
+
+                    {
+                        "name": "sale_count",
+                        "in": "query",
+                        "description": "推广销量",
+                        "required": false,
+                        "type": "integer"
+                    },
+
+                    {
+                        "name": "total_money",
+                        "in": "query",
+                        "description": "推广费用总费用",
+                        "required": false,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product_promote"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response"
+
+                    }
+                }
+            },
+            "put": {
+                "summary": "添加推广商品",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "商品 owner_id",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "product_id",
+                        "in": "query",
+                        "description": "商品id",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "money",
+                        "in": "query",
+                        "description": "推广单价",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "stock",
+                        "in": "query",
+                        "description": "推广库存",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "time_from",
+                        "in": "query",
+                        "description": "推广开始时间%Y-%m-%d %H:%M:%S",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "time_to",
+                        "in": "query",
+                        "description": "推广结束时间%Y-%m-%d %H:%M:%S",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "sale_count",
+                        "in": "query",
+                        "description": "推广销量",
+                        "required": false,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "total_money",
+                        "in": "query",
+                        "description": "推广费用总费用",
+                        "required": false,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product_promote"
+                ],
+
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "type": "object",
+                            "properties":{
+                              "code": {
+                                    "type": "string",
+
+                                    "description": "返回码"
+                                },
+                                "data": {
+                                  "type": "object",
+                                  "properties": {
+                                        "id": {
+                                            "type": "string",
+                                            "description": "weapp这边新增的推广信息id"
+                                        },
+                                        "cps_promotion_info":{
+                                            "$ref": "#/definitions/CpsPromotionInfo"
+                                        }
+                                  }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+       "/product/cps_promoted_products/":{
+            "get": {
+                "summary": "获得推广商品",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "product_status",
+                        "in": "query",
+                        "description": "商品状态 insale: 在售, forsale: 下架 , pool: 商品池列表",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "filters",
+                        "in": "query",
+                        "description": "查询条件(json字符串)",
+                        "required": false,
+                        "type": "string",
+                        "format": "类似{'__f-name-contains':'abc', '__f-product_name-contains':'def'}这样的查询对象"
+                    }
+
+                ],
+                "tags": [
+                    "product_promote"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/PromotedProductsList"
+                        }
+                    }
+                }
+            }
+
+       },
+
+       "/product/unprocessed_cps_promoted_products_count": {
+            "get": {
+                "summary": "自营平台未处理的cps推广商品的数量",
+                "parameters": [
+                     {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product_promote"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "type": "object",
+                        "schema": {
+                            "type": "object",
+                            "properties":{
+                              "code": {
+                                    "type": "string",
+
+                                    "description": "返回码"
+                                },
+                                "data": {
+                                  "type": "object",
+                                  "properties": {
+                                        "count": {
+                                            "type": "int",
+                                            "description": "新增的推广"
+                                        }
+                                  }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+       },
+         "/product/processed_cps_promoted_products": {
+            "put": {
+                "summary": "自营平台处理cps推广商品",
+                "parameters": [
+                     {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "product_ids",
+                        "in": "query",
+                        "description": "[product_id....]格式 ",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product_promote"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+
+                    }
+                }
+            }
+       }
+
+    },
+    "definitions": {
+        "PromotedProductsList": {
+            "type": "object",
+            "properties": {
+                "pageinfo": {
+                    "type": "object",
+                    "description": "分页信息"
+                },
+                "products": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/PromotedProductInList"
+                    },
+                    "minItems": 0
+                }
+            }
+        },
+        "ProductPromote": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": ""
+                },
+
+                "product_id": {
+                    "type": "string",
+                    "description": "商品id"
+                },
+                "promote_status": {
+                    "type": "string",
+                    "description": "推广状态 1: 推广中 2: 推广结束"
+                },
+                "promote_money": {
+                    "type": "string",
+                    "description": "推广费用/件"
+                },
+                "promote_stock": {
+                    "type": "string",
+                    "description": "推广库存"
+                },
+                "promote_time_to": {
+                    "type": "string",
+                    "description": "推广结束时间%Y-%m-%d %H:%M:%S"
+                },
+                "promote_time_from": {
+                    "type": "string",
+                    "description": "推广开始时间%Y-%m-%d %H:%M:%S"
+                },
+                "promote_total_money": {
+                    "type": "string",
+                    "description": "推广费用总费用"
+                },
+                "promote_sale_count": {
+                    "type": "string",
+                    "description": "推广销量"
+                },
+
+                "created_at": {
+                    "type": "string",
+                    "description": "创建时间%Y-%m-%d %H:%M:%S"
+                }
+
+            }
+        },
+        "PromotedProductInList":{
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "number",
+                    "description": "商品的id"
+                },
+                "base_info": {
+                    "$ref": "#/definitions/ReturnBaseInfo"
+                },
+                "models_info": {
+                    "$ref": "#/definitions/ModelsInfo"
+                },
+                "image_info": {
+                    "$ref": "#/definitions/ImageInfo"
+                },
+
+                "categories": {
+                    "$ref": "#/definitions/ReturnCategories"
+                },
+                "supplier": {
+                    "$ref": "#/definitions/ReturnSupplier"
+                },
+                "classifications": {
+                    "$ref": "#/definitions/ReturnClassifications"
+                },
+                "cps_promotion_info":{
+                    "$ref": "#/definitions/CpsPromotionInfo"
+                }
+            }
+        },
+        "CpsPromotionInfo": {
+            "type": "object",
+            "description": "商品cps推广信息",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "推广id"
+                },
+                "money": {
+                    "type": "string",
+                    "description": "cps推广单价"
+                },
+                "time_from": {
+                    "type": "string",
+                    "description": "cps推广start时间"
+                },
+                "time_to": {
+                    "type": "string",
+                    "description": "cps推广end时间"
+                },
+                "sale_count": {
+                    "type": "string",
+                    "description": "cps推广销量"
+                },
+                "total_money": {
+                    "type": "string",
+                    "description": "cps推广总金额"
+                },
+                "is_cps_promotion_processed": {
+                    "type": "boolean",
+                    "description": "是否处理过改推广商品"
+                },
+                "stock": {
+                    "type": "string",
+                    "description": "cps库存"
+                }
+            }
+        }
+
+
+    }
+}

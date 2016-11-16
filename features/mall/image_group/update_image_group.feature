@@ -3,7 +3,7 @@ Feature: 更新图片分组
 Background:
 	Given jobs登录系统
 
-@gaia @mall @mall.product @mall.image_group @hermes
+@gaia @mall @mall.product @mall.image_group
 Scenario:1 修改图片分组
 	Jobs添加图片分组后
 	1. jobs能修改图片分组名字

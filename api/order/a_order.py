@@ -3,6 +3,8 @@
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
 
+from business.order.encode_order_service import EncodeOrderService
+
 
 class AOrder(api_resource.ApiResource):
 	"""
@@ -23,30 +25,48 @@ class AOrder(api_resource.ApiResource):
 
 		corp = args['corp']
 		order_repository = corp.order_repository
+
+		delivery_fill_options = {
+			'with_products': True,
+			'with_refunding_info': True,
+			'with_express_details': True,
+			'with_supplier': True,
+			'with_operation_logs': True
+		}
 		fill_options = {
 			'with_refunding_info': True,
 			'with_group_buy_info': True,
 			'with_member': True,
-			'with_group_info': True,
 			'with_full_money_info': True,
+
 			'with_status_logs': True,
 			'with_operation_logs': True,
 			'with_coupon': True,
 			'extra_promotion_info': True,
-			'with_delivery_items': {
-				'with_products': True,
-				'with_refunding_info': True,
-				'with_express_details': True,
-				'with_supplier': True,
-				'with_operation_logs': True
-			}
+			'with_delivery_items': delivery_fill_options
 
 		}
 
 		order = order_repository.get_order(id, fill_options)
 		# todo 显式声明
+
+		encode_order_service = EncodeOrderService.get(corp)
+		data = {}
+		data.update(encode_order_service.get_base_info(order))
+
+		data.update(encode_order_service.get_refunding_info(order))
+		data.update(encode_order_service.get_group_buy_info(order))
+		data.update(encode_order_service.get_member_info(order))
+		data.update(encode_order_service.get_full_money_info(order))
+
+		data.update(encode_order_service.get_status_logs(order))
+		data.update(encode_order_service.get_operation_logs(order))
+		data.update(encode_order_service.get_extra_coupon_info(order))
+		data.update(encode_order_service.get_extra_promotion_info(order))
+		data.update(encode_order_service.get_delivery_items(order, delivery_fill_options))
+
 		if order:
-			return {'order': order.to_dict()}
+			return {'order': data}
 		else:
 			return 500, {}
 

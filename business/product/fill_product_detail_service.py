@@ -28,17 +28,17 @@ class FillProductDetailService(business_model.Service):
 
 		product_ids = [product.id for product in products]
 		id2product = dict([(product.id, product) for product in products])
-		for p in mall_models.ProductPool.select().dj_where(product_id__in=product_ids):
+		for p in mall_models.ProductPool.select().dj_where(product_id__in=product_ids, woid=self.corp.id):
 			product = id2product[p.product_id]
 			if p.status == mall_models.PP_STATUS_ON:
 				product.set_shelve_type('on_shelf')
-				product.display_index = p.display_index
 			elif p.status == mall_models.PP_STATUS_OFF:
 				product.set_shelve_type('off_shelf')
-				product.display_index = p.display_index
-			else:
+			elif p.status == mall_models.PP_STATUS_ON_POOL:
 				product.set_shelve_type('in_pool')
-				product.display_index = p.display_index
+			else:
+				product.set_shelve_type('deleted')
+			product.display_index = p.display_index
 
 	def __fill_model_detail(self, corp, products, is_enable_model_property_info=False):
 		"""填充商品规格相关细节
@@ -53,25 +53,25 @@ class FillProductDetailService(business_model.Service):
 		product_model_generator = ProductModelGenerator.get(corp)
 		product_model_generator.fill_models_for_products(products, is_enable_model_property_info)
 
-	def __fill_category_detail(self, corp, products, product_ids):
+	def __fill_category_detail(self, product_ids, id2product):
 		"""填充商品分类信息相关细节
 		"""
-		categories = list(mall_models.ProductCategory.select().dj_where(owner=corp.id).order_by('id'))
 
 		# 获取product关联的category集合
-		id2product = {}
-		for product in products:
+		for key, product in id2product.items():
 			product.categories = []
-			id2product[product.id] = product
 
-		category_ids = [category.id for category in categories]
+		relations = mall_models.CategoryHasProduct.select().dj_where(product_id__in=product_ids).order_by('id')
+		catagory_ids = [relation.category_id for relation in relations]
+		categories = list(mall_models.ProductCategory.select().dj_where(id__in=catagory_ids).order_by('id'))
+
 		id2category = dict([(category.id, category) for category in categories])
-		for relation in mall_models.CategoryHasProduct.select().dj_where(product_id__in=product_ids).order_by('id'):
+		for relation in relations:
 			category_id = relation.category_id
 			product_id = relation.product_id
-			# if not category_id in id2category:
-			# 	# 微众商城分类，在商户中没有
-			# 	continue
+			if not category_id in id2category:
+				# 微众商城分类，在商户中没有
+				continue
 			category = id2category[category_id]
 			id2product[product_id].categories.append({
 				'id': category.id,
@@ -148,8 +148,8 @@ class FillProductDetailService(business_model.Service):
 					product.price_info = {
 						#'display_price': price_range,
 						#'display_original_price': price_range,
-						'display_price': min_price,
-						'display_original_price': min_price,
+						'display_price': str("%.2f" % min_price),
+						'display_original_price': str("%.2f" % min_price),
 						'display_market_price': market_price_range,
 						'min_price': min_price,
 						'max_price': max_price,
@@ -229,7 +229,8 @@ class FillProductDetailService(business_model.Service):
 		"""
 		填充商品标签的信息
 		"""
-		relations = mall_models.ProductHasLabel.select().dj_where(product_id__in=product_ids)
+		relations = mall_models.ProductHasLabel.select().dj_where(product_id__in=product_ids,
+																  label_id__gt=0)
 		label_ids = []
 		product_id2label_ids = {}
 		for relation in relations:
@@ -261,12 +262,9 @@ class FillProductDetailService(business_model.Service):
 		"""
 		填充商品促销的信息
 		"""
-		product_promotion_relations = promotion_models.ProductHasPromotion.select().dj_where(product_id__in=product_ids)
-		promotion_ids = list()
-		promotion2product = dict()
-		for relation in product_promotion_relations:
-			promotion_ids.append(relation.promotion_id)
-			promotion2product[relation.promotion_id] = relation.product_id
+		relations = promotion_models.ProductHasPromotion.select().dj_where(product_id__in=product_ids)
+		promotion_id2product_id = dict([(relation.promotion_id, relation.product_id) for relation in relations])
+		promotion_ids = promotion_id2product_id.keys()
 
 		promotion_db_models = promotion_models.Promotion.select().dj_where(id__in=promotion_ids).where(
 			promotion_models.Promotion.type != promotion_models.PROMOTION_TYPE_COUPON)
@@ -276,29 +274,55 @@ class FillProductDetailService(business_model.Service):
 				#跳过已结束、已删除的促销活动
 				continue
 
-			if promotion_db_model.owner_id != corp.id:
+			if promotion_db_model.owner_id != int(corp.id):
 				continue
 
-			promotion = corp.PromotionRepository.get_promotion(promotion_db_model)
+			promotion = corp.promotion_repository.get_promotion(promotion_db_model)
 			promotions.append(promotion)
 		fill_promotion_detail_service = FillPromotionDetailService.get(corp)
-		fill_promotion_detail_service.fill_detail(promotions)
-
+		fill_promotion_detail_service.fill_detail(promotions, corp)
 		#为所有的product设置product.promotion
 		for promotion in promotions:
-			product_id = promotion2product.get(promotion.id, None)
+			product_id = promotion_id2product_id.get(promotion.id, None)
 			if not product_id:
 				continue
 
 			product = id2product.get(product_id, None)
 			if not product:
 				continue
-
 			if promotion.type_name == 'integral_sale':
 				product.integral_sale = promotion
 			else:
 				product.promotion = promotion
 
+	def __fill_cps_promoteion_info(self, corp, products, product_ids, id2product):
+		"""
+		填充商品的cps推广信息
+		"""
+		promotion_infos = mall_models.PromoteDetail.select().dj_where(product_id__in=product_ids)
+		pool_product_models = mall_models.ProductPool.select().dj_where(product_id__in=product_ids, woid=self.corp.id)
+		id2pool_products = dict([(pool.product_id, pool) for pool in pool_product_models])
+		for promotion in promotion_infos:
+			product = id2product.get(promotion.product_id)
+			# product_id = product_id,
+			# promote_money = money,
+			# promote_time_from = time_from,
+			# promote_time_to = time_to,
+			# promote_sale_count = sale_count,
+			# promote_total_money = total_money,
+			# promote_stock = stock
+			pool_product_model = id2pool_products[promotion.product_id]
+			promotion_info = {
+				'money': promotion.promote_money,
+				'time_from': promotion.promote_time_from,
+				'time_to': promotion.promote_time_to,
+				'sale_count': promotion.promote_sale_count,
+				'total_money': promotion.promote_total_money,
+				'stock': promotion.promote_stock,
+				'is_cps_promotion_processed': pool_product_model.is_cps_promotion_processed,
+				'id': promotion.id
+			}
+			product.cps_promoted_info = promotion_info
 
 	def fill_detail(self, products, options):
 		"""填充各种细节信息
@@ -315,6 +339,7 @@ class FillProductDetailService(business_model.Service):
 			with_selected_category: 填充选中的分类信息
 			with_all_category: 填充所有商品分类详情
 			with_sales: 填充商品销售详情
+			with_cps_promotion_info: 填充商品cps推广信息
 		"""
 		if len(products) == 0:
 			return
@@ -341,7 +366,7 @@ class FillProductDetailService(business_model.Service):
 			self.__fill_shelve_status(self.corp, products)
 
 		if options.get('with_product_promotion', False):
-			Product.__fill_promotion_detail(self.corp, products, product_ids, id2product)
+			self.__fill_promotion_detail(self.corp, products, product_ids, id2product)
 
 		if options.get('with_image', False):
 			self.__fill_image_detail(self.corp, products, product_ids)
@@ -350,7 +375,7 @@ class FillProductDetailService(business_model.Service):
 			self.__fill_property_detail(self.corp, products, product_ids)
 
 		if options.get('with_category', False):
-			self.__fill_category_detail(self.corp, products, product_ids)
+			self.__fill_category_detail(product_ids, id2product)
 
 		if options.get('with_supplier_info', False):
 			self.__fill_supplier_detail(self.corp, products, product_ids)
@@ -364,3 +389,5 @@ class FillProductDetailService(business_model.Service):
 		if options.get('with_product_label', False):
 			self.__fill_label_detail(self.corp, products, product_ids)
 
+		if options.get('with_cps_promotion_info', False):
+			self.__fill_cps_promoteion_info(self.corp, products, product_ids, id2product)

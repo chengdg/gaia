@@ -47,7 +47,9 @@ class AProduct(api_resource.ApiResource):
 				'properties': encode_product_service.get_properties(product),
 				"logistics_info": encode_product_service.get_logistics_info(product),
 				"supplier": encode_product_service.get_supplier_info(product),
-				"classifications": encode_product_service.get_classifications(product)
+				"classifications": encode_product_service.get_classifications(product),
+				"promotion": product.promotion,
+				"integral_sale": product.integral_sale
 			}
 
 			return data
