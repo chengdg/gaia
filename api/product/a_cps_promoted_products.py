@@ -69,6 +69,7 @@ class ACPSPromotedProducts(api_resource.ApiResource):
 				'classifications': classifications,
 				'base_info': base_info,
 				'cps_promotion_info': cps_promotion_info,
+				"sync_at": base_info['sync_at'],
 			}
 
 			datas.append(data)
