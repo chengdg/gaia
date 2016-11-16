@@ -16,6 +16,7 @@ from business.common.filter_parser import FilterParser
 
 NEW_PRODUCT_DISPLAY_INDEX = 9999999
 
+
 class ProductPool(business_model.Model):
 	__slots__ = (
 		'corp',
@@ -85,6 +86,8 @@ class ProductPool(business_model.Model):
 
 		filter_parse_result = FilterParser.get().parse(filters)
 		should_add_default_status = True #是否添加默认的商品status条件
+		# 是否添加规格信息的is_deleted字段
+		should_add_default_model_is_deleted = True
 		for filter_field_op, filter_value in filter_parse_result.items():
 			#获得过滤的field
 			items = filter_field_op.split('__')
@@ -109,6 +112,7 @@ class ProductPool(business_model.Model):
 				filter_category = product_db_filter_values
 			elif filter_field == 'price' or filter_field == 'stocks':
 				filter_category = product_model_filter_values
+				should_add_default_model_is_deleted = True
 			elif filter_field == 'category':
 				filter_category = product_category_filter_values
 			elif filter_field == 'sales':
@@ -156,6 +160,9 @@ class ProductPool(business_model.Model):
 		if should_add_default_status:
 			product_pool_filter_values['status__not'] = mall_models.PP_STATUS_DELETE
 
+		if should_add_default_model_is_deleted:
+			product_model_filter_values['is_deleted'] = False
+
 		return {
 			'product_pool': product_pool_filter_values,
 			'product_info': product_db_filter_values,
@@ -168,34 +175,61 @@ class ProductPool(business_model.Model):
 			'product_label': product_label_filter_values
 		}
 
-	def get_products(self, page_info, fill_options=None, options={}, filters={}):
+	def __get_product_order_fields(self, options):
+		"""
+		获得商品排序field集合
+		"""
+		options = {} if not options else options
+		type2field = {
+			'display_index': mall_models.ProductPool.display_index,
+			'status': mall_models.ProductPool.status,
+			'onshelf_time': mall_models.ProductPool.sync_at,
+			'id': mall_models.ProductPool.product_id
+		}
+
+		fields = []
+		for order_type in options.get('order_options', []):
+			is_desc = False
+			if order_type[0] == '-':
+				is_desc = True
+				order_type = order_type[1:]
+
+			field = type2field[order_type]
+			if is_desc:
+				field = field.desc()
+
+			fields.append(field)
+
+		return fields
+
+	def get_products(self, page_info, fill_options=None, options=None, filters=None):
 		"""
 		根据条件在商品池搜索商品
 		@return:
 		"""
 		type2filters = self.__split_filters(filters)
 
-		print filters
-		print type2filters
-
 		#构建排序策略
-		order_options = []
-		if 'order_by_display_index' in options:
-			order_options.append(mall_models.ProductPool.display_index)
-			order_options.append(mall_models.ProductPool.product_id)
-		elif 'order_by_status' in options:
-			order_options.append(mall_models.ProductPool.status.desc())
-			order_options.append(mall_models.ProductPool.product_id)
+		order_fields = self.__get_product_order_fields(options)
 
 		#在product_pool表中进行过滤
 		product_pool_filters = type2filters['product_pool']
 		#进行查询
 		if product_pool_filters:
+			# 补充首次上架时间搜索值null判断
+			sync_at__range = product_pool_filters.get('sync_at__range')
+			if sync_at__range:
+				sync_at__range = list(sync_at__range)
+				if not sync_at__range[0]:
+					sync_at__range[0] = '1999-01-01'
+				if not sync_at__range[1]:
+					sync_at__range[1] = '2999-01-01'
+				product_pool_filters['sync_at__range'] = sync_at__range
 			pool_product_models = mall_models.ProductPool.select().dj_where(**product_pool_filters)			
 		else:
 			pool_product_models = mall_models.ProductPool.select().dj_where(status__not=mall_models.PP_STATUS_DELETE)			
-		if len(order_options) > 0:
-			pool_product_models = pool_product_models.order_by(*order_options)
+		if len(order_fields) > 0:
+			pool_product_models = pool_product_models.order_by(*order_fields)
 
 		#获取查询结果
 		product_ids = [pool_product_model.product_id for pool_product_model in pool_product_models]
@@ -205,9 +239,14 @@ class ProductPool(business_model.Model):
 		product_model_filters = type2filters['product_model']
 		if product_model_filters:
 			product_model_filters['product_id__in'] = product_ids
-			product_model_filters['is_deleted'] = 0
+			# 只设置库存最小值，不设置库存最大值的情况下，才能将库存为无限的商品查询出来
+			stocks__lte = product_model_filters.get('stocks__lte')
+			if stocks__lte and stocks__lte != u'999999999':
+				product_model_filters['stock_type'] = mall_models.PRODUCT_STOCK_TYPE_LIMIT
+
 			product_model_models = mall_models.ProductModel.select().dj_where(**product_model_filters)
 			product_ids = [model.product_id for model in product_model_models]
+			product_ids = list(set(product_ids))
 
 		#在mall_category_has_product中进行过滤
 		product_category_filters = type2filters['product_category']
@@ -221,7 +260,20 @@ class ProductPool(business_model.Model):
 		if product_sales_filters:
 			product_sales_filters['product_id__in'] = product_ids
 			models = mall_models.ProductSales.select().dj_where(**product_sales_filters)
+			sales__lte = product_sales_filters.get('sales__lte')
+			sales__gte = product_sales_filters.get('sales__gte')
+			# 不在mall_product_sales 的product
+			temp_product_ids = []
+			# 在mall_product_sales中没有数据的商品销量也是0
+			if int(sales__gte) <= 0 and int(sales__lte) >= 0:
+				all_product_sales_models = mall_models.ProductSales.select().dj_where(product_id__in=product_ids)
+				all_product_ids = [sales_model.product_id for sales_model in all_product_sales_models]
+
+				temp_product_ids = list(set(product_ids) - set(all_product_ids))
+
 			product_ids = [model.product_id for model in models]
+			if temp_product_ids:
+				product_ids += temp_product_ids
 
 		#根据供应商进行过滤
 		product_supplier_filters = type2filters['product_supplier']
@@ -276,9 +328,9 @@ class ProductPool(business_model.Model):
 				pool_product_model = product2poolmodel[product.id]
 				if pool_product_model.type == mall_models.PP_TYPE_SYNC:
 					product.create_type = 'sync'
-					product.sync_at = pool_product_model.sync_at
 				else:
 					product.create_type = 'create'
+				product.sync_at = pool_product_model.sync_at
 				result.append(product)
 		return result, pageinfo
 
@@ -316,9 +368,11 @@ class ProductPool(business_model.Model):
 
 	def __compatible_delete_products(self, product_ids):
 		#[compatibility]: 兼容老的apiserver，在apiserver升级到支持ProductPool，本函数应该删除
-		if self.corp.type == 'normal':
-			# 在当前阶段，只有normal家的商品才执行删除
-			mall_models.Product.update(is_deleted=True).dj_where(id__in=product_ids).execute()
+
+		# if self.corp.type == 'normal':
+		# 在当前阶段，只有自建商品执行此删除
+		mall_models.Product.update(is_deleted=True).dj_where(id__in=product_ids,
+															 owner_id=self.corp.id).execute()
 
 	def delete_products(self, product_ids):
 		"""
@@ -386,11 +440,12 @@ class ProductPool(business_model.Model):
 			'with_supplier_info': True,
 			'with_classification': True,
 			'with_sales': True,
-			'with_cps_promotion_info': True
+			'with_cps_promotion_info': True,
+			'with_product_label': True,
 		}
 
 		options = {
-			'order_by_display_index': True
+			'order_options': ['display_index', '-id']
 		}
 
 		products, pageinfo = product_pool.get_products(page_info, fill_options, options, filters)

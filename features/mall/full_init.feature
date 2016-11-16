@@ -39,6 +39,30 @@ Scenario: 安装完整测试数据
 			"name": "分类2"
 		}, {
 			"name": "分类3"
+		}, {
+			"name": "分类4"
+		}, {
+			"name": "分类5"
+		}, {
+			"name": "分类6"
+		}, {
+			"name": "分类7"
+		}, {
+			"name": "分类8"
+		}, {
+			"name": "分类9"
+		}, {
+			"name": "分类10"
+		}, {
+			"name": "分类11"
+		}, {
+			"name": "分类12"
+		}, {
+			"name": "分类13"
+		}, {
+			"name": "分类14"
+		}, {
+			"name": "分类15"
 		}]	
 		"""
 	And jobs已添加商品
@@ -480,7 +504,6 @@ Scenario: 安装完整测试数据
 			}
 		}]	
 		"""
-
 	When weizoom将商品加入CPS推广
 		"""
 		[{
@@ -504,7 +527,13 @@ Scenario: 安装完整测试数据
 			"promote_time_to": "2019-03-01"
 		}]
 		"""
+	Given zhouxun登录系统
 	When zhouxun添加代销商品
 		"""
 		["东坡肘子-weizoom", "叫花鸡-weizoom", "水晶虾仁-weizoom"]
+		"""
+	Given yangmi登录系统
+	When yangmi添加代销商品
+		"""
+		["东坡肘子-weizoom", "叫花鸡-weizoom", "黄桥烧饼-weizoom"]
 		"""

@@ -27,7 +27,7 @@ class CategoryRepository(business_model.Service):
 
 		return [Category.from_model({'db_model': category}) for category in categories], pageinfo
 
-	def search_categories(self, filters):
+	def search_categories(self, filters, target_page):
 		"""
 		搜索商品分组
 		"""
@@ -37,11 +37,12 @@ class CategoryRepository(business_model.Service):
 			product_filters = FilterParser.get().extract_by_keys(filters, {
 				'__f-product_name-contain': '__f-name-contain'
 			})
-			target_page = PageInfo.get_max_page()
-			products, pageinfo = self.corp.product_pool.get_products(target_page, filters=product_filters)
+			max_page = PageInfo.get_max_page()
+			products, _ = self.corp.product_pool.get_products(max_page, filters=product_filters)
 			product_ids = [product.id for product in products]
 			category_ids = [relation.category_id for relation in mall_models.CategoryHasProduct.select().dj_where(product_id__in=product_ids)]
-			result_categories = list(mall_models.ProductCategory.select().dj_where(id__in=category_ids))
+			result_categories = mall_models.ProductCategory.select().dj_where(id__in=category_ids, owner_id=self.corp.id)
+			pageinfo, result_categories = paginator.paginate(result_categories, target_page.cur_page, target_page.count_per_page)
 
 		if '__f-name-contain' in filters:
 			filter_parse_result = FilterParser.get().parse_key(filters, '__f-name-contain')
@@ -51,10 +52,12 @@ class CategoryRepository(business_model.Service):
 			params.update(filter_parse_result)
 			categories = mall_models.ProductCategory.select().dj_where(**params)
 			if result_categories:
+				#搜索场景：同时搜索“分组名”和“分组商品名”，基本不常用
+				#这里分页的逻辑非常复杂，所以，这种情况暂不支持分页
 				category_id_set = [category.id for category in categories]
 				result_categories = [category for category in result_categories if category.id in category_id_set]
 			else:
-				result_categories = categories
+				pageinfo, result_categories = paginator.paginate(categories, target_page.cur_page, target_page.count_per_page)
 
 		return [Category.from_model({'db_model': category}) for category in result_categories], pageinfo
 
@@ -80,3 +83,6 @@ class CategoryRepository(business_model.Service):
 		categories = mall_models.ProductCategory.select().dj_where(owner_id=self.corp.id)
 		category_ids = [category.id for category in categories]
 		mall_models.CategoryHasProduct.delete().dj_where(product_id__in=product_ids, category_id__in=category_ids).execute()
+
+		for category_id in category_ids:
+			Category.update_product_count(category_id)

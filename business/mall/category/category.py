@@ -43,6 +43,16 @@ class Category(business_model.Model):
 		category = Category(model)
 		return category
 
+	@staticmethod
+	def update_product_count(category_id):
+		"""
+		更新category中的product count
+
+		TODO: 将其改造为非static方案
+		"""
+		new_count = mall_models.CategoryHasProduct.select().dj_where(id=category_id).count()
+		mall_models.ProductCategory.update(product_count=new_count).dj_where(id=category_id).execute()
+
 	def update_product_position(self, product_id, new_position):
 		"""
 		更新商品在分类中的排序位置
@@ -59,7 +69,8 @@ class Category(business_model.Model):
 		"""
 		mall_models.CategoryHasProduct.delete().dj_where(category_id=self.id, product_id=product_id).execute()
 
-		mall_models.ProductCategory.update(product_count=mall_models.ProductCategory.product_count-1).dj_where(id=self.id).execute()
+		Category.update_product_count(self.id)
+
 		msgutil.send_message(
 			TOPIC['product'],
 			'delete_product_from_category',
@@ -73,23 +84,34 @@ class Category(business_model.Model):
 	def add_products(self, product_ids):
 		"""
 		向分组中添加一组商品
+
+		先过滤出CategoryHasProduct表中已经存在的<category_id, product_id>对，只向表中添加新的<category_id, product_id>对
 		"""
 		if product_ids:
-			for product_id in product_ids:
-				mall_models.CategoryHasProduct.create(
-					product = product_id,
-					category = self.id
+			relations = mall_models.CategoryHasProduct.select().dj_where(product_id__in=product_ids, category_id=self.id)
+			existed_product_ids = set([relation.product_id for relation in relations])
+
+			product_ids = set(product_ids)
+			new_product_ids = product_ids - existed_product_ids
+
+			if new_product_ids:
+				for product_id in new_product_ids:
+					mall_models.CategoryHasProduct.create(
+						product = product_id,
+						category = self.id
+					)
+				
+				Category.update_product_count(self.id)
+				
+				msgutil.send_message(
+					TOPIC['product'],
+					'add_products_to_category',
+					{
+						'corp_id': CorporationFactory.get().id,
+						'product_ids': new_product_ids,
+						'category_id': self.id
+					}
 				)
-			mall_models.ProductCategory.update(product_count=mall_models.ProductCategory.product_count+len(product_ids)).dj_where(id=self.id).execute()
-		msgutil.send_message(
-			TOPIC['product'],
-			'add_products_to_category',
-			{
-				'corp_id': CorporationFactory.get().id,
-				'product_ids': product_ids,
-				'category_id': self.id
-			}
-		)
 		
 	def update_name(self, name):
 		"""
@@ -128,6 +150,8 @@ class Category(business_model.Model):
 					product = product_id,
 					category = category_model.id
 				)
+
+			Category.update_product_count(category_model.id)
 
 			msgutil.send_message(
 				TOPIC['product'],

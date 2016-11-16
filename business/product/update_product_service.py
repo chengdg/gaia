@@ -10,6 +10,7 @@ from db.mall import models as mall_models
 from eaglet.decorator import param_required
 from gaia_conf import TOPIC
 from business.product import product_pool
+from business.mall.category.category import Category
 
 class UpdateProductService(business_model.Service):
 	"""
@@ -45,15 +46,18 @@ class UpdateProductService(business_model.Service):
 		"""
 		更新商品分组
 		"""
-		if len(category_ids) == 0:
-			return
-
-		mall_models.CategoryHasProduct.delete().dj_where(product_id=product_id).execute()
+		#由于不同渠道创建的代销商品，在ProductCategory表中的product_id，所以这里要筛选出当前公司（渠道）拥有的category，进行选择性删除
+		#不能只根据product_id进行删除
+		existed_category_ids = [category.id for category in mall_models.ProductCategory.select().dj_where(owner_id=self.corp.id)]
+		mall_models.CategoryHasProduct.delete().dj_where(product_id=product_id, category_id__in=existed_category_ids).execute()
 		for category_id in category_ids:
 			mall_models.CategoryHasProduct.create(
 				category = category_id,
 				product = product_id
 			)
+
+		for category_id in category_ids:
+			Category.update_product_count(category_id)
 
 	def __update_standard_model(self, product_id, models_info):
 		"""

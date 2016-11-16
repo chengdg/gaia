@@ -1,8 +1,7 @@
 # coding=utf-8
 # -*- utf-8 -*-
-from eaglet.decorator import param_required
+import datetime
 
-from bdem import msgutil
 from business import model as business_model
 
 from business.product.product import Product
@@ -53,25 +52,27 @@ class FillProductDetailService(business_model.Service):
 		product_model_generator = ProductModelGenerator.get(corp)
 		product_model_generator.fill_models_for_products(products, is_enable_model_property_info)
 
-	def __fill_category_detail(self, product_ids, id2product):
+	def __fill_category_detail(self, corp, product_ids, id2product):
 		"""填充商品分类信息相关细节
 		"""
-
 		# 获取product关联的category集合
 		for key, product in id2product.items():
 			product.categories = []
 
+		#获得当前corp的category集合
 		relations = mall_models.CategoryHasProduct.select().dj_where(product_id__in=product_ids).order_by('id')
 		catagory_ids = [relation.category_id for relation in relations]
-		categories = list(mall_models.ProductCategory.select().dj_where(id__in=catagory_ids).order_by('id'))
+		categories = list(mall_models.ProductCategory.select().dj_where(id__in=catagory_ids, owner_id=corp.id).order_by('id'))
 
 		id2category = dict([(category.id, category) for category in categories])
+		category2corp = dict([(category.id, category.owner_id) for category in categories])
 		for relation in relations:
 			category_id = relation.category_id
 			product_id = relation.product_id
 			if not category_id in id2category:
 				# 微众商城分类，在商户中没有
 				continue
+
 			category = id2category[category_id]
 			id2product[product_id].categories.append({
 				'id': category.id,
@@ -204,6 +205,7 @@ class FillProductDetailService(business_model.Service):
 		"""
 		填充供应商相关细节
 		"""
+		# 如果已经下线的分类还在使用,就是错误数据,这里的woid没有目前没有作用
 		relations = mall_models.ClassificationHasProduct.select().dj_where(product_id__in=product_ids)
 
 		classifications = corp.product_classification_repository.get_product_classifications()
@@ -299,7 +301,8 @@ class FillProductDetailService(business_model.Service):
 		"""
 		填充商品的cps推广信息
 		"""
-		promotion_infos = mall_models.PromoteDetail.select().dj_where(product_id__in=product_ids)
+		promotion_infos = mall_models.PromoteDetail.select().dj_where(product_id__in=product_ids,
+																	  promote_status=mall_models.PROMOTING)
 		pool_product_models = mall_models.ProductPool.select().dj_where(product_id__in=product_ids, woid=self.corp.id)
 		id2pool_products = dict([(pool.product_id, pool) for pool in pool_product_models])
 		for promotion in promotion_infos:
@@ -375,7 +378,7 @@ class FillProductDetailService(business_model.Service):
 			self.__fill_property_detail(self.corp, products, product_ids)
 
 		if options.get('with_category', False):
-			self.__fill_category_detail(product_ids, id2product)
+			self.__fill_category_detail(self.corp, product_ids, id2product)
 
 		if options.get('with_supplier_info', False):
 			self.__fill_supplier_detail(self.corp, products, product_ids)

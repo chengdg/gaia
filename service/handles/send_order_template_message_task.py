@@ -18,7 +18,7 @@ SELECT * from market_tools_template_message;
 import settings
 from bdem import msgutil
 from business.mall.corporation import Corporation
-from service.service_register import register
+from service.handler_register import register
 from db.mall import models as mall_models
 
 TEMPLATE_DB_TITLE2TMS_NAME = {

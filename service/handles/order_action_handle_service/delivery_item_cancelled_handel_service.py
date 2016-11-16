@@ -12,7 +12,7 @@ from bdem import msgutil
 from business.mall.corporation import Corporation
 from business.mall.express.express_service import ExpressService
 from business.mall.express.kdniao_express_poll import KdniaoExpressPoll
-from service.service_register import register
+from service.handler_register import register
 from db.express import models as express_models
 from gaia_conf import TOPIC
 

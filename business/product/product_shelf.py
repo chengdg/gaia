@@ -100,7 +100,6 @@ class ProductShelf(business_model.Model):
 		获得货架上的商品集合
 		"""
 		product_pool = self.corp.product_pool
-		#TODO: get_products不应泄露DB层信息
 		filters['__f-status-equal'] = mall_models.PP_STATUS_ON if self.type == 'in_sale' else mall_models.PP_STATUS_OFF
 
 		fill_options = {
@@ -111,12 +110,18 @@ class ProductShelf(business_model.Model):
 			'with_supplier_info': True,
 			'with_classification': True,
 			'with_sales': True,
-			'with_product_promotion': True
+			'with_product_promotion': True,
+			'with_cps_promotion_info': True,
 		}
 
-		options = {
-			'order_by_display_index': True
-		}
+		if self.type == 'in_sale':
+			options = {
+				'order_options': ['display_index', '-onshelf_time', '-id']
+			}
+		else:
+			options = {
+				'order_options': ['-id']
+			}
 
 		products, pageinfo = product_pool.get_products(page_info, fill_options, options, filters)
 
@@ -177,11 +182,12 @@ class ProductShelf(business_model.Model):
 			'with_supplier_info': True,
 			'with_classification': True,
 			'with_image': True,
-			'with_cps_promotion_info': True
+			'with_cps_promotion_info': True,
+			'with_product_label': True,
 		}
 
 		options = {
-			'order_by_display_index': True
+			'order_options': ['display_index', '-id']
 		}
 
 		products, pageinfo = product_pool.get_products(page_info, fill_options, options, filters)

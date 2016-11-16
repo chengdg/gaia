@@ -28,14 +28,6 @@ class ACPSPromotedProducts(api_resource.ApiResource):
 		})
 		filters = json.loads(args.get('filters', '{}'))
 		product_status = args.get('product_status')
-		# with_product_model: 填充所有商品规格信息
-		# with_product_promotion: 填充商品促销信息
-		# with_image: 填充商品轮播图信息
-		# with_property: 填充商品属性信息
-		# with_selected_category: 填充选中的分类信息
-		# with_all_category: 填充所有商品分类详情
-		# with_sales: 填充商品销售详情
-		# with_cps_promotion_info: 填充商品cps推广信息
 
 		if product_status == 'insale':
 			insale_shelf = corp.insale_shelf
@@ -58,6 +50,7 @@ class ACPSPromotedProducts(api_resource.ApiResource):
 			classifications = encode_product_service.get_classifications(product)
 			image_info = encode_product_service.get_image_info(product)
 			categories = encode_product_service.get_categories(product)
+			labels = encode_product_service.get_labels(product)
 			cps_promotion_info = encode_product_service.get_cps_promotion_info(product)
 
 			data = {
@@ -68,7 +61,9 @@ class ACPSPromotedProducts(api_resource.ApiResource):
 				"categories": categories,
 				'classifications': classifications,
 				'base_info': base_info,
+				'labels': labels,
 				'cps_promotion_info': cps_promotion_info,
+				"sync_at": base_info['sync_at'],
 			}
 
 			datas.append(data)

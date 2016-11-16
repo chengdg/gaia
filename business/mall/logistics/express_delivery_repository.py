@@ -112,6 +112,18 @@ COMPANIES = [
 		"name": "邮政包裹/平邮",
 		"value": "youzhengguonei",
 		"kdniao_value": "YZPY"
+	},
+	{
+		"id": "00018",
+		"name": "优速物流",
+		"value": "youshuwuliu",
+		"kdniao_value": "UC"
+	},
+	{
+		"id": "00019",
+		"name": "安能物流",
+		"value": "annengwuliu",
+		"kdniao_value": "ANE"
 	}
 ]
 

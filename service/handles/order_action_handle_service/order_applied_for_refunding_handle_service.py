@@ -1,18 +1,15 @@
 # -*- coding: utf-8 -*-
 """
-处理订单的消息service(演示)
-
-@author Victor
+已完成
 """
-
 from bdem import msgutil
 
 from business.mall.corporation import Corporation
-from service.service_register import register
+from service.handler_register import register
 from gaia_conf import TOPIC
 
 
-@register("order_paid")
+@register("order_applied_for_refunding")
 def process(data, recv_msg=None):
 	"""
 	处理支付订单消息
@@ -33,15 +30,6 @@ def process(data, recv_msg=None):
 
 	}
 	order = corp.order_repository.get_order(order_id, fill_options)
-	# 更新商品销量
-
-	# todo 赠品不计销量
-	# for product in products:
-	# 	if product.promotion != {'type_name': 'premium_sale:premium_product'}:
-	# 		product_sale_infos.append({
-	# 			'product_id': product.id,
-	# 			'purchase_count': product.purchase_count
-	# 		})
 
 	# 发送运营邮件通知
 	topic_name = TOPIC['base_service']
@@ -61,10 +49,5 @@ def process(data, recv_msg=None):
 	msgutil.send_message(topic_name, 'send_order_template_message_task', data)
 
 	member = corp.member_repository.get_member_by_id(order.member_info['id'])
-
-	member.increase_integral_after_finish_order(order)  # 对应购买商品返积分功能
 	member.update_pay_info(order, from_status, to_status)
-	member.process_order_from_spread(order)
-
-
 

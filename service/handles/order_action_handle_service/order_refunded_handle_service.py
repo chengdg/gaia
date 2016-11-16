@@ -9,7 +9,7 @@ from bdem import msgutil
 
 from business.mall.corporation import Corporation
 from business.order.release_order_resource_service import ReleaseOrderResourceService
-from service.service_register import register
+from service.handler_register import register
 from gaia_conf import TOPIC
 
 

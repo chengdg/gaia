@@ -7,26 +7,17 @@
 @author Victor
 """
 
-from eaglet.utils.command import BaseCommand
-
-#from eaglet.core.cache import utils as cache_util
 import json
-
-import settings
-
-from eaglet.core.exceptionutil import unicode_full_stack
 import logging
 
+from eaglet.core import watchdog
+from eaglet.core.exceptionutil import unicode_full_stack
+from eaglet.utils.command import BaseCommand
 from mns.account import Account
-from mns.queue import *
-from mns.topic import *
 from mns.subscription import *
 
-import time
-import service  # load all services
-from service import service_register
-
-
+import settings
+from service import handler_register
 
 WAIT_SECONDS = 10
 SLEEP_SECONDS = 10
@@ -52,19 +43,22 @@ class Command(BaseCommand):
 
 		# TODO: 改成LongPoll更好
 		while True:
+			handler_func = None
+			handle_success = False
 			#读取消息
 			try:
 				recv_msg = queue.receive_message(WAIT_SECONDS)
-				# logging.info("Receive Message Succeed! ReceiptHandle:%s MessageBody:%s MessageID:%s" % (recv_msg.receipt_handle, recv_msg.message_body, recv_msg.message_id))
+				logging.info("Receive Message Succeed! ReceiptHandle:%s MessageBody:%s MessageID:%s" % (recv_msg.receipt_handle, recv_msg.message_body, recv_msg.message_id))
 
 				# 处理消息(consume)
 				data = json.loads(recv_msg.message_body)
-				function_name = data['name']
-				func = service_register.find_service(function_name)
-				if func:
+				message_name = data['name']
+				handler_func = handler_register.find_message_handler(message_name)
+				if handler_func:
 					try:
-						response = func(data['data'], recv_msg)
+						response = handler_func(data['data'], recv_msg)
 						logging.info("service response: {}".format(response))
+						handle_success = True
 
 						#只有正常才能删除消息，否则消息仍然在队列中
 						try:
@@ -75,7 +69,9 @@ class Command(BaseCommand):
 					except:
 						logging.info(u"Service Exception: {}".format(unicode_full_stack()))
 				else:
-					logging.info(u"Error: no such service found : {}".format(function_name))
+					queue.delete_message(recv_msg.receipt_handle)
+					#TODO: 这里是否需要删除消息？
+					logging.info(u"Error: no such service found : {}".format(message_name))
 
 			except MNSExceptionBase as e:
 				if e.type == "QueueNotExist":
@@ -88,9 +84,16 @@ class Command(BaseCommand):
 				time.sleep(SLEEP_SECONDS)
 				continue
 			except Exception as e:
-				# print(type(e))
-				print('--------------------')
 				print u"Exception: {}".format(unicode_full_stack())
-				print('--------------------')
-
+			finally:
+				if handler_func:
+					message = {
+						'message_id': recv_msg.message_id,
+						'message_body_md5': '',
+						'data': args,
+						'topic_name': '',
+						'msg_name': message_name,
+						'handel_success': handle_success
+					}
+					watchdog.info(message, log_type='MNS_RECEIVE_LOG')
 		return

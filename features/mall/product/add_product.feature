@@ -65,7 +65,7 @@ Background:
 Scenario:1 添加标准规格商品
 	job添加商品后：
 	1、能获得商品详情
-	2、在待售商品列表能看到商品
+	2、在待售商品列表能看到商品(添加时间倒序排列)
 
 	Given jobs登录系统
 	When jobs添加商品
@@ -188,9 +188,17 @@ Scenario:1 添加标准规格商品
 			}
 		}
 		"""
+	#待售列表按添加时间倒序排列
 	Then jobs能获得'待售'商品列表
 		"""
 		[{
+			"name": "叫花鸡",
+			"create_type": "create",
+			"price": 12.00,
+			"stocks": 3,
+			"sales": 0,
+			"image": "/static/test_resource_img/hangzhou2.jpg"
+		}, {
 			"name": "东坡肘子",
 			"create_type": "create",
 			"bar_code": "zhouzi_1",
@@ -199,13 +207,6 @@ Scenario:1 添加标准规格商品
 			"stocks": "无限",
 			"sales": 0,
 			"image": "/static/test_resource_img/hangzhou1.jpg"
-		}, {
-			"name": "叫花鸡",
-			"create_type": "create",
-			"price": 12.00,
-			"stocks": 3,
-			"sales": 0,
-			"image": "/static/test_resource_img/hangzhou2.jpg"
 		}]
 		"""
 

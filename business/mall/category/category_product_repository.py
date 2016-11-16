@@ -122,7 +122,8 @@ class CategoryProductRepository(object):
 		#商品详情填充选项
 		fill_options = {
 			'with_price': True,
-			'with_shelve_status': True
+			'with_shelve_status': True,
+			'with_sales': True
 		}
 
 		if filters is None:
@@ -130,7 +131,7 @@ class CategoryProductRepository(object):
 		filters['__f-status-in'] = [mall_models.PP_STATUS_OFF, mall_models.PP_STATUS_ON]
 
 		options = {
-			'order_by_status': True
+			'order_options': ['-status', '-id']
 		}
 
 		if category_id == '0' or category_id == 0:

@@ -37,11 +37,12 @@ class AUnshelfPooledProducts(api_resource.ApiResource):
 			'with_supplier_info': True,
 			'with_classification': True,
 			'with_sales': True,
-			'with_product_label': True
+			'with_product_label': True,
+			'with_cps_promotion_info': True,
 		}
 
 		options = {
-			'order_by_display_index': True
+			'order_options': ['display_index', '-id']
 		}
 
 		products, pageinfo = corp.product_pool.get_products(target_page, fill_options, options, filters)
@@ -56,6 +57,7 @@ class AUnshelfPooledProducts(api_resource.ApiResource):
 			image_info = encode_product_service.get_image_info(product)
 			categories = encode_product_service.get_categories(product)
 			labels = encode_product_service.get_labels(product)
+			cps_promotion_info = encode_product_service.get_cps_promotion_info(product)
 
 			data = {
 				"id": product.id,
@@ -71,7 +73,8 @@ class AUnshelfPooledProducts(api_resource.ApiResource):
 				"sales": base_info['sales'],
 				"created_at": base_info['created_at'],
 				"sync_at": base_info['sync_at'],
-				'labels': labels
+				'labels': labels,
+				'cps_promotion_info': cps_promotion_info,
 
 			}
 
