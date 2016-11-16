@@ -440,7 +440,8 @@ class ProductPool(business_model.Model):
 			'with_supplier_info': True,
 			'with_classification': True,
 			'with_sales': True,
-			'with_cps_promotion_info': True
+			'with_cps_promotion_info': True,
+			'with_product_label': True,
 		}
 
 		options = {

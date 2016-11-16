@@ -394,6 +394,9 @@
                 },
                 "cps_promotion_info":{
                     "$ref": "#/definitions/CpsPromotionInfo"
+                },
+                "labels": {
+                    "$ref": "#/definitions/Lables"
                 }
             }
         },
