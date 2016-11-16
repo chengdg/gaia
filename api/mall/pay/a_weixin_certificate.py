@@ -33,9 +33,6 @@ class AWeixinCertificate(api_resource.ApiResource):
 		file_path = args['file_path']
 		up_file_path = args['up_file_path']
 		weixin_certificate = WeixinCertificate.from_owner_id({'owner_id': owner_id})
-		try:
-			weixin_certificate.update_weixin_certificate(file_cat, file_path, up_file_path)
-			return {'msg': "upload success"}
-		except:
-			return {'msg': "upload failed"}
+		weixin_certificate.update_weixin_certificate(file_cat, file_path, up_file_path)
+		return {}
 
