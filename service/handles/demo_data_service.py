@@ -6,7 +6,7 @@
 """
 
 import logging
-from service.service_register import register
+from service.handler_register import register
 
 @register("demo_data111")
 def demo_order_process(data, recv_msg=None):

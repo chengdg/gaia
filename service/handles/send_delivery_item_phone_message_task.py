@@ -3,7 +3,7 @@
 处理已支付的订单
 """
 from business.mall.corporation import Corporation
-from service.service_register import register
+from service.handler_register import register
 from util.send_phone_msg import send_chargeback_message
 
 

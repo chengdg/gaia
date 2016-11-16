@@ -8,7 +8,7 @@ from eaglet.core.sendmail import sendmail
 
 import settings
 from business.mall.notify.notification_repository import NotificationRepository
-from service.service_register import register
+from service.handler_register import register
 
 # -*- coding: utf-8 -*-
 from util.regional_util import get_str_value_by_string_ids
@@ -16,7 +16,7 @@ from util.regional_util import get_str_value_by_string_ids
 
 
 from business.mall.corporation import Corporation
-from service.service_register import register
+from service.handler_register import register
 from db.mall import models as mall_models
 
 ORDER_STATUS2NOTIFY_STATUS = {
