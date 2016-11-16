@@ -1,8 +1,7 @@
 # coding=utf-8
 # -*- utf-8 -*-
-from eaglet.decorator import param_required
+import datetime
 
-from bdem import msgutil
 from business import model as business_model
 
 from business.product.product import Product
@@ -262,7 +261,9 @@ class FillProductDetailService(business_model.Service):
 		"""
 		填充商品的cps推广信息
 		"""
-		promotion_infos = mall_models.PromoteDetail.select().dj_where(product_id__in=product_ids)
+		promotion_infos = mall_models.PromoteDetail.select().dj_where(product_id__in=product_ids,
+																	  promote_status=mall_models.PROMOTING,
+																	  promote_time_to__gt=datetime.datetime.now())
 		pool_product_models = mall_models.ProductPool.select().dj_where(product_id__in=product_ids, woid=self.corp.id)
 		id2pool_products = dict([(pool.product_id, pool) for pool in pool_product_models])
 		for promotion in promotion_infos:

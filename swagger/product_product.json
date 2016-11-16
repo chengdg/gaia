@@ -1090,6 +1090,9 @@
                 },
                 "labels": {
                     "$ref": "#/definitions/Lables"
+                },
+                "cps_promotion_info": {
+                    "$ref": "#/definitions/CpsPromotionInfo"
                 }
             }
         },

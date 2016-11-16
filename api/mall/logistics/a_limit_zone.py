@@ -5,6 +5,7 @@ from eaglet.core import api_resource
 from eaglet.decorator import param_required
 from business.mall.logistics.limit_zone import LimitZone
 from business.mall.corporation_factory import CorporationFactory
+from business.mall.corporation import Corporation
 
 
 class ALimitZone(api_resource.ApiResource):
@@ -17,10 +18,13 @@ class ALimitZone(api_resource.ApiResource):
 	@param_required(['corp_id', 'id'])
 	def get(args):
 		corp = args['corp']
-		weizoom_corp = CorporationFactory.get_weizoom_corporation()
-		CorporationFactory.set(weizoom_corp)
-		limit_zone = weizoom_corp.limit_zone_repository.get_limit_zone_by_id(args['id'])
-		CorporationFactory.set(corp)
+		if corp.is_self_run_platform():
+			weizoom_corp = CorporationFactory.get_weizoom_corporation()
+			CorporationFactory.set(weizoom_corp)
+			limit_zone = weizoom_corp.limit_zone_repository.get_limit_zone_by_id(args['id'])
+			CorporationFactory.set(corp)
+		else:
+			limit_zone = corp.limit_zone_repository.get_limit_zone_by_id(args['id'])
 		data = {
 			'id': limit_zone.id,
 			'name': limit_zone.name,
@@ -45,10 +49,13 @@ class ALimitZone(api_resource.ApiResource):
 		name = args['name']
 		limit_provinces = json.loads(args.get('limit_provinces', '[]'))
 		limit_cities = json.loads(args.get('limit_cities', '[]'))
-		weizoom_corp = CorporationFactory.get_weizoom_corporation()
-		CorporationFactory.set(weizoom_corp)
-		limit_zone = weizoom_corp.limit_zone_repository.get_limit_zone_by_id(id)
-		CorporationFactory.set(corp)
+		if corp.is_self_run_platform():
+			weizoom_corp = CorporationFactory.get_weizoom_corporation()
+			CorporationFactory.set(weizoom_corp)
+			limit_zone = weizoom_corp.limit_zone_repository.get_limit_zone_by_id(id)
+			CorporationFactory.set(corp)
+		else:
+			limit_zone = corp.limit_zone_repository.get_limit_zone_by_id(id)
 		limit_zone.update(name, limit_provinces, limit_cities)
 		return {}
 
