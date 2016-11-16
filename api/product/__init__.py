@@ -5,6 +5,7 @@ import a_product_creation_option
 import a_product_price
 import a_product_stock
 import a_product_position
+import a_product_display_index_validity
 
 import a_offshelf_products
 import a_onshelf_products

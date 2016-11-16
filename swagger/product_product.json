@@ -553,6 +553,47 @@
                     }
                 }
             }
+        },
+        "/product/display_index_validity/": {
+            "get": {
+                "summary": "获取商品排序信息的有效性",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "display_index",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "is_exists": {
+                                    "type": "boolean",
+                                    "description": "排序是否已经被占用"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {

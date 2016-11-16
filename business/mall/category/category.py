@@ -50,7 +50,7 @@ class Category(business_model.Model):
 
 		TODO: 将其改造为非static方案
 		"""
-		new_count = mall_models.CategoryHasProduct.select().dj_where(id=category_id).count()
+		new_count = mall_models.CategoryHasProduct.select().dj_where(category_id=category_id).count()
 		mall_models.ProductCategory.update(product_count=new_count).dj_where(id=category_id).execute()
 
 	def update_product_position(self, product_id, new_position):
@@ -117,7 +117,13 @@ class Category(business_model.Model):
 		"""
 		更新分组名
 		"""
-		mall_models.ProductCategory.update(name=name).dj_where(id=self.id).execute()		
+		mall_models.ProductCategory.update(name=name).dj_where(id=self.id).execute()	
+
+	def has_product_with_display_index(self, display_index):
+		"""
+		判断category中是否已存在排序为display index的商品
+		"""
+		return mall_models.CategoryHasProduct.select().dj_where(category_id=self.id, display_index=display_index).count() > 0	
 
 	def get_products(self, target_page):
 		"""

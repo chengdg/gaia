@@ -447,7 +447,6 @@ class ProductPool(business_model.Model):
 		"""
 
 		"""
-
 		new_promoted_product = mall_models.PromoteDetail.select().dj_where(is_new=True,
 																		   promote_status=mall_models.PROMOTING)
 		promoting_product_ids = [promoted_product.product_id for promoted_product in new_promoted_product]
@@ -461,7 +460,7 @@ class ProductPool(business_model.Model):
 		return pool_product_models.count()
 
 	def set_cps_promoted_products_processed(self, product_ids):
+		mall_models.ProductPool.update(is_cps_promotion_processed=True).dj_where(product_id__in=product_ids,woid=self.corp.id).execute()
 
-		mall_models.ProductPool.update(is_cps_promotion_processed=True)\
-			.dj_where(product_id__in=product_ids,
-					  woid=self.corp.id).execute()
+	def has_product_with_display_index(self, display_index):
+		return mall_models.ProductPool.select().dj_where(woid=self.corp.id, display_index=display_index).count() > 0
