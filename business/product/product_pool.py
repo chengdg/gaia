@@ -16,6 +16,7 @@ from business.common.filter_parser import FilterParser
 
 NEW_PRODUCT_DISPLAY_INDEX = 9999999
 
+
 class ProductPool(business_model.Model):
 	__slots__ = (
 		'corp',
@@ -85,6 +86,8 @@ class ProductPool(business_model.Model):
 
 		filter_parse_result = FilterParser.get().parse(filters)
 		should_add_default_status = True #是否添加默认的商品status条件
+		# 是否添加规格信息的is_deleted字段
+		should_add_default_model_is_deleted = True
 		for filter_field_op, filter_value in filter_parse_result.items():
 			#获得过滤的field
 			items = filter_field_op.split('__')
@@ -109,6 +112,7 @@ class ProductPool(business_model.Model):
 				filter_category = product_db_filter_values
 			elif filter_field == 'price' or filter_field == 'stocks':
 				filter_category = product_model_filter_values
+				should_add_default_model_is_deleted = True
 			elif filter_field == 'category':
 				filter_category = product_category_filter_values
 			elif filter_field == 'sales':
@@ -155,6 +159,9 @@ class ProductPool(business_model.Model):
 		product_pool_filter_values['woid'] = CorporationFactory.get().id
 		if should_add_default_status:
 			product_pool_filter_values['status__not'] = mall_models.PP_STATUS_DELETE
+
+		if should_add_default_model_is_deleted:
+			product_model_filter_values['is_deleted'] = False
 
 		return {
 			'product_pool': product_pool_filter_values,
