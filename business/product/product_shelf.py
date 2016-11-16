@@ -109,7 +109,8 @@ class ProductShelf(business_model.Model):
 			'with_shelve_status': True,
 			'with_supplier_info': True,
 			'with_classification': True,
-			'with_sales': True
+			'with_sales': True,
+			'with_cps_promotion_info': True,
 		}
 
 		if self.type == 'in_sale':

@@ -41,6 +41,7 @@ class AOnshelfProducts(api_resource.ApiResource):
 			classifications = encode_product_service.get_classifications(product)
 			image_info = encode_product_service.get_image_info(product)
 			categories = encode_product_service.get_categories(product)
+			cps_promotion_info = encode_product_service.get_cps_promotion_info(product)
 
 			data = {
 				"id": product.id,
@@ -57,9 +58,7 @@ class AOnshelfProducts(api_resource.ApiResource):
 				"sales": base_info['sales'],
 				"created_at": base_info['created_at'],
 				"sync_at": base_info['sync_at'],
-				"display_index": base_info['display_index'],
-				'supplier': supplier,
-				'classifications': classifications
+				"cps_promotion_info": cps_promotion_info,
 			}
 
 			datas.append(data)
