@@ -194,7 +194,7 @@ class ProductPool(business_model.Model):
 
 		return fields
 
-	def get_products(self, page_info, fill_options=None, options={}, filters={}):
+	def get_products(self, page_info, fill_options=None, options=None, filters=None):
 		"""
 		根据条件在商品池搜索商品
 		@return:
@@ -208,6 +208,15 @@ class ProductPool(business_model.Model):
 		product_pool_filters = type2filters['product_pool']
 		#进行查询
 		if product_pool_filters:
+			# 补充首次上架时间搜索值null判断
+			sync_at__range = product_pool_filters.get('sync_at__range')
+			if sync_at__range:
+				sync_at__range = list(sync_at__range)
+				if not sync_at__range[0]:
+					sync_at__range[0] = '1999-01-01'
+				if not sync_at__range[1]:
+					sync_at__range[1] = '2999-01-01'
+				product_pool_filters['sync_at__range'] = sync_at__range
 			pool_product_models = mall_models.ProductPool.select().dj_where(**product_pool_filters)			
 		else:
 			pool_product_models = mall_models.ProductPool.select().dj_where(status__not=mall_models.PP_STATUS_DELETE)			
