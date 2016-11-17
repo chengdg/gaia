@@ -2,10 +2,10 @@
 """
 限时抢购
 """
-from business.mall.promotion import promotion
+from business import model as business_model
 
 
-class FlashSale(promotion.Promotion):
+class FlashSale(business_model.Model):
 	"""
 	限时抢购
 	"""
@@ -16,8 +16,8 @@ class FlashSale(promotion.Promotion):
 		'count_per_period'
 	)
 
-	def __init__(self, promotion_model=None):
-		promotion.Promotion.__init__(self)
+	def __init__(self, db_model=None):
+		business_model.Model.__init__(self)
 
-		if promotion_model:
-			self._init_promotion_slot_from_model(promotion_model)
+		if db_model:
+			self._init_slot_from_model(db_model)

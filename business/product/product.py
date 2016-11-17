@@ -80,7 +80,7 @@ class Product(business_model.Model):
 		'buy_in_supplier',
 
 		#促销信息
-		'promotion',
+		'promotions',
 		'promotion_title', #商品关联的促销活动的促销标题
 		'integral_sale',
 		'product_review',
@@ -104,7 +104,6 @@ class Product(business_model.Model):
 
 	def __init__(self, model=None):
 		business_model.Model.__init__(self)
-		self.promotion = None
 
 		if model:
 			self._init_slot_from_model(model)
@@ -121,6 +120,7 @@ class Product(business_model.Model):
 			self.sales = 0
 			self.supplier_id = self.supplier
 			self.supplier = None
+			self.promotions = []
 
 	@property
 	def is_sellout(self):

@@ -2,9 +2,9 @@
 
 from business import model as busniess_model
 from business.mall.promotion.integral_sale import IntegralSale
+from business.mall.promotion.flash_sale import FlashSale
+from business.mall.promotion.premium_sale import PremiumSale
 from db.mall import promotion_models
-from db.mall import models as mall_models
-import settings
 
 
 class FillPromotionDetailService(busniess_model.Service):
@@ -22,13 +22,8 @@ class FillPromotionDetailService(busniess_model.Service):
 			detail_id2promotion[promotion.context['detail_id']] = promotion
 		flash_sale_models = promotion_models.FlashSale.select().dj_where(id__in=flash_sale_ids)
 		for model in flash_sale_models:
-			flash_sale_detail = {
-				'count_per_period': model.count_per_period,
-				'limit_period': model.limit_period,
-				'count_per_purchase': model.count_per_purchase,
-				'promotion_price': model.promotion_price
-			}
-			detail_id2promotion[model.id].detail = flash_sale_detail
+			flash_sale = FlashSale(model)
+			detail_id2promotion[model.id].detail = flash_sale
 
 	def __fill_integral_sale_rule_details(self, promotions):
 		"""
@@ -48,13 +43,7 @@ class FillPromotionDetailService(busniess_model.Service):
 			integral_sale_id = model.id
 			integral_sale.add_rule(integral_sale_id2integral_sale_rules[integral_sale_id])
 			integral_sale.calculate_discount()
-			integral_sale_rule_detail = {
-				'rules': integral_sale.rules,
-				'discount': integral_sale.discount,
-				'discount_money': integral_sale.discount_money,
-				'is_permanant_active': integral_sale.is_permanant_active
-			}
-			detail_id2promotion[integral_sale_id].detail = integral_sale_rule_detail
+			detail_id2promotion[integral_sale_id].detail = integral_sale
 
 	def __fill_premium_products_details(self, promotions, corp):
 		"""
@@ -69,54 +58,7 @@ class FillPromotionDetailService(busniess_model.Service):
 
 		premium_sale_models = promotion_models.PremiumSale.select().dj_where(id__in=premium_sale_ids)
 		for model in premium_sale_models:
-			detail_id2promotion[model.id].detail = {
-				'count': model.count,
-				'is_enable_cycle_mode': model.is_enable_cycle_mode,
-				'premium_products': []
-			}
-
-		premium_sale_products = promotion_models.PremiumSaleProduct.select().dj_where(
-				owner_id=corp.id,
-				premium_sale_id__in=premium_sale_ids)
-		product_ids = [premium_sale_product.product_id for premium_sale_product in premium_sale_products]
-
-		products = mall_models.Product.select().dj_where(id__in=product_ids)
-
-		pool_product_list = [p.product_id for p in mall_models.ProductPool.select().dj_where(
-			woid=corp.id,
-			status=mall_models.PP_STATUS_ON)]
-
-		id2product = dict([(product.id, product) for product in products])
-
-		for premium_sale_product in premium_sale_products:
-			premium_sale_id = premium_sale_product.premium_sale_id
-			promotion_id = detail_id2promotion[premium_sale_id].id
-
-			product2promotion = promotion_models.ProductHasPromotion.get(promotion=promotion_id)
-			main_product = product2promotion.product
-
-			product_id = premium_sale_product.product_id
-			product = id2product[product_id]
-
-			if pool_product_list and product_id in pool_product_list:
-				shelve_type = mall_models.PRODUCT_SHELVE_TYPE_ON
-			else:
-				shelve_type = product.shelve_type
-
-			data = {
-				'id': product.id,
-				'name': product.name,
-				'thumbnails_url': '%s%s' % (settings.IMAGE_HOST, product.thumbnails_url) if product.thumbnails_url.find(
-					'http') == -1 else product.thumbnails_url,
-				'original_premium_count': premium_sale_product.count,
-				'premium_count': premium_sale_product.count,
-				'premium_unit': premium_sale_product.unit,
-				'premium_product_id': premium_sale_product.product_id,
-				'supplier': main_product.supplier,
-				'shelve_type': shelve_type,
-				'is_deleted': product.is_deleted
-			}
-			detail_id2promotion[premium_sale_id].detail['premium_products'].append(data)
+			detail_id2promotion[model.id].detail = PremiumSale(model)
 
 	def fill_detail(self, promotions, corp):
 		"""
@@ -132,3 +74,40 @@ class FillPromotionDetailService(busniess_model.Service):
 				self.__fill_premium_products_details(promotions, corp)
 			elif promotion_type == promotion_models.PROMOTION_TYPE_INTEGRAL_SALE:
 				self.__fill_integral_sale_rule_details(promotions)
+
+	def fill_detail_for_products(self, corp, products):
+		"""
+		为商品添加促销详细信息
+		"""
+		id2product = dict([(product.id, product) for product in products])
+		product_ids = id2product.keys()
+
+		relations = promotion_models.ProductHasPromotion.select().dj_where(product_id__in=product_ids)
+		promotion_id2product_id = dict([(relation.promotion_id, relation.product_id) for relation in relations])
+		promotion_ids = promotion_id2product_id.keys()
+
+		promotion_db_models = promotion_models.Promotion.select().dj_where(id__in=promotion_ids).where(
+			promotion_models.Promotion.type != promotion_models.PROMOTION_TYPE_COUPON)
+		promotions = []
+		for promotion_db_model in promotion_db_models:
+			if (promotion_db_model.status != promotion_models.PROMOTION_STATUS_STARTED) and (
+				promotion_db_model.status != promotion_models.PROMOTION_STATUS_NOT_START):
+				# 跳过已结束、已删除的促销活动
+				continue
+
+			if promotion_db_model.owner_id != int(corp.id):
+				continue
+
+			promotion = corp.promotion_repository.get_promotion(promotion_db_model)
+			promotions.append(promotion)
+		self.fill_detail(promotions, corp)
+		# 为所有的product设置product.promotion
+		for promotion in promotions:
+			product_id = promotion_id2product_id.get(promotion.id, None)
+			if not product_id:
+				continue
+
+			product = id2product.get(product_id, None)
+			if not product:
+				continue
+			product.promotions.append(promotion)

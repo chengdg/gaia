@@ -260,42 +260,12 @@ class FillProductDetailService(business_model.Service):
 			if id2product.has_key(product_id):
 				id2product[product_id].sales = sales.sales
 
-	def __fill_promotion_detail(self, corp, products, product_ids, id2product):
+	def __fill_promotion_detail(self, corp, products):
 		"""
 		填充商品促销的信息
 		"""
-		relations = promotion_models.ProductHasPromotion.select().dj_where(product_id__in=product_ids)
-		promotion_id2product_id = dict([(relation.promotion_id, relation.product_id) for relation in relations])
-		promotion_ids = promotion_id2product_id.keys()
-
-		promotion_db_models = promotion_models.Promotion.select().dj_where(id__in=promotion_ids).where(
-			promotion_models.Promotion.type != promotion_models.PROMOTION_TYPE_COUPON)
-		promotions = []
-		for promotion_db_model in promotion_db_models:
-			if (promotion_db_model.status != promotion_models.PROMOTION_STATUS_STARTED) and (promotion_db_model.status != promotion_models.PROMOTION_STATUS_NOT_START):
-				#跳过已结束、已删除的促销活动
-				continue
-
-			if promotion_db_model.owner_id != int(corp.id):
-				continue
-
-			promotion = corp.promotion_repository.get_promotion(promotion_db_model)
-			promotions.append(promotion)
 		fill_promotion_detail_service = FillPromotionDetailService.get(corp)
-		fill_promotion_detail_service.fill_detail(promotions, corp)
-		#为所有的product设置product.promotion
-		for promotion in promotions:
-			product_id = promotion_id2product_id.get(promotion.id, None)
-			if not product_id:
-				continue
-
-			product = id2product.get(product_id, None)
-			if not product:
-				continue
-			if promotion.type_name == 'integral_sale':
-				product.integral_sale = promotion
-			else:
-				product.promotion = promotion
+		fill_promotion_detail_service.fill_detail_for_products(corp, products)
 
 	def __fill_cps_promoteion_info(self, corp, products, product_ids, id2product):
 		"""
@@ -369,7 +339,7 @@ class FillProductDetailService(business_model.Service):
 			self.__fill_shelve_status(self.corp, products)
 
 		if options.get('with_product_promotion', False):
-			self.__fill_promotion_detail(self.corp, products, product_ids, id2product)
+			self.__fill_promotion_detail(self.corp, products)
 
 		if options.get('with_image', False):
 			self.__fill_image_detail(self.corp, products, product_ids)
