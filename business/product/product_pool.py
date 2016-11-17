@@ -108,7 +108,8 @@ class ProductPool(business_model.Model):
 				filter_category = product_pool_filter_values
 			elif filter_field == 'sync_at':
 				filter_category = product_pool_filter_values
-			elif filter_field == 'name' or filter_field == 'bar_code' or filter_field == 'created_at':
+			elif filter_field == 'name' or filter_field == 'bar_code' or filter_field == 'created_at'\
+					or filter_field == 'user_code':
 				filter_category = product_db_filter_values
 			elif filter_field == 'price' or filter_field == 'stocks':
 				filter_category = product_model_filter_values
