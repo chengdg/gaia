@@ -245,8 +245,8 @@ class ProductPool(business_model.Model):
 				product_model_filters['stock_type'] = mall_models.PRODUCT_STOCK_TYPE_LIMIT
 
 			product_model_models = mall_models.ProductModel.select().dj_where(**product_model_filters)
-			product_ids = [model.product_id for model in product_model_models]
-			product_ids = list(set(product_ids))
+			temp_product_ids = [model.product_id for model in product_model_models]
+			product_ids = sorted(list(set(temp_product_ids)), key=product_ids.index)
 
 		#在mall_category_has_product中进行过滤
 		product_category_filters = type2filters['product_category']
