@@ -304,7 +304,7 @@ class ProductPool(business_model.Model):
 
 		#在mall_product表中进行过滤
 		product_info_filters = type2filters['product_info']
-		if supplier_ids:
+		if supplier_ids is not None:
 			product_info_filters['supplier_id__in'] = supplier_ids
 		if product_info_filters:
 			product_info_filters['id__in'] = product_ids
