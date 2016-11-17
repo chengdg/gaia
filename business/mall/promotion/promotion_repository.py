@@ -6,6 +6,6 @@ from business.mall.promotion.promotion import Promotion
 
 class PromotionRepository(business_model.Service):
 
-	def get_promotion(self, model):
-		promotion = Promotion(model)
-		return promotion
+	def get_promotion(self, promotion_id):
+		promotion = promotion_models.Promotion.select().dj_where(id=promotion_id).get()
+		return Promotion(promotion)

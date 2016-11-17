@@ -244,7 +244,6 @@ class EncodeProductService(business_model.Service):
 				}
 			data = {
 				'id': promotion.id,
-				'owner_id': promotion.owner_id,
 				'name': promotion.name,
 				'promotion_title': promotion.promotion_title,
 				'type': promotion.type,

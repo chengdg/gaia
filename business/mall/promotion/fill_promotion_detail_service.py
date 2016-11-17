@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from business import model as busniess_model
+from business.mall.promotion.promotion import Promotion
 from business.mall.promotion.integral_sale import IntegralSale
 from business.mall.promotion.flash_sale import FlashSale
 from business.mall.promotion.premium_sale import PremiumSale
@@ -98,7 +99,7 @@ class FillPromotionDetailService(busniess_model.Service):
 			if promotion_db_model.owner_id != int(corp.id):
 				continue
 
-			promotion = corp.promotion_repository.get_promotion(promotion_db_model)
+			promotion = Promotion(promotion_db_model)
 			promotions.append(promotion)
 		self.fill_detail(promotions, corp)
 		# 为所有的product设置product.promotion

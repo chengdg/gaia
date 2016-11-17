@@ -2,6 +2,7 @@
 """
 买赠
 """
+from business.mall.corporation_factory import CorporationFactory
 from business import model as business_model
 from db.mall import models as mall_models
 from db.mall import promotion_models
@@ -26,6 +27,7 @@ class PremiumSale(business_model.Model):
 
 	@property
 	def premium_products(self):
+		corp = CorporationFactory.get()
 		premium_sale_model = self.context['premium_sale_model']
 		promotion = promotion_models.Promotion.select().dj_where(detail_id=premium_sale_model.id).get()
 		product2promotion = promotion_models.ProductHasPromotion.get(promotion=promotion.id)
@@ -33,8 +35,7 @@ class PremiumSale(business_model.Model):
 
 		premium_sale_products = promotion_models.PremiumSaleProduct.select().dj_where(premium_sale_id=premium_sale_model.id)
 		product_ids = [premium_sale_product.product_id for premium_sale_product in premium_sale_products]
-
-		products = mall_models.Product.select().dj_where(id__in=product_ids)
+		products = corp.product_pool.get_products_by_ids(product_ids=product_ids)
 
 		pool_product_list = [p.product_id for p in mall_models.ProductPool.select().dj_where(
 			woid=premium_sale_model.owner_id,

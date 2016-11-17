@@ -15,7 +15,6 @@ class Promotion(business_model.Model):
     """
     __slots__ = (
         'id',
-        'owner_id',
         'name',
         'promotion_title',
         'type',
