@@ -6,7 +6,9 @@ from business import model as business_model
 
 from business.product.product import Product
 from business.product.model.product_model_generator import ProductModelGenerator
+from business.mall.promotion.fill_promotion_detail_service import FillPromotionDetailService
 from db.mall import models as mall_models
+from db.mall import promotion_models
 from gaia_conf import TOPIC
 
 import settings
@@ -258,6 +260,13 @@ class FillProductDetailService(business_model.Service):
 			if id2product.has_key(product_id):
 				id2product[product_id].sales = sales.sales
 
+	def __fill_promotion_detail(self, corp, products):
+		"""
+		填充商品促销的信息
+		"""
+		fill_promotion_detail_service = FillPromotionDetailService.get(corp)
+		fill_promotion_detail_service.fill_detail_for_products(corp, products)
+
 	def __fill_cps_promoteion_info(self, corp, products, product_ids, id2product):
 		"""
 		填充商品的cps推广信息
@@ -330,7 +339,7 @@ class FillProductDetailService(business_model.Service):
 			self.__fill_shelve_status(self.corp, products)
 
 		if options.get('with_product_promotion', False):
-			Product.__fill_promotion_detail(corp, products, product_ids)
+			self.__fill_promotion_detail(self.corp, products)
 
 		if options.get('with_image', False):
 			self.__fill_image_detail(self.corp, products, product_ids)

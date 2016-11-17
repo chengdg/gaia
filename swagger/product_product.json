@@ -694,6 +694,9 @@
                 },
                 "classifications": {
                     "$ref": "#/definitions/ReturnClassifications"
+                },
+                "promotions": {
+                    "$ref": "#/definitions/ReturnPromotions"
                 }
             }
         },
@@ -1134,6 +1137,9 @@
                 },
                 "cps_promotion_info": {
                     "$ref": "#/definitions/CpsPromotionInfo"
+                },
+                "promotions": {
+                    "$ref": "#/definitions/ReturnPromotions"
                 }
             }
         },
@@ -1154,6 +1160,62 @@
                 "label_name": {
                     "type": "string",
                     "description": "商品标签名称"
+                }
+            }
+        },
+        "ReturnPromotions": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number",
+                        "description": "促销的id"
+                    },
+                    "owner_id": {
+                        "type": "number",
+                        "description": "促销的owner_id"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "促销的名称"
+                    },
+                    "promotion_title": {
+                        "type": "string",
+                        "description": "促销的标题"
+                    },
+                    "type": {
+                        "type": "number",
+                        "description": "促销类型"
+                    },
+                    "type_name": {
+                        "type": "number",
+                        "description": "促销名称"
+                    },
+                    "status": {
+                        "type": "number",
+                        "description": "促销状态"
+                    },
+                    "start_date": {
+                        "type": "date",
+                        "description": "促销开始时间"
+                    },
+                    "end_date": {
+                        "type": "date",
+                        "description": "促销结束时间"
+                    },
+                    "member_grade_id": {
+                        "type": "number",
+                        "description": "促销限制的会员id"
+                    },
+                    "detail": {
+                        "type": "object",
+                        "description": "促销详情"
+                    },
+                    "created_at": {
+                        "type": "date",
+                        "description": "促销创建时间"
+                    }
                 }
             }
         }

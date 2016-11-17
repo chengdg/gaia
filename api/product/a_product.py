@@ -27,7 +27,8 @@ class AProduct(api_resource.ApiResource):
 			'with_model_property_info': True,
 			'with_property': True,
 			'with_supplier_info': True,
-			'with_classification': True
+			'with_classification': True,
+			'with_product_promotion': True
 		}
 		products = corp.product_pool.get_products_by_ids(ids, fill_options)
 		if len(products) == 0:
@@ -46,7 +47,8 @@ class AProduct(api_resource.ApiResource):
 				'properties': encode_product_service.get_properties(product),
 				"logistics_info": encode_product_service.get_logistics_info(product),
 				"supplier": encode_product_service.get_supplier_info(product),
-				"classifications": encode_product_service.get_classifications(product)
+				"classifications": encode_product_service.get_classifications(product),
+				"promotions": encode_product_service.get_promotions(product)
 			}
 
 			return data

@@ -30,6 +30,7 @@ from business.mall.supplier.supplier_repository import SupplierRepository
 from business.mall.product_classification_repository import ProductClassificationRepository
 from business.mall.product_label_repository import ProductLabelRepository
 from business.mall.product_label_group_repository import ProductLabelGroupRepositroy
+from business.mall.promotion.promotion_repository import PromotionRepository
 
 
 class Corporation(business_model.Model):
@@ -194,6 +195,10 @@ class Corporation(business_model.Model):
 	@property
 	def wepage_project(self):
 		return WepageProjectRepository(self)
+
+	@property
+	def promotion_repository(self):
+		return PromotionRepository(self)
 
 	@property
 	def order_config_repository(self):

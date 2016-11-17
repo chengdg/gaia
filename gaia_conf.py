@@ -7,7 +7,7 @@ CACHE_KEY = {
 
 # 消息队列topic
 TOPIC = {
-	'product': 'test-topic',
+	'product': 'local-test-topic',
 	'order': 'test-topic',
 	'delivery_item': 'test-topic',
 	'mall_config': "test-topic",

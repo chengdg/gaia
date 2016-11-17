@@ -217,5 +217,46 @@ class EncodeProductService(business_model.Service):
 			return data
 		return None
 
+	def get_promotions(self, product):
+		promotions = product.promotions
+		datas = []
+		for promotion in promotions:
+			promotion_detail = promotion.detail
+			if promotion.type_name == 'flash_sale':
+				detail = {
+					'count_per_period': promotion_detail.count_per_period,
+					'limit_period': promotion_detail.limit_period,
+					'count_per_purchase': promotion_detail.count_per_purchase,
+					'promotion_price': promotion_detail.promotion_price
+				}
+			elif promotion.type_name == 'premium_sale':
+				detail = {
+					'count': promotion_detail.count,
+					'is_enable_cycle_mode': promotion_detail.is_enable_cycle_mode,
+					'premium_products': promotion_detail.premium_products
+				}
+			elif promotion.type_name == 'integral_sale':
+				detail = {
+					'rules': promotion_detail.rules,
+					'discount': promotion_detail.discount,
+					'discount_money': promotion_detail.discount_money,
+					'is_permanant_active': promotion_detail.is_permanant_active
+				}
+			data = {
+				'id': promotion.id,
+				'name': promotion.name,
+				'promotion_title': promotion.promotion_title,
+				'type': promotion.type,
+				'type_name': promotion.type_name,
+				'status': promotion.status,
+				'start_date': promotion.start_date,
+				'end_date': promotion.end_date,
+				'member_grade_id': promotion.member_grade_id,
+				'detail': detail,
+				'created_at': promotion.created_at
+			}
+			datas.append(data)
+		return datas
+
 	def encode(self, product):
 		pass
