@@ -87,7 +87,7 @@ class ProductPool(business_model.Model):
 		filter_parse_result = FilterParser.get().parse(filters)
 		should_add_default_status = True #是否添加默认的商品status条件
 		# 是否添加规格信息的is_deleted字段
-		should_add_default_model_is_deleted = True
+		should_add_default_model_is_deleted = False
 		for filter_field_op, filter_value in filter_parse_result.items():
 			#获得过滤的field
 			items = filter_field_op.split('__')

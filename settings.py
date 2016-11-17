@@ -24,6 +24,8 @@ DATABASES = {
         'PASSWORD': 'weizoom',
         'HOST': GAIA_DB,
         'PORT': '',
+        #'HOST': '103.29.16.148',#WEAPP_DB_HOST,
+        #'PORT': '33306',
         'CONN_MAX_AGE': 100
     }
 }
