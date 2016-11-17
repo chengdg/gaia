@@ -37,21 +37,11 @@ class PremiumSale(business_model.Model):
 		product_ids = [premium_sale_product.product_id for premium_sale_product in premium_sale_products]
 		products = corp.product_pool.get_products_by_ids(product_ids=product_ids)
 
-		pool_product_list = [p.product_id for p in mall_models.ProductPool.select().dj_where(
-			woid=premium_sale_model.owner_id,
-			status=mall_models.PP_STATUS_ON)]
-
 		id2product = dict([(product.id, product) for product in products])
 		premium_products = []
 		for premium_sale_product in premium_sale_products:
 			product_id = premium_sale_product.product_id
 			product = id2product[product_id]
-
-			if pool_product_list and product_id in pool_product_list:
-				shelve_type = mall_models.PRODUCT_SHELVE_TYPE_ON
-			else:
-				shelve_type = product.shelve_type
-
 			data = {
 				'id': product.id,
 				'name': product.name,
@@ -62,7 +52,7 @@ class PremiumSale(business_model.Model):
 				'premium_unit': premium_sale_product.unit,
 				'premium_product_id': premium_sale_product.product_id,
 				'supplier': main_product.supplier,
-				'shelve_type': shelve_type,
+				'status': product.shelve_type,
 				'is_deleted': product.is_deleted
 			}
 			premium_products.append(data)
