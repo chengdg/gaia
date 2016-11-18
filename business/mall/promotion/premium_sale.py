@@ -29,7 +29,7 @@ class PremiumSale(business_model.Model):
 	def premium_products(self):
 		corp = CorporationFactory.get()
 		premium_sale_model = self.context['premium_sale_model']
-		promotion = promotion_models.Promotion.select().dj_where(detail_id=premium_sale_model.id).get()
+		promotion = promotion_models.Promotion.select().dj_where(detail_id=premium_sale_model.id, owner_id=corp.id).get()
 		product2promotion = promotion_models.ProductHasPromotion.get(promotion=promotion.id)
 		main_product = product2promotion.product
 
