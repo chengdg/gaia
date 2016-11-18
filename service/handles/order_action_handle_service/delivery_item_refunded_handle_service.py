@@ -16,9 +16,11 @@ from business.order.release_delivery_item_resource import ReleaseDeliveryItemRes
 from service.handler_register import register
 from db.express import models as express_models
 from gaia_conf import TOPIC
+from service.utils import not_retry
 
 
 @register("delivery_item_refunded")
+@not_retry
 def process(data, recv_msg=None):
 	"""
 	已完成

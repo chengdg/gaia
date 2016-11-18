@@ -11,9 +11,11 @@ from business.mall.corporation import Corporation
 from business.order.release_order_resource_service import ReleaseOrderResourceService
 from service.handler_register import register
 from gaia_conf import TOPIC
+from service.utils import not_retry
 
 
 @register("order_cancelled")
+@not_retry
 def process(data, recv_msg=None):
 	corp_id = data['corp_id']
 	order_id = data['order_id']

@@ -7,9 +7,11 @@ from bdem import msgutil
 from business.mall.corporation import Corporation
 from service.handler_register import register
 from gaia_conf import TOPIC
+from service.utils import not_retry
 
 
 @register("order_applied_for_refunding")
+@not_retry
 def process(data, recv_msg=None):
 	"""
 	处理支付订单消息
