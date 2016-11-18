@@ -157,7 +157,7 @@ else:
     MNS_ACCESS_KEY_SECRET = 'bPKU71c0cfrui4bWgGPO96tLiOJ0PZ'
     MNS_ENDPOINT = 'https://1615750970594173.mns.cn-beijing.aliyuncs.com/'
     MNS_SECURITY_TOKEN = ''
-    SUBSCRIBE_QUEUE_NAME = 'local-test-gaia'
+    SUBSCRIBE_QUEUE_NAME = 'test-order-trade-center'
 
 if 'develop' != MODE:
     MESSAGE_DEBUG_MODE = False
