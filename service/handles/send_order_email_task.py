@@ -13,8 +13,6 @@ from service.handler_register import register
 # -*- coding: utf-8 -*-
 from util.regional_util import get_str_value_by_string_ids
 
-
-
 from business.mall.corporation import Corporation
 from service.handler_register import register
 from db.mall import models as mall_models
@@ -30,12 +28,12 @@ ORDER_STATUS2NOTIFY_STATUS = {
 
 def __send_email(emails, content_described, content):
 	for email in emails:
+		print('-----emails', email, content_described, content)
 		sendmail(email, content_described, content)
 
 
 @register("send_order_email_task")
 def process(data, recv_msg=None):
-
 	type = data['type']
 	if type == 'order':
 		corp_id = data['corp_id']
@@ -51,6 +49,7 @@ def process(data, recv_msg=None):
 			}
 
 		}
+
 		order = corp.order_repository.get_order(order_id, fill_options)
 		# 更新商品销量
 		delivery_item_products = []
@@ -61,7 +60,8 @@ def process(data, recv_msg=None):
 		order_notify_type = ORDER_STATUS2NOTIFY_STATUS.get(order.status, -1)
 		order_notify = notification_repository.get_email_notification_by_type(order_notify_type)
 
-		if order_notify and order_notify.is_active and order.memebr_info['id'] not in order_notify.black_member_ids:
+		if order_notify and order_notify.is_active and order.member_info[
+			'id'] not in order_notify.black_member_ids and order_notify.email_addresses:
 			buy_count = ''
 			product_name = ''
 			product_pic_list = []
@@ -114,15 +114,25 @@ def process(data, recv_msg=None):
 
 				content_list.append(u'收货人电话：%s' % order.ship_tel)
 
-				area = get_str_value_by_string_ids(order.ship_area)
+				# area = get_str_value_by_string_ids(order.ship_area)
+				area = ""
 				buyer_address = area + u" " + order.ship_address
 				content_list.append(u'收货人地址：%s' % buyer_address)
 				if order.customer_message:
 					content_list.append(u'顾客留言：%s' % order.customer_message)
 
 			content = u'<br> '.join(content_list)
-
-			__send_email(order_notify.email_addresses, content_described, content)
+			try:
+				__send_email(order_notify.email_addresses, content_described, content)
+			except:
+				from eaglet.core.exceptionutil import unicode_full_stack
+				from eaglet.core import watchdog
+				watchdog.alert({
+					'uuid': "send_email_error",
+					'traceback': unicode_full_stack(),
+					'email_addresses': order_notify.email_addresses
+				})
+				pass
 	else:
 		# todo
 		pass

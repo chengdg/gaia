@@ -86,11 +86,16 @@ class Command(BaseCommand):
 			except Exception as e:
 				print u"Exception: {}".format(unicode_full_stack())
 			finally:
+				try:
+					_data = data['data']
+				except:
+					_data = 'null'
+
 				if handler_func:
 					message = {
 						'message_id': recv_msg.message_id,
 						'message_body_md5': '',
-						'data': args,
+						'data': _data,
 						'topic_name': '',
 						'msg_name': message_name,
 						'handel_success': handle_success
