@@ -8,7 +8,6 @@ from eaglet.decorator import param_required
 
 from business.common.page_info import PageInfo
 from business.order.order_export_job import OrderExportJob
-from gaia_conf import TOPIC
 
 
 class AOrderExportResult(api_resource.ApiResource):
@@ -17,22 +16,15 @@ class AOrderExportResult(api_resource.ApiResource):
 
 	@param_required(['corp', 'type'])
 	def put(args):
-		filters = json.loads(args.get('filters', '{}'))
+		filters = args.get('filters', '{}')
 
 		corp = args['corp']
 
 		order_export_job = OrderExportJob.create({
 			'corp_id': corp.id,
 			'type': args['type'],
-			'filters': args['filters']
+			'filters': filters
 		})
-
-		topic_name = TOPIC['order']
-		data = {
-			"job_id": order_export_job.id
-		}
-
-		msgutil.send_message(topic_name, "order_export_job_created", data)
 
 		return {
 			"job_id": order_export_job.id
@@ -64,4 +56,10 @@ class AOrderExportResult(api_resource.ApiResource):
 
 	@param_required(['corp', 'job_id'])
 	def delete(args):
-		pass
+		
+		corp = args['corp']
+		job_id = args['job_id']
+
+		is_download = False
+		job = corp.order_export_job_repository.get_order_export_job_by_job_id(job_id)
+		job.update(is_download)

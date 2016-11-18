@@ -12,8 +12,8 @@ SERVICE_NAME = 'gaia'
 DEV_SERVER_MULTITHREADING = True
 WEAPP_DOMAIN = "weapp.weizoom.com"
 HERMES_DOMAIN = "weapp.weizoom.com"
-# GAIA_DB = os.environ.get('GAIA_DB', None) or '103.29.16.148'
-GAIA_DB = os.environ.get('GAIA_DB', None) or 'db.dev.com'
+GAIA_DB = os.environ.get('GAIA_DB', None) or '103.29.16.148'
+# GAIA_DB = os.environ.get('GAIA_DB', None) or 'db.dev.com'
 
 DATABASES = {
     'default': {
@@ -23,7 +23,7 @@ DATABASES = {
         'USER': 'weapp',
         'PASSWORD': 'weizoom',
         'HOST': GAIA_DB,
-        'PORT': '',
+        'PORT': '33306',
         'CONN_MAX_AGE': 100
     }
 }
@@ -157,7 +157,7 @@ else:
     MNS_SECURITY_TOKEN = ''
     SUBSCRIBE_QUEUE_NAME = 'test-gaia'
     MESSAGE_DEBUG_MODE = True
-
+MESSAGE_DEBUG_MODE = False
 # BDD_SERVER相关配置
 BDD_SERVER2PORT = {
     'weapp': 8170,
