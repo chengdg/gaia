@@ -206,7 +206,7 @@
 																},
 																"customer_message": {
 																	"type": "string",
-																	"description": "买家留言"
+																	"description": "已废弃"
 																},
 																"postage": {
 																	"type": "number",
@@ -301,6 +301,10 @@
 																			"leader_name": {
 																				"type": "string",
 																				"description": "发货人"
+																			},
+																			"customer_message": {
+																				"type": "string",
+																				"description": "买家留言"
 																			},
 																			"with_logistics": {
 																				"type": "boolean",
@@ -631,7 +635,7 @@
 												},
 												"customer_message": {
 													"type": "string",
-													"description": "买家留言"
+													"description": "已废弃"
 												},
 												"postage": {
 													"type": "number",
@@ -784,6 +788,10 @@
 															"leader_name": {
 																"type": "string",
 																"description": "发货人"
+															},
+															"customer_message": {
+																"type": "string",
+																"description": "买家留言"
 															},
 															"with_logistics": {
 																"type": "boolean",

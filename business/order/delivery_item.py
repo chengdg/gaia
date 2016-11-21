@@ -37,6 +37,8 @@ class DeliveryItem(business_model.Model):
 		'ship_name',
 		'supplier_id',
 
+		'customer_message',
+
 		'refunding_info',
 		'supplier_info',
 		'express_details',
@@ -76,6 +78,7 @@ class DeliveryItem(business_model.Model):
 		self.area = db_model.area
 		self.supplier_id = db_model.supplier
 		self.ship_name = db_model.ship_name
+		self.customer_message = db_model.customer_message
 
 		# 快递公司信息
 		self.express_company_name_value = db_model.express_company_name
