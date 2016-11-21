@@ -159,7 +159,9 @@ else:
     MNS_SECURITY_TOKEN = ''
     SUBSCRIBE_QUEUE_NAME = 'test-order-trade-center'
 
-if 'develop' != MODE:
+if 'develop' == MODE:
+    MESSAGE_DEBUG_MODE = True
+else:
     MESSAGE_DEBUG_MODE = False
 
 # BDD_SERVER相关配置
