@@ -17,6 +17,7 @@ class EncodeOrderService(business_model.Service):
 			'ship_name': order.ship_name,
 			'ship_tel': order.ship_tel,
 			'ship_area': order.ship_area,
+			'ship_area_text': order.ship_area_text,
 			'ship_address': order.ship_address,
 			'bill_type': order.bill_type,
 			'bill': order.bill,

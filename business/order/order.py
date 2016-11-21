@@ -7,6 +7,8 @@ from gaia_conf import TOPIC
 from bdem import msgutil
 from datetime import datetime, timedelta
 
+from util.regional_util import get_str_value_by_string_ids
+
 
 class Order(business_model.Model):
 	"""
@@ -30,6 +32,7 @@ class Order(business_model.Model):
 		'ship_name',
 		'ship_tel',
 		'ship_area',
+		'ship_area_text',
 		'ship_address',
 		'bill_type',
 		'bill',
@@ -144,7 +147,8 @@ class Order(business_model.Model):
 			order.ship_name = db_model.ship_name
 			order.ship_tel = db_model.ship_tel
 			order.ship_address = db_model.ship_address
-			order.ship_area = db_model.ship_name
+			order.ship_area = db_model.area
+			order.ship_area_text = get_str_value_by_string_ids(order.ship_area)
 
 			# 会员信息
 			order.webapp_user_id = db_model.webapp_user_id
