@@ -41,61 +41,16 @@ class DeliveryItemProductRepository(business_model.Model):
 		@return:
 		"""
 
-		# ohs_db_model_list = mall_models.OrderHasProduct.select().dj_where(order_id__in=delivery_item_ids)
+		# todo 性能优化
 
-
-		# delivery_item_id2ohs_list = {}
-		#
-		# for ohs in ohs_db_model_list:
-		# 	if ohs.order_id in delivery_item_id2ohs_list:
-		# 		delivery_item_id2ohs_list[ohs.order_id].append(ohs)
-		# 	else:
-		# 		delivery_item_id2ohs_list[ohs.order_id] = [ohs]
-		#
-		#
-		# origin_order_ids = [delivery_item.origin_order_id for delivery_item in delivery_items]
-		#
-		#
-		# origin_ohs_list = mall_models.OrderHasProduct.select().dj_where(order_id__in=origin_order_ids)
-
-		# origin_order_id2ohs = {}
-		# for ohs in origin_ohs_list:
-		# 	origin_order_id2ohs[ohs.order_id] = ohs
-		# 	# if ohs.origin_order_id > 0:
-		# 	# 	ohs._origin_order_id = ohs.origin_order_id
-		# 	# 	origin_order_id2ohs[ohs.origin_order_id] = ohs
-		# 	# else:
-		# 	# 	origin_order_id2ohs[ohs.order_id] = ohs
-		# 	# 	ohs._origin_order_id = ohs.order_id
-		#
-		# delivery_item_ohs_list = mall_models.OrderHasProduct.select().dj_where(order_id__in=delivery_items)
-		# delivery_item_id2origin_ohs = {}
-		# delivery_item_id2delivery_item_ohs = {ohs.order_id:ohs for ohs in delivery_item_ohs_list}
-		#
-		# for delivery_item_ohs in delivery_item_ohs_list:
-		# 	if delivery_item_ohs.origin_order_id > 0:
-		# 		delivery_item_ohs.real_origin_order_id = delivery_item_ohs.origin_order_id
-		#
-		# 	else:
-		# 		delivery_item_ohs.real_origin_order_id = delivery_item_ohs.order_id
-		#
-		# for delivery_item_ohs in delivery_item_ohs_list:
-		# 	origin_ohs = origin_order_id2ohs[delivery_item_ohs.real_origin_order_id]
-		# 	delivery_item.context['origin_ohs'] = delivery_item_ohs_id2delivery_item[delivery_item_ohs.id] context['origin_ohs']
-		# promotion_db_model_list = mall_models.OrderHasPromotion.select().dj_where(order_id__in=origin_order_ids)
-
-
-		delivery_item_ids = [delivery_item.id for delivery_item in delivery_items]
+		origin_order_ids = []
+		delivery_item_ids = []
+		delivery_item_id2origin_order_id = {}
+		for delivery_item in delivery_items:
+			delivery_item_ids.append(delivery_item.id)
+			origin_order_ids.append(delivery_item.origin_order_id)
+			delivery_item_id2origin_order_id[delivery_item.id] = delivery_item.origin_order_id
 		ohs_db_model_list = mall_models.OrderHasProduct.select().dj_where(order_id__in=delivery_item_ids)
-
-		product_ids = [p.product_id for p in ohs_db_model_list]
-
-		products = self.corp.product_pool.get_products_by_ids(product_ids,
-		                                                      {"with_product_model": True, "with_property": True,
-		                                                       "with_model_property_info": True})
-		product_id2product = {p.id: p for p in products}
-
-		origin_order_ids = [delivery_item.origin_order_id for delivery_item in delivery_items]
 
 		id2promotion = {r.promotion_id: r for r in
 		                mall_models.OrderHasPromotion.select().dj_where(order_id__in=origin_order_ids)}
@@ -105,11 +60,21 @@ class DeliveryItemProductRepository(business_model.Model):
 
 		delivery_item_ohs_id2origin_order_ohs = {}
 
+		product_ids = []
 		for delivery_item_ohs in ohs_db_model_list:
 			for origin_ohs in origin_ohs_list:
-				if delivery_item_ohs.order_id == origin_ohs.order_id and delivery_item_ohs.product_id == origin_ohs.product_id:
+				# if delivery_item_ohs.origin_order_id == origin_ohs.order_id and delivery_item_ohs.product_id == origin_ohs.product_id:
+				if delivery_item_id2origin_order_id[
+					delivery_item_ohs.order_id] == origin_ohs.order_id and delivery_item_ohs.product_id == origin_ohs.product_id:
 					delivery_item_ohs_id2origin_order_ohs[delivery_item_ohs.id] = origin_ohs
 					break
+
+			product_ids.append(delivery_item_ohs.product_id)
+
+		products = self.corp.product_pool.get_products_by_ids(product_ids,
+		                                                      {"with_product_model": True, "with_property": True,
+		                                                       "with_model_property_info": True})
+		product_id2product = {p.id: p for p in products}
 
 		delivery_item_products = []
 		for r in ohs_db_model_list:
@@ -141,8 +106,7 @@ class DeliveryItemProductRepository(business_model.Model):
 
 			delivery_item_product.origin_price = origin_ohs.total_price / r.number
 			delivery_item_product.sale_price = origin_ohs.price
-
-			delivery_item_product.total_origin_price = r.total_price
+			delivery_item_product.total_origin_price = origin_ohs.total_price
 			delivery_item_product.count = r.number
 			delivery_item_product.product_model_name = r.product_model_name
 			delivery_item_product.delivery_item_id = r.order_id
@@ -216,7 +180,8 @@ class DeliveryItemProductRepository(business_model.Model):
 				# 填充积分应用
 				integral_product_info = db_promotion_result.get('integral_product_info')
 				if integral_product_info:
-					if integral_product_info == str(delivery_item_product.id) + '-' + delivery_item_product.product_model_name:
+					if integral_product_info == str(
+							delivery_item_product.id) + '-' + delivery_item_product.product_model_name:
 						promotion_info['integral_money'] = promotion.integral_money
 						promotion_info['integral_count'] = promotion.integral_count
 

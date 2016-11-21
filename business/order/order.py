@@ -439,11 +439,8 @@ class Order(business_model.Model):
 			order.origin_final_price = order.final_price + order.refunding_info['cash']
 
 			total_product_origin_price = order.__get_total_origin_product_price()
-
-			order.save_money = round(total_product_origin_price, 2) + round(order.postage, 2) - round(
-				order.origin_final_price,
-				2) - round(
-				order.origin_weizoom_card_money, 2)
+			order.save_money = round(float(total_product_origin_price) + float(order.postage) - float(
+				order.origin_final_price, ) - float(order.origin_weizoom_card_money), 2)
 
 	@staticmethod
 	def __fill_operation_logs(orders, order_ids):
