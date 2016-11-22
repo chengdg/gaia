@@ -38,7 +38,7 @@ class AOrderList(api_resource.ApiResource):
 			'with_refunding_info': True,
 			'with_group_buy_info': True,
 			'with_member': True,
-
+			'with_coupon':True,
 			'with_full_money_info': True,
 			'with_delivery_items': delivery_fill_options
 

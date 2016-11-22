@@ -17,22 +17,15 @@ class AOrderExportResult(api_resource.ApiResource):
 
 	@param_required(['corp', 'type'])
 	def put(args):
-		filters = json.loads(args.get('filters', '{}'))
+		filters = args.get('filters', '{}')
 
 		corp = args['corp']
 
 		order_export_job = OrderExportJob.create({
 			'corp_id': corp.id,
 			'type': args['type'],
-			'filters': args['filters']
+			'filters': filters
 		})
-
-		topic_name = TOPIC['order']
-		data = {
-			"job_id": order_export_job.id
-		}
-
-		msgutil.send_message(topic_name, "order_export_job_created", data)
 
 		return {
 			"job_id": order_export_job.id
@@ -62,6 +55,10 @@ class AOrderExportResult(api_resource.ApiResource):
 
 			}
 
-	@param_required(['corp', 'job_id'])
+	@param_required(['corp', 'type'])
 	def delete(args):
-		pass
+		corp = args['corp']
+		type = args['type']
+		job = corp.order_export_job_repository.get_order_export_job_by_type(type)
+		job.update({"is_download":True})
+		return {}
