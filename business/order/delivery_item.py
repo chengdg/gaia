@@ -382,7 +382,7 @@ class DeliveryItem(business_model.Model):
 		@return:
 		"""
 		from_status = self.status
-		to_status = mall_models.ORDER_STATUS_PAYED_NOT_SHIP
+		to_status = mall_models.ORDER_STATUS_CANCEL
 		if self.has_db_record:
 			action_text = u"支付"
 
