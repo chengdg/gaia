@@ -3,7 +3,7 @@
 出货单发货服务
 """
 
-
+from eaglet.core.exceptionutil import unicode_full_stack
 from eaglet.core import watchdog
 
 from business import model as business_model
@@ -78,10 +78,12 @@ class DeliveryItemShipService(business_model.Service):
 					ship_info["is_success"] = False
 			except:
 				ship_info["error_info"] = u"发送异常"
+				ship_info['is_success'] = False
 				watchdog.alert({
 					"uuid": "ship_error",
 					"hint": u"发送出货单异常",
-					"ship_info": ship_info
+					"ship_info": ship_info,
+					'traceback': unicode_full_stack()
 				})
 
 		return ship_infos
