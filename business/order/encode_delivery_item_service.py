@@ -20,7 +20,8 @@ class EncodeDeliveryItemService(business_model.Service):
 			'leader_name': delivery_item.leader_name,
 			'created_at': delivery_item.created_at,
 			'with_logistics_trace': delivery_item.with_logistics_trace,
-			'with_logistics': delivery_item.with_logistics
+			'with_logistics': delivery_item.with_logistics,
+			'customer_message': delivery_item.customer_message
 		}
 
 	def get_express_details(self, delivery_item):

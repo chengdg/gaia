@@ -7,6 +7,8 @@ from gaia_conf import TOPIC
 from bdem import msgutil
 from datetime import datetime, timedelta
 
+from util.regional_util import get_str_value_by_string_ids
+
 
 class Order(business_model.Model):
 	"""
@@ -30,6 +32,7 @@ class Order(business_model.Model):
 		'ship_name',
 		'ship_tel',
 		'ship_area',
+		'ship_area_text',
 		'ship_address',
 		'bill_type',
 		'bill',
@@ -45,7 +48,7 @@ class Order(business_model.Model):
 		'status_code',
 		'status_text',
 
-		'customer_message',
+		# 'customer_message',
 
 		'created_at',
 
@@ -144,11 +147,12 @@ class Order(business_model.Model):
 			order.ship_name = db_model.ship_name
 			order.ship_tel = db_model.ship_tel
 			order.ship_address = db_model.ship_address
-			order.ship_area = db_model.ship_name
+			order.ship_area = db_model.area
+			order.ship_area_text = get_str_value_by_string_ids(order.ship_area)
 
 			# 会员信息
 			order.webapp_user_id = db_model.webapp_user_id
-			order.customer_message = db_model.customer_message
+			# order.customer_message = db_model.customer_message
 
 			# 出货单
 			order.delivery_items = []
@@ -435,11 +439,8 @@ class Order(business_model.Model):
 			order.origin_final_price = order.final_price + order.refunding_info['cash']
 
 			total_product_origin_price = order.__get_total_origin_product_price()
-
-			order.save_money = round(total_product_origin_price, 2) + round(order.postage, 2) - round(
-				order.origin_final_price,
-				2) - round(
-				order.origin_weizoom_card_money, 2)
+			order.save_money = round(float(total_product_origin_price) + float(order.postage) - float(
+				order.origin_final_price, ) - float(order.origin_weizoom_card_money), 2)
 
 	@staticmethod
 	def __fill_operation_logs(orders, order_ids):

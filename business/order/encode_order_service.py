@@ -17,6 +17,7 @@ class EncodeOrderService(business_model.Service):
 			'ship_name': order.ship_name,
 			'ship_tel': order.ship_tel,
 			'ship_area': order.ship_area,
+			'ship_area_text': order.ship_area_text,
 			'ship_address': order.ship_address,
 			'bill_type': order.bill_type,
 			'bill': order.bill,
@@ -26,7 +27,7 @@ class EncodeOrderService(business_model.Service):
 			'coupon_money': order.coupon_money,
 			'coupon_id': order.coupon_id,
 			'status_code': order.status_code,
-			'customer_message': order.customer_message,
+			'customer_message': '',  # todo 删除
 			'created_at': order.created_at,
 
 			'webapp_id': order.webapp_id,

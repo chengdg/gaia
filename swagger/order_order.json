@@ -76,7 +76,11 @@
 																},
 																"ship_area": {
 																	"type": "string",
-																	"description": "收货地址地区"
+																	"description": "收货地址地区的编码，如1_1_1"
+																},
+																"ship_area_text": {
+																	"type": "string",
+																	"description": "收货地址地区的中文地区描述，如北京市 北京市 西城区"
 																},
 																"ship_name": {
 																	"type": "string",
@@ -121,13 +125,13 @@
 																			"type": "integer",
 																			"description": "id"
 																		},
-																		"is_subscribed":{
-																			"type":"boolean",
-																			"description":"是否关注"
+																		"is_subscribed": {
+																			"type": "boolean",
+																			"description": "是否关注"
 																		},
-																		"name":{
-																			"type":"string",
-																			"description":"携带emoji的HTML的名称"
+																		"name": {
+																			"type": "string",
+																			"description": "携带emoji的HTML的名称"
 																		}
 																	}
 																},
@@ -202,7 +206,7 @@
 																},
 																"customer_message": {
 																	"type": "string",
-																	"description": "买家留言"
+																	"description": "已废弃"
 																},
 																"postage": {
 																	"type": "number",
@@ -297,6 +301,10 @@
 																			"leader_name": {
 																				"type": "string",
 																				"description": "发货人"
+																			},
+																			"customer_message": {
+																				"type": "string",
+																				"description": "买家留言"
 																			},
 																			"with_logistics": {
 																				"type": "boolean",
@@ -493,7 +501,11 @@
 												},
 												"ship_area": {
 													"type": "string",
-													"description": "收货地址地区"
+													"description": "收货地址地区的编码，如1_1_1"
+												},
+												"ship_area_text": {
+													"type": "string",
+													"description": "收货地址地区的中文地区描述，如北京市 北京市 西城区"
 												},
 												"integral_type": {
 													"type": "string",
@@ -542,13 +554,13 @@
 															"type": "string",
 															"description": "携带emoji的html的用户名"
 														},
-														"id":{
-															"type":"integer",
-															"description":"id"
+														"id": {
+															"type": "integer",
+															"description": "id"
 														},
-														"is_subscribed":{
-															"type":"boolean",
-															"description":"是否已关注"
+														"is_subscribed": {
+															"type": "boolean",
+															"description": "是否已关注"
 														}
 													}
 												},
@@ -623,7 +635,7 @@
 												},
 												"customer_message": {
 													"type": "string",
-													"description": "买家留言"
+													"description": "已废弃"
 												},
 												"postage": {
 													"type": "number",
@@ -776,6 +788,10 @@
 															"leader_name": {
 																"type": "string",
 																"description": "发货人"
+															},
+															"customer_message": {
+																"type": "string",
+																"description": "买家留言"
 															},
 															"with_logistics": {
 																"type": "boolean",
