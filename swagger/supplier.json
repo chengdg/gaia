@@ -1,0 +1,103 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "Hermes Image Group API"
+    },
+    "paths": {
+        "/mall/suppliers/": {
+            "get": {
+                "summary": "获取供货商列表",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "order_config"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/SupplierList"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "SupplierList": {
+            "type": "object",
+            "properties": {
+                "pageinfo": {
+                    "type": "object",
+                    "description": "分页信息"
+                },
+                "suppliers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/SupplierInList"
+                    },
+                    "minItems": 0
+                }
+            }
+        },
+         "SupplierInList": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": ""
+                },
+
+                "name": {
+                    "type": "string",
+                    "description": "供货商名称"
+                },
+                "type": {
+                    "type": "string",
+                    "description": "供货商类型"
+                },
+                "responsible_person": {
+                    "type": "string",
+                    "description": "责任人"
+                },
+                "supplier_tel": {
+                    "type": "string",
+                    "description": "供货商电话"
+                },
+                "supplier_address": {
+                    "type": "string",
+                    "description": "供货商地址"
+                },
+                "remark": {
+                    "type": "string",
+                    "description": ""
+                },
+                "settlement_period": {
+                    "type": "string",
+                    "description": ""
+                },
+                "divide_type_info": {
+                    "type": "string",
+                    "description": ""
+                },
+
+                "retail_type_info": {
+                    "type": "string",
+                    "description": ""
+                }
+
+            }
+        }
+    }
+}
