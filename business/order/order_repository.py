@@ -71,7 +71,7 @@ class OrderRepository(business_model.Model):
 				order_filter_parse_result.update(filter_parse_result)
 
 			if '__f-pay_interface_type-equal' in filters:
-				filters['__f-pay_interface_type-equal'] = mall_models.PAYSTR2TYPE
+				filters['__f-pay_interface_type-equal'] = mall_models.PAYSTR2TYPE[filters['__f-pay_interface_type-equal']]
 				filter_parse_result = FilterParser.get().parse_key(filters, '__f-pay_interface_type-equal')
 				order_filter_parse_result.update(filter_parse_result)
 
