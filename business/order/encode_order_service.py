@@ -27,7 +27,8 @@ class EncodeOrderService(business_model.Service):
 			'coupon_money': order.coupon_money,
 			'coupon_id': order.coupon_id,
 			'status_code': order.status_code,
-			'customer_message': '',  # todo 删除
+			'customer_message': order.customer_message,  # todo 删除
+			'supplier_remark': order.customer_message,
 			'created_at': order.created_at,
 
 			'webapp_id': order.webapp_id,
