@@ -26,6 +26,7 @@ class DeliveryItemProduct(business_model.Model):
 		'origin_price',  # 下单时的原价
 		'sale_price',  # 售价
 		'count',
+		'weight',
 		'delivery_item_id',
 		'thumbnails_url',
 		'is_deleted',

@@ -6,6 +6,7 @@ from db.mall import models as mall_models
 from gaia_conf import TOPIC
 from bdem import msgutil
 from datetime import datetime, timedelta
+import re
 
 from util.regional_util import get_str_value_by_string_ids
 
@@ -48,7 +49,7 @@ class Order(business_model.Model):
 		'status_code',
 		'status_text',
 
-		# 'customer_message',
+		'customer_message',
 
 		'created_at',
 
@@ -152,7 +153,7 @@ class Order(business_model.Model):
 
 			# 会员信息
 			order.webapp_user_id = db_model.webapp_user_id
-			# order.customer_message = db_model.customer_message
+			order.customer_message = db_model.customer_message
 
 			# 出货单
 			order.delivery_items = []
@@ -193,8 +194,10 @@ class Order(business_model.Model):
 				if with_member:
 					member = webapp_user_id2member.get(order.webapp_user_id, None)
 					if member:
+						reobj = re.compile(r'\<span.*?\<\/span\>')
+						name, number = reobj.subn('口', member.username_for_html)
 						order.member_info = {
-							'name': member.username_for_html,
+							'name': name,
 							'id': member.id,
 							'is_subscribed': member.is_subscribed
 						}
