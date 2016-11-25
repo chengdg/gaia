@@ -61,9 +61,15 @@ class OrderExportJob(business_model.Model):
 
 		return OrderExportJob(db_model)
 
-	def send_mns_message(self, args):
-		msgutil.send_message(args['topic_name'], args['topic'], args['data'])
-
 	def update(self, args):
 		self.is_download = args["is_download"]
-		self.save()
+		self.__save()
+
+	def __save(self):
+	 	"""
+	 	持久化修改的数据
+	 	@return:
+	 	"""
+	 	db_model = self.context['db_model']
+	 	db_model.is_download = self.is_download
+	 	db_model.save()
