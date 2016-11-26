@@ -69,7 +69,7 @@ class OrderRepository(business_model.Model):
 				order_filter_parse_result.update(filter_parse_result)
 
 			if '__f-is_first_order-equal' in filters:
-				if filters['__f-is_first_order-equal'] == 'true':
+				if filters['__f-is_first_order-equal'] == 'true' or True:
 					filters['__f-is_first_order-equal'] = True
 				else:
 					filters['__f-is_first_order-equal'] = False
