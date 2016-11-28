@@ -80,5 +80,5 @@ class ReleaseOrderResourceService(business_model.Service):
 				'webapp_user_id': order.webapp_user_id,
 				'member_id': order.member_info['id'],
 				'event_type': member_models.RETURN_BY_SYSTEM,
-				'corp': corp
+				'corp': corp,
 			})

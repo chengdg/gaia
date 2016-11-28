@@ -33,6 +33,7 @@ from business.mall.product_label_group_repository import ProductLabelGroupReposi
 from business.mall.promotion.promotion_repository import PromotionRepository
 
 
+
 class Corporation(business_model.Model):
 	"""
 	商家
