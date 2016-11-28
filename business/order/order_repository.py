@@ -145,25 +145,22 @@ class OrderRepository(business_model.Model):
 						status_list = [status]
 					status_params.extend(status_list)
 
-					# 退款中和退款完成的订单搜索条件其实是出货单的状态。。。。。
-					if self.corp.type != 'normal' and use_wtf_refund:
-						_delivery_items = mall_models.Order.select(mall_models.Order.origin_order_id).dj_where(
-							webapp_id=self.corp.webapp_id,
-							origin_order_id__gt=0, status__in=status_params)
-						wtf_refund_order_id = [item.origin_order_id for item in _delivery_items]
-						should_in_order_ids.extend(wtf_refund_order_id)
-						use_should_in_order_ids = True
+				# 退款中和退款完成的订单搜索条件其实是出货单的状态。。。。。
+				if self.corp.type != 'normal' and use_wtf_refund:
+					_delivery_items = mall_models.Order.select(mall_models.Order.origin_order_id).dj_where(
+						webapp_id=self.corp.webapp_id,
+						origin_order_id__gt=0, status__in=status_params)
+					wtf_refund_order_id = [item.origin_order_id for item in _delivery_items]
+					should_in_order_ids.extend(wtf_refund_order_id)
+					use_should_in_order_ids = True
 
-					else:
-						db_models = db_models.dj_where(status__in=status_params)
+				else:
+					db_models = db_models.dj_where(status__in=status_params)
 
 			if use_should_in_order_ids:
 				order_filter_parse_result.update({
 					'id__in': should_in_order_ids
 				})
-
-
-			print('=---',should_in_order_bids)
 
 			if use_should_in_order_bids:
 				order_filter_parse_result.update({
