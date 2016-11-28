@@ -100,30 +100,30 @@ class Category(business_model.Model):
 						product = product_id,
 						category = self.id
 					)
-				
+
 				Category.update_product_count(self.id)
-				
+
 				msgutil.send_message(
 					TOPIC['product'],
 					'add_products_to_category',
 					{
 						'corp_id': CorporationFactory.get().id,
-						'product_ids': new_product_ids,
+						'product_ids': list(new_product_ids),
 						'category_id': self.id
 					}
 				)
-		
+
 	def update_name(self, name):
 		"""
 		更新分组名
 		"""
-		mall_models.ProductCategory.update(name=name).dj_where(id=self.id).execute()	
+		mall_models.ProductCategory.update(name=name).dj_where(id=self.id).execute()
 
 	def has_product_with_display_index(self, display_index):
 		"""
 		判断category中是否已存在排序为display index的商品
 		"""
-		return mall_models.CategoryHasProduct.select().dj_where(category_id=self.id, display_index=display_index).count() > 0	
+		return mall_models.CategoryHasProduct.select().dj_where(category_id=self.id, display_index=display_index).count() > 0
 
 	def get_products(self, target_page):
 		"""
@@ -149,7 +149,7 @@ class Category(business_model.Model):
 			name = name,
 			product_count = len(product_ids) if product_ids else 0
 		)
-		
+
 		if product_ids:
 			for product_id in product_ids:
 				mall_models.CategoryHasProduct.create(
