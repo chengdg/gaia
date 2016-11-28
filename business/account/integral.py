@@ -96,7 +96,7 @@ class Integral(business_model.Model):
 	@staticmethod
 	def increase_member_integral(args):
 		#TODO-bert 调整统一参数
-		member_id = args['member']
+		member_id = args['member_id']
 		event_type = args['event_type']
 		integral_increase_count = args.get('integral_increase_count', 0)
 		follower_member = args.get('follower_member', None)
