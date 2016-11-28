@@ -32,7 +32,7 @@ class ReleaseOrderResourceService(business_model.Service):
 		corp = self.corp
 		order = corp.order_repository.get_order(order_id, fill_options)
 
-		is_paid = (mall_models.MEANINGFUL_WORD2ORDER_STATUS(from_status) != mall_models.ORDER_STATUS_NOT)  # 已经支付过的订单，已增加过销量
+		is_paid = (mall_models.MEANINGFUL_WORD2ORDER_STATUS[from_status] != mall_models.ORDER_STATUS_NOT)  # 已经支付过的订单，已增加过销量
 
 		delivery_item_products = order.get_all_products()
 		product_ids = [p.id for p in delivery_item_products]
