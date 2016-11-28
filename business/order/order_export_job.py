@@ -54,10 +54,10 @@ class OrderExportJob(business_model.Model):
 		)
 
 		topic_name = TOPIC['order']
-	  	data = {
-	  		"job_id": db_model.id
-	  	}
-	  	msgutil.send_message(topic_name, "order_export_job_created", data)
+		data = {
+			"job_id": db_model.id
+		}
+		msgutil.send_message(topic_name, "order_export_job_created", data)
 
 		return OrderExportJob(db_model)
 
@@ -66,10 +66,10 @@ class OrderExportJob(business_model.Model):
 		self.__save()
 
 	def __save(self):
-	 	"""
-	 	持久化修改的数据
-	 	@return:
-	 	"""
-	 	db_model = self.context['db_model']
-	 	db_model.is_download = self.is_download
-	 	db_model.save()
+		"""
+		持久化修改的数据
+		@return:
+		"""
+		db_model = self.context['db_model']
+		db_model.is_download = self.is_download
+		db_model.save()
