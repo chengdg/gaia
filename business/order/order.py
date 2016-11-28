@@ -6,7 +6,6 @@ from db.mall import models as mall_models
 from gaia_conf import TOPIC
 from bdem import msgutil
 from datetime import datetime, timedelta
-import re
 
 from util.regional_util import get_str_value_by_string_ids
 
