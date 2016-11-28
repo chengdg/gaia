@@ -526,8 +526,8 @@ class DeliveryItem(business_model.Model):
 			self.refunding_info['finished'] = True
 
 			# 更新订单的金额信息
-			mall_models.Order.update(mall_models.Order.final_price - self.refunding_info['cash'],
-			                         mall_models.Order.weizoom_card_money - self.context[
+			mall_models.Order.update(final_price=mall_models.Order.final_price - self.refunding_info['cash'],
+			                         weizoom_card_money=mall_models.Order.weizoom_card_money - self.refunding_info[
 				                         'weizoom_card_money']).dj_where(id=self.origin_order_id).execute()
 		self.__save()
 
@@ -582,6 +582,6 @@ class DeliveryItem(business_model.Model):
 				finished=False
 			)
 		elif self.refunding_info and self.refunding_info['finished'] is True:
-			mall_models.OrderHasRefund.update().dj_where(delivery_item_id=self.id).update(finished=True).execute()
+			mall_models.OrderHasRefund.update(finished=True).dj_where(delivery_item_id=self.id).execute()
 
 		db_model.save()

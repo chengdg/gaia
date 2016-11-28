@@ -21,7 +21,10 @@ class ARefundedDeliveryItem(api_resource.ApiResource):
 		delivery_item_id = args['delivery_item_id']
 
 		delivery_item_repository = corp.delivery_item_repository
-		delivery_item = delivery_item_repository.get_delivery_item(delivery_item_id)
+		fill_options = {
+			'with_products': True
+		}
+		delivery_item = delivery_item_repository.get_delivery_item(delivery_item_id, fill_options)
 		if delivery_item:
 			is_success, msg = delivery_item.refund(corp)
 			if is_success:
