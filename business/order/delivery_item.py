@@ -307,7 +307,7 @@ class DeliveryItem(business_model.Model):
 					'coupon_money': 0,
 					'total': 0,
 					'finished': False,
-					'total_can_refund': 0
+					'total_can_refund': round(total_product_sale_price + delivery_item.postage, 2)
 				}
 
 	@staticmethod
