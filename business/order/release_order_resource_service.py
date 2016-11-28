@@ -49,7 +49,7 @@ class ReleaseOrderResourceService(business_model.Service):
 			delivery_item_product = product_id2delivery_item_product[product.id]
 
 			# 更新销量库存
-			product.update_stock(delivery_item_product.product_model_name, 0 - delivery_item_product.count)
+			product.update_stock(delivery_item_product.product_model_name, delivery_item_product.count)
 
 			# 更新销量
 			if is_paid:
