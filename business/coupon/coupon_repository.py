@@ -8,7 +8,7 @@ from business import model as business_model
 
 class CouponRepository(business_model.Service):
 	def get_coupon_by_id(self, coupon_id):
-		db_model = promotion_models.Coupon.select().dj_where(id=coupon_id, owner_id=self.corp.id)
+		db_model = promotion_models.Coupon.select().dj_where(id=coupon_id, owner_id=self.corp.id).first()
 
 		coupons = Coupon.from_models({"db_models": [db_model], 'corp': self.corp})
 		if coupons:

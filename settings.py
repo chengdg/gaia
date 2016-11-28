@@ -164,6 +164,12 @@ if 'develop' == MODE:
 else:
     MESSAGE_DEBUG_MODE = False
 
+
+REDIS_QUEUE_DB = 8
+TOPIC2QUEUES = {
+    'test-topic': ['test-order-trade-center']
+}
+
 # BDD_SERVER相关配置
 BDD_SERVER2PORT = {
     'weapp': 8170,

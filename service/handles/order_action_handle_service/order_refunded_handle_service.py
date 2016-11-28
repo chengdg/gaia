@@ -14,7 +14,7 @@ from gaia_conf import TOPIC
 from service.utils import not_retry
 
 
-@register("order_cancelled")
+@register("order_refunded")
 @not_retry
 def process(data, recv_msg=None):
 	corp_id = data['corp_id']

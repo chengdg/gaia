@@ -49,6 +49,6 @@ class CouponRule(business_model.Model):
 			coupon_rule.type = 'all_products_coupon'
 		return coupon_rule
 
-	def update_use_count(self):
-		promotion_models.CouponRule.update(use_count=promotion_models.CouponRule.use_count + 1).dj_where(
+	def update_use_count(self, count):
+		promotion_models.CouponRule.update(use_count=promotion_models.CouponRule.use_count + count).dj_where(
 			id=self.id).execute()
