@@ -38,7 +38,7 @@ class AOrderList(api_resource.ApiResource):
 			'with_refunding_info': True,
 			'with_group_buy_info': True,
 			'with_member': True,
-
+			'with_coupon':True,
 			'with_full_money_info': True,
 			'with_delivery_items': delivery_fill_options
 
@@ -52,6 +52,7 @@ class AOrderList(api_resource.ApiResource):
 		for order in orders:
 			data = {}
 			data.update(encode_order_service.get_base_info(order))
+			data.update(encode_order_service.get_extra_coupon_info(order))
 			data.update(encode_order_service.get_group_buy_info(order))
 			data.update(encode_order_service.get_refunding_info(order))
 			data.update(encode_order_service.get_full_money_info(order))
