@@ -24,6 +24,7 @@ class ReleaseOrderResourceService(business_model.Service):
 
 		fill_options = {
 			'with_member': True,
+			'with_weizoom_card': True,
 			'with_delivery_items': {
 				'with_products': True,
 			}
