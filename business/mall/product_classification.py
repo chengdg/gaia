@@ -18,6 +18,8 @@ class ProductClassification(business_model.Model):
         'status',
         'father_id',
         'level',
+        'product_count',
+        'note',
         'created_at'
 	)
 
@@ -40,11 +42,23 @@ class ProductClassification(business_model.Model):
 		model = mall_models.Classification.select().dj_where(id=self.father_id).get()
 		return ProductClassification(model)
 
+	def update(self, name, note):
+		"""
+		更新商品分类
+		"""
+		mall_models.Classification.update(name=name, note=note).dj_where(id=self.id).execute()
+
+	def is_used_by_product(self):
+		"""
+		判断该classification是否已被使用
+		"""
+		return mall_models.ClassificationHasProduct.select().dj_where(classification_id=self.id).count() > 0
+
 	@staticmethod
-	@param_required(['name', 'father_id'])
+	@param_required(['name', 'father_id', 'note'])
 	def create(args):
 		"""
-		保存信息
+		创建商品分类
 		"""
 		corp_id = CorporationFactory.get().id
 
@@ -58,6 +72,7 @@ class ProductClassification(business_model.Model):
 		model = mall_models.Classification.create(
 			name = args['name'],
 			father_id = args['father_id'],
+			note = args['note'],
 			level = level
 		)
 

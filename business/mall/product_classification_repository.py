@@ -12,6 +12,10 @@ class ProductClassificationRepository(business_model.Service):
 		models = mall_models.Classification.select().dj_where(status=mall_models.CLASSIFICATION_ONLINE)
 		return [ProductClassification(model) for model in models]
 
+	def get_product_classification(self, id):
+		model = mall_models.Classification.select().dj_where(id=id).get()
+		return ProductClassification(model)
+
 	def get_child_product_classifications(self, father_id):
 		"""
 		获得下一级子分类集合
@@ -42,3 +46,24 @@ class ProductClassificationRepository(business_model.Service):
 				child_ids.add(model.id)
 
 		return children
+
+	def get_product_classification_tree_by_end(self, end_id):
+		"""
+		获得以end_id为终结节点的classification路径的集合
+		"""
+		classification_id = end_id
+
+		classifications = []
+		while True:
+			if classification_id == 0:
+				break
+
+			model = mall_models.Classification.select().dj_where(id=classification_id).get()
+			classifications.append(ProductClassification(model))
+
+			classification_id = model.father_id
+
+		classifications.reverse()
+		return classifications
+
+
