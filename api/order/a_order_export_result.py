@@ -51,7 +51,7 @@ class AOrderExportResult(api_resource.ApiResource):
 				'is_existent': False,
 				'is_finished': '',
 				'percentage': 0,
-				'file_url': ''
+				'file_path': ''
 
 			}
 
