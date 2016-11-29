@@ -265,8 +265,8 @@ class DeliveryItem(business_model.Model):
 
 		for item in delivery_items:
 			item.operation_logs = bid2logs.get(item.bid, [])
-			for log in item.operation_logs:
-				log['operator'] = item.leader_name
+			# for log in item.operation_logs:
+			# 	log['operator'] = item.leader_name
 
 	def to_dict(self, *extras):
 
