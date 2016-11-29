@@ -114,10 +114,12 @@ class DeliveryItemProductRepository(business_model.Model):
 
 			if r.product_model_name == 'standard':
 				delivery_item_product.product_model_name_texts = []
+				delivery_item_product.weight = product.standard_model.weight if product.standard_model else 0
 			else:
 				for custom_model in product.custom_models:
 					if r.product_model_name == custom_model.name:
 						delivery_item_product.product_model_name_texts = []
+						delivery_item_product.weight = custom_model.weight if custom_model else 0
 						for value in custom_model.property_values:
 							delivery_item_product.product_model_name_texts.append(value['name'])
 						break
@@ -150,6 +152,9 @@ class DeliveryItemProductRepository(business_model.Model):
 							'http') == -1 else premium_product['thumbnails_url']
 					premium_delivery_item_product.id = premium_product['id']
 
+					# todo 需等待重构完成后修改apiserver那边下单时就填充此值 premium_product['weight']
+					premium_delivery_item_product.weight = 0
+
 					premium_delivery_item_product.promotion_info = {
 						'type': 'premium_sale:premium_product',
 						'integral_money': 0,
@@ -160,7 +165,6 @@ class DeliveryItemProductRepository(business_model.Model):
 
 					premium_delivery_item_product.delivery_item_id = r.order_id
 					premium_delivery_item_product.context['index'] = r.id + 1
-
 					premium_delivery_item_product.origin_price = 0
 					premium_delivery_item_product.sale_price = 0
 					premium_delivery_item_product.total_origin_price = 0
@@ -207,7 +211,6 @@ class DeliveryItemProductRepository(business_model.Model):
 			# 	'corp': self.corp,
 			# 	'product_info': delivery_item_product_info
 			# })
-
 			delivery_item_products.append(delivery_item_product)
 
 		delivery_item_id2products = {}

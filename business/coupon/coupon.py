@@ -92,13 +92,13 @@ class Coupon(business_model.Model):
 		"""
 		取消、退款订单时返还优惠券
 		"""
-
 		if self.provided_time == promotion_models.DEFAULT_DATETIME:
 			self.status = promotion_models.COUPON_STATUS_UNGOT
 		else:
 			self.status = promotion_models.COUPON_STATUS_UNUSED
 		corp = self.context['corp']
-		coupon_rule = corp.coupon_rule_repository.get_coupon_rule_by_id(self.coupon_rule_id)
+		self.__save()
+		coupon_rule = corp.coupon_rule_repository.get_coupon_rule_by_id(self.rule.id)
 		coupon_rule.update_use_count(-1)
 
 	def __save(self):

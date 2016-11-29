@@ -13,3 +13,6 @@ class CouponRuleRepository(business_model.Service):
 		coupon_rules = [CouponRule.from_model({"db_model": db_model, 'corp': self.corp}) for db_model in db_models]
 
 		return coupon_rules
+
+	def get_coupon_rule_by_id(self, id):
+		return self.get_coupon_rule_by_ids([id])[0]

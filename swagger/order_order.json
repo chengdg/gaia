@@ -420,6 +420,10 @@
 																							"type": "number",
 																							"description": "售价"
 																						},
+																						"weight": {
+																							"type": "integer",
+																							"description": "重量"
+																						},
 																						"id": {
 																							"type": "integer",
 																							"description": "商品id"
