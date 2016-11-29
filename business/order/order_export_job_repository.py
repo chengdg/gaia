@@ -10,7 +10,7 @@ class OrderExportJobRepository(business_model.Service):
 
 		db_type = mall_models.WORD2EXPORT_JOB_TYPE[type]
 
-		db_model = mall_models.ExportJob.select().dj_where(woid=self.corp.id, type=db_type, is_download=False).order_by(mall_models.ExportJob.id.desc())
+		db_model = mall_models.ExportJob.select().dj_where(woid=self.corp.id, type=db_type, is_download=False).order_by(mall_models.ExportJob.id.desc()).first()
 		# db_model = mall_models.ExportJob.select().dj_where(woid=self.corp.id, type=db_type, is_download=False).first()
 
 		return OrderExportJob(db_model)

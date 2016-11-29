@@ -43,9 +43,10 @@ class OrderExportJob(business_model.Model):
 
 	@staticmethod
 	def create(args):
+		export_type = mall_models.WORD2EXPORT_JOB_TYPE[args['type']]
 		db_model = mall_models.ExportJob.create(
 			woid=args['corp_id'],
-			type=args['type'],
+			type=export_type,
 			status=False,
 			param=args['filters'],
 			created_at=datetime.now(),
