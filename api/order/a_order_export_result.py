@@ -17,7 +17,7 @@ class AOrderExportResult(api_resource.ApiResource):
 
 	@param_required(['corp', 'type'])
 	def put(args):
-		filters = args.get('filters', '{}')
+		filters = args.get('filters', '')
 
 		corp = args['corp']
 
