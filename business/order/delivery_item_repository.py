@@ -66,6 +66,6 @@ class DeliveryItemRepository(business_model.Model):
 
 		db_models = db_models.dj_where(origin_order_id=order_id)
 		delivery_items = DeliveryItem.from_models(
-			{"db_models": db_models, 'fill_options': {}, 'corp': self.corp})
+			{"models": db_models, 'fill_options': {}, 'corp': self.corp})
 
 		return delivery_items

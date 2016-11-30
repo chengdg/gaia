@@ -271,3 +271,4 @@ class UpdateProductService(business_model.Service):
 
 		#设置指定商品的position
 		mall_models.ProductPool.update(display_index=position).dj_where(woid=self.corp.id, product_id=product_id).execute()
+		self.__send_msg_to_topic(product_id, "product_updated")
