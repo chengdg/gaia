@@ -60,5 +60,5 @@ class AOrderExportResult(api_resource.ApiResource):
 		corp = args['corp']
 		type = args['type']
 		job = corp.order_export_job_repository.get_order_export_job_by_type(type)
-		job.update({"is_download":False})
+		job.update({"is_download":True})
 		return {}
