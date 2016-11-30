@@ -32,7 +32,7 @@ class OrderExportJob(business_model.Model):
 		if db_model:
 			self._init_slot_from_model(db_model)
 			self.corp_id = db_model.woid
-			self.is_valid = db_model.is_download
+			self.is_valid = True
 			self.is_finished = db_model.status
 			if db_model.count == 0:
 				self.percentage = 0
