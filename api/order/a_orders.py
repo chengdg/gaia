@@ -18,7 +18,6 @@ class AOrderList(api_resource.ApiResource):
 
 	@param_required(['corp'])
 	def get(args):
-		print args,'=============================='
 		filters = json.loads(args.get('filters', ''))
 
 		corp = args['corp']
