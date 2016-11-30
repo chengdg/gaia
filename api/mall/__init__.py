@@ -9,6 +9,7 @@ import a_supplier
 import a_product_classifications
 import a_child_product_classifications
 import a_product_classification
+import a_product_classification_tree
 
 import category
 import pay

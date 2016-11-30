@@ -37,6 +37,7 @@ class OrderRepository(business_model.Model):
 		# db_models = mall_models.Order.select().dj_where(webapp_id=webapp_id, origin_order_id__lte=0)
 
 		should_in_order_ids = []
+		# should_in_order_bids = []
 		use_should_in_order_ids = False
 
 		should_in_order_bids = []
@@ -56,14 +57,19 @@ class OrderRepository(business_model.Model):
 				# filter_parse_result = FilterParser.get().parse_key(filters, '__f-bid-equal',
 				#                                                    {'bid': 'order_id'})
 				# order_filter_parse_result.update(filter_parse_result)
-				should_in_order_bids.append(filters['__f-bid-equal'])
+				# should_in_order_bids.append(filters['__f-bid-equal'])
+				# should_in_order_bids_by_bid_search = [filters['__f-bid-equal']]
+				if should_in_order_ids:
+					should_in_order_bids = list(set(should_in_order_ids).intersection({filters['__f-bid-equal']}))
+				else:
+					should_in_order_bids = [filters['__f-bid-equal']]
 				use_should_in_order_bids = True
 			if '__f-weizoom_card_money-gt' in filters:
 				filter_parse_result = FilterParser.get().parse_key(filters, '__f-weizoom_card_money-gt')
 				order_filter_parse_result.update(filter_parse_result)
 
 			if '__f-is_first_order-equal' in filters:
-				if filters['__f-is_first_order-equal'] == 'true':
+				if filters['__f-is_first_order-equal'] == 'true' or True:
 					filters['__f-is_first_order-equal'] = True
 				else:
 					filters['__f-is_first_order-equal'] = False
@@ -109,7 +115,13 @@ class OrderRepository(business_model.Model):
 			if '__f-is_group_buy-equal' in filters:
 				if filters['__f-is_group_buy-equal'] == 'true':
 					use_should_in_order_bids = True
-					should_in_order_bids.extend(self.context['valid_group_order_bids'])
+					# should_in_order_bids.extend(self.context['valid_group_order_bids'])
+					# should_in_order_bids_by_group_search = self.context['valid_group_order_bids']
+
+					if should_in_order_bids:
+						should_in_order_bids = list(set(should_in_order_bids).intersection(set(self.context['valid_group_order_bids'])))
+					else:
+						should_in_order_bids = self.context['valid_group_order_bids']
 
 			if '__f-status-in' in filters:
 				# 需要使用meaningful_word搜索
@@ -133,17 +145,17 @@ class OrderRepository(business_model.Model):
 						status_list = [status]
 					status_params.extend(status_list)
 
-					# 退款中和退款完成的订单搜索条件其实是出货单的状态。。。。。
-					if self.corp.type != 'normal' and use_wtf_refund:
-						_delivery_items = mall_models.Order.select(mall_models.Order.origin_order_id).dj_where(
-							webapp_id=self.corp.webapp_id,
-							origin_order_id__gt=0, status__in=status_params)
-						wtf_refund_order_id = [item.origin_order_id for item in _delivery_items]
-						should_in_order_ids.extend(wtf_refund_order_id)
-						use_should_in_order_ids = True
+				# 退款中和退款完成的订单搜索条件其实是出货单的状态。。。。。
+				if self.corp.type != 'normal' and use_wtf_refund:
+					_delivery_items = mall_models.Order.select(mall_models.Order.origin_order_id).dj_where(
+						webapp_id=self.corp.webapp_id,
+						origin_order_id__gt=0, status__in=status_params)
+					wtf_refund_order_id = [item.origin_order_id for item in _delivery_items]
+					should_in_order_ids.extend(wtf_refund_order_id)
+					use_should_in_order_ids = True
 
-					else:
-						db_models = db_models.dj_where(status__in=status_params)
+				else:
+					db_models = db_models.dj_where(status__in=status_params)
 
 			if use_should_in_order_ids:
 				order_filter_parse_result.update({

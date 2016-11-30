@@ -96,13 +96,13 @@ class Integral(business_model.Model):
 	@staticmethod
 	def increase_member_integral(args):
 		#TODO-bert 调整统一参数
-		member_id = args['member']
+		member_id = args['member_id']
 		event_type = args['event_type']
 		integral_increase_count = args.get('integral_increase_count', 0)
 		follower_member = args.get('follower_member', None)
 		reason = args.get('reason', '')
 		manager = args.get('manager', '')
-		webapp_user_id = args.get('webapp_user', None)
+		webapp_user_id = args.get('webapp_user_id', None)
 		corp = args['corp']
 
 		integral_increase_count = int(integral_increase_count)
@@ -110,7 +110,7 @@ class Integral(business_model.Model):
 		if integral_increase_count == 0:
 			return None
 
-		member = corp.memebr_repository.get_member_by_id(member_id)
+		member = corp.member_repository.get_member_by_id(member_id)
 		current_integral = member.integral + integral_increase_count
 		try:
 			#TODO-bert 并发下是否会出现积分日志无法对应上

@@ -7,17 +7,25 @@
 @author Victor
 """
 
-import json
-import logging
-
-from eaglet.core import watchdog
-from eaglet.core.exceptionutil import unicode_full_stack
 from eaglet.utils.command import BaseCommand
-from mns.account import Account
-from mns.subscription import *
+from eaglet.core import watchdog
+#from eaglet.core.cache import utils as cache_util
+import json
 
 import settings
+
+from eaglet.core.exceptionutil import unicode_full_stack
+import logging
+
+from mns.account import Account
+from mns.queue import *
+from mns.topic import *
+from mns.subscription import *
+
+import time
+import service  #load all message handlers
 from service import handler_register
+
 
 WAIT_SECONDS = 10
 SLEEP_SECONDS = 10
@@ -38,7 +46,13 @@ class Command(BaseCommand):
 			settings.MNS_ACCESS_KEY_SECRET, \
 			settings.MNS_SECURITY_TOKEN)
 
-		queue = self.mns_account.get_queue(settings.SUBSCRIBE_QUEUE_NAME)
+		if hasattr(settings, 'MESSAGE_DEBUG_MODE') and settings.MESSAGE_DEBUG_MODE:
+			import redis_queue
+			queue = redis_queue.get_queue(settings.SUBSCRIBE_QUEUE_NAME)
+			logging.info("queue mode:{}".format('redis'))
+		else:
+			queue = self.mns_account.get_queue(settings.SUBSCRIBE_QUEUE_NAME)
+			logging.info("queue mode:{}".format('mns'))
 		logging.info('queue: {}'.format(queue.get_attributes().queue_name))
 
 		# TODO: 改成LongPoll更好
@@ -69,7 +83,6 @@ class Command(BaseCommand):
 					except:
 						logging.info(u"Service Exception: {}".format(unicode_full_stack()))
 				else:
-					queue.delete_message(recv_msg.receipt_handle)
 					#TODO: 这里是否需要删除消息？
 					logging.info(u"Error: no such service found : {}".format(message_name))
 
@@ -86,16 +99,11 @@ class Command(BaseCommand):
 			except Exception as e:
 				print u"Exception: {}".format(unicode_full_stack())
 			finally:
-				try:
-					_data = data['data']
-				except:
-					_data = 'null'
-
 				if handler_func:
 					message = {
 						'message_id': recv_msg.message_id,
 						'message_body_md5': '',
-						'data': _data,
+						'data': args,
 						'topic_name': '',
 						'msg_name': message_name,
 						'handel_success': handle_success

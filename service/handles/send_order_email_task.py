@@ -118,8 +118,8 @@ def process(data, recv_msg=None):
 				area = ""
 				buyer_address = area + u" " + order.ship_address
 				content_list.append(u'收货人地址：%s' % buyer_address)
-				if order.customer_message:
-					content_list.append(u'顾客留言：%s' % order.customer_message)
+				# if order.customer_message:
+				# 	content_list.append(u'顾客留言：%s' % order.customer_message)
 
 			content = u'<br> '.join(content_list)
 			try:

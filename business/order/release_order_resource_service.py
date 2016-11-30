@@ -24,6 +24,7 @@ class ReleaseOrderResourceService(business_model.Service):
 
 		fill_options = {
 			'with_member': True,
+			'with_weizoom_card': True,
 			'with_delivery_items': {
 				'with_products': True,
 			}
@@ -32,7 +33,7 @@ class ReleaseOrderResourceService(business_model.Service):
 		corp = self.corp
 		order = corp.order_repository.get_order(order_id, fill_options)
 
-		is_paid = (mall_models.MEANINGFUL_WORD2ORDER_STATUS(from_status) != mall_models.ORDER_STATUS_NOT)  # 已经支付过的订单，已增加过销量
+		is_paid = (mall_models.MEANINGFUL_WORD2ORDER_STATUS[from_status] != mall_models.ORDER_STATUS_NOT)  # 已经支付过的订单，已增加过销量
 
 		delivery_item_products = order.get_all_products()
 		product_ids = [p.id for p in delivery_item_products]
@@ -49,7 +50,7 @@ class ReleaseOrderResourceService(business_model.Service):
 			delivery_item_product = product_id2delivery_item_product[product.id]
 
 			# 更新销量库存
-			product.update_stock(delivery_item_product.product_model_name, 0 - delivery_item_product.count)
+			product.update_stock(delivery_item_product.product_model_name, delivery_item_product.count)
 
 			# 更新销量
 			if is_paid:
@@ -80,5 +81,5 @@ class ReleaseOrderResourceService(business_model.Service):
 				'webapp_user_id': order.webapp_user_id,
 				'member_id': order.member_info['id'],
 				'event_type': member_models.RETURN_BY_SYSTEM,
-				'corp': corp
+				'corp': corp,
 			})

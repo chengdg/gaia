@@ -654,7 +654,7 @@ class Order(business_model.Model):
 		@return:
 		"""
 		from_status = self.status
-		to_status = mall_models.ORDER_STATUS_REFUNDING
+		to_status = mall_models.ORDER_STATUS_REFUNDED
 		if not only_send_message:
 			action_text = u"退款完成"
 

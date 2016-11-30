@@ -9,7 +9,7 @@ from business.common.page_info import PageInfo
 from business.order.encode_order_service import EncodeOrderService
 
 
-class AOrderList(api_resource.ApiResource):
+class AOrders(api_resource.ApiResource):
 	"""
 	订单列表
 	"""
@@ -18,7 +18,7 @@ class AOrderList(api_resource.ApiResource):
 
 	@param_required(['corp'])
 	def get(args):
-		filters = args.get('filters', '')
+		filters = json.loads(args.get('filters', '{}'))
 
 		corp = args['corp']
 		order_repository = corp.order_repository
