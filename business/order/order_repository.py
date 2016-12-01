@@ -85,6 +85,11 @@ class OrderRepository(business_model.Model):
 				filter_parse_result = FilterParser.get().parse_key(filters, '__f-created_at-range')
 				order_filter_parse_result.update(filter_parse_result)
 
+			if '__f-payment_time-range' in filters:
+				filter_parse_result = FilterParser.get().parse_key(filters, '__f-payment_time-range')
+				order_filter_parse_result.update(filter_parse_result)
+
+
 			if '__f-express_number-equal' in filters:
 				# 物流单号在出货单里，此处为了性能优化，对于normal直接查mall_order
 
