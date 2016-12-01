@@ -204,8 +204,7 @@ class DeliveryItem(business_model.Model):
 					express_push_id2details[detail.express_id] = [detail]
 
 			for delivery_item in delivery_items:
-				push_id = name_number2express_push_id.get(
-					str(delivery_item.express_company_name_value + '__' + delivery_item.express_number))
+				push_id = name_number2express_push_id.get(delivery_item.express_company_name_value + '__' + delivery_item.express_number)
 				if push_id:
 					express_details = express_push_id2details.get(push_id, [])
 
