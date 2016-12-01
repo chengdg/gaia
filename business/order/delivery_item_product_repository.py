@@ -65,7 +65,7 @@ class DeliveryItemProductRepository(business_model.Model):
 			for origin_ohs in origin_ohs_list:
 				# if delivery_item_ohs.origin_order_id == origin_ohs.order_id and delivery_item_ohs.product_id == origin_ohs.product_id:
 				if delivery_item_id2origin_order_id[
-					delivery_item_ohs.order_id] == origin_ohs.order_id and delivery_item_ohs.product_id == origin_ohs.product_id:
+					delivery_item_ohs.order_id] == origin_ohs.order_id and delivery_item_ohs.product_id == origin_ohs.product_id and delivery_item_ohs.product_model_name == origin_ohs.product_model_name:
 					delivery_item_ohs_id2origin_order_ohs[delivery_item_ohs.id] = origin_ohs
 					break
 
