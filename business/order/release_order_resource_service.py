@@ -72,7 +72,7 @@ class ReleaseOrderResourceService(business_model.Service):
 		if order.coupon_id:
 			coupon = corp.coupon_repository.get_coupon_by_id(order.coupon_id)
 			if coupon:
-				coupon.refund()
+				coupon.refund(order)
 
 		# 退还积分
 		if order.integral:
