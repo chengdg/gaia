@@ -66,7 +66,7 @@ def process(data, recv_msg=None):
 
 	member.increase_integral_after_finish_order(order)  # 对应购买商品返积分功能
 	member.update_pay_info(order, from_status, to_status)
-	MemberSpread.process_order_from_spread(order)
+	MemberSpread.process_order_from_spread({'order_id': order.id})
 
 
 
