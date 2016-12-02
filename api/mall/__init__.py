@@ -21,4 +21,6 @@ import notify
 import a_promotion_products
 import a_product_label_groups
 
+import promotion
+
 

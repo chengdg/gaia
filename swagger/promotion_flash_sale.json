@@ -92,8 +92,40 @@
                     }
                 }
             },
-            "post": {
-                "summary": "结束限时抢购",
+            "delete": {
+                "summary": "删除限时抢购",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "promotion"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        },
+        "/promotion/active_flash_sale/": {
+            "put": {
+                "summary": "开启限时抢购",
                 "parameters": [
                     {
                         "name": "corp_id",
@@ -123,7 +155,7 @@
                 }
             },
             "delete": {
-                "summary": "删除限时抢购",
+                "summary": "结束限时抢购",
                 "parameters": [
                     {
                         "name": "corp_id",

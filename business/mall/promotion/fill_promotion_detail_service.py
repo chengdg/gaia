@@ -61,7 +61,13 @@ class FillPromotionDetailService(busniess_model.Service):
 		for model in premium_sale_models:
 			detail_id2promotion[model.id].detail = PremiumSale(model)
 
-	def fill_detail(self, promotions, corp):
+	def __fill_promotion_product_detail(self):
+		"""
+		填充促销相关的商品信息
+		"""
+		pass
+
+	def fill_detail(self, promotions, corp, fill_options):
 		"""
 		为促销填充促销特定数据
 		"""

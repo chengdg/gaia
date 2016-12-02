@@ -361,7 +361,7 @@ class ProductPool(business_model.Model):
 		result = []
 		for product_id in product_ids:
 			product_id = int(product_id)
-			result.append(id2product[product_id])
+			result.append([product_id])
 		return result
 
 	def get_product_by_id(self, product_id, fill_options={}):
