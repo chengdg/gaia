@@ -95,6 +95,7 @@ class Member(business_model.Model):
             self._init_slot_from_model(model)
 
     def increase_integral_after_finish_order(self, order):
+
         Integral.increase_after_order_payed_finsh({
             'member': self,
             'order': order,

@@ -8,18 +8,22 @@
 from bdem import msgutil
 
 from business.mall.corporation import Corporation
+from business.member.member_spread import MemberSpread
 from service.handler_register import register
 from gaia_conf import TOPIC
 from service.utils import not_retry
 
 
-@register("order_paid")
+@register("order_finished")
 @not_retry
 def process(data, recv_msg=None):
 	"""
 	处理支付订单消息
 	"""
-
+	print('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
+	print('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
+	print('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
+	print('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
 	corp_id = data['corp_id']
 	order_id = data['order_id']
 	from_status = data['from_status']
@@ -65,8 +69,8 @@ def process(data, recv_msg=None):
 	member = corp.member_repository.get_member_by_id(order.member_info['id'])
 
 	member.increase_integral_after_finish_order(order)  # 对应购买商品返积分功能
-	member.update_pay_info(order, from_status, to_status)
-	member.process_order_from_spread(order)
+	# member.update_pay_info(order, from_status, to_status)
+	# MemberSpread.process_order_from_spread(order)
 
 
 
