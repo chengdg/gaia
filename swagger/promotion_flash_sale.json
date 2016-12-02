@@ -1,0 +1,305 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "Hermes Product API"
+    },
+    "paths": {
+        "/promotion/flash_sales/": {
+            "get": {
+                "summary": "获取限时抢购促销活动列表",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "promotion"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/FlashSales"
+                        }
+                    }
+                }
+            }
+        },
+        "/promotion/flash_sale/": {
+            "get": {
+                "summary": "获取单个限时抢购详细信息",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "promotion"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/FlashSale"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "summary": "创建限时抢购",
+                "parameters": [
+                    {
+                        "name": "",
+                        "in": "body",
+                        "description": "postage config的name",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/NewFlashSale"
+                        }
+                    }
+                ],
+                "tags": [
+                    "promotion"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            },
+            "post": {
+                "summary": "结束限时抢购",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "promotion"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "删除限时抢购",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "promotion"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "NewFlashSale": {
+            "type": "object",
+            "properties": {
+                "corp_id": {
+                    "type": "number",
+                    "description": ""
+                },
+                "name": {
+                    "type": "string",
+                    "description": ""
+                },
+                "member_grade": {
+                    "type": "number",
+                    "description": "可参与活动的会员等级"
+                },
+                "promotion_title": {
+                    "type": "string",
+                    "description": "促销广告语"
+                },
+                "promotion_price": {
+                    "type": "number",
+                    "description": "限购价格"
+                },
+                "start_date": {
+                    "type": "string",
+                    "description": "促销开始时间"
+                },
+                "end_date": {
+                    "type": "string",
+                    "description": "促销结束时间"
+                },
+                "limit_period": {
+                    "type": "number",
+                    "description": "限购周期"
+                },
+                "count_per_period": {
+                    "type": "number",
+                    "description": "限购次数"
+                },
+                "count_per_purchase": {
+                    "type": "number",
+                    "description": "每次限购数量"
+                },
+                "product_id": {
+                    "type": "number",
+                    "description": "商品id"
+                },
+                "product_model_id": {
+                    "type": "number",
+                    "description": "商品model id"
+                }
+            }
+        },
+        "FlashSales": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/FlashSale"
+            }
+        },
+        "FlashSale": {
+            "type": "object",
+            "properties": {
+                "promotion_info": {
+                    "$ref": "#/definitions/PromotionInfo"
+                },
+                "detail_info": {
+                    "$ref": "#/definitions/DetailInfo"
+                },
+                "product_info": {
+                    "$ref": "#/definitions/ProductInfo"
+                }
+            }
+        },
+        "PromotionInfo": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "number",
+                    "description": ""
+                },
+                "name": {
+                    "type": "string",
+                    "description": ""
+                },
+                "status": {
+                    "type": "string",
+                    "description": "促销状态"
+                },
+                "member_grade": {
+                    "type": "number",
+                    "description": "可参与活动的会员等级"
+                },
+                "type": {
+                    "type": "object",
+                    "properties": {
+                        "display_name": {
+                            "type": "string",
+                            "description": "限时名称"
+                        },
+                        "name": {
+                            "type": "string",
+                            "description": ""
+                        }
+                    }
+                },
+                "promotion_title": {
+                    "type": "string",
+                    "description": "促销广告语"
+                },
+                "start_date": {
+                    "type": "string",
+                    "description": "促销开始时间"
+                },
+                "end_date": {
+                    "type": "string",
+                    "description": "促销结束时间"
+                }
+            }
+        },
+        "DetailInfo": {
+            "type": "object",
+            "properties": {
+                "limit_period": {
+                    "type": "number",
+                    "description": "限购周期"
+                },
+                "count_per_period": {
+                    "type": "number",
+                    "description": "限购次数"
+                },
+                "count_per_purchase": {
+                    "type": "number",
+                    "description": "每次限购数量"
+                },
+                "promotion_price": {
+                    "type": "number",
+                    "description": "限购价格"
+                }
+            }
+        },
+        "ProductInfo": {
+            "type": "object",
+            "properties": {
+
+            }
+        }
+    }
+}
