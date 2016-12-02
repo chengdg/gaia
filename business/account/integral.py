@@ -96,7 +96,6 @@ class Integral(business_model.Model):
 	@staticmethod
 	def increase_member_integral(args):
 
-		print('--------44444')
 		#TODO-bert 调整统一参数
 		member_id = args['member_id']
 		event_type = args['event_type']
@@ -129,12 +128,11 @@ class Integral(business_model.Model):
 					manager=manager
 				)
 			# todo 看起来有个清理缓存的样子。。。。
-			# if webapp_user:
-			# 	webapp_user.cleanup_cache()
+			if member:
+				member.cleanup_cache()
 
 			return True, integral_log.id
 		except:
-			print('------99999')
 			notify_message = u"update_member_integral member_id:{}, cause:\n{}".format(member.id, unicode_full_stack())
 			watchdog.error(notify_message)
 			return False, None
@@ -230,15 +228,11 @@ class Integral(business_model.Model):
 				#给好友奖励（分享链接购买）
 
 				if increase_count > 0 and followed_member:
-
-					followed_webapp_user = WebAppUser.from_member_id({
-						#'webapp_owner': webapp_owner,
-						'member_id': followed_member.id
-						})
+					followed_webapp_user_id = member_models.WebAppUser.get(member_id=followed_member.id).id
 
 					Integral.increase_member_integral({
 						'integral_increase_count': increase_count,
-						'webapp_user': followed_webapp_user,
+						'webapp_user_id': followed_webapp_user_id,
 						'member_id': followed_member.id,
 						'event_type':  member_models.FOLLOWER_BUYED_VIA_SHARED_URL,
 						'corp': corp
@@ -266,7 +260,6 @@ class Integral(business_model.Model):
 					#print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.9:'
 					order_money_percentage_for_each_buy = float(integral_strategy.order_money_percentage_for_each_buy)
 					increase_count_integral = int(order_money_percentage_for_each_buy * float(order.final_price))
-					print('-------333333',increase_count_integral,order_money_percentage_for_each_buy,order.final_price)
 					if increase_count_integral > 0:
 						#self.increase_member_integral(member, increase_count_integral, BUY_AWARD)
 						Integral.increase_member_integral({
@@ -301,7 +294,7 @@ class Integral(business_model.Model):
 							Integral.increase_member_integral({
 								'integral_increase_count': integral_strategy.buy_via_offline_increase_count_for_author,
 								'webapp_user_id': father_webapp_user_id,
-								'member': father_member,
+								'member_id': father_member.id,
 								'event_type':  member_models.BUY_INCREST_COUNT_FOR_FATHER
 								})
 
@@ -314,7 +307,7 @@ class Integral(business_model.Model):
 								Integral.increase_member_integral({
 									'integral_increase_count': integral_count,
 									'webapp_user_id': father_webapp_user_id,
-									'member': father_member,
+									'member_id': father_member.id,
 									'event_type':  member_models.BUY_INCREST_COUNT_FOR_FATHER
 									})
 							except:

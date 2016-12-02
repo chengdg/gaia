@@ -95,15 +95,34 @@ class Member(business_model.Model):
             self._init_slot_from_model(model)
 
     def increase_integral_after_finish_order(self, order):
-
+        """
+        有用
+        @param order:
+        @return:
+        """
         Integral.increase_after_order_payed_finsh({
             'member': self,
             'order': order,
             'corp': self.context['corp']
         })
 
+    def cleanup_cache(self):
+        """
+        有用
+        @return:
+        """
+        openid = member_models.MemberHasSocialAccount.select().dj_where(member_id=self.id).first().account.open_id
+        key = 'member_{webapp:%s}_{openid:%s}' % (self.webapp_id, openid)
+        cache_util.delete_cache(key)
 
-    def update_pay_info(self,order,from_status,to_status):
+    def update_pay_info(self, order, from_status, to_status):
+        """
+        有用
+        @param order:
+        @param from_status:
+        @param to_status:
+        @return:
+        """
         # todo order搜索完成后使用order_repository
         from db.mall import models as mall_models
 
