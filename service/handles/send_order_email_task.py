@@ -34,6 +34,8 @@ def __send_email(emails, content_described, content):
 
 @register("send_order_email_task")
 def process(data, recv_msg=None):
+	return
+	# 暂时停用
 	type = data['type']
 	if type == 'order':
 		corp_id = data['corp_id']
