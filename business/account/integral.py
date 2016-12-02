@@ -295,7 +295,8 @@ class Integral(business_model.Model):
 								'integral_increase_count': integral_strategy.buy_via_offline_increase_count_for_author,
 								'webapp_user_id': father_webapp_user_id,
 								'member_id': father_member.id,
-								'event_type':  member_models.BUY_INCREST_COUNT_FOR_FATHER
+								'event_type':  member_models.BUY_INCREST_COUNT_FOR_FATHER,
+								'corp': corp
 								})
 
 
@@ -308,7 +309,8 @@ class Integral(business_model.Model):
 									'integral_increase_count': integral_count,
 									'webapp_user_id': father_webapp_user_id,
 									'member_id': father_member.id,
-									'event_type':  member_models.BUY_INCREST_COUNT_FOR_FATHER
+									'event_type':  member_models.BUY_INCREST_COUNT_FOR_FATHER,
+									'corp': corp
 									})
 							except:
 								notify_message = u"increase_father_member_integral_by_child_member_buyed cause:\n{}".format(unicode_full_stack())
