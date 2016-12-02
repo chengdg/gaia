@@ -65,6 +65,36 @@
                     }
                 }
 
+            },
+            "delete": {
+                "summary": "删除具体某个买赠促销活动",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "promotion_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                ],
+                "tags": [
+                    "promotion"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
             }
         },
         "/promotion/handsel_promotions": {
@@ -103,42 +133,9 @@
                 }
             }
         },
-        "/promotion/stop_handsel_promotions": {
+        "/promotion/off_handsel_promotions": {
             "post": {
                 "summary": "手动结束买赠促销活动",
-                "parameters": [
-                    {
-                        "name": "corp_id",
-                        "in": "query",
-                        "description": "",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "name": "promotion_ids",
-                        "in": "query",
-                        "description": "[promotion_id,....]",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "tags": [
-                    "promotion"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "success"
-
-                    }
-                }
-            }
-        },
-        "/promotion/delete_handsel_promotions": {
-            "delete": {
-                "summary": "删除结束买赠促销活动",
                 "parameters": [
                     {
                         "name": "corp_id",
@@ -234,6 +231,12 @@
                 "member_grade_id": {
                     "type": "string",
                     "description": "会员等级id"
+
+                },
+                "status": {
+                    "type": "string",
+                    "description": "状态,",
+                    "enum": ["1未开始","2进行中","3已结束","4已删除","5已失效",]
 
                 }
 
