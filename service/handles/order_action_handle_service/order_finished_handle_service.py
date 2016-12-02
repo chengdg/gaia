@@ -20,10 +20,6 @@ def process(data, recv_msg=None):
 	"""
 	处理支付订单消息
 	"""
-	print('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
-	print('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
-	print('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
-	print('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
 	corp_id = data['corp_id']
 	order_id = data['order_id']
 	from_status = data['from_status']
@@ -69,8 +65,8 @@ def process(data, recv_msg=None):
 	member = corp.member_repository.get_member_by_id(order.member_info['id'])
 
 	member.increase_integral_after_finish_order(order)  # 对应购买商品返积分功能
-	# member.update_pay_info(order, from_status, to_status)
-	# MemberSpread.process_order_from_spread(order)
+	member.update_pay_info(order, from_status, to_status)
+	MemberSpread.process_order_from_spread(order)
 
 
 

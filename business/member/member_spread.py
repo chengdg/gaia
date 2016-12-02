@@ -221,7 +221,7 @@ class MemberSpread(business_model.Model):
     #     # 更新leader_to_buy 放到会支付成功后 或者异步里
 
     @staticmethod
-    @param_required(['order_id', 'webapp_user'])
+    @param_required(['order_id'])
     def process_order_from_spread(args):
         """静态方法 订单完成后处理分享链接相关
 
@@ -229,7 +229,6 @@ class MemberSpread(business_model.Model):
         @param[in] webapp_user 当前下单用户
         """
         order_id = args['order_id']
-        webapp_user = args['webapp_user']
 
         mall_order_from_shared = mall_models.MallOrderFromSharedRecord.select().dj_where(order_id=order_id).first()
         if mall_order_from_shared:
@@ -238,7 +237,6 @@ class MemberSpread(business_model.Model):
 
             if shared_url and fmt:
                 try:
-                    followed_member = member_models.Member.get(token=fmt)
                     member_models.MemberSharedUrlInfo.update(leadto_buy_count = member_models.MemberSharedUrlInfo.leadto_buy_count + 1).dj_where(shared_url=shared_url,).execute()
 
                     mall_order_from_shared.is_updated = True
