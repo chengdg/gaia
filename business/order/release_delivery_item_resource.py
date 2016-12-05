@@ -49,6 +49,6 @@ class ReleaseDeliveryItemResourceService(business_model.Service):
 				# 更新销量库存
 				product.update_stock(delivery_item_product.product_model_name, delivery_item_product.count)
 
-				# 更新销量
-				if is_paid:
+				# 更新销量,赠品不算销量
+				if is_paid and product.promotion_info['type'] != "premium_sale:premium_product":
 					product.update_sales(0 - delivery_item_product.count)

@@ -156,7 +156,7 @@ class DeliveryItemProductRepository(business_model.Model):
 					premium_delivery_item_product.weight = 0
 
 					premium_delivery_item_product.promotion_info = {
-						'type': 'premium_sale:premium_product',
+						'type': 'premium_sale:premium_product',  # 赠品
 						'integral_money': 0,
 						'integral_count': 0,
 						'grade_discount_money': 0,
