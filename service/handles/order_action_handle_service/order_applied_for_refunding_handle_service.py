@@ -35,12 +35,12 @@ def process(data, recv_msg=None):
 
 	# 发送运营邮件通知
 	topic_name = TOPIC['base_service']
-	data = {
-		"type": "order",
-		"order_id": order.id,
-		"corp_id": corp.id
-	}
-	msgutil.send_message(topic_name, 'send_order_email_task', data)
+	# data = {
+	# 	"type": "order",
+	# 	"order_id": order.id,
+	# 	"corp_id": corp.id
+	# }
+	# msgutil.send_message(topic_name, 'send_order_email_task', data)
 
 	# 发送模板消息
 	topic_name = TOPIC['base_service']
