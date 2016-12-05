@@ -32,6 +32,10 @@ from business.mall.product_label_repository import ProductLabelRepository
 from business.mall.product_label_group_repository import ProductLabelGroupRepositroy
 from business.mall.promotion.promotion_repository import PromotionRepository
 
+from business.weixin.material_repository import MaterialRepository
+from business.weixin.weixin_news_repository import WeixinNewsRepository
+
+
 
 
 class Corporation(business_model.Model):
@@ -208,3 +212,11 @@ class Corporation(business_model.Model):
 	@property
 	def order_export_job_repository(self):
 		return OrderExportJobRepository(self)
+
+	@property
+	def material_repository(self):
+		return MaterialRepository(self)
+
+	@property
+	def weixin_news_repository(self):
+		return WeixinNewsRepository(self)
