@@ -40,9 +40,6 @@ class DeliveryItemProductRepository(business_model.Model):
 		@param delivery_items:
 		@return:
 		"""
-
-		# todo 性能优化
-
 		origin_order_ids = []
 		delivery_item_ids = []
 		delivery_item_id2origin_order_id = {}
@@ -57,6 +54,18 @@ class DeliveryItemProductRepository(business_model.Model):
 
 		# [compatibility]: 兼容apiserver产生的出货单的order_has_prduct时候，total_price和price写入的采购价
 		origin_ohs_list = mall_models.OrderHasProduct.select().dj_where(order_id__in=origin_order_ids)
+
+
+		premium_product_ids = []
+		for promotion in id2promotion.values():
+			if promotion.promotion_type == 'premium_sale':
+				db_promotion_result = json.loads(promotion.promotion_result_json)
+				premium_product_ids.extend(p['id'] for p in db_promotion_result['premium_products'])
+
+		current_premium_products = self.corp.product_pool.get_products_by_ids(premium_product_ids,
+		                                                      {"with_product_model": True, "with_property": True,
+		                                                       "with_model_property_info": True})
+		id2current_premium_products = {p.id: p for p in current_premium_products}
 
 		delivery_item_ohs_id2origin_order_ohs = {}
 
@@ -106,6 +115,7 @@ class DeliveryItemProductRepository(business_model.Model):
 
 			delivery_item_product.origin_price = origin_ohs.total_price / r.number
 			delivery_item_product.sale_price = origin_ohs.price
+			delivery_item_product.show_sale_price = delivery_item_product.sale_price
 			delivery_item_product.total_origin_price = origin_ohs.total_price
 			delivery_item_product.count = r.number
 			delivery_item_product.product_model_name = r.product_model_name
@@ -152,8 +162,12 @@ class DeliveryItemProductRepository(business_model.Model):
 							'http') == -1 else premium_product['thumbnails_url']
 					premium_delivery_item_product.id = premium_product['id']
 
-					# todo 需等待重构完成后修改apiserver那边下单时就填充此值 premium_product['weight']
-					premium_delivery_item_product.weight = 0
+					current_premium_product = id2current_premium_products[premium_product['id']]
+
+					if current_premium_product.standard_model:
+						premium_delivery_item_product.weight = current_premium_product.standard_model.weight
+					else:
+						premium_delivery_item_product.weight = 0
 
 					premium_delivery_item_product.promotion_info = {
 						'type': 'premium_sale:premium_product',  # 赠品
@@ -167,6 +181,7 @@ class DeliveryItemProductRepository(business_model.Model):
 					premium_delivery_item_product.context['index'] = r.id + 1
 					premium_delivery_item_product.origin_price = 0
 					premium_delivery_item_product.sale_price = 0
+					premium_delivery_item_product.show_sale_price = premium_product['price']    # 为了前端能够显示
 					premium_delivery_item_product.total_origin_price = 0
 					premium_delivery_item_product.product_model_name_texts = []
 
