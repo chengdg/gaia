@@ -136,13 +136,11 @@ class Member(business_model.Model):
         pay_money = 0
         pay_times = 0
 
-        user_orders = mall_models.Order.select().dj_where(webapp_user_id=webapp_user_id)
+        user_orders = self.context['corp'].order_repository.get_orders_by_webapp_user_id(webapp_user_id, mall_models.ORDER_STATUS_SUCCESSED)
 
         for user_order in user_orders:
-            user_order.final_price = user_order.final_price + user_order.weizoom_card_money
-            if user_order.status == mall_models.ORDER_STATUS_SUCCESSED:
-                pay_money += user_order.final_price
-                pay_times += 1
+            pay_money = user_order.pay_money
+            pay_times += 1
 
         if pay_times > 0:
             unit_price = pay_money / pay_times
