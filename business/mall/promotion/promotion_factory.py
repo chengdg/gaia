@@ -56,7 +56,7 @@ class PromotionFactory(business_model.Service):
         promotion_models.PremiumSaleProduct.create(
             product_id=premium_product_id,
             premium_sale=premium_sale,
-            count=promotion_data['count'],
+            count=promotion_data['premium_count'],
             unit=promotion_data['unit']
         )
 

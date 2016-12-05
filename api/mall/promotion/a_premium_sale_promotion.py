@@ -30,9 +30,8 @@ class APremiumSalePromotion(api_resource.ApiResource):
         else:
             encode_promotion_service = EncodePromotionService.get(corp)
             product_info = encode_promotion_service.get_product_info(promotion)
-            premium_product_info = encode_promotion_service.get_premium_product_info(promotion)
             base_info = encode_promotion_service.get_base_info(promotion)
-            detail = encode_promotion_service.get_detail_info(promotion)
+            detail_info = encode_promotion_service.get_detail_info(promotion)
             data = {
                 'id': base_info['id'],
                 'name': base_info['name'],
@@ -45,8 +44,7 @@ class APremiumSalePromotion(api_resource.ApiResource):
                 'member_grade_id': base_info['member_grade_id'],
                 'created_at': base_info['created_at'],
                 'product_info': product_info,
-                'premium_product_info': premium_product_info,
-                'detail': detail
+                'detail': detail_info
 
             }
             return data
@@ -73,8 +71,8 @@ class APremiumSalePromotion(api_resource.ApiResource):
         factory.create_promotion(args)
         return {}
 
-    @param_required(['corp_id', 'id'])
+    @param_required(['corp_id', 'ids'])
     def delete(args):
         corp = args['corp_id']
-        id = args['id']
-        corp.promotion_repository.delete_promotions(promotion_ids=[id])
+        promotion_ids = args['ids']
+        corp.promotion_repository.delete_promotions(promotion_ids)

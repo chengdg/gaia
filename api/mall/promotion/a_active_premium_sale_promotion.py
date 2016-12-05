@@ -3,42 +3,28 @@
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
 
-from business.mall.promotion.promotion_factory import PromotionFactory
+from business.mall.promotion.promotion_repository import PromotionRepository
 
 
-class APromotionFlashSale(api_resource.ApiResource):
+class AActivePremiumSalePromotion(api_resource.ApiResource):
     """
-    促销-限时抢购
+    开启一个买赠促销活动
     """
     app = 'promotion'
-    resource = 'flash_sale'
+    resource = 'active_premium_sale_promotion'
 
-    @param_required(['corp_id', 'id'])
-    def get(args):
-        corp = args['corp']
-        ids = [args['id']]
-
-        fill_options = {
-            'with_detail': True,
-            'with_product': True
-        }
-        promotions = corp.promotion_repository.get_promotion_by_ids(promotion_ids=ids, fill_options=fill_options)
-        if len(promotions) == 0:
-            return {}
-        else:
-            promotion = promotions[0]
-            return promotion
-
-
-    @param_required([])
+    @param_required(['corp_id', 'ids'])
     def put(args):
-        promotion_data = args
-        promotion_factory = PromotionFactory(args['corp'])
-        promotion_factory.create_promotion(promotion_data)
+        corp = args['corp']
+        promotion_ids = args['ids']
+        promotion_repository = corp.promotion_repository
+        promotion_repository.active_promotion(promotion_ids)
+        return {}
 
-
-    @param_required(['corp_id', 'id'])
+    @param_required(['corp_id', 'ids'])
     def delete(args):
         corp = args['corp_id']
-        id = args['id']
-        corp.promotion_repository.delete_promotions(promotion_ids=[id])
+        promotion_ids = args['ids']
+        promotion_repository = corp.promotion_repository
+        promotion_repository.off_promotion(promotion_ids)
+        return {}
