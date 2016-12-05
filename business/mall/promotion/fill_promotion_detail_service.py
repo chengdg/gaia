@@ -46,16 +46,16 @@ class FillPromotionDetailService(busniess_model.Service):
 			integral_sale.calculate_discount()
 			detail_id2promotion[integral_sale_id].detail = integral_sale
 
-	def __fill_premium_products_details(self, promotions, corp):
+	def __fill_premium_sale_details(self, promotions, corp):
 		"""
-		填充与限时抢购相关的`促销商品详情`
+		填充与买赠相关的`促销商品详情`
 		"""
 		premium_sale_ids = []
 		detail_id2promotion = {}
 		for promotion in promotions:
-			prenium_sale_detail_id = promotion.context['detail_id']
-			premium_sale_ids.append(prenium_sale_detail_id)
-			detail_id2promotion[prenium_sale_detail_id] = promotion
+			premium_sale_detail_id = promotion.context['detail_id']
+			premium_sale_ids.append(premium_sale_detail_id)
+			detail_id2promotion[premium_sale_detail_id] = promotion
 
 		premium_sale_models = promotion_models.PremiumSale.select().dj_where(id__in=premium_sale_ids)
 		for model in premium_sale_models:
@@ -78,7 +78,7 @@ class FillPromotionDetailService(busniess_model.Service):
 			if promotion_type == promotion_models.PROMOTION_TYPE_FLASH_SALE:
 				self.__fill_flash_sale_details(promotions)
 			elif promotion_type == promotion_models.PROMOTION_TYPE_PREMIUM_SALE:
-				self.__fill_premium_products_details(promotions, corp)
+				self.__fill_premium_sale_details(promotions, corp)
 			elif promotion_type == promotion_models.PROMOTION_TYPE_INTEGRAL_SALE:
 				self.__fill_integral_sale_rule_details(promotions)
 
