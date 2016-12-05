@@ -35,7 +35,6 @@ TEMPLATE_DB_TITLE2TMS_NAME = {
 
 @register("send_order_template_task")
 def process(data, recv_msg=None):
-	return
 	# 暂时停用
 	corp_id = data['corp_id']
 	corp = Corporation(corp_id)
@@ -90,9 +89,8 @@ def process(data, recv_msg=None):
 				else:
 					items = {}
 
-
-
 				data = {
+					'test_env': 'pttest',
 					'user_id': corp.id,
 					'member_id': order.member_info['id'],
 					'name': name,
@@ -103,4 +101,4 @@ def process(data, recv_msg=None):
 
 				}
 
-				msgutil.send_message(topic, 'template_msg', )
+				msgutil.send_message(topic, 'template_msg', data)
