@@ -52,8 +52,8 @@ class ReleaseOrderResourceService(business_model.Service):
 			# 更新销量库存
 			product.update_stock(delivery_item_product.product_model_name, delivery_item_product.count)
 
-			# 更新销量
-			if is_paid:
+			# 更新销量，赠品不算销量
+			if is_paid and product.promotion_info['type'] != "premium_sale:premium_product":
 				product.update_sales(0 - delivery_item_product.count)
 
 		# 退款微众卡
@@ -72,7 +72,7 @@ class ReleaseOrderResourceService(business_model.Service):
 		if order.coupon_id:
 			coupon = corp.coupon_repository.get_coupon_by_id(order.coupon_id)
 			if coupon:
-				coupon.refund()
+				coupon.refund(order)
 
 		# 退还积分
 		if order.integral:

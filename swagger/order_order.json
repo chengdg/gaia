@@ -30,7 +30,7 @@
 						"in": "query",
 						"format": "json",
 						"type": "string",
-						"description": "json字符串，<__f-ship_tel-equal>,<__f-ship_name-equal>,<__f-bid-equal>,<__f-weizoom_card_money-gt>,<__f-is_first_order-equal:'true' or 'false'>,<__f-pay_interface_type-equal:字符串>,<__f-created_at-range>,<__f-express_number-equal>,<__f-product_name-contain>,<__f-is_group_buy-equal'>,<__f-status-in:状态字符串列表>"
+						"description": "json字符串，<__f-ship_tel-equal>,<__f-ship_name-equal>,<__f-bid-equal>,<__f-weizoom_card_money-gt>,<__f-is_first_order-equal:'true' or 'false'>,<__f-pay_interface_type-equal:字符串>,<__f-created_at-range>,<__f-payment_time-range>,<__f-express_number-equal>,<__f-product_name-contain>,<__f-is_group_buy-equal'>,<__f-status-in:状态字符串列表>"
 					}
 				],
 				"tags": [
@@ -419,6 +419,10 @@
 																						"sale_price": {
 																							"type": "number",
 																							"description": "售价"
+																						},
+																						"show_sale_price": {
+																							"type": "number",
+																							"description": "商品的显示售价，通常和售价一致，只有赠品时，售价为0，而显示商品价格"
 																						},
 																						"weight": {
 																							"type": "integer",
@@ -906,6 +910,10 @@
 																		"sale_price": {
 																			"type": "number",
 																			"description": "售价"
+																		},
+																		"show_sale_price": {
+																			"type": "number",
+																			"description": "商品的显示售价，通常和售价一致，只有赠品时，售价为0，而显示商品价格"
 																		},
 																		"id": {
 																			"type": "integer",

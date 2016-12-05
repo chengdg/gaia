@@ -6,6 +6,7 @@ from datetime import datetime
 
 from business import model as business_model
 from db.mall import promotion_models
+from db.mall import models as mall_models
 from eaglet.decorator import param_required
 
 
@@ -88,7 +89,7 @@ class Coupon(business_model.Model):
 
 		return coupons
 
-	def refund(self):
+	def refund(self,order):
 		"""
 		取消、退款订单时返还优惠券
 		"""
@@ -100,6 +101,30 @@ class Coupon(business_model.Model):
 		self.__save()
 		coupon_rule = corp.coupon_rule_repository.get_coupon_rule_by_id(self.rule.id)
 		coupon_rule.update_use_count(-1)
+
+		# 更新红包优惠券分析数据 by Eugene
+		if promotion_models.RedEnvelopeParticipences.select().dj_where(coupon_id=self.id,
+		                                                            introduced_by__gt=0).count() > 0:
+
+			red_envelope2member = promotion_models.RedEnvelopeParticipences.select().dj_where(
+				coupon_id=order.coupon_id).first()
+
+			if red_envelope2member:
+				promotion_models.RedEnvelopeParticipences.update(
+					introduce_used_number=promotion_models.RedEnvelopeParticipences.introduce_used_number + 1).dj_where(
+					red_envelope_rule_id=red_envelope2member.red_envelope_rule_id,
+					red_envelope_relation_id=red_envelope2member.red_envelope_relation_id,
+					member_id=red_envelope2member.introduced_by
+				).execute()
+
+			if order.status >= mall_models.ORDER_STATUS_SUCCESSED:
+
+				promotion_models.RedEnvelopeParticipences.update(
+					introduce_sales_number=promotion_models.RedEnvelopeParticipences.introduce_sales_number - order.final_price - order.postage).dj_where(
+					red_envelope_rule_id=red_envelope2member.red_envelope_rule_id,
+					red_envelope_relation_id=red_envelope2member.red_envelope_relation_id,
+					member_id=red_envelope2member.introduced_by
+				).execute()
 
 	def __save(self):
 		db_model = self.context['db_model']

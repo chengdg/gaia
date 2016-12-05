@@ -9,6 +9,7 @@ from db.account import models as account_models
 def __add_classification(context, classification2children, level, father_id):
     for classification in classification2children:
         data = {
+            "corp_id": context.corp.id,
             "name": classification,
             "level": level,
             "father_id": father_id

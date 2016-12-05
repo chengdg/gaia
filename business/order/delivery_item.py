@@ -205,7 +205,7 @@ class DeliveryItem(business_model.Model):
 
 			for delivery_item in delivery_items:
 				push_id = name_number2express_push_id.get(
-					str(delivery_item.express_company_name_value + '__' + delivery_item.express_number))
+					delivery_item.express_company_name_value + '__' + delivery_item.express_number)
 				if push_id:
 					express_details = express_push_id2details.get(push_id, [])
 
@@ -265,8 +265,8 @@ class DeliveryItem(business_model.Model):
 
 		for item in delivery_items:
 			item.operation_logs = bid2logs.get(item.bid, [])
-			# for log in item.operation_logs:
-			# 	log['operator'] = item.leader_name
+		# for log in item.operation_logs:
+		# 	log['operator'] = item.leader_name
 
 	def to_dict(self, *extras):
 
@@ -332,12 +332,14 @@ class DeliveryItem(business_model.Model):
 		id2supplier = {supplier.id: supplier for supplier in suppliers}
 
 		# supplier
+
 		supplier_users = UserSupplier.get_user_supplier_by_user_ids(supplier_user_ids)
-		id2supplier_user = {supplier_user.id:supplier_user for supplier_user in supplier_users}
+		id2supplier_user = {supplier_user.id: supplier_user for supplier_user in supplier_users}
 
 		for delivery_item in delivery_items:
 			db_model = delivery_item.context['db_model']
 			supplier_user = id2supplier_user.get(db_model.supplier_user_id, None)
+
 			supplier = id2supplier.get(db_model.supplier, None)
 			if supplier_user:
 				delivery_item.supplier_info = {

@@ -704,15 +704,13 @@ class Order(business_model.Model):
 		db_model.save()
 
 	def get_all_products(self):
+		"""
+		赠品
+		@return:
+		"""
 		delivery_item_products = []
 
 		for item in self.delivery_items:
 			delivery_item_products.extend(item.products)
-		# todo 赠品不计销量
-		# for product in products:
-		# 	if product.promotion != {'type_name': 'premium_sale:premium_product'}:
-		# 		product_sale_infos.append({
-		# 			'product_id': product.id,
-		# 			'purchase_count': product.purchase_count
-		# 		})
+
 		return delivery_item_products

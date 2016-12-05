@@ -77,12 +77,17 @@ class OrderRepository(business_model.Model):
 				order_filter_parse_result.update(filter_parse_result)
 
 			if '__f-pay_interface_type-equal' in filters:
-				filters['__f-pay_interface_type-equal'] = mall_models.PAYSTR2TYPE[filters['__f-pay_interface_type-equal']]
+				filters['__f-pay_interface_type-equal'] = mall_models.PAYSTR2TYPE[
+					filters['__f-pay_interface_type-equal']]
 				filter_parse_result = FilterParser.get().parse_key(filters, '__f-pay_interface_type-equal')
 				order_filter_parse_result.update(filter_parse_result)
 
 			if '__f-created_at-range' in filters:
 				filter_parse_result = FilterParser.get().parse_key(filters, '__f-created_at-range')
+				order_filter_parse_result.update(filter_parse_result)
+
+			if '__f-payment_time-range' in filters:
+				filter_parse_result = FilterParser.get().parse_key(filters, '__f-payment_time-range')
 				order_filter_parse_result.update(filter_parse_result)
 
 			if '__f-express_number-equal' in filters:
@@ -119,7 +124,8 @@ class OrderRepository(business_model.Model):
 					# should_in_order_bids_by_group_search = self.context['valid_group_order_bids']
 
 					if should_in_order_bids:
-						should_in_order_bids = list(set(should_in_order_bids).intersection(set(self.context['valid_group_order_bids'])))
+						should_in_order_bids = list(
+							set(should_in_order_bids).intersection(set(self.context['valid_group_order_bids'])))
 					else:
 						should_in_order_bids = self.context['valid_group_order_bids']
 
@@ -247,8 +253,9 @@ class OrderRepository(business_model.Model):
 			ignored_group_orders = db_models.where(
 				(mall_models.Order.order_id << running_group_order_bids) | (
 					(mall_models.Order.order_id << failed_group_order_bids) & (mall_models.Order.status.not_in(
-						[mall_models.ORDER_STATUS_GROUP_REFUNDING, mall_models.ORDER_STATUS_GROUP_REFUNDING]))))
-			# 有效的团购订单
+						[mall_models.ORDER_STATUS_GROUP_REFUNDING, mall_models.ORDER_STATUS_GROUP_REFUNDED]) & (
+					                                                           mall_models.Order.final_price > 0))))
+
 			invalid_group_order_bids = [o.order_id for o in ignored_group_orders]
 
 			self.context['valid_group_order_bids'] = list(

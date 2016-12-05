@@ -95,6 +95,7 @@ class Integral(business_model.Model):
 
 	@staticmethod
 	def increase_member_integral(args):
+
 		#TODO-bert 调整统一参数
 		member_id = args['member_id']
 		event_type = args['event_type']
@@ -127,8 +128,8 @@ class Integral(business_model.Model):
 					manager=manager
 				)
 			# todo 看起来有个清理缓存的样子。。。。
-			# if webapp_user:
-			# 	webapp_user.cleanup_cache()
+			if member:
+				member.cleanup_cache()
 
 			return True, integral_log.id
 		except:
@@ -227,17 +228,14 @@ class Integral(business_model.Model):
 				#给好友奖励（分享链接购买）
 
 				if increase_count > 0 and followed_member:
-
-					followed_webapp_user = WebAppUser.from_member_id({
-						#'webapp_owner': webapp_owner,
-						'member_id': followed_member.id
-						})
+					followed_webapp_user_id = member_models.WebAppUser.get(member_id=followed_member.id).id
 
 					Integral.increase_member_integral({
 						'integral_increase_count': increase_count,
-						'webapp_user': followed_webapp_user,
-						'member': followed_member,
-						'event_type':  member_models.FOLLOWER_BUYED_VIA_SHARED_URL
+						'webapp_user_id': followed_webapp_user_id,
+						'member_id': followed_member.id,
+						'event_type':  member_models.FOLLOWER_BUYED_VIA_SHARED_URL,
+						'corp': corp
 						})
 
 					#self.increase_member_integral(followed_member, \
@@ -249,8 +247,9 @@ class Integral(business_model.Model):
 					Integral.increase_member_integral({
 						'integral_increase_count': integral_strategy.buy_award_count_for_buyer,
 						'webapp_user_id': webapp_user_id,
-						'member': member,
-						'event_type':  member_models.BUY_AWARD
+						'member_id': member.id,
+						'event_type':  member_models.BUY_AWARD,
+						'corp':corp
 						})
 
 					#self.increase_member_integral(member, \
@@ -266,8 +265,9 @@ class Integral(business_model.Model):
 						Integral.increase_member_integral({
 							'integral_increase_count': increase_count_integral,
 							'webapp_user_id': webapp_user_id,
-							'member': member,
-							'event_type':  member_models.BUY_AWARD
+							'member_id': member.id,
+							'event_type':  member_models.BUY_AWARD,
+							'corp': corp
 							})
 				#print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.10:'
 
@@ -294,8 +294,9 @@ class Integral(business_model.Model):
 							Integral.increase_member_integral({
 								'integral_increase_count': integral_strategy.buy_via_offline_increase_count_for_author,
 								'webapp_user_id': father_webapp_user_id,
-								'member': father_member,
-								'event_type':  member_models.BUY_INCREST_COUNT_FOR_FATHER
+								'member_id': father_member.id,
+								'event_type':  member_models.BUY_INCREST_COUNT_FOR_FATHER,
+								'corp': corp
 								})
 
 
@@ -307,8 +308,9 @@ class Integral(business_model.Model):
 								Integral.increase_member_integral({
 									'integral_increase_count': integral_count,
 									'webapp_user_id': father_webapp_user_id,
-									'member': father_member,
-									'event_type':  member_models.BUY_INCREST_COUNT_FOR_FATHER
+									'member_id': father_member.id,
+									'event_type':  member_models.BUY_INCREST_COUNT_FOR_FATHER,
+									'corp': corp
 									})
 							except:
 								notify_message = u"increase_father_member_integral_by_child_member_buyed cause:\n{}".format(unicode_full_stack())

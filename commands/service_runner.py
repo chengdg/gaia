@@ -78,11 +78,16 @@ class Command(BaseCommand):
 						try:
 							queue.delete_message(recv_msg.receipt_handle)
 							logging.debug("Delete Message Succeed!  ReceiptHandle:%s" % recv_msg.receipt_handle)
-						except MNSException,e:
+						except MNSExceptionBase,e:
 							logging.debug("Delete Message Fail! Exception:%s\n" % e)
 					except:
 						logging.info(u"Service Exception: {}".format(unicode_full_stack()))
 				else:
+					try:
+						queue.delete_message(recv_msg.receipt_handle)
+						logging.debug("Delete Message Succeed!  ReceiptHandle:%s" % recv_msg.receipt_handle)
+					except MNSExceptionBase, e:
+						logging.debug("Delete Message Fail! Exception:%s\n" % e)
 					#TODO: 这里是否需要删除消息？
 					logging.info(u"Error: no such service found : {}".format(message_name))
 
