@@ -147,8 +147,8 @@ class Member(business_model.Model):
         else:
             unit_price = 0
 
-        member_models.Member.update(unit_price=unit_price, pay_times=member_models.Member.pay_times + pay_times,
-                                    pay_money=member_models.Member.pay_money + pay_money,
+        member_models.Member.update(unit_price=unit_price, pay_times=pay_times,
+                                    pay_money=pay_money,
                                     last_pay_time=last_pay_time).dj_where(
             id=self.id).execute()
 
