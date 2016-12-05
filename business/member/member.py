@@ -111,7 +111,7 @@ class Member(business_model.Model):
         有用
         @return:
         """
-        openid = member_models.MemberHasSocialAccount.select().dj_where(member_id=self.id).first().account.open_id
+        openid = member_models.MemberHasSocialAccount.select().dj_where(member_id=self.id).first().account.openid
         key = 'member_{webapp:%s}_{openid:%s}' % (self.webapp_id, openid)
         cache_util.delete_cache(key)
 
