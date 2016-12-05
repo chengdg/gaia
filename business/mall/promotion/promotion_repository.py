@@ -18,3 +18,7 @@ class PromotionRepository(business_model.Service):
 			status=promotion_models.PROMOTION_STATUS_DELETED
 		).dj_where(id__in=promotion_ids).execute()
 		return True
+
+	def get_promotion_by_id(self, promotion_id, fill_options=None):
+		promotions = self.get_promotion_by_ids([promotion_id], fill_options=fill_options)
+		return promotions[0] if promotions else None

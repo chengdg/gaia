@@ -21,8 +21,12 @@ class PromotionFactory(business_model.Service):
     def __create_integral_sale(self):
         pass
 
-    def __create_premium_sale(self):
-        pass
+    def __create_premium_sale(self, promotion_data):
+        is_enable_cycle_mode = True if promotion_data['is_enable_cycle'] == 'true' else False
+        premium_sale = promotion_models.PremiumSale.create(owner=self.corp,
+                                                           count=promotion_data['count'],
+                                                           is_enable_cycle_mode=is_enable_cycle_mode)
+        return premium_sale
 
     def __add_product_to_promotion(self, promotion_data, promotion):
         products = json.loads(promotion_data['products'])
@@ -44,10 +48,26 @@ class PromotionFactory(business_model.Service):
             end_date=promotion_data['end_date'],
             detail_id=promotion_detail_id
         )
+        return promotion
+
+    def __add_product_to_premium_sale(self, promotion_data, premium_sale):
+        premium_product_id = json.loads(promotion_data['premium_product_id'])
+
+        promotion_models.PremiumSaleProduct.create(
+            product_id=premium_product_id,
+            premium_sale=premium_sale,
+            count=promotion_data['count'],
+            unit=promotion_data['unit']
+        )
 
     def create_promotion(self, promotion_data):
         if promotion_data['type'] == 'flash_sale':
             flash_sale = self.__create_flash_sale(promotion_data)
-        promotion_detail_id = flash_sale.id
+
+            promotion_detail_id = flash_sale.id
+        elif promotion_data['type'] == 'premium_sale':
+            premium_sale = self.__create_premium_sale(promotion_data)
+            self.__add_product_to_premium_sale(promotion_data)
+            promotion_detail_id = premium_sale.id
         promotion = self.__create_promotion(promotion_data, promotion_detail_id)
         self.__add_product_to_promotion(promotion_data, promotion)
