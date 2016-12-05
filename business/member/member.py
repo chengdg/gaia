@@ -126,9 +126,10 @@ class Member(business_model.Model):
         # todo order搜索完成后使用order_repository
         from db.mall import models as mall_models
 
-        db_model = self.context['db_model']
         if to_status == 'paid':
-            db_model.last_pay_time = order.payment_time
+            last_pay_time = order.payment_time
+        else:
+            last_pay_time = self.last_pay_time
 
         webapp_user_id = order.webapp_user_id
 
@@ -137,25 +138,22 @@ class Member(business_model.Model):
 
         user_orders = mall_models.Order.select().dj_where(webapp_user_id=webapp_user_id)
 
-        if user_orders.dj_where(status__gte=mall_models.ORDER_STATUS_PAYED_SUCCESSED).count() > 0:
-            payment_time = user_orders.order_by(mall_models.Order.payment_time)[0].payment_time
-            db_model.last_pay_time = payment_time
-
         for user_order in user_orders:
             user_order.final_price = user_order.final_price + user_order.weizoom_card_money
             if user_order.status == mall_models.ORDER_STATUS_SUCCESSED:
                 pay_money += user_order.final_price
                 pay_times += 1
 
-        db_model.pay_times = pay_times
-        db_model.pay_money = pay_money
-
         if pay_times > 0:
-            db_model.unit_price = pay_money / pay_times
+            unit_price = pay_money / pay_times
         else:
-            db_model.unit_price = 0
+            unit_price = 0
 
-        db_model.save()
+        member_models.Member.update(unit_price=unit_price, pay_times=member_models.Member.pay_times + pay_times,
+                                    pay_money=member_models.Member.pay_money + pay_money,
+                                    last_pay_time=last_pay_time).dj_where(
+            id=self.id).execute()
+
 
 
     @cached_context_property
