@@ -14,14 +14,14 @@ class UserSupplier(business_model.Model):
 		'name'
 	)
 
-	def __init__(self, model):
+	def __init__(self, user_id, store_name):
 		business_model.Model.__init__(self)
 
-		self.id = model.id
-		self.name = model.store_name
+		self.id = user_id
+		self.name = store_name
 
 	@staticmethod
 	def get_user_supplier_by_user_ids(user_ids):
 		db_models = account_models.UserProfile.select().dj_where(user_id__in=user_ids)
 
-		return [UserSupplier(db_model) for db_model in db_models]
+		return [UserSupplier(db_model.user_id, db_model.store_name) for db_model in db_models]
