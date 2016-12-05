@@ -31,7 +31,7 @@ def process(data, recv_msg=None):
 	corp_id = data['corp_id']
 	delivery_item_id = data['delivery_item_id']
 	from_status = data['from_status']
-	to_status = data['to']
+	to_status = data['to_status']
 
 	# 订阅快递推送
 	topic_name = TOPIC['base_service']
