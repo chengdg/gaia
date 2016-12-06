@@ -33,7 +33,7 @@ TEMPLATE_DB_TITLE2TMS_NAME = {
 }
 
 
-@register("send_order_template_task")
+@register("send_order_template_message_task")
 def process(data, recv_msg=None):
 	# 暂时停用
 	corp_id = data['corp_id']
@@ -100,5 +100,5 @@ def process(data, recv_msg=None):
 					'remark': template_message_detail.remark_text
 
 				}
-				print('--------------------sendtemplate_msg',data)
+				print('------template_message000001111',data)
 				msgutil.send_message(topic, 'template_msg', data)

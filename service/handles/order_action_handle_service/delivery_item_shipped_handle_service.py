@@ -46,6 +46,7 @@ def process(data, recv_msg=None):
 		"type": "delivery_item",
 		'to_status': to_status
 	}
+	print('------template_message00000')
 	msgutil.send_message(topic_name, 'send_order_template_message_task', data)
 
 	# 发送通知邮件
