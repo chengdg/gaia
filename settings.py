@@ -167,7 +167,8 @@ else:
 
 REDIS_QUEUE_DB = 8
 TOPIC2QUEUES = {
-    'test-topic': ['test-order-trade-center']
+    'test-topic': ['test-order-trade-center'],
+    'test-weixin-topic': ['test-weixin-topic']
 }
 
 # BDD_SERVER相关配置
