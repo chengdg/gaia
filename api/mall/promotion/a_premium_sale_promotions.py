@@ -51,13 +51,13 @@ class APremiumSalePromotions(api_resource.ApiResource):
                 'member_grade_id': base_info['member_grade_id'],
                 'created_at': base_info['created_at'],
                 'product_info': product_info,
-                'detail_Info': detail_info,
+                'detail': detail_info,
             }
 
             datas.append(data)
 
         return {
             'page_info': page_info.to_dict(),
-            'products': datas
+            'premium_sale_promotions': datas
         }
 

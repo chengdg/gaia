@@ -23,7 +23,6 @@ class APremiumSalePromotion(api_resource.ApiResource):
         fill_options = {
             'with_detail': True,
             'with_product': True,
-            'with_premium_product': True
         }
         promotion = corp.promotion_repository.get_promotion_by_id(promotion_id, fill_options=fill_options)
         if not promotion:
