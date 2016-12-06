@@ -100,5 +100,5 @@ def process(data, recv_msg=None):
 					'remark': template_message_detail.remark_text
 
 				}
-
+				print('--------------------sendtemplate_msg',data)
 				msgutil.send_message(topic, 'template_msg', data)
