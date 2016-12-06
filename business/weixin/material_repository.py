@@ -36,7 +36,7 @@ class MaterialRepository(business_model.Service):
 
 		if title and len(title) > 0:
 			# 需求说只显示单图文即可
-			materials_models = weixin_models.Material.select(weixin_models.Material.id).dj_where(owner=self.corp.id, is_deleted=False, type=1).order_by(params.get('sort_attr', '-id'))
+			materials_models = weixin_models.Material.select(weixin_models.Material.id).dj_where(owner=self.corp.id, is_deleted=False, type=weixin_models.SINGLE_NEWS_TYPE).order_by(params.get('sort_attr', '-id'))
 			material_ids = [ material.id for material in materials_models]
 			target_material_ids = [news.material_id for news in weixin_models.News.select().dj_where(material_id__in=material_ids, title__icontains=title)]
 			materials = weixin_models.Material.select().dj_where(owner=self.corp.id, is_deleted=False, id__in=target_material_ids)
