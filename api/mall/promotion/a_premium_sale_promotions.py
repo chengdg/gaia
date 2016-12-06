@@ -28,7 +28,7 @@ class APremiumSalePromotions(api_resource.ApiResource):
             'with_product': True
         }
         filters = json.loads(args.get('filters', '{}'))
-
+        # filters['__f-product_name-contains'] = '葡萄酒'
         promotions, page_info = corp.promotion_repository.search_premium_sale_promotions(target_page,
                                                                                          fill_options=fill_options,
                                                                                          filters=filters)

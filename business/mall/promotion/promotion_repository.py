@@ -38,8 +38,8 @@ class PromotionRepository(business_model.Service):
 			'order_options': ['-start_date']
 		}
 		promotions, pageinfo = self.get_promotions(page_info, fill_options=fill_options, options=options,
-												   filters=fill_options)
-		return promotions, page_info
+												   filters=filters)
+		return promotions, pageinfo
 
 	def __split_filters(self, filters):
 		promotion_filter_values = {}
@@ -47,6 +47,7 @@ class PromotionRepository(business_model.Service):
 		flash_sale_filter_values = {}
 		product_filter_values = {}
 		filter_parse_result = FilterParser.get().parse(filters)
+
 		for filter_field_op, filter_value in filter_parse_result.items():
 			items = filter_field_op.split('__')
 			filter_field = items[0]
@@ -57,9 +58,10 @@ class PromotionRepository(business_model.Service):
 			should_ignore_field = False
 			if filter_field == 'id' or filter_field == 'status' or filter_field == 'type':
 				filter_category = promotion_filter_values
-			elif filter_field == 'name' or filter_field == 'barcode':
+			elif filter_field == 'product_name':
+				filter_field = 'name'
 				filter_category = product_filter_values
-			elif filter_field == 'start_date' or filter_field == 'end_date':
+			elif filter_field == 'start_date' or filter_field == 'end_date' or filter_field == 'barcode':
 				filter_category = product_filter_values
 			if not should_ignore_field:
 				if op:
