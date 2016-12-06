@@ -2,6 +2,8 @@
 """
 订单
 """
+import json
+
 from eaglet.core import paginator
 from eaglet.core import watchdog
 
@@ -83,10 +85,18 @@ class OrderRepository(business_model.Model):
 				order_filter_parse_result.update(filter_parse_result)
 
 			if '__f-created_at-range' in filters:
+				try:
+					filters['__f-created_at-range'] = json.loads(filters['__f-created_at-range'])
+				except:
+					pass
 				filter_parse_result = FilterParser.get().parse_key(filters, '__f-created_at-range')
 				order_filter_parse_result.update(filter_parse_result)
 
 			if '__f-payment_time-range' in filters:
+				try:
+					filters['__f-payment_time-range'] = json.loads(filters['__f-payment_time-range'])
+				except:
+					pass
 				filter_parse_result = FilterParser.get().parse_key(filters, '__f-payment_time-range')
 				order_filter_parse_result.update(filter_parse_result)
 
@@ -178,7 +188,6 @@ class OrderRepository(business_model.Model):
 			# 	db_models = db_models.dj_where(id__in=should_in_order_ids)
 
 			# print('-----db_models-count',db_models.count())
-
 		return db_models
 
 	def get_orders(self, filters, target_page, fill_options):
