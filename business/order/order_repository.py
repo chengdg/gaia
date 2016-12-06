@@ -141,6 +141,10 @@ class OrderRepository(business_model.Model):
 
 			if '__f-status-in' in filters:
 				# 需要使用meaningful_word搜索
+				try:
+					filters['__f-status-in'] = json.loads(filters['__f-status-in'])
+				except:
+					pass
 				args_status = []
 				for s in filters['__f-status-in']:
 					args_status.append(mall_models.MEANINGFUL_WORD2ORDER_STATUS[s])
