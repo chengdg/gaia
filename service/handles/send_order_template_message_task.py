@@ -35,7 +35,6 @@ TEMPLATE_DB_TITLE2TMS_NAME = {
 
 @register("send_order_template_message_task")
 def process(data, recv_msg=None):
-	# 暂时停用
 	corp_id = data['corp_id']
 	corp = Corporation(corp_id)
 	to_status = data['to_status']
@@ -100,5 +99,15 @@ def process(data, recv_msg=None):
 					'remark': template_message_detail.remark_text
 
 				}
-				print('------template_message000001111',data)
 				msgutil.send_message(topic, 'template_msg', data)
+
+
+# data = {
+#
+# 	'delivery_item_id':'1001435',
+# 	'to_status':'shipped',
+# 	'corp_id':490,
+# 	'type':'delivery_item'
+# }
+# print(2222222222222)
+# process(data,None)

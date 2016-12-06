@@ -36,6 +36,7 @@ class DeliveryItem(business_model.Model):
 		'area',
 		'ship_name',
 		'supplier_id',
+		'ship_address',
 
 		'customer_message',
 
@@ -78,6 +79,7 @@ class DeliveryItem(business_model.Model):
 		self.area = db_model.area
 		self.supplier_id = db_model.supplier
 		self.ship_name = db_model.ship_name
+		self.ship_address = db_model.ship_address
 		self.customer_message = db_model.customer_message
 
 		# 快递公司信息
@@ -101,6 +103,11 @@ class DeliveryItem(business_model.Model):
 			total_sale_price += product.sale_price * product.count
 			product_names.append(product.name)
 			total_count += product.count
+		return {
+			'total_sale_price':total_sale_price,
+			'product_names':product_names,
+			'total_count':total_count
+		}
 
 	@staticmethod
 	@param_required(['models'])

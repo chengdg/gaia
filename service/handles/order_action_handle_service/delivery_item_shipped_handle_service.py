@@ -41,7 +41,6 @@ def process(data, recv_msg=None):
 	# 发送模板消息
 	topic_name = TOPIC['base_service']
 	data = {
-		"order_id": delivery_item_id,
 		"corp_id": corp_id,
 		"type": "delivery_item",
 		"delivery_item_id": delivery_item_id,
