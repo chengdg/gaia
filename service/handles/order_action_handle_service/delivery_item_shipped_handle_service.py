@@ -44,6 +44,7 @@ def process(data, recv_msg=None):
 		"order_id": delivery_item_id,
 		"corp_id": corp_id,
 		"type": "delivery_item",
+		"delivery_item_id": delivery_item_id,
 		'to_status': to_status
 	}
 	print('------template_message00000')
