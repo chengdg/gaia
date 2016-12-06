@@ -70,9 +70,9 @@ class EncodePromotionService(business_model.Service):
 		"""
 
 		if promotion.type == promotion_models.PROMOTION_TYPE_FLASH_SALE:
-			self.__get_premium_sale_info(promotion)
-		elif promotion.type == promotion_models.PROMOTION_TYPE_PREMIUM_SALE:
 			pass
+		elif promotion.type == promotion_models.PROMOTION_TYPE_PREMIUM_SALE:
+			return self.__get_premium_sale_info(promotion)
 
 	def __get_premium_sale_info(self, promotion):
 		"""
@@ -95,7 +95,7 @@ class EncodePromotionService(business_model.Service):
 		"""
 		获取买赠活动中赠送的商品信息
 		"""
-		premium_products = promotion.premium_products
+		premium_products = promotion.detail.premium_products
 		datas = []
 		for product in premium_products:
 

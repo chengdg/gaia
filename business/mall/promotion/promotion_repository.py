@@ -35,21 +35,24 @@ class PromotionRepository(business_model.Service):
 	def get_promotions(self, page_info, fill_options=None, options=None, filters=None):
 		pass
 
-	def active_promotion(self, promotion_ids):
+	def active_promotions(self, promotion_ids):
 		"""
         开启促销活动
         promotion_ids: [promtion_id,...]
         """
 		promotion_models.Promotion.update(
-			status=promotion_models.PROMOTION_STATUS_DELETED
-		).dj_where(id__in=promotion_ids).execute()
+			status=promotion_models.PROMOTION_STATUS_STARTED
+		).dj_where(id__in=promotion_ids,
+				   status=promotion_models.PROMOTION_STATUS_NOT_START,
+				   ).execute()
 		return True
 
-	def off_promotion(self, promotion_ids):
+	def off_promotions(self, promotion_ids):
 		"""
         关闭撤销活动
         """
 		promotion_models.Promotion.update(
 			status=promotion_models.PROMOTION_STATUS_FINISHED
-		).dj_where(id__in=promotion_ids).execute()
+		).dj_where(id__in=promotion_ids,
+				   status=promotion_models.PROMOTION_STATUS_STARTED).execute()
 		return True
