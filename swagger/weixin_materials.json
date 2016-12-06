@@ -15,7 +15,7 @@
 						"description": "已选中的素材ID,默认值为0"
 					},
 					{
-						"name": "query",
+						"name": "filters",
 						"required": "false",
 						"description": "查询条件"
 					},
