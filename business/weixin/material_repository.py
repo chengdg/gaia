@@ -38,9 +38,7 @@ class MaterialRepository(business_model.Service):
 			materials_models = weixin_models.Material.select(weixin_models.Material.id).dj_where(owner=self.corp.id, is_deleted=False).order_by(params.get('sort_attr', '-id'))
 			material_ids = [ material.id for material in materials_models]
 			target_material_ids = [news.material_id for news in weixin_models.News.select().dj_where(material_id__in=material_ids, title__icontains=title)]
-			print target_material_ids,'=======22=============',title
 			materials = weixin_models.Material.select().dj_where(owner=self.corp.id, is_deleted=False, id__in=target_material_ids)
-			print materials,'===================='
 
 		else:
 			materials = weixin_models.Material.select().dj_where(owner=self.corp.id, is_deleted=False)
