@@ -257,9 +257,11 @@ class Integral(business_model.Model):
 
 				#购物返利 按订单比例增加
 				if order and order.final_price > 0:
+
 					#print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.9:'
 					order_money_percentage_for_each_buy = float(integral_strategy.order_money_percentage_for_each_buy)
 					increase_count_integral = int(order_money_percentage_for_each_buy * float(order.final_price))
+
 					if increase_count_integral > 0:
 						#self.increase_member_integral(member, increase_count_integral, BUY_AWARD)
 						Integral.increase_member_integral({

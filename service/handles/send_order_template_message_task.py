@@ -18,6 +18,7 @@ SELECT * from market_tools_template_message;
 import settings
 from bdem import msgutil
 from business.mall.corporation import Corporation
+from gaia_conf import TOPIC
 from service.handler_register import register
 from db.mall import models as mall_models
 
@@ -32,13 +33,13 @@ TEMPLATE_DB_TITLE2TMS_NAME = {
 }
 
 
-@register("send_order_template_task")
+@register("send_order_template_message_task")
 def process(data, recv_msg=None):
-	return
 	# 暂时停用
 	corp_id = data['corp_id']
 	corp = Corporation(corp_id)
 	to_status = data['to_status']
+	topic = TOPIC['template_message']
 
 	type = data['type']
 	if type == 'delivery_item':
@@ -69,7 +70,6 @@ def process(data, recv_msg=None):
 				total_sale_price = u'￥%s［实际付款］' % delivery_item.product_statistics_info['total_sale_price']
 				product_names = ','.join(delivery_item.product_statistics_info['product_names'])
 				total_count = delivery_item.product_statistics_info['total_count']
-
 				if name == u'商品发货通知':
 					items = {
 						'keyword1': delivery_item.express_company_name_text,
@@ -88,7 +88,9 @@ def process(data, recv_msg=None):
 					}
 				else:
 					items = {}
-				msgutil.send_message('test-topic', 'template_msg', {
+
+				data = {
+					'test_env': 'pttest',
 					'user_id': corp.id,
 					'member_id': order.member_info['id'],
 					'name': name,
@@ -97,4 +99,6 @@ def process(data, recv_msg=None):
 					'first': template_message_detail.first_text,
 					'remark': template_message_detail.remark_text
 
-				})
+				}
+				print('------template_message000001111',data)
+				msgutil.send_message(topic, 'template_msg', data)

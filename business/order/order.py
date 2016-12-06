@@ -349,10 +349,11 @@ class Order(business_model.Model):
 
 	@staticmethod
 	def __fill_status_logs(orders, order_ids):
-		logs = mall_models.OrderStatusLog.select().dj_where(order_id__in=order_ids).order_by(
-			mall_models.OrderStatusLog.created_at)
 		if len(orders) == 1:
 			order = orders[0]
+
+			logs = mall_models.OrderStatusLog.select().dj_where(order_id=order.bid).order_by(
+				mall_models.OrderStatusLog.created_at)
 			order.status_logs = []
 			# 下单时没状态日志
 			order.status_logs.append(
@@ -367,11 +368,10 @@ class Order(business_model.Model):
 					{
 						'from_status': log.from_status,
 						'from_status_code': mall_models.ORDER_STATUS2MEANINGFUL_WORD[log.from_status],
-						'to_status': log.to_staus,
-						'to_status_code': mall_models.ORDER_STATUS2MEANINGFUL_WORD[log.to_staus],
+						'to_status': log.to_status,
+						'to_status_code': mall_models.ORDER_STATUS2MEANINGFUL_WORD[log.to_status],
 						'time': log.created_at
 					})
-
 	@staticmethod
 	def __fill_group_buy(orders, order_ids):
 		"""

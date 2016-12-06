@@ -204,6 +204,16 @@ class OrderRepository(business_model.Model):
 		else:
 			return None
 
+	def get_orders_by_webapp_user_id(self, webapp_user_id, status=None):
+		db_models = self.__get_db_models_for_corp().dj_where(webapp_user_id=webapp_user_id)
+		if status:
+			db_models = db_models.dj_where(status=status)
+		orders = Order.from_models({"db_models": db_models, 'fill_options': '', 'corp': self.corp})
+
+		return orders
+
+
+
 	def __get_db_models_for_corp(self):
 		webapp_id = self.corp.webapp_id
 		user_id = self.corp.id
