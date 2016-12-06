@@ -139,7 +139,7 @@ class Member(business_model.Model):
         user_orders = self.context['corp'].order_repository.get_orders_by_webapp_user_id(webapp_user_id, mall_models.ORDER_STATUS_SUCCESSED)
 
         for user_order in user_orders:
-            pay_money = user_order.pay_money
+            pay_money += user_order.pay_money
             pay_times += 1
 
         if pay_times > 0:
