@@ -50,10 +50,10 @@ def __search_premium_sale_promotion(context, user):
 def __off_premium_sale_promotion(context, user):
     user = mall_models.User.select().dj_where(username=user).first()
     promotion_name = json.loads(context.text).get('name')
-    promotion = promotion_models.Promotion.select().dj_where(name=promotion_name)
+    promotions = promotion_models.Promotion.select().dj_where(name=promotion_name)
     data = {
         "corp_id": user.id,
-        'ids': json.dumps([promotion.id])
+        'ids': json.dumps([promotion.id for promotion in promotions])
     }
     response = context.client.delete('/promotion/active_premium_sale_promotion/', data)
     bdd_util.assert_api_call_success(response)
@@ -61,13 +61,20 @@ def __off_premium_sale_promotion(context, user):
 
 def __get_promotion_info(context, user, promotion_name, assert_status):
     user = mall_models.User.select().dj_where(username=user).first()
-    promotion = promotion_models.Promotion.select().dj_where(name=promotion_name)
+    promotions = promotion_models.Promotion.select().dj_where(name=promotion_name)
+    promotion_ids = [promotion.id for promotion in promotions]
     data = {
         "corp_id": user.id,
-        'id': promotion.id
+        'id': max(promotion_ids)
     }
     response = context.client.get('/promotion/premium_sale_promotion/', data)
-    assert response.data.get('status') == assert_status
+    print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
+    print response
+    print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
+    if assert_status == u'已结束':
+        print 'fffffffffffffffffffffffffffffffffffffffffffffffffffffff'
+        assert_status = 2
+    assert int(response.data.get('status')) == assert_status
 
 
 @when(u"{user}创建一个买赠活动")
