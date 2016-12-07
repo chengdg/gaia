@@ -61,7 +61,7 @@ class OrderRepository(business_model.Model):
 				# order_filter_parse_result.update(filter_parse_result)
 				# should_in_order_bids.append(filters['__f-bid-equal'])
 				# should_in_order_bids_by_bid_search = [filters['__f-bid-equal']]
-				if should_in_order_ids:
+				if should_in_order_bids:
 					should_in_order_bids = list(set(should_in_order_ids).intersection({filters['__f-bid-equal']}))
 				else:
 					should_in_order_bids = [filters['__f-bid-equal']]
@@ -114,8 +114,8 @@ class OrderRepository(business_model.Model):
 
 				shipped_at_bids = [bid.split("^")[0] for bid in shipped_at_bids]
 
-				if should_in_order_ids:
-					should_in_order_bids = list(set(should_in_order_ids).intersection(set(shipped_at_bids)))
+				if should_in_order_bids:
+					should_in_order_bids = list(set(should_in_order_bids).intersection(set(shipped_at_bids)))
 				else:
 					should_in_order_bids = shipped_at_bids
 
@@ -130,7 +130,11 @@ class OrderRepository(business_model.Model):
 					_delivery_items = mall_models.Order.select(mall_models.Order.origin_order_id).dj_where(
 						express_number=searched_express_number)
 					use_should_in_order_ids = True
-					should_in_order_ids.extend([item.origin_order_id for item in _delivery_items])
+					if should_in_order_ids:
+						should_in_order_ids = list(set(should_in_order_ids).intersection(
+							set([item.origin_order_id for item in _delivery_items])))
+					else:
+						should_in_order_ids = [item.origin_order_id for item in _delivery_items]
 
 			# 关联表
 			if '__f-product_name-contain' in filters:
@@ -144,7 +148,11 @@ class OrderRepository(business_model.Model):
 				product_ids = [product.id for product in products]
 				ohs_list = ohs_list.dj_where(product_id__in=product_ids)
 				use_should_in_order_ids = True
-				should_in_order_ids.extend([ohs.order_id for ohs in ohs_list])
+				if should_in_order_ids:
+					should_in_order_ids = list(
+						set(should_in_order_ids).intersection(set([ohs.order_id for ohs in ohs_list])))
+				else:
+					should_in_order_ids = [ohs.order_id for ohs in ohs_list]
 
 			if '__f-is_group_buy-equal' in filters:
 				if filters['__f-is_group_buy-equal'] == 'true':
@@ -189,8 +197,13 @@ class OrderRepository(business_model.Model):
 					_delivery_items = mall_models.Order.select(mall_models.Order.origin_order_id).dj_where(
 						webapp_id=self.corp.webapp_id,
 						origin_order_id__gt=0, status__in=status_params)
-					wtf_refund_order_id = [item.origin_order_id for item in _delivery_items]
-					should_in_order_ids.extend(wtf_refund_order_id)
+					wtf_refund_order_ids = [item.origin_order_id for item in _delivery_items]
+
+					if should_in_order_ids:
+						should_in_order_ids = list(
+							set(should_in_order_ids).intersection(set(wtf_refund_order_ids)))
+					else:
+						should_in_order_ids = wtf_refund_order_ids
 					use_should_in_order_ids = True
 
 				else:
