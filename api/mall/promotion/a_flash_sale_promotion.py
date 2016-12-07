@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import json
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
 
@@ -30,15 +31,16 @@ class APromotionFlashSale(api_resource.ApiResource):
             return promotion
 
 
-    @param_required([])
+    @param_required(['corp_id', 'promotion_info', 'detail_info', 'product_info'])
     def put(args):
         promotion_data = args
         promotion_factory = PromotionFactory(args['corp'])
         promotion_factory.create_promotion(promotion_data)
 
 
-    @param_required(['corp_id', 'id'])
+    @param_required(['corp_id', 'ids'])
     def delete(args):
         corp = args['corp_id']
-        id = args['id']
-        corp.promotion_repository.delete_promotions(promotion_ids=[id])
+        promotion_ids = args['ids']
+        corp.promotion_repository.delete_promotions(promotion_ids=json.loads(promotion_ids))
+        return {}
