@@ -3,7 +3,8 @@
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
 
-from business.mall.product_label_group import ProductLabelGroup
+from business.mall.label.product_label_group import ProductLabelGroup
+from business.mall.corporation_factory import CorporationFactory
 
 
 class AProductLableGroup(api_resource.ApiResource):
@@ -13,14 +14,13 @@ class AProductLableGroup(api_resource.ApiResource):
 	app = 'mall'
 	resource = 'product_label_group'
 
-	@param_required(['corp_id','name'])
+	@param_required(['name'])
 	def put(args):
 		"""
 		创建标签分类
 		:return:
 		"""
 		result = ProductLabelGroup.create({
-			'corp_id': args['corp_id'],
 			'name': args['name']
 		})
 		if isinstance(result, basestring):
@@ -28,12 +28,14 @@ class AProductLableGroup(api_resource.ApiResource):
 		else:
 			return {'id': result.id}
 
-	@param_required(['id'])
+	@param_required(['label_group_id'])
 	def delete(args):
 		"""
 		删除标签分类
 		:return:
 		"""
-		ProductLabelGroup.delete({'id': args['id']})
+		weizoom_corp = CorporationFactory.get_weizoom_corporation()
+		weizoom_corp.product_label_group_repository.delete_label_group(args['label_group_id'])
+
 		return {}
 

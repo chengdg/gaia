@@ -6,7 +6,7 @@ from eaglet.core import watchdog
 
 from business.mall.corporation_factory import CorporationFactory
 from business import model as business_model
-from business.mall.product_label import ProductLabel
+from business.mall.label.product_label import ProductLabel
 from db.mall import models as mall_models
 
 class ProductLabelGroup(business_model.Model):
@@ -34,14 +34,14 @@ class ProductLabelGroup(business_model.Model):
 		return labels
 
 	@staticmethod
-	@param_required(['corp_id', 'name'])
+	@param_required(['name'])
 	def create(args):
 		"""
 		创建商品标签分类
 		:param args:
 		:return:
 		"""
-		corp_id = args['corp_id']
+		corp_id = CorporationFactory.get_weizoom_corporation().id
 		label_group_name = args['name']
 		#检查重名
 		exist_groups = mall_models.ProductLabelGroup.select().dj_where(name=label_group_name, owner_id=corp_id)
@@ -57,18 +57,3 @@ class ProductLabelGroup(business_model.Model):
 			watchdog.alert(u'创建商品标签分类失败，cause: \n{}'.format(unicode_full_stack()))
 			return u'创建商品标签分类失败'
 
-	@staticmethod
-	@param_required(['id'])
-	def delete(args):
-		label_group_id = int(args['id'])
-
-		#首先删除此分类下的所有标签
-		deleted_labels = mall_models.ProductLabel.select().dj_where(label_group_id=label_group_id)
-		deleted_label_ids = [str(l.id) for l in deleted_labels]
-		deleted_labels.update(is_deleted=True).execute()
-		#再删除分类
-		mall_models.ProductLabelGroup.update(is_delete=True).dj_where(id=label_group_id).execute()
-		#更新已选择这些被删除标签的商品的信息
-		mall_models.ProductHasLabel.select().dj_where(label_id__in=deleted_label_ids).delete()
-		#更新已选择这些被删除标签的商品分类的信息
-		mall_models.ClassificationHasLabel.select().dj_where(label_id__in=deleted_label_ids).delete()
