@@ -29,7 +29,7 @@ class APremiumSalePromotion(api_resource.ApiResource):
             return {}
         else:
             encode_promotion_service = EncodePromotionService.get(corp)
-            product_info = encode_promotion_service.get_product_info(promotion)
+            products_info = encode_promotion_service.get_products_info(promotion)
             base_info = encode_promotion_service.get_base_info(promotion)
             detail_info = encode_promotion_service.get_detail_info(promotion)
             data = {
@@ -43,7 +43,7 @@ class APremiumSalePromotion(api_resource.ApiResource):
                 'end_date': base_info['end_date'],
                 'member_grade_id': base_info['member_grade_id'],
                 'created_at': base_info['created_at'],
-                'product_info': product_info,
+                'products_info': products_info,
                 'detail': detail_info
 
             }
@@ -53,7 +53,7 @@ class APremiumSalePromotion(api_resource.ApiResource):
                      'count', 'is_enable_cycle'])
     def put(args):
         """
-        product_id: 参加活动的商品
+        product_ids: 参加活动的商品[id...]
         premium_product_id: 赠送的商品
         name: 促销活动的名字
         start_date: 促销开始时间

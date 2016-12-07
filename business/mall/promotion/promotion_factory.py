@@ -31,12 +31,13 @@ class PromotionFactory(business_model.Service):
                                                            is_enable_cycle_mode=is_enable_cycle_mode)
         return PremiumSale(premium_sale)
 
-    def __add_product_to_promotion(self, product_id, promotion):
-
-        promotion_models.ProductHasPromotion.create(
-            product=product_id,
-            promotion=promotion
-        )
+    def __add_product_to_promotion(self, product_ids, promotion):
+        product_ids = json.loads(product_ids)
+        for product_id in product_ids:
+            promotion_models.ProductHasPromotion.create(
+                product=product_id,
+                promotion=promotion
+            )
 
     def __create_promotion(self, promotion_data, promotion_detail_id):
         promotion = promotion_models.Promotion.create(
@@ -74,4 +75,4 @@ class PromotionFactory(business_model.Service):
             promotion_detail_id = premium_sale.id
             promotion_data['type'] = promotion_models.PROMOTION_TYPE_PREMIUM_SALE
         promotion = self.__create_promotion(promotion_data, promotion_detail_id)
-        self.__add_product_to_promotion(promotion_data['product_id'], promotion)
+        self.__add_product_to_promotion(promotion_data['product_ids'], promotion)

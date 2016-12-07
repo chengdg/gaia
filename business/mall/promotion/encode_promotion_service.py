@@ -32,37 +32,39 @@ class EncodePromotionService(business_model.Service):
 
 		return data
 
-	def get_product_info(self, promotion):
+	def get_products_info(self, promotion):
 		"""
 		获得促销中的商品信息
 		"""
-		product = promotion.product
-		if product:
-			encode_product_service = EncodeProductService.get(self.corp)
-			base_info = encode_product_service.get_base_info(product)
-			models_info = encode_product_service.get_models_info(product)
-			supplier = encode_product_service.get_supplier_info(product)
-			classifications = encode_product_service.get_classifications(product)
-			image_info = encode_product_service.get_image_info(product)
-			categories = encode_product_service.get_categories(product)
+		if promotion.products:
+			result = []
+			for product in promotion.products:
+				encode_product_service = EncodeProductService.get(self.corp)
+				base_info = encode_product_service.get_base_info(product)
+				models_info = encode_product_service.get_models_info(product)
+				supplier = encode_product_service.get_supplier_info(product)
+				classifications = encode_product_service.get_classifications(product)
+				image_info = encode_product_service.get_image_info(product)
+				categories = encode_product_service.get_categories(product)
 
-			data = {
-				"id": product.id,
-				"name": base_info['name'],
-				"create_type": base_info['create_type'],
-				"is_member_product": base_info['is_member_product'],
-				"image": image_info['thumbnails_url'],
-				"models_info": models_info,
-				"bar_code": base_info['bar_code'],
-				"display_index": base_info['display_index'],
-				'supplier': supplier,
-				'classifications': classifications,
-				"categories": categories,
-				"sales": base_info['sales'],
-				"created_at": base_info['created_at'],
-				"sync_at": base_info['sync_at'],
-			}
-			return data
+				data = {
+					"id": product.id,
+					"name": base_info['name'],
+					"create_type": base_info['create_type'],
+					"is_member_product": base_info['is_member_product'],
+					"image": image_info['thumbnails_url'],
+					"models_info": models_info,
+					"bar_code": base_info['bar_code'],
+					"display_index": base_info['display_index'],
+					'supplier': supplier,
+					'classifications': classifications,
+					"categories": categories,
+					"sales": base_info['sales'],
+					"created_at": base_info['created_at'],
+					"sync_at": base_info['sync_at'],
+				}
+				result.append(data)
+			return result
 
 	def get_detail_info(self, promotion):
 		"""

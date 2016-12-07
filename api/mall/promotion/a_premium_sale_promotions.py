@@ -36,7 +36,7 @@ class APremiumSalePromotions(api_resource.ApiResource):
         encode_promotion_service = EncodePromotionService.get(corp)
         for promotion in promotions:
             base_info = encode_promotion_service.get_base_info(promotion)
-            product_info = encode_promotion_service.get_product_info(promotion)
+            products_info = encode_promotion_service.get_products_info(promotion)
             detail_info = encode_promotion_service.get_detail_info(promotion)
 
             data = {
@@ -50,7 +50,7 @@ class APremiumSalePromotions(api_resource.ApiResource):
                 'end_date': base_info['end_date'],
                 'member_grade_id': base_info['member_grade_id'],
                 'created_at': base_info['created_at'],
-                'product_info': product_info,
+                'products_info': products_info,
                 'detail': detail_info,
             }
 

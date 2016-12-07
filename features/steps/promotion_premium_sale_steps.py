@@ -18,7 +18,7 @@ def __add_premium_sale_promotion(context, user):
     product_id = mall_models.Product.select().dj_where(name=product_name).first().id
     premium_product_id = mall_models.Product.select().dj_where(name=premium_product_name).first().id
 
-    promotion_data['product_id'] = product_id
+    promotion_data['product_ids'] = json.dumps([product_id])
     promotion_data['premium_product_id'] = premium_product_id
 
     response = context.client.put('/promotion/premium_sale_promotion/', promotion_data)
