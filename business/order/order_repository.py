@@ -102,22 +102,22 @@ class OrderRepository(business_model.Model):
 
 			if '__f-shipped_at-range' in filters:
 				try:
-					filters['__f-payment_time-range'] = json.loads(filters['__f-shipped_at-range'])
+					filters['__f-shipped_at-range'] = json.loads(filters['__f-shipped_at-range'])
 				except:
 					pass
-				filter_parse_result = FilterParser.get().parse_key(filters, '__f-shipped_at-range')
-				order_filter_parse_result.update(filter_parse_result)
+				# filter_parse_result = FilterParser.get().parse_key(filters, '__f-shipped_at-range')
+				# order_filter_parse_result.update(filter_parse_result)
 
-				shipped_at_bids = mall_models.OrderOperationLog.select(mall_models.OrderOperationLog.order_id).dj_where(
-					created_at__range=filters['__f-payment_time-range'],
-					__icontains="订单发货")
+				shipped_at_delivery_items = mall_models.OrderOperationLog.select(mall_models.OrderOperationLog.order_id).dj_where(
+					created_at__range=filters['__f-shipped_at-range'],
+					action__icontains="订单发货")
 
-				shipped_at_bids = [bid.split("^")[0] for bid in shipped_at_bids]
-
+				shipped_at_bids = [item.order_id.split("^")[0] for item in shipped_at_delivery_items]
 				if should_in_order_bids:
 					should_in_order_bids = list(set(should_in_order_bids).intersection(set(shipped_at_bids)))
 				else:
 					should_in_order_bids = shipped_at_bids
+				use_should_in_order_bids = True
 
 			if '__f-express_number-equal' in filters:
 				# 物流单号在出货单里，此处为了性能优化，对于normal直接查mall_order
@@ -213,17 +213,13 @@ class OrderRepository(business_model.Model):
 				order_filter_parse_result.update({
 					'id__in': should_in_order_ids
 				})
-
 			if use_should_in_order_bids:
 				order_filter_parse_result.update({
 					'order_id__in': should_in_order_bids
 				})
 			if order_filter_parse_result:
 				db_models = db_models.dj_where(**order_filter_parse_result)
-			# if should_in_order_ids:
-			# 	db_models = db_models.dj_where(id__in=should_in_order_ids)
 
-			# print('-----db_models-count',db_models.count())
 		return db_models
 
 	def get_orders(self, filters, target_page, fill_options):
