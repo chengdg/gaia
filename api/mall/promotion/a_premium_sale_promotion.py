@@ -49,25 +49,12 @@ class APremiumSalePromotion(api_resource.ApiResource):
             }
             return data
 
-    @param_required(['corp_id', 'product_id', 'premium_product_id', 'name', 'start_date', 'end_date',
-                     'count', 'is_enable_cycle'])
+    @param_required(['corp_id', 'product_info', 'promotion_info', 'detail_info'])
     def put(args):
         """
-        product_ids: 参加活动的商品[id...]
-        premium_product_id: 赠送的商品
-        name: 促销活动的名字
-        start_date: 促销开始时间
-        end_date: 促销结束时间
-        count: 购买基数
-        is_enable_cycle: 是否可循环购买 true: false (默认true)
-        premium_count: 赠送基数
-        unit: 赠送单位
 
-        promotion_title: 促销标题
-        member_grade: 会员等级id
         """
         factory = PromotionFactory.get(args['corp'])
-        args['type'] = 'premium_sale'
         factory.create_promotion(args)
         return {}
 

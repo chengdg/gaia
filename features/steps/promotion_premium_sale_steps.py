@@ -18,10 +18,34 @@ def __add_premium_sale_promotion(context, user):
     product_id = mall_models.Product.select().dj_where(name=product_name).first().id
     premium_product_id = mall_models.Product.select().dj_where(name=premium_product_name).first().id
 
-    promotion_data['product_ids'] = json.dumps([product_id])
-    promotion_data['premium_product_id'] = premium_product_id
+    promotion_info = {
+        "name": promotion_data['name'],
+        "promotion_title": promotion_data['promotion_title'],
+        "type": "premium_sale",
+        "member_grade": "",
+        "start_date": promotion_data['start_date'],
+        "end_date": promotion_data['end_date']
+    }
 
+    detail_info = {
+        "premium_product_id": premium_product_id,
+        "premium_count": promotion_data['premium_count'],
+        "is_enable_cycle": promotion_data['is_enable_cycle'],
+        "unit": promotion_data['unit'],
+        "count": promotion_data['count']
+    }
+
+    product_info = {
+        "product_ids": [product_id]
+    }
+    promotion_data = {
+        "corp_id": user.id,
+        "detail_info": json.dumps(detail_info),
+        "product_info": json.dumps(product_info),
+        "promotion_info": json.dumps(promotion_info)
+    }
     response = context.client.put('/promotion/premium_sale_promotion/', promotion_data)
+
     bdd_util.assert_api_call_success(response)
 
 
@@ -41,7 +65,7 @@ def __search_premium_sale_promotion(context, user):
     assert_success = False
     for promotion in premium_sale_promotions:
 
-        if promotion.get('product_info').get('name') == product_name:
+        if promotion.get('products_info')[0].get('name') == product_name:
             assert_success = True
             break
     assert assert_success
