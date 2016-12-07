@@ -41,7 +41,8 @@ class MaterialRepository(business_model.Service):
 			target_material_ids = [news.material_id for news in weixin_models.News.select().dj_where(material_id__in=material_ids, title__icontains=title)]
 			materials = weixin_models.Material.select().dj_where(owner=self.corp.id, is_deleted=False, id__in=target_material_ids)
 		else:
-			materials = weixin_models.Material.select().dj_where(owner=self.corp.id, is_deleted=False)
+			# 需求说只显示单图文即可
+			materials = weixin_models.Material.select().dj_where(owner=self.corp.id, is_deleted=False, type=weixin_models.SINGLE_NEWS_TYPE)
 
 		if params.get('from', '') == 'share_page_config':
 			materials = materials.filter(type=weixin_models.SINGLE_NEWS_TYPE)
