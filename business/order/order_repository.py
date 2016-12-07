@@ -100,6 +100,25 @@ class OrderRepository(business_model.Model):
 				filter_parse_result = FilterParser.get().parse_key(filters, '__f-payment_time-range')
 				order_filter_parse_result.update(filter_parse_result)
 
+			if '__f-shipped_at-range' in filters:
+				try:
+					filters['__f-payment_time-range'] = json.loads(filters['__f-shipped_at-range'])
+				except:
+					pass
+				filter_parse_result = FilterParser.get().parse_key(filters, '__f-shipped_at-range')
+				order_filter_parse_result.update(filter_parse_result)
+
+				shipped_at_bids = mall_models.OrderOperationLog.select(mall_models.OrderOperationLog.order_id).dj_where(
+					created_at__range=filters['__f-payment_time-range'],
+					__icontains="订单发货")
+
+				shipped_at_bids = [bid.split("^")[0] for bid in shipped_at_bids]
+
+				if should_in_order_ids:
+					should_in_order_bids = list(set(should_in_order_ids).intersection(set(shipped_at_bids)))
+				else:
+					should_in_order_bids = [filters['__f-bid-equal']]
+
 			if '__f-express_number-equal' in filters:
 				# 物流单号在出货单里，此处为了性能优化，对于normal直接查mall_order
 
@@ -225,8 +244,6 @@ class OrderRepository(business_model.Model):
 
 		return orders
 
-
-
 	def __get_db_models_for_corp(self):
 		webapp_id = self.corp.webapp_id
 		user_id = self.corp.id
@@ -277,7 +294,7 @@ class OrderRepository(business_model.Model):
 				(mall_models.Order.order_id << running_group_order_bids) | (
 					(mall_models.Order.order_id << failed_group_order_bids) & (mall_models.Order.status.not_in(
 						[mall_models.ORDER_STATUS_GROUP_REFUNDING, mall_models.ORDER_STATUS_GROUP_REFUNDED]) & (
-					                                                           mall_models.Order.final_price > 0))))
+						                                                           mall_models.Order.final_price > 0))))
 
 			invalid_group_order_bids = [o.order_id for o in ignored_group_orders]
 
