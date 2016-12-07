@@ -15,7 +15,6 @@ class AProductLableGroups(api_resource.ApiResource):
 
 	@param_required(['corp_id'])
 	def get(args):
-		corp = args['corp']
 		weizoom_corp = CorporationFactory.get_weizoom_corporation()
 		product_label_groups = weizoom_corp.product_label_group_repository.get_label_groups()
 
