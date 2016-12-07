@@ -13,13 +13,16 @@ class AProductLableGroup(api_resource.ApiResource):
 	app = 'mall'
 	resource = 'product_label_group'
 
-	@param_required(['name'])
+	@param_required(['corp_id','name'])
 	def put(args):
 		"""
 		创建标签分类
 		:return:
 		"""
-		result = ProductLabelGroup.create({'name': args['name']})
+		result = ProductLabelGroup.create({
+			'corp_id': args['corp_id'],
+			'name': args['name']
+		})
 		if isinstance(result, basestring):
 			return (500, result)
 		else:

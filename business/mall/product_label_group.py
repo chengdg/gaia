@@ -34,18 +34,18 @@ class ProductLabelGroup(business_model.Model):
 		return labels
 
 	@staticmethod
-	@param_required(['name'])
+	@param_required(['corp_id', 'name'])
 	def create(args):
 		"""
 		创建商品标签分类
 		:param args:
 		:return:
 		"""
-		corp_id = CorporationFactory.get().id
+		corp_id = args['corp_id']
 		label_group_name = args['name']
 		#检查重名
 		exist_groups = mall_models.ProductLabelGroup.select().dj_where(name=label_group_name, owner_id=corp_id)
-		if len(exist_groups) > 0:
+		if exist_groups.count() > 0:
 			return u'商品标签分类已存在'
 		try:
 			model = mall_models.ProductLabelGroup.create(
