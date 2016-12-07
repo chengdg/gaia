@@ -11,6 +11,14 @@ class ProductLabelGroupRepositroy(business_model.Service):
 		product_label_groups = [ProductLabelGroup(model) for model in models]
 		return product_label_groups
 
+	def get_label_group(self, label_group_id):
+		try:
+			model = mall_models.ProductLabelGroup.select().dj_where(id=label_group_id, is_deleted=False).get()
+			return ProductLabelGroup(model)
+		except:
+			return None
+
+
 	def delete_label_group(self, label_group_id):
 		#查询出需要删除的分类中的标签
 		deleted_labels = mall_models.ProductLabel.select().dj_where(label_group_id=label_group_id)

@@ -37,7 +37,7 @@ class ProductLabelGroup(business_model.Model):
 	@param_required(['name'])
 	def create(args):
 		"""
-		创建商品标签分类
+		创建商品标签分组
 		:param args:
 		:return:
 		"""
