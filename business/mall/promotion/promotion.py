@@ -24,7 +24,7 @@ class Promotion(business_model.Model):
         'end_date',
         'member_grade_id',
         'detail',
-        'product',
+        'products',
         'created_at'
     )
 

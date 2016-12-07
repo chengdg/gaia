@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import collections
+
 from business import model as busniess_model
 from business.mall.promotion.promotion import Promotion
 from business.mall.promotion.integral_sale import IntegralSale
@@ -68,22 +70,29 @@ class FillPromotionDetailService(busniess_model.Service):
 		"""
 		promotion_ids = [promotion.id for promotion in promotions]
 		relations = promotion_models.ProductHasPromotion.select().dj_where(promotion_id__in=promotion_ids)
-		promotion_id2product_id = dict([(relation.promotion_id, relation.product_id) for relation in relations])
-		product_ids = promotion_id2product_id.values()
+		promotion_id2product_ids = collections.defaultdict(list)
+
+		for relation in relations:
+			promotion_id2product_ids[relation.promotion_id].append(relation.product_id)
+		product_ids = [relation.product_id for relation in relations]
 		from business.product.product import Product
 		product_models = mall_models.Product.select().dj_where(id__in=product_ids)
 		products = [Product(model) for model in product_models]
-
 		fill_options = {
-			'with_sales': True
+			'with_sales': True,
+			"with_image": True,
+			"with_product_model": True
 		}
 		from business.product.fill_product_detail_service import FillProductDetailService
 		fill_product_detail_service = FillProductDetailService.get(self.corp)
 		fill_product_detail_service.fill_detail(products, fill_options)
 		id2product = dict([(product.id, product) for product in products])
+
 		for promotion in promotions:
-			product_id = promotion_id2product_id[int(promotion.id)]
-			promotion.product = id2product.get(product_id, {})
+			temp_product_ids = promotion_id2product_ids[promotion.id]
+			temp_products = [product for product_id, product in id2product.items()
+							 if product_id in temp_product_ids]
+			promotion.products = temp_products
 
 	def fill_detail(self, promotions, corp, options):
 		"""

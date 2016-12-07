@@ -101,9 +101,9 @@
                         "type": "integer"
                     },
                     {
-                        "name": "product_id",
+                        "name": "product_ids",
                         "in": "query",
-                        "description": "活动销售的主商品",
+                        "description": "活动销售的主商品[id,...]",
                         "required": true,
                         "type": "integer"
                     },
