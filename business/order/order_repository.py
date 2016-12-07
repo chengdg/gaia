@@ -117,7 +117,7 @@ class OrderRepository(business_model.Model):
 				if should_in_order_ids:
 					should_in_order_bids = list(set(should_in_order_ids).intersection(set(shipped_at_bids)))
 				else:
-					should_in_order_bids = [filters['__f-bid-equal']]
+					should_in_order_bids = shipped_at_bids
 
 			if '__f-express_number-equal' in filters:
 				# 物流单号在出货单里，此处为了性能优化，对于normal直接查mall_order
