@@ -62,7 +62,7 @@ class OrderRepository(business_model.Model):
 				# should_in_order_bids.append(filters['__f-bid-equal'])
 				# should_in_order_bids_by_bid_search = [filters['__f-bid-equal']]
 				if should_in_order_bids:
-					should_in_order_bids = list(set(should_in_order_ids).intersection({filters['__f-bid-equal']}))
+					should_in_order_bids = list(set(should_in_order_bids).intersection({filters['__f-bid-equal']}))
 				else:
 					should_in_order_bids = [filters['__f-bid-equal']]
 				use_should_in_order_bids = True
