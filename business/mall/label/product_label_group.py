@@ -34,7 +34,7 @@ class ProductLabelGroup(business_model.Model):
 		return labels
 
 	@staticmethod
-	@param_required(['name'])
+	@param_required(['label_group_name'])
 	def create(args):
 		"""
 		创建商品标签分组
@@ -42,7 +42,7 @@ class ProductLabelGroup(business_model.Model):
 		:return:
 		"""
 		corp_id = CorporationFactory.get_weizoom_corporation().id
-		label_group_name = args['name']
+		label_group_name = args['label_group_name']
 		#检查重名
 		exist_groups = mall_models.ProductLabelGroup.select().dj_where(name=label_group_name, owner_id=corp_id)
 		if exist_groups.count() > 0:

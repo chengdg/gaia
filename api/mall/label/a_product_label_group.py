@@ -14,14 +14,14 @@ class AProductLableGroup(api_resource.ApiResource):
 	app = 'mall'
 	resource = 'product_label_group'
 
-	@param_required(['name'])
+	@param_required(['label_group_name'])
 	def put(args):
 		"""
 		创建标签分类
 		:return:
 		"""
 		result = ProductLabelGroup.create({
-			'name': args['name']
+			'label_group_name': args['label_group_name']
 		})
 		if isinstance(result, basestring):
 			return (500, result)
