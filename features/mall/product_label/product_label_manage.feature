@@ -84,6 +84,16 @@ Scenario:1 运营人员新增标签
 @panda @tag
 Scenario:2 运营人员删除标签
 	Given yunying登录管理系统
+	When yunying新增标签分组
+		"""
+		[{
+		"classify":"国家"
+		},{
+		"classify":"省市"
+		},{
+		"classify":"基本信息"
+		}]
+		"""
 	When yunying新增标签
 	"""
 	{
