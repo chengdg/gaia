@@ -12,7 +12,8 @@ from db.mall import models as db_models
 class PromotionRepository(business_model.Service):
 
 	def get_promotion_by_ids(self, promotion_ids, fill_options=None):
-		models = promotion_models.Promotion.select().dj_where(id__in=promotion_ids)
+		models = promotion_models.Promotion.select().dj_where(id__in=promotion_ids,
+															  owner_id=self.corp.id)
 		promotions = [Promotion(model) for model in models]
 		fill_promotion_detail_service = FillPromotionDetailService(self.corp)
 		fill_promotion_detail_service.fill_detail(promotions, self.corp, fill_options)
@@ -33,7 +34,7 @@ class PromotionRepository(business_model.Service):
 		搜索买赠的促销活动
 		"""
 		filters = filters if filters else {}
-		filters['type'] = promotion_models.PROMOTION_TYPE_PREMIUM_SALE
+		filters['__f-type-equal'] = promotion_models.PROMOTION_TYPE_PREMIUM_SALE
 		options = {
 			'order_options': ['-start_date']
 		}
@@ -66,11 +67,12 @@ class PromotionRepository(business_model.Service):
 			if not should_ignore_field:
 				if op:
 					filter_field_op = '%s__%s' % (filter_field, op)
-					filter_category[filter_field_op] = filter_value
+				filter_category[filter_field_op] = filter_value
 		# 如果有补充条件,可以手动补充
 		promotion_filter_values['status__in'] = [promotion_models.PROMOTION_STATUS_STARTED,
 												 promotion_models.PROMOTION_STATUS_NOT_START,
 												 promotion_models.PROMOTION_STATUS_FINISHED,]
+		promotion_filter_values['owner_id'] = self.corp.id
 		return {
 			'product': product_filter_values,
 			'premium_sale': premium_sale_filter_values,

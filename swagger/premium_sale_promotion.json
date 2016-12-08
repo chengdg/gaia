@@ -43,92 +43,14 @@
                 "summary": "创建 买赠促销活动",
                 "parameters": [
                     {
-                        "name": "corp_id",
-                        "in": "query",
-                        "description": "商品 owner_id",
+                        "name": "",
+                        "in": "body",
+                        "description": "postage config的name",
                         "required": true,
-                        "type": "integer"
-                    },
-                    {
-                        "name": "count",
-                        "in": "query",
-                        "description": "主商品购买基数",
-                        "required": true,
-                        "type": "integer"
-                    },
-                    {
-                        "name": "premium_product_id",
-                        "in": "query",
-                        "description": "赠送的商品id",
-                        "required": true,
-                        "type": "integer"
-                    },
-                    {
-                        "name": "promotion_title",
-                        "in": "query",
-                        "description": "促销广告语",
-                        "required": false,
-                        "type": "integer"
-                    },
-
-                    {
-                        "name": "name",
-                        "in": "query",
-                        "description": "促销名称",
-                        "required": true,
-                        "type": "integer"
-                    },
-                    {
-                        "name": "end_date",
-                        "in": "query",
-                        "description": "促销结束时间",
-                        "required": true,
-                        "type": "integer"
-                    },
-                    {
-                        "name": "start_date",
-                        "in": "query",
-                        "description": "促销start时间",
-                        "required": true,
-                        "type": "integer"
-                    },
-
-                    {
-                        "name": "is_enable_cycle",
-                        "in": "query",
-                        "description": "是否可循环购买 true: false (默认true)",
-                        "required": true,
-                        "type": "integer"
-                    },
-                    {
-                        "name": "product_ids",
-                        "in": "query",
-                        "description": "活动销售的主商品[id,...]",
-                        "required": true,
-                        "type": "integer"
-                    },
-                    {
-                        "name": "premium_count",
-                        "in": "query",
-                        "description": "赠送基数",
-                        "required": true,
-                        "type": "integer"
-                    },
-                    {
-                        "name": "unit",
-                        "in": "query",
-                        "description": "赠送单位",
-                        "required": true,
-                        "type": "integer"
-                    },
-                    {
-                        "name": "member_grade",
-                        "in": "query",
-                        "description": "会员等级id",
-                        "required": false,
-                        "type": "integer"
+                        "schema": {
+                            "$ref": "#/definitions/NewPremiumSalePromotion"
+                        }
                     }
-
                 ],
                 "tags": [
                     "promotion"
@@ -342,8 +264,79 @@
         "NewPremiumSalePromotion": {
             "type": "object",
             "properties": {
+                "corp_id": {
+                    "type": "number",
+                    "description": ""
+                },
+                "promotion_info": {
+                    "type": "object",
+                    "properties": {
+                        "name": {
+                            "type": "string",
+                            "description": ""
+                        },
+                        "promotion_title": {
+                            "type": "string",
+                            "description": "促销广告语"
+                        },
+                        "type": {
+                            "type": "string",
+                            "description": "促销类型premium_sale"
+                        },
+                        "member_grade": {
+                            "type": "number",
+                            "description": "可参与活动的会员等级"
+                        },
+                        "start_date": {
+                            "type": "string",
+                            "description": "促销开始时间"
+                        },
+                        "end_date": {
+                            "type": "string",
+                            "description": "促销结束时间"
+                        }
+                    }
+                },
+                "detail_info": {
+                    "type": "object",
+                    "properties": {
+                        "premium_count": {
+                            "type": "number",
 
+                            "description": "赠送基数"
+                        },
+                        "count": {
+                            "type": "number",
 
+                            "description": "购买 基数"
+                        },
+                        "unit": {
+                            "type": "number",
+                            "description": "赠送单位"
+                        },
+                        "premium_product_id": {
+                            "type": "number",
+                            "description": "赠送的商品id"
+                        },
+                        "is_enable_cycle": {
+                            "type": "number",
+                            "description": "是否可循环购买 true: false (默认true)"
+                        },
+                    }
+
+                },
+                "product_info": {
+                    "type": "object",
+                    "properties": {
+                        "product_ids": {
+                            "type": "array",
+                            "description": "商品id",
+                            "items": {
+                                "type": "number"
+                            }
+                        }
+                    }
+                }
             }
         },
         "PremiumPromotedProductInfo":{
@@ -422,8 +415,8 @@
                   "description": "赠送的商品id"
               },
               "supplier": {
-                  "type": "供货商id",
-                  "description": "赠送的商品id"
+                  "type": "string",
+                  "description": "供货商id"
               }
             }
         }
