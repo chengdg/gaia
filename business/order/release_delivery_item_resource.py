@@ -10,7 +10,7 @@ from business.account.integral import Integral
 from db.mall import models as mall_models
 from db.member import models as member_models
 
-
+# todo order_trade_center重构后删除
 class ReleaseDeliveryItemResourceService(business_model.Service):
 	def release(self, delivery_item_id,from_status,to_status):
 		"""

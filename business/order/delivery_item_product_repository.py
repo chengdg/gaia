@@ -125,9 +125,11 @@ class DeliveryItemProductRepository(business_model.Model):
 			if r.product_model_name == 'standard':
 				delivery_item_product.product_model_name_texts = []
 				delivery_item_product.weight = product.standard_model.weight if product.standard_model else 0
+				delivery_item_product.model_id = product.standard_model.id
 			else:
 				for custom_model in product.custom_models:
 					if r.product_model_name == custom_model.name:
+						delivery_item_product.model_id = custom_model.id
 						delivery_item_product.product_model_name_texts = []
 						delivery_item_product.weight = custom_model.weight if custom_model else 0
 						for value in custom_model.property_values:

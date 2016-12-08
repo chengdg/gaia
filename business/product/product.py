@@ -359,8 +359,9 @@ class Product(business_model.Model):
 			return True
 
 	def update_sales(self,count):
+		# todo delete_after_mns_service
 		"""
-		ztq add
+
 		更新商品销量
 		@param count: 正数表示增加销量，负数表示减少销量
 		@return:
@@ -382,6 +383,7 @@ class Product(business_model.Model):
 		@return:
 		"""
 		# todo 是否使用ProductModel业务模型？
+		# todo delete_after_mns_service
 
 		product_model = mall_models.ProductModel.select().dj_where(product_id=self.id, name=product_model_name).first()
 		# 该商品有此规格，并且库存是有限，进入修改商品的数量

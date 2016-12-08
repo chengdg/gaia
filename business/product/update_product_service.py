@@ -259,8 +259,15 @@ class UpdateProductService(business_model.Service):
 		for stock_info in stock_infos:
 			model_id = stock_info['model_id']
 			stock_type = mall_models.PRODUCT_STOCK_TYPE_UNLIMIT if stock_info['stock_type'] == 'unlimit' else mall_models.PRODUCT_STOCK_TYPE_LIMIT
-			stocks = stock_info['stocks']
-			mall_models.ProductModel.update(stock_type=stock_type, stocks=stocks).dj_where(owner_id=self.corp.id, id=model_id).execute()
+			if ['stocks'] in stock_info:
+				stocks = stock_info['stocks']
+				mall_models.ProductModel.update(stock_type=stock_type, stocks=stocks).dj_where(owner_id=self.corp.id, id=model_id).execute()
+			else:
+				changed_count = stock_info['changed_count']
+				mall_models.ProductModel.update(stock_type=stock_type,
+				                                stocks=mall_models.ProductModel.stocks + changed_count).dj_where(
+					owner_id=self.corp.id,
+					id=model_id).execute()
 
 	def update_product_position(self, product_id, position):
 		"""
@@ -272,3 +279,11 @@ class UpdateProductService(business_model.Service):
 		#设置指定商品的position
 		mall_models.ProductPool.update(display_index=position).dj_where(woid=self.corp.id, product_id=product_id).execute()
 		self.__send_msg_to_topic(product_id, "product_updated")
+
+
+	def update_product_sale(self,product_id,changed_count):
+		if mall_models.ProductSales.select().dj_where(product_id=product_id).first():
+			mall_models.ProductSales.update(
+				sales=mall_models.ProductSales.sales + changed_count).dj_where(product_id=product_id).execute()
+		else:
+			mall_models.ProductSales.create(product_id=product_id, sales=changed_count)
