@@ -27,5 +27,4 @@ class ProductLabelGroupRepositroy(business_model.Service):
 		weizoom_corp = CorporationFactory.get_weizoom_corporation()
 		weizoom_corp.product_label_repository.delete_labels(deleted_label_ids)
 		#然后删除分组
-		print label_group_id
 		mall_models.ProductLabelGroup.update(is_deleted=True).dj_where(id=label_group_id).execute()

@@ -39,15 +39,15 @@ class ProductLabel(business_model.Model):
 		label_group = weizoom_corp.product_label_group_repository.get_label_group(label_group_id)
 		if label_group:
 			#存在分组，则创建属于该分组的标签
-			try:
-				new_model = mall_models.ProductLabel.create(
-					label_group_id = label_group_id,
-					owner_id = weizoom_corp.id,
-					name = args['label_name']
-				)
-				return ProductLabel(new_model)
-			except:
-				watchdog.alert(u'创建商品标签失败，cause：\n{}'.format(unicode_full_stack()))
+			if mall_models.ProductLabel.select().dj_where(name=args['label_name']).count() > 0:
 				return u'创建失败，请检查是否重名'
+
+			new_model = mall_models.ProductLabel.create(
+				label_group_id = label_group_id,
+				owner_id = weizoom_corp.id,
+				name = args['label_name']
+			)
+			return ProductLabel(new_model)
+
 		else:
 			return u'该分组不存在，可能已被删除'
