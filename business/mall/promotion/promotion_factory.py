@@ -73,7 +73,7 @@ class PromotionFactory(business_model.Service):
         if promotion_info['type'] == 'flash_sale':
             flash_sale = self.__create_flash_sale(detail_info)
             promotion_detail = flash_sale
-            promotion_info['type'] = promotion_models.PROMOTION_TYPE_PREMIUM_SALE
+            promotion_info['type'] = promotion_models.PROMOTION_TYPE_FLASH_SALE
         elif promotion_info['type'] == 'premium_sale':
             premium_sale = self.__create_premium_sale(detail_info)
             self.__add_product_to_premium_sale(detail_info, premium_sale)

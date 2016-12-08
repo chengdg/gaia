@@ -34,7 +34,7 @@ class PromotionRepository(business_model.Service):
 		搜索买赠的促销活动
 		"""
 		filters = filters if filters else {}
-		filters['__f-type-equal'] = promotion_models.PROMOTION_TYPE_PREMIUM_SALE
+		filters['__f-type-equal'] = promotion_models.PROMOTION_TYPE_FLASH_SALE
 		options = {
 			'order_options': ['-start_date']
 		}
