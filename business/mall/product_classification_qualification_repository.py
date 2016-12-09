@@ -42,7 +42,7 @@ class ProductClassificationQualificationRepository(business_model.Service):
 				product_classification_qualification.update(qualification_info['name'])
 			else:
 				#新增资质
-				ProductClassificationQualification().create(classification_id, qualification_info['name'])
+				ProductClassificationQualification.create(classification_id, qualification_info['name'])
 		for old_id in old_ids:
 			if old_id not in need_keep_ids:
 				need_remove_ids.append(old_id)

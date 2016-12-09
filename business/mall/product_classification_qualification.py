@@ -45,7 +45,8 @@ class ProductClassificationQualification(business_model.Model):
 		"""
 		mall_models.ClassificationQualification.update(name=name).dj_where(id=self.id).execute()
 
-	def create(self, classification_id, name):
+	@staticmethod
+	def create(classification_id, name):
 		"""
 		创建商品分组特殊资质
 		"""
