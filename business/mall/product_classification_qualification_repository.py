@@ -12,7 +12,5 @@ class ProductClassificationQualificationRepository(business_model.Service):
 		models = mall_models.ClassificationQualification.select().dj_where(classification_id=classification_id)
 		return [ProductClassificationQualification(model) for model in models]
 
-
-	
-
-	
+	def delete_qualification_by_ids(self, ids):
+		mall_models.ClassificationQualification.delete().dj_where(id__in=ids).execute()
