@@ -3,7 +3,6 @@
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
 
-from business.mall.label.product_label import ProductLabel
 from business.mall.corporation_factory import CorporationFactory
 
 
@@ -14,15 +13,15 @@ class AProductLable(api_resource.ApiResource):
 	app = 'mall'
 	resource = 'product_label'
 
-	@param_required(['label_group_id', 'label_name'])
+	@param_required(['label_group_id:int', 'label_name'])
 	def put(args):
 		"""
 		创建标签
 		"""
-		result = ProductLabel.create({
-			'label_group_id': args['label_group_id'],
-			'label_name': args['label_name']
-		})
+		weizoom_corp = CorporationFactory.get_weizoom_corporation()
+		label_group = weizoom_corp.product_label_group_repository.get_label_group(args['label_group_id'])
+		result = label_group.add_label(args['label_name'])
+
 		if isinstance(result, basestring):
 			return (500, result)
 		else:

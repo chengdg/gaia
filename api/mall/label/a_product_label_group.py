@@ -20,9 +20,7 @@ class AProductLableGroup(api_resource.ApiResource):
 		创建标签分类
 		:return:
 		"""
-		result = ProductLabelGroup.create({
-			'label_group_name': args['label_group_name']
-		})
+		result = ProductLabelGroup.create(args['label_group_name'])
 		if isinstance(result, basestring):
 			return (500, result)
 		else:

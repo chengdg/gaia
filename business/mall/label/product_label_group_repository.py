@@ -12,11 +12,8 @@ class ProductLabelGroupRepositroy(business_model.Service):
 		return product_label_groups
 
 	def get_label_group(self, label_group_id):
-		try:
-			model = mall_models.ProductLabelGroup.select().dj_where(id=label_group_id, is_deleted=False).get()
-			return ProductLabelGroup(model)
-		except:
-			return None
+		model = mall_models.ProductLabelGroup.select().dj_where(id=label_group_id, is_deleted=False).get()
+		return ProductLabelGroup(model)
 
 
 	def delete_label_group(self, label_group_id):
