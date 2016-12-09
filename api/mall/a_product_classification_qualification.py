@@ -17,7 +17,7 @@ class AProductClassificationQualification(api_resource.ApiResource):
     app = "mall"
     resource = "product_classification_qualification"
 
-    @param_required(['classification_id', 'qualification_infos'])
+    @param_required(['classification_id', 'qualification_infos:json'])
     def put(args):		
         classification_id = args['classification_id']
         qualification_infos = args['qualification_infos']

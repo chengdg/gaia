@@ -2,7 +2,6 @@
 import logging
 from copy import copy, deepcopy
 from bdem import msgutil
-import json
 
 from eaglet.decorator import param_required
 from eaglet.core import api_resource
@@ -47,7 +46,7 @@ class ProductClassificationQualification(business_model.Model):
 		"""
 		修改商品分组特殊资质
 		"""
-		qualification_infos = json.loads(args['qualification_infos'])
+		qualification_infos = args['qualification_infos']
 		classification_id = int(args['classification_id'])
 		old_ids = [int(classification.id) for classification in mall_models.ClassificationQualification.select().dj_where(classification_id=classification_id)]
 		new_ids = []
