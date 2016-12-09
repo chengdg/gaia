@@ -7,6 +7,7 @@ from eaglet.utils.resource_client import Resource
 
 from business import model as business_model
 from business.account.integral import Integral
+from business.product.update_product_service import UpdateProductService
 from db.mall import models as mall_models
 from db.member import models as member_models
 
@@ -50,12 +51,18 @@ class ReleaseOrderResourceService(business_model.Service):
 			delivery_item_product = product_id2delivery_item_product[product.id]
 
 			# 更新销量库存
-			product.update_stock(delivery_item_product.product_model_name, delivery_item_product.count)
+			# product.update_stock(delivery_item_product.product_model_name, delivery_item_product.count)
+			update_product_service = UpdateProductService.get(corp)
+			stock_infos = [{
+				'model_id': delivery_item_product.model_id,
+				'changed_count': delivery_item_product.count
+			}]
+			update_product_service.update_product_stock(delivery_item_product.id, stock_infos)
 
 			# 更新销量，赠品不算销量
 			if is_paid and delivery_item_product.promotion_info['type'] != "premium_sale:premium_product":
-				product.update_sales(0 - delivery_item_product.count)
-
+				update_product_service.update_product_sale(delivery_item_product.id, 0 - delivery_item_product.count)
+				# product.update_sales(0 - delivery_item_product.count)
 
 		to_status = mall_models.MEANINGFUL_WORD2ORDER_STATUS[to_status]
 
