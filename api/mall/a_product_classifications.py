@@ -5,8 +5,6 @@ from eaglet.decorator import param_required
 from eaglet.core import watchdog
 from eaglet.core.exceptionutil import unicode_full_stack
 
-from business.mall.product_classification_qualification_repository import ProductClassificationQualificationRepository
-
 
 class AProductClassifications(api_resource.ApiResource):
     """
@@ -34,7 +32,11 @@ class AProductClassifications(api_resource.ApiResource):
                 'product_count': product_classification.product_count,
                 'note': product_classification.note,
                 'created_at': product_classification.created_at.strftime('%Y-%m-%d %H:%M'),
-                'qualification_infos': ProductClassificationQualificationRepository().get_product_classification_qualifications(product_classification.id)
+                'qualification_infos': [{
+                    "id":qualification.id, 
+                    "name":qualification.name, 
+                    'created_at':qualification.created_at
+                    } for qualification in product_classification.get_qualifications()]
             })
 
         return {

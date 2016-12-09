@@ -5,8 +5,7 @@ from eaglet.decorator import param_required
 from eaglet.core import watchdog
 from eaglet.core.exceptionutil import unicode_full_stack
 
-from business.mall.product_classification import ProductClassification
-from business.mall.product_classification_qualification_repository import ProductClassificationQualificationRepository
+from business.mall.classification.product_classification import ProductClassification
 
 
 class AProductClassificationTree(api_resource.ApiResource):
@@ -32,7 +31,11 @@ class AProductClassificationTree(api_resource.ApiResource):
                 'father_id': product_classification.father_id,
                 'product_count': product_classification.product_count,
                 'created_at': product_classification.created_at.strftime('%Y-%m-%d %H:%M'),
-                'qualification_infos': ProductClassificationQualificationRepository().get_product_classification_qualifications(product_classification.id)
+                'qualification_infos': [{
+                    "id":qualification.id, 
+                    "name":qualification.name, 
+                    'created_at':qualification.created_at
+                    } for qualification in product_classification.get_qualifications()]
             })
 
         return {

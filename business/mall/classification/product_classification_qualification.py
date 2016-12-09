@@ -20,7 +20,6 @@ class ProductClassificationQualification(business_model.Model):
 	"""
 	__slots__ = (
 		'id',
-		'classification_id',
 		'name',
 		'created_at',
 	)
@@ -31,27 +30,3 @@ class ProductClassificationQualification(business_model.Model):
 		self.context['db_model'] = model
 		if model:
 			self._init_slot_from_model(model)
-
-	@staticmethod
-	@param_required(['db_model'])
-	def from_model(args):
-		model = args['db_model']
-		product_classification_qualification = ProductClassificationQualification(model)
-		return product_classification_qualification
-
-	def update(self, name):
-		"""
-		修改商品分组特殊资质
-		"""
-		mall_models.ClassificationQualification.update(name=name).dj_where(id=self.id).execute()
-
-	@staticmethod
-	def create(classification_id, name):
-		"""
-		创建商品分组特殊资质
-		"""
-		model = mall_models.ClassificationQualification.create(
-			classification = classification_id,
-			name = name
-		)
-		return ProductClassificationQualification(model)
