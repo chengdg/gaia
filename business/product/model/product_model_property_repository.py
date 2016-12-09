@@ -56,7 +56,7 @@ class ProductModelPropertyRepository(business_model.Service):
                 property_value_ids = [detail.split(':')[1] for detail in product_model_name.split('_')]
                 data = []
                 for value_id in property_value_ids:
-                    property_value_model = id2property_value_model[value_id]
+                    property_value_model = id2property_value_model[int(value_id)]
                     data.append(ProductModelPropertyValue(property_value_model))
                 product_model_name2value[product_model_name] = data
         return product_model_name2value
