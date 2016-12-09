@@ -147,7 +147,7 @@ class DeliveryItemProductRepository(business_model.Model):
 						break
 
 				if not delivery_item_product.product_model_name_texts:
-					delivery_item_product.product_model_name_texts = product_model_name2values[r.product_model_name]
+					delivery_item_product.product_model_name_texts = [value.name for value in product_model_name2values[r.product_model_name]]
 			delivery_item_product.thumbnails_url = product.thumbnails_url
 			delivery_item_product.is_deleted = product.is_deleted
 
