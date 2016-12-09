@@ -24,6 +24,7 @@ class AProductClassificationTree(api_resource.ApiResource):
 
         datas = []
         for product_classification in product_classifications:
+            qualifications = product_classification.get_qualifications()
             datas.append({
                 'id': product_classification.id,
                 'name': product_classification.name,
@@ -32,10 +33,11 @@ class AProductClassificationTree(api_resource.ApiResource):
                 'product_count': product_classification.product_count,
                 'created_at': product_classification.created_at.strftime('%Y-%m-%d %H:%M'),
                 'qualification_infos': [{
-                    "id":qualification.id, 
-                    "name":qualification.name, 
-                    'created_at':qualification.created_at
-                    } for qualification in product_classification.get_qualifications()]
+                    "id": qualification.id, 
+                    "name": qualification.name, 
+                    'created_at': qualification.created_at,
+                    'index': i
+                    } for i, qualification in enumerate(qualifications)]
             })
 
         return {
