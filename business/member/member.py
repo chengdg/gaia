@@ -152,6 +152,64 @@ class Member(business_model.Model):
                                     last_pay_time=last_pay_time).dj_where(
             id=self.id).execute()
 
+    # def auto_update_grade(self, member, delete=False):
+    #     """
+    #     @param corp:
+    #     @param member:
+    #     @param delete:
+    #     @return:是否改变了等级
+    #     """
+    #     is_change = False
+    #     corp_id = self.context['corp'].id
+    #     if not isinstance(member, member_models.Member):
+    #         return
+    #     if not member:
+    #         return False
+    #     if not member.grade.is_auto_upgrade and not delete:
+    #         return is_change
+
+    #     webapp_id = member.webapp_id
+    #     corp_id = self.context['corp'].id
+    #     webapp_user_ids = [webapp_user.id for webapp_user in member_models.WebAppUser.filter(member_id=member.id)]
+
+    #     # 获取会员数据
+    #     paid_orders = self.context['corp'].order_repository.get_orders_by_webapp_user_id(webapp_user_id, mall_models.ORDER_STATUS_SUCCESSED)
+    #     Order.by_webapp_user_id(webapp_user_ids).filter(
+    #         status=mall_models.ORDER_STATUS_SUCCESSED, origin_order_id__lte=0)
+    #     pay_times = paid_orders.count()
+    #     bound = member.experience
+    #     pay_money = 0
+    #     for order in paid_orders:
+    #         pay_money += order.get_final_price(webapp_id) + order.weizoom_card_money
+
+    #     if delete:
+    #         grades_list = MemberGrade.objects.filter(webapp_id=webapp_id, is_auto_upgrade=True).exclude(
+    #             id=member.grade_id).order_by('-id')
+    #     else:
+    #         grades_list = MemberGrade.objects.filter(webapp_id=webapp_id, is_auto_upgrade=True,
+    #                                                  id__gt=member.grade_id).order_by('-id')
+    #     from cache.webapp_owner_cache import get_webapp_owner_info
+    #     # 此处import写在文件头会报错
+    #     is_all_conditions = get_webapp_owner_info(webapp_owner_id).integral_strategy_settings.is_all_conditions
+
+    #     # 计算条件
+    #     if is_all_conditions:
+    #         for grade in grades_list:
+    #             # if pay_money >= grade.pay_money and pay_times >= grade.pay_times and bound >= grade.upgrade_lower_bound:
+    #             if pay_money >= grade.pay_money and pay_times >= grade.pay_times:
+    #                 is_change = True
+    #                 new_grade = grade
+    #                 break
+    #     else:
+    #         for grade in grades_list:
+    #             # if pay_money >= grade.pay_money or pay_times >= grade.pay_times or bound >= grade.upgrade_lower_bound:
+    #             if pay_money >= grade.pay_money or pay_times >= grade.pay_times:
+    #                 is_change = True
+    #                 new_grade = grade
+    #                 break
+    #     if is_change:
+    #         Member.objects.filter(id=member.id).update(grade=new_grade)
+    #     return is_change
 
 
     @cached_context_property

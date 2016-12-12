@@ -13,6 +13,7 @@ import a_product_classification_tree
 
 import category
 import pay
+import template_message
 import logistics
 import image_group
 import config
