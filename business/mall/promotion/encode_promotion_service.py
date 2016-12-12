@@ -72,7 +72,7 @@ class EncodePromotionService(business_model.Service):
 		"""
 
 		if promotion.type == promotion_models.PROMOTION_TYPE_FLASH_SALE:
-			pass
+			return self.__get_flash_sale_info(promotion)
 		elif promotion.type == promotion_models.PROMOTION_TYPE_PREMIUM_SALE:
 			return self.__get_premium_sale_info(promotion)
 
@@ -91,7 +91,13 @@ class EncodePromotionService(business_model.Service):
 		"""
 		获取限时抢购促销的详细信息.
 		"""
-		pass
+		if promotion.detail:
+			return {
+				'limit_period': promotion.detail.limit_period,
+				'promotion_price': promotion.detail.promotion_price,
+				'count_per_purchase': promotion.detail.count_per_purchase,
+				'count_per_period': promotion.detail.count_per_period
+			}
 
 	def __get_premium_product_info(self, promotion):
 		"""

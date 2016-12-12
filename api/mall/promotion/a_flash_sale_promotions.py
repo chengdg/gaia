@@ -29,7 +29,7 @@ class AFlashSalePromotions(api_resource.ApiResource):
         }
         filters = json.loads(args.get('filters', '{}'))
         filters['type'] = 1
-        promotions, page_info = corp.promotion_repository.search_premium_sale_promotions(target_page,
+        promotions, page_info = corp.promotion_repository.search_flash_sale_promotions(target_page,
                                                                                  fill_options=fill_options,
                                                                                  filters=filters)
         datas = []
