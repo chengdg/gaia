@@ -13,9 +13,9 @@ class AProductStock(api_resource.ApiResource):
 	商品库存
 	"""
 	app = "product"
-	resource = "product_stock"
+	resource = "product_sale"
 
-	@param_required(['corp_id', 'id', 'changed_count'])
+	@param_required(['corp', 'id', 'changed_count'])
 	def post(args):
 		product_id = args['id']
 		changed_count = args['changed_count']
