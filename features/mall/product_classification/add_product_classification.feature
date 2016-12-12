@@ -6,8 +6,8 @@ Feature: 添加商品分类
 @gaia @mall @mall.product @mall.product_classification
 Scenario:1 添加无商品的商品分类
 
-	Given jobs登录系统
-	When jobs添加商品分类
+	Given manager登录系统
+	When manager添加商品分类
 		"""
 		{
 			"分类11": {
@@ -23,7 +23,7 @@ Scenario:1 添加无商品的商品分类
 			"分类13": null
 		}
 		"""
-	Then jobs能获取商品分类列表
+	Then manager能获取商品分类列表
 		"""
 		{
 			"分类11": {
@@ -39,15 +39,15 @@ Scenario:1 添加无商品的商品分类
 			"分类13": null
 		}
 		"""
-	Then jobs能获得'分类11'的子分类集合
+	Then manager能获得'分类11'的子分类集合
 		"""
 		["分类21", "分类22", "分类23"]
 		"""
-	Then jobs能获得'分类23'的子分类集合
+	Then manager能获得'分类23'的子分类集合
 		"""
 		["分类31"]
 		"""
-	Then jobs能获得'分类21'的子分类集合
+	Then manager能获得'分类21'的子分类集合
 		"""
 		[]
 		"""
