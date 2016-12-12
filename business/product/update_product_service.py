@@ -262,7 +262,7 @@ class UpdateProductService(business_model.Service):
 			stocks = stock_info['stocks']
 			mall_models.ProductModel.update(stock_type=stock_type, stocks=stocks).dj_where(owner_id=self.corp.id, id=model_id).execute()
 
-	def add_product_stock(self, stock_infos):
+	def add_product_stock(self, product_id, stock_infos):
 		for stock_info in stock_infos:
 			model_id = stock_info['model_id']
 			changed_count = stock_info['changed_count']
