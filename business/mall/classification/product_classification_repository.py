@@ -5,7 +5,8 @@ from db.mall import models as mall_models
 from db.account import models as account_models
 from business import model as business_model
 
-from business.mall.product_classification import ProductClassification
+from business.mall.classification.product_classification import ProductClassification
+from business.mall.classification.product_classification_qualification import ProductClassificationQualification
 
 class ProductClassificationRepository(business_model.Service):
 	def get_product_classifications(self):
@@ -66,4 +67,7 @@ class ProductClassificationRepository(business_model.Service):
 		classifications.reverse()
 		return classifications
 
+	
 
+
+	
