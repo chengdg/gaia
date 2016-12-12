@@ -267,12 +267,10 @@ class UpdateProductService(business_model.Service):
 			model_id = stock_info['model_id']
 			changed_count = stock_info['changed_count']
 
-			product_model = mall_models.ProductModel.select().dj_where(owner_id=self.corp.id, id=model_id).first()
-
+			product_model = mall_models.ProductModel.select().dj_where(id=model_id).first()
 			if product_model and product_model.stock_type == mall_models.PRODUCT_STOCK_TYPE_LIMIT:
 				mall_models.ProductModel.update(
 					stocks=mall_models.ProductModel.stocks + changed_count).dj_where(
-					owner_id=self.corp.id,
 					id=model_id).execute()
 
 
