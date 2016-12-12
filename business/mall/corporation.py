@@ -28,8 +28,8 @@ from business.mall.config.mall_config_repository import MallConfigRepository
 from business.mall.notify.notification_repository import NotificationRepository
 from business.mall.supplier.supplier_repository import SupplierRepository
 from business.mall.product_classification_repository import ProductClassificationRepository
-from business.mall.product_label_repository import ProductLabelRepository
-from business.mall.product_label_group_repository import ProductLabelGroupRepositroy
+from business.mall.label.product_label_repository import ProductLabelRepository
+from business.mall.label.product_label_group_repository import ProductLabelGroupRepositroy
 from business.mall.promotion.promotion_repository import PromotionRepository
 
 from business.weixin.material_repository import MaterialRepository
