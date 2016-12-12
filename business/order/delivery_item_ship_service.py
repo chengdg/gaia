@@ -16,7 +16,7 @@ class DeliveryItemShipService(business_model.Service):
 			delivery_item_bid = ship_info['delivery_item_bid']
 			company_name_value = ''
 			express_number = ''
-			leader_name = ''
+			leader_name = ship_info['leader_name']
 
 			# 校验订单存在
 			if "-" in delivery_item_bid:  # 过滤掉改价生产的字符串

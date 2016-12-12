@@ -567,6 +567,10 @@ class Order(business_model.Model):
 
 		@return:
 		"""
+
+		if self.status != mall_models.ORDER_STATUS_NOT:
+			return False, 'Error Status'
+
 		action_text = u"取消订单"
 		from_status = self.status
 		to_status = mall_models.ORDER_STATUS_CANCEL
