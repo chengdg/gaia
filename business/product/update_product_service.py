@@ -259,15 +259,22 @@ class UpdateProductService(business_model.Service):
 		for stock_info in stock_infos:
 			model_id = stock_info['model_id']
 			stock_type = mall_models.PRODUCT_STOCK_TYPE_UNLIMIT if stock_info['stock_type'] == 'unlimit' else mall_models.PRODUCT_STOCK_TYPE_LIMIT
-			if ['stocks'] in stock_info:
-				stocks = stock_info['stocks']
-				mall_models.ProductModel.update(stock_type=stock_type, stocks=stocks).dj_where(owner_id=self.corp.id, id=model_id).execute()
-			else:
-				changed_count = stock_info['changed_count']
-				mall_models.ProductModel.update(stock_type=stock_type,
-				                                stocks=mall_models.ProductModel.stocks + changed_count).dj_where(
+			stocks = stock_info['stocks']
+			mall_models.ProductModel.update(stock_type=stock_type, stocks=stocks).dj_where(owner_id=self.corp.id, id=model_id).execute()
+
+	def add_product_stock(self, stock_infos):
+		for stock_info in stock_infos:
+			model_id = stock_info['model_id']
+			changed_count = stock_info['changed_count']
+
+			product_model = mall_models.ProductModel.select().dj_where(owner_id=self.corp.id, id=model_id).first()
+
+			if product_model and product_model.stock_type == mall_models.PRODUCT_STOCK_TYPE_LIMIT:
+				mall_models.ProductModel.update(
+					stocks=mall_models.ProductModel.stocks + changed_count).dj_where(
 					owner_id=self.corp.id,
 					id=model_id).execute()
+
 
 	def update_product_position(self, product_id, position):
 		"""

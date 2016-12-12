@@ -57,7 +57,7 @@ class ReleaseOrderResourceService(business_model.Service):
 				'model_id': delivery_item_product.model_id,
 				'changed_count': delivery_item_product.count
 			}]
-			update_product_service.update_product_stock(delivery_item_product.id, stock_infos)
+			update_product_service.add_product_stock(delivery_item_product.id, stock_infos)
 
 			# 更新销量，赠品不算销量
 			if is_paid and delivery_item_product.promotion_info['type'] != "premium_sale:premium_product":

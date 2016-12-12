@@ -6,7 +6,7 @@ from eaglet.decorator import param_required
 from business.order.release_order_resource_service import ReleaseOrderResourceService
 
 
-class AReleaseOrder(api_resource.ApiResource):
+class AReleasedOrder(api_resource.ApiResource):
 	"""
 	释放的订单，即释放订单资源
 	"""
