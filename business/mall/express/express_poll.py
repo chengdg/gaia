@@ -215,6 +215,7 @@ class ExpressPoll(object):
 	def get_express_poll(self):
 		# 如果是空不处理
 		if self.express_company_name is '' or self.express_number is '':
+			watchdog.error(u'快递订阅异常')
 			return False
 
 		# 是否已经订阅过该订单，并且成功
@@ -241,4 +242,5 @@ class ExpressPoll(object):
 			if data and data.get('returnCode'):
 				self.express.status = data.get('returnCode')
 				self.express.save()
+			watchdog.error(u'快递订阅异常')
 			return False

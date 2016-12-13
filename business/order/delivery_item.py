@@ -600,3 +600,13 @@ class DeliveryItem(business_model.Model):
 			mall_models.OrderHasRefund.update(finished=True).dj_where(delivery_item_id=self.id).execute()
 
 		db_model.save()
+
+	def send_phone_message(self,corp):
+
+		if self.has_db_record:
+			message_content = u"您好，订单号：%s，收货人：%s。已退单，请知晓！【微众传媒】"
+			supplier = corp.supplier_repository.get_supplier(self.supplier_id)
+			supplier_tel = supplier.supplier_tel
+		
+			if supplier_tel:
+				send_chargeback_message(supplier_tel, message_content % (self.bid, self.ship_name))

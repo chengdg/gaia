@@ -12,7 +12,7 @@ class ADeliveryItemKuaidiNotification(api_resource.ApiResource):
 	快递订阅
 	"""
 	app = 'delivery_item'
-	resource = 'NotifyKuaidi'
+	resource = 'notify_kuaidi'
 
 	@param_required(['delivery_item_id'])
 	def put(args):
@@ -25,13 +25,12 @@ class ADeliveryItemKuaidiNotification(api_resource.ApiResource):
 
 		delivery_item_id = args['delivery_item_id']
 
-		delivery_item = delivery_item_repository.get_delivery_item(delivery_item_id, {})
+		delivery_item = delivery_item_repository.get_delivery_item(delivery_item_id)
 
 		if delivery_item.with_logistics_trace:
 			# 发送快递订阅
-			is_success = ExpressService(delivery_item).get_express_poll()
-			if not is_success:
-				raise Exception(u'快递订阅异常')
+			ExpressService(delivery_item).get_express_poll()
+
 		return {}
 
 	
