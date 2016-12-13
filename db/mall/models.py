@@ -1280,6 +1280,8 @@ class MarketToolsTemplateMessage(models.Model):
 ########################################################################
 MAJOR_INDUSTRY_TYPE = 0 #主营行业
 DEPUTY_INDUSTRY_TYPE = 1 #副营行业
+MESSAGE_STATUS_ON = 1 # 启用
+MESSAGE_STATUS_OFF = 0 # 不启用
 class MarketToolsTemplateMessageDetail(models.Model):
 	owner = models.ForeignKey(User)
 	template_message = models.ForeignKey(MarketToolsTemplateMessage)

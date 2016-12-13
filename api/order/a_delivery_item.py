@@ -10,7 +10,7 @@ class ADeliveryItem(api_resource.ApiResource):
 	app = "order"
 	resource = "delivery_item"
 
-	@param_required(['id'])
+	@param_required(['delivery_item_id'])
 	def get(args):
 		"""
 		相对于订单列表的增量信息：状态日志、操作日志、物流信息、完整的促销信息、优惠券信息
@@ -18,7 +18,7 @@ class ADeliveryItem(api_resource.ApiResource):
 		"""
 
 		# todo 操作日志
-		id = args['id']
+		delivery_item_id = args['delivery_item_id']
 
 		corp = args['corp']
 		delivery_item_repository = corp.delivery_item_repository
@@ -31,7 +31,7 @@ class ADeliveryItem(api_resource.ApiResource):
 			'with_operation_logs': True
 		}
 
-		delivery_item = delivery_item_repository.get_delivery_item(id, delivery_fill_options)
+		delivery_item = delivery_item_repository.get_delivery_item(delivery_item_id, delivery_fill_options)
 
 		encode_delivery_item_service = EncodeDeliveryItemService.get(corp)
 		data = {}

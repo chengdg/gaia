@@ -31,9 +31,12 @@ class SocialAccount(business_model.Model):
         'token'
     )
 
-    # @staticmethod
-    # def from_models(query):
-    #     pass
+    def __init__(self, db_model):
+
+        business_model.Model.__init__(self)
+        self.context['db_model'] = db_model
+        if db_model:
+            self._init_slot_from_model(db_model)
 
     @staticmethod
     @param_required(['model'])
@@ -95,10 +98,10 @@ class SocialAccount(business_model.Model):
         #except:
         #   return None 
 
-    def __init__(self, model):
-        business_model.Model.__init__(self)
+    # def __init__(self, model):
+    #     business_model.Model.__init__(self)
 
-        self.context['db_model'] = model
+    #     self.context['db_model'] = model
 
     @staticmethod
     def empty_social_account():

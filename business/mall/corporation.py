@@ -36,7 +36,9 @@ from business.mall.promotion.promotion_repository import PromotionRepository
 
 from business.weixin.material_repository import MaterialRepository
 from business.weixin.weixin_news_repository import WeixinNewsRepository
-
+from business.mall.template_message.template_message_detail_repository import TemplateMessageDetailRepository
+from business.weixin.mpuser_access_token_repository import MpuserAccessTokenRepository
+from business.member.social_account_repository import SocialAccountRepository
 
 
 
@@ -222,3 +224,15 @@ class Corporation(business_model.Model):
 	@property
 	def weixin_news_repository(self):
 		return WeixinNewsRepository(self)
+
+	@property
+	def template_message_detail_repository(self):
+		return TemplateMessageDetailRepository(self)
+
+	@property
+	def mpuser_access_token_repository(self):
+		return MpuserAccessTokenRepository(self)
+
+	@property
+	def social_account_repository(self):
+		return SocialAccountRepository(self)

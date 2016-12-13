@@ -16,6 +16,7 @@ class EncodeDeliveryItemService(business_model.Service):
 			'area': delivery_item.area,
 			'ship_name': delivery_item.ship_name,
 			'express_company_name_value': delivery_item.express_company_name_value,
+			'express_company_name_text': delivery_item.express_company_name_text,
 			'express_number': delivery_item.express_number,
 			'leader_name': delivery_item.leader_name,
 			'created_at': delivery_item.created_at,
