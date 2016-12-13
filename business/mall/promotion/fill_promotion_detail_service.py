@@ -105,8 +105,7 @@ class FillPromotionDetailService(busniess_model.Service):
 			if promotion_type == promotion_models.PROMOTION_TYPE_FLASH_SALE:
 				self.__fill_flash_sale_details(promotions)
 			elif promotion_type == promotion_models.PROMOTION_TYPE_PREMIUM_SALE:
-				if options.get('with_detail'):
-					self.__fill_premium_sale_details(promotions, corp)
+				self.__fill_premium_sale_details(promotions, corp)
 			elif promotion_type == promotion_models.PROMOTION_TYPE_INTEGRAL_SALE:
 				self.__fill_integral_sale_rule_details(promotions)
 		# 填充促销商品的信息
