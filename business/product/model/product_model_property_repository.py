@@ -37,6 +37,30 @@ class ProductModelPropertyRepository(business_model.Service):
         property_value_model = mall_models.ProductModelPropertyValue.select().dj_where(id=property_value_id).get()
         return ProductModelPropertyValue(property_value_model)
 
+    def get_order_product_model_values(self, product_model_names):
+        """
+        获取订单商品的model详情
+        """
+        product_model_name2value = {}
+        product_model_value_ids = []
+        for product_model_name in product_model_names:
+            if product_model_name != 'standard':
+                product_model_value_ids += [detail.split(':')[1] for detail in product_model_name.split('_')]
+        property_value_models = mall_models.ProductModelPropertyValue.select().dj_where(id__in=list(set(product_model_value_ids)))
+        id2property_value_model = dict([(model.id, model) for model in property_value_models])
+
+        for product_model_name in product_model_names:
+            if product_model_name == 'standard':
+                product_model_name2value[product_model_name] = []
+            else:
+                property_value_ids = [detail.split(':')[1] for detail in product_model_name.split('_')]
+                data = []
+                for value_id in property_value_ids:
+                    property_value_model = id2property_value_model[int(value_id)]
+                    data.append(ProductModelPropertyValue(property_value_model))
+                product_model_name2value[product_model_name] = data
+        return product_model_name2value
+
     def delete_property(self, property_id):
         """
         删除指定的商品规格属性

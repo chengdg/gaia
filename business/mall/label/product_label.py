@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 from business import model as business_model
 
 class ProductLabel(business_model.Model):

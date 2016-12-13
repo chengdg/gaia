@@ -358,37 +358,6 @@ class Product(business_model.Model):
 		else:
 			return True
 
-	def update_sales(self,count):
-		"""
-		ztq add
-		更新商品销量
-		@param count: 正数表示增加销量，负数表示减少销量
-		@return:
-		"""
-		if mall_models.ProductSales.select().dj_where(product_id=self.id).first():
-			mall_models.ProductSales.update(
-				sales=mall_models.ProductSales.sales + count).dj_where(product_id=self.id).execute()
-		else:
-			mall_models.ProductSales.create(product=self.id, sales=count)
-
-
-
-	def update_stock(self,product_model_name,count):
-		"""
-		ztq add
-		更新商品库存
-		@param product_model_name:
-		@param count:
-		@return:
-		"""
-		# todo 是否使用ProductModel业务模型？
-
-		product_model = mall_models.ProductModel.select().dj_where(product_id=self.id, name=product_model_name).first()
-		# 该商品有此规格，并且库存是有限，进入修改商品的数量
-		if product_model and product_model.stock_type == mall_models.PRODUCT_STOCK_TYPE_LIMIT:
-			product_model.stocks = product_model.stocks + count
-			product_model.save()
-
 
 	def is_supplied_by_supplier(self):
 		"""

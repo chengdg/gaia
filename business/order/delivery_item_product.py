@@ -34,7 +34,8 @@ class DeliveryItemProduct(business_model.Model):
 		'total_origin_price',
 		'promotion_info',
 		'product_model_name_texts',
-		'product_model_name'
+		'product_model_name',
+		'model_id'  # 规格id
 
 	)
 

@@ -39,6 +39,10 @@ def clean():
 	mall_models.CategoryHasProduct.delete().execute()
 	mall_models.ProductCategory.delete().execute()
 
+	#商品标签
+	mall_models.ProductLabelGroup.delete().execute()
+	mall_models.ProductLabel.delete().execute()
+
 	#促销
 	promotion_models.ProductHasPromotion.delete().execute()
 	promotion_models.PremiumSaleProduct.delete().execute()
@@ -59,6 +63,7 @@ def clean():
 
 	#商品
 	mall_models.ClassificationHasProduct.delete().execute()
+	mall_models.ClassificationQualification.delete().execute()
 	mall_models.Classification.delete().execute()
 	mall_models.ProductModelHasPropertyValue.delete().execute()
 	mall_models.ProductModel.delete().execute()

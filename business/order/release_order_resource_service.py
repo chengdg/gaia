@@ -7,6 +7,7 @@ from eaglet.utils.resource_client import Resource
 
 from business import model as business_model
 from business.account.integral import Integral
+from business.product.update_product_service import UpdateProductService
 from db.mall import models as mall_models
 from db.member import models as member_models
 
@@ -50,36 +51,49 @@ class ReleaseOrderResourceService(business_model.Service):
 			delivery_item_product = product_id2delivery_item_product[product.id]
 
 			# 更新销量库存
-			product.update_stock(delivery_item_product.product_model_name, delivery_item_product.count)
+			# product.update_stock(delivery_item_product.product_model_name, delivery_item_product.count)
+			update_product_service = UpdateProductService.get(corp)
+			stock_infos = [{
+				'model_id': delivery_item_product.model_id,
+				'changed_count': delivery_item_product.count
+			}]
+			update_product_service.add_product_stock(delivery_item_product.id, stock_infos)
 
 			# 更新销量，赠品不算销量
 			if is_paid and delivery_item_product.promotion_info['type'] != "premium_sale:premium_product":
-				product.update_sales(0 - delivery_item_product.count)
+				update_product_service.update_product_sale(delivery_item_product.id, 0 - delivery_item_product.count)
+				# product.update_sales(0 - delivery_item_product.count)
 
-		# 退款微众卡
-		if order.weizoom_card_money:
-			trade_id = order.weizoom_card_info['trade_id']
-			data = {
-				'trade_id': trade_id,
-				'trade_type': 1  # 普通退款
-			}
-			resp = Resource.use('card_apiserver').delete({
-				'resource': 'card.trade',
-				'data': data
-			})
+		to_status = mall_models.MEANINGFUL_WORD2ORDER_STATUS[to_status]
 
-		# 退还优惠券
-		if order.coupon_id:
-			coupon = corp.coupon_repository.get_coupon_by_id(order.coupon_id)
-			if coupon:
-				coupon.refund(order)
+		if to_status == mall_models.ORDER_STATUS_REFUNDED and order.is_weizoom_order > 0:
+			# 微众订单退款成功时不自动返还资源
+			pass
+		else:
+			# 退款微众卡
+			if order.weizoom_card_money:
+				trade_id = order.weizoom_card_info['trade_id']
+				data = {
+					'trade_id': trade_id,
+					'trade_type': 1  # 普通退款
+				}
+				resp = Resource.use('card_apiserver').delete({
+					'resource': 'card.trade',
+					'data': data
+				})
 
-		# 退还积分
-		if order.integral:
-			Integral.increase_member_integral({
-				'integral_increase_count': order.integral,
-				'webapp_user_id': order.webapp_user_id,
-				'member_id': order.member_info['id'],
-				'event_type': member_models.RETURN_BY_SYSTEM,
-				'corp': corp,
-			})
+			# 退还优惠券
+			if order.coupon_id:
+				coupon = corp.coupon_repository.get_coupon_by_id(order.coupon_id)
+				if coupon:
+					coupon.refund(order)
+
+			# 退还积分
+			if order.integral:
+				Integral.increase_member_integral({
+					'integral_increase_count': order.integral,
+					'webapp_user_id': order.webapp_user_id,
+					'member_id': order.member_info['id'],
+					'event_type': member_models.RETURN_BY_SYSTEM,
+					'corp': corp,
+				})

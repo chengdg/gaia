@@ -422,7 +422,8 @@ class DeliveryItem(business_model.Model):
 		@param corp:
 		@return:
 		"""
-
+		if self.status != mall_models.ORDER_STATUS_PAYED_SHIPED:
+			return False, 'Error Status'
 		action_text = u'完成'
 		from_status = self.status
 		to_status = mall_models.ORDER_STATUS_SUCCESSED
@@ -484,6 +485,9 @@ class DeliveryItem(business_model.Model):
 
 	def apply_for_refunding(self, corp, cash, weizoom_card_money, coupon_money, integral):
 
+		if self.status in (mall_models.ORDER_STATUS_GROUP_REFUNDING, mall_models.ORDER_STATUS_REFUNDING):
+			return False, 'Error Status'
+
 		action_text = u'退款'
 		from_status = self.status
 		to_status = mall_models.ORDER_STATUS_REFUNDING
@@ -519,7 +523,8 @@ class DeliveryItem(business_model.Model):
 		return True, ''
 
 	def refund(self, corp):
-
+		if self.status not in (mall_models.ORDER_STATUS_REFUNDING, mall_models.ORDER_STATUS_GROUP_REFUNDING):
+			return False, 'Error Status'
 		action_text = u'退款完成'
 		from_status = self.status
 		to_status = mall_models.ORDER_STATUS_REFUNDED

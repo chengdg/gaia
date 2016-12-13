@@ -12,3 +12,7 @@ import a_delivery_item
 import a_order_config
 import a_order_export_result
 import a_delivery_item_kuaidi_notification
+import a_delivery_item_phone_message
+import a_released_order
+import a_released_delivery_item
+
