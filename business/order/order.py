@@ -3,6 +3,7 @@
 from business import model as business_model
 from business.order.delivery_item import DeliveryItem
 from db.mall import models as mall_models
+from db.member import models as member_models
 from gaia_conf import TOPIC
 from bdem import msgutil
 from datetime import datetime, timedelta
@@ -76,6 +77,7 @@ class Order(business_model.Model):
 		'status_logs',
 		'operation_logs',
 		'weizoom_card_info',
+		'member_card_info',
 		'extra_coupon_info',
 
 		'integral_type',  # 订单中使用积分的类型。'order':整单抵扣,'product':积分应用
@@ -180,6 +182,7 @@ class Order(business_model.Model):
 			with_status_logs = fill_options.get('with_status_logs')
 			with_operation_logs = fill_options.get('with_operation_logs')
 			with_weizoom_card = fill_options.get("with_weizoom_card")
+			with_member_card = fill_options.get("with_member_card")
 			with_coupon = fill_options.get("with_coupon")
 			with_extra_promotion_info = fill_options.get("extra_promotion_info")
 
@@ -212,6 +215,9 @@ class Order(business_model.Model):
 
 			if with_weizoom_card:
 				Order.__fill_weizoom_card(orders, order_ids)
+
+			if with_member_card:
+				Order.__fill_member_card(orders, order_ids)
 
 			if with_group_buy_info:
 				Order.__fill_group_buy(orders, order_ids)
@@ -297,6 +303,22 @@ class Order(business_model.Model):
 				}
 			else:
 				order.weizoom_card_info = {}
+
+	@staticmethod
+	def __fill_member_card(orders, order_ids):
+		order_bids = [order.bid for order in orders]
+		infos = member_models.MemberCardLog.select().dj_where(order_id__in=order_bids)
+
+		bid2infos = {info.order_id: info for info in infos}
+
+		for order in orders:
+			info = bid2infos.get(order.bid)
+			if info:
+				order.member_card_info = {
+					'trade_id': info.trade_id
+				}
+			else:
+				order.member_card_info = {}
 
 	@staticmethod
 	def __fill_delivery_items(orders, fill_options):

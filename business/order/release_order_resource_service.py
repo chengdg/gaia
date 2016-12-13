@@ -13,7 +13,7 @@ from db.member import models as member_models
 
 
 class ReleaseOrderResourceService(business_model.Service):
-	def release(self, order_id,from_status,to_status):
+	def release(self, order_id, from_status, to_status):
 		"""
 		当处理的是出货单时，需要决策是否处理以及如何处理订单
 		对于db层面有没有出货单的订单，db操作已经在出货单完成，只用发送消息通知
@@ -26,6 +26,7 @@ class ReleaseOrderResourceService(business_model.Service):
 		fill_options = {
 			'with_member': True,
 			'with_weizoom_card': True,
+			'with_member_card': True,
 			'with_delivery_items': {
 				'with_products': True,
 			}
@@ -62,7 +63,7 @@ class ReleaseOrderResourceService(business_model.Service):
 			# 更新销量，赠品不算销量
 			if is_paid and delivery_item_product.promotion_info['type'] != "premium_sale:premium_product":
 				update_product_service.update_product_sale(delivery_item_product.id, 0 - delivery_item_product.count)
-				# product.update_sales(0 - delivery_item_product.count)
+			# product.update_sales(0 - delivery_item_product.count)
 
 		to_status = mall_models.MEANINGFUL_WORD2ORDER_STATUS[to_status]
 
@@ -73,6 +74,18 @@ class ReleaseOrderResourceService(business_model.Service):
 			# 退款微众卡
 			if order.weizoom_card_money:
 				trade_id = order.weizoom_card_info['trade_id']
+				data = {
+					'trade_id': trade_id,
+					'trade_type': 1  # 普通退款
+				}
+				resp = Resource.use('card_apiserver').delete({
+					'resource': 'card.trade',
+					'data': data
+				})
+
+			# 退还会员卡
+			if order.member_card_money:
+				trade_id = order.member_card_info['trade_id']
 				data = {
 					'trade_id': trade_id,
 					'trade_type': 1  # 普通退款
