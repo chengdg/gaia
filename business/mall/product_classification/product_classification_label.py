@@ -25,4 +25,4 @@ class ProductClassificationLabel(business_model.Model):
 
 	@staticmethod
 	def create_many(create_list):
-		mall_models.ClassificationHasLabel.save_many(create_list)
+		mall_models.ClassificationHasLabel.insert_many(create_list).execute()

@@ -6,7 +6,7 @@ Feature:运营人员配置分类的标签
 
 Background:
 	Given manager登录系统
-	When manager添加分类
+	When manager添加商品分类
 		"""
 		{
 			"电子数码": {
@@ -23,33 +23,35 @@ Background:
 			}
 		}
 		"""
-	When manager新增标签
+	When manager添加商品标签
 		"""
 		[{
-		"label_group":"国家",
-		"label":{
+			"label_group":"国家",
+			"label":{
 				"美国"，"法国","中国","德国","意大利","澳大利亚"
+			}
 		},{
-		"label_group":"省市",
-		"label":{
-				"江苏"，"黑龙江","广东","浙江","北京","江西"
+			"label_group":"省市",
+			"label":{
+					"江苏"，"黑龙江","广东","浙江","北京","江西"
+			}
 		},{
-		"label_group":"基本信息",
-		"label":{
-				"男"，"女","新生儿","9-13岁","14-18岁","成年"
+			"label_group":"基本信息",
+			"label":{
+					"男"，"女","新生儿","9-13岁","14-18岁","成年"
 		}]
 		"""
-	When manager配置'平板电脑'标签
+	When manager为商品分类'平板电脑'配置标签
 		"""
 		[{
-		"label_group":"国家",
-		"label":{
+			"label_group":"国家",
+			"label":{
 				"美国","法国"
 			}
 		}]
 		"""
 
-	Then manager查看类目列表
+	Then manager能获取商品分类列表
 		|classfication|     creat_time    | business_number |             operate           |
 		|   电子数码  |2016-07-21 15:30:08|      0.00       |修改 删除 配置特殊资质 标签配置|
 		|     耳机    |2016-07-21 15:30:25|      0.00       |修改 删除 配置特殊资质 标签配置|
@@ -60,42 +62,42 @@ Background:
 		|     零食    |2016-07-21 15:31:25|      0.00       |修改 删除 配置特殊资质 标签配置|
 		|     肥皂    |2016-07-21 15:31:25|      0.00       |修改 删除 配置特殊资质 标签配置|
 		|   清洗用品  |2016-07-21 15:31:25|      0.00       |修改 删除 配置特殊资质 标签配置|
-	Then manager查看'平板电脑'配置的标签
+	Then manager查看商品分类'平板电脑'配置的标签
 		"""
 		[{
-		"label_group":"国家",
-		"label":{
+			"label_group":"国家",
+			"label":{
 				"美国","法国"
 			}
 		}]
 		"""
-	Then manager查看'分类31'配置的标签
+	Then manager查看商品'分类31'配置的标签
 		"""
 		[{
-		"label_group":"国家",
-		"label":{
+			"label_group":"国家",
+			"label":{
 				"美国","法国"
 			}
 		}]
 		"""
 
-	When manager配置'生活用品'标签
+	When manager为商品分类'生活用品'配置标签
 	
 		"""
 		[{
-		"label_group":"省市",
-		"label":{
+			"label_group":"省市",
+			"label":{
 				"江苏","黑龙江"
 			}
 		},{
-		"label_group":"基本信息",
-		"label":{
+			"label_group":"基本信息",
+			"label":{
 				"男","女"
 			}
 		}]
 		"""
 
-	Then manager查看类目列表
+	Then manager能获取商品分类列表
 		|classfication|     creat_time    | business_number |             operate           |
 		|   电子数码  |2016-07-21 15:30:08|      0.00       |修改 删除 配置特殊资质 标签配置|
 		|     耳机    |2016-07-21 15:30:25|      0.00       |修改 删除 配置特殊资质 标签配置|
@@ -105,70 +107,70 @@ Background:
 		|     零食    |2016-07-21 15:31:25|      0.00       |修改 删除 配置特殊资质 已配置标签|
 		|     肥皂    |2016-07-21 15:31:25|      0.00       |修改 删除 配置特殊资质 已配置标签|
 		|   清洗用品  |2016-07-21 15:31:25|      0.00       |修改 删除 配置特殊资质 已配置标签|
-	Then manager查看'肥皂'的标签
+	Then manager查看商品分类'肥皂'的标签
 		"""
 		[{
-		"label_group":"省市",
-		"label":{
+			"label_group":"省市",
+			"label":{
 				"江苏","黑龙江"
 			}
 		},{
-		"label_group":"基本信息",
-		"label":{
+			"label_group":"基本信息",
+			"label":{
 				"男","女"
 			}
 		}]
 		"""
-	Then manager配置'零食'的标签
+	Then manager为商品分类'零食'配置标签
 		"""
 		[{
-		"label_group":"省市",
-		"label":{
+			"label_group":"省市",
+			"label":{
 				"江苏","黑龙江"
 			}
 		},{
-		"label_group":"基本信息",
-		"label":{
+			"label_group":"基本信息",
+			"label":{
 				"男","女"
 			}
 		}]
 		"""
-	When manager配置'肥皂'的标签
+	When manager为商品标签'肥皂'配置标签
 		"""
 		[{
-		"label_group":"省市",
-		"label":{
+			"label_group":"省市",
+			"label":{
 				"江苏"
 			}
 		},{
-		"label_group":"基本信息",
-		"label":{
+			"label_group":"基本信息",
+			"label":{
 				"男"
 			}
 		}]
 		"""
-	Then manager查看'肥皂'的标签
+	Then manager查看商品分类'肥皂'的标签
 		"""
 		[{
-		"label_group":"省市",
-		"label":{
+			"label_group":"省市",
+			"label":{
 				"江苏"
 			}
 		},{
-		"label_group":"基本信息",
-		"label":{
+			"label_group":"基本信息",
+			"label":{
 				"男"
 			}
 		}]
 		"""
-	When manager配置'清洗用品'的标签
+	When manager为商品分类'清洗用品'配置标签
 		"""
 		{
-		"label_group":null,
-		"label":null
+			"label_group":null,
+			"label":null
 		}
 		"""
-	Then manager查看分类列表
+	Then manager能获取商品分类列表
 		|classfication|     creat_time    | business_number |             operate           |
 		|   电子数码  |2016-07-21 15:30:08|      0.00       |修改 删除 配置特殊资质 标签配置|
 		|     耳机    |2016-07-21 15:30:25|      0.00       |修改 删除 配置特殊资质 标签配置|
