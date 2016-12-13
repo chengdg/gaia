@@ -13,7 +13,7 @@ class APromotionFlashSale(api_resource.ApiResource):
     促销-限时抢购
     """
     app = 'promotion'
-    resource = 'flash_sale'
+    resource = 'flash_sale_promotion'
 
     @param_required(['corp_id', 'id'])
     def get(args):

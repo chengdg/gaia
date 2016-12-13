@@ -18,7 +18,7 @@ class AActiveFlashSalePromotion(api_resource.ApiResource):
         corp = args['corp']
         promotion_ids = args['ids']
         promotion_ids = json.loads(promotion_ids)
-        corp.promotion_repository.active_promotions(promotion_ids)
+        corp.promotion_repository.on_promotions(promotion_ids)
         return {}
 
     @param_required(['corp_id', 'ids'])

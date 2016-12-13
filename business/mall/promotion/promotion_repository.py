@@ -143,7 +143,7 @@ class PromotionRepository(business_model.Service):
 
 		return promotions, pageinfo
 
-	def active_promotions(self, promotion_ids):
+	def on_promotions(self, promotion_ids):
 		"""
         开启促销活动
         promotion_ids: [promotion_id,...]

@@ -33,7 +33,7 @@
                 }
             }
         },
-        "/promotion/flash_sale/": {
+        "/promotion/flash_sale_promotion/": {
             "get": {
                 "summary": "获取单个限时抢购详细信息",
                 "parameters": [

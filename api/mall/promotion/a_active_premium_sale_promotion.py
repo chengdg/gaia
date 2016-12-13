@@ -19,7 +19,7 @@ class AActivePremiumSalePromotion(api_resource.ApiResource):
         promotion_ids = args['ids']
         promotion_ids = json.loads(promotion_ids)
         promotion_repository = corp.promotion_repository
-        promotion_repository.active_promotions(promotion_ids)
+        promotion_repository.on_promotions(promotion_ids)
         return {}
 
     @param_required(['corp_id', 'ids'])
