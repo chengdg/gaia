@@ -134,6 +134,22 @@ class ProductClassification(business_model.Model):
 		
 		return {}
 
+	def set_labels(self, selected_labels):
+		"""
+		设置商品分类标签
+		:return:
+		"""
+		bulk_create = []
+		for label in selected_labels:
+			label_group_id = label['labelGroupId'],
+			for label_id in label['labelIds']:
+				bulk_create.append({
+					'classification_id': self.id,
+					'label_group_id': str(label_group_id),
+					'label_id': str(label_id)
+				})
+		ProductClassificationLabel.create_many(bulk_create)
+
 	def get_classification_labels(self):
 		"""
 		获取分类的标签

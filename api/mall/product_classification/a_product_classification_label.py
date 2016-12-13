@@ -34,7 +34,7 @@ class AProductClassificationLabel(api_resource.ApiResource):
 		label_group_has_label = {}
 		for model in classification_label_models:
 			label_group_id = model.label_group_id
-			label_id = model.label.id
+			label_id = model.label_id
 			if not label_group_has_label.has_key(label_group_id):
 				label_group_has_label[label_group_id] = [label_id]
 			else:
@@ -51,14 +51,17 @@ class AProductClassificationLabel(api_resource.ApiResource):
 
 
 
-	@param_required(['classification_id', 'qualification_infos:json'])
+	@param_required(['classification_id', 'selected_labels:json'])
 	def put(args):
+		"""
+		设置商品分类标签
+		"""
 		classification_id = args['classification_id']
-		qualification_infos = args['qualification_infos']
+		selected_labels = args['selected_labels']
 
 		weizoom_corp = CorporationFactory.get_weizoom_corporation()
 		classification = weizoom_corp.product_classification_repository.get_product_classification(classification_id)
-		classification.set_qualifications(qualification_infos)
+		classification.set_labels(selected_labels)
 
 		return {}
 
