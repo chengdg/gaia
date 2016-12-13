@@ -61,8 +61,6 @@ class ProductClassification(business_model.Model):
 		"""
 		创建商品分类
 		"""
-		corp_id = CorporationFactory.get().id
-
 		father_id = int(args['father_id'])
 		if father_id == 0:
 			level = 1		

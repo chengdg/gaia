@@ -5,6 +5,8 @@ from eaglet.decorator import param_required
 from eaglet.core import watchdog
 from eaglet.core.exceptionutil import unicode_full_stack
 
+from business.mall.corporation_factory import CorporationFactory
+
 
 class AProductClassifications(api_resource.ApiResource):
     """
@@ -15,12 +17,12 @@ class AProductClassifications(api_resource.ApiResource):
 
     @param_required(['?father_id'])
     def get(args):
-        corp = args['corp']
+        weizoom_corp = CorporationFactory.get_weizoom_corporation()
         father_id = args.get('father_id', None)
         if father_id:
-            product_classifications = corp.product_classification_repository.get_child_product_classifications(father_id)
+            product_classifications = weizoom_corp.product_classification_repository.get_child_product_classifications(father_id)
         else:
-            product_classifications = corp.product_classification_repository.get_product_classifications()
+            product_classifications = weizoom_corp.product_classification_repository.get_product_classifications()
 
         datas = []
         for product_classification in product_classifications:

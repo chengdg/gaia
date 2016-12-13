@@ -29,7 +29,8 @@ class ProductClassificationRepository(business_model.Service):
 		"""
 		删除指定的商品分类
 		"""
-		mall_models.Classification.update(status=mall_models.CLASSIFICATION_OFFLINE).dj_where(id=id).execute()
+		# 同时删除分类及其子分类
+		mall_models.Classification.update(status=mall_models.CLASSIFICATION_OFFLINE).dj_where(id=id).dj_where(father_id=id).execute()
 
 	def get_children_product_classifications(self, father_id):
 		"""

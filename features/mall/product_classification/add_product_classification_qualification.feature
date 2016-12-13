@@ -26,15 +26,15 @@ Background:
 	"""
 
 	
-@gaia @mall @mall.product @product_classification_qualification
+@gaia @mall @mall.product @mall.product_classification @product_classification_qualification
 Scenario:1  运营人员为分配配置特殊资质
-	When manger为'平板电脑'配置特殊资质
+	When manger为商品分类'平板电脑'配置特殊资质
 		"""
-		{
-		"qualification_name":"平板电脑销售许可证"
-		}
+		[{
+			"qualification_name":"平板电脑销售许可证"
+		}]
 		"""
 
-	Then manager查看'平板电脑'的特殊资质
+	Then manager查看商品分类'平板电脑'的特殊资质
 		| qualification_name |
 		| 平板电脑销售许可证 |

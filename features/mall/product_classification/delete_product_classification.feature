@@ -1,11 +1,11 @@
-Feature: 删除商品分组
+Feature: 删除商品分类
 """
-	Jobs能通过管理系统为商城删除的"商品分组"
+	manager能删除"商品分类"
 """
 
 Background:
-	Given jobs登录系统
-	When jobs已添加商品分组
+	Given manager登录系统
+	When manager已添加商品分类
 		"""
 		{
 			"分类11": {
@@ -20,11 +20,11 @@ Background:
 		}
 		"""
 
-@gaia @mall @mall.product @mall.product_category
-Scenario:1 Jobs删除已存在的商品分组
-	Given jobs登录系统
-	When jobs删除商品分组'分类12'
-	Then jobs能获取商品分组列表
+@gaia @mall @mall.product @mall.product_classification
+Scenario:1 Jobs删除已存在的商品分类
+	Given manager登录系统
+	When manager删除商品分类'分类12'
+	Then manager能获取商品分类列表
 		"""
 		{
 			"分类11": {
@@ -35,8 +35,8 @@ Scenario:1 Jobs删除已存在的商品分组
 			"分类13": null
 		}
 		"""
-	When jobs删除商品分组'分类21'
-	Then jobs能获取商品分组列表
+	When manager删除商品分类'分类21'
+	Then manager能获取商品分类列表
 		"""
 		{
 			"分类11": {

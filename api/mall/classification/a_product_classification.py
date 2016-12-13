@@ -6,6 +6,7 @@ from eaglet.core import watchdog
 from eaglet.core.exceptionutil import unicode_full_stack
 
 from business.mall.classification.product_classification import ProductClassification
+from business.mall.corporation_factory import CorporationFactory
 
 
 class AProductClassification(api_resource.ApiResource):
@@ -43,15 +44,15 @@ class AProductClassification(api_resource.ApiResource):
 
         return {}
 
-    @param_required(['corp_id', 'id'])
+    @param_required(['id'])
     def delete(args):
-        corp = args['corp']
+        weizoom_corp = CorporationFactory.get_weizoom_corporation()
         classification_id = args['id']
-        product_classification = corp.product_classification_repository.get_product_classification(classification_id)
+        product_classification = weizoom_corp.product_classification_repository.get_product_classification(classification_id)
         if product_classification.is_used_by_product():
             return 500, 'used_by_product' #商品分类正在被使用
         else:
-            corp.product_classification_repository.delete_product_classification(classification_id)
+            weizoom_corp.product_classification_repository.delete_product_classification(classification_id)
 
             return {}
         
