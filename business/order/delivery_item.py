@@ -53,7 +53,8 @@ class DeliveryItem(business_model.Model):
 
 	@cached_context_property
 	def express_company_name_text(self):
-		self.context['corp'].express_delivery_repository.get_company_by_value(self.express_company_name_value)
+		express_company_name = self.context['corp'].express_delivery_repository.get_company_by_value(self.express_company_name_value)
+		return express_company_name
 
 	def __init__(self, db_model):
 		business_model.Model.__init__(self)

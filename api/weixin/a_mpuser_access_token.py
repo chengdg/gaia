@@ -21,7 +21,7 @@ class AMpuserAccessToken(api_resource.ApiResource):
 
 		# 获取mpuser_access_token
 		access_token = corp.mpuser_access_token_repository.get_mpuser_access_token(corp.id)
-
+		print access_token.access_token,'=================='
 		return {
             'access_token': access_token
         }

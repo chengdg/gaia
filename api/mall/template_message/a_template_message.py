@@ -16,13 +16,9 @@ class ATemplateMessage(api_resource.ApiResource):
 	def get(args):
 		corp = args['corp']
 		send_point = args['send_point']
-		print '======================================',send_point
 		template_message_detail, template_message = corp.template_message_detail_repository.get_template_message(corp.id, send_point)
-		attribute = getattr(template_message,'attribute',None)
-		title = getattr(template_message,'title',None)
-		print attribute,'============',title
-		setattr(template_message_detail,'attribute',attribute)
-		setattr(template_message_detail,'title',title)
+		template_message_detail.attribute = template_message.attribute
+		template_message_detail.title = template_message.title
 		return {
             'template': template_message_detail
         }
