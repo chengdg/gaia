@@ -2,10 +2,8 @@
 
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
-from eaglet.core import watchdog
-from eaglet.core.exceptionutil import unicode_full_stack
 
-from business.mall.classification.product_classification import ProductClassification
+from business.mall.product_classification.product_classification import ProductClassification
 from business.mall.corporation_factory import CorporationFactory
 
 
@@ -34,12 +32,12 @@ class AProductClassification(api_resource.ApiResource):
 
     @param_required(['corp_id', 'name', 'id', '?note'])
     def post(args):
-        corp = args['corp']
+        weizoom_corp = CorporationFactory.get_weizoom_corporation()
         name = args['name']
         classification_id = args['id']
         note = args.get('note', '')
 
-        product_classification = corp.product_classification_repository.get_product_classification(classification_id)
+        product_classification = weizoom_corp.product_classification_repository.get_product_classification(classification_id)
         product_classification.update(name, note)
 
         return {}

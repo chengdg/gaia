@@ -13,8 +13,8 @@ import logistics
 import image_group
 import config
 import notify
-import classification
-import label
+import product_classification
+import product_label
 
 import a_promotion_products
 

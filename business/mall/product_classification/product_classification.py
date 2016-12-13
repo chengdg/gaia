@@ -6,7 +6,7 @@ from db.account import models as account_models
 from business import model as business_model
 
 from business.mall.corporation_factory import CorporationFactory
-from business.mall.classification.product_classification_qualification import ProductClassificationQualification
+from business.mall.product_classification.product_classification_qualification import ProductClassificationQualification
 
 
 class ProductClassification(business_model.Model):

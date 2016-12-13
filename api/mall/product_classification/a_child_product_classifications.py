@@ -2,10 +2,6 @@
 
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
-from eaglet.core import watchdog
-from eaglet.core.exceptionutil import unicode_full_stack
-
-from business.mall.classification.product_classification import ProductClassification
 from business.mall.corporation_factory import CorporationFactory
 
 

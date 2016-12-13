@@ -2,7 +2,7 @@
 from business import model as business_model
 from business.mall.corporation_factory import CorporationFactory
 from db.mall import models as mall_models
-from business.mall.label.product_label_group import ProductLabelGroup
+from business.mall.product_label.product_label_group import ProductLabelGroup
 
 
 class ProductLabelGroupRepositroy(business_model.Service):

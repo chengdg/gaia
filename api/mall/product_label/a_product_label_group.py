@@ -3,7 +3,7 @@
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
 
-from business.mall.label.product_label_group import ProductLabelGroup
+from business.mall.product_label.product_label_group import ProductLabelGroup
 from business.mall.corporation_factory import CorporationFactory
 
 

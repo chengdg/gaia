@@ -2,7 +2,7 @@
 
 from business.mall.corporation_factory import CorporationFactory
 from business import model as business_model
-from business.mall.label.product_label import ProductLabel
+from business.mall.product_label.product_label import ProductLabel
 from db.mall import models as mall_models
 
 class ProductLabelGroup(business_model.Model):

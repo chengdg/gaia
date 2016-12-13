@@ -1,14 +1,9 @@
 # -*- coding: utf-8 -*-
-import json
 
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
-from eaglet.core import watchdog
-from eaglet.core.exceptionutil import unicode_full_stack
 
 from business.mall.corporation_factory import CorporationFactory
-from business.common.page_info import PageInfo
-
 
 class AProductClassificationQualification(api_resource.ApiResource):
     """
