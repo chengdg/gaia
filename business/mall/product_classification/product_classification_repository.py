@@ -5,7 +5,6 @@ from db.account import models as account_models
 from business import model as business_model
 
 from business.mall.product_classification.product_classification import ProductClassification
-from business.mall.product_classification.product_classification_qualification import ProductClassificationQualification
 
 class ProductClassificationRepository(business_model.Service):
 	def get_product_classifications(self):

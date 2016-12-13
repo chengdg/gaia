@@ -300,6 +300,17 @@ class ClassificationQualification(models.Model):
 	class Meta(object):
 		db_table = 'mall_classification_qualification'
 
+class ClassificationHasLabel(models.Model):
+	"""
+	商品类目（分类)有什么标签
+	"""
+	classification_id = models.IntegerField(default=-1)
+	label_id = models.CharField(max_length=1024, default='')
+	created_at = models.DateTimeField(auto_now_add=True)
+
+	class Meta(object):
+		db_table = 'mall_classification_has_label'
+
 
 #########################################################################
 # 商品相关Model
@@ -1606,6 +1617,7 @@ class ClassificationHasLabel(models.Model):
 	商品类目（分类)有什么标签
 	"""
 	classification_id = models.IntegerField(default=-1)
+	label_group_id = models.CharField(max_length=1024, default='')
 	label_id = models.CharField(max_length=1024, default='')
 	created_at = models.DateTimeField(auto_now_add=True)
 

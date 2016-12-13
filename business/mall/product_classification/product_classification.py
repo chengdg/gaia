@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from eaglet.decorator import param_required
 
+from business.mall.product_classification.product_classification_label import ProductClassificationLabel
 from db.mall import models as mall_models
 from db.account import models as account_models
 from business import model as business_model
@@ -132,3 +133,10 @@ class ProductClassification(business_model.Model):
 		self.delete_qualification_by_ids(need_remove_ids)		
 		
 		return {}
+
+	def get_classification_labels(self):
+		"""
+		获取分类的标签
+		"""
+		models = mall_models.ClassificationHasLabel.select().dj_where(classification_id=self.id)
+		return [ProductClassificationLabel(model) for model in models]
