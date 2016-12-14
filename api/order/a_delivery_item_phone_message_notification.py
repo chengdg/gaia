@@ -24,10 +24,14 @@ class ADeliveryItemPhoneMessageNotification(api_resource.ApiResource):
 		delivery_item_repository = corp.delivery_item_repository
 
 		delivery_item_id = args['delivery_item_id']
-		delivery_item = delivery_item_repository.get_delivery_item(delivery_item_id)
+		delivery_fill_options = {
+			'with_supplier': True
+		}
 
-		delivery_item.send_phone_message(corp)
-		
+		delivery_item = delivery_item_repository.get_delivery_item(delivery_item_id, delivery_fill_options)
+
+		delivery_item.send_phone_message()
+
 		return {}
 
 	
