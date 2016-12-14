@@ -491,6 +491,10 @@ class DeliveryItem(business_model.Model):
 		self.__send_msg_to_topic('delivery_item_ship_info_updated', self.status, self.status)
 
 		self.__record_operation_log(self.bid, corp.username, action_text)
+		# [compatibility]: 兼容apiserver当只有一个出货单的时候，直接显示订单的发货信息
+		mall_models.Order.update(express_company_name=express_company_name_value, express_number=express_number,
+		                         is_100=with_logistics_trace, leader_name=leader_name).dj_where(
+			id=self.origin_order_id).execute()
 		return True, ''
 
 	def apply_for_refunding(self, corp, cash, weizoom_card_money, coupon_money, integral):
