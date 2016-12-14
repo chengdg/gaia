@@ -57,6 +57,7 @@ class Order(business_model.Model):
 		'webapp_user_id',
 
 		'weizoom_card_money',
+		'member_card_money',
 		'delivery_time',  # 配送时间字符串
 		'is_first_order',
 		'supplier_user_id',
@@ -134,6 +135,7 @@ class Order(business_model.Model):
 			order.coupon_money = db_model.coupon_money
 			order.postage = db_model.postage
 			order.weizoom_card_money = db_model.weizoom_card_money
+			order.member_card_money = db_model.member_card_money
 			order.integral_money = db_model.integral_money
 			order.integral = db_model.integral
 			order.promotion_saved_money = db_model.promotion_saved_money
