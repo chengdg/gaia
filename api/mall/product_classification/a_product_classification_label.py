@@ -43,8 +43,8 @@ class AProductClassificationLabel(api_resource.ApiResource):
 		return_data = []
 		for label_group_id, label_ids in label_group_has_label.items():
 			return_data.append({
-				'label_group_id': label_group_id,
-				'label_ids': label_ids
+				'labelGroupId': label_group_id,
+				'labelIds': label_ids
 			})
 
 		return return_data
