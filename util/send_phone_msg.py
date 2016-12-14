@@ -49,6 +49,7 @@ def send_phone_captcha(phones, content):
 		"content": content,
 		"phones": phones  
 	}
+	print '========================================'
 	msgutil.send_message(TOPIC['notify'], 'phone', data)
 
 def send_captcha(phone_number, company_name=u'微众传媒'):

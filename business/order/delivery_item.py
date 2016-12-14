@@ -610,6 +610,5 @@ class DeliveryItem(business_model.Model):
 		if self.has_db_record:
 			message_content = u"您好，订单号：%s，收货人：%s。已退单，请知晓！【微众传媒】"
 			supplier_tel = self.supplier_info['supplier_tel']
-			print '========================================'	
 			if supplier_tel:
 				send_phone_captcha(supplier_tel, message_content % (self.bid, self.ship_name))
