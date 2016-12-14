@@ -13,7 +13,7 @@ from business.order.delivery_item_product_repository import DeliveryItemProductR
 from business.order.process_order_after_delivery_item_service import ProcessOrderAfterDeliveryItemService
 from db.express import models as express_models
 from db.mall import models as mall_models
-from util.send_phone_msg import send_chargeback_message
+from util.send_phone_msg import send_phone_captcha
 from gaia_conf import TOPIC
 import logging
 
@@ -611,4 +611,4 @@ class DeliveryItem(business_model.Model):
 			message_content = u"您好，订单号：%s，收货人：%s。已退单，请知晓！【微众传媒】"
 			supplier_tel = self.supplier_info['supplier_tel']		
 			if supplier_tel:
-				send_chargeback_message(supplier_tel, message_content % (self.bid, self.ship_name))
+				send_phone_captcha(supplier_tel, message_content % (self.bid, self.ship_name))
