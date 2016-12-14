@@ -140,14 +140,15 @@ class ProductClassification(business_model.Model):
 		:return:
 		"""
 		bulk_create = []
+		print selected_labels
 		for label in selected_labels:
 			label_group_id = label['labelGroupId'],
 			for label_id in label['labelIds']:
-				bulk_create.append({
-					'classification_id': self.id,
-					'label_group_id': str(label_group_id),
-					'label_id': str(label_id)
-				})
+				bulk_create.append(dict(
+					classification_id = self.id,
+					label_group_id = label_group_id[0] if isinstance(label_group_id, tuple) else str(label_group_id),
+					label_id = str(label_id)
+				))
 		ProductClassificationLabel.create_many(bulk_create)
 
 	def get_classification_labels(self):
