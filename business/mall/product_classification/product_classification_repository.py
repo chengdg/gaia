@@ -23,14 +23,32 @@ class ProductClassificationRepository(business_model.Service):
 			.dj_where(status=mall_models.CLASSIFICATION_ONLINE)
 		return [ProductClassification(model) for model in models]
 
-	def check_labels(self, classification_models):
+	def check_labels(self, classification_models, has_label_dict=None):
+		"""
+		递归检查分类是否配置了标签
+		配置了标签的分类，其子分类都视为已配置标签
+		:return:
+		"""
+		has_label_dict = has_label_dict if has_label_dict else dict()
 		classification_ids = [c.id for c in classification_models]
-		has_label_dict = {str(c): False for c in classification_ids}
-		models = mall_models.ClassificationHasLabel.select().dj_where(id__in=classification_ids)
-		for model in models:
-			if model.label_group_id:
-				has_label_dict[str(model.classification_id)] = True
+		father_ids = [c.father_id for c in classification_models if c.father_id > 0]
+		child_id2father_id = {str(c.id): str(c.father_id) for c in classification_models}
+		father_has_label_dict = dict()
 
+		if len(father_ids) > 0:
+			father_classifications = mall_models.Classification.select().dj_where(id__in=father_ids)
+			father_has_label_dict = self.check_labels(father_classifications, has_label_dict)
+
+		for c in classification_ids:
+			has_label_dict[str(c)] = False
+			if father_has_label_dict and father_has_label_dict[child_id2father_id[str(c)]]:
+				has_label_dict[str(c)] = True
+
+		models = mall_models.ClassificationHasLabel.select().dj_where(classification_id__in=classification_ids)
+		for model in models:
+			classification_id = str(model.classification_id)
+			if model.label_group_id:
+				has_label_dict[classification_id] = True
 		return has_label_dict
 
 

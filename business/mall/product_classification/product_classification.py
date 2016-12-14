@@ -151,9 +151,16 @@ class ProductClassification(business_model.Model):
 				))
 		ProductClassificationLabel.create_many(bulk_create)
 
-	def get_classification_labels(self):
+	def get_classification_labels(self, classification_ids=None):
 		"""
 		获取分类的标签
 		"""
-		models = mall_models.ClassificationHasLabel.select().dj_where(classification_id=self.id)
+		classification_ids = classification_ids if classification_ids else []
+		classification_ids.append(self.id)
+		#首先检查父分类
+		if self.father_id > 0:
+			weizoom_corp = CorporationFactory.get_weizoom_corporation()
+			father_model = weizoom_corp.product_classification_repository.get_product_classification(self.father_id)
+			father_model.get_classification_labels(classification_ids)
+		models = mall_models.ClassificationHasLabel.select().dj_where(classification_id__in=classification_ids)
 		return [ProductClassificationLabel(model) for model in models]

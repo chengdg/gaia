@@ -44,9 +44,8 @@ class AProductClassificationLabel(api_resource.ApiResource):
 		for label_group_id, label_ids in label_group_has_label.items():
 			return_data.append({
 				'labelGroupId': label_group_id,
-				'labelIds': label_ids
+				'labelIds': list(set(label_ids)) #去重
 			})
-
 		return return_data
 
 
