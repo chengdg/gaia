@@ -12,9 +12,7 @@ Background:
 			"电子数码": {
 				"耳机": null,
 				"手机": null,
-				"平板电脑": {
-					"分类31": null
-				}
+				"平板电脑": null
 			},
 			"生活用品": {
 				"零食": null,
@@ -41,6 +39,8 @@ Background:
 					"男"，"女","新生儿","9-13岁","14-18岁","成年"
 		}]
 		"""
+@mantis @manage_classfication
+Scenario:1 运营人员为分类配置标签
 	When manager为商品分类'平板电脑'配置标签
 		"""
 		[{
