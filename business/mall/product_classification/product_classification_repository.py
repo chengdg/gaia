@@ -23,6 +23,17 @@ class ProductClassificationRepository(business_model.Service):
 			.dj_where(status=mall_models.CLASSIFICATION_ONLINE)
 		return [ProductClassification(model) for model in models]
 
+	def check_labels(self, classification_models):
+		classification_ids = [c.id for c in classification_models]
+		has_label_dict = {str(c): False for c in classification_ids}
+		models = mall_models.ClassificationHasLabel.select().dj_where(id__in=classification_ids)
+		for model in models:
+			if model.label_group_id:
+				has_label_dict[str(model.classification_id)] = True
+
+		return has_label_dict
+
+
 	def delete_product_classification(self, id):
 		"""
 		删除指定的商品分类
