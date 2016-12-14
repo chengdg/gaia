@@ -353,18 +353,21 @@ class DeliveryItem(business_model.Model):
 			if supplier_user:
 				delivery_item.supplier_info = {
 					'name': supplier_user.name,
-					'supplier_type': 'supplier_user'
+					'supplier_type': 'supplier_user',
+					'supplier_tel':''
 				}
 			elif supplier:
 				supplier = id2supplier.get(db_model.supplier, None)
 				delivery_item.supplier_info = {
 					'name': supplier.name,
-					'supplier_type': 'supplier'
+					'supplier_type': 'supplier',
+					'supplier_tel':supplier.supplier_tel
 				}
 			else:
 				delivery_item.supplier_info = {
 					'name': '',
-					'supplier_type': 'None'
+					'supplier_type': 'None',
+					'supplier_tel':''
 				}
 
 	def pay(self, payment_time, corp):
@@ -602,12 +605,11 @@ class DeliveryItem(business_model.Model):
 
 		db_model.save()
 
-	def send_phone_message(self,corp):
+	def send_phone_message(self):
 
 		if self.has_db_record:
 			message_content = u"您好，订单号：%s，收货人：%s。已退单，请知晓！【微众传媒】"
-			supplier = corp.supplier_repository.get_supplier(self.supplier_id)
-			supplier_tel = supplier.supplier_tel
+			supplier_tel = self.supplier_info.supplier_tel
 		
 			if supplier_tel:
 				send_chargeback_message(supplier_tel, message_content % (self.bid, self.ship_name))
