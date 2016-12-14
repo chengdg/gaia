@@ -3,7 +3,6 @@ Feature:运营人员配置分类的标签
 	"""
 		1.运营人员为分类配置标签
 	"""
-
 Background:
 	Given manager登录系统
 	When manager添加商品分类
@@ -21,176 +20,145 @@ Background:
 			}
 		}
 		"""
+	When manager新增商品标签分组
+		"""
+		[{
+			"label_group_name": "国家"
+		},
+		{
+			"label_group_name": "省市"
+		},
+		{
+			"label_group_name": "基本信息"
+		}]
+		"""
 	When manager添加商品标签
 		"""
 		[{
-			"label_group":"国家",
-			"label":{
-				"美国"，"法国","中国","德国","意大利","澳大利亚"
-			}
+			"label_group_name":"国家",
+			"labels":["美国", "法国","中国","德国","意大利","澳大利亚"]
 		},{
-			"label_group":"省市",
-			"label":{
-					"江苏"，"黑龙江","广东","浙江","北京","江西"
-			}
+			"label_group_name":"省市",
+			"labels":["江苏", "黑龙江","广东","浙江","北京","江西"]
 		},{
-			"label_group":"基本信息",
-			"label":{
-					"男"，"女","新生儿","9-13岁","14-18岁","成年"
+			"label_group_name":"基本信息",
+			"labels":["男", "女","新生儿","9-13岁","14-18岁","成年"]
 		}]
 		"""
-@mantis @manage_classfication
+@gaia @mall @mall.product @classfication_label
 Scenario:1 运营人员为分类配置标签
 	When manager为商品分类'平板电脑'配置标签
 		"""
 		[{
-			"label_group":"国家",
-			"label":{
-				"美国","法国"
-			}
+			"label_group_name":"国家",
+			"labels":["美国", "法国"]
 		}]
 		"""
 
-	Then manager能获取商品分类列表
-		|classfication|    create_time    | business_number |      operate      |
-		|   电子数码  |2016-07-21 15:30:08|      0.00       |修改 删除  配置标签|
-		|   生活用品  |2016-07-21 15:31:27|      0.00       |修改 删除  配置标签|
+	Then manager查看商品分类列表
+		|classfication_name|      operation      |
+		|   电子数码  |修改,删除,配置标签|
+		|   生活用品  |修改,删除,配置标签|
 
-	Then manager查看商品分类'电子数码'的二级分类
-		|classfication|     create_time   | business_number |             operate           |
-		|     耳机    |2016-07-21 15:30:25|      0.00       |修改 删除 配置特殊资质 配置标签|
-		|     手机    |2016-07-21 15:31:25|      0.00       |修改 删除 配置特殊资质 配置标签|
-		|   平板电脑  |2016-07-21 15:32:25|      0.00       |修改 删除 配置特殊资质 已配置标签|
-	Then manager查看商品分类'生活用品'的二级分类
-		|classfication|     create_time   | business_number |             operate           |
-		|     零食    |2016-07-21 15:31:25|      0.00       |修改 删除 配置特殊资质 配置标签|
-		|     肥皂    |2016-07-21 15:31:25|      0.00       |修改 删除 配置特殊资质 配置标签|
-		|   清洗用品  |2016-07-21 15:31:25|      0.00       |修改 删除 配置特殊资质 配置标签|
-		"""
-		[{
-			"label_group":"国家",
-			"label":{
-				"美国","法国"
-			}
-		}]
-		"""
-	Then manager查看商品'分类31'配置的标签
-		"""
-		[{
-			"label_group":"国家",
-			"label":{
-				"美国","法国"
-			}
-		}]
-		"""
+#	Then manager查看商品分类'电子数码'的二级分类
+#		|classfication_name|    operation          |
+#		|     耳机    |修改,删除,配置特殊资质,配置标签|
+#		|     手机    |修改,删除,配置特殊资质,配置标签|
+#		|  平板电脑    |修改,删除,配置特殊资质,已配置标签|
+
+#	Then manager查看商品分类'生活用品'的二级分类
+#		|classfication_name|             operation           |
+#		|     零食    |修改,删除,配置特殊资质,配置标签|
+#		|     肥皂    |修改,删除,配置特殊资质,配置标签|
+#		|   清洁用品  |修改,删除,配置特殊资质,配置标签|
 
 	When manager为商品分类'生活用品'配置标签
 	
 		"""
 		[{
-			"label_group":"省市",
-			"label":{
-				"江苏","黑龙江"
-			}
+			"label_group_name":"省市",
+			"labels":["江苏","黑龙江"]
 		},{
-			"label_group":"基本信息",
-			"label":{
-				"男","女"
-			}
+			"label_group_name":"基本信息",
+			"labels":["男","女"]
 		}]
 		"""
 
-	Then manager能获取商品分类列表
-		|classfication|    create_time    | business_number |      operate      |
-		|   电子数码  |2016-07-21 15:30:08|      0.00       |修改 删除  配置标签|
-		|   生活用品  |2016-07-21 15:31:27|      0.00       |修改 删除  已配置标签|
-	Then manager查看商品分类'电子数码'的二级分类
-		|classfication|     create_time   | business_number |             operate           |
-		|     耳机    |2016-07-21 15:30:25|      0.00       |修改 删除 配置特殊资质 配置标签|
-		|     手机    |2016-07-21 15:31:25|      0.00       |修改 删除 配置特殊资质 配置标签|
-		|   平板电脑  |2016-07-21 15:32:25|      0.00       |修改 删除 配置特殊资质 已配置标签|
-	Then manager查看商品分类'生活用品'的二级分类
-		|classfication|     create_time   | business_number |              operate            |
-		|     零食    |2016-07-21 15:31:25|      0.00       |修改 删除 配置特殊资质 已配置标签|
-		|     肥皂    |2016-07-21 15:31:25|      0.00       |修改 删除 配置特殊资质 已配置标签|
-		|   清洗用品  |2016-07-21 15:31:25|      0.00       |修改 删除 配置特殊资质 已配置标签|
-	Then manager查看商品分类'肥皂'的标签
-		"""
-		[{
-			"label_group":"省市",
-			"label":{
-				"江苏","黑龙江"
-			}
-		},{
-			"label_group":"基本信息",
-			"label":{
-				"男","女"
-			}
-		}]
-		"""
-	Then manager为商品分类'零食'配置标签
-		"""
-		[{
-			"label_group":"省市",
-			"label":{
-				"江苏","黑龙江"
-			}
-		},{
-			"label_group":"基本信息",
-			"label":{
-				"男","女"
-			}
-		}]
-		"""
-	When manager为商品标签'肥皂'配置标签
-		"""
-		[{
-			"label_group":"省市",
-			"label":{
-				"江苏"
-			}
-		},{
-			"label_group":"基本信息",
-			"label":{
-				"男"
-			}
-		}]
-		"""
-	Then manager查看商品分类'肥皂'的标签
-		"""
-		[{
-			"label_group":"省市",
-			"label":{
-				"江苏"
-			}
-		},{
-			"label_group":"基本信息",
-			"label":{
-				"男"
-			}
-		}]
-		"""
-	When manager为商品分类'清洗用品'配置标签
-		"""
-		{
-			"label_group":null,
-			"label":null
-		}
-		"""
-	Then manager能获取商品分类列表
-		|classfication|    create_time    | business_number |      operate      |
-		|   电子数码  |2016-07-21 15:30:08|      0.00       |修改 删除  配置标签|
-		|   生活用品  |2016-07-21 15:31:27|      0.00       |修改 删除  已配置标签|
-	Then manager查看商品分类'电子数码'的二级分类
-		|classfication|     create_time   | business_number |             operate           |
-		|     耳机    |2016-07-21 15:30:25|      0.00       |修改 删除 配置特殊资质 配置标签|
-		|     手机    |2016-07-21 15:31:25|      0.00       |修改 删除 配置特殊资质 配置标签|
-		|   平板电脑  |2016-07-21 15:32:25|      0.00       |修改 删除 配置特殊资质 已配置标签|
-	Then manager查看商品分类'生活用品'的二级分类
-		|classfication|     create_time   | business_number |              operate            |
-		|     零食    |2016-07-21 15:31:25|      0.00       |修改 删除 配置特殊资质 已配置标签|
-		|     肥皂    |2016-07-21 15:31:25|      0.00       |修改 删除 配置特殊资质 配置标签|
-		|   清洗用品  |2016-07-21 15:31:25|      0.00       |修改 删除 配置特殊资质 已配置标签|
+	Then manager查看商品分类列表
+		|classfication_name|      operation      |
+		|   电子数码  |修改,删除,配置标签|
+		|   生活用品  |修改,删除,已配置标签|
 
+#	Then manager查看商品分类'电子数码'的二级分类
+#		|classfication_name|           operation           |
+#		|     耳机    |修改,删除,配置特殊资质,配置标签|
+#		|     手机    |修改,删除,配置特殊资质,配置标签|
+#		|   平板电脑  |修改,删除,配置特殊资质,已配置标签|
+#
+#	Then manager查看商品分类'生活用品'的二级分类
+#		|classfication_name|              operation            |
+#		|     零食    |修改,删除,配置特殊资质,已配置标签|
+#		|     肥皂    |修改,删除,配置特殊资质,已配置标签|
+#		|   清洁用品  |修改,删除,配置特殊资质,已配置标签|
 
+#	Then manager查看商品分类'肥皂'的标签
+#		"""
+#		[{
+#			"label_group_name":"省市",
+#			"labels":["江苏","黑龙江"]
+#		},{
+#			"label_group_name":"基本信息",
+#			"labels":["男","女"]
+#		}]
+#		"""
+	When manager为商品分类'零食'配置标签
+		"""
+		[{
+			"label_group_name":"省市",
+			"labels":["江苏","黑龙江"]
+		},{
+			"label_group_name":"基本信息",
+			"labels":["男","女"]
+		}]
+		"""
+	When manager为商品分类'肥皂'配置标签
+		"""
+		[{
+			"label_group_name":"省市",
+			"labels":["江苏"]
+		},{
+			"label_group_name":"基本信息",
+			"labels":["男"]
+		}]
+		"""
+#	Then manager查看商品分类'肥皂'的标签
+#		"""
+#		[{
+#			"label_group_name": "省市",
+#			"labels": ["江苏","黑龙江"]
+#		},{
+#			"label_group_name": "基本信息",
+#			"labels": ["男","女"]
+#		}]
+#		"""
+	When manager为商品分类'清洁用品'配置标签
+		"""
+		[]
+		"""
 
+	Then manager查看商品分类列表
+		|classfication_name|      operation      |
+		|   电子数码  |修改,删除,配置标签|
+		|   生活用品  |修改,删除,已配置标签|
+
+#	Then manager查看商品分类'电子数码'的二级分类
+#		|classfication_name|           operation           |
+#		|     耳机    |修改,删除,配置特殊资质,配置标签|
+#		|     手机    |修改,删除,配置特殊资质,配置标签|
+#		|   平板电脑  |修改,删除,配置特殊资质,已配置标签|
+
+#	Then manager查看商品分类'生活用品'的二级分类
+#		|classfication_name|          operation            |
+#		|     零食    |修改,删除,配置特殊资质,已配置标签|
+#		|     肥皂    |修改,删除,配置特殊资质,配置标签|
+#		|   清洁用品  |修改,删除,配置特殊资质,已配置标签|

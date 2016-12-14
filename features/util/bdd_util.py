@@ -302,7 +302,7 @@ def print_json(obj):
 	print json.dumps(obj, indent=True)
 
 
-def table2dict(context):
+def table2list(context):
 	expected = []
 	for row in context.table:
 		data = {}

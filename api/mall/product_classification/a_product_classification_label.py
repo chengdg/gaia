@@ -48,8 +48,6 @@ class AProductClassificationLabel(api_resource.ApiResource):
 			})
 		return return_data
 
-
-
 	@param_required(['classification_id', 'selected_labels:json'])
 	def put(args):
 		"""

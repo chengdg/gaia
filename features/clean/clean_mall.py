@@ -65,6 +65,7 @@ def clean():
 	mall_models.ClassificationHasProduct.delete().execute()
 	mall_models.ClassificationQualification.delete().execute()
 	mall_models.Classification.delete().execute()
+	mall_models.ClassificationHasLabel.delete().execute()
 	mall_models.ProductModelHasPropertyValue.delete().execute()
 	mall_models.ProductModel.delete().execute()
 	mall_models.ProductSwipeImage.delete().execute()

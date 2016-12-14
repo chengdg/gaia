@@ -139,17 +139,26 @@ class ProductClassification(business_model.Model):
 		设置商品分类标签
 		:return:
 		"""
+		#首先删除已有的标签
+		self.delete_labels()
 		bulk_create = []
-		print selected_labels
-		for label in selected_labels:
-			label_group_id = label['labelGroupId'],
-			for label_id in label['labelIds']:
-				bulk_create.append(dict(
-					classification_id = self.id,
-					label_group_id = label_group_id[0] if isinstance(label_group_id, tuple) else str(label_group_id),
-					label_id = str(label_id)
-				))
-		ProductClassificationLabel.create_many(bulk_create)
+		if len(selected_labels) > 0:
+			for label in selected_labels:
+				label_group_id = label['labelGroupId'],
+				for label_id in label['labelIds']:
+					bulk_create.append(dict(
+						classification_id = self.id,
+						label_group_id = label_group_id[0] if isinstance(label_group_id, tuple) else str(label_group_id),
+						label_id = str(label_id)
+					))
+			ProductClassificationLabel.create_many(bulk_create)
+
+	def delete_labels(self):
+		"""
+		删除所有标签
+		:return:
+		"""
+		mall_models.ClassificationHasLabel.delete().dj_where(classification_id=self.id).execute()
 
 	def get_classification_labels(self, classification_ids=None):
 		"""

@@ -18,7 +18,7 @@ def step_impl(context, user):
 
 @then(u"{user}查看商品标签列表")
 def step_impl(context, user):
-	expected = bdd_util.table2dict(context)
+	expected = bdd_util.table2list(context)
 	response = context.client.get('/mall/product_label_groups/')
 	actual = response.data['product_label_groups']
 	for data in expected:

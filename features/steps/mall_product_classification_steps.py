@@ -6,7 +6,6 @@ from behave import *
 from business.mall.corporation_factory import CorporationFactory
 from features.util import bdd_util
 from db.mall import models as mall_models
-from db.account import models as account_models
 
 def __add_classification(context, classification2children, level, father_id):
 	for classification in classification2children:
@@ -155,3 +154,111 @@ def step_impl(context, user, classification_name):
 	})
 
 	bdd_util.assert_api_call_success(response)
+
+@when(u"{user}为商品分类'{classification_name}'配置标签")
+def step_impl(context, user, classification_name):
+	datas = json.loads(context.text)
+	selected_labels = []
+	classification_id = __classification_name2id(classification_name)
+	for data in datas:
+		selected_labels.append({
+			'labelGroupId': label_group_name2id(data['label_group_name']),
+			'labelIds': map(lambda x: label_name2id(x), data['labels'])
+		})
+
+	print (selected_labels)
+
+	response = context.client.put('/mall/product_classification_label/', {
+		'classification_id': classification_id,
+		'selected_labels': json.dumps(selected_labels)
+	})
+	bdd_util.assert_api_call_success(response)
+
+@then(u"{user}查看商品分类列表")
+def step_impl(context, user):
+	expected = bdd_util.table2list(context)
+	for one in expected:
+		one['operation'] = one['operation'].split(',')
+	actual = __view_classification_list(context)
+	print (expected)
+	print (actual)
+	bdd_util.assert_list(expected, actual)
+
+@then(u"{user}查看商品分类'{classification_name}'的二级分类")
+def step_impl(context, user, classification_name):
+	classification_id = __classification_name2id(classification_name)
+	expected = bdd_util.table2list(context)
+	for one in expected:
+		print (isinstance(one['operation'], unicode))
+		one['operation'] = one['operation'].split(',')
+	actual = __view_classification_list(context, classification_id)
+	print (expected)
+	print (actual)
+	bdd_util.assert_list(expected, actual)
+
+@then(u"{user}查看商品分类'{classification_name}'的标签")
+def step_impl(context, user, classification_name):
+	expected = json.loads(context.text)
+	classification_id = __classification_name2id(classification_name)
+	response = context.client.get('/mall/product_classification_label/', {
+		'classification_id': classification_id
+	})
+	resp_datas = response.data
+	actual = []
+	for data in resp_datas:
+		label_group_name = label_group_id2name(data['labelGroupId'])
+		label_ids = map(lambda x: label_id2name(x), data['labelIds'])
+		actual.append({
+			'label_group_name': label_group_name,
+			'labels': label_ids
+		})
+
+	print (expected)
+	print (actual)
+	bdd_util.assert_list(expected, actual)
+
+
+def __view_classification_list(context, father_id=0):
+
+
+	data = {
+		'father_id': father_id
+	}
+
+	response = context.client.get('/mall/product_classifications/', data)
+	data_list = response.data['product_classifications']
+	use_data_list = []
+
+	for one in data_list:
+		use_data = dict()
+		use_data['classfication_name'] = one['name']
+
+		operation_list = [u'修改', u'删除']
+		if father_id != 0:
+			operation_list.append(u'配置特殊资质')
+
+		if one['has_label']:
+			operation_list.append(u'已配置标签')
+		else:
+			operation_list.append(u'配置标签')
+		use_data['operation'] = operation_list
+		use_data_list.append(use_data)
+
+	return use_data_list
+
+
+def label_group_name2id(label_group_name):
+	label_group = mall_models.ProductLabelGroup.select().dj_where(name=label_group_name).get()
+	return label_group.id
+
+def label_group_id2name(label_group_id):
+	label_group = mall_models.ProductLabelGroup.select().dj_where(id=label_group_id).get()
+	return label_group.name
+
+def label_name2id(label_name):
+	label = mall_models.ProductLabel.select().dj_where(name=label_name).get()
+	return label.id
+
+def label_id2name(label_id):
+	label = mall_models.ProductLabel.select().dj_where(id=label_id).get()
+	return label.name
