@@ -4,6 +4,7 @@ from business import model as business_model
 from business.coupon.coupon_repository import CouponRepository
 from business.coupon.coupon_rule_repository import CouponRuleRepository
 from business.deprecated.wepage_project_repository import WepageProjectRepository
+from business.member.member_grade_repository import MemberGradeRepository
 from business.member.member_repository import MemberRepository
 from business.order.delivery_item_repository import DeliveryItemRepository
 from business.order.order_export_job_repository import OrderExportJobRepository
@@ -236,3 +237,7 @@ class Corporation(business_model.Model):
 	@property
 	def social_account_repository(self):
 		return SocialAccountRepository(self)
+
+	@property
+	def member_grade_repository(self):
+		return MemberGradeRepository(self)
