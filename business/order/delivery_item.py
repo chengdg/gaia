@@ -620,11 +620,10 @@ class DeliveryItem(business_model.Model):
 		if self.has_db_record:
 			message_content = u"您好，订单号：%s，收货人：%s。已退单，请知晓！【微众传媒】"
 			supplier_tel = self.supplier_info['supplier_tel']
-			order_id = self.bid.split("^")[0]
 			# data = {
    #                  "phones": str(supplier_tel),
    #                  "content": {
-   #                      "order_id": order_id,
+   #                      "order_id": self.bid,
    #                      "ship_name": self.ship_name
    #                  },
    #                  "sms_code": "SMS_34465265"
@@ -633,7 +632,7 @@ class DeliveryItem(business_model.Model):
 			data = {
                     "phones": str(supplier_tel),
                     "content": {
-                        "reason": str(order_id)+u'仅供测试'+str(self.ship_name)
+                        "reason": str(self.bid)+u'仅供测试'+str(self.ship_name)
                     },
                     "sms_code": "SMS_27200001"
                 }		
