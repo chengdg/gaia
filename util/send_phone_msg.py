@@ -11,6 +11,7 @@ from BeautifulSoup import BeautifulSoup
 from eaglet.core.exceptionutil import unicode_full_stack
 from eaglet.core import watchdog
 from gaia_conf import TOPIC
+from bdem import msgutil
 
 # URL = "http://www.mxtong.net.cn/GateWay/Services.asmx/DirectSend?%s"
 # USER_ID = 963921
@@ -44,20 +45,5 @@ from gaia_conf import TOPIC
 # 		watchdog.alert(notify_msg)
 # 		return False
 
-def send_phone_captcha(phones, content):
-	data = {
-		"content": content,
-		"phones": phones  
-	}
+def send_phone_captcha(data):
 	msgutil.send_message(TOPIC['notify'], 'phone', data)
-
-def send_captcha(phone_number, company_name=u'微众传媒'):
-	"""
-		send_phone_msg: 发送手机验证码
-	"""
-	MSG_CONTENT = u"您的验证码为[%s]，请不要泄露给任何人【%s】"
-	captcha = ''.join(random.sample(string.digits, 4))
-	content = MSG_CONTENT % (captcha, company_name)
-	#result = True
-	result = send_phone_captcha(phone_number, content)
-	return result,captcha
