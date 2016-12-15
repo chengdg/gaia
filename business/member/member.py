@@ -61,8 +61,7 @@ class Member(business_model.Model):
 		'sex',
 		'purchase_frequency',
 		'cancel_subscribe_time',
-		'fans_count',
-		'webapp_user_id'
+		'fans_count'
 	)
 
 	@staticmethod
