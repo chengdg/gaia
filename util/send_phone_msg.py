@@ -11,6 +11,7 @@ from BeautifulSoup import BeautifulSoup
 from eaglet.core.exceptionutil import unicode_full_stack
 from eaglet.core import watchdog
 from gaia_conf import TOPIC
+from bdem import msgutil
 
 # URL = "http://www.mxtong.net.cn/GateWay/Services.asmx/DirectSend?%s"
 # USER_ID = 963921
