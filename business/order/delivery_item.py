@@ -54,7 +54,8 @@ class DeliveryItem(business_model.Model):
 
 	@cached_context_property
 	def express_company_name_text(self):
-		express_company_name = self.context['corp'].express_delivery_repository.get_company_by_value(self.express_company_name_value)
+		express_company_name = self.context['corp'].express_delivery_repository.get_company_by_value(
+			self.express_company_name_value)
 		return express_company_name
 
 	def __init__(self, db_model):
@@ -106,9 +107,9 @@ class DeliveryItem(business_model.Model):
 			product_names.append(product.name)
 			total_count += product.count
 		return {
-			'total_sale_price':total_sale_price,
-			'product_names':product_names,
-			'total_count':total_count
+			'total_sale_price': total_sale_price,
+			'product_names': product_names,
+			'total_count': total_count
 		}
 
 	@staticmethod
@@ -354,20 +355,20 @@ class DeliveryItem(business_model.Model):
 				delivery_item.supplier_info = {
 					'name': supplier_user.name,
 					'supplier_type': 'supplier_user',
-					'supplier_tel':''
+					'supplier_tel': ''
 				}
 			elif supplier:
 				supplier = id2supplier.get(db_model.supplier, None)
 				delivery_item.supplier_info = {
 					'name': supplier.name,
 					'supplier_type': 'supplier',
-					'supplier_tel':supplier.supplier_tel
+					'supplier_tel': supplier.supplier_tel
 				}
 			else:
 				delivery_item.supplier_info = {
 					'name': '',
 					'supplier_type': 'None',
-					'supplier_tel':''
+					'supplier_tel': ''
 				}
 
 	def pay(self, payment_time, corp):
@@ -471,6 +472,11 @@ class DeliveryItem(business_model.Model):
 		process_order_after_delivery_item_service = ProcessOrderAfterDeliveryItemService.get(corp)
 		process_order_after_delivery_item_service.process_order(self)
 
+		# [compatibility]: 兼容apiserver当只有一个出货单的时候，直接显示订单的发货信息
+		mall_models.Order.update(express_company_name=express_company_name_value, express_number=express_number,
+		                         is_100=with_logistics_trace, leader_name=leader_name).dj_where(
+			id=self.origin_order_id).execute()
+
 		return True, ''
 
 	def update_ship_info(self, corp, with_logistics_trace, express_company_name_value, express_number, leader_name):
@@ -485,6 +491,10 @@ class DeliveryItem(business_model.Model):
 		self.__send_msg_to_topic('delivery_item_ship_info_updated', self.status, self.status)
 
 		self.__record_operation_log(self.bid, corp.username, action_text)
+		# [compatibility]: 兼容apiserver当只有一个出货单的时候，直接显示订单的发货信息
+		mall_models.Order.update(express_company_name=express_company_name_value, express_number=express_number,
+		                         is_100=with_logistics_trace, leader_name=leader_name).dj_where(
+			id=self.origin_order_id).execute()
 		return True, ''
 
 	def apply_for_refunding(self, corp, cash, weizoom_card_money, coupon_money, integral):
@@ -619,3 +629,4 @@ class DeliveryItem(business_model.Model):
                     "sms_code": "SMS_34465265"
                 }		
 			rs = send_phone_captcha(data)
+

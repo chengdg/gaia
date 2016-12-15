@@ -22,418 +22,390 @@ from util import emojicons_util
 from db.member import models as member_models
 from business import model as business_model
 from business.member.member_has_tag import MemberHasTag
-
+from db.mall import models as mall_models
 
 
 class Member(business_model.Model):
-    """
-    会员
-    """
-    __slots__ = (
-        'id',
-        'grade_id',
-        'username_hexstr',
-        #'webapp_user',
-        'is_subscribed',
-        'created_at',
-        'token',
-        'webapp_id',
-        'pay_money',
-        'update_time',
-        'status',
-        'experience',
-        'remarks_name',
-        'remarks_extra',
-        'last_visit_time',
-        'session_id',
-        'is_subscribed',
-        'friend_count',
-        'factor',
-        'source',
-        'integral',
-        'update_time',
-        'pay_times',
-        'last_pay_time',
-        'unit_price',
-        'city',
-        'province',
-        'country',
-        'sex',
-        'purchase_frequency',
-        'cancel_subscribe_time',
-        'fans_count'
-    )
-
-
-    @staticmethod
-    @param_required(['models'])
-    def from_models(args):
-        """
-        工厂对象，根据member model获取Member业务对象
-
-        @param[in] model: member model
-
-        @return Member业务对象
-        """
-        models = args['models']
-        corp = args['corp']
-        members = []
-        for model in models:
-
-            member = Member(model)
-            member.context['corp'] = corp
-            member.context['db_model'] = model
-            members.append(member)
-        return members
-
-    def __init__(self, model):
-        business_model.Model.__init__(self)
-
-        #self.context['webapp_owner'] = webapp_owner
-        self.context['db_model'] = model
-        if model:
-            self._init_slot_from_model(model)
-
-    def increase_integral_after_finish_order(self, order):
-        """
-        有用
-        @param order:
-        @return:
-        """
-        Integral.increase_after_order_payed_finsh({
-            'member': self,
-            'order': order,
-            'corp': self.context['corp']
-        })
-
-    def cleanup_cache(self):
-        """
-        有用
-        @return:
-        """
-        openid = member_models.MemberHasSocialAccount.select().dj_where(member_id=self.id).first().account.openid
-        key = 'member_{webapp:%s}_{openid:%s}' % (self.webapp_id, openid)
-        cache_util.delete_cache(key)
-
-    def update_pay_info(self, order, from_status, to_status):
-        """
-        有用
-        @param order:
-        @param from_status:
-        @param to_status:
-        @return:
-        """
-        # todo order搜索完成后使用order_repository
-        from db.mall import models as mall_models
-
-        if to_status == 'paid':
-            last_pay_time = order.payment_time
-        else:
-            last_pay_time = self.last_pay_time
-
-        webapp_user_id = order.webapp_user_id
-
-        pay_money = 0
-        pay_times = 0
-
-        user_orders = self.context['corp'].order_repository.get_orders_by_webapp_user_id(webapp_user_id, mall_models.ORDER_STATUS_SUCCESSED)
-
-        for user_order in user_orders:
-            pay_money += user_order.pay_money
-            pay_times += 1
-
-        if pay_times > 0:
-            unit_price = pay_money / pay_times
-        else:
-            unit_price = 0
-
-        member_models.Member.update(unit_price=unit_price, pay_times=pay_times,
-                                    pay_money=pay_money,
-                                    last_pay_time=last_pay_time).dj_where(
-            id=self.id).execute()
-
-    # def auto_update_grade(self, member, delete=False):
-    #     """
-    #     @param corp:
-    #     @param member:
-    #     @param delete:
-    #     @return:是否改变了等级
-    #     """
-    #     is_change = False
-    #     corp_id = self.context['corp'].id
-    #     if not isinstance(member, member_models.Member):
-    #         return
-    #     if not member:
-    #         return False
-    #     if not member.grade.is_auto_upgrade and not delete:
-    #         return is_change
-
-    #     webapp_id = member.webapp_id
-    #     corp_id = self.context['corp'].id
-    #     webapp_user_ids = [webapp_user.id for webapp_user in member_models.WebAppUser.filter(member_id=member.id)]
-
-    #     # 获取会员数据
-    #     paid_orders = self.context['corp'].order_repository.get_orders_by_webapp_user_id(webapp_user_id, mall_models.ORDER_STATUS_SUCCESSED)
-    #     Order.by_webapp_user_id(webapp_user_ids).filter(
-    #         status=mall_models.ORDER_STATUS_SUCCESSED, origin_order_id__lte=0)
-    #     pay_times = paid_orders.count()
-    #     bound = member.experience
-    #     pay_money = 0
-    #     for order in paid_orders:
-    #         pay_money += order.get_final_price(webapp_id) + order.weizoom_card_money
-
-    #     if delete:
-    #         grades_list = MemberGrade.objects.filter(webapp_id=webapp_id, is_auto_upgrade=True).exclude(
-    #             id=member.grade_id).order_by('-id')
-    #     else:
-    #         grades_list = MemberGrade.objects.filter(webapp_id=webapp_id, is_auto_upgrade=True,
-    #                                                  id__gt=member.grade_id).order_by('-id')
-    #     from cache.webapp_owner_cache import get_webapp_owner_info
-    #     # 此处import写在文件头会报错
-    #     is_all_conditions = get_webapp_owner_info(webapp_owner_id).integral_strategy_settings.is_all_conditions
-
-    #     # 计算条件
-    #     if is_all_conditions:
-    #         for grade in grades_list:
-    #             # if pay_money >= grade.pay_money and pay_times >= grade.pay_times and bound >= grade.upgrade_lower_bound:
-    #             if pay_money >= grade.pay_money and pay_times >= grade.pay_times:
-    #                 is_change = True
-    #                 new_grade = grade
-    #                 break
-    #     else:
-    #         for grade in grades_list:
-    #             # if pay_money >= grade.pay_money or pay_times >= grade.pay_times or bound >= grade.upgrade_lower_bound:
-    #             if pay_money >= grade.pay_money or pay_times >= grade.pay_times:
-    #                 is_change = True
-    #                 new_grade = grade
-    #                 break
-    #     if is_change:
-    #         Member.objects.filter(id=member.id).update(grade=new_grade)
-    #     return is_change
-
-
-    @cached_context_property
-    def __grade(self):
-        """
-        [property] 会员等级信息
-        """
-        member_model = self.context['db_model']
-
-        if not member_model:
-            return None
-
-        return member_model.grade
-
-    @property
-    def discount(self):
-        """
-        [property] 会员折扣
-
-        @return 返回二元组(grade_id, 折扣百分数)
-        """
-        member_model = self.context['db_model']
-        if not member_model:
-            return -1, 100
-
-        member_grade = self.__grade
-        if member_grade:
-            return member_model.grade_id, member_grade.shop_discount
-        else:
-            return member_model.grade_id, 100
-
-    @property
-    def grade(self):
-        """
-        [property] 会员等级
-        """
-        return self.__grade
-
-    @property
-    def grade_name(self):
-        """
-        [property] 会员等级名称
-        """
-        return self.__grade.name
-
-    @cached_context_property
-    def __tags(self):
-        """
-        [property] 会员分组信息
-        """
-        member_model = self.context['db_model']
-
-        if not member_model:
-            return None
-        member_tags = MemberHasTag.get_member_tags({'member_id': member_model.id})
-        return member_tags
-
-
-    @property
-    def tags(self):
-        """
-        [property] 会员分组信息列表
-        """
-        return self.__tags
-
-    @cached_context_property
-    def __info(self):
-        """
-        [property] 与会员对应的MemberInfo model对象
-        """
-        member_model = self.context['db_model']
-        if not member_model:
-            return None
-
-        try:
-            member_info = member_models.MemberInfo.get(member=member_model)
-        except:
-            member_info = member_models.MemberInfo()
-            member_info.member = member_model
-            member_info.name = ''
-            member_info.weibo_name = ''
-            member_info.phone_number = ''
-            member_info.sex = member_models.SEX_TYPE_UNKOWN
-            member_info.is_binded = False
-            member_info.weibo_nickname = ''
-            member_info.phone_number = ''
-            member_info.save()
-
-        if member_info.phone_number and len(member_info.phone_number) > 10:
-            member_info.phone =  '%s****%s' % (member_info.phone_number[:3], member_info.phone_number[-4:])
-        else:
-            member_info.phone = ''
-
-        return member_info
-
-    @property
-    def phone(self):
-        """
-        [property] 会员绑定的手机号码加密
-        """
-
-        return self.__info.phone
-
-    @cached_context_property
-    def phone_number(self):
-        """
-        [property] 会员绑定的手机号码
-        """
-
-        return self.__info.phone_number
-
-
-    @cached_context_property
-    def captcha(self):
-        """
-        [property] 手机验证码
-        """
-        return self.__info.captcha
-
-    @cached_context_property
-    def captcha_session_id(self):
-        """
-        [property] 手机验证码
-        """
-        return self.__info.session_id
-
-    @property
-    def name(self):
-        """
-        [property] 会员名
-        """
-
-        return self.__info.name
-
-    @property
-    def is_binded(self):
-        """
-        [property] 会员是否进行了绑定
-        """
-        return self.__info.is_binded
-
-    @cached_context_property
-    def user_icon(self):
-        """
-        [property] 会员头像
-        """
-        return self.context['db_model'].user_icon
-
-    @cached_context_property
-    def username_for_html(self):
-        """
-        [property] 兼容html显示的会员名
-        """
-        if (self.username_hexstr is not None) and (len(self.username_hexstr) > 0):
-            username = emojicons_util.encode_emojicons_for_html(self.username_hexstr, is_hex_str=True)
-        else:
-            username = emojicons_util.encode_emojicons_for_html(self.username)
-
-        try:
-            username.decode('utf-8')
-        except:
-            username = self.username_hexstr
-
-        return username
-
-    @cached_context_property
-    def market_tools(self):
-        """
-        [property] 会员参与的营销工具集合
-        """
-        #TODO2: 实现营销工具集合
-        print u'TODO2: 实现营销工具集合'
-        return []
-
-    @staticmethod
-    def empty_member():
-        """工厂方法，创建空的member对象
-
-        @return Member对象
-        """
-        member = Member(None, None)
-        return member
-
-
-    @property
-    def username(self):
-        return hex_to_byte(self.username_hexstr)
-
-    @cached_context_property
-    def username_size_ten(self):
-        try:
-            username = unicode(self.username_for_html, 'utf8')
-            _username = re.sub('<[^<]+?><[^<]+?>', ' ', username)
-            if len(_username) <= 10:
-                return username
-            else:
-                name_str = username
-                span_list = re.findall(r'<[^<]+?><[^<]+?>', name_str) #保存表情符
-
-                output_str = ""
-                count = 0
-
-                if not span_list:
-                    return u'%s...' % name_str[:10]
-
-                for span in span_list:
-                    length = len(span)
-                    while not span == name_str[:length]:
-                        output_str += name_str[0]
-                        count += 1
-                        name_str = name_str[1:]
-                        if count == 10:
-                            break
-                    else:
-                        output_str += span
-                        count += 1
-                        name_str = name_str[length:]
-                        if count == 10:
-                            break
-                    if count == 10:
-                        break
-                return u'%s...' % output_str
-        except:
-            return self.username_for_html[:10]
-
-
-
+	"""
+	会员
+	"""
+	__slots__ = (
+		'id',
+		'grade_id',
+		'username_hexstr',
+		# 'webapp_user',
+		'is_subscribed',
+		'created_at',
+		'token',
+		'webapp_id',
+		'pay_money',
+		'update_time',
+		'status',
+		'experience',
+		'remarks_name',
+		'remarks_extra',
+		'last_visit_time',
+		'session_id',
+		'is_subscribed',
+		'friend_count',
+		'factor',
+		'source',
+		'integral',
+		'update_time',
+		'pay_times',
+		'last_pay_time',
+		'unit_price',
+		'city',
+		'province',
+		'country',
+		'sex',
+		'purchase_frequency',
+		'cancel_subscribe_time',
+		'fans_count'
+	)
+
+	@staticmethod
+	@param_required(['models'])
+	def from_models(args):
+		"""
+		工厂对象，根据member model获取Member业务对象
+
+		@param[in] model: member model
+
+		@return Member业务对象
+		"""
+		models = args['models']
+		corp = args['corp']
+		members = []
+		for model in models:
+			member = Member(model)
+			member.context['corp'] = corp
+			member.context['db_model'] = model
+			members.append(member)
+		return members
+
+	def __init__(self, model):
+		business_model.Model.__init__(self)
+
+		# self.context['webapp_owner'] = webapp_owner
+		self.context['db_model'] = model
+		if model:
+			self._init_slot_from_model(model)
+
+	@cached_context_property
+	def webapp_user_id(self):
+		return member_models.WebAppUser.select().dj_where(member_id=self.id).first().id
+
+	def increase_integral_after_finish_order(self, order):
+		"""
+		有用
+		@param order:
+		@return:
+		"""
+		Integral.increase_after_order_payed_finsh({
+			'member': self,
+			'order': order,
+			'corp': self.context['corp']
+		})
+
+	def cleanup_cache(self):
+		"""
+		有用
+		@return:
+		"""
+		openid = member_models.MemberHasSocialAccount.select().dj_where(member_id=self.id).first().account.openid
+		key = 'member_{webapp:%s}_{openid:%s}' % (self.webapp_id, openid)
+		cache_util.delete_cache(key)
+
+	def update_pay_info(self, order, from_status, to_status):
+		"""
+		有用
+		@param order:
+		@param from_status:
+		@param to_status:
+		@return:
+		"""
+		if to_status == 'paid':
+			last_pay_time = order.payment_time
+		else:
+			last_pay_time = self.last_pay_time
+
+		webapp_user_id = order.webapp_user_id
+
+		pay_money = 0
+		pay_times = 0
+
+		user_orders = self.context['corp'].order_repository.get_orders_by_webapp_user_id(webapp_user_id,
+		                                                                                 mall_models.ORDER_STATUS_SUCCESSED)
+
+		for user_order in user_orders:
+			pay_money += user_order.pay_money
+			pay_times += 1
+
+		if pay_times > 0:
+			unit_price = pay_money / pay_times
+		else:
+			unit_price = 0
+
+		member_models.Member.update(unit_price=unit_price, pay_times=pay_times,
+		                            pay_money=pay_money,
+		                            last_pay_time=last_pay_time).dj_where(
+			id=self.id).execute()
+
+	def auto_update_grade(self):
+		"""
+		@param corp:
+		@param member:
+		@param delete:
+		@return:是否改变了等级
+		"""
+
+		member_grades = self.context['corp'].member_grade_repository.get_auto_upgrade_for_corp()
+
+		member_grades = filter(lambda x: x.id > self.grade_id, member_grades)
+
+		user_orders = self.context['corp'].order_repository.get_orders_by_webapp_user_id(self.webapp_user_id,
+		                                                                                 mall_models.ORDER_STATUS_SUCCESSED)
+
+		pay_money = 0
+		pay_times = 0
+		for user_order in user_orders:
+			pay_money += user_order.pay_money
+			pay_times += 1
+
+		is_all_conditions = self.context['corp'].mall_config_repository.get_integral_strategy().is_all_conditions
+
+		new_grade = None
+		for grade in member_grades:
+			if is_all_conditions:
+				if pay_money >= grade.pay_money and pay_times >= grade.pay_times:
+					new_grade = grade
+			else:
+				if pay_money >= grade.pay_money or pay_times >= grade.pay_times:
+					new_grade = grade
+
+			if new_grade:
+				member = member_models.Member.get(id=self.id)
+				member.grade = new_grade
+				member.save()
+				break
+
+	@cached_context_property
+	def __grade(self):
+		"""
+		[property] 会员等级信息
+		"""
+		member_model = self.context['db_model']
+
+		if not member_model:
+			return None
+
+		return member_model.grade
+
+	@property
+	def discount(self):
+		"""
+		[property] 会员折扣
+
+		@return 返回二元组(grade_id, 折扣百分数)
+		"""
+		member_model = self.context['db_model']
+		if not member_model:
+			return -1, 100
+
+		member_grade = self.__grade
+		if member_grade:
+			return member_model.grade_id, member_grade.shop_discount
+		else:
+			return member_model.grade_id, 100
+
+	@property
+	def grade(self):
+		"""
+		[property] 会员等级
+		"""
+		return self.__grade
+
+	@property
+	def grade_name(self):
+		"""
+		[property] 会员等级名称
+		"""
+		return self.__grade.name
+
+	@cached_context_property
+	def __tags(self):
+		"""
+		[property] 会员分组信息
+		"""
+		member_model = self.context['db_model']
+
+		if not member_model:
+			return None
+		member_tags = MemberHasTag.get_member_tags({'member_id': member_model.id})
+		return member_tags
+
+	@property
+	def tags(self):
+		"""
+		[property] 会员分组信息列表
+		"""
+		return self.__tags
+
+	@cached_context_property
+	def __info(self):
+		"""
+		[property] 与会员对应的MemberInfo model对象
+		"""
+		member_model = self.context['db_model']
+		if not member_model:
+			return None
+
+		try:
+			member_info = member_models.MemberInfo.get(member=member_model)
+		except:
+			member_info = member_models.MemberInfo()
+			member_info.member = member_model
+			member_info.name = ''
+			member_info.weibo_name = ''
+			member_info.phone_number = ''
+			member_info.sex = member_models.SEX_TYPE_UNKOWN
+			member_info.is_binded = False
+			member_info.weibo_nickname = ''
+			member_info.phone_number = ''
+			member_info.save()
+
+		if member_info.phone_number and len(member_info.phone_number) > 10:
+			member_info.phone = '%s****%s' % (member_info.phone_number[:3], member_info.phone_number[-4:])
+		else:
+			member_info.phone = ''
+
+		return member_info
+
+	@property
+	def phone(self):
+		"""
+		[property] 会员绑定的手机号码加密
+		"""
+
+		return self.__info.phone
+
+	@cached_context_property
+	def phone_number(self):
+		"""
+		[property] 会员绑定的手机号码
+		"""
+
+		return self.__info.phone_number
+
+	@cached_context_property
+	def captcha(self):
+		"""
+		[property] 手机验证码
+		"""
+		return self.__info.captcha
+
+	@cached_context_property
+	def captcha_session_id(self):
+		"""
+		[property] 手机验证码
+		"""
+		return self.__info.session_id
+
+	@property
+	def name(self):
+		"""
+		[property] 会员名
+		"""
+
+		return self.__info.name
+
+	@property
+	def is_binded(self):
+		"""
+		[property] 会员是否进行了绑定
+		"""
+		return self.__info.is_binded
+
+	@cached_context_property
+	def user_icon(self):
+		"""
+		[property] 会员头像
+		"""
+		return self.context['db_model'].user_icon
+
+	@cached_context_property
+	def username_for_html(self):
+		"""
+		[property] 兼容html显示的会员名
+		"""
+		if (self.username_hexstr is not None) and (len(self.username_hexstr) > 0):
+			username = emojicons_util.encode_emojicons_for_html(self.username_hexstr, is_hex_str=True)
+		else:
+			username = emojicons_util.encode_emojicons_for_html(self.username)
+
+		try:
+			username.decode('utf-8')
+		except:
+			username = self.username_hexstr
+
+		return username
+
+	@cached_context_property
+	def market_tools(self):
+		"""
+		[property] 会员参与的营销工具集合
+		"""
+		# TODO2: 实现营销工具集合
+		print u'TODO2: 实现营销工具集合'
+		return []
+
+	@staticmethod
+	def empty_member():
+		"""工厂方法，创建空的member对象
+
+		@return Member对象
+		"""
+		member = Member(None, None)
+		return member
+
+	@property
+	def username(self):
+		return hex_to_byte(self.username_hexstr)
+
+	@cached_context_property
+	def username_size_ten(self):
+		try:
+			username = unicode(self.username_for_html, 'utf8')
+			_username = re.sub('<[^<]+?><[^<]+?>', ' ', username)
+			if len(_username) <= 10:
+				return username
+			else:
+				name_str = username
+				span_list = re.findall(r'<[^<]+?><[^<]+?>', name_str)  # 保存表情符
+
+				output_str = ""
+				count = 0
+
+				if not span_list:
+					return u'%s...' % name_str[:10]
+
+				for span in span_list:
+					length = len(span)
+					while not span == name_str[:length]:
+						output_str += name_str[0]
+						count += 1
+						name_str = name_str[1:]
+						if count == 10:
+							break
+					else:
+						output_str += span
+						count += 1
+						name_str = name_str[length:]
+						if count == 10:
+							break
+					if count == 10:
+						break
+				return u'%s...' % output_str
+		except:
+			return self.username_for_html[:10]
