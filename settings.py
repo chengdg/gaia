@@ -123,7 +123,6 @@ MAIL_NOTIFY_USERNAME = u'noreply@notice.weizoom.com'
 MAIL_NOTIFY_PASSWORD = u'Weizoom2015'
 MAIL_NOTIFY_ACCOUNT_SMTP = u'smtp.dm.aliyun.com'
 
-PANDA_IMAGE_DOMAIN = 'http://chaozhi.weizoom.com'
 
 # settings for WAPI Logger
 if MODE == 'develop' or MODE == 'test':
