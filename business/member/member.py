@@ -185,9 +185,7 @@ class Member(business_model.Model):
 					new_grade = grade
 
 			if new_grade:
-				member = member_models.Member.get(id=self.id)
-				member.grade = new_grade
-				member.save()
+				member_models.Member.update(grade=new_grade.id).dj_where(id=self.id).execute()
 				break
 
 	@cached_context_property
