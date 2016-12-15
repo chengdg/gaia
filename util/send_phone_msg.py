@@ -48,8 +48,7 @@ from bdem import msgutil
 def send_phone_captcha(phones, content):
 	data = {
 		"content": content,
-		"phones": phones,
-		"sms_code":'111'
+		"phones": phones
 	}
 	msgutil.send_message(TOPIC['notify'], 'phone', data)
 
