@@ -633,7 +633,7 @@ class DeliveryItem(business_model.Model):
 			data = {
                     "phones": str(supplier_tel),
                     "content": {
-                        "reason": str(order_id)+'仅供测试'+str(self.ship_name)
+                        "reason": str(order_id)+u'仅供测试'+str(self.ship_name)
                     },
                     "sms_code": "SMS_27200001"
                 }		
