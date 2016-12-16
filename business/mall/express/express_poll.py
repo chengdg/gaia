@@ -84,7 +84,7 @@ class ExpressPoll(object):
 		"""
 		# post中的param的json
 		param_json_data = {		
-			self.express_params.COMPANY: self.express_company_name_value,
+			self.express_params.COMPANY: self.express_company_name,
 			self.express_params.NUMBER: self.express_number,
 			self.express_params.TO: self.area,
 			self.express_params.KEY: self.express_config.app_key, 
@@ -214,7 +214,7 @@ class ExpressPoll(object):
 	def get_express_poll(self):
 		# 如果是空不处理
 		if self.express_company_name is '' or self.express_number is '':
-			watchdog.error(u'快递订阅异常,订单号:{}, 原因:{}'.format(self.bid, unicode_full_stack()), self.express_config.watchdog_type)
+			watchdog.error(u'快递订阅异常,订单号:{}, 原因:{}'.format(self.delivery_item.bid, unicode_full_stack()), self.express_config.watchdog_type)
 			return False
 
 		# 是否已经订阅过该订单，并且成功
@@ -241,5 +241,5 @@ class ExpressPoll(object):
 			if data and data.get('returnCode'):
 				self.express.status = data.get('returnCode')
 				self.express.save()
-			watchdog.error(u'快递订阅异常,订单号:{}, 原因:{}'.format(self.bid, unicode_full_stack()), self.express_config.watchdog_type)
+			watchdog.error(u'快递订阅异常,订单号:{}, 原因:{}'.format(self.delivery_item.bid, unicode_full_stack()), self.express_config.watchdog_type)
 			return False
