@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import json
 
 from business import model as business_model
 from business.order.delivery_item import DeliveryItem
@@ -301,7 +302,7 @@ class Order(business_model.Model):
 			if info:
 				order.weizoom_card_info = {
 					'trade_id': info.trade_id,
-					'used_card': info.used_card
+					'used_card': json.loads(info.used_card)
 				}
 			else:
 				order.weizoom_card_info = {}

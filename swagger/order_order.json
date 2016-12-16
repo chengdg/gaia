@@ -572,6 +572,18 @@
 														}
 													}
 												},
+												"weizoom_card_info": {
+													"type": "object",
+													"properties": {
+														"used_card": {
+															"type": "array",
+															"description": "卡号列表",
+															"items":{
+																"type":"string"
+															}
+														}
+													}
+												},
 												"status_code": {
 													"type": "string",
 													"description": "订单状态，created（待支付）, cancelled（已取消）, paid（已支付）,shipped（已发货）,finished（已完成）,refunding（退款中）,refunded（退款成功）"
