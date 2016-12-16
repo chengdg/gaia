@@ -143,12 +143,11 @@ class ProductClassification(business_model.Model):
 		self.delete_labels()
 		bulk_create = []
 		if len(selected_labels) > 0:
-			for label in selected_labels:
-				for label_id in label['labelIds']:
-					bulk_create.append(dict(
-						classification = self.id,
-						label_id = str(label_id)
-					))
+			for label_id in selected_labels:
+				bulk_create.append(dict(
+					classification = self.id,
+					label_id = str(label_id)
+				))
 			ProductClassificationLabel.create_many(bulk_create)
 
 	def delete_labels(self):

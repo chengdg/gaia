@@ -69,7 +69,7 @@ class AProductClassificationLabel(api_resource.ApiResource):
 		设置商品分类标签
 		"""
 		classification_id = args['classification_id']
-		selected_labels = args['selected_labels']
+		selected_labels = args.get('selected_labels', [])
 
 		weizoom_corp = CorporationFactory.get_weizoom_corporation()
 		classification = weizoom_corp.product_classification_repository.get_product_classification(classification_id)
