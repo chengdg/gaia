@@ -26,11 +26,10 @@ class ADeliveryItemKuaidiNotification(api_resource.ApiResource):
 		delivery_item_id = args['delivery_item_id']
 
 		delivery_item = delivery_item_repository.get_delivery_item(delivery_item_id)
-
 		if delivery_item.with_logistics_trace:
 			# 发送快递订阅
-			ExpressService(delivery_item).get_express_poll()
+			result = ExpressService(delivery_item).get_express_poll()
 
-		return {}
+		return result
 
 	
