@@ -31,10 +31,16 @@ class AProductClassificationLabel(api_resource.ApiResource):
 		classification = weizoom_corp.product_classification_repository.get_product_classification(classification_id)
 		classification_label_models = classification.get_classification_labels()
 
-		label_group_has_label = {}
+		all_label_ids = []
 		for model in classification_label_models:
+			all_label_ids.append(model.label_id)
+
+		label_models = weizoom_corp.product_label_repository.get_labels(all_label_ids)
+
+		label_group_has_label = {}
+		for model in label_models:
 			label_group_id = model.label_group_id
-			label_id = model.label_id
+			label_id = model.id
 			if not label_group_has_label.has_key(label_group_id):
 				label_group_has_label[label_group_id] = [label_id]
 			else:
