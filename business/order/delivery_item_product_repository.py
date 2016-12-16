@@ -91,7 +91,8 @@ class DeliveryItemProductRepository(business_model.Model):
 		                                                       "with_model_property_info": True})
 		product_id2product = {p.id: p for p in products}
 
-		product_model_name2values = self.corp.product_model_property_repository.get_order_product_model_values(custom_model_names)
+		product_model_name2values = self.corp.product_model_property_repository.get_order_product_model_values(
+			custom_model_names)
 
 		delivery_item_products = []
 		for r in ohs_db_model_list:
@@ -147,7 +148,8 @@ class DeliveryItemProductRepository(business_model.Model):
 						break
 
 				if not delivery_item_product.product_model_name_texts:
-					delivery_item_product.product_model_name_texts = [value.name for value in product_model_name2values[r.product_model_name]]
+					delivery_item_product.product_model_name_texts = [value.name for value in
+					                                                  product_model_name2values[r.product_model_name]]
 			delivery_item_product.thumbnails_url = product.thumbnails_url
 			delivery_item_product.is_deleted = product.is_deleted
 
@@ -202,14 +204,14 @@ class DeliveryItemProductRepository(business_model.Model):
 
 					delivery_item_products.append(premium_delivery_item_product)
 
+			# 填充会员等级价金额
+			if r.grade_discounted_money:
+				promotion_info['grade_discount_money'] = r.grade_discounted_money
+
 			# 填充限时抢购金额
 			if promotion:
 				if promotion.promotion_type == "flash_sale":
 					promotion_info['promotion_saved_money'] = db_promotion_result['promotion_saved_money']
-
-				# 填充会员等级价金额
-				if r.grade_discounted_money:
-					promotion_info['grade_discounted_money'] = r.grade_discounted_money
 
 				# 填充积分应用
 				integral_product_info = db_promotion_result.get('integral_product_info')
