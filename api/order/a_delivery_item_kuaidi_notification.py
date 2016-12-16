@@ -29,7 +29,9 @@ class ADeliveryItemKuaidiNotification(api_resource.ApiResource):
 		if delivery_item.with_logistics_trace:
 			# 发送快递订阅
 			result = ExpressService(delivery_item).get_express_poll()
-
-		return {}
+		if not result:
+			return 500, {}
+		else:
+			return {}
 
 	
