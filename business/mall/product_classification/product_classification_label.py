@@ -11,7 +11,6 @@ class ProductClassificationLabel(business_model.Model):
 	__slots__ = (
 		'id',
 		'classification_id',
-		'label_group_id',
 		'label_id',
 		'created_at',
 	)

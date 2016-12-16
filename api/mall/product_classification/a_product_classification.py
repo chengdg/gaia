@@ -14,7 +14,7 @@ class AProductClassification(api_resource.ApiResource):
     app = "mall"
     resource = "product_classification"
 
-    @param_required(['corp_id', 'name', 'father_id', '?note'])
+    @param_required(['name', 'father_id', '?note'])
     def put(args):
         name = args['name']
         father_id = args['father_id']
@@ -30,11 +30,11 @@ class AProductClassification(api_resource.ApiResource):
             'id': product_classification.id
         }
 
-    @param_required(['corp_id', 'name', 'id', '?note'])
+    @param_required(['name', 'classification_id', '?note'])
     def post(args):
         weizoom_corp = CorporationFactory.get_weizoom_corporation()
         name = args['name']
-        classification_id = args['id']
+        classification_id = args['classification_id']
         note = args.get('note', '')
 
         product_classification = weizoom_corp.product_classification_repository.get_product_classification(classification_id)
@@ -42,10 +42,10 @@ class AProductClassification(api_resource.ApiResource):
 
         return {}
 
-    @param_required(['id'])
+    @param_required(['classification_id'])
     def delete(args):
         weizoom_corp = CorporationFactory.get_weizoom_corporation()
-        classification_id = args['id']
+        classification_id = args['classification_id']
         product_classification = weizoom_corp.product_classification_repository.get_product_classification(classification_id)
         if product_classification.is_used_by_product():
             return 500, 'used_by_product' #商品分类正在被使用

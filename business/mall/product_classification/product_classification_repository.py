@@ -47,17 +47,17 @@ class ProductClassificationRepository(business_model.Service):
 		models = mall_models.ClassificationHasLabel.select().dj_where(classification_id__in=classification_ids)
 		for model in models:
 			classification_id = str(model.classification_id)
-			if model.label_group_id:
+			if model.label_id:
 				has_label_dict[classification_id] = True
 		return has_label_dict
 
 
-	def delete_product_classification(self, id):
+	def delete_product_classification(self, classification_id):
 		"""
 		删除指定的商品分类
 		"""
 		# 同时删除分类及其子分类
-		mall_models.Classification.update(status=mall_models.CLASSIFICATION_OFFLINE).dj_where(id=id).dj_where(father_id=id).execute()
+		mall_models.Classification.update(status=mall_models.CLASSIFICATION_OFFLINE).where((mall_models.Classification.id==classification_id) | (mall_models.Classification.father_id==classification_id)).execute()
 
 	def get_children_product_classifications(self, father_id):
 		"""

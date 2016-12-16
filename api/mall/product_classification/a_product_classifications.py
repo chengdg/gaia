@@ -18,6 +18,7 @@ class AProductClassifications(api_resource.ApiResource):
 		weizoom_corp = CorporationFactory.get_weizoom_corporation()
 		father_id = args.get('father_id', None)
 		if father_id:
+			print father_id
 			product_classifications = weizoom_corp.product_classification_repository.get_child_product_classifications(father_id)
 		else:
 			product_classifications = weizoom_corp.product_classification_repository.get_product_classifications()

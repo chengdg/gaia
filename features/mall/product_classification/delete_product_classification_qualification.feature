@@ -49,7 +49,7 @@ Background:
 		|    食品销售资格   |
 		|   安全食品许可证  |
 
-@gaia @mall @mall.product @mall.product_classification @product_classification_qualification
+@gaia @mall @mall.product @mall.product_classification @product_classification_qualification @aix
 Scenario:1 运营人员删除资质
 	When manager删除商品分类'零食'中已经分配的资质
 		"""

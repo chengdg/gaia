@@ -36,12 +36,11 @@ def step_impl(context, user):
 	response = context.client.get('/mall/product_classifications/')
 
 	product_classifications = response.data['product_classifications']
-	father2child = dict([(classification['father_id'], classification) for classification in product_classifications])
+	print (product_classifications)
 
 	product_classifications.sort(lambda x,y: cmp(x['father_id'], y['father_id']))
 	name2classification = dict()
 	id2classification = dict()
-	print (product_classifications)
 	for classification in product_classifications:
 		id = classification['id']
 		name = classification['name']
@@ -51,7 +50,6 @@ def step_impl(context, user):
 			id2classification[id] = data
 			if father_id == 0:
 				name2classification[name] = data
-		print (id2classification)
 		if father_id != 0:
 			id2classification[father_id][name] = id2classification[id]
 	actual = name2classification
@@ -65,13 +63,15 @@ def step_impl(context, user):
 	__change_empty_dict_to_none(name2classification)
 
 	expected = json.loads(context.text)
+	print (actual)
+	print (expected)
 	bdd_util.assert_dict(expected, actual)
 
 
 @when(u"{user}删除商品分类'{classification_name}'")
 def step_impl(context, user, classification_name):
 	data = {
-		'id': __classification_name2id(classification_name)
+		'classification_id': __classification_name2id(classification_name)
 	}
 	response = context.client.delete('/mall/product_classification/', data)
 	bdd_util.assert_api_call_success(response)
@@ -79,13 +79,15 @@ def step_impl(context, user, classification_name):
 def __classification_name2id(classification_name):
 	return mall_models.Classification.select().dj_where(name=classification_name).get().id
 
+def __classification_name2father_id(classification_name):
+	return mall_models.Classification.select().dj_where(name=classification_name).get().father_id
+
 
 @then(u"{user}能获得'{classification_name}'的子分类集合")
 def step_impl(context, user, classification_name):
 	classification = mall_models.Classification.select().dj_where(name=classification_name).get()
 
 	data = {
-		'corp_id': context.corp.id,
 		'classification_id': classification.id
 	}
 	response = context.client.get('/mall/child_product_classifications/', data)
@@ -118,7 +120,9 @@ def step_impl(context, user, classification_name):
 @Then(u"{user}查看商品分类'{classification_name}'的特殊资质")
 def step_impl(context, user, classification_name):
 	table = context.table
-	response = context.client.get('/mall/product_classifications/')
+	response = context.client.get('/mall/product_classifications/', {
+		'father_id': __classification_name2father_id(classification_name)
+	})
 	datas = response.data['product_classifications']
 	actual = []
 	expected = []

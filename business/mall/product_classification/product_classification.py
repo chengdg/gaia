@@ -144,11 +144,9 @@ class ProductClassification(business_model.Model):
 		bulk_create = []
 		if len(selected_labels) > 0:
 			for label in selected_labels:
-				label_group_id = label['labelGroupId'],
 				for label_id in label['labelIds']:
 					bulk_create.append(dict(
-						classification_id = self.id,
-						label_group_id = label_group_id[0] if isinstance(label_group_id, tuple) else str(label_group_id),
+						classification = self.id,
 						label_id = str(label_id)
 					))
 			ProductClassificationLabel.create_many(bulk_create)

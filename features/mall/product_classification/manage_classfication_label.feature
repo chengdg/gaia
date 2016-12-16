@@ -45,7 +45,7 @@ Background:
 			"labels":["男", "女","新生儿","9-13岁","14-18岁","成年"]
 		}]
 		"""
-@gaia @mall @mall.product @classfication_label
+@gaia @mall @mall.product @classfication_label @aix
 Scenario:1 运营人员为分类配置标签
 	When manager为商品分类'平板电脑'配置标签
 		"""
