@@ -305,7 +305,10 @@ class Order(business_model.Model):
 					'used_card': json.loads(info.used_card)
 				}
 			else:
-				order.weizoom_card_info = {}
+				order.weizoom_card_info = {
+					'trade_id': '',
+					'used_card': ''
+				}
 
 	@staticmethod
 	def __fill_member_card(orders, order_ids):
@@ -397,6 +400,7 @@ class Order(business_model.Model):
 						'to_status_code': mall_models.ORDER_STATUS2MEANINGFUL_WORD[log.to_status],
 						'time': log.created_at
 					})
+
 	@staticmethod
 	def __fill_group_buy(orders, order_ids):
 		"""
