@@ -30,6 +30,6 @@ class ADeliveryItemKuaidiNotification(api_resource.ApiResource):
 			# 发送快递订阅
 			result = ExpressService(delivery_item).get_express_poll()
 
-		return result
+		return {}
 
 	

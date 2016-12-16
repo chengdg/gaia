@@ -122,10 +122,12 @@ class ExpressPoll(object):
 				self.express_config.get_api_url(), 
 				param_str,
 				verified_result.decode('utf-8')))
-		except:
+		except BaseException as e:
+
 			watchdog.error(u'发送快递100 订阅请求 失败，url:{},data:{},原因:{}'.format(self.express_config.get_api_url(),
 				param_str,
 				unicode_full_stack()))
+			raise e
 
 		return verified_result
 
