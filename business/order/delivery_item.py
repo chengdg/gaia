@@ -629,12 +629,13 @@ class DeliveryItem(business_model.Model):
    #                  "sms_code": "SMS_34465265"
    #              }		
 			# rs = send_phone_captcha(data)
+			print '----------------------send_phone_message-------------------------'
 			data = {
-                    "phones": str(supplier_tel),
-                    "content": {
-                        "reason": str(self.bid)+u'仅供测试'+str(self.ship_name)
-                    },
-                    "sms_code": "SMS_27200001"
-                }		
+					"phones": supplier_tel,
+					"content": {
+						"reason":self.ship_name
+					},
+					"sms_code": "SMS_27200001"
+			}		
 			rs = send_phone_captcha(data)
 
