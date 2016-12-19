@@ -178,7 +178,6 @@ class DeliveryItemProductRepository(business_model.Model):
 								                                                           'thumbnails_url'].find(
 							'http') == -1 else premium_product['thumbnails_url']
 					premium_delivery_item_product.id = premium_product['id']
-					premium_delivery_item_product.origin_price = premium_product['price']
 
 					current_premium_product = id2current_premium_products[premium_product['id']]
 
@@ -197,7 +196,7 @@ class DeliveryItemProductRepository(business_model.Model):
 
 					premium_delivery_item_product.delivery_item_id = r.order_id
 					premium_delivery_item_product.context['index'] = r.id + 1
-					premium_delivery_item_product.origin_price = 0
+					premium_delivery_item_product.origin_price = premium_product['price']
 					premium_delivery_item_product.sale_price = 0
 					premium_delivery_item_product.show_sale_price = premium_product['price']  # 为了前端能够显示
 					premium_delivery_item_product.total_origin_price = 0
