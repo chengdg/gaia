@@ -247,35 +247,35 @@ class SupplierRetailRebateInfo(models.Model):
         
 
 
-# 一级分类
+# 一级类目
 FIRST_CLASSIFICATION = 1
-# 二级分类
+# 二级类目
 SECONDARY_CLASSIFICATION = 2
-# 分类上线（类似于未删除）
+# 类目上线（类似于未删除）
 CLASSIFICATION_ONLINE = 1
-# 分类下线（类似于删除）
+# 类目下线（类似于删除）
 CLASSIFICATION_OFFLINE = 0
 class Classification(models.Model):
 	"""
-	商品分类
+	商品类目
 	"""
-	name = models.CharField(max_length=1024) #分类名
-	level = models.IntegerField(default=FIRST_CLASSIFICATION) #分类等级
+	name = models.CharField(max_length=1024) #分组名
+	level = models.IntegerField(default=FIRST_CLASSIFICATION) #分组等级
 	status = models.IntegerField(default=CLASSIFICATION_ONLINE)
-	father_id = models.IntegerField(default=-1) #父级分类id
-	product_count = models.IntegerField(default=0) #分类商品数量
-	note = models.CharField(max_length=1024, default='') #分类备注
+	father_id = models.IntegerField(default=-1) #父级分组id
+	product_count = models.IntegerField(default=0) #分组商品数量
+	note = models.CharField(max_length=1024, default='') #分组备注
 	created_at = models.DateTimeField(auto_now_add=True)  # 添加时间
 
 	class Meta(object):
-		verbose_name = "商品分类"
-		verbose_name_plural = "商品分类"
+		verbose_name = "商品类目"
+		verbose_name_plural = "商品类目"
 		db_table = "mall_classification"
 
 
 class ClassificationHasProduct(models.Model):
 	"""
-	商品分类拥有商品的关系表
+	商品类目拥有商品的关系表
 	"""
 	classification = models.ForeignKey(Classification)
 	product_id = models.IntegerField(default=-1)
@@ -284,14 +284,14 @@ class ClassificationHasProduct(models.Model):
 	created_at = models.DateTimeField(auto_now_add=True)  # 添加时间
 
 	class Meta(object):
-		verbose_name = "商品分类与商品的关系"
-		verbose_name_plural = "商品分类与商品的关系"
+		verbose_name = "商品类目与商品的关系"
+		verbose_name_plural = "商品类目与商品的关系"
 		db_table = "mall_classification_has_product"
 		
 
 class ClassificationQualification(models.Model):
 	"""
-	商品分类配置的特殊资质
+	商品类目配置的特殊资质
 	"""
 	classification = models.ForeignKey(Classification)
 	name = models.CharField(max_length=48, default='') #资质名称
@@ -390,6 +390,43 @@ class Product(models.Model):
 
 	class Meta(object):
 		db_table = 'mall_product'
+
+
+NO_LIMIT = 0 #不限制
+FORBIDDEN_SALE_LIMIT = 1 #禁售
+ONLY_SALE_LIMIT = 2 #仅售
+class ProductPreview(models.Model):
+	"""
+	审核前和审核中的商品信息
+	"""
+	owner_id = models.IntegerField(default=0)
+	name = models.CharField(max_length=50, null=True)  #商品名称
+	title = models.CharField(max_length=50, null=True)  #促销标题
+	price = models.DecimalField(max_digits=65, decimal_places=2, null=True)  #商品价格 (元)
+	settlement_price = models.DecimalField(max_digits=65, decimal_places=2, null=True)  #结算价 (元)
+	weight = models.FloatField(default=0)  #商品重量 (kg)
+	store = models.IntegerField(default=0)  #商品库存 默认-1{大于0: 有限 ,-1:无限}
+	valid_time_from = models.DateTimeField(null=True)  #有效范围开始时间
+	valid_time_to = models.DateTimeField(null=True)  #有效范围结束时间
+	limit_settlement_price = models.DecimalField(max_digits=65, decimal_places=2, null=True)  #限时结算价 (元)
+	has_limit_time = models.BooleanField(default=False)  #限时结算价是否需要 有效范期
+	has_product_model = models.BooleanField(default=False) #是否是多规格商品
+	classification_id = models.IntegerField(default=0) #所属分类id(二级分类id)
+	limit_zone_type = models.IntegerField(default=NO_LIMIT)
+	limit_zone = models.IntegerField(default=0)  # 限制地区的模板id
+	has_same_postage = models.BooleanField(default=True) #是否是统一运费{0:统一运费,1:默认模板运费}
+	postage_money = models.DecimalField(max_digits=65, decimal_places=2, null=True) #统一运费金额
+	postage_id = models.IntegerField(default=0)# 默认模板运费id
+	is_update = models.BooleanField(default=False)  # 是否更新
+	is_refused = models.BooleanField(default=False)  # 是否驳回(待入库状态下驳回叫入库驳回，已入库状态下驳回叫修改驳回)
+	refuse_reason = models.TextField(null=True)  # 驳回原因
+	status = models.IntegerField(default=0)  # 商品状态
+	is_deleted = models.BooleanField(default=False)
+	remark = models.TextField(null=True)  # 备注
+	created_at = models.DateTimeField(auto_now_add=True)  # 添加时间
+
+	class Meta(object):
+		db_table = 'mall_product_preview'
 
 
 class CategoryHasProduct(models.Model):
