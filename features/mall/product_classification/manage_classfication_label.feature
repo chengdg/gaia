@@ -2,6 +2,7 @@
 Feature:运营人员配置分类的标签
 	"""
 		1.运营人员为分类配置标签
+		2.运营人员删除一级分类的标签后查看二级分类的标签
 	"""
 Background:
 	Given manager登录系统
@@ -162,3 +163,65 @@ Scenario:1 运营人员为分类配置标签
 #		|     零食    |修改,删除,配置特殊资质,已配置标签|
 #		|     肥皂    |修改,删除,配置特殊资质,配置标签|
 #		|   清洁用品  |修改,删除,配置特殊资质,已配置标签|
+
+@gaia @mall @mall.product @classfication_label @aix
+Scenario:1 运营人员删除一级分类的标签后查看二级分类的标签
+	Then manager查看商品分类列表
+		|classfication_name|      operation      |
+		|     电子数码     |修改,删除,配置标签|
+		|     生活用品     |修改,删除,配置标签|
+	When manager为'电子数码'配置标签
+		"""
+		[{
+			"label_group_name":"省市",
+			"labels":["江苏","黑龙江"]
+		},{
+			"label_group_name":"基本信息",
+			"labels":["男","女"]
+		}]
+		"""
+	Then manager查看'电子数码'的二级分类列表
+		|classfication_name|            operation            |
+		|       耳机       |修改,删除,配置特殊资质,已配置标签|
+		|       手机       |修改,删除,配置特殊资质,已配置标签|
+		|      平板电脑    |修改,删除,配置特殊资质,已配置标签|
+	When manager配置'耳机'的标签
+		"""
+		[{
+			"label_group_name":"省市",
+			"labels":["江苏","黑龙江"]
+		},{
+			"label_group_name":"基本信息",
+			"labels":["男","女","未成年"]
+		},{
+			"label_group_name":"国家",
+			"labels":["中国"]
+		}]
+		"""
+	When manager配置'电子数码'的标签
+		"""
+		[{
+			"label_group_name": null
+		},{
+			"label_group_name": null
+		}]
+		"""
+	Then manager查看商品分类列表
+		|classfication_name|      operation      |
+		|     电子数码     |修改,删除,配置标签|
+		|     生活用品     |修改,删除,配置标签|
+ 	Then manager查看'电子数码'的二级分类列表
+		|classfication_name|            operation            |
+		|       耳机       |修改,删除,配置特殊资质,已配置标签|
+		|       手机       |修改,删除,配置特殊资质,配置标签|
+		|      平板电脑    |修改,删除,配置特殊资质,配置标签|
+	Then manager获取'耳机'的标签
+		"""
+		[{
+			"label_group_name":"基本信息",
+			"labels":["未成年"]
+		},{
+			"label_group_name":"国家",
+			"labels":["中国"]
+		}]
+		"""
