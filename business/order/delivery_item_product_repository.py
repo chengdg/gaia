@@ -178,6 +178,7 @@ class DeliveryItemProductRepository(business_model.Model):
 								                                                           'thumbnails_url'].find(
 							'http') == -1 else premium_product['thumbnails_url']
 					premium_delivery_item_product.id = premium_product['id']
+					premium_delivery_item_product.origin_price = premium_product['price']
 
 					current_premium_product = id2current_premium_products[premium_product['id']]
 
