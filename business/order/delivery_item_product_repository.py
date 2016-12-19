@@ -52,8 +52,14 @@ class DeliveryItemProductRepository(business_model.Model):
 			delivery_item_id2origin_order_id[delivery_item.id] = delivery_item.origin_order_id
 		ohs_db_model_list = mall_models.OrderHasProduct.select().dj_where(order_id__in=delivery_item_ids)
 
-		id2promotion = {r.promotion_id: r for r in
-		                mall_models.OrderHasPromotion.select().dj_where(order_id__in=origin_order_ids)}
+		# id2promotion = {r.promotion_id: r for r in
+		#                 mall_models.OrderHasPromotion.select().dj_where(order_id__in=origin_order_ids)}
+
+		id2promotion = {}
+		order_has_promotions = mall_models.OrderHasPromotion.select().dj_where(order_id__in=origin_order_ids)
+
+		for p in order_has_promotions:
+			id2promotion[p.promotion_id] = p
 
 		# [compatibility]: 兼容apiserver产生的出货单的order_has_prduct时候，total_price和price写入的采购价
 		origin_ohs_list = mall_models.OrderHasProduct.select().dj_where(order_id__in=origin_order_ids)
@@ -71,6 +77,7 @@ class DeliveryItemProductRepository(business_model.Model):
 		id2current_premium_products = {p.id: p for p in current_premium_products}
 
 		delivery_item_ohs_id2origin_order_ohs = {}
+		delivery_item_ohs_id2order_has_promotion = {}
 
 		product_ids = []
 		custom_model_names = []
@@ -85,6 +92,13 @@ class DeliveryItemProductRepository(business_model.Model):
 					break
 
 			product_ids.append(delivery_item_ohs.product_id)
+
+			for order_has_promotion in order_has_promotions:
+				db_promotion_result = json.loads(order_has_promotion.promotion_result_json)
+				if order_has_promotion.order_id == delivery_item_ohs.origin_order_id and str(
+										delivery_item_ohs.product_id) + '-' + delivery_item_ohs.product_model_name == db_promotion_result.get(
+						'integral_product_info'):
+					delivery_item_ohs_id2order_has_promotion[delivery_item_ohs.id] = order_has_promotion
 
 		products = self.corp.product_pool.get_products_by_ids(product_ids,
 		                                                      {"with_product_model": True, "with_property": True,
@@ -213,13 +227,13 @@ class DeliveryItemProductRepository(business_model.Model):
 				if promotion.promotion_type == "flash_sale":
 					promotion_info['promotion_saved_money'] = db_promotion_result['promotion_saved_money']
 
-				# 填充积分应用
+			# 填充积分应用
+			order_has_promotion = delivery_item_ohs_id2order_has_promotion.get(r.id)
+			if order_has_promotion:
 				integral_product_info = db_promotion_result.get('integral_product_info')
 				if integral_product_info:
-					if integral_product_info == str(
-							delivery_item_product.id) + '-' + delivery_item_product.product_model_name:
-						promotion_info['integral_money'] = promotion.integral_money
-						promotion_info['integral_count'] = promotion.integral_count
+						promotion_info['integral_money'] = order_has_promotion.integral_money
+						promotion_info['integral_count'] = order_has_promotion.integral_count
 
 			delivery_item_product.promotion_info = promotion_info
 
