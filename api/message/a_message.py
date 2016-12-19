@@ -6,46 +6,55 @@ from eaglet.core import watchdog
 from eaglet.core.exceptionutil import unicode_full_stack
 
 from business.station_message.message import Message
+from business.station_message.message_repository import MessageRepository
 
 
 class AMessage(api_resource.ApiResource):
-    """
-    商品分类
-    """
-    app = "message"
-    resource = "message"
+	"""
+	商品分类
+	"""
+	app = "message"
+	resource = "message"
 
-    @param_required(['corp_id', 'title', 'content', 'file_url'])
-    def put(args):
-        message = Message.create({
-            'title': args['title'],
-            'content': args['content'],
-            'file_url': args['file_url']
-        })
-        return {
-            'id': message.id
-        }
+	@param_required(['id'])
+	def get(args):
+		# corp = args['corp']
+		# messages = corp.message_repository.get_messages()
+		msgrepo = MessageRepository()
+		message = msgrepo.get_message(args['id'])
+		attachments = msgrepo.get_message_attachments(args['id'])
+		data = {
+			'id': message.id,
+			'title': message.title,
+			'content': message.content,
+			'attachments': attachments,
+			'created_at': message.created_at.strftime('%Y-%m-%d %H:%M'),
+		}
 
-    @param_required(['corp_id', 'id', 'title', 'content', 'file_url'])
-    def post(args):
-        corp = args['corp']
-        name = args['name']
-        classification_id = args['id']
-        note = args.get('note', '')
+		return {
+			'message': data
+		}
 
-        message = corp.message_repository.get_message(classification_id)
-        message.update(name, note)
+	@param_required(['corp_id', 'title', 'content', '?attachments:json'])
+	def put(args):
+		message = Message.create({
+			'title': args['title'],
+			'content': args['content'],
+			'attachments': args['attachments']
+		})
+		return {
+			'id': message.id
+		}
 
-        return {}
+	@param_required(['id', 'title', 'content', '?attachments:json'])
+	def post(args):
+		message = MessageRepository().get_message(args['id'])
 
-    @param_required(['corp_id', 'id'])
-    def delete(args):
-        corp = args['corp']
-        classification_id = args['id']
-        message = corp.message_repository.get_message(classification_id)
-        if message.is_used_by_product():
-            return 500, 'used_by_product' #商品分类正在被使用
-        else:
-            corp.message_repository.delete_message(classification_id)
+		message.update(args['title'], args['content'], args['attachments'])
 
-            return {}
+		return {}
+
+	@param_required(['id'])
+	def delete(args):
+		MessageRepository().delete_message(args['id'])
+		return {}

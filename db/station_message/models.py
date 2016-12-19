@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-from django.contrib.auth.models import User
+from eaglet.core.db import models
+# from django.db.models import signals
 
-from django.db import models
-from django.db.models import signals
+from db.account.models import User
 
 MODULES = {
 	'DATA': 0,
@@ -41,6 +41,21 @@ class UserHasMessage(models.Model):
 		verbose_name_plural = '用户－系统消息'
 
 
+class MessageAttachment(models.Model):
+	"""
+	消息附件
+	"""
+	# 消息id Message
+	message = models.ForeignKey(Message)
+	type = models.CharField(max_length=26)  # 文档类型
+	filename = models.CharField(max_length=1024)  # 原始文件名
+	path = models.CharField(max_length=1024, default='')
+	created_at = models.DateTimeField(auto_now_add=True)
+
+	class Meta(object):
+		db_table = 'message_attachment'
+
+
 def add_relation_to_user(instance, created, **kwords):
 	"""
 	新增message后触发
@@ -58,6 +73,5 @@ def add_relation_to_user(instance, created, **kwords):
 			))
 		UserHasMessage.objects.bulk_create(created_list)
 
-
 # signals
-signals.post_save.connect(add_relation_to_user, sender=Message, dispatch_uid='user_message.add_relation')
+# signals.post_save.connect(add_relation_to_user, sender=Message, dispatch_uid='user_message.add_relation')

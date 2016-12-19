@@ -6,21 +6,29 @@ from db.mall import models as mall_models
 from db.account import models as account_models
 from db.station_message import models as message_models
 from business.station_message.message import Message
-
+from business.station_message.message_attachment_repository import  MessageAttachmentRepository
 
 class MessageRepository(business_model.Service):
 	def get_messages(self):
 		models = message_models.Message.select()
 		return [Message(model) for model in models]
 
-	@param_required(['id'])
 	def get_message(self, id):
 		model = message_models.Message.select().dj_where(id=id).get()
+
 		return Message(model)
 
-	@param_required(['id'])
+	def get_message_attachments(self, id):
+		attachments = message_models.MessageAttachment.select().dj_where(message=id)
+		data = [{'id': at.id,
+						'name': at.filename,
+						'type': at.type,
+						'path': at.path} for at in attachments]
+		return data
+
 	def delete_message(self, id):
 		"""
 		删除指定的站内消息
 		"""
+		MessageAttachmentRepository().delete_message_attachments(id)
 		message_models.Message.delete().dj_where(id=id).execute()
