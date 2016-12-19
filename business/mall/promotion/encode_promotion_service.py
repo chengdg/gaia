@@ -75,6 +75,8 @@ class EncodePromotionService(business_model.Service):
 			pass
 		elif promotion.type == promotion_models.PROMOTION_TYPE_PREMIUM_SALE:
 			return self.__get_premium_sale_info(promotion)
+		elif promotion.type == promotion_models.PROMOTION_TYPE_INTEGRAL_SALE:
+			return self.__get_integral_sale_info(promotion)
 
 	def __get_premium_sale_info(self, promotion):
 		"""
@@ -115,3 +117,23 @@ class EncodePromotionService(business_model.Service):
 			}
 			datas.append(data)
 		return datas
+
+	def __get_integral_sale_info(self, promotion):
+		detail_info = promotion.detail
+		if detail_info:
+
+			is_permanant_active = detail_info.is_permanant_active
+			rules = detail_info.rules
+			data = {
+				'id': detail_info.id,
+				'is_permanant_active': is_permanant_active,
+				'rules': [
+					{
+						'id': rule['id'],
+						'member_grade_id': rule['member_grade_id'],
+						'discount': rule['discount'],
+						'discount_money': rule['discount_money'],
+					} for rule in rules]
+
+			}
+			return data

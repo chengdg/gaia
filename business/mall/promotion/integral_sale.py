@@ -11,6 +11,7 @@ class IntegralSale(business_model.Model):
 	积分应用
 	"""
 	__slots__ = (
+		'id',
 		'type',
 		'is_permanant_active',
 		'rules',
