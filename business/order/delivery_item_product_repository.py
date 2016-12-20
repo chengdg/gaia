@@ -121,7 +121,7 @@ class DeliveryItemProductRepository(business_model.Model):
 
 			product = product_id2product[r.product_id]
 
-			promotion = id2promotion.get(r.promotion_id, None)
+			promotion = id2promotion.get(r.promotion_id, None) if r.promotion_id else None # 积分应用的promotion_id为0，需要单独处理
 			if promotion:
 				db_promotion_result = json.loads(promotion.promotion_result_json)
 				# type种类:flash_sale、integral_sale、premium_sale
@@ -234,6 +234,9 @@ class DeliveryItemProductRepository(business_model.Model):
 				if integral_product_info:
 						promotion_info['integral_money'] = order_has_promotion.integral_money
 						promotion_info['integral_count'] = order_has_promotion.integral_count
+
+						if not promotion_info['type']:
+							promotion_info['type'] = 'integral_sale'
 
 			delivery_item_product.promotion_info = promotion_info
 
