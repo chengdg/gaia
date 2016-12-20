@@ -8,7 +8,7 @@ from business.mall.promotion.encode_promotion_service import EncodePromotionServ
 from business.mall.promotion.promotion_factory import PromotionFactory
 
 
-class APromotionFlashSale(api_resource.ApiResource):
+class AFlashSalePromotion(api_resource.ApiResource):
     """
     促销-限时抢购
     """

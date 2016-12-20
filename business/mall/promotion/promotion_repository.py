@@ -143,24 +143,24 @@ class PromotionRepository(business_model.Service):
 
 		return promotions, pageinfo
 
-	def on_promotions(self, promotion_ids):
+	def enable_promotion(self, promotion_id):
 		"""
         开启促销活动
         promotion_ids: [promotion_id,...]
         """
 		promotion_models.Promotion.update(
 			status=promotion_models.PROMOTION_STATUS_STARTED
-		).dj_where(id__in=promotion_ids,
+		).dj_where(id=promotion_id,
 				   status=promotion_models.PROMOTION_STATUS_NOT_START,
 				   ).execute()
 		return True
 
-	def off_promotions(self, promotion_ids):
+	def disable_promotion(self, promotion_id):
 		"""
         关闭撤销活动
         """
 		promotion_models.Promotion.update(
 			status=promotion_models.PROMOTION_STATUS_FINISHED
-		).dj_where(id__in=promotion_ids,
+		).dj_where(id=promotion_id,
 				   status=promotion_models.PROMOTION_STATUS_STARTED).execute()
 		return True
