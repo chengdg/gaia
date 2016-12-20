@@ -77,7 +77,7 @@ class DeliveryItemProductRepository(business_model.Model):
 		id2current_premium_products = {p.id: p for p in current_premium_products}
 
 		delivery_item_ohs_id2origin_order_ohs = {}
-		delivery_item_ohs_id2order_has_promotion = {}
+		delivery_item_ohs_id2integral_sale_promotion = {}
 
 		product_ids = []
 		custom_model_names = []
@@ -98,7 +98,9 @@ class DeliveryItemProductRepository(business_model.Model):
 				if order_has_promotion.order_id == delivery_item_ohs.origin_order_id and str(
 										delivery_item_ohs.product_id) + '-' + delivery_item_ohs.product_model_name == db_promotion_result.get(
 						'integral_product_info'):
-					delivery_item_ohs_id2order_has_promotion[delivery_item_ohs.id] = order_has_promotion
+					delivery_item_ohs_id2integral_sale_promotion[delivery_item_ohs.id] = order_has_promotion
+
+		print('---delivery_item_ohs_id2order_has_promotion', delivery_item_ohs_id2integral_sale_promotion)
 
 		products = self.corp.product_pool.get_products_by_ids(product_ids,
 		                                                      {"with_product_model": True, "with_property": True,
@@ -228,15 +230,12 @@ class DeliveryItemProductRepository(business_model.Model):
 					promotion_info['promotion_saved_money'] = db_promotion_result['promotion_saved_money']
 
 			# 填充积分应用
-			order_has_promotion = delivery_item_ohs_id2order_has_promotion.get(r.id)
-			if order_has_promotion:
-				integral_product_info = db_promotion_result.get('integral_product_info')
-				if integral_product_info:
-						promotion_info['integral_money'] = order_has_promotion.integral_money
-						promotion_info['integral_count'] = order_has_promotion.integral_count
-
-						if not promotion_info['type']:
-							promotion_info['type'] = 'integral_sale'
+			integral_sale_promotion = delivery_item_ohs_id2integral_sale_promotion.get(r.id)
+			if integral_sale_promotion:
+				promotion_info['integral_money'] = integral_sale_promotion.integral_money
+				promotion_info['integral_count'] = integral_sale_promotion.integral_count
+				if not promotion_info['type']:
+					promotion_info['type'] = 'integral_sale'
 
 			delivery_item_product.promotion_info = promotion_info
 
