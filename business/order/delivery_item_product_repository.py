@@ -196,9 +196,9 @@ class DeliveryItemProductRepository(business_model.Model):
 
 					premium_delivery_item_product.delivery_item_id = r.order_id
 					premium_delivery_item_product.context['index'] = r.id + 1
-					premium_delivery_item_product.origin_price = premium_product['price']
+					premium_delivery_item_product.origin_price = premium_product.get('price',0)
 					premium_delivery_item_product.sale_price = 0
-					premium_delivery_item_product.show_sale_price = premium_product['price']  # 为了前端能够显示
+					premium_delivery_item_product.show_sale_price = premium_product.get('price',0)  # 为了前端能够显示
 					premium_delivery_item_product.total_origin_price = 0
 					premium_delivery_item_product.product_model_name_texts = []
 
