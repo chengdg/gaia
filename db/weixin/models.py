@@ -54,7 +54,7 @@ class WeixinMpUserAccessToken(models.Model):
     app_secret = models.CharField(max_length=64)
     access_token = models.CharField(max_length=1024) #mp平台返回的access_token
     update_time = models.DateTimeField(auto_now=True)
-    expire_time = models.DateTimeField()
+    expire_time = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)
     
@@ -126,9 +126,9 @@ class ComponentAuthedAppid(models.Model):
     user_id = models.IntegerField(default=0) #对应帐号user id
     last_update_time = models.DateTimeField(default=datetime.now())
     authorizer_appid = models.CharField(max_length=255, default='')
-    authorizer_access_token = models.TextField()
-    authorizer_refresh_token = models.TextField()
-    func_info = models.TextField()
+    authorizer_access_token = models.TextField(default='')
+    authorizer_refresh_token = models.TextField(default='')
+    func_info = models.TextField(default='')
     created_at = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=False)
 
