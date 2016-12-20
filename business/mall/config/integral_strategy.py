@@ -76,6 +76,7 @@ class IntegralStrategy(business_model.Model):
 
 	@cached_context_property
 	def can_enable_integral_ceiling(self):
+		# TODO 应该有promotion_respository提供
 		corp = CorporationFactory.get()
 		starting_promotion_count = promotion_models.Promotion.select()\
 			.dj_where(type=promotion_models.PROMOTION_TYPE_INTEGRAL_SALE,
