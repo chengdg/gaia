@@ -13,6 +13,7 @@ from db.account import models as account_models
 from db.mall import promotion_models
 from business.mall.corporation_factory import CorporationFactory
 from gaia_conf import TOPIC
+from business.decorator import cached_context_property
 
 
 class IntegralStrategy(business_model.Model):
@@ -73,3 +74,13 @@ class IntegralStrategy(business_model.Model):
 		}
 		msgutil.send_message(topic_name, msg_name, data)
 
+	@cached_context_property
+	def can_enable_integral_ceiling(self):
+		corp = CorporationFactory.get()
+		starting_promotion_count = promotion_models.Promotion.select()\
+			.dj_where(type=promotion_models.PROMOTION_TYPE_INTEGRAL_SALE,
+					  status=promotion_models.PROMOTION_STATUS_STARTED,
+					  owner_id=corp.id).count()
+		if starting_promotion_count:
+			return False
+		return True
