@@ -395,9 +395,17 @@ class Product(models.Model):
 NO_LIMIT = 0 #不限制
 FORBIDDEN_SALE_LIMIT = 1 #禁售
 ONLY_SALE_LIMIT = 2 #仅售
-class ProductPreview(models.Model):
+
+PENDING_PRODUCT_STATUS = {
+	'NOT_YET': 0, #尚未提交审核
+	'SUBMIT': 1, #提交审核
+	'REFUSED': 2, #驳回
+	'ACCEPT': 3 #审核通过
+}
+
+class ProductPendingStock(models.Model):
 	"""
-	审核前和审核中的商品信息
+	待入库商品
 	"""
 	owner_id = models.IntegerField(default=0)
 	name = models.CharField(max_length=50, null=True)  #商品名称
@@ -417,16 +425,15 @@ class ProductPreview(models.Model):
 	has_same_postage = models.BooleanField(default=True) #是否是统一运费{0:统一运费,1:默认模板运费}
 	postage_money = models.DecimalField(max_digits=65, decimal_places=2, null=True) #统一运费金额
 	postage_id = models.IntegerField(default=0)# 默认模板运费id
-	is_update = models.BooleanField(default=False)  # 是否更新
-	is_refused = models.BooleanField(default=False)  # 是否驳回(待入库状态下驳回叫入库驳回，已入库状态下驳回叫修改驳回)
-	refuse_reason = models.TextField(null=True)  # 驳回原因
-	status = models.IntegerField(default=0)  # 商品状态
-	is_deleted = models.BooleanField(default=False)
 	remark = models.TextField(null=True)  # 备注
+	is_updated = models.BooleanField(default=False)  # 是否更新
+	review_status = models.IntegerField(default=PENDING_PRODUCT_STATUS['NOT_YET'])#审核状态
+	refuse_reason = models.TextField(null=True)  # 驳回原因
+	is_deleted = models.BooleanField(default=False)
 	created_at = models.DateTimeField(auto_now_add=True)  # 添加时间
 
 	class Meta(object):
-		db_table = 'mall_product_preview'
+		db_table = 'mall_product_pending_stock'
 
 
 class CategoryHasProduct(models.Model):

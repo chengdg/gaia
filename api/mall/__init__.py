@@ -20,7 +20,7 @@ import image_group
 import config
 import notify
 import label
-import product_preview
+import product_pending_stock
 
 import a_promotion_products
 

@@ -3,18 +3,18 @@
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
 
-class AProducts(api_resource.ApiResource):
+class APendingProducts(api_resource.ApiResource):
 	"""
-	商品集合
+	待入库商品集合
 	"""
 	app = "mall"
-	resource = "product_preview_products"
+	resource = "pending_products"
 
 	@param_required(['corp_id'])
 	def get(args):
 		corp = args['corp']
 
-		preview_products = corp.product_preview_repository.get_products()
+		preview_products = corp.product_preview_repository.filter_products(args)
 
 		return {
 			'can_created': True,

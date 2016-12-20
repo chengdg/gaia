@@ -66,8 +66,3 @@ class ProductClassificationRepository(business_model.Service):
 
 		classifications.reverse()
 		return classifications
-
-	
-
-
-	
