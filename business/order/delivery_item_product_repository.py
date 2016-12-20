@@ -100,7 +100,6 @@ class DeliveryItemProductRepository(business_model.Model):
 						'integral_product_info'):
 					delivery_item_ohs_id2integral_sale_promotion[delivery_item_ohs.id] = order_has_promotion
 
-		print('---delivery_item_ohs_id2order_has_promotion', delivery_item_ohs_id2integral_sale_promotion)
 
 		products = self.corp.product_pool.get_products_by_ids(product_ids,
 		                                                      {"with_product_model": True, "with_property": True,
