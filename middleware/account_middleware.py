@@ -15,6 +15,5 @@ class AccountMiddleware(object):
 		corp_id = req.params.get('woid')
 		if not corp_id:
 			corp_id = req.params.get('corp_id')
-			corp_id = 0 if int(corp_id) == -1 else corp_id
 		req.context['corp'] = Corporation(corp_id)
 		CorporationFactory.set(req.context['corp'])
