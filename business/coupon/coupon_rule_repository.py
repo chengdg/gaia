@@ -8,7 +8,7 @@ from business import model as business_model
 
 class CouponRuleRepository(business_model.Service):
 	def get_coupon_rule_by_ids(self, ids):
-		db_models = promotion_models.CouponRule.select().dj_where(id__=ids, owner_id=self.corp.id)
+		db_models = promotion_models.CouponRule.select().dj_where(id__in=ids, owner_id=self.corp.id)
 
 		coupon_rules = [CouponRule.from_model({"db_model": db_model, 'corp': self.corp}) for db_model in db_models]
 

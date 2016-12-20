@@ -27,7 +27,7 @@ class AIntegralStrategy(api_resource.ApiResource):
 			'buy_via_offline_increase_count_percentage_for_author': integral_strategy.buy_via_offline_increase_count_percentage_for_author,
 			'use_ceiling': integral_strategy.use_ceiling,
 			'review_increase': integral_strategy.review_increase,
-			'can_enable_integral_ceiling': False
+			'can_enable_integral_ceiling': integral_strategy.can_enable_integral_ceiling
 		}
 
 		return data
