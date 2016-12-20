@@ -14,6 +14,7 @@ class PremiumSale(business_model.Model):
 	买赠
 	"""
 	__slots__ = (
+		'id',
 		'count',
 		'is_enable_cycle_mode'
 	)

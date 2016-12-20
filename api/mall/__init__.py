@@ -23,4 +23,6 @@ import label
 
 import a_promotion_products
 
+import promotion
+
 
