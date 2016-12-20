@@ -123,7 +123,7 @@
                 }
             }
         },
-        "/promotion/active_flash_sale/": {
+        "/promotion/active_promotion/": {
             "put": {
                 "summary": "开启限时抢购",
                 "parameters": [
