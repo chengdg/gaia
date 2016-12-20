@@ -120,12 +120,12 @@ class PromotionRepository(business_model.Service):
 		promotion_filters = type2fiters['promotion']
 		promotions = promotion_models.Promotion.select().dj_where(**promotion_filters)
 
-		product_filters = type2fiters['product']
-		if product_filters:
-			products = db_models.Product.select().dj_where(**product_filters)
-			product_ids = [product.id for product in products]
-			relations = promotion_models.ProductHasPromotion.select().dj_where(product_id__in=product_ids)
-			promotions = promotions.dj_where(id__in=[re.promotion_id for re in relations])
+		# product_filters = type2fiters['product']
+		# if product_filters:
+		# 	products = self.corp.product_pool.search_products_by_filters(**product_filters)
+		# 	product_ids = [product.id for product in products]
+		# 	relations = promotion_models.ProductHasPromotion.select().dj_where(product_id__in=product_ids)
+		# 	promotions = promotions.dj_where(id__in=[re.promotion_id for re in relations])
 		premium_sale_filters = type2fiters['premium_sale']
 		if premium_sale_filters:
 			premium_sales = promotion_models.PremiumSale.select().dj_where(**premium_sale_filters)
@@ -133,6 +133,18 @@ class PromotionRepository(business_model.Service):
 		flash_sale_filters = type2fiters['flash_sale']
 		if flash_sale_filters:
 			pass
+		product_filters = type2fiters['product']
+		if product_filters:
+			# 根据promotion查处所有这些促销的商品
+			promotion_ids = [promotion.id for promotion in promotions]
+			relations = promotion_models.ProductHasPromotion.select().dj_where(promotion_id__in=promotion_ids)
+			product_filters['id__in'] = [relation.product_id for relation in relations]
+			# 根据商品id和其他商品条件搜索出商品
+			products = self.corp.product_pool.search_products_by_filters(**product_filters)
+			product_ids = [product.id for product in products]
+			# 根据正确的商品搜索出促销
+			relations = promotion_models.ProductHasPromotion.select().dj_where(product_id__in=product_ids)
+			promotions = promotions.dj_where(id__in=[re.promotion_id for re in relations])
 		if order_options:
 			promotions = promotions.order_by(*order_options)
 
