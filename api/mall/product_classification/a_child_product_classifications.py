@@ -12,11 +12,11 @@ class AChildProductClassifications(api_resource.ApiResource):
     app = "mall"
     resource = "child_product_classifications"
 
-    @param_required(['classification_id'])
+    @param_required(['corp_id', 'classification_id'])
     def get(args):
-        weizoom_corp = CorporationFactory.get_weizoom_corporation()
+        corp = CorporationFactory.get()
         father_id = int(args['classification_id'])
-        product_classifications = weizoom_corp.product_classification_repository.get_child_product_classifications(father_id)
+        product_classifications = corp.product_classification_repository.get_child_product_classifications(father_id)
 
         datas = []
         for product_classification in product_classifications:

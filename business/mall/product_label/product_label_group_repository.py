@@ -21,7 +21,7 @@ class ProductLabelGroupRepositroy(business_model.Service):
 		deleted_labels = mall_models.ProductLabel.select().dj_where(label_group_id=label_group_id)
 		deleted_label_ids = [str(l.id) for l in deleted_labels]
 		#首先删除所有的标签
-		weizoom_corp = CorporationFactory.get_weizoom_corporation()
-		weizoom_corp.product_label_repository.delete_labels(deleted_label_ids)
+		corp = CorporationFactory.get()
+		corp.product_label_repository.delete_labels(deleted_label_ids)
 		#然后删除分组
 		mall_models.ProductLabelGroup.update(is_deleted=True).dj_where(id=label_group_id).execute()

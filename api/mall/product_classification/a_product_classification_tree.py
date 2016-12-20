@@ -13,12 +13,12 @@ class AProductClassificationTree(api_resource.ApiResource):
     app = "mall"
     resource = "product_classification_tree"
 
-    @param_required(['end_id'])
+    @param_required(['corp_id', 'end_id'])
     def get(args):
-        weizoom_corp = CorporationFactory.get_weizoom_corporation()
+        corp = CorporationFactory.get()
         end_id = args['end_id']
 
-        product_classifications = weizoom_corp.product_classification_repository.get_product_classification_tree_by_end(end_id)
+        product_classifications = corp.product_classification_repository.get_product_classification_tree_by_end(end_id)
 
         datas = []
         for product_classification in product_classifications:

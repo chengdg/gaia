@@ -13,7 +13,7 @@ class AProductClassificationLabel(api_resource.ApiResource):
 	app = "mall"
 	resource = "product_classification_label"
 
-	@param_required(['classification_id:int'])
+	@param_required(['corp_id', 'classification_id:int'])
 	def get(args):
 		"""
 		:return:
@@ -27,8 +27,8 @@ class AProductClassificationLabel(api_resource.ApiResource):
 		}]
 		"""
 		classification_id = args['classification_id']
-		weizoom_corp = CorporationFactory.get_weizoom_corporation()
-		classification = weizoom_corp.product_classification_repository.get_product_classification(classification_id)
+		corp = CorporationFactory.get()
+		classification = corp.product_classification_repository.get_product_classification(classification_id)
 		classification_label_models = classification.get_classification_labels()
 
 		all_label_ids = []
@@ -38,7 +38,7 @@ class AProductClassificationLabel(api_resource.ApiResource):
 			all_label_ids.append(label_id)
 			label_id2classifi[label_id] = model.classification_id
 
-		label_models = weizoom_corp.product_label_repository.get_labels(all_label_ids)
+		label_models = corp.product_label_repository.get_labels(all_label_ids)
 
 		label_group_has_label = dict()
 		label_relation = dict()
@@ -63,7 +63,7 @@ class AProductClassificationLabel(api_resource.ApiResource):
 			'label_relation': label_relation
 		}
 
-	@param_required(['classification_id', 'selected_labels:json'])
+	@param_required(['corp_id', 'classification_id', 'selected_labels:json'])
 	def put(args):
 		"""
 		设置商品分类标签
@@ -71,8 +71,8 @@ class AProductClassificationLabel(api_resource.ApiResource):
 		classification_id = args['classification_id']
 		selected_labels = args.get('selected_labels', [])
 
-		weizoom_corp = CorporationFactory.get_weizoom_corporation()
-		classification = weizoom_corp.product_classification_repository.get_product_classification(classification_id)
+		corp = CorporationFactory.get()
+		classification = corp.product_classification_repository.get_product_classification(classification_id)
 		classification.set_labels(selected_labels)
 
 		return {}

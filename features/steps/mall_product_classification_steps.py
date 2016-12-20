@@ -71,6 +71,7 @@ def step_impl(context, user):
 @when(u"{user}删除商品分类'{classification_name}'")
 def step_impl(context, user, classification_name):
 	data = {
+		'corp_id': bdd_util.get_user_id_for(user),
 		'classification_id': __classification_name2id(classification_name)
 	}
 	response = context.client.delete('/mall/product_classification/', data)
@@ -88,6 +89,7 @@ def step_impl(context, user, classification_name):
 	classification = mall_models.Classification.select().dj_where(name=classification_name).get()
 
 	data = {
+		'corp_id': bdd_util.get_user_id_for(user),
 		'classification_id': classification.id
 	}
 	response = context.client.get('/mall/child_product_classifications/', data)
@@ -112,6 +114,7 @@ def step_impl(context, user, classification_name):
 		})
 
 	response = context.client.put('/mall/product_classification_qualification/', {
+		'corp_id': bdd_util.get_user_id_for(user),
 		'classification_id': __classification_name2id(classification_name),
 		'qualification_infos': json.dumps(qualifications)
 	})
@@ -121,6 +124,7 @@ def step_impl(context, user, classification_name):
 def step_impl(context, user, classification_name):
 	table = context.table
 	response = context.client.get('/mall/product_classifications/', {
+		'corp_id': bdd_util.get_user_id_for(user),
 		'father_id': __classification_name2father_id(classification_name)
 	})
 	datas = response.data['product_classifications']
@@ -153,6 +157,7 @@ def step_impl(context, user, classification_name):
 				all_qualifications.remove(qualification)
 
 	response = context.client.put('/mall/product_classification_qualification/', {
+		'corp_id': bdd_util.get_user_id_for(user),
 		'classification_id': classification_id,
 		'qualification_infos': json.dumps([{'id': q.id, 'name': q.name} for q in all_qualifications])
 	})
@@ -170,9 +175,8 @@ def step_impl(context, user, classification_name):
 			'labelIds': map(lambda x: label_name2id(x), data['labels'])
 		})
 
-	print (selected_labels)
-
 	response = context.client.put('/mall/product_classification_label/', {
+		'corp_id': bdd_util.get_user_id_for(user),
 		'classification_id': classification_id,
 		'selected_labels': json.dumps(selected_labels)
 	})
@@ -183,7 +187,7 @@ def step_impl(context, user):
 	expected = bdd_util.table2list(context)
 	for one in expected:
 		one['operation'] = one['operation'].split(',')
-	actual = __view_classification_list(context)
+	actual = __view_classification_list(context, user)
 	print (expected)
 	print (actual)
 	bdd_util.assert_list(expected, actual)
@@ -195,7 +199,7 @@ def step_impl(context, user, classification_name):
 	for one in expected:
 		print (isinstance(one['operation'], unicode))
 		one['operation'] = one['operation'].split(',')
-	actual = __view_classification_list(context, classification_id)
+	actual = __view_classification_list(context, user, classification_id)
 	print (expected)
 	print (actual)
 	bdd_util.assert_list(expected, actual)
@@ -205,6 +209,7 @@ def step_impl(context, user, classification_name):
 	expected = json.loads(context.text)
 	classification_id = __classification_name2id(classification_name)
 	response = context.client.get('/mall/product_classification_label/', {
+		'corp_id': bdd_util.get_user_id_for(user),
 		'classification_id': classification_id
 	})
 	resp_datas = response.data
@@ -222,10 +227,11 @@ def step_impl(context, user, classification_name):
 	bdd_util.assert_list(expected, actual)
 
 
-def __view_classification_list(context, father_id=0):
+def __view_classification_list(context, user, father_id=0):
 
 
 	data = {
+		'corp_id': bdd_util.get_user_id_for(user),
 		'father_id': father_id
 	}
 

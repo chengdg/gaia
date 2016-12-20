@@ -259,6 +259,7 @@ class Classification(models.Model):
 	"""
 	商品分类
 	"""
+	owner_id = models.IntegerField(default=0)
 	name = models.CharField(max_length=1024) #分类名
 	level = models.IntegerField(default=FIRST_CLASSIFICATION) #分类等级
 	status = models.IntegerField(default=CLASSIFICATION_ONLINE)

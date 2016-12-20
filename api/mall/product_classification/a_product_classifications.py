@@ -13,17 +13,17 @@ class AProductClassifications(api_resource.ApiResource):
 	app = "mall"
 	resource = "product_classifications"
 
-	@param_required(['?father_id'])
+	@param_required(['corp_id', '?father_id'])
 	def get(args):
-		weizoom_corp = CorporationFactory.get_weizoom_corporation()
+		corp = CorporationFactory.get()
 		father_id = args.get('father_id', None)
 		if father_id:
 			print father_id
-			product_classifications = weizoom_corp.product_classification_repository.get_child_product_classifications(father_id)
+			product_classifications = corp.product_classification_repository.get_child_product_classifications(father_id)
 		else:
-			product_classifications = weizoom_corp.product_classification_repository.get_product_classifications()
+			product_classifications = corp.product_classification_repository.get_product_classifications()
 
-		classification_id2haslabel = weizoom_corp.product_classification_repository.check_labels(product_classifications)
+		classification_id2haslabel = corp.product_classification_repository.check_labels(product_classifications)
 
 		datas = []
 		for product_classification in product_classifications:

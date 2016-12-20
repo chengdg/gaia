@@ -16,6 +16,7 @@ class ProductClassification(business_model.Model):
 	"""
 	__slots__ = (
 		'id',
+		'owner_id',
         'name',
         'status',
         'father_id',
@@ -70,6 +71,7 @@ class ProductClassification(business_model.Model):
 			level = father_model.level + 1
 
 		model = mall_models.Classification.create(
+			owner_id = CorporationFactory.get().id,
 			name = args['name'],
 			father_id = args['father_id'],
 			note = args['note'],
@@ -165,8 +167,8 @@ class ProductClassification(business_model.Model):
 		classification_ids.append(self.id)
 		#首先检查父分类
 		if self.father_id > 0:
-			weizoom_corp = CorporationFactory.get_weizoom_corporation()
-			father_model = weizoom_corp.product_classification_repository.get_product_classification(self.father_id)
+			corp = CorporationFactory.get()
+			father_model = corp.product_classification_repository.get_product_classification(self.father_id)
 			father_model.get_classification_labels(classification_ids)
 		models = mall_models.ClassificationHasLabel.select().dj_where(classification_id__in=classification_ids)
 		return [ProductClassificationLabel(model) for model in models]

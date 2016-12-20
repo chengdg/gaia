@@ -12,13 +12,13 @@ class AProductClassificationQualification(api_resource.ApiResource):
     app = "mall"
     resource = "product_classification_qualification"
 
-    @param_required(['classification_id', 'qualification_infos:json'])
+    @param_required(['corp_id', 'classification_id', 'qualification_infos:json'])
     def put(args):
         classification_id = args['classification_id']
         qualification_infos = args['qualification_infos']
 
-        weizoom_corp = CorporationFactory.get_weizoom_corporation()
-        classification = weizoom_corp.product_classification_repository.get_product_classification(classification_id)
+        corp = CorporationFactory.get()
+        classification = corp.product_classification_repository.get_product_classification(classification_id)
         classification.set_qualifications(qualification_infos)
 
         return {}

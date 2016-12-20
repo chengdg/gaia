@@ -38,7 +38,7 @@ class ProductLabelGroup(business_model.Model):
 		"""
 		创建商品标签分组
 		"""
-		corp_id = CorporationFactory.get_weizoom_corporation().id
+		corp_id = CorporationFactory.get().id
 		#检查重名
 		exist_groups = mall_models.ProductLabelGroup.select().dj_where(name=label_group_name, owner_id=corp_id, is_deleted=False)
 		if exist_groups.count() > 0:

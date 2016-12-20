@@ -14,7 +14,7 @@ class AProductLableGroup(api_resource.ApiResource):
 	app = 'mall'
 	resource = 'product_label_group'
 
-	@param_required(['label_group_name'])
+	@param_required(['corp_id', 'label_group_name'])
 	def put(args):
 		"""
 		创建标签分类
@@ -26,14 +26,14 @@ class AProductLableGroup(api_resource.ApiResource):
 		else:
 			return {'id': result.id}
 
-	@param_required(['label_group_id'])
+	@param_required(['corp_id', 'label_group_id'])
 	def delete(args):
 		"""
 		删除标签分类
 		:return:
 		"""
-		weizoom_corp = CorporationFactory.get_weizoom_corporation()
-		weizoom_corp.product_label_group_repository.delete_label_group(args['label_group_id'])
+		corp = CorporationFactory.get()
+		corp.product_label_group_repository.delete_label_group(args['label_group_id'])
 
 		return {}
 
