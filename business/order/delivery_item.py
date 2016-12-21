@@ -13,6 +13,7 @@ from business.order.delivery_item_product_repository import DeliveryItemProductR
 from business.order.process_order_after_delivery_item_service import ProcessOrderAfterDeliveryItemService
 from db.express import models as express_models
 from db.mall import models as mall_models
+from util.send_phone_msg import send_phone_captcha
 from gaia_conf import TOPIC
 import logging
 
@@ -36,6 +37,7 @@ class DeliveryItem(business_model.Model):
 		'area',
 		'ship_name',
 		'supplier_id',
+		'ship_address',
 
 		'customer_message',
 
@@ -52,7 +54,9 @@ class DeliveryItem(business_model.Model):
 
 	@cached_context_property
 	def express_company_name_text(self):
-		self.context['corp'].express_delivery_repository.get_company_by_value(self.express_company_name_value)
+		express_company_name = self.context['corp'].express_delivery_repository.get_company_by_value(
+			self.express_company_name_value)
+		return express_company_name
 
 	def __init__(self, db_model):
 		business_model.Model.__init__(self)
@@ -78,6 +82,7 @@ class DeliveryItem(business_model.Model):
 		self.area = db_model.area
 		self.supplier_id = db_model.supplier
 		self.ship_name = db_model.ship_name
+		self.ship_address = db_model.ship_address
 		self.customer_message = db_model.customer_message
 
 		# 快递公司信息
@@ -101,6 +106,11 @@ class DeliveryItem(business_model.Model):
 			total_sale_price += product.sale_price * product.count
 			product_names.append(product.name)
 			total_count += product.count
+		return {
+			'total_sale_price': total_sale_price,
+			'product_names': product_names,
+			'total_count': total_count
+		}
 
 	@staticmethod
 	@param_required(['models'])
@@ -204,7 +214,8 @@ class DeliveryItem(business_model.Model):
 					express_push_id2details[detail.express_id] = [detail]
 
 			for delivery_item in delivery_items:
-				push_id = name_number2express_push_id.get(delivery_item.express_company_name_value + '__' + delivery_item.express_number)
+				push_id = name_number2express_push_id.get(
+					delivery_item.express_company_name_value + '__' + delivery_item.express_number)
 				if push_id:
 					express_details = express_push_id2details.get(push_id, [])
 
@@ -264,8 +275,8 @@ class DeliveryItem(business_model.Model):
 
 		for item in delivery_items:
 			item.operation_logs = bid2logs.get(item.bid, [])
-			# for log in item.operation_logs:
-			# 	log['operator'] = item.leader_name
+		# for log in item.operation_logs:
+		# 	log['operator'] = item.leader_name
 
 	def to_dict(self, *extras):
 
@@ -331,28 +342,33 @@ class DeliveryItem(business_model.Model):
 		id2supplier = {supplier.id: supplier for supplier in suppliers}
 
 		# supplier
+
 		supplier_users = UserSupplier.get_user_supplier_by_user_ids(supplier_user_ids)
-		id2supplier_user = {supplier_user.id:supplier_user for supplier_user in supplier_users}
+		id2supplier_user = {supplier_user.id: supplier_user for supplier_user in supplier_users}
 
 		for delivery_item in delivery_items:
 			db_model = delivery_item.context['db_model']
 			supplier_user = id2supplier_user.get(db_model.supplier_user_id, None)
+
 			supplier = id2supplier.get(db_model.supplier, None)
 			if supplier_user:
 				delivery_item.supplier_info = {
 					'name': supplier_user.name,
-					'supplier_type': 'supplier_user'
+					'supplier_type': 'supplier_user',
+					'supplier_tel': ''
 				}
 			elif supplier:
 				supplier = id2supplier.get(db_model.supplier, None)
 				delivery_item.supplier_info = {
 					'name': supplier.name,
-					'supplier_type': 'supplier'
+					'supplier_type': 'supplier',
+					'supplier_tel': supplier.supplier_tel
 				}
 			else:
 				delivery_item.supplier_info = {
 					'name': '',
-					'supplier_type': 'None'
+					'supplier_type': 'None',
+					'supplier_tel': ''
 				}
 
 	def pay(self, payment_time, corp):
@@ -411,7 +427,8 @@ class DeliveryItem(business_model.Model):
 		@param corp:
 		@return:
 		"""
-
+		if self.status != mall_models.ORDER_STATUS_PAYED_SHIPED:
+			return False, 'Error Status'
 		action_text = u'完成'
 		from_status = self.status
 		to_status = mall_models.ORDER_STATUS_SUCCESSED
@@ -455,6 +472,11 @@ class DeliveryItem(business_model.Model):
 		process_order_after_delivery_item_service = ProcessOrderAfterDeliveryItemService.get(corp)
 		process_order_after_delivery_item_service.process_order(self)
 
+		# [compatibility]: 兼容apiserver当只有一个出货单的时候，直接显示订单的发货信息
+		mall_models.Order.update(express_company_name=express_company_name_value, express_number=express_number,
+		                         is_100=with_logistics_trace, leader_name=leader_name).dj_where(
+			id=self.origin_order_id).execute()
+
 		return True, ''
 
 	def update_ship_info(self, corp, with_logistics_trace, express_company_name_value, express_number, leader_name):
@@ -469,9 +491,16 @@ class DeliveryItem(business_model.Model):
 		self.__send_msg_to_topic('delivery_item_ship_info_updated', self.status, self.status)
 
 		self.__record_operation_log(self.bid, corp.username, action_text)
+		# [compatibility]: 兼容apiserver当只有一个出货单的时候，直接显示订单的发货信息
+		mall_models.Order.update(express_company_name=express_company_name_value, express_number=express_number,
+		                         is_100=with_logistics_trace, leader_name=leader_name).dj_where(
+			id=self.origin_order_id).execute()
 		return True, ''
 
 	def apply_for_refunding(self, corp, cash, weizoom_card_money, coupon_money, integral):
+
+		if self.status in (mall_models.ORDER_STATUS_GROUP_REFUNDING, mall_models.ORDER_STATUS_REFUNDING):
+			return False, 'Error Status'
 
 		action_text = u'退款'
 		from_status = self.status
@@ -508,7 +537,8 @@ class DeliveryItem(business_model.Model):
 		return True, ''
 
 	def refund(self, corp):
-
+		if self.status not in (mall_models.ORDER_STATUS_REFUNDING, mall_models.ORDER_STATUS_GROUP_REFUNDING):
+			return False, 'Error Status'
 		action_text = u'退款完成'
 		from_status = self.status
 		to_status = mall_models.ORDER_STATUS_REFUNDED
@@ -584,3 +614,19 @@ class DeliveryItem(business_model.Model):
 			mall_models.OrderHasRefund.update(finished=True).dj_where(delivery_item_id=self.id).execute()
 
 		db_model.save()
+
+	def send_phone_message(self):
+
+		if self.has_db_record:
+			supplier_tel = self.supplier_info['supplier_tel']
+			data = {
+                    "phones": str(supplier_tel),
+                    "content": {
+                        "order_id": self.bid,
+                        "ship_name": self.ship_name
+                    },
+                    "sms_code": "SMS_34465265"
+                }		
+			rs = send_phone_captcha(data)
+
+

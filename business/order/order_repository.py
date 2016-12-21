@@ -2,6 +2,8 @@
 """
 订单
 """
+import json
+
 from eaglet.core import paginator
 from eaglet.core import watchdog
 
@@ -36,14 +38,16 @@ class OrderRepository(business_model.Model):
 	def __search(self, filters):
 		# db_models = mall_models.Order.select().dj_where(webapp_id=webapp_id, origin_order_id__lte=0)
 
-		should_in_order_ids = []
+		# should_in_order_ids = []
+		# # should_in_order_bids = []
+		# use_should_in_order_ids = False
+		#
 		# should_in_order_bids = []
-		use_should_in_order_ids = False
-
-		should_in_order_bids = []
-		use_should_in_order_bids = False
+		# use_should_in_order_bids = False
 		db_models = self.__get_db_models_for_corp()
 
+		order_id_filters = []
+		order_bid_filters = []
 		if filters:
 			# 处理订单中的值搜索
 			order_filter_parse_result = {}
@@ -54,15 +58,14 @@ class OrderRepository(business_model.Model):
 				filter_parse_result = FilterParser.get().parse_key(filters, '__f-ship_name-equal')
 				order_filter_parse_result.update(filter_parse_result)
 			if '__f-bid-equal' in filters:
-				# filter_parse_result = FilterParser.get().parse_key(filters, '__f-bid-equal',
-				#                                                    {'bid': 'order_id'})
-				# order_filter_parse_result.update(filter_parse_result)
-				# should_in_order_bids.append(filters['__f-bid-equal'])
-				# should_in_order_bids_by_bid_search = [filters['__f-bid-equal']]
-				if should_in_order_ids:
-					should_in_order_bids = list(set(should_in_order_ids).intersection({filters['__f-bid-equal']}))
-				else:
-					should_in_order_bids = [filters['__f-bid-equal']]
+				#
+				# if should_in_order_bids:
+				# 	should_in_order_bids = list(set(should_in_order_bids).intersection({filters['__f-bid-equal']}))
+				# else:
+				# 	should_in_order_bids = [filters['__f-bid-equal']]
+
+				order_bid_filters.append([filters['__f-bid-equal']])
+
 				use_should_in_order_bids = True
 			if '__f-weizoom_card_money-gt' in filters:
 				filter_parse_result = FilterParser.get().parse_key(filters, '__f-weizoom_card_money-gt')
@@ -83,12 +86,41 @@ class OrderRepository(business_model.Model):
 				order_filter_parse_result.update(filter_parse_result)
 
 			if '__f-created_at-range' in filters:
+				try:
+					filters['__f-created_at-range'] = json.loads(filters['__f-created_at-range'])
+				except:
+					pass
 				filter_parse_result = FilterParser.get().parse_key(filters, '__f-created_at-range')
 				order_filter_parse_result.update(filter_parse_result)
 
 			if '__f-payment_time-range' in filters:
+				try:
+					filters['__f-payment_time-range'] = json.loads(filters['__f-payment_time-range'])
+				except:
+					pass
 				filter_parse_result = FilterParser.get().parse_key(filters, '__f-payment_time-range')
 				order_filter_parse_result.update(filter_parse_result)
+
+			if '__f-shipped_at-range' in filters:
+				try:
+					filters['__f-shipped_at-range'] = json.loads(filters['__f-shipped_at-range'])
+				except:
+					pass
+				# filter_parse_result = FilterParser.get().parse_key(filters, '__f-shipped_at-range')
+				# order_filter_parse_result.update(filter_parse_result)
+
+				shipped_at_delivery_items = mall_models.OrderOperationLog.select(
+					mall_models.OrderOperationLog.order_id).dj_where(
+					created_at__range=filters['__f-shipped_at-range'],
+					action__icontains="订单发货")
+
+				shipped_at_bids = [item.order_id.split("^")[0] for item in shipped_at_delivery_items]
+				# if should_in_order_bids:
+				# 	should_in_order_bids = list(set(should_in_order_bids).intersection(set(shipped_at_bids)))
+				# else:
+				# 	should_in_order_bids = shipped_at_bids
+				# use_should_in_order_bids = True
+				order_bid_filters.append(shipped_at_bids)
 
 			if '__f-express_number-equal' in filters:
 				# 物流单号在出货单里，此处为了性能优化，对于normal直接查mall_order
@@ -100,8 +132,14 @@ class OrderRepository(business_model.Model):
 					searched_express_number = filters['__f-express_number-equal']
 					_delivery_items = mall_models.Order.select(mall_models.Order.origin_order_id).dj_where(
 						express_number=searched_express_number)
-					use_should_in_order_ids = True
-					should_in_order_ids.extend([item.origin_order_id for item in _delivery_items])
+					# use_should_in_order_ids = True
+					# if should_in_order_ids:
+					# 	should_in_order_ids = list(set(should_in_order_ids).intersection(
+					# 		set([item.origin_order_id for item in _delivery_items])))
+					# else:
+					# 	should_in_order_ids = [item.origin_order_id for item in _delivery_items]
+
+					order_id_filters.append([item.origin_order_id for item in _delivery_items])
 
 			# 关联表
 			if '__f-product_name-contain' in filters:
@@ -114,8 +152,14 @@ class OrderRepository(business_model.Model):
 				products, pageinfo = self.corp.product_pool.get_products(target_page, filters=product_filters)
 				product_ids = [product.id for product in products]
 				ohs_list = ohs_list.dj_where(product_id__in=product_ids)
-				use_should_in_order_ids = True
-				should_in_order_ids.extend([ohs.order_id for ohs in ohs_list])
+				# use_should_in_order_ids = True
+				# if should_in_order_ids:
+				# 	should_in_order_ids = list(
+				# 		set(should_in_order_ids).intersection(set([ohs.order_id for ohs in ohs_list])))
+				# else:
+				# 	should_in_order_ids = [ohs.order_id for ohs in ohs_list]
+
+				order_id_filters.append([ohs.order_id for ohs in ohs_list])
 
 			if '__f-is_group_buy-equal' in filters:
 				if filters['__f-is_group_buy-equal'] == 'true':
@@ -123,14 +167,19 @@ class OrderRepository(business_model.Model):
 					# should_in_order_bids.extend(self.context['valid_group_order_bids'])
 					# should_in_order_bids_by_group_search = self.context['valid_group_order_bids']
 
-					if should_in_order_bids:
-						should_in_order_bids = list(
-							set(should_in_order_bids).intersection(set(self.context['valid_group_order_bids'])))
-					else:
-						should_in_order_bids = self.context['valid_group_order_bids']
+					# if should_in_order_bids:
+					# 	should_in_order_bids = list(
+					# 		set(should_in_order_bids).intersection(set(self.context['valid_group_order_bids'])))
+					# else:
+					# 	should_in_order_bids = self.context['valid_group_order_bids']
+					order_bid_filters.append(self.context['valid_group_order_bids'])
 
 			if '__f-status-in' in filters:
 				# 需要使用meaningful_word搜索
+				try:
+					filters['__f-status-in'] = json.loads(filters['__f-status-in'])
+				except:
+					pass
 				args_status = []
 				for s in filters['__f-status-in']:
 					args_status.append(mall_models.MEANINGFUL_WORD2ORDER_STATUS[s])
@@ -156,28 +205,54 @@ class OrderRepository(business_model.Model):
 					_delivery_items = mall_models.Order.select(mall_models.Order.origin_order_id).dj_where(
 						webapp_id=self.corp.webapp_id,
 						origin_order_id__gt=0, status__in=status_params)
-					wtf_refund_order_id = [item.origin_order_id for item in _delivery_items]
-					should_in_order_ids.extend(wtf_refund_order_id)
-					use_should_in_order_ids = True
+					wtf_refund_order_ids = [item.origin_order_id for item in _delivery_items]
+
+					# if should_in_order_ids:
+					# 	should_in_order_ids = list(
+					# 		set(should_in_order_ids).intersection(set(wtf_refund_order_ids)))
+					# else:
+					# 	should_in_order_ids = wtf_refund_order_ids
+					# use_should_in_order_ids = True
+
+					order_id_filters.append(wtf_refund_order_ids)
 
 				else:
 					db_models = db_models.dj_where(status__in=status_params)
 
-			if use_should_in_order_ids:
+			# if use_should_in_order_ids:
+			# 	order_filter_parse_result.update({
+			# 		'id__in': should_in_order_ids
+			# 	})
+
+			# if use_should_in_order_bids:
+			# 	order_filter_parse_result.update({
+			# 		'order_id__in': should_in_order_bids
+			# 	})
+
+
+			def get_intersection_of_some_filters(filters):
+				if len(filters) == 1:
+					return filters[0]
+				elif len(filters) == 2:
+					return list(set(filters[0]).intersection(set(filters[1])))
+				else:
+					return list(set(filters[0]).intersection(set(get_intersection_of_some_filters(filters[1:]))))
+
+			if order_id_filters:
+
 				order_filter_parse_result.update({
-					'id__in': should_in_order_ids
+					'id__in': get_intersection_of_some_filters(order_id_filters)
 				})
 
-			if use_should_in_order_bids:
+			if order_bid_filters:
 				order_filter_parse_result.update({
-					'order_id__in': should_in_order_bids
+					'order_id__in': get_intersection_of_some_filters(order_bid_filters)
 				})
+
+
+
 			if order_filter_parse_result:
 				db_models = db_models.dj_where(**order_filter_parse_result)
-			# if should_in_order_ids:
-			# 	db_models = db_models.dj_where(id__in=should_in_order_ids)
-
-			# print('-----db_models-count',db_models.count())
 
 		return db_models
 
@@ -203,6 +278,14 @@ class OrderRepository(business_model.Model):
 			return orders[0]
 		else:
 			return None
+
+	def get_orders_by_webapp_user_id(self, webapp_user_id, status=None):
+		db_models = self.__get_db_models_for_corp().dj_where(webapp_user_id=webapp_user_id)
+		if status:
+			db_models = db_models.dj_where(status=status)
+		orders = Order.from_models({"db_models": db_models, 'fill_options': '', 'corp': self.corp})
+
+		return orders
 
 	def __get_db_models_for_corp(self):
 		webapp_id = self.corp.webapp_id
@@ -254,7 +337,7 @@ class OrderRepository(business_model.Model):
 				(mall_models.Order.order_id << running_group_order_bids) | (
 					(mall_models.Order.order_id << failed_group_order_bids) & (mall_models.Order.status.not_in(
 						[mall_models.ORDER_STATUS_GROUP_REFUNDING, mall_models.ORDER_STATUS_GROUP_REFUNDED]) & (
-					                                                           mall_models.Order.final_price > 0))))
+						                                                           mall_models.Order.final_price > 0))))
 
 			invalid_group_order_bids = [o.order_id for o in ignored_group_orders]
 

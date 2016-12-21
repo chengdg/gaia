@@ -16,6 +16,7 @@ class EncodeDeliveryItemService(business_model.Service):
 			'area': delivery_item.area,
 			'ship_name': delivery_item.ship_name,
 			'express_company_name_value': delivery_item.express_company_name_value,
+			'express_company_name_text': delivery_item.express_company_name_text,
 			'express_number': delivery_item.express_number,
 			'leader_name': delivery_item.leader_name,
 			'created_at': delivery_item.created_at,
@@ -35,24 +36,25 @@ class EncodeDeliveryItemService(business_model.Service):
 
 	def get_products(self, delivery_item):
 		return {'products': [{
-			                    'id': product.id,
-			                    'name': product.name,
-			                    'origin_price': product.origin_price,
-			                    'sale_price': product.sale_price,
-			                    'count': product.count,
-			                    'thumbnails_url': product.thumbnails_url,
-			                    'is_deleted': product.is_deleted,
-			                    'weight': product.weight,
-			                    'total_origin_price': product.total_origin_price,
-			                    'product_model_name_texts': product.product_model_name_texts,
-			                    'promotion_info': {
-				                    'type': product.promotion_info['type'],
-				                    'integral_money': product.promotion_info['integral_money'],
-				                    'integral_count': product.promotion_info['integral_count'],
-				                    'grade_discount_money': product.promotion_info['grade_discount_money'],
-				                    'promotion_saved_money': product.promotion_info['promotion_saved_money'],
-			                    }
-		                    } for product in delivery_item.products]}
+			                     'id': product.id,
+			                     'name': product.name,
+			                     'origin_price': product.origin_price,
+			                     'sale_price': product.sale_price,
+			                     'show_sale_price': product.show_sale_price,
+			                     'count': product.count,
+			                     'thumbnails_url': product.thumbnails_url,
+			                     'is_deleted': product.is_deleted,
+			                     'weight': product.weight,
+			                     'total_origin_price': product.total_origin_price,
+			                     'product_model_name_texts': product.product_model_name_texts,
+			                     'promotion_info': {
+				                     'type': product.promotion_info['type'],
+				                     'integral_money': product.promotion_info['integral_money'],
+				                     'integral_count': product.promotion_info['integral_count'],
+				                     'grade_discount_money': product.promotion_info['grade_discount_money'],
+				                     'promotion_saved_money': product.promotion_info['promotion_saved_money'],
+			                     }
+		                     } for product in delivery_item.products]}
 
 	def get_operation_logs(self, delivery_item):
 		return {

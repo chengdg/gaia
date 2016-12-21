@@ -2,8 +2,9 @@
 
 import demo
 import mall
-# import member
+import member
 import order
 import product
 import auth
 import deprecated
+import weixin

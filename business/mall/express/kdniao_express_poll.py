@@ -60,18 +60,18 @@ class KdniaoExpressPoll(object):
 	result: "true"表示成功，false表示失败
 	'''
 	
-	def __init__(self, order):
+	def __init__(self, delivery_item):
 		self.Business_id = KdniaoExpressConfig.EBusiness_id
 		self.api_key = KdniaoExpressConfig.api_key
-		self.express_company_name = order.express_company_name if order.express_company_name else ''
+		self.express_company_name = delivery_item.express_company_name_value if delivery_item.express_company_name_value else ''
 		self.express_company_name_kdniao = express2kdniaocode[self.express_company_name]
-		self.express_number = order.express_number if order.express_number else ''
-		self.order = order
-		self.order_id = order.id
-		self.area = order.ship_area
+		self.express_number = delivery_item.express_number if delivery_item.express_number else ''
+		self.delivery_item = delivery_item
+		self.delivery_item_id = delivery_item.id
+		self.area = delivery_item.area
 		self.express = None
 		self.express_config = KdniaoExpressConfig()
-		self.webapp_id = order.webapp_id
+		self.webapp_id = delivery_item.webapp_id
 
 		# 伪造
 		# self.express_company_name = 'EMS'
@@ -120,8 +120,8 @@ class KdniaoExpressPoll(object):
 		try:
 			pushs = ExpressHasOrderPushStatus.select().dj_where(
 					# order_id = self.order_id,
-					express_company_name = self.order.express_company_name,
-					express_number = self.order.express_number
+					express_company_name = self.delivery_item.express_company_name_value,
+					express_number = self.delivery_item.express_number
 					)
 			if pushs.count() > 0:
 				push = pushs[0]
@@ -144,13 +144,13 @@ class KdniaoExpressPoll(object):
 
 			return False
 		except:
-			watchdog.error(u'快递鸟tool_express_has_order_push_status表异常，获取订单信息，express_company_name:{}，express_number:{}'.format(self.order.express_company_name, self.order.express_number))
+			watchdog.error(u'快递鸟tool_express_has_order_push_status表异常，获取订单信息，express_company_name:{}，express_number:{}'.format(self.delivery_item.express_company_name, self.delivery_item.express_number))
 			return False
 
 	def _save_poll_order_id(self):
 		pushs = ExpressHasOrderPushStatus.select().dj_where(
-			express_company_name = self.order.express_company_name,
-			express_number = self.order.express_number
+			express_company_name = self.delivery_item.express_company_name_value,
+			express_number = self.delivery_item.express_number
 		)
 
 		if pushs.count() > 0:
@@ -160,8 +160,8 @@ class KdniaoExpressPoll(object):
 			express = ExpressHasOrderPushStatus.create(
 				order_id = -1,
 				status = EXPRESS_PULL_NOT_STATUS,
-				express_company_name = self.order.express_company_name,
-				express_number = self.order.express_number,
+				express_company_name = self.delivery_item.express_company_name_value,
+				express_number = self.delivery_item.express_number,
 				service_type = KDNIAO,
 				webapp_id = self.webapp_id,
 				abort_receive_message = ""
@@ -201,6 +201,6 @@ class KdniaoExpressPoll(object):
 				self.express.abort_receive_message = data.get('Reason')
 				self.express.save()
 				watchdog.error(u'发送快递鸟 订阅请求存在问题，url:{},订单id:{},原因:{}'.format(KdniaoExpressConfig.req_url,
-					self.order_id,
+					self.delivery_item_id,
 					data.get('Reason')))
 			return False

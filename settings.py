@@ -99,11 +99,7 @@ TASKQUEUE_ENABLED = True
 
 # Celery for Falcon
 INSTALLED_TASKS = [
-    'wapi.tasks',
-    'services.order_notify_mail_service.task.service_send_order_email',
-    'services.shiped_order_template_message_service.task.service_send_shiped_order_template_message',
-    'services.express_service.task.service_express',
-    'services.product_service.task.clear_sync_product_cache',
+
 ]
 
 #redis celery相关
@@ -123,7 +119,6 @@ MAIL_NOTIFY_USERNAME = u'noreply@notice.weizoom.com'
 MAIL_NOTIFY_PASSWORD = u'Weizoom2015'
 MAIL_NOTIFY_ACCOUNT_SMTP = u'smtp.dm.aliyun.com'
 
-PANDA_IMAGE_DOMAIN = 'http://chaozhi.weizoom.com'
 
 # settings for WAPI Logger
 if MODE == 'develop' or MODE == 'test':
@@ -167,7 +162,8 @@ else:
 
 REDIS_QUEUE_DB = 8
 TOPIC2QUEUES = {
-    'test-topic': ['test-order-trade-center']
+    'test-topic': ['test-order-trade-center'],
+    'test-weixin-topic': ['test-weixin-topic']
 }
 
 # BDD_SERVER相关配置

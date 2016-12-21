@@ -4,6 +4,7 @@ from business import model as business_model
 from business.coupon.coupon_repository import CouponRepository
 from business.coupon.coupon_rule_repository import CouponRuleRepository
 from business.deprecated.wepage_project_repository import WepageProjectRepository
+from business.member.member_grade_repository import MemberGradeRepository
 from business.member.member_repository import MemberRepository
 from business.order.delivery_item_repository import DeliveryItemRepository
 from business.order.order_export_job_repository import OrderExportJobRepository
@@ -27,10 +28,18 @@ from business.mall.logistics.province_city_repository import ProvinceCityReposit
 from business.mall.config.mall_config_repository import MallConfigRepository
 from business.mall.notify.notification_repository import NotificationRepository
 from business.mall.supplier.supplier_repository import SupplierRepository
-from business.mall.product_classification_repository import ProductClassificationRepository
-from business.mall.product_label_repository import ProductLabelRepository
-from business.mall.product_label_group_repository import ProductLabelGroupRepositroy
+
+from business.mall.classification.product_classification_repository import ProductClassificationRepository
+from business.mall.label.product_label_repository import ProductLabelRepository
+from business.mall.label.product_label_group_repository import ProductLabelGroupRepositroy
+
 from business.mall.promotion.promotion_repository import PromotionRepository
+
+from business.weixin.material_repository import MaterialRepository
+from business.weixin.weixin_news_repository import WeixinNewsRepository
+from business.mall.template_message.template_message_detail_repository import TemplateMessageDetailRepository
+from business.weixin.mpuser_access_token_repository import MpuserAccessTokenRepository
+from business.member.social_account_repository import SocialAccountRepository
 
 
 
@@ -208,3 +217,27 @@ class Corporation(business_model.Model):
 	@property
 	def order_export_job_repository(self):
 		return OrderExportJobRepository(self)
+
+	@property
+	def material_repository(self):
+		return MaterialRepository(self)
+
+	@property
+	def weixin_news_repository(self):
+		return WeixinNewsRepository(self)
+
+	@property
+	def template_message_detail_repository(self):
+		return TemplateMessageDetailRepository(self)
+
+	@property
+	def mpuser_access_token_repository(self):
+		return MpuserAccessTokenRepository(self)
+
+	@property
+	def social_account_repository(self):
+		return SocialAccountRepository(self)
+
+	@property
+	def member_grade_repository(self):
+		return MemberGradeRepository(self)

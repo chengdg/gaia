@@ -1,0 +1,109 @@
+{
+	"swagger": "2.0",
+	"info": {
+		"version": "0.0.1",
+		"title": "Hermes Weixin Material API"
+	},
+	"paths": {
+		"/weixin/materials": {
+			"get": {
+				"summary": "展示要分享的图文消息",
+				"parameters": [
+					{
+						"name": "selected_material_id",
+						"required": true,
+						"description": "已选中的素材ID,默认值为0"
+					},
+					{
+						"name": "query",
+						"required": "false",
+						"description": "查询条件"
+					},
+					{
+						"name": "from",
+						"required": true,
+						"description": "来源，默认值为share_page_config"
+					},
+					{
+						"name": "sort_attr",
+						"required": "false",
+						"description": "排序字段名称"
+					},
+					{
+						"name": "cur_page",
+						"in": "query",
+						"required": true
+					},
+					{
+						"name": "count_per_page",
+						"in": "query",
+						"required": true
+					}
+				],
+				"tags": [
+					"weixin"
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32",
+									"description": "当存在正在执行或未下载的任务时，创建失败返回500"
+								},
+								"data": {
+									"type": "object",
+									"properties": {
+										"pageinfo": {
+		                                    "type": "object",
+		                                    "description": "分页信息"
+		                                },
+										"created_at": {
+											"type": "string",
+											"description": "创建时间"
+										},
+										"id": {
+											"type": "integer",
+											"description": "素材ID"
+										},
+										"type": {
+											"type": "integer",
+											"description": "类型,值为single活multi"
+										},
+										"isChecked": {
+											"type": "boolean",
+											"description": "消息,值为True或False"
+										},
+										"newses": {
+											"type": "object",
+											"description": "消息",
+											"properties": {
+												"id": {
+				                                    "type": "integer",
+				                                    "description": "消息ID"
+				                                },
+				                                "title": {
+				                                    "type": "string",
+				                                    "description": "主题"
+				                                }
+											}
+										}
+									}
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

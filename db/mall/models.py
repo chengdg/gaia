@@ -289,6 +289,18 @@ class ClassificationHasProduct(models.Model):
 		db_table = "mall_classification_has_product"
 		
 
+class ClassificationQualification(models.Model):
+	"""
+	商品分类配置的特殊资质
+	"""
+	classification = models.ForeignKey(Classification)
+	name = models.CharField(max_length=48, default='') #资质名称
+	created_at = models.DateTimeField(auto_now_add=True) #创建时间
+
+	class Meta(object):
+		db_table = 'mall_classification_qualification'
+
+
 #########################################################################
 # 商品相关Model
 #########################################################################
@@ -924,6 +936,8 @@ class Order(models.Model):
 	supplier_user_id = models.IntegerField(default=0) # 订单供货商user的id，用于系列拆单
 	total_purchase_price = models.FloatField(default=0)  # 总订单采购价格
 	# bid = models.CharField(max_length=100)  # 订单号
+	member_card_money = models.FloatField(
+		default=0.0)  # 会员卡抵扣金额  alter table mall_order add column member_card_money float default 0;
 
 	class Meta(object):
 		db_table = 'mall_order'
@@ -1268,6 +1282,8 @@ class MarketToolsTemplateMessage(models.Model):
 ########################################################################
 MAJOR_INDUSTRY_TYPE = 0 #主营行业
 DEPUTY_INDUSTRY_TYPE = 1 #副营行业
+MESSAGE_STATUS_ON = 1 # 启用
+MESSAGE_STATUS_OFF = 0 # 不启用
 class MarketToolsTemplateMessageDetail(models.Model):
 	owner = models.ForeignKey(User)
 	template_message = models.ForeignKey(MarketToolsTemplateMessage)

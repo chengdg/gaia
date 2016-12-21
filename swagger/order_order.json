@@ -420,6 +420,10 @@
 																							"type": "number",
 																							"description": "售价"
 																						},
+																						"show_sale_price": {
+																							"type": "number",
+																							"description": "商品的显示售价，通常和售价一致，只有赠品时，售价为0，而显示商品价格"
+																						},
 																						"weight": {
 																							"type": "integer",
 																							"description": "重量"
@@ -565,6 +569,18 @@
 														"is_subscribed": {
 															"type": "boolean",
 															"description": "是否已关注"
+														}
+													}
+												},
+												"weizoom_card_info": {
+													"type": "object",
+													"properties": {
+														"used_card": {
+															"type": "array",
+															"description": "卡号列表",
+															"items":{
+																"type":"string"
+															}
 														}
 													}
 												},
@@ -906,6 +922,10 @@
 																		"sale_price": {
 																			"type": "number",
 																			"description": "售价"
+																		},
+																		"show_sale_price": {
+																			"type": "number",
+																			"description": "商品的显示售价，通常和售价一致，只有赠品时，售价为0，而显示商品价格"
 																		},
 																		"id": {
 																			"type": "integer",

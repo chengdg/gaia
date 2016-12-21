@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
+import json
 
 from business import model as business_model
 from business.order.delivery_item import DeliveryItem
 from db.mall import models as mall_models
+from db.member import models as member_models
 from gaia_conf import TOPIC
 from bdem import msgutil
 from datetime import datetime, timedelta
@@ -56,6 +58,7 @@ class Order(business_model.Model):
 		'webapp_user_id',
 
 		'weizoom_card_money',
+		'member_card_money',
 		'delivery_time',  # 配送时间字符串
 		'is_first_order',
 		'supplier_user_id',
@@ -76,6 +79,7 @@ class Order(business_model.Model):
 		'status_logs',
 		'operation_logs',
 		'weizoom_card_info',
+		'member_card_info',
 		'extra_coupon_info',
 
 		'integral_type',  # 订单中使用积分的类型。'order':整单抵扣,'product':积分应用
@@ -132,6 +136,7 @@ class Order(business_model.Model):
 			order.coupon_money = db_model.coupon_money
 			order.postage = db_model.postage
 			order.weizoom_card_money = db_model.weizoom_card_money
+			order.member_card_money = db_model.member_card_money
 			order.integral_money = db_model.integral_money
 			order.integral = db_model.integral
 			order.promotion_saved_money = db_model.promotion_saved_money
@@ -180,6 +185,7 @@ class Order(business_model.Model):
 			with_status_logs = fill_options.get('with_status_logs')
 			with_operation_logs = fill_options.get('with_operation_logs')
 			with_weizoom_card = fill_options.get("with_weizoom_card")
+			with_member_card = fill_options.get("with_member_card")
 			with_coupon = fill_options.get("with_coupon")
 			with_extra_promotion_info = fill_options.get("extra_promotion_info")
 
@@ -212,6 +218,9 @@ class Order(business_model.Model):
 
 			if with_weizoom_card:
 				Order.__fill_weizoom_card(orders, order_ids)
+
+			if with_member_card:
+				Order.__fill_member_card(orders, order_ids)
 
 			if with_group_buy_info:
 				Order.__fill_group_buy(orders, order_ids)
@@ -293,10 +302,29 @@ class Order(business_model.Model):
 			if info:
 				order.weizoom_card_info = {
 					'trade_id': info.trade_id,
-					'used_card': info.used_card
+					'used_card': json.loads(info.used_card)
 				}
 			else:
-				order.weizoom_card_info = {}
+				order.weizoom_card_info = {
+					'trade_id': '',
+					'used_card': ''
+				}
+
+	@staticmethod
+	def __fill_member_card(orders, order_ids):
+		order_bids = [order.bid for order in orders]
+		infos = member_models.MemberCardLog.select().dj_where(order_id__in=order_bids)
+
+		bid2infos = {info.order_id: info for info in infos}
+
+		for order in orders:
+			info = bid2infos.get(order.bid)
+			if info:
+				order.member_card_info = {
+					'trade_id': info.trade_id
+				}
+			else:
+				order.member_card_info = {}
 
 	@staticmethod
 	def __fill_delivery_items(orders, fill_options):
@@ -349,10 +377,11 @@ class Order(business_model.Model):
 
 	@staticmethod
 	def __fill_status_logs(orders, order_ids):
-		logs = mall_models.OrderStatusLog.select().dj_where(order_id__in=order_ids).order_by(
-			mall_models.OrderStatusLog.created_at)
 		if len(orders) == 1:
 			order = orders[0]
+
+			logs = mall_models.OrderStatusLog.select().dj_where(order_id=order.bid).order_by(
+				mall_models.OrderStatusLog.created_at)
 			order.status_logs = []
 			# 下单时没状态日志
 			order.status_logs.append(
@@ -367,8 +396,8 @@ class Order(business_model.Model):
 					{
 						'from_status': log.from_status,
 						'from_status_code': mall_models.ORDER_STATUS2MEANINGFUL_WORD[log.from_status],
-						'to_status': log.to_staus,
-						'to_status_code': mall_models.ORDER_STATUS2MEANINGFUL_WORD[log.to_staus],
+						'to_status': log.to_status,
+						'to_status_code': mall_models.ORDER_STATUS2MEANINGFUL_WORD[log.to_status],
 						'time': log.created_at
 					})
 
@@ -567,6 +596,10 @@ class Order(business_model.Model):
 
 		@return:
 		"""
+
+		if self.status != mall_models.ORDER_STATUS_NOT:
+			return False, 'Error Status'
+
 		action_text = u"取消订单"
 		from_status = self.status
 		to_status = mall_models.ORDER_STATUS_CANCEL
@@ -704,15 +737,13 @@ class Order(business_model.Model):
 		db_model.save()
 
 	def get_all_products(self):
+		"""
+		赠品
+		@return:
+		"""
 		delivery_item_products = []
 
 		for item in self.delivery_items:
 			delivery_item_products.extend(item.products)
-		# todo 赠品不计销量
-		# for product in products:
-		# 	if product.promotion != {'type_name': 'premium_sale:premium_product'}:
-		# 		product_sale_infos.append({
-		# 			'product_id': product.id,
-		# 			'purchase_count': product.purchase_count
-		# 		})
+
 		return delivery_item_products
