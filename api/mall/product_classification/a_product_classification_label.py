@@ -17,50 +17,16 @@ class AProductClassificationLabel(api_resource.ApiResource):
 	def get(args):
 		"""
 		:return:
-
-		[{
-			'label_group_id': label_group_A,
-			'label_ids': [label_a1, label_a2, label_a3]
-		},{
-			'label_group_id': label_group_B,
-			'label_ids': [label_b1, label_b2, label_b3]
-		}]
+		:classification_has_own_label: 商品分类是否有自己的标签而不是继承自上级分类
 		"""
 		classification_id = args['classification_id']
 		corp = CorporationFactory.get()
 		classification = corp.product_classification_repository.get_product_classification(classification_id)
-		classification_label_models = classification.get_classification_labels()
+		relation_data = classification.get_label_group_relation()
 
-		all_label_ids = []
-		label_id2classifi = dict()
-		for model in classification_label_models:
-			label_id = model.label_id
-			all_label_ids.append(label_id)
-			label_id2classifi[label_id] = model.classification_id
-
-		label_models = corp.product_label_repository.get_labels(all_label_ids)
-
-		label_group_has_label = dict()
-		label_relation = dict()
-		for model in label_models:
-			label_group_id = model.label_group_id
-			label_id = str(model.id)
-			if not label_group_has_label.has_key(label_group_id):
-				label_group_has_label[label_group_id] = [label_id]
-			else:
-				label_group_has_label[label_group_id].append(label_id)
-
-			label_relation[label_id] = True if int(label_id2classifi[label_id]) == int(classification_id) else False
-
-		return_data = []
-		for label_group_id, label_ids in label_group_has_label.items():
-			return_data.append({
-				'labelGroupId': label_group_id,
-				'labelIds': list(set(label_ids)) #去重
-			})
 		return {
-			'selected_labels': return_data,
-			'label_relation': label_relation
+			'relations': relation_data['relations'],
+			'classification_has_own_label': relation_data['classification_has_own_label']
 		}
 
 	@param_required(['corp_id', 'classification_id', 'selected_labels:json'])

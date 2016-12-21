@@ -18,7 +18,6 @@ class AProductClassifications(api_resource.ApiResource):
 		corp = CorporationFactory.get()
 		father_id = args.get('father_id', None)
 		if father_id:
-			print father_id
 			product_classifications = corp.product_classification_repository.get_child_product_classifications(father_id)
 		else:
 			product_classifications = corp.product_classification_repository.get_product_classifications()
@@ -28,6 +27,7 @@ class AProductClassifications(api_resource.ApiResource):
 		datas = []
 		for product_classification in product_classifications:
 			qualifications = product_classification.get_qualifications()
+			print classification_id2haslabel[product_classification.id]
 			datas.append({
 				'id': product_classification.id,
 				'name': product_classification.name,
@@ -42,7 +42,7 @@ class AProductClassifications(api_resource.ApiResource):
 					'created_at': qualification.created_at,
 					'index': i
 					} for i, qualification in enumerate(qualifications)],
-				'has_label': classification_id2haslabel[str(product_classification.id)]
+				'has_label': classification_id2haslabel[product_classification.id]
 			})
 
 		return {

@@ -306,7 +306,7 @@ class ClassificationHasLabel(models.Model):
 	商品类目（分类)有什么标签
 	"""
 	classification = models.ForeignKey(Classification)
-	label_id = models.CharField(max_length=1024, default='')
+	label_id = models.IntegerField(default=0)
 	created_at = models.DateTimeField(auto_now_add=True)
 
 	class Meta(object):

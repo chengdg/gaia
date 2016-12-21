@@ -148,7 +148,7 @@ class ProductClassification(business_model.Model):
 			for label_id in selected_labels:
 				bulk_create.append(dict(
 					classification = self.id,
-					label_id = str(label_id)
+					label_id = label_id
 				))
 			ProductClassificationLabel.create_many(bulk_create)
 
@@ -159,7 +159,7 @@ class ProductClassification(business_model.Model):
 		"""
 		mall_models.ClassificationHasLabel.delete().dj_where(classification_id=self.id).execute()
 
-	def get_classification_labels(self, classification_ids=None):
+	def get_labels(self, classification_ids=None):
 		"""
 		获取分类的标签
 		"""
@@ -169,6 +169,53 @@ class ProductClassification(business_model.Model):
 		if self.father_id > 0:
 			corp = CorporationFactory.get()
 			father_model = corp.product_classification_repository.get_product_classification(self.father_id)
-			father_model.get_classification_labels(classification_ids)
+			father_model.get_labels(classification_ids)
 		models = mall_models.ClassificationHasLabel.select().dj_where(classification_id__in=classification_ids)
 		return [ProductClassificationLabel(model) for model in models]
+
+	def get_label_group_relation(self):
+		"""
+		:return:
+
+		[{
+			'label_group_id': label_group_A,
+			'label_ids': [label_a1, label_a2, label_a3]
+		},{
+			'label_group_id': label_group_B,
+			'label_ids': [label_b1, label_b2, label_b3]
+		}]
+		"""
+		classification_labels = self.get_labels()
+		all_label_ids = []
+		label_id2classifi = dict()
+		for model in classification_labels:
+			label_id = model.label_id
+			all_label_ids.append(label_id)
+			label_id2classifi[label_id] = model.classification_id
+
+		corp = CorporationFactory.get()
+		labels = corp.product_label_repository.get_labels(all_label_ids)
+
+		label_group_has_label = dict()
+		classification_has_own_label = dict()
+		for model in labels:
+			label_group_id = model.label_group_id
+			label_id = model.id
+			if not label_group_has_label.has_key(label_group_id):
+				label_group_has_label[label_group_id] = [label_id]
+			else:
+				label_group_has_label[label_group_id].append(label_id)
+
+				classification_has_own_label[label_id] = True if label_id2classifi[label_id] == self.id else False
+
+		relations = []
+		for label_group_id, label_ids in label_group_has_label.items():
+			relations.append({
+				'label_group_id': label_group_id,
+				'label_ids': list(set(label_ids))  # 去重
+			})
+
+		return {
+			'relations': relations,
+			'classification_has_own_label': classification_has_own_label
+		}
