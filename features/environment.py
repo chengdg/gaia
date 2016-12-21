@@ -17,6 +17,23 @@ from eaglet.core.cache import utils as cache_utils
 
 #from core.service import celeryconfig
 
+
+# 临时检测bdd时的数据库是否是本地
+def get_ip(domain):
+	import socket
+	ip = socket.gethostbyname(domain)
+	return ip
+
+if settings.DATABASES['default']['HOST'] != 'db.dev.com':
+
+	raise RuntimeError("Do not run BDD when connect online database")
+else:
+	ip = get_ip('db.dev.com')
+	if ip != '127.0.0.1':
+		raise RuntimeError("Do not run BDD when connect online database")
+
+
+
 ######################################################################################
 # __clear_all_account_data: 清空账号数据
 ######################################################################################
