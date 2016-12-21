@@ -6,77 +6,77 @@ Feature: 从微众商品池中选择商品进行上架
 		2. 目前需要先跑apiserver的@ztqb建立会员关系
 """
 
-  Background:
-    Given weizoom登录系统
-    And weizoom已添加商品分组
-      """
-      [{
-          "name": "分类1"
+Background:
+Given weizoom登录系统
+And weizoom已添加商品分组
+  """
+  [{
+      "name": "分类1"
+  }, {
+      "name": "分类2"
+  }, {
+      "name": "分类3"
+  }]
+  """
+And weizoom已添加商品规格
+  """
+  [{
+      "name": "颜色",
+      "type": "图片",
+      "values": [{
+          "name": "黑色",
+          "image": "/static/test_resource_img/icon_color/black.png"
       }, {
-          "name": "分类2"
-      }, {
-          "name": "分类3"
+          "name": "白色",
+          "image": "/static/test_resource_img/icon_color/white.png"
       }]
-      """
-    And weizoom已添加商品规格
-      """
-      [{
-          "name": "颜色",
-          "type": "图片",
-          "values": [{
-              "name": "黑色",
-              "image": "/static/test_resource_img/icon_color/black.png"
-          }, {
-              "name": "白色",
-              "image": "/static/test_resource_img/icon_color/white.png"
-          }]
+  }, {
+      "name": "尺寸",
+      "type": "文字",
+      "values": [{
+          "name": "M"
       }, {
-          "name": "尺寸",
-          "type": "文字",
-          "values": [{
-              "name": "M"
-          }, {
-              "name": "S"
-          }]
+          "name": "S"
       }]
-      """
-    When weizoom添加商品分类
-      """
-      {
-          "分类11": {
-              "分类21": null,
-              "分类22": null,
-              "分类23": {
-                  "分类31": null
-              }
-          },
-          "分类12": {
-              "分类24": null
-          },
-          "分类13": null
+  }]
+  """
+When weizoom添加商品分类
+  """
+  {
+      "分类11": {
+          "分类21": null,
+          "分类22": null,
+          "分类23": {
+              "分类31": null
+          }
+      },
+      "分类12": {
+          "分类24": null
+      },
+      "分类13": null
+  }
+  """
+When weizoom添加供应商
+  """
+  [{
+      "name": "苹果",
+      "type": "固定低价"
+  }, {
+      "name": "微软",
+      "type": "首月55分成",
+      "divide_info": {
+          "divide_money": 1.0,
+          "basic_rebate": 20,
+          "rebate": 30
       }
-      """
-    When weizoom添加供应商
-      """
-      [{
-          "name": "苹果",
-          "type": "固定低价"
-      }, {
-          "name": "微软",
-          "type": "首月55分成",
-          "divide_info": {
-              "divide_money": 1.0,
-              "basic_rebate": 20,
-              "rebate": 30
-          }
-      }, {
-          "name": "谷歌",
-          "type": "零售返点",
-          "retail_info": {
-              "rebate": 50
-          }
-      }]
-      """
+  }, {
+      "name": "谷歌",
+      "type": "零售返点",
+      "retail_info": {
+          "rebate": 50
+      }
+  }]
+  """
 
 @ztqb
 Scenario:1 创建代销的商品
@@ -198,7 +198,7 @@ Then jobs能获得'weizoom商品池'商品列表
   "image": "/static/test_resource_img/hangzhou1.jpg"
 }]
 """
-When jobs添加代销商品
+ When jobs添加代销商品
 """
 ["东坡肘子", "叫花鸡"]
 """
@@ -245,8 +245,29 @@ When bill购买jobs的商品::apiserver
 Given jobs登录系统
 Then jobs获得订单列表
 """
-[{
-  "bid":"001"
-}]
+      [{
+          "order_no":"001",
+          "methods_of_payment":"微信支付",
+          "save_money": 0.00,
+          "buyer":"bill",
+          "is_first_order":false,
+          "is_group_buying":false,
+          "ship_name":"bill",
+          "ship_tel":"13811223344",
+          "ship_area": "北京市 北京市 海淀区",
+          "ship_address": "泰兴大厦",
+          "invoice":"",
+          "pay_money": 11.12,
+          "postage": 0.00,
+          "status":"待支付",
+		  "delivery_items":[{
+				"products":[{
+					"name":"东坡肘子",
+					"origin_price":11.12,
+					"count":1
+				}]
+			}]
+
+      }]
 """
 

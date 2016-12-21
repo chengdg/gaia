@@ -238,6 +238,7 @@ def assert_dict(expected, actual):
 			except Exception, e:
 				items = ['\n<<<<<', 'e: %s' % str(expected), 'a: %s' % str(actual), 'key: %s' % key, e.args[0], '>>>>>\n']
 				e.args = ('\n'.join(items),)
+				print('\n'.join(items))
 				raise e
 
 
