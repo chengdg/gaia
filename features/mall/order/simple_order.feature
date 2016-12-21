@@ -1,9 +1,8 @@
-Feature: 从微众商品池中选择商品进行上架
+Feature: 购买自营平台商品
 """
-
-	todo:
-		1. 需要产生一个能用的自营账号
-		2. 目前需要先跑apiserver的@ztqb建立会员关系
+weizoom: 微众公司
+zhouxun: 即自营平台
+bill: 会员
 """
 
 Background:
@@ -81,10 +80,10 @@ When weizoom添加供应商
 @ztqb
 Scenario:1 创建代销的商品
 weizoom添加商品后：
-1、jobs能获得weizoom商品池商品（创建时间倒序排列）
+1、zhouxun能获得weizoom商品池商品（创建时间倒序排列）
 
-jobs创建代销商品后:
-1、jobs在商品池商品列表能看到代销商品（创建时间倒序排列）
+zhouxun创建代销商品后:
+1、zhouxun在商品池商品列表能看到代销商品（创建时间倒序排列）
 
 Given weizoom登录系统
 When weizoom添加商品
@@ -149,8 +148,8 @@ When weizoom添加商品
   }
 }]
 """
-Given jobs登录系统
-When jobs添加支付方式
+Given zhouxun登录系统
+When zhouxun添加支付方式
   """
   [{
       "type": "微信支付",
@@ -162,12 +161,12 @@ When jobs添加支付方式
       "paysign_key": "paysign_key_1"
   }]
   """
-Then jobs能获得'待售'商品列表
+Then zhouxun能获得'待售'商品列表
 """
 []
 """
-Given jobs成为自营平台
-Then jobs能获得'weizoom商品池'商品列表
+Given zhouxun成为自营平台
+Then zhouxun能获得'weizoom商品池'商品列表
 """
 [{
   "name": "黄桥烧饼",
@@ -198,11 +197,11 @@ Then jobs能获得'weizoom商品池'商品列表
   "image": "/static/test_resource_img/hangzhou1.jpg"
 }]
 """
- When jobs添加代销商品
+ When zhouxun添加代销商品
 """
 ["东坡肘子", "叫花鸡"]
 """
-Then jobs能获得'jobs商品池'商品列表
+Then zhouxun能获得'zhouxun商品池'商品列表
 """
 [{
   "name": "叫花鸡"
@@ -210,11 +209,11 @@ Then jobs能获得'jobs商品池'商品列表
   "name": "东坡肘子"
 }]
 """
-When jobs将商品移动到'在售'货架
+When zhouxun将商品移动到'在售'货架
 """
 ["东坡肘子", "叫花鸡"]
 """
-Then jobs能获得'在售'商品列表
+Then zhouxun能获得'在售'商品列表
 """
 [{
   "name": "叫花鸡"
@@ -222,9 +221,9 @@ Then jobs能获得'在售'商品列表
   "name": "东坡肘子"
 }]
 """
-Given bill关注jobs的公众号::apiserver
-When bill访问jobs的webapp::apiserver
-When bill购买jobs的商品::apiserver
+Given bill关注zhouxun的公众号::apiserver
+When bill访问zhouxun的webapp::apiserver
+When bill购买zhouxun的商品::apiserver
 """
 {
   "order_id":"001",
@@ -242,8 +241,8 @@ When bill购买jobs的商品::apiserver
   "customer_message": "bill购买无规格商品1"
 }
 """
-Given jobs登录系统
-Then jobs获得订单列表
+Given zhouxun登录系统
+Then zhouxun获得订单列表
 """
       [{
           "order_no":"001",
