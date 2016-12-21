@@ -36,7 +36,6 @@ def step_impl(context, user):
 	response = context.client.get('/mall/product_classifications/')
 
 	product_classifications = response.data['product_classifications']
-	print (product_classifications)
 
 	product_classifications.sort(lambda x,y: cmp(x['father_id'], y['father_id']))
 	name2classification = dict()
@@ -197,7 +196,6 @@ def step_impl(context, user, classification_name):
 	classification_id = __classification_name2id(classification_name)
 	expected = bdd_util.table2list(context)
 	for one in expected:
-		print (isinstance(one['operation'], unicode))
 		one['operation'] = one['operation'].split(',')
 	actual = __view_classification_list(context, user, classification_id)
 	print (expected)

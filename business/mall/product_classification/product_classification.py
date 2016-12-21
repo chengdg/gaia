@@ -208,8 +208,6 @@ class ProductClassification(business_model.Model):
 
 			classification_has_own_label[label_id] = True if label_id2classifi[label_id] == self.id else False
 
-		print classification_has_own_label
-
 		relations = []
 		for label_group_id, label_ids in label_group_has_label.items():
 			relations.append({

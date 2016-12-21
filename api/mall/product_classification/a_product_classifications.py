@@ -27,7 +27,6 @@ class AProductClassifications(api_resource.ApiResource):
 		datas = []
 		for product_classification in product_classifications:
 			qualifications = product_classification.get_qualifications()
-			print classification_id2haslabel[product_classification.id]
 			datas.append({
 				'id': product_classification.id,
 				'name': product_classification.name,
