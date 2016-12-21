@@ -124,4 +124,4 @@ class AccessToken(models.Model):
 	is_active = models.BooleanField(default=True)
 
 	class Meta(object):
-		db_table = "gaia_access_token"
+		db_table = "access_token"

@@ -15,13 +15,13 @@ class PromotionFactory(business_model.Service):
     """
     def __create_flash_sale(self, promotion_data):
         flash_sale = promotion_models.FlashSale.create(
-            owner=self.corp,
+            owner=self.corp.id,
             limit_period=promotion_data['limit_period'],
             promotion_price=promotion_data['promotion_price'],
             count_per_purchase=promotion_data['count_per_purchase'],
-            count_per_perio=promotion_data['count_per_perio']
+            count_per_period=promotion_data['count_per_period']
         )
-        return FlashSale(flash_sale)
+        return flash_sale
 
     def __create_integral_sale(self, detail_info):
 		# TODO 判断商品是否在做其他促销
@@ -82,7 +82,6 @@ class PromotionFactory(business_model.Service):
         )
 
     def create_promotion(self, promotion_data):
-
         product_info = json.loads(promotion_data['product_info'])
         promotion_info = json.loads(promotion_data['promotion_info'])
         detail_info = json.loads(promotion_data['detail_info'])

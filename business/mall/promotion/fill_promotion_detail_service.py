@@ -75,9 +75,7 @@ class FillPromotionDetailService(busniess_model.Service):
 		for relation in relations:
 			promotion_id2product_ids[relation.promotion_id].append(relation.product_id)
 		product_ids = [relation.product_id for relation in relations]
-		from business.product.product import Product
-		product_models = mall_models.Product.select().dj_where(id__in=product_ids)
-		products = [Product(model) for model in product_models]
+		products = self.corp.product_pool.get_products_by_ids(product_ids=product_ids)
 		fill_options = {
 			'with_sales': True,
 			"with_image": True,
@@ -105,8 +103,7 @@ class FillPromotionDetailService(busniess_model.Service):
 			if promotion_type == promotion_models.PROMOTION_TYPE_FLASH_SALE:
 				self.__fill_flash_sale_details(promotions)
 			elif promotion_type == promotion_models.PROMOTION_TYPE_PREMIUM_SALE:
-				if options.get('with_detail'):
-					self.__fill_premium_sale_details(promotions, corp)
+				self.__fill_premium_sale_details(promotions, corp)
 			elif promotion_type == promotion_models.PROMOTION_TYPE_INTEGRAL_SALE:
 				self.__fill_integral_sale_rule_details(promotions)
 		# 填充促销商品的信息

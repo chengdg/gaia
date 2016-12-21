@@ -473,3 +473,7 @@ class ProductPool(business_model.Model):
 
 	def has_product_with_display_index(self, display_index):
 		return mall_models.ProductPool.select().dj_where(woid=self.corp.id, display_index=display_index).count() > 0
+
+	def search_products_by_filters(self, **filters):
+		product_models = mall_models.Product.select().dj_where(**filters)
+		return [Product(product_model) for product_model in product_models]

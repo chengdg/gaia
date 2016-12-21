@@ -43,7 +43,7 @@ class CouponRule(business_model.Model):
 		coupon_rule._init_slot_from_model(model)
 		coupon_rule.context['db_model'] = args['db_model']
 		coupon_rule.context['corp'] = args['corp']
-		if coupon_rule.limit_product_id:
+		if coupon_rule.limit_product_id != '0':
 			coupon_rule.type = 'multi_products_coupon'
 		else:
 			coupon_rule.type = 'all_products_coupon'
