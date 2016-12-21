@@ -198,15 +198,17 @@ class ProductClassification(business_model.Model):
 
 		label_group_has_label = dict()
 		classification_has_own_label = dict()
-		for model in labels:
-			label_group_id = model.label_group_id
-			label_id = model.id
+		for label in labels:
+			label_group_id = label.label_group_id
+			label_id = label.id
 			if not label_group_has_label.has_key(label_group_id):
 				label_group_has_label[label_group_id] = [label_id]
 			else:
 				label_group_has_label[label_group_id].append(label_id)
 
-				classification_has_own_label[label_id] = True if label_id2classifi[label_id] == self.id else False
+			classification_has_own_label[label_id] = True if label_id2classifi[label_id] == self.id else False
+
+		print classification_has_own_label
 
 		relations = []
 		for label_group_id, label_ids in label_group_has_label.items():
