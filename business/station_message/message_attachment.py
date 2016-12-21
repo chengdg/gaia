@@ -13,8 +13,8 @@ class MessageAttachment(business_model.Model):
 	__slots__ = (
 		'id',
 		'message'
-		'filename',
-		'type',
+		'file_name',
+		'file_type',
 		'path',
 		'created_at'
 	)
@@ -27,12 +27,6 @@ class MessageAttachment(business_model.Model):
 			self._init_slot_from_model(model)
 
 
-	def update(self, title, content, file_url):
-		"""
-		更新站内消息
-		"""
-		message_models.Message.update(title=title, content=content, file_url=file_url).dj_where(id=self.id).execute()
-
 	@staticmethod
 	def create(message, filename, type_name, path):
 		"""
@@ -40,8 +34,8 @@ class MessageAttachment(business_model.Model):
 		"""
 		model = message_models.MessageAttachment.create(
 			message=message,
-			filename=filename,
-			type=type_name,
+			file_name=filename,
+			file_type=type_name,
 			path=path
 		)
 		return MessageAttachment(model)

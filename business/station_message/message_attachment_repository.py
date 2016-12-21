@@ -11,8 +11,8 @@ class MessageAttachmentRepository(business_model.Service):
 	def get_message_attachments(self, id):
 		attachments = message_models.MessageAttachment.select().dj_where(message=id)
 		data = [{'id': at.id,
-						'name': at.filename,
-						'type': at.type,
+						'name': at.file_name,
+						'type': at.file_type,
 						'path': at.path} for at in attachments]
 		return data
 

@@ -10,6 +10,8 @@ from db.station_message import models as message_models
 
 from business.station_message.message_attachment import MessageAttachment
 from business.station_message.message_attachment_repository import MessageAttachmentRepository
+from business.station_message.user_has_message_repository import UserHasMessageRepository
+
 
 class Message(business_model.Model):
 	__slots__ = (
@@ -17,7 +19,9 @@ class Message(business_model.Model):
 		'title',
 		'content',
 		'file_url',
-		'created_at'
+		'created_at',
+		'owner',
+		'is_read'
 	)
 
 	def __init__(self, model):
@@ -36,7 +40,8 @@ class Message(business_model.Model):
 		if attachments:
 			MessageAttachmentRepository().delete_message_attachments(self.id)
 			for attachment in attachments:
-				MessageAttachment.create(self.id, attachment.get('name'), attachment.get('type'), attachment.get('path'))
+				MessageAttachment.create(self.id, attachment.get('name'), attachment.get('type'),
+										 attachment.get('path'))
 
 	@staticmethod
 	@param_required(['title', 'content', '?attachments:list'])
@@ -52,6 +57,9 @@ class Message(business_model.Model):
 			content=args.get('content').strip(),
 			file_url='multifile'
 		)
+		# 添加用户与站内消息的关联（是否已读）
+		UserHasMessageRepository().create_user_has_messages(model)
+
 		if model and attachments:
 			for attachment in attachments:
 				MessageAttachment.create(model, attachment.get('name'), attachment.get('type'), attachment.get('path'))

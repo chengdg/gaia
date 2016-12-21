@@ -7,6 +7,7 @@ from eaglet.core.exceptionutil import unicode_full_stack
 
 from business.station_message.message import Message
 from business.station_message.message_repository import MessageRepository
+from business.station_message.message_attachment_repository import MessageAttachmentRepository
 
 
 class AMessage(api_resource.ApiResource):
@@ -22,7 +23,8 @@ class AMessage(api_resource.ApiResource):
 		# messages = corp.message_repository.get_messages()
 		msgrepo = MessageRepository()
 		message = msgrepo.get_message(args['id'])
-		attachments = msgrepo.get_message_attachments(args['id'])
+		msg_att_repo = MessageAttachmentRepository()
+		attachments = msg_att_repo.get_message_attachments(args['id'])
 		data = {
 			'id': message.id,
 			'title': message.title,
