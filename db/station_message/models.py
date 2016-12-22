@@ -55,23 +55,3 @@ class MessageAttachment(models.Model):
 	class Meta(object):
 		db_table = 'message_attachment'
 
-
-def add_relation_to_user(instance, created, **kwords):
-	"""
-	新增message后触发
-	:param instance: Message
-	:param created: boolean
-	:param kwords: other args
-	"""
-	if created:
-		created_list = []
-		for user in User.objects.exclude(id=1):
-			created_list.append(UserHasMessage(
-				user=user,
-				message=instance,
-				message_type=instance.message_type
-			))
-		UserHasMessage.objects.bulk_create(created_list)
-
-# signals
-# signals.post_save.connect(add_relation_to_user, sender=Message, dispatch_uid='user_message.add_relation')

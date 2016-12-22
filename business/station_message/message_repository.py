@@ -11,7 +11,7 @@ from business.station_message.message_attachment_repository import MessageAttach
 
 class MessageRepository(business_model.Service):
 	def get_messages(self):
-		models = message_models.Message.select()
+		models = message_models.Message.select().order_by(message_models.Message.created_at.desc())
 		return [Message(model) for model in models]
 
 	def get_message(self, id):
