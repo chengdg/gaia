@@ -245,11 +245,6 @@ bill: 会员
 
 
   Scenario:1 发货出货单
-  weizoom添加商品后：
-  1、zhouxun能获得weizoom商品池商品（创建时间倒序排列）
-
-  zhouxun创建代销商品后:
-  1、zhouxun在商品池商品列表能看到代销商品（创建时间倒序排列）
 
 
 	 When jobs支付订单'001'

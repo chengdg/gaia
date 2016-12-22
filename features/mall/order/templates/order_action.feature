@@ -6,18 +6,18 @@ bill: 会员
 """
 
   Background:
-	 Given weizoom登录系统
-	 And weizoom已添加商品分组
-	"""
-	[{
-		"name": "分类1"
-	}, {
-		"name": "分类2"
-	}, {
-		"name": "分类3"
-	}]
-	"""
-	 And weizoom已添加商品规格
+    Given weizoom登录系统
+    And weizoom已添加商品分组
+		"""
+		[{
+			"name": "分类1"
+		}, {
+			"name": "分类2"
+		}, {
+			"name": "分类3"
+		}]
+		"""
+    And weizoom已添加商品规格
 	"""
 	[{
 		"name": "颜色",
@@ -39,7 +39,7 @@ bill: 会员
 		}]
 	}]
 	"""
-	 When weizoom添加商品分类
+    When weizoom添加商品分类
 	"""
 	{
 		"分类11": {
@@ -55,7 +55,7 @@ bill: 会员
 		"分类13": null
 	}
 	"""
-	 When weizoom添加供应商
+    When weizoom添加供应商
 	"""
 	[{
 		"name": "苹果",
@@ -76,8 +76,8 @@ bill: 会员
 		}
 	}]
 	"""
-	 Given weizoom登录系统
-	 When weizoom添加商品
+    Given weizoom登录系统
+    When weizoom添加商品
 """
 [{
 	"name": "东坡肘子",
@@ -139,8 +139,8 @@ bill: 会员
 	}
 }]
 """
-	 Given zhouxun登录系统
-	 When zhouxun添加支付方式
+    Given zhouxun登录系统
+    When zhouxun添加支付方式
 	"""
 	[{
 		"type": "微信支付",
@@ -152,12 +152,12 @@ bill: 会员
 		"paysign_key": "paysign_key_1"
 	}]
 	"""
-	 Then zhouxun能获得'待售'商品列表
+    Then zhouxun能获得'待售'商品列表
 """
 []
 """
-	 Given zhouxun成为自营平台
-	 Then zhouxun能获得'weizoom商品池'商品列表
+    Given zhouxun成为自营平台
+    Then zhouxun能获得'weizoom商品池'商品列表
 """
 [{
 	"name": "黄桥烧饼",
@@ -188,11 +188,11 @@ bill: 会员
 	"image": "/static/test_resource_img/hangzhou1.jpg"
 }]
 """
-	 When zhouxun添加代销商品
+    When zhouxun添加代销商品
 """
 ["东坡肘子", "叫花鸡"]
 """
-	 Then zhouxun能获得'zhouxun商品池'商品列表
+    Then zhouxun能获得'zhouxun商品池'商品列表
 """
 [{
 	"name": "叫花鸡"
@@ -200,11 +200,11 @@ bill: 会员
 	"name": "东坡肘子"
 }]
 """
-	 When zhouxun将商品移动到'在售'货架
+    When zhouxun将商品移动到'在售'货架
 """
 ["东坡肘子", "叫花鸡"]
 """
-	 Then zhouxun能获得'在售'商品列表
+    Then zhouxun能获得'在售'商品列表
 """
 [{
 	"name": "叫花鸡"
@@ -212,9 +212,9 @@ bill: 会员
 	"name": "东坡肘子"
 }]
 """
-	 Given bill关注zhouxun的公众号::apiserver
-	 When bill访问zhouxun的webapp::apiserver
-	 When bill购买zhouxun的商品::apiserver
+    Given bill关注zhouxun的公众号::apiserver
+    When bill访问zhouxun的webapp::apiserver
+    When bill购买zhouxun的商品::apiserver
 """
 {
 	"order_id":"001",
@@ -232,8 +232,8 @@ bill: 会员
 	"customer_message": "bill购买无规格商品1"
 }
 """
-	 Given zhouxun登录系统
-	 Then zhouxun获得订单列表
+    Given zhouxun登录系统
+    Then zhouxun获得订单列表
 """
 		[
 		{
@@ -245,16 +245,12 @@ bill: 会员
 
 
   Scenario:1 支付订单
-  weizoom添加商品后：
-  1、zhouxun能获得weizoom商品池商品（创建时间倒序排列）
-
-  zhouxun创建代销商品后:
-  1、zhouxun在商品池商品列表能看到代销商品（创建时间倒序排列）
 
 
-	 When jobs支付订单'001'
 
-	 Then zhouxun获得订单列表
+    When jobs支付订单'001'
+
+    Then zhouxun获得订单列表
 """
 [
   {
@@ -271,17 +267,10 @@ bill: 会员
 """
 
 
-  Scenario:1 取消订单
-  weizoom添加商品后：
-  1、zhouxun能获得weizoom商品池商品（创建时间倒序排列）
+  Scenario:2 取消订单
+    When jobs取消订单'001'
 
-  zhouxun创建代销商品后:
-  1、zhouxun在商品池商品列表能看到代销商品（创建时间倒序排列）
-
-
-	 When jobs取消订单'001'
-
-	 Then zhouxun获得订单列表
+    Then zhouxun获得订单列表
 """
 [
   {
@@ -296,4 +285,4 @@ bill: 会员
   }
 ]
 """
-"""
+  """

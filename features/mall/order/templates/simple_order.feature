@@ -1,13 +1,8 @@
 Feature: 购买自营平台商品
-"""
-weizoom: 微众公司
-zhouxun: 即自营平台
-bill: 会员
-"""
 
-Background:
-Given weizoom登录系统
-And weizoom已添加商品分组
+  Background:
+    Given weizoom登录系统
+    And weizoom已添加商品分组
   """
   [{
       "name": "分类1"
@@ -17,7 +12,7 @@ And weizoom已添加商品分组
       "name": "分类3"
   }]
   """
-And weizoom已添加商品规格
+    And weizoom已添加商品规格
   """
   [{
       "name": "颜色",
@@ -39,7 +34,7 @@ And weizoom已添加商品规格
       }]
   }]
   """
-When weizoom添加商品分类
+    When weizoom添加商品分类
   """
   {
       "分类11": {
@@ -55,7 +50,7 @@ When weizoom添加商品分类
       "分类13": null
   }
   """
-When weizoom添加供应商
+    When weizoom添加供应商
   """
   [{
       "name": "苹果",
@@ -78,15 +73,15 @@ When weizoom添加供应商
   """
 
 
-Scenario:1 创建代销的商品
-weizoom添加商品后：
-1、zhouxun能获得weizoom商品池商品（创建时间倒序排列）
+  Scenario:1 创建代销的商品
+  weizoom添加商品后：
+  1、zhouxun能获得weizoom商品池商品（创建时间倒序排列）
 
-zhouxun创建代销商品后:
-1、zhouxun在商品池商品列表能看到代销商品（创建时间倒序排列）
+  zhouxun创建代销商品后:
+  1、zhouxun在商品池商品列表能看到代销商品（创建时间倒序排列）
 
-Given weizoom登录系统
-When weizoom添加商品
+    Given weizoom登录系统
+    When weizoom添加商品
 """
 [{
   "name": "东坡肘子",
@@ -148,8 +143,8 @@ When weizoom添加商品
   }
 }]
 """
-Given zhouxun登录系统
-When zhouxun添加支付方式
+    Given zhouxun登录系统
+    When zhouxun添加支付方式
   """
   [{
       "type": "微信支付",
@@ -161,12 +156,12 @@ When zhouxun添加支付方式
       "paysign_key": "paysign_key_1"
   }]
   """
-Then zhouxun能获得'待售'商品列表
+    Then zhouxun能获得'待售'商品列表
 """
 []
 """
-Given zhouxun成为自营平台
-Then zhouxun能获得'weizoom商品池'商品列表
+    Given zhouxun成为自营平台
+    Then zhouxun能获得'weizoom商品池'商品列表
 """
 [{
   "name": "黄桥烧饼",
@@ -197,11 +192,11 @@ Then zhouxun能获得'weizoom商品池'商品列表
   "image": "/static/test_resource_img/hangzhou1.jpg"
 }]
 """
- When zhouxun添加代销商品
+    When zhouxun添加代销商品
 """
 ["东坡肘子", "叫花鸡"]
 """
-Then zhouxun能获得'zhouxun商品池'商品列表
+    Then zhouxun能获得'zhouxun商品池'商品列表
 """
 [{
   "name": "叫花鸡"
@@ -209,11 +204,11 @@ Then zhouxun能获得'zhouxun商品池'商品列表
   "name": "东坡肘子"
 }]
 """
-When zhouxun将商品移动到'在售'货架
+    When zhouxun将商品移动到'在售'货架
 """
 ["东坡肘子", "叫花鸡"]
 """
-Then zhouxun能获得'在售'商品列表
+    Then zhouxun能获得'在售'商品列表
 """
 [{
   "name": "叫花鸡"
@@ -221,9 +216,9 @@ Then zhouxun能获得'在售'商品列表
   "name": "东坡肘子"
 }]
 """
-Given bill关注zhouxun的公众号::apiserver
-When bill访问zhouxun的webapp::apiserver
-When bill购买zhouxun的商品::apiserver
+    Given bill关注zhouxun的公众号::apiserver
+    When bill访问zhouxun的webapp::apiserver
+    When bill购买zhouxun的商品::apiserver
 """
 {
   "order_id":"001",
@@ -241,8 +236,8 @@ When bill购买zhouxun的商品::apiserver
   "customer_message": "bill购买无规格商品1"
 }
 """
-Given zhouxun登录系统
-Then zhouxun获得订单列表
+    Given zhouxun登录系统
+    Then zhouxun获得订单列表
 """
       [
       {
