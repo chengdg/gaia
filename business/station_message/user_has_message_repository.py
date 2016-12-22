@@ -21,11 +21,16 @@ class UserHasMessageRepository(business_model.Service):
 			})
 		message_models.UserHasMessage.insert_many(created_list).execute()
 
-	def get_user_has_message(self, user_id, message_id):
-		model = message_models.UserHasMessage.select().dj_where(user=user_id, message=message_id).get()
+	def get_user_has_message(self, corp_id, message_id):
+		model = message_models.UserHasMessage.select().dj_where(user=corp_id, message=message_id).get()
 		return UserHasMessage(model)
 
 	def get_unread_count(self, user_id):
 		count = message_models.UserHasMessage.select().dj_where(user=user_id).count()
 		return count
 
+	def delete_user_has_message(self, message_id):
+		"""
+		删除指定的站内消息的用户关联
+		"""
+		message_models.UserHasMessage.delete().dj_where(message=message_id).execute()

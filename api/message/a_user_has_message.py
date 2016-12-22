@@ -15,9 +15,9 @@ class AUserHasMessage(api_resource.ApiResource):
 	app = "message"
 	resource = "user_has_message"
 
-	@param_required(['user_id:int', 'message_id:int', 'is_read:bool'])
+	@param_required(['corp_id:int', 'message_id:int', 'is_read:bool'])
 	def post(args):
-		user_has_message = UserHasMessageRepository().get_user_has_message(args['user_id'], args['message_id'])
+		user_has_message = UserHasMessageRepository().get_user_has_message(args['corp_id'], args['message_id'])
 		is_read = args.get('is_read', True)
 		user_has_message.update(is_read)
 		return {}

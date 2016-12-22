@@ -7,6 +7,7 @@ from db.account import models as account_models
 from db.station_message import models as message_models
 from business.station_message.message import Message
 from business.station_message.message_attachment_repository import MessageAttachmentRepository
+from business.station_message.user_has_message_repository import UserHasMessageRepository
 
 
 class MessageRepository(business_model.Service):
@@ -32,4 +33,5 @@ class MessageRepository(business_model.Service):
 		删除指定的站内消息
 		"""
 		MessageAttachmentRepository().delete_message_attachments(id)
+		UserHasMessageRepository().delete_user_has_message(id)
 		message_models.Message.delete().dj_where(id=id).execute()

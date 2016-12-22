@@ -14,17 +14,18 @@ class AMessages(api_resource.ApiResource):
     app = "message"
     resource = "messages"
 
-    @param_required(['user_id:int'])
+    @param_required(['corp_id:int'])
     def get(args):
         # corp = args['corp']
         # messages = corp.message_repository.get_messages()
         msgrepo = MessageRepository()
         uhm_repo = UserHasMessageRepository()
 
+
         messages = msgrepo.get_messages()
         datas = []
         for message in messages:
-            is_read = uhm_repo.get_user_has_message(args['user_id'], message.id).is_read
+            is_read = uhm_repo.get_user_has_message(args['corp_id'], message.id).is_read
             datas.append({
                 'id': message.id,
                 'title': message.title,
@@ -32,7 +33,7 @@ class AMessages(api_resource.ApiResource):
                 'created_at': message.created_at.strftime('%Y-%m-%d %H:%M'),
                 'is_read': is_read
             })
-        unread_count = uhm_repo.get_unread_count(args['user_id'])
+        unread_count = uhm_repo.get_unread_count(args['corp_id'])
 
         return {
             'messages': datas,
