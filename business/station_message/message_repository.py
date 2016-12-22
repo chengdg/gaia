@@ -17,7 +17,6 @@ class MessageRepository(business_model.Service):
 
 	def get_message(self, id):
 		model = message_models.Message.select().dj_where(id=id).get()
-
 		return Message(model)
 
 	# def get_message_attachments(self, id):

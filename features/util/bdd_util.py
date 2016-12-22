@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
 import time
-from datetime import datetime,timedelta
+from datetime import datetime, timedelta
 
 import settings
 from client import Client
@@ -306,6 +306,7 @@ def table2dict(context):
 	expected = []
 	for row in context.table:
 		data = {}
+		print "tttttttttttttttttable"
 		for heading in row.headings:
 			if ':' in heading:
 				real_heading, value_type = heading.split(':')

@@ -19,8 +19,6 @@ class AMessage(api_resource.ApiResource):
 
 	@param_required(['id'])
 	def get(args):
-		# corp = args['corp']
-		# messages = corp.message_repository.get_messages()
 		msgrepo = MessageRepository()
 		message = msgrepo.get_message(args['id'])
 		msg_att_repo = MessageAttachmentRepository()
@@ -39,10 +37,11 @@ class AMessage(api_resource.ApiResource):
 
 	@param_required(['corp_id', 'title', 'content', '?attachments:json'])
 	def put(args):
+		attachments = args.get('attachments', [])
 		message = Message.create({
 			'title': args['title'],
 			'content': args['content'],
-			'attachments': args['attachments']
+			'attachments': attachments
 		})
 		return {
 			'id': message.id
@@ -50,10 +49,9 @@ class AMessage(api_resource.ApiResource):
 
 	@param_required(['id', 'title', 'content', '?attachments:json'])
 	def post(args):
+		attachments = args.get('attachments', [])
 		message = MessageRepository().get_message(args['id'])
-
-		message.update(args['title'], args['content'], args['attachments'])
-
+		message.update(args['title'], args['content'], attachments)
 		return {}
 
 	@param_required(['id'])
