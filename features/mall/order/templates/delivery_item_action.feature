@@ -244,7 +244,7 @@ bill: 会员
 """
 
 
-  Scenario:1 支付订单
+  Scenario:1 发货出货单
   weizoom添加商品后：
   1、zhouxun能获得weizoom商品池商品（创建时间倒序排列）
 
@@ -269,31 +269,31 @@ bill: 会员
   }
 ]
 """
+    When zhouxun批量发货出货单
+    """
+    [{
 
-
-  Scenario:1 取消订单
-  weizoom添加商品后：
-  1、zhouxun能获得weizoom商品池商品（创建时间倒序排列）
-
-  zhouxun创建代销商品后:
-  1、zhouxun在商品池商品列表能看到代销商品（创建时间倒序排列）
-
-
-	 When jobs取消订单'001'
-
-	 Then zhouxun获得订单列表
+      "delivery_item_bid": "001^苹果",
+      "with_logistics": "true",
+      "with_logistics_trace": "true",
+      "express_company_name_value": "shentong",
+      "express_number": 10086,
+      "leader_name": "abcdef"
+    }]
+    """
+    	 Then zhouxun获得订单列表
 """
 [
   {
   "bid": "001",
-  "status_code": "cancelled",
+  "status_code": "shipped",
   "delivery_items": [
        {
-          "status_code": "cancelled"
+          "status_code": "shipped"
 
        }
     ]
   }
 ]
 """
-"""
+
