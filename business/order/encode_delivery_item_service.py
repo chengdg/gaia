@@ -9,7 +9,7 @@ class EncodeDeliveryItemService(business_model.Service):
 			'bid': delivery_item.bid,
 			'origin_order_id': delivery_item.origin_order_id,
 			'webapp_id': delivery_item.webapp_id,
-			'webapp_user_id': delivery_item.id,
+			'webapp_user_id': delivery_item.webapp_user_id,
 			'postage': delivery_item.postage,
 			'status_code': delivery_item.status_code,
 			'payment_time': delivery_item.payment_time,

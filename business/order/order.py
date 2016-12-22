@@ -127,7 +127,11 @@ class Order(business_model.Model):
 			# 支付信息
 			order.pay_interface_type = db_model.pay_interface_type
 			order.pay_interface_type_code = mall_models.PAYTYPE2STR[order.pay_interface_type]
-			order.payment_time = db_model.payment_time
+
+			if db_model.status in (mall_models.ORDER_STATUS_CANCEL,mall_models.ORDER_STATUS_NOT):
+				order.payment_time = ''
+			else:
+				order.payment_time = db_model.payment_time
 
 			# 金额信息
 			order.final_price = db_model.final_price

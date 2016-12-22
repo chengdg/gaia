@@ -14,13 +14,16 @@ def step_impl(context, user):
 	bdd_util.assert_api_call_success(response)
 	actual = response.data["orders"]
 
-	for o in actual:
-		o['order_no'] = o['bid']
-		o['methods_of_payment'] = mall_models.PAYTYPE2NAME[mall_models.PAYSTR2TYPE[o['pay_interface_type_code']]]
-		o['status'] = mall_models.STATUS2TEXT[mall_models.MEANINGFUL_WORD2ORDER_STATUS[o['status_code']]]
-		o['invoice'] = o['bill']
-		o['is_group_buying'] = o['is_group_buy']
-		o['ship_area'] = o['ship_area_text']
-		o['buyer'] = o['member_info']['name']
+
+
+
+	# for o in actual:
+	# 	o['order_no'] = o['bid']
+	# 	o['methods_of_payment'] = mall_models.PAYTYPE2NAME[mall_models.PAYSTR2TYPE[o['pay_interface_type_code']]]
+	# 	o['status'] = mall_models.STATUS2TEXT[mall_models.MEANINGFUL_WORD2ORDER_STATUS[o['status_code']]]
+	# 	o['invoice'] = o['bill']
+	# 	o['is_group_buying'] = o['is_group_buy']
+	# 	o['ship_area'] = o['ship_area_text']
+	# 	o['buyer'] = o['member_info']['name']
 	expected = json.loads(context.text)
 	bdd_util.assert_list(expected, actual)

@@ -244,29 +244,111 @@ When bill购买zhouxun的商品::apiserver
 Given zhouxun登录系统
 Then zhouxun获得订单列表
 """
-      [{
-          "order_no":"001",
-          "methods_of_payment":"微信支付",
-          "save_money": 0.00,
-          "buyer":"bill",
-          "is_first_order":false,
-          "is_group_buying":false,
-          "ship_name":"bill",
-          "ship_tel":"13811223344",
-          "ship_area": "北京市 北京市 海淀区",
-          "ship_address": "泰兴大厦",
-          "invoice":"",
-          "pay_money": 11.12,
-          "postage": 0.00,
-          "status":"待支付",
-		  "delivery_items":[{
-				"products":[{
-					"name":"东坡肘子",
-					"origin_price":11.12,
-					"count":1
-				}]
-			}]
+      [
+      {
+        "bill": "",
+        "status_code": "created",
+        "coupon_money": 0,
+        "integral": 0,
+        "ship_area": "1_1_8",
+        "pay_money": 11.12,
+        "origin_weizoom_card_money": 0,
+        "ship_name": "bill",
+        "product_price": 11.12,
+        "final_price": 11.12,
+        "is_first_order": false,
+        "bid": "001",
+        "ship_area_text": "北京市 北京市 海淀区",
+        "extra_coupon_info": {
+          "bid": "",
+          "type": ""
+        },
+        "weizoom_card_money": 0,
+        "ship_address": "泰兴大厦",
+        "save_money": 0,
+        "member_info": {
+          "is_subscribed": true,
+          "name": "bill"
+        },
+        "bill_type": 0,
+        "is_weizoom_order": true,
+        "remark": "",
+        "origin_final_price": 11.12,
+        "refunding_info": {
+          "weizoom_card_money": 0,
+          "coupon_money": 0,
+          "integral": 0,
+          "cash": 0,
+          "integral_money": 0,
+          "total": 0
+        },
+        "integral_money": 0,
+        "ship_tel": "13811223344",
+        "is_group_buy": false,
+        "coupon_id": 0,
+        "customer_message": "",
+        "postage": 0,
+        "delivery_time": "",
+        "payment_time": "",
+        "promotion_saved_money": 0,
+        "bid_with_edit_money": "001",
+        "delivery_items": [
+          {
+            "status_code": "created",
 
-      }]
+            "express_company_name_value": "",
+            "express_details": [],
+            "area": "1_1_8",
+            "ship_name": "bill",
+            "leader_name": "",
+            "with_logistics_trace": true,
+            "payment_time": "2000-01-01 00:00:00",
+            "express_company_name_text": "",
+            "refunding_info": {
+              "weizoom_card_money": 0,
+              "coupon_money": 0,
+              "integral": 0,
+              "cash": 0,
+              "finished": false,
+              "integral_money": 0,
+              "total_can_refund": 11.12,
+              "total": 0
+            },
+
+            "customer_message": "bill购买无规格商品1",
+            "postage": 0,
+            "supplier_info": {
+              "supplier_type": "supplier",
+              "name": "苹果"
+            },
+            "with_logistics": false,
+            "products": [
+              {
+                "count": 1,
+                "is_deleted": false,
+                "show_sale_price": 11.12,
+                "weight": 2,
+                "product_model_name_texts": [],
+                "total_origin_price": 11.12,
+                "promotion_info": {
+                  "type": "",
+                  "promotion_saved_money": 0,
+                  "grade_discount_money": 0,
+                  "integral_count": 0,
+                  "integral_money": 0
+                },
+                "thumbnails_url": "/static/test_resource_img/hangzhou1.jpg",
+                "sale_price": 11.12,
+                "origin_price": 11.12,
+                "name": "东坡肘子"
+              }
+            ],
+            "express_number": ""
+          }
+        ],
+        "pay_interface_type_code": "weixin_pay",
+        "edit_money": 0
+      }
+    ]
 """
 
