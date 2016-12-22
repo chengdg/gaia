@@ -2,10 +2,8 @@
 
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
-from eaglet.core import watchdog
-from eaglet.core.exceptionutil import unicode_full_stack
 
-from business.mall.classification.product_classification import ProductClassification
+from business.mall.corporation_factory import CorporationFactory
 
 
 class AProductClassificationTree(api_resource.ApiResource):
@@ -15,9 +13,9 @@ class AProductClassificationTree(api_resource.ApiResource):
     app = "mall"
     resource = "product_classification_tree"
 
-    @param_required(['end_id'])
+    @param_required(['corp_id', 'end_id'])
     def get(args):
-        corp = args['corp']
+        corp = CorporationFactory.get()
         end_id = args['end_id']
 
         product_classifications = corp.product_classification_repository.get_product_classification_tree_by_end(end_id)

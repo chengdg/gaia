@@ -2,7 +2,7 @@
 
 from business.mall.corporation_factory import CorporationFactory
 from business import model as business_model
-from business.mall.label.product_label import ProductLabel
+from business.mall.product_label.product_label import ProductLabel
 from db.mall import models as mall_models
 
 class ProductLabelGroup(business_model.Model):
@@ -38,10 +38,10 @@ class ProductLabelGroup(business_model.Model):
 		"""
 		创建商品标签分组
 		"""
-		corp_id = CorporationFactory.get_weizoom_corporation().id
+		corp_id = CorporationFactory.get().id
 		#检查重名
-		exist_groups = mall_models.ProductLabelGroup.select().dj_where(name=label_group_name, owner_id=corp_id, is_deleted=False)
-		if exist_groups.count() > 0:
+		exist_group_models = mall_models.ProductLabelGroup.select().dj_where(name=label_group_name, owner_id=corp_id, is_deleted=False)
+		if exist_group_models.count() > 0:
 			return u'商品标签分类已存在'
 
 		model = mall_models.ProductLabelGroup.create(

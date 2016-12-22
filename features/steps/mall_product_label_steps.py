@@ -12,14 +12,16 @@ def step_impl(context, user):
 	if isinstance(label_groups_data, list):
 		for label_group_dict in label_groups_data:
 			label_group_name = label_group_dict['label_group_name']
-			__add_product_label_group(context, label_group_name)
+			__add_product_label_group(context, user, label_group_name)
 	else:
-		__add_product_label_group(context, label_groups_data['label_group_name'])
+		__add_product_label_group(context, user, label_groups_data['label_group_name'])
 
 @then(u"{user}查看商品标签列表")
 def step_impl(context, user):
-	expected = bdd_util.table2dict(context)
-	response = context.client.get('/mall/product_label_groups/')
+	expected = bdd_util.table2list(context)
+	response = context.client.get('/mall/product_label_groups/', {
+		'corp_id': bdd_util.get_user_id_for(user)
+	})
 	actual = response.data['product_label_groups']
 	for data in expected:
 		tmp_list = []
@@ -39,9 +41,9 @@ def step_impl(context, user):
 	if isinstance(label_groups_data, list):
 		for label_group_dict in label_groups_data:
 			label_group_name = label_group_dict['label_group_name']
-			__del_product_label_group(context, label_group_name)
+			__del_product_label_group(context, user, label_group_name)
 	else:
-		__del_product_label_group(context, label_groups_data['label_group_name'])
+		__del_product_label_group(context, user, label_groups_data['label_group_name'])
 
 @when(u"{user}添加商品标签")
 def step_impl(context, user):
@@ -51,11 +53,11 @@ def step_impl(context, user):
 			label_group_name = label_group_dict['label_group_name']
 			label_name_list = label_group_dict['labels']
 			for label_name in label_name_list:
-				__add_product_label(context, label_group_name, label_name)
+				__add_product_label(context, user, label_group_name, label_name)
 	else:
 		label_name_list = labels_data['labels']
 		for label_name in label_name_list:
-			__add_product_label(context, labels_data['label_group_name'], label_name)
+			__add_product_label(context, user, labels_data['label_group_name'], label_name)
 
 @when(u"{user}删除商品标签")
 def step_impl(context, user):
@@ -63,34 +65,38 @@ def step_impl(context, user):
 	if isinstance(labels_data, list):
 		for label_group_dict in labels_data:
 			label_name = label_group_dict['label_name']
-			__del_product_label(context, label_name)
+			__del_product_label(context, user, label_name)
 	else:
-		__del_product_label(context,  labels_data['label_name'])
+		__del_product_label(context, user, labels_data['label_name'])
 
-def __del_product_label(context, label_name):
+def __del_product_label(context, user, label_name):
 	label_id = label_name2id(label_name)
 	response = context.client.delete('/mall/product_label/', {
+		'corp_id': bdd_util.get_user_id_for(user),
 		'label_id': label_id,
 	})
 	bdd_util.assert_api_call_success(response)
 
-def __add_product_label(context, label_group_name, label_name):
+def __add_product_label(context, user, label_group_name, label_name):
 	label_group_id = label_group_name2id(label_group_name)
 	response = context.client.put('/mall/product_label/', {
+		'corp_id': bdd_util.get_user_id_for(user),
 		'label_group_id': label_group_id,
 		'label_name': label_name
 	})
 	bdd_util.assert_api_call_success(response)
 
-def __add_product_label_group(context, label_group_name):
+def __add_product_label_group(context, user, label_group_name):
 	response = context.client.put('/mall/product_label_group/', {
+		'corp_id': bdd_util.get_user_id_for(user),
 		'label_group_name': label_group_name
 	})
 	bdd_util.assert_api_call_success(response)
 
-def __del_product_label_group(context, label_group_name):
+def __del_product_label_group(context, user, label_group_name):
 	label_group_id = label_group_name2id(label_group_name)
 	response = context.client.delete('/mall/product_label_group/', {
+		'corp_id': bdd_util.get_user_id_for(user),
 		'label_group_id': label_group_id
 	})
 	bdd_util.assert_api_call_success(response)

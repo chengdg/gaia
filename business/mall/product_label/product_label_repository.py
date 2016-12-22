@@ -2,7 +2,7 @@
 
 from db.mall import models as mall_models
 from business import model as business_model
-from business.mall.label.product_label import ProductLabel
+from business.mall.product_label.product_label import ProductLabel
 
 
 class ProductLabelRepository(business_model.Service):

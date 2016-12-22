@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
-import time
+import re
 from datetime import datetime,timedelta
 
 import settings
@@ -10,7 +10,7 @@ from util import string_util
 from db.member import models as member_models
 from db.mall import models as mall_models
 import logging
-#from business.account.member import Member
+# from business.account.member import Member
 
 tc = None
 
@@ -303,7 +303,7 @@ def print_json(obj):
 	print json.dumps(obj, indent=True)
 
 
-def table2dict(context):
+def table2list(context):
 	expected = []
 	for row in context.table:
 		data = {}

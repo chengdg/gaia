@@ -2,10 +2,7 @@
 
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
-from eaglet.core import watchdog
-from eaglet.core.exceptionutil import unicode_full_stack
-
-from business.mall.classification.product_classification import ProductClassification
+from business.mall.corporation_factory import CorporationFactory
 
 
 class AChildProductClassifications(api_resource.ApiResource):
@@ -17,7 +14,7 @@ class AChildProductClassifications(api_resource.ApiResource):
 
     @param_required(['corp_id', 'classification_id'])
     def get(args):
-        corp = args['corp']
+        corp = CorporationFactory.get()
         father_id = int(args['classification_id'])
         product_classifications = corp.product_classification_repository.get_child_product_classifications(father_id)
 

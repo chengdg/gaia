@@ -7,7 +7,7 @@ Feature:商品标签分组的新增、删除
 Background:
 	Given manager登录系统
 	
-@gaia @mall @product @product_label @label_group
+@gaia @mall @product @product_label @label_group @aix
 Scenario:1 运营人员新增商品标签分组
 	When manager新增商品标签分组
 		"""
@@ -28,7 +28,7 @@ Scenario:1 运营人员新增商品标签分组
 		|  省市  |              |
 		|基本信息|              |
 
-@gaia @mall @product @product_label @label_group
+@gaia @mall @product @product_label @label_group @aix
 Scenario:2 运营人员删除商品标签分组
 	When manager新增商品标签分组
 		"""
