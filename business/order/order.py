@@ -733,7 +733,8 @@ class Order(business_model.Model):
 		"""
 		db_model = self.context['db_model']
 		db_model.status = self.status
-		db_model.payment_time = self.payment_time
+		if self.payment_time:
+			db_model.payment_time = self.payment_time
 		db_model.is_first_order = self.is_first_order
 		db_model.remark = self.remark
 		db_model.final_price = self.final_price
