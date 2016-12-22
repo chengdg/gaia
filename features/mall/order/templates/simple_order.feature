@@ -77,7 +77,7 @@ When weizoom添加供应商
   }]
   """
 
-@ztqb
+
 Scenario:1 创建代销的商品
 weizoom添加商品后：
 1、zhouxun能获得weizoom商品池商品（创建时间倒序排列）
