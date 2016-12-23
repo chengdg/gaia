@@ -29,7 +29,6 @@ class MallConfigFactory(business_model.Service):
 		topic_name = TOPIC['mall_config']
 		data = {
 			"corp_id": self.corp.id,
-
 		}
 		msgutil.send_message(topic_name, msg_name, data)
 		return IntegralStrategy(integral_strategy_settings)

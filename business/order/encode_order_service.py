@@ -50,7 +50,8 @@ class EncodeOrderService(business_model.Service):
 		return {
 			'extra_coupon_info': {
 				'bid': order.extra_coupon_info['bid'],
-				'type': order.extra_coupon_info['type']
+				'type': order.extra_coupon_info['type'],
+				'name': order.extra_coupon_info['name']
 			}
 
 		}

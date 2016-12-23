@@ -2,10 +2,9 @@
 
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
-from eaglet.core import watchdog
-from eaglet.core.exceptionutil import unicode_full_stack
 
-from business.mall.classification.product_classification import ProductClassification
+from business.mall.product_classification.product_classification import ProductClassification
+from business.mall.corporation_factory import CorporationFactory
 
 
 class AProductClassification(api_resource.ApiResource):
@@ -31,11 +30,11 @@ class AProductClassification(api_resource.ApiResource):
             'id': product_classification.id
         }
 
-    @param_required(['corp_id', 'name', 'id', '?note'])
+    @param_required(['corp_id', 'name', 'classification_id', '?note'])
     def post(args):
-        corp = args['corp']
+        corp = CorporationFactory.get()
         name = args['name']
-        classification_id = args['id']
+        classification_id = args['classification_id']
         note = args.get('note', '')
 
         product_classification = corp.product_classification_repository.get_product_classification(classification_id)
@@ -43,10 +42,10 @@ class AProductClassification(api_resource.ApiResource):
 
         return {}
 
-    @param_required(['corp_id', 'id'])
+    @param_required(['corp_id', 'classification_id'])
     def delete(args):
-        corp = args['corp']
-        classification_id = args['id']
+        corp = CorporationFactory.get()
+        classification_id = args['classification_id']
         product_classification = corp.product_classification_repository.get_product_classification(classification_id)
         if product_classification.is_used_by_product():
             return 500, 'used_by_product' #商品分类正在被使用

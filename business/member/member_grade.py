@@ -19,6 +19,7 @@ import settings
 from eaglet.decorator import cached_context_property
 from util import emojicons_util
 
+DEFAULT_GRADE_NAME = u'普通会员'
 
 class MemberGrade(business_model.Model):
     """
@@ -31,7 +32,6 @@ class MemberGrade(business_model.Model):
     )
 
     def __init__(self, db_model):
-
         business_model.Model.__init__(self)
         self.context['db_model'] = db_model
         if db_model:
@@ -51,3 +51,14 @@ class MemberGrade(business_model.Model):
 
         member_grade = MemberGrade(model)
         return member_grade
+
+    @staticmethod
+    def create_default_member_grade_for_corp(corp):
+        if member_models.MemberGrade.select().dj_where(webapp_id=corp.webapp_id, name=DEFAULT_GRADE_NAME).count() == 0:
+            return member_models.MemberGrade.create(
+                webapp_id = corp.webapp_id,
+                name = DEFAULT_GRADE_NAME,
+                upgrade_lower_bound = 0,
+                is_default_grade = True,
+                is_auto_upgrade = True
+            )

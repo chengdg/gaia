@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import json
 
 from business import model as business_model
 from business.order.delivery_item import DeliveryItem
@@ -126,7 +127,11 @@ class Order(business_model.Model):
 			# 支付信息
 			order.pay_interface_type = db_model.pay_interface_type
 			order.pay_interface_type_code = mall_models.PAYTYPE2STR[order.pay_interface_type]
-			order.payment_time = db_model.payment_time
+
+			if db_model.status in (mall_models.ORDER_STATUS_CANCEL,mall_models.ORDER_STATUS_NOT):
+				order.payment_time = ''
+			else:
+				order.payment_time = db_model.payment_time
 
 			# 金额信息
 			order.final_price = db_model.final_price
@@ -279,14 +284,15 @@ class Order(business_model.Model):
 				coupon = id2coupon[order.coupon_id]
 				order.extra_coupon_info = {
 					'bid': coupon.bid,
-					'type': coupon.rule.type
-
+					'type': coupon.rule.type，
+					'name': coupon.rule.name
 				}
 
 			else:
 				order.extra_coupon_info = {
 					'bid': '',
-					'type': ''
+					'type': '',
+					'name': ''
 				}
 
 	@staticmethod
@@ -301,10 +307,13 @@ class Order(business_model.Model):
 			if info:
 				order.weizoom_card_info = {
 					'trade_id': info.trade_id,
-					'used_card': info.used_card
+					'used_card': json.loads(info.used_card)
 				}
 			else:
-				order.weizoom_card_info = {}
+				order.weizoom_card_info = {
+					'trade_id': '',
+					'used_card': ''
+				}
 
 	@staticmethod
 	def __fill_member_card(orders, order_ids):
@@ -396,6 +405,7 @@ class Order(business_model.Model):
 						'to_status_code': mall_models.ORDER_STATUS2MEANINGFUL_WORD[log.to_status],
 						'time': log.created_at
 					})
+
 	@staticmethod
 	def __fill_group_buy(orders, order_ids):
 		"""
@@ -724,7 +734,8 @@ class Order(business_model.Model):
 		"""
 		db_model = self.context['db_model']
 		db_model.status = self.status
-		db_model.payment_time = self.payment_time
+		if self.payment_time:
+			db_model.payment_time = self.payment_time
 		db_model.is_first_order = self.is_first_order
 		db_model.remark = self.remark
 		db_model.final_price = self.final_price

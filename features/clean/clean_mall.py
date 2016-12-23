@@ -3,9 +3,22 @@ import logging
 
 from db.mall import models as mall_models
 from db.mall import promotion_models
+from db.member import models as member_models
+from db.account import models as account_models
 
 def clean():
 	logging.info('clean database for mall')
+	mall_models.OrderHasProduct.delete().execute()
+	mall_models.Order.delete().execute()
+	account_models.AccessToken.delete().execute()
+	member_models.MemberInfo.delete().execute()
+	member_models.MemberBrowseRecord.delete().execute()
+	member_models.MemberHasTag.delete().execute()
+	member_models.MemberHasSocialAccount.delete().execute()
+	member_models.WebAppUser.delete().execute()
+	member_models.Member.delete().execute()
+	member_models.SocialAccount.delete().execute()
+
 	#支付接口配置
 	mall_models.UserWeixinPayOrderConfig.delete().execute()
 	mall_models.UserAlipayOrderConfig.delete().execute()
@@ -65,6 +78,7 @@ def clean():
 	mall_models.ClassificationHasProduct.delete().execute()
 	mall_models.ClassificationQualification.delete().execute()
 	mall_models.Classification.delete().execute()
+	mall_models.ClassificationHasLabel.delete().execute()
 	mall_models.ProductModelHasPropertyValue.delete().execute()
 	mall_models.ProductModel.delete().execute()
 	mall_models.ProductSwipeImage.delete().execute()

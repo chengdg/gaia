@@ -38,6 +38,7 @@ class AOrder(api_resource.ApiResource):
 			'with_group_buy_info': True,
 			'with_member': True,
 			'with_full_money_info': True,
+			'with_weizoom_card': True,
 
 			'with_status_logs': True,
 			'with_operation_logs': True,
@@ -58,7 +59,7 @@ class AOrder(api_resource.ApiResource):
 		data.update(encode_order_service.get_group_buy_info(order))
 		data.update(encode_order_service.get_member_info(order))
 		data.update(encode_order_service.get_full_money_info(order))
-
+		data.update(encode_order_service.get_weizoom_card_info(order))
 		data.update(encode_order_service.get_status_logs(order))
 		data.update(encode_order_service.get_operation_logs(order))
 		data.update(encode_order_service.get_extra_coupon_info(order))

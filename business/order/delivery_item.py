@@ -618,23 +618,15 @@ class DeliveryItem(business_model.Model):
 	def send_phone_message(self):
 
 		if self.has_db_record:
-			message_content = u"您好，订单号：%s，收货人：%s。已退单，请知晓！【微众传媒】"
 			supplier_tel = self.supplier_info['supplier_tel']
-			# data = {
-   #                  "phones": str(supplier_tel),
-   #                  "content": {
-   #                      "order_id": self.bid,
-   #                      "ship_name": self.ship_name
-   #                  },
-   #                  "sms_code": "SMS_34465265"
-   #              }		
-			# rs = send_phone_captcha(data)
 			data = {
                     "phones": str(supplier_tel),
                     "content": {
-                        "reason": str(self.bid)+'仅供测试'+str(self.ship_name)
+                        "order_id": self.bid,
+                        "ship_name": self.ship_name
                     },
-                    "sms_code": "SMS_27200001"
+                    "sms_code": "SMS_34465265"
                 }		
 			rs = send_phone_captcha(data)
+
 

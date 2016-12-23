@@ -2,7 +2,7 @@
     "swagger": "2.0",
     "info": {
         "version": "1.0.0",
-        "title": "Hermes Product API"
+        "title": "Hermes Flash Sale Promotion API"
     },
     "paths": {
         "/promotion/flash_sales/": {
@@ -33,7 +33,7 @@
                 }
             }
         },
-        "/promotion/flash_sale/": {
+        "/promotion/flash_sale_promotion/": {
             "get": {
                 "summary": "获取单个限时抢购详细信息",
                 "parameters": [
@@ -92,8 +92,40 @@
                     }
                 }
             },
-            "post": {
-                "summary": "结束限时抢购",
+            "delete": {
+                "summary": "删除限时抢购",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "promotion"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        },
+        "/promotion/active_promotion/": {
+            "put": {
+                "summary": "开启限时抢购",
                 "parameters": [
                     {
                         "name": "corp_id",
@@ -123,7 +155,7 @@
                 }
             },
             "delete": {
-                "summary": "删除限时抢购",
+                "summary": "结束限时抢购",
                 "parameters": [
                     {
                         "name": "corp_id",
@@ -162,49 +194,67 @@
                     "type": "number",
                     "description": ""
                 },
-                "name": {
-                    "type": "string",
-                    "description": ""
+                "promotion_info": {
+                    "type": "object",
+                    "properties": {
+                        "name": {
+                            "type": "string",
+                            "description": ""
+                        },
+                        "promotion_title": {
+                            "type": "string",
+                            "description": "促销广告语"
+                        },
+                        "type": {
+                            "type": "string",
+                            "description": "促销类型"
+                        },
+                        "member_grade": {
+                            "type": "number",
+                            "description": "可参与活动的会员等级"
+                        },
+                        "start_date": {
+                            "type": "string",
+                            "description": "促销开始时间"
+                        },
+                        "end_date": {
+                            "type": "string",
+                            "description": "促销结束时间"
+                        }
+                    }
                 },
-                "member_grade": {
-                    "type": "number",
-                    "description": "可参与活动的会员等级"
+                "detail_info": {
+                    "type": "object",
+                    "properties": {
+                        "promotion_price": {
+                            "type": "number",
+                            "description": "限购价格"
+                        },
+                        "limit_period": {
+                            "type": "number",
+                            "description": "限购周期"
+                        },
+                        "count_per_period": {
+                            "type": "number",
+                            "description": "限购次数"
+                        },
+                        "count_per_purchase": {
+                            "type": "number",
+                            "description": "每次限购数量"
+                        }
+                    }
                 },
-                "promotion_title": {
-                    "type": "string",
-                    "description": "促销广告语"
-                },
-                "promotion_price": {
-                    "type": "number",
-                    "description": "限购价格"
-                },
-                "start_date": {
-                    "type": "string",
-                    "description": "促销开始时间"
-                },
-                "end_date": {
-                    "type": "string",
-                    "description": "促销结束时间"
-                },
-                "limit_period": {
-                    "type": "number",
-                    "description": "限购周期"
-                },
-                "count_per_period": {
-                    "type": "number",
-                    "description": "限购次数"
-                },
-                "count_per_purchase": {
-                    "type": "number",
-                    "description": "每次限购数量"
-                },
-                "product_id": {
-                    "type": "number",
-                    "description": "商品id"
-                },
-                "product_model_id": {
-                    "type": "number",
-                    "description": "商品model id"
+                "product_info": {
+                    "type": "object",
+                    "properties": {
+                        "product_ids": {
+                            "type": "array",
+                            "description": "商品id",
+                            "items": {
+                                "type": "number"
+                            }
+                        }
+                    }
                 }
             }
         },
