@@ -281,7 +281,7 @@ class Order(business_model.Model):
 				order.extra_coupon_info = {
 					'bid': coupon.bid,
 					'type': coupon.rule.type，
-					'name': (coupon.rule.name + "（多品券）")  if coupon.limit_product else (coupon.rule.name + "（通用券）")
+					'name': coupon.rule.name
 				}
 
 			else:
