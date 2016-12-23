@@ -284,14 +284,15 @@ class Order(business_model.Model):
 				coupon = id2coupon[order.coupon_id]
 				order.extra_coupon_info = {
 					'bid': coupon.bid,
-					'type': coupon.rule.type
-
+					'type': coupon.rule.type，
+					'name': coupon.rule.name
 				}
 
 			else:
 				order.extra_coupon_info = {
 					'bid': '',
-					'type': ''
+					'type': '',
+					'name': ''
 				}
 
 	@staticmethod
