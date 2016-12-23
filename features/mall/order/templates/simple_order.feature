@@ -2,16 +2,7 @@ Feature: 购买自营平台商品
 
   Background:
     Given weizoom登录系统
-    And weizoom已添加商品分组
-  """
-  [{
-      "name": "分类1"
-  }, {
-      "name": "分类2"
-  }, {
-      "name": "分类3"
-  }]
-  """
+
 And weizoom已添加商品规格
   """
   [{
