@@ -12,7 +12,7 @@ if [ "${CAN_START_SERVICE}" == "false" ]; then
 fi
 
 # start service
-if [ "$_WEIZOOM_PRODUCTION" == "1" ]; then
+if [ "$_USE_WSGI_PROTOCAL" == "1" ]; then
 	uwsgi service.ini
 else
 	python manage.py runserver 0.0.0.0 $PORT
