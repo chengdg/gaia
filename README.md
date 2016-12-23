@@ -24,7 +24,7 @@ pip install -U git+https://git2.weizzz.com:84/microservice/eaglet.git
 npm install -g bootprint
 npm install -g bootprint-swagger
 node ./swagger
-bootprint swaggger swagger/openapi.json html
+bootprint swagger swagger/openapi.json html
 ```
 然后打开 html/index.html 即可看到API文档。
 
