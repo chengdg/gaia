@@ -283,7 +283,6 @@ class Order(business_model.Model):
 					'type': coupon.rule.type,
 					'name': coupon.rule.name
 				}
-
 			else:
 				order.extra_coupon_info = {
 					'bid': '',
