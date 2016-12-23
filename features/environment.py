@@ -67,9 +67,13 @@ def before_all(context):
 	# __clear_all_account_data()	
 	from features.util import account_util
 	account_util.create_general_corp('jobs')
+	account_util.create_general_corp('nokia')
+
 	account_util.create_general_corp('bill')
 	account_util.create_general_corp('tom')
+
 	account_util.create_weizoom_corp('weizoom')
+
 	account_util.create_self_run_platform('zhouxun', u'周迅')
 	account_util.create_self_run_platform('yangmi', u'杨幂')
 

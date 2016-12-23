@@ -5,6 +5,7 @@ from hashlib import md5
 from db.account import models as account_models
 from db.weixin import models as weixin_user_models
 from db.webapp import models as webapp_models
+from db.mall import models as mall_models
 from features.util import bdd_util
 
 
@@ -140,12 +141,24 @@ def __create_corp(username, display_name, webapp_type):
     return user
 
 
+def __create_supplier(user):
+    mall_models.Supplier.create(
+        owner=user,
+        name=user.username,
+        supplier_tel='10086',
+        supplier_address=u'火星',
+        remark='aaaaaa'
+
+    )
+
 def create_general_corp(username, display_name=None):
-    return __create_corp(username, display_name, GENERAL_CORP)
+    user = __create_corp(username, display_name, GENERAL_CORP)
+    __create_supplier(user)
+    return user
 
 
 def create_weizoom_corp(username, display_name=None):
-    return __create_corp(username, display_name, WEIZOOM_CORP)
+    return __create_corp(username, display_name, SELF_RUN_PLATFORM)
 
 
 def create_self_run_platform(username, display_name=None):

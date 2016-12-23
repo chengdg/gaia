@@ -1,9 +1,9 @@
-Feature: 购买自营平台商品
+Feature: 简单下单模板
 
   Background:
-    Given weizoom登录系统
+    Given jobs登录系统
 
-And weizoom已添加商品规格
+And jobs已添加商品规格
   """
   [{
       "name": "颜色",
@@ -41,35 +41,30 @@ And weizoom已添加商品规格
       "分类13": null
   }
   """
-    When weizoom添加供应商
-  """
-  [{
-      "name": "苹果",
-      "type": "固定低价"
-  }, {
-      "name": "微软",
-      "type": "首月55分成",
-      "divide_info": {
-          "divide_money": 1.0,
-          "basic_rebate": 20,
-          "rebate": 30
-      }
-  }, {
-      "name": "谷歌",
-      "type": "零售返点",
-      "retail_info": {
-          "rebate": 50
-      }
-  }]
-  """
+#    When weizoom添加供应商
+#  """
+#  [{
+#      "name": "苹果",
+#      "type": "固定低价"
+#  }, {
+#      "name": "微软",
+#      "type": "首月55分成",
+#      "divide_info": {
+#          "divide_money": 1.0,
+#          "basic_rebate": 20,
+#          "rebate": 30
+#      }
+#  }, {
+#      "name": "谷歌",
+#      "type": "零售返点",
+#      "retail_info": {
+#          "rebate": 50
+#      }
+#  }]
+#  """
 
   @ztqb
-  Scenario:1 创建代销的商品
-  weizoom添加商品后：
-  1、zhouxun能获得weizoom商品池商品（创建时间倒序排列）
-
-  zhouxun创建代销商品后:
-  1、zhouxun在商品池商品列表能看到代销商品（创建时间倒序排列）
+  Scenario:1 下单
 
     Given weizoom登录系统
     When weizoom添加商品
