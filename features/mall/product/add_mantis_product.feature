@@ -90,6 +90,7 @@ Scenario:1 客户添加无规格商品
 			"picture":"",
 			"description":"周黑鸭 鲜卤鸭脖 230g/袋 办公室休闲零食 肉干小食"
 		}]
+		"""
 	When aini点击添加商品
 	When aini选择商品分类
 		"""
@@ -98,8 +99,8 @@ Scenario:1 客户添加无规格商品
 					"分类21": null
 				}
 			}]
-		""
-	When aini添加商品	
+		"""
+	When aini添加商品
 		"""
 		[{
 			"shop_name": "ipad",

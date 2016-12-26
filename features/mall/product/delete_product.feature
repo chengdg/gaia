@@ -88,6 +88,7 @@ Backround:
 			"picture":"",
 			"description":"周黑鸭 鲜卤鸭脖 230g/袋 办公室休闲零食 肉干小食"
 		}]
+		"""
 	When aini点击添加商品
 	When aini选择商品分类
 		"""
@@ -96,7 +97,7 @@ Backround:
 					"分类21": null
 				}
 			}]
-		""
+		"""
 	When aini添加商品	
 		"""
 		[{
@@ -207,7 +208,7 @@ Scenario:2 运营删除'已入库'的商品
 		|  耐克男鞋  |  aini  |分类12-分类24|500.00-700.00|100.00-222.00|  上架 | 
 	When jobs上架商品'耐克男鞋'
 	Then jobs查看在售商品列表
-		product_name|supplier|classfication|    price     |   stocks    |sales|operate|tieme|
+		|product_name|supplier|classfication|    price     |   stocks    |sales|operate|tieme|
 		|  耐克男鞋  |  aini  |分类12-分类24|500.00-700.00|100.00-222.00|0.00 |  上架 |上架时间| 
 
 	When manager删除商品'耐克男鞋'
