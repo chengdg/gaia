@@ -145,6 +145,7 @@ def __create_supplier(user):
     mall_models.Supplier.create(
         owner=user,
         name=user.username,
+        responsible_person=user.username, 
         supplier_tel='10086',
         supplier_address=u'火星',
         remark='aaaaaa'
