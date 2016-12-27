@@ -7,15 +7,15 @@ Background:
 	Given manager登录系统
 	When manager添加商品分类
 		"""
-		{
-			"分类11": {
-				"分类21": null,
-				"分类22": null
-			}
-		}
+		[{
+			"分类11": [{
+				"分类21": [],
+				"分类22": []
+			}]
+		}]
 		"""
 
-@gaia @mall @product @pending_product_tmp
+@gaia @mall @product @pending_product_tmp @aix
 Scenario:1 客户添加无规格商品
 	When manager创建待入库商品
 		"""
