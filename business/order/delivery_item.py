@@ -301,6 +301,7 @@ class DeliveryItem(business_model.Model):
 				delivery_item.refunding_info = {
 					'cash': refunding_info.cash,
 					'weizoom_card_money': refunding_info.weizoom_card_money,
+					'member_card_money': refunding_info.member_card_money,
 					'integral': refunding_info.integral,
 					'integral_money': refunding_info.integral_money,
 					'coupon_money': refunding_info.coupon_money,
@@ -312,6 +313,7 @@ class DeliveryItem(business_model.Model):
 				delivery_item.refunding_info = {
 					'cash': 0,
 					'weizoom_card_money': 0,
+					'member_card_money': 0,
 					'integral': 0,
 					'integral_money': 0,
 					'coupon_money': 0,
@@ -497,7 +499,7 @@ class DeliveryItem(business_model.Model):
 			id=self.origin_order_id).execute()
 		return True, ''
 
-	def apply_for_refunding(self, corp, cash, weizoom_card_money, coupon_money, integral):
+	def apply_for_refunding(self, corp, cash, weizoom_card_money, member_card_money, coupon_money, integral):
 
 		if self.status in (mall_models.ORDER_STATUS_GROUP_REFUNDING, mall_models.ORDER_STATUS_REFUNDING):
 			return False, 'Error Status'
@@ -517,11 +519,12 @@ class DeliveryItem(business_model.Model):
 			integral_each_yuan = integral_strategy.integral_each_yuan
 			integral_money = round(integral / integral_each_yuan, 2)
 
-			total = cash + weizoom_card_money + coupon_money + integral_money
+			total = cash + weizoom_card_money + coupon_money + integral_money + member_card_money
 
 			self.refunding_info = {
 				"cash": cash,
 				"weizoom_card_money": weizoom_card_money,
+				"member_card_money": member_card_money,
 				"coupon_money": coupon_money,
 				"integral": integral,
 				"integral_money": integral_money,
@@ -557,7 +560,8 @@ class DeliveryItem(business_model.Model):
 			# 更新订单的金额信息
 			mall_models.Order.update(final_price=mall_models.Order.final_price - self.refunding_info['cash'],
 			                         weizoom_card_money=mall_models.Order.weizoom_card_money - self.refunding_info[
-				                         'weizoom_card_money']).dj_where(id=self.origin_order_id).execute()
+				                         'weizoom_card_money']- self.refunding_info[
+				                         'member_card_money']).dj_where(id=self.origin_order_id).execute()
 		self.__save()
 
 		self.__send_msg_to_topic('delivery_item_refunded', from_status, to_status)
@@ -604,6 +608,7 @@ class DeliveryItem(business_model.Model):
 				delivery_item_id=self.id,
 				cash=self.refunding_info['cash'],
 				weizoom_card_money=self.refunding_info['weizoom_card_money'],
+				member_card_money=self.refunding_info['member_card_money'],
 				integral=self.refunding_info['integral'],
 				integral_money=self.refunding_info['integral_money'],
 				coupon_money=self.refunding_info['coupon_money'],

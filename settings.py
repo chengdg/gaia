@@ -7,13 +7,14 @@ import logging
 DEBUG = True
 PROJECT_HOME = os.path.dirname(os.path.abspath(__file__))
 
-MODE = os.environ.get('MODE', 'develop')
+MODE = os.environ.get('_SERVICE_MODE', 'develop')
 SERVICE_NAME = 'gaia'
 DEV_SERVER_MULTITHREADING = False
 WEAPP_DOMAIN = "weapp.weizoom.com"
 HERMES_DOMAIN = "weapp.weizoom.com"
 # GAIA_DB = os.environ.get('GAIA_DB', None) or '103.29.16.148'
-GAIA_DB = os.environ.get('GAIA_DB', None) or 'db.dev.com'
+DB_HOST = os.environ.get('DB_HOST', 'db.dev.com') 
+DB_PORT = os.environ.get('DB_PORT', 3306) 
 
 DATABASES = {
     'default': {
@@ -22,8 +23,8 @@ DATABASES = {
         'NAME': 'weapp',
         'USER': 'weapp',
         'PASSWORD': 'weizoom',
-        'HOST': GAIA_DB,
-        'PORT': '',
+        'HOST': DB_HOST,
+        'PORT': DB_PORT,
         #'HOST': '103.29.16.148',#WEAPP_DB_HOST,
         #'PORT': '33306',
         'CONN_MAX_AGE': 100
@@ -79,7 +80,7 @@ else:
     ENABLE_SQL_LOG = False #是否dump peewee产生的sql查询
 
 #缓存相关配置
-REDIS_HOST = 'redis.weapp.com'
+REDIS_HOST = os.environ.get('_REDIS_HOST', 'redis.weapp.com')
 REDIS_PORT = 6379
 REDIS_CACHES_DB = 1
 REDIS_CACHE_KEY = ':1:api'

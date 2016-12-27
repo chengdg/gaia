@@ -75,6 +75,7 @@ class Order(business_model.Model):
 		'refunding_info',
 		'save_money',
 		'origin_weizoom_card_money',
+		'origin_member_card_money',
 		'origin_final_price',
 		'status_logs',
 		'operation_logs',
@@ -128,7 +129,7 @@ class Order(business_model.Model):
 			order.pay_interface_type = db_model.pay_interface_type
 			order.pay_interface_type_code = mall_models.PAYTYPE2STR[order.pay_interface_type]
 
-			if db_model.status in (mall_models.ORDER_STATUS_CANCEL,mall_models.ORDER_STATUS_NOT):
+			if db_model.status in (mall_models.ORDER_STATUS_CANCEL, mall_models.ORDER_STATUS_NOT):
 				order.payment_time = ''
 			else:
 				order.payment_time = db_model.payment_time
@@ -287,7 +288,6 @@ class Order(business_model.Model):
 					'type': coupon.rule.type,
 					'name': coupon.rule.name
 				}
-
 			else:
 				order.extra_coupon_info = {
 					'bid': '',
@@ -432,6 +432,9 @@ class Order(business_model.Model):
 					'weizoom_card_money': sum(
 						[delivery_item.refunding_info['weizoom_card_money'] for delivery_item in order.delivery_items if
 						 delivery_item.refunding_info['finished']]),
+					'member_card_money': sum(
+						[delivery_item.refunding_info['weizoom_card_money'] for delivery_item in order.delivery_items if
+						 delivery_item.refunding_info['finished']]),
 					'integral_money': sum(
 						[delivery_item.refunding_info['integral_money'] for delivery_item in order.delivery_items if
 						 delivery_item.refunding_info['finished']]),
@@ -448,6 +451,7 @@ class Order(business_model.Model):
 				order.refunding_info = {
 					'cash': 0,
 					'weizoom_card_money': 0,
+					'member_card_money': 0,
 					'integral': 0,
 					'integral_money': 0,
 					'coupon_money': 0,
@@ -470,11 +474,15 @@ class Order(business_model.Model):
 		for order in orders:
 			order.origin_weizoom_card_money = order.weizoom_card_money + order.refunding_info[
 				'weizoom_card_money']
+			order.origin_member_card_money = order.weizoom_card_money + order.refunding_info[
+				'member_card_money']
 			order.origin_final_price = order.final_price + order.refunding_info['cash']
 
 			total_product_origin_price = order.__get_total_origin_product_price()
-			order.save_money = round(float(total_product_origin_price) + float(order.postage) - float(
-				order.origin_final_price, ) - float(order.origin_weizoom_card_money), 2)
+			order.save_money = round(
+				(float(total_product_origin_price) + float(order.postage) - float(
+				order.origin_final_price) - float(order.origin_weizoom_card_money)
+			                          - float(order.origin_member_card_money)),2)
 
 	@staticmethod
 	def __fill_operation_logs(orders, order_ids):

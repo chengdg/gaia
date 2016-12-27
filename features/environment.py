@@ -19,18 +19,17 @@ from eaglet.core.cache import utils as cache_utils
 
 
 # 临时检测bdd时的数据库是否是本地
-def get_ip(domain):
-	import socket
-	ip = socket.gethostbyname(domain)
-	return ip
+# def get_ip(domain):
+# 	import socket
+# 	ip = socket.gethostbyname(domain)
+# 	return ip
 
 if settings.DATABASES['default']['HOST'] != 'db.dev.com':
-
 	raise RuntimeError("Do not run BDD when connect online database")
-else:
-	ip = get_ip('db.dev.com')
-	if ip != '127.0.0.1':
-		raise RuntimeError("Do not run BDD when connect online database")
+# else:
+# 	ip = get_ip('db.dev.com')
+# 	if ip != '127.0.0.1':
+# 		raise RuntimeError("Do not run BDD when connect online database")
 
 
 
@@ -67,9 +66,13 @@ def before_all(context):
 	# __clear_all_account_data()	
 	from features.util import account_util
 	account_util.create_general_corp('jobs')
+	account_util.create_general_corp('nokia')
+
 	account_util.create_general_corp('bill')
 	account_util.create_general_corp('tom')
+
 	account_util.create_weizoom_corp('weizoom')
+
 	account_util.create_self_run_platform('zhouxun', u'周迅')
 	account_util.create_self_run_platform('yangmi', u'杨幂')
 

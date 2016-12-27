@@ -33,6 +33,7 @@ class EncodeOrderService(business_model.Service):
 			'webapp_id': order.webapp_id,
 			'webapp_user_id': order.webapp_user_id,
 			'weizoom_card_money': order.weizoom_card_money,
+			'member_card_money': order.member_card_money,
 			'delivery_time': order.delivery_time,
 			'is_first_order': order.is_first_order,
 			'is_weizoom_order': order.is_weizoom_order,
@@ -111,6 +112,7 @@ class EncodeOrderService(business_model.Service):
 			'refunding_info': {
 				'cash': order.refunding_info['cash'],
 				'weizoom_card_money': order.refunding_info['weizoom_card_money'],
+				'member_card_money': order.refunding_info['member_card_money'],
 				'integral_money': order.refunding_info['integral_money'],
 				'integral': order.refunding_info['integral'],
 				'coupon_money': order.refunding_info['coupon_money'],
@@ -121,6 +123,7 @@ class EncodeOrderService(business_model.Service):
 	def get_full_money_info(self, order):
 		return {
 			'origin_weizoom_card_money': order.origin_weizoom_card_money,
+			'origin_member_card_money': order.origin_member_card_money,
 			'origin_final_price': order.origin_final_price,
 			'save_money': order.save_money
 		}

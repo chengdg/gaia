@@ -69,6 +69,7 @@ class EncodeDeliveryItemService(business_model.Service):
 			'refunding_info': {
 				"cash": delivery_item.refunding_info['cash'],
 				"weizoom_card_money": delivery_item.refunding_info['weizoom_card_money'],
+				"member_card_money": delivery_item.refunding_info['member_card_money'],
 				"integral": delivery_item.refunding_info['integral'],
 				"integral_money": delivery_item.refunding_info['integral_money'],
 				"coupon_money": delivery_item.refunding_info['coupon_money'],

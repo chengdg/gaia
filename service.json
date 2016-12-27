@@ -5,9 +5,8 @@
 	"envs": {
 		"production": [
 			"_SERVICE_HOST_PORT",
-			"GAIA_DB",
 			"_USE_WSGI_PROTOCAL",
-			"MODE"
+			"_SERVICE_MODE"
 		],
 		"dev": [
 			"_IS_WEIZOOM_DEV_VM",

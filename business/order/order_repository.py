@@ -66,9 +66,12 @@ class OrderRepository(business_model.Model):
 
 				order_bid_filters.append([filters['__f-bid-equal']])
 
-				use_should_in_order_bids = True
 			if '__f-weizoom_card_money-gt' in filters:
 				filter_parse_result = FilterParser.get().parse_key(filters, '__f-weizoom_card_money-gt')
+				order_filter_parse_result.update(filter_parse_result)
+
+			if '__f-member_card_money-gt' in filters:
+				filter_parse_result = FilterParser.get().parse_key(filters, '__f-member_card_money-gt')
 				order_filter_parse_result.update(filter_parse_result)
 
 			if '__f-is_first_order-equal' in filters:
