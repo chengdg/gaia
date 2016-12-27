@@ -11,7 +11,7 @@ class PendingProduct(business_model.Model):
 		'id',
 		'owner_id',
 		'name',
-		'title',
+		'promotion_title',
 		'price',
 		'settlement_price',
 		'weight',
@@ -23,9 +23,9 @@ class PendingProduct(business_model.Model):
 		'has_product_model',
 		'classification_id',
 		'limit_zone_type',
+		'postage_money',
 		'limit_zone',
 		'has_same_postage',
-		'postage_money',
 		'postage_id',
 		'is_deleted',
 		'is_updated',
@@ -42,6 +42,22 @@ class PendingProduct(business_model.Model):
 		if model:
 			self._init_slot_from_model(model)
 
+	@staticmethod
+	def get(product_id):
+		db_model = mall_models.ProductPendingStock.select().dj_where(id=product_id, is_deleted=False).get()
+		return PendingProduct(db_model)
+
+	@staticmethod
+	def create(params):
+		#首先检查是否有重名商品
+		db_models = mall_models.ProductPendingStock.select().dj_where(name=params['name'], is_deleted=False)
+
+		if db_models.count() > 0:
+			return None, u'商品名已存在'
+		model = mall_models.ProductPendingStock.create(**params)
+
+		return PendingProduct(model), ''
+
 	def get_stock_status_text(self):
 		"""
 		:return: 待入库, 已入库, 入库驳回
@@ -49,7 +65,9 @@ class PendingProduct(business_model.Model):
 		status_text = u'待入库'
 		if self.review_status == mall_models.PENDING_PRODUCT_STATUS['ACCEPT']:
 			status_text = u'已入库'
-		elif self.review_status == mall_models.PENDING_PRODUCT_STATUS['REFUSED'] and self.is_updated:
+		elif self.review_status == mall_models.PENDING_PRODUCT_STATUS['REFUSED'] and not self.is_updated:
 			status_text = u'入库驳回>>'
+		elif self.review_status == mall_models.PENDING_PRODUCT_STATUS['REFUSED'] and self.is_updated:
+			status_text = u'修改驳回>>'
 
 		return status_text
