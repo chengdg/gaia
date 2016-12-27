@@ -146,14 +146,12 @@ if 'deploy' == MODE:
     MNS_ACCESS_KEY_SECRET = 'bPKU71c0cfrui4bWgGPO96tLiOJ0PZ'
     MNS_ENDPOINT = 'http://1615750970594173.mns.cn-hangzhou.aliyuncs.com/'
     MNS_SECURITY_TOKEN = ''
-    SUBSCRIBE_QUEUE_NAME = 'redmine-agent'
 
 else:
     MNS_ACCESS_KEY_ID = 'LTAICKQ4rQBofAhF'
     MNS_ACCESS_KEY_SECRET = 'bPKU71c0cfrui4bWgGPO96tLiOJ0PZ'
     MNS_ENDPOINT = 'https://1615750970594173.mns.cn-beijing.aliyuncs.com/'
     MNS_SECURITY_TOKEN = ''
-    SUBSCRIBE_QUEUE_NAME = 'test-order-trade-center'
 
 if 'develop' == MODE:
     MESSAGE_DEBUG_MODE = True
@@ -175,3 +173,9 @@ BDD_SERVER2PORT = {
 }
 
 PROMOTION_RESULT_VERSION = '2' #促销结果数据版本号
+
+# redis锁，前缀lk
+REGISTERED_LOCK_NAMES = {
+	'__prefix': 'lk:',
+	'order_action': 'o_ac:',
+}
