@@ -9,12 +9,12 @@ import math
 import logging
 from bs4 import BeautifulSoup
 from datetime import datetime
+from bdem import msgutil
 
 from eaglet.decorator import param_required
 from eaglet.decorator import cached_context_property
 from eaglet.utils.string_util import hex_to_byte, byte_to_hex
 from eaglet.core import watchdog
-from eaglet.core.cache import utils as cache_util
 
 import settings
 from business.account.integral import Integral
@@ -114,8 +114,14 @@ class Member(business_model.Model):
 		@return:
 		"""
 		openid = member_models.MemberHasSocialAccount.select().dj_where(member_id=self.id).first().account.openid
-		key = 'member_{webapp:%s}_{openid:%s}' % (self.webapp_id, openid)
-		cache_util.delete_cache(key)
+		# 先暂时使用mall_config主题，目的是为了省两块钱TODO
+		topic_name = TOPIC['mall_config']
+		msg_name = 'memeber_info_updated'
+		data = {
+			"weapp_id": self.webapp_id,
+			"openid": openid
+		}
+		msgutil.send_message(topic_name, msg_name, data)
 
 	def update_pay_info(self, order, from_status, to_status):
 		"""
