@@ -8,22 +8,23 @@ Feature:运营人员配置分类的标签和资质
 Background:
 	Given manager登录系统
 	When manager添加商品分类
-	"""
-		{
-			"电子数码": {
-				"耳机": null,
-				"手机": null,
-				"平板电脑": {
-					"分类31": null
-				}
-			},
-			"生活用品": {
+		"""
+		[{
+			"电子数码": [{
+				"耳机": [],
+				"手机": [],
+				"平板电脑": [{
+					"分类31": []
+				}]
+			}]
+		},{
+			"生活用品": [{
 				"零食": null,
 				"肥皂":null,
 				"清洁用品": null
-			}
-		}
-	"""
+			}]
+		}]
+		"""
 
 	
 @gaia @mall @mall.product @mall.product_classification @product_classification_qualification @aix

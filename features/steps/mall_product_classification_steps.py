@@ -7,28 +7,29 @@ from business.mall.corporation_factory import CorporationFactory
 from features.util import bdd_util
 from db.mall import models as mall_models
 
-def __add_classification(context, classification2children, level, father_id):
-	for classification in classification2children:
-		data = {
-			"corp_id": context.corp.id,
-			"name": classification,
-			"level": level,
-			"father_id": father_id
-		}
-		response = context.client.put('/mall/product_classification/', data)
-		bdd_util.assert_api_call_success(response)
+def __add_classification(context, datas, level, father_id):
+	for classification2children in datas:
+		for classification in classification2children:
+			data = {
+				"corp_id": context.corp.id,
+				"name": classification,
+				"level": level,
+				"father_id": father_id
+			}
+			response = context.client.put('/mall/product_classification/', data)
+			bdd_util.assert_api_call_success(response)
 
-		children = classification2children[classification]
-		if children:
-			__add_classification(context, children, level+1, response.data['id'])
+			children = classification2children[classification]
+			if children:
+				__add_classification(context, children, level+1, response.data['id'])
 
 
 @when(u"{user}添加商品分类")
 def step_impl(context, user):
-	classification2children = json.loads(context.text)
+	datas = json.loads(context.text)
 	level = 1
 	father_id = 0
-	__add_classification(context, classification2children, level, father_id)
+	__add_classification(context, datas, level, father_id)
 
 
 @then(u"{user}能获取商品分类列表")
@@ -169,10 +170,7 @@ def step_impl(context, user, classification_name):
 	selected_labels = []
 	classification_id = __classification_name2id(classification_name)
 	for data in datas:
-		selected_labels.append({
-			'labelGroupId': label_group_name2id(data['label_group_name']),
-			'labelIds': map(lambda x: label_name2id(x), data['labels'])
-		})
+		selected_labels += map(lambda x: label_name2id(x), data['labels'])
 
 	response = context.client.put('/mall/product_classification_label/', {
 		'corp_id': bdd_util.get_user_id_for(user),
@@ -210,11 +208,11 @@ def step_impl(context, user, classification_name):
 		'corp_id': bdd_util.get_user_id_for(user),
 		'classification_id': classification_id
 	})
-	resp_datas = response.data
+	resp_datas = response.data['relations']
 	actual = []
 	for data in resp_datas:
-		label_group_name = label_group_id2name(data['labelGroupId'])
-		label_ids = map(lambda x: label_id2name(x), data['labelIds'])
+		label_group_name = label_group_id2name(data['label_group_id'])
+		label_ids = map(lambda x: label_id2name(x), data['label_ids'])
 		actual.append({
 			'label_group_name': label_group_name,
 			'labels': label_ids

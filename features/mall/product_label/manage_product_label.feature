@@ -11,11 +11,9 @@ Background:
 		"""
 		[{
 			"label_group_name": "国家"
-		},
-		{
+		},{
 			"label_group_name": "省市"
-		},
-		{
+		},{
 			"label_group_name": "基本信息"
 		}]
 		"""

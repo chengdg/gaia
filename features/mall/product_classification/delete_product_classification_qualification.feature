@@ -7,20 +7,25 @@ Background:
 	Given manager登录系统
 	When manager添加商品分类
 		"""
-		{
-			"电子数码": {
-				"耳机": null,
-				"手机": null,
-				"平板电脑": {
-					"分类31": null
-				}
-			},
-			"生活用品": {
-				"零食": null,
-				"肥皂":null,
-				"清洁用品": null
-			}
-		}
+		[{
+			"电子数码": [{
+				"耳机": []
+			},{
+				"手机": []
+			},{
+				"平板电脑": [{
+					"分类31": []
+				}]
+			}]
+		},{
+			"生活用品": [{
+				"零食": []
+			},{
+				"肥皂":[]
+			},{
+				"清洁用品": []
+			}]
+		}]
 		"""
 
 	When manager为商品分类'平板电脑'配置特殊资质
@@ -49,7 +54,7 @@ Background:
 		|    食品销售资格   |
 		|   安全食品许可证  |
 
-@gaia @mall @mall.product @mall.product_classification @product_classification_qualification @aix
+@gaia @mall @mall.product @mall.product_classification @product_classification_qualification @aix1
 Scenario:1 运营人员删除资质
 	When manager删除商品分类'零食'中已经分配的资质
 		"""

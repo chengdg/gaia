@@ -16,7 +16,6 @@ class ProductClassification(business_model.Model):
 	"""
 	__slots__ = (
 		'id',
-		'owner_id',
         'name',
         'status',
         'father_id',
@@ -194,13 +193,13 @@ class ProductClassification(business_model.Model):
 			label_id2classifi[label_id] = model.classification_id
 
 		corp = CorporationFactory.get()
-		labels = corp.product_label_repository.get_labels(all_label_ids)
+		labels, label_id2group_id = corp.product_label_repository.get_labels(all_label_ids)
 
 		label_group_has_label = dict()
 		classification_has_own_label = dict()
 		for label in labels:
-			label_group_id = label.label_group_id
 			label_id = label.id
+			label_group_id = label_id2group_id[label_id]
 			if not label_group_has_label.has_key(label_group_id):
 				label_group_has_label[label_group_id] = [label_id]
 			else:

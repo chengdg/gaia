@@ -42,7 +42,7 @@ class PendingStockProductRepository(business_model.Service):
 		product_factory = ProductFactory.get(CorporationFactory.get())
 		for product_id in product_ids:
 			pending_product = PendingProduct.get(product_id)
-			base_info = json.dumps({
+			base_info = {
 				'name': pending_product.name,
 				'promotion_title': pending_product.promotion_title,
 				'supplier_id': pending_product.owner_id,
@@ -51,26 +51,28 @@ class PendingStockProductRepository(business_model.Service):
 				'min_limit': 0,
 				'is_member_product': False,
 				'is_enable_bill': False
-			})
+			}
 
-			image_info = json.dumps({})
-			properties = json.dumps([])
-			categories = json.dumps([])
+			image_info = {
+				'images': []
+			}
+			properties = []
+			categories = []
 
-			logistics_info = json.dumps({
+			logistics_info = {
 				'postage_type': 'unified_postage_type' if pending_product.has_same_postage else 'custom_postage_type',
 				'postage_id': pending_product.postage_id,
 				'unified_postage_money': str(pending_product.postage_money),
 				'limit_zone_type': pending_product.limit_zone_type,
 				'limit_zone_id': pending_product.limit_zone
-			})
+			}
 
-			pay_info = json.dumps({
+			pay_info = {
 				'is_use_online_pay_interface': True,
 				'is_use_cod_pay_interface': False
-			})
+			}
 
-			models_info = json.dumps({
+			models_info = {
 				'standard_model': {
 					'price': str(pending_product.price),
 					'purchase_price': str(pending_product.settlement_price),
@@ -78,8 +80,9 @@ class PendingStockProductRepository(business_model.Service):
 					'stock_type': 'limit',
 					'stocks': pending_product.store,
 					'user_code': ''
-				}
-			})
+				},
+				'custom_models': []
+			}
 
 			product_factory.create_product({
 				'base_info': base_info,

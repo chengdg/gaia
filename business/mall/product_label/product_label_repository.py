@@ -9,12 +9,12 @@ class ProductLabelRepository(business_model.Service):
 	def get_product_labels(self, product_id):
 		relation_models = mall_models.ProductHasLabel.select().dj_where(id=product_id)
 		label_ids = [relation.label_id for relation in relation_models]
-		models = mall_models.ProductLabel.select().dj_where(id__in=label_ids, is_deleted=False)
-		return [ProductLabel(model) for model in models]
+		db_models = mall_models.ProductLabel.select().dj_where(id__in=label_ids, is_deleted=False)
+		return [ProductLabel(model) for model in db_models]
 
 	def get_labels(self, label_ids):
-		models = mall_models.ProductLabel.select().dj_where(id__in=label_ids, is_deleted=False)
-		return [ProductLabel(model) for model in models]
+		db_models = mall_models.ProductLabel.select().dj_where(id__in=label_ids, is_deleted=False)
+		return [ProductLabel(model) for model in db_models], {model.id: model.label_group_id for model in db_models}
 
 	def delete_labels(self, label_ids):
 		mall_models.ProductLabel.update(is_deleted=True).dj_where(id__in=label_ids).execute()

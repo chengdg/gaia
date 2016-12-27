@@ -161,13 +161,13 @@ class ProductFactory(business_model.Service):
 		"""
 		创建自营商品
 		"""
-		base_info = json.loads(args['base_info'])
-		models_info = json.loads(args['models_info'])
-		image_info = json.loads(args['image_info'])
-		logistics_info = json.loads(args['logistics_info'])
-		pay_info = json.loads(args['pay_info'])
-		categories = json.loads(args['categories'])
-		properties = json.loads(args['properties'])
+		base_info = args['base_info']
+		models_info = args['models_info']
+		image_info = args['image_info']
+		logistics_info = args['logistics_info']
+		pay_info = args['pay_info']
+		categories = args['categories']
+		properties = args['properties']
 
 		product = self.__create_product(base_info, image_info, logistics_info, pay_info)
 		self.__add_product_to_categories(product, categories)
