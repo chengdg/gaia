@@ -1,6 +1,12 @@
 #!/bin/bash
 PORT=${1:-8003}
 
+if [ "${_SERVICE_HOST_PORT}" == "" ]; then
+	__IGNORE=1 #do nothing
+else
+	PORT=${_SERVICE_HOST_PORT}
+fi
+
 # prepare service
 CAN_START_SERVICE=`python <<END
 import servicecli
@@ -9,12 +15,6 @@ END`
 
 if [ "${CAN_START_SERVICE}" == "false" ]; then
 	exit 2
-fi
-
-if [ "${_SERVICE_PORT}" == "" ]; then
-	__IGNORE=1 #do nothing
-else
-	PORT=${_SERVICE_PORT}
 fi
 
 # start service
