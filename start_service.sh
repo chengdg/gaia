@@ -21,6 +21,5 @@ fi
 if [ "$_USE_WSGI_PROTOCAL" == "1" ]; then
 	uwsgi --socket 0.0.0.0:${PORT} service.ini
 else
-else
 	python manage.py runserver 0.0.0.0 $PORT
 fi

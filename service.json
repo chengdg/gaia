@@ -10,7 +10,7 @@
 			"_REGISTER_SERVICE",
 			"_DB_HOST",
 			"_DB_PORT",
-			"_REDIST_HOST",
+			"_REDIS_HOST",
 			"_MONGO_HOST"
 		],
 		"dev": [
