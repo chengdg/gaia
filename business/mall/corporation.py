@@ -18,7 +18,7 @@ from business.product.product_pool import ProductPool
 from business.product.property_template.property_template_repository import PropertyTemplateRepository
 from business.product.model.product_model_property_repository import ProductModelPropertyRepository
 
-from business.mall.product_pending_stock.pending_stock_product_repository import PendingStockProductRepository
+from business.mall.pre_product.pre_product_repository import PreProductRepository
 from business.mall.category.category_repository import CategoryRepository
 from business.mall.image_group.image_group_repository import ImageGroupRepository
 from business.mall.pay.pay_interface_repository import PayInterfaceRepository
@@ -135,8 +135,8 @@ class Corporation(business_model.Model):
 		return PropertyTemplateRepository.get(self)
 
 	@property
-	def pending_stock_product_repository(self):
-		return PendingStockProductRepository(self)
+	def pre_product_repository(self):
+		return PreProductRepository(self)
 
 	@property
 	def product_model_property_repository(self):

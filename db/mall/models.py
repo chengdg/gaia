@@ -247,36 +247,36 @@ class SupplierRetailRebateInfo(models.Model):
 
 
 
-# 一级类目
+# 一级分类
 FIRST_CLASSIFICATION = 1
-# 二级类目
+# 二级分类
 SECONDARY_CLASSIFICATION = 2
-# 类目上线（类似于未删除）
+# 分类上线（类似于未删除）
 CLASSIFICATION_ONLINE = 1
-# 类目下线（类似于删除）
+# 分类下线（类似于删除）
 CLASSIFICATION_OFFLINE = 0
 class Classification(models.Model):
 	"""
-	商品类目
+	商品分类
 	"""
 	owner_id = models.IntegerField(default=0)
 	name = models.CharField(max_length=1024) #分类名
 	level = models.IntegerField(default=FIRST_CLASSIFICATION) #分类等级
 	status = models.IntegerField(default=CLASSIFICATION_ONLINE)
 	father_id = models.IntegerField(default=-1) #父级分组id
-	product_count = models.IntegerField(default=0) #分组商品数量
+	product_count = models.IntegerField(default=0) #分类商品数量
 	note = models.CharField(max_length=1024, default='') #分组备注
 	created_at = models.DateTimeField(auto_now_add=True)  # 添加时间
 
 	class Meta(object):
-		verbose_name = "商品类目"
-		verbose_name_plural = "商品类目"
+		verbose_name = "商品分类"
+		verbose_name_plural = "商品分类"
 		db_table = "mall_classification"
 
 
 class ClassificationHasProduct(models.Model):
 	"""
-	商品类目拥有商品的关系表
+	商品分类拥有商品的关系表
 	"""
 	classification = models.ForeignKey(Classification)
 	product_id = models.IntegerField(default=-1)
@@ -285,14 +285,14 @@ class ClassificationHasProduct(models.Model):
 	created_at = models.DateTimeField(auto_now_add=True)  # 添加时间
 
 	class Meta(object):
-		verbose_name = "商品类目与商品的关系"
-		verbose_name_plural = "商品类目与商品的关系"
+		verbose_name = "商品分类与商品的关系"
+		verbose_name_plural = "商品分类与商品的关系"
 		db_table = "mall_classification_has_product"
 		
 
 class ClassificationQualification(models.Model):
 	"""
-	商品类目配置的特殊资质
+	商品分类配置的特殊资质
 	"""
 	classification = models.ForeignKey(Classification)
 	name = models.CharField(max_length=48, default='') #资质名称
@@ -303,7 +303,7 @@ class ClassificationQualification(models.Model):
 
 class ClassificationHasLabel(models.Model):
 	"""
-	商品类目（分类)有什么标签
+	商品分类有什么标签
 	"""
 	classification = models.ForeignKey(Classification)
 	label_id = models.IntegerField(default=0)
@@ -408,16 +408,16 @@ NO_LIMIT = 0 #不限制
 FORBIDDEN_SALE_LIMIT = 1 #禁售
 ONLY_SALE_LIMIT = 2 #仅售
 
-PENDING_PRODUCT_STATUS = {
+PRE_PRODUCT_STATUS = {
 	'NOT_YET': 0, #尚未提交审核
 	'SUBMIT': 1, #提交审核
 	'REFUSED': 2, #驳回
 	'ACCEPT': 3 #审核通过
 }
 
-class ProductPendingStock(models.Model):
+class PreProduct(models.Model):
 	"""
-	待入库商品
+	待入池商品
 	"""
 	owner_id = models.IntegerField(default=0)
 	name = models.CharField(max_length=50, default='')  #商品名称
@@ -425,7 +425,7 @@ class ProductPendingStock(models.Model):
 	price = models.DecimalField(max_digits=65, decimal_places=2, default=0.00)  #商品价格 (元)
 	settlement_price = models.DecimalField(max_digits=65, decimal_places=2, default=0.00)  #结算价 (元)
 	weight = models.FloatField(default=0)  #商品重量 (kg)
-	store = models.IntegerField(default=0)  #商品库存 默认-1{大于0: 有限 ,-1:无限}
+	stock = models.IntegerField(default=0)  #商品库存 默认-1{大于0: 有限 ,-1:无限}
 	valid_time_from = models.DateTimeField(null=True)  #有效范围开始时间
 	valid_time_to = models.DateTimeField(null=True)  #有效范围结束时间
 	limit_settlement_price = models.DecimalField(max_digits=65, decimal_places=2, default=0.00)  #限时结算价 (元)
@@ -439,13 +439,14 @@ class ProductPendingStock(models.Model):
 	postage_id = models.IntegerField(default=0)# 默认模板运费id
 	remark = models.TextField(default='')  # 备注
 	is_updated = models.BooleanField(default=False)  # 是否更新
-	review_status = models.IntegerField(default=PENDING_PRODUCT_STATUS['NOT_YET'])#审核状态
+	review_status = models.IntegerField(default=PRE_PRODUCT_STATUS['NOT_YET'])#审核状态
 	refuse_reason = models.TextField(default='')  # 驳回原因
 	is_deleted = models.BooleanField(default=False)
 	created_at = models.DateTimeField(auto_now_add=True)  # 添加时间
+	mall_product_id = models.IntegerField(default=0)  # 审核通过后与mall_product记录关联
 
 	class Meta(object):
-		db_table = 'mall_product_pending_stock'
+		db_table = 'mall_pre_product'
 
 
 class CategoryHasProduct(models.Model):
@@ -1668,7 +1669,7 @@ class ProductHasLabel(models.Model):
 	"""
 	product_id = models.IntegerField(null=False)
 	label_id = models.IntegerField(null=False)
-	# -1表示改标签是商品自己的标签不是类目的标签
+	# -1表示改标签是商品自己的标签不是分类的标签
 	classification_id = models.IntegerField(default=-1)
 	created_at = models.DateTimeField(auto_now_add=True)
 

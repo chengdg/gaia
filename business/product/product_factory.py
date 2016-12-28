@@ -195,3 +195,74 @@ class ProductFactory(business_model.Service):
 		corp.forsale_shelf.add_products([product.id])
 
 		return product
+
+	def create_product_from_pre_product(self, pre_product_ids):
+		"""
+		创建通过审核的商品
+		"""
+		created_products = []
+		pre_products = self.corp.pre_product_repository.get_pre_products(pre_product_ids)
+		pre_id2product = {p.id: p for p in pre_products}
+		for product_id in pre_product_ids:
+			pre_product = pre_id2product[product_id]
+			base_info = {
+				'name': pre_product.name,
+				'promotion_title': pre_product.promotion_title,
+				'supplier_id': self.corp.id,
+				'detail': pre_product.remark,
+				'purchase_price': str(pre_product.settlement_price),
+				'min_limit': 0,
+				'is_member_product': False,
+				'is_enable_bill': False
+			}
+
+			image_info = {
+				'images': []
+			}
+			properties = []
+			categories = []
+
+			logistics_info = {
+				'postage_type': 'unified_postage_type' if pre_product.has_same_postage else 'custom_postage_type',
+				'postage_id': pre_product.postage_id,
+				'unified_postage_money': str(pre_product.postage_money),
+				'limit_zone_type': pre_product.limit_zone_type,
+				'limit_zone_id': pre_product.limit_zone
+			}
+
+			pay_info = {
+				'is_use_online_pay_interface': True,
+				'is_use_cod_pay_interface': False
+			}
+
+			models_info = {
+				'standard_model': {
+					'price': str(pre_product.price),
+					'purchase_price': str(pre_product.settlement_price),
+					'weight': pre_product.weight,
+					'stock_type': 'limit',
+					'stocks': pre_product.stock,
+					'user_code': ''
+				},
+				'custom_models': []
+			}
+
+			created_product = self.create_product({
+				'base_info': base_info,
+				'image_info': image_info,
+				'logistics_info': logistics_info,
+				'pay_info': pay_info,
+				'properties': properties,
+				'categories': categories,
+				'models_info': models_info
+			})
+
+			mall_models.PreProduct.update(
+				review_status = mall_models.PRE_PRODUCT_STATUS['ACCEPT'],
+				is_updated = False,
+				mall_product_id = created_product.id
+			).dj_where(id=product_id, is_deleted=False).execute()
+
+			created_products.append(created_product)
+
+		return created_products

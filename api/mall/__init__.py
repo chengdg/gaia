@@ -14,7 +14,7 @@ import logistics
 import image_group
 import config
 import notify
-import product_pending_stock
+import pre_product
 import product_classification
 import product_label
 

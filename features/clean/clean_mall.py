@@ -40,7 +40,7 @@ def clean():
 	mall_models.ImageGroup.delete().execute()
 
 	#待入库商品
-	mall_models.ProductPendingStock.delete().execute()
+	mall_models.PreProduct.delete().execute()
 
 	#商品属性模板
 	mall_models.ProductProperty.delete().execute()
