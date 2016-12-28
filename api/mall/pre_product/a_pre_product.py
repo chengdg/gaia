@@ -3,7 +3,8 @@
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
 
-from business.mall.pre_product.pre_product import PreProduct
+from business.mall.pre_product.pre_product_factory import PreProductFactory
+
 
 class APreProduct(api_resource.ApiResource):
 	"""
@@ -43,10 +44,8 @@ class APreProduct(api_resource.ApiResource):
 
 	@param_required(['corp_id', 'name'])
 	def put(args):
-		"""
-		创建待审核商品
-		"""
-		pre_product, msg = PreProduct.create({
+		pre_product_factory = PreProductFactory.get(args['corp'])
+		pre_product = pre_product_factory.create_pre_product({
 			'owner_id': args['corp'].id,
 			'name': args['name'],
 			'promotion_title': args.get('promotion_title', ''),
@@ -62,21 +61,15 @@ class APreProduct(api_resource.ApiResource):
 			'remark': args.get('remark', '')
 		})
 
-		if pre_product:
+		if not isinstance(pre_product, basestring):
 			return {}
 		else:
-			return (500, msg)
+			return (500, pre_product)
 
 	def post(self):
-		"""
-		修改商品信息
-		"""
 		pass
 
 	def delete(self):
-		"""
-		删除商品(待审核、已审核)
-		"""
 		pass
 
 

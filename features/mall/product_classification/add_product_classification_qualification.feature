@@ -6,8 +6,8 @@ Feature:运营人员配置分类的标签和资质
 
 
 Background:
-	Given manager登录系统
-	When manager添加商品分类
+	Given weizoom登录系统
+	When weizoom添加商品分类
 		"""
 		[{
 			"电子数码": [{
@@ -29,13 +29,13 @@ Background:
 	
 @gaia @mall @mall.product @mall.product_classification @product_classification_qualification @aix
 Scenario:1  运营人员为分配配置特殊资质
-	When manager为商品分类'平板电脑'配置特殊资质
+	When weizoom为商品分类'平板电脑'配置特殊资质
 		"""
 		[{
 			"qualification_name":"平板电脑销售许可证"
 		}]
 		"""
 
-	Then manager查看商品分类'平板电脑'的特殊资质
+	Then weizoom查看商品分类'平板电脑'的特殊资质
 		| qualification_name |
 		| 平板电脑销售许可证 |

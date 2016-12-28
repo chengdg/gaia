@@ -43,17 +43,6 @@ class PreProduct(business_model.Model):
 		if model:
 			self._init_slot_from_model(model)
 
-	@staticmethod
-	def create(params):
-		#首先检查是否有重名商品
-		db_models = mall_models.PreProduct.select().dj_where(name=params['name'], is_deleted=False)
-
-		if db_models.count() > 0:
-			return None, u'商品名已存在'
-		model = mall_models.PreProduct.create(**params)
-
-		return PreProduct(model), ''
-
 	@property
 	def status_text(self):
 		"""
