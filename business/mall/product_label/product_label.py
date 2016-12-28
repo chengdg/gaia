@@ -9,7 +9,6 @@ class ProductLabel(business_model.Model):
 	__slots__ = (
 		'id',
 		'name',
-		'label_group_id',
 		'created_at'
 	)
 

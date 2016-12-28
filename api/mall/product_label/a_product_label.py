@@ -29,7 +29,7 @@ class AProductLable(api_resource.ApiResource):
 				'label': {
 					'id': result.id,
 					'name': result.name,
-					'label_group_id': result.label_group_id,
+					'label_group_id': label_group.id,
 					'created_at': result.created_at.strftime('%Y-%m-%d %H:%M:%S')
 				}
 			}

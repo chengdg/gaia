@@ -11,7 +11,6 @@ class ProductLabelGroup(business_model.Model):
 	"""
 	__slots__ = (
 		'id',
-		'owner_id',
 		'name',
 		'is_deleted',
 		'labels',
@@ -59,7 +58,7 @@ class ProductLabelGroup(business_model.Model):
 
 		new_model = mall_models.ProductLabel.create(
 			label_group_id = self.id,
-			owner_id = self.owner_id,
+			owner_id = CorporationFactory.get().id,
 			name = label_name
 		)
 		return ProductLabel(new_model)

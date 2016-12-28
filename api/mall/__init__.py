@@ -14,6 +14,7 @@ import logistics
 import image_group
 import config
 import notify
+import pre_product
 import product_classification
 import product_label
 

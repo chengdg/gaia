@@ -40,8 +40,7 @@ class ProductClassificationRepository(business_model.Service):
 
 		for classification_id in classification_ids:
 			has_label_dict[classification_id] = False
-			if father_has_label_dict and child_id2father_id[classification_id] > 0 and father_has_label_dict[
-				child_id2father_id[classification_id]]:
+			if father_has_label_dict and child_id2father_id[classification_id] > 0 and father_has_label_dict[child_id2father_id[classification_id]]:
 				has_label_dict[classification_id] = True
 
 		models = mall_models.ClassificationHasLabel.select().dj_where(classification_id__in=classification_ids)
@@ -94,8 +93,3 @@ class ProductClassificationRepository(business_model.Service):
 
 		classifications.reverse()
 		return classifications
-
-	
-
-
-	
