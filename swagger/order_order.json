@@ -98,13 +98,17 @@
 																	"type": "number",
 																	"description": "原始微众卡金额"
 																},
+																"origin_member_card_money": {
+																	"type": "number",
+																	"description": "原始会员卡金额"
+																},
 																"weizoom_card_money": {
 																	"type": "number",
 																	"description": "微众卡金额"
 																},
 																"member_card_money": {
 																	"type": "number",
-																	"description": "微众卡金额"
+																	"description": "会员卡金额"
 																},
 																"origin_final_price": {
 																	"type": "number",
@@ -172,7 +176,7 @@
 																		},
 																		"member_card_money": {
 																			"type": "number",
-																			"description": "订单已经退款的微众卡金额"
+																			"description": "订单已经退款的会员卡金额"
 																		},
 																		"coupon_money": {
 																			"type": "number",
@@ -327,7 +331,7 @@
 																					},
 																					"member_card_money": {
 																						"type": "number",
-																						"description": "出货单申请退款的微众卡金额"
+																						"description": "出货单申请退款的会员卡金额"
 																					},
 																					"coupon_money": {
 																						"type": "number",
@@ -547,13 +551,17 @@
 													"type": "number",
 													"description": "原始微众卡金额"
 												},
+												"origin_member_card_money": {
+													"type": "number",
+													"description": "原始会员卡金额"
+												},
 												"weizoom_card_money": {
 													"type": "number",
 													"description": "微众卡金额"
 												},
 												"member_card_money": {
 													"type": "number",
-													"description": "微众卡金额"
+													"description": "会员卡金额"
 												},
 												"origin_final_price": {
 													"type": "number",
@@ -633,7 +641,7 @@
 														},
 														"member_card_money": {
 															"type": "number",
-															"description": "订单已经退款的微众卡金额"
+															"description": "订单已经退款的会员卡金额"
 														},
 														"coupon_money": {
 															"type": "number",
@@ -846,7 +854,7 @@
 																	},
 																	"member_card_money": {
 																		"type": "number",
-																		"description": "出货单申请退款的微众卡金额"
+																		"description": "出货单申请退款的会员卡金额"
 																	},
 																	"coupon_money": {
 																		"type": "number",
