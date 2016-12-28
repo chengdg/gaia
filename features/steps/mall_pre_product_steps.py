@@ -33,7 +33,7 @@ def step_impl(context, user):
 		response = context.client.put('/mall/pre_product/', {
 			'corp_id': bdd_util.get_user_id_for(user),
 			'name': data['product_name'],
-			'title': data['promotion_title'],
+			'promotion_title': data['promotion_title'],
 			'has_product_model': data['has_product_model'],
 			'price': data['price'],
 			'weight': data['weight'],

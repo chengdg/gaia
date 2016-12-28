@@ -49,7 +49,7 @@ class APreProduct(api_resource.ApiResource):
 		pre_product, msg = PreProduct.create({
 			'owner_id': args['corp'].id,
 			'name': args['name'],
-			'title': args.get('title', ''),
+			'promotion_title': args.get('promotion_title', ''),
 			'has_product_model': args.get('has_product_model', False),
 			'price': args.get('price', 0),
 			'weight': args.get('weight', 0),

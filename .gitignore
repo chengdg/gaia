@@ -5,3 +5,4 @@
 *.DS_Store
 html/
 node_modules
+swagger/openapi.json
