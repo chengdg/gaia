@@ -22,12 +22,15 @@ class AMessage(api_resource.ApiResource):
 		msgrepo = MessageRepository()
 		message = msgrepo.get_message(args['id'])
 		msg_att_repo = MessageAttachmentRepository()
-		attachments = msg_att_repo.get_message_attachments(args['id'])
+		db_attachments = msg_att_repo.get_message_attachments(args['id'])
 		data = {
 			'id': message.id,
 			'title': message.title,
 			'content': message.content,
-			'attachments': attachments,
+			'attachments': [{'id': at.id,
+							 'name': at.file_name,
+							 'type': at.file_type,
+							 'path': at.path} for at in db_attachments],
 			'created_at': message.created_at.strftime('%Y-%m-%d %H:%M'),
 		}
 

@@ -8,21 +8,6 @@ from db.mall import models as mall_models
 from db.account import models as account_models
 from db.station_message import models as message_models
 
-def __add_classification(context, classification2children, level, father_id):
-	for classification in classification2children:
-		data = {
-			"corp_id": context.corp.id,
-			"name": classification,
-			"level": level,
-			"father_id": father_id
-		}
-		response = context.client.put('/mall/product_classification/', data)
-		bdd_util.assert_api_call_success(response)
-
-		children = classification2children[classification]
-		if children:
-			__add_classification(context, children, level + 1, response.data['id'])
-
 
 @when(u"{user}新增站内消息")
 def step_add_station_message(context, user):
@@ -100,24 +85,4 @@ def step_delete_category(context, user, title):
 	}
 	response = context.client.delete('/message/message/', data)
 	bdd_util.assert_api_call_success(response)
-#
-#
-# @then(u"{user}能获得'{classification_name}'的子分类集合")
-# def stem_impl(context, user, classification_name):
-# 	classification = mall_models.Classification.select().dj_where(name=classification_name).get()
-#
-# 	data = {
-# 		'corp_id': context.corp.id,
-# 		'classification_id': classification.id
-# 	}
-# 	response = context.client.get('/mall/child_product_classifications/', data)
-#
-# 	actual = {}
-# 	for classification in response.data['product_classifications']:
-# 		actual[classification['name']] = True
-#
-# 	expected = {}
-# 	for item in json.loads(context.text):
-# 		expected[item] = True
-#
-# 	bdd_util.assert_dict(expected, actual)
+
