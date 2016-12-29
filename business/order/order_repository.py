@@ -348,3 +348,18 @@ class OrderRepository(business_model.Model):
 
 		db_models = db_models.order_by(mall_models.Order.id.desc())
 		return db_models
+
+	def get_orders_unshipped_count(self):
+
+		unshipped_orders_count = self.__get_db_models_for_corp().dj_where(status=mall_models.ORDER_STATUS_PAYED_NOT_SHIP).count()
+
+		from db.weixin import models as weixin_models
+		mpuser = weixin_models.WeixinMpUser.select().dj_where(owner_id=self.corp.id)
+		# 因为微信那边没有提供接口，先临时这么写着用
+		weixin_models= weixin_models.Session.select().dj_where(mpuser=mpuser, is_show=True, member_latest_created_at__not="")
+		if weixin_models:
+			weixin_unread_count = sum([x.unread_count for x in weixin_models])
+		else:
+			weixin_unread_count = 0
+		#count = weixin_unread_count.unread_count if weixin_unread_count.unread_count else 0
+		return unshipped_orders_count, weixin_unread_count

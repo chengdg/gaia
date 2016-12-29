@@ -20,5 +20,5 @@ class AOrdersUnshippedCount(api_resource.ApiResource):
 		unship_orders_count, weixin_unread_count = corp.order_repository.get_orders_unshipped_count()
 		return {
 			'unship_orders_count': unship_orders_count,
-			'weixin_messages_count': weixin_unread_count,
+			'weixin_messages_count': weixin_unread_count
 		}
