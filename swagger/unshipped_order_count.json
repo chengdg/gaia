@@ -5,7 +5,7 @@
 		"title": "zeus API doc"
 	},
 	"paths": {
-		"/order/orders_unshipped_count": {
+		"/order/unshipped_orders_count": {
 			"get": {
 				"summary": "获得待发货的订单数量",
 				"parameters": [
