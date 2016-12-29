@@ -349,7 +349,7 @@ class OrderRepository(business_model.Model):
 		db_models = db_models.order_by(mall_models.Order.id.desc())
 		return db_models
 
-	def get_orders_unshipped_count(self):
+	def get_unshipped_orders_count(self):
 
 		unshipped_orders_count = self.__get_db_models_for_corp().dj_where(status=mall_models.ORDER_STATUS_PAYED_NOT_SHIP).count()
 
