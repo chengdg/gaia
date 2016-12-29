@@ -8,7 +8,7 @@ from db.mall import models as mall_models
 
 
 class Command(BaseCommand):
-	help = "python manage.py upgrade_product_db"
+	help = "python manage.py upgrade_deleted_product_db"
 	args = ''
 
 	def handle(self, **options):
