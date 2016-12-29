@@ -53,7 +53,7 @@ class AProduct(api_resource.ApiResource):
 
 			return data
 
-	@param_required(['corp_id', 'base_info', 'models_info', 'image_info', 'logistics_info', 'pay_info', 'categories', 'properties'])
+	@param_required(['corp_id', 'base_info:json', 'models_info:json', 'image_info:json', 'logistics_info:json', 'pay_info:json', 'categories:json', 'properties:json'])
 	def put(args):
 		"""
 		创建商品

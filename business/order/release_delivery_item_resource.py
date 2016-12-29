@@ -26,7 +26,7 @@ class ReleaseDeliveryItemResourceService(business_model.Service):
 		corp = self.corp
 		delivery_item = corp.delivery_item_repository.get_delivery_item(delivery_item_id, fill_options)
 
-		if delivery_item.has_db_redcord:
+		if delivery_item.has_db_record:
 			is_paid = (
 			mall_models.MEANINGFUL_WORD2ORDER_STATUS[from_status] != mall_models.ORDER_STATUS_NOT)  # 已经支付过的订单，已增加过销量
 

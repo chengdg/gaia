@@ -210,41 +210,41 @@ class SupplierPostageConfig(models.Model):
 
 
 class SupplierDivideRebateInfo(models.Model):
-    """
-    供货商五五分成信息(不一定是五成)--目前只有首月五五分成,以后可能扩展成,不同额度不同返点.
-    """
-    # 供货商id
-    supplier_id = models.IntegerField()
-    # 钱额度
-    divide_money = models.IntegerField()
-    # 基础返点
-    basic_rebate = models.IntegerField()
-    # 在此额度内返点
-    rebate = models.IntegerField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    is_deleted = models.BooleanField(default=False)
+	"""
+	供货商五五分成信息(不一定是五成)--目前只有首月五五分成,以后可能扩展成,不同额度不同返点.
+	"""
+	# 供货商id
+	supplier_id = models.IntegerField()
+	# 钱额度
+	divide_money = models.IntegerField()
+	# 基础返点
+	basic_rebate = models.IntegerField()
+	# 在此额度内返点
+	rebate = models.IntegerField()
+	created_at = models.DateTimeField(auto_now_add=True)
+	is_deleted = models.BooleanField(default=False)
 
-    class Meta(object):
-        db_table = 'supplier_divide_rebate_info'
+	class Meta(object):
+		db_table = 'supplier_divide_rebate_info'
 
 
 class SupplierRetailRebateInfo(models.Model):
-    """
-    零售返点的供货商的返点信息(包括团购)
-    """
-    # 供货商id
-    supplier_id = models.IntegerField()
-    # 平台id(如果支持团购) 0的表示改供货商的基础扣点; 0的默认值表示改供货商的基础扣点
-    # 如果有owner_id说明该扣点是属于团购扣点
-    owner_id = models.IntegerField(default=0)
-    # 扣点
-    rebate = models.IntegerField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    is_deleted = models.BooleanField(default=False)
+	"""
+	零售返点的供货商的返点信息(包括团购)
+	"""
+	# 供货商id
+	supplier_id = models.IntegerField()
+	# 平台id(如果支持团购) 0的表示改供货商的基础扣点; 0的默认值表示改供货商的基础扣点
+	# 如果有owner_id说明该扣点是属于团购扣点
+	owner_id = models.IntegerField(default=0)
+	# 扣点
+	rebate = models.IntegerField()
+	created_at = models.DateTimeField(auto_now_add=True)
+	is_deleted = models.BooleanField(default=False)
 
-    class Meta(object):
-        db_table = 'supplier_retail_rebate_info'
-        
+	class Meta(object):
+		db_table = 'supplier_retail_rebate_info'
+
 
 
 # 一级分类
@@ -259,12 +259,13 @@ class Classification(models.Model):
 	"""
 	商品分类
 	"""
+	owner_id = models.IntegerField(default=0)
 	name = models.CharField(max_length=1024) #分类名
 	level = models.IntegerField(default=FIRST_CLASSIFICATION) #分类等级
 	status = models.IntegerField(default=CLASSIFICATION_ONLINE)
-	father_id = models.IntegerField(default=-1) #父级分类id
+	father_id = models.IntegerField(default=-1) #父级分组id
 	product_count = models.IntegerField(default=0) #分类商品数量
-	note = models.CharField(max_length=1024, default='') #分类备注
+	note = models.CharField(max_length=1024, default='') #分组备注
 	created_at = models.DateTimeField(auto_now_add=True)  # 添加时间
 
 	class Meta(object):
@@ -299,6 +300,17 @@ class ClassificationQualification(models.Model):
 
 	class Meta(object):
 		db_table = 'mall_classification_qualification'
+
+class ClassificationHasLabel(models.Model):
+	"""
+	商品分类有什么标签
+	"""
+	classification = models.ForeignKey(Classification)
+	label_id = models.IntegerField(default=0)
+	created_at = models.DateTimeField(auto_now_add=True)
+
+	class Meta(object):
+		db_table = 'mall_classification_has_label'
 
 
 #########################################################################
@@ -390,6 +402,51 @@ class Product(models.Model):
 
 	class Meta(object):
 		db_table = 'mall_product'
+
+
+NO_LIMIT = 0 #不限制
+FORBIDDEN_SALE_LIMIT = 1 #禁售
+ONLY_SALE_LIMIT = 2 #仅售
+
+PRE_PRODUCT_STATUS = {
+	'NOT_YET': 0, #尚未提交审核
+	'SUBMIT': 1, #提交审核
+	'REFUSED': 2, #驳回
+	'ACCEPT': 3 #审核通过
+}
+
+class PreProduct(models.Model):
+	"""
+	待入池商品
+	"""
+	owner_id = models.IntegerField(default=0)
+	name = models.CharField(max_length=50, default='')  #商品名称
+	promotion_title = models.CharField(max_length=50, default='')  #促销标题
+	price = models.DecimalField(max_digits=65, decimal_places=2, default=0.00)  #商品价格 (元)
+	settlement_price = models.DecimalField(max_digits=65, decimal_places=2, default=0.00)  #结算价 (元)
+	weight = models.FloatField(default=0)  #商品重量 (kg)
+	stock = models.IntegerField(default=0)  #商品库存 默认-1{大于0: 有限 ,-1:无限}
+	valid_time_from = models.DateTimeField(null=True)  #有效范围开始时间
+	valid_time_to = models.DateTimeField(null=True)  #有效范围结束时间
+	limit_settlement_price = models.DecimalField(max_digits=65, decimal_places=2, default=0.00)  #限时结算价 (元)
+	has_limit_time = models.BooleanField(default=False)  #限时结算价是否需要 有效范期
+	has_product_model = models.BooleanField(default=False) #是否是多规格商品
+	classification_id = models.IntegerField(default=0) #所属分类id(二级分类id)
+	limit_zone_type = models.IntegerField(default=NO_LIMIT)
+	limit_zone = models.IntegerField(default=0)  # 限制地区的模板id
+	has_same_postage = models.BooleanField(default=True) #是否是统一运费{0:统一运费,1:默认模板运费}
+	postage_money = models.DecimalField(max_digits=65, decimal_places=2, default=0.00) #统一运费金额
+	postage_id = models.IntegerField(default=0)# 默认模板运费id
+	remark = models.TextField(default='')  # 备注
+	is_updated = models.BooleanField(default=False)  # 是否更新
+	review_status = models.IntegerField(default=PRE_PRODUCT_STATUS['NOT_YET'])#审核状态
+	refuse_reason = models.TextField(default='')  # 驳回原因
+	is_deleted = models.BooleanField(default=False)
+	created_at = models.DateTimeField(auto_now_add=True)  # 添加时间
+	mall_product_id = models.IntegerField(default=0)  # 审核通过后与mall_product记录关联
+
+	class Meta(object):
+		db_table = 'mall_pre_product'
 
 
 class CategoryHasProduct(models.Model):
@@ -936,6 +993,8 @@ class Order(models.Model):
 	supplier_user_id = models.IntegerField(default=0) # 订单供货商user的id，用于系列拆单
 	total_purchase_price = models.FloatField(default=0)  # 总订单采购价格
 	# bid = models.CharField(max_length=100)  # 订单号
+	member_card_money = models.FloatField(
+		default=0.0)  # 会员卡抵扣金额  alter table mall_order add column member_card_money float default 0;
 
 	class Meta(object):
 		db_table = 'mall_order'
@@ -1047,6 +1106,7 @@ class OrderHasRefund(models.Model):
 		created_at = models.DateTimeField(auto_now_add=True)  # 添加时间
 		total = models.FloatField(default=0)  # 积分
 		finished = models.BooleanField(default=False)  # 是否退款完成
+		member_card_money = models.FloatField(default=0.0)  # 会员卡抵扣金额
 
 		class Meta(object):
 			db_table = 'mall_order_has_refund'
@@ -1280,6 +1340,8 @@ class MarketToolsTemplateMessage(models.Model):
 ########################################################################
 MAJOR_INDUSTRY_TYPE = 0 #主营行业
 DEPUTY_INDUSTRY_TYPE = 1 #副营行业
+MESSAGE_STATUS_ON = 1 # 启用
+MESSAGE_STATUS_OFF = 0 # 不启用
 class MarketToolsTemplateMessageDetail(models.Model):
 	owner = models.ForeignKey(User)
 	template_message = models.ForeignKey(MarketToolsTemplateMessage)
@@ -1601,24 +1663,13 @@ class ProductLabel(models.Model):
 		db_table = 'mall_product_label'
 		verbose_name = '标签'
 
-class ClassificationHasLabel(models.Model):
-	"""
-	商品类目（分类)有什么标签
-	"""
-	classification_id = models.IntegerField(default=-1)
-	label_id = models.CharField(max_length=1024, default='')
-	created_at = models.DateTimeField(auto_now_add=True)
-
-	class Meta(object):
-		db_table = 'mall_classification_has_label'
-
 class ProductHasLabel(models.Model):
 	"""
 	商品有哪些标签
 	"""
 	product_id = models.IntegerField(null=False)
 	label_id = models.IntegerField(null=False)
-	# -1表示改标签是商品自己的标签不是类目的标签
+	# -1表示改标签是商品自己的标签不是分类的标签
 	classification_id = models.IntegerField(default=-1)
 	created_at = models.DateTimeField(auto_now_add=True)
 
@@ -1657,21 +1708,21 @@ PROMOTE_OVER = 2  # 推广结束
 
 
 class PromoteDetail(models.Model):
-    """
+	"""
 	推广信息
-    """
-    product_id = models.IntegerField()
-    # 推广状态 （未推广，推广中，已结束）   推广设置中展示：未推广，已结束。推广明细中：推广中，已结束
-    promote_status = models.IntegerField(default=PROMOTING)
+	"""
+	product_id = models.IntegerField()
+	# 推广状态 （未推广，推广中，已结束）   推广设置中展示：未推广，已结束。推广明细中：推广中，已结束
+	promote_status = models.IntegerField(default=PROMOTING)
 
-    promote_money = models.FloatField(default=0, help_text=u'推广费用/件')
-    promote_stock = models.IntegerField(default=1, help_text=u'推广库存')
-    promote_time_from = models.DateTimeField(auto_now_add=True)
-    promote_time_to = models.DateTimeField(auto_now_add=True)
-    promote_sale_count = models.IntegerField(default=0, help_text=u'推广销量')
-    promote_total_money = models.FloatField(default=0, help_text=u'推广费用总费用')
-    is_new = models.BooleanField(default=True, help_text=u'是否已读')  # 是否已读
-    created_at = models.DateTimeField(auto_now_add=True)
+	promote_money = models.FloatField(default=0, help_text=u'推广费用/件')
+	promote_stock = models.IntegerField(default=1, help_text=u'推广库存')
+	promote_time_from = models.DateTimeField(auto_now_add=True)
+	promote_time_to = models.DateTimeField(auto_now_add=True)
+	promote_sale_count = models.IntegerField(default=0, help_text=u'推广销量')
+	promote_total_money = models.FloatField(default=0, help_text=u'推广费用总费用')
+	is_new = models.BooleanField(default=True, help_text=u'是否已读')  # 是否已读
+	created_at = models.DateTimeField(auto_now_add=True)
 
-    class Meta(object):
-        db_table = 'mall_promote_detail'
+	class Meta(object):
+		db_table = 'mall_promote_detail'

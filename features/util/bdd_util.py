@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
-import time
-from datetime import datetime, timedelta
+import re
+from datetime import datetime,timedelta
 
 import settings
 from client import Client
@@ -10,7 +10,7 @@ from util import string_util
 from db.member import models as member_models
 from db.mall import models as mall_models
 import logging
-#from business.account.member import Member
+# from business.account.member import Member
 
 tc = None
 
@@ -238,6 +238,7 @@ def assert_dict(expected, actual):
 			except Exception, e:
 				items = ['\n<<<<<', 'e: %s' % str(expected), 'a: %s' % str(actual), 'key: %s' % key, e.args[0], '>>>>>\n']
 				e.args = ('\n'.join(items),)
+				print('\n'.join(items))
 				raise e
 
 
@@ -302,7 +303,7 @@ def print_json(obj):
 	print json.dumps(obj, indent=True)
 
 
-def table2dict(context):
+def table2list(context):
 	expected = []
 	for row in context.table:
 		data = {}
@@ -383,3 +384,77 @@ def set_bdd_mock(mock_type, mock_content):
 
 def get_bdd_mock(mock_type):
 	return bdd_mock[mock_type]
+
+import copy
+
+
+class JsonModifier(object):
+	def __init__(self, obj, modify_rule):
+
+		self.__modify_key_func = modify_rule.modify_key_func
+		self.__modify_value_func = modify_rule.modify_value_func
+
+		self.obj = copy.deepcopy(obj)
+
+	def __modify_dict(self, obj):
+
+		for key, value in obj.items():
+			new_key = self.__modify_key_func(key)
+
+			new_value = self.__modify_value_func(obj.pop(key))
+			if isinstance(value, dict):
+				obj[new_key] = self.__modify_dict(new_value)
+			elif isinstance(value, list):
+				obj[new_key] = self.__modify_list(new_value)
+			else:
+				obj[new_key] = new_value
+
+		return obj
+
+	def __modify_list(self, obj):
+		for i, item in enumerate(obj):
+			if isinstance(item, dict):
+				obj[i] = self.__modify_dict(item)
+			if isinstance(item, list):
+				obj[i] = self.__modify_list(item)
+		return obj
+
+	def modify(self):
+		if isinstance(self.obj, dict):
+			self.__modify_dict(self.obj)
+			return self.__modify_dict(self.obj)
+		elif isinstance(self.obj, list):
+			return self.__modify_list(self.obj)
+		else:
+			return self.obj
+
+
+class ModifyRule(object):
+    """
+    如不实现相关方法,则返回原值
+    """
+
+    def modify_key_func(self, key):
+        return key
+
+    def modify_value_func(self, value):
+        return value
+
+class ChangeKeyNameRule(ModifyRule):
+	def __init__(self, key_map):
+		self.key_map = key_map
+
+	def modify_key_func(self, key):
+		return self.key_map[key] if key in self.key_map else key
+
+
+def change_key_name(obj, key_map):
+	"""
+	不会改变原变量，key_map为原key->new_key的对应关系
+	@param obj:
+	@param key_map:
+	@return:
+	"""
+	modifier = JsonModifier(obj, ChangeKeyNameRule(key_map))
+
+	return modifier.modify()

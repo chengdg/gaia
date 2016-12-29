@@ -2,7 +2,7 @@
     "swagger": "2.0",
     "info": {
         "version": "1.0.0",
-        "title": "Hermes Product Promote API"
+        "title": "Hermes CPS promoted Product API"
     },
     "paths": {
        "/product/cps_promoted_product/": {

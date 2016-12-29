@@ -7,13 +7,14 @@ import logging
 DEBUG = True
 PROJECT_HOME = os.path.dirname(os.path.abspath(__file__))
 
-MODE = os.environ.get('MODE', 'develop')
+MODE = os.environ.get('_SERVICE_MODE', 'develop')
 SERVICE_NAME = 'gaia'
 DEV_SERVER_MULTITHREADING = False
 WEAPP_DOMAIN = "weapp.weizoom.com"
 HERMES_DOMAIN = "weapp.weizoom.com"
 # GAIA_DB = os.environ.get('GAIA_DB', None) or '103.29.16.148'
-GAIA_DB = os.environ.get('GAIA_DB', None) or 'db.dev.com'
+DB_HOST = os.environ.get('DB_HOST', 'db.dev.com') 
+DB_PORT = os.environ.get('DB_PORT', '3306')
 
 DATABASES = {
     'default': {
@@ -22,8 +23,8 @@ DATABASES = {
         'NAME': 'weapp',
         'USER': 'weapp',
         'PASSWORD': 'weizoom',
-        'HOST': GAIA_DB,
-        'PORT': '',
+        'HOST': DB_HOST,
+        'PORT': DB_PORT,
         #'HOST': '103.29.16.148',#WEAPP_DB_HOST,
         #'PORT': '33306',
         'CONN_MAX_AGE': 100
@@ -79,7 +80,7 @@ else:
     ENABLE_SQL_LOG = False #是否dump peewee产生的sql查询
 
 #缓存相关配置
-REDIS_HOST = 'redis.weapp.com'
+REDIS_HOST = os.environ.get('_REDIS_HOST', 'redis.weapp.com')
 REDIS_PORT = 6379
 REDIS_CACHES_DB = 1
 REDIS_CACHE_KEY = ':1:api'
@@ -99,11 +100,7 @@ TASKQUEUE_ENABLED = True
 
 # Celery for Falcon
 INSTALLED_TASKS = [
-    'wapi.tasks',
-    'services.order_notify_mail_service.task.service_send_order_email',
-    'services.shiped_order_template_message_service.task.service_send_shiped_order_template_message',
-    'services.express_service.task.service_express',
-    'services.product_service.task.clear_sync_product_cache',
+
 ]
 
 #redis celery相关
@@ -123,7 +120,6 @@ MAIL_NOTIFY_USERNAME = u'noreply@notice.weizoom.com'
 MAIL_NOTIFY_PASSWORD = u'Weizoom2015'
 MAIL_NOTIFY_ACCOUNT_SMTP = u'smtp.dm.aliyun.com'
 
-PANDA_IMAGE_DOMAIN = 'http://chaozhi.weizoom.com'
 
 # settings for WAPI Logger
 if MODE == 'develop' or MODE == 'test':
@@ -150,14 +146,12 @@ if 'deploy' == MODE:
     MNS_ACCESS_KEY_SECRET = 'bPKU71c0cfrui4bWgGPO96tLiOJ0PZ'
     MNS_ENDPOINT = 'http://1615750970594173.mns.cn-hangzhou.aliyuncs.com/'
     MNS_SECURITY_TOKEN = ''
-    SUBSCRIBE_QUEUE_NAME = 'redmine-agent'
 
 else:
     MNS_ACCESS_KEY_ID = 'LTAICKQ4rQBofAhF'
     MNS_ACCESS_KEY_SECRET = 'bPKU71c0cfrui4bWgGPO96tLiOJ0PZ'
     MNS_ENDPOINT = 'https://1615750970594173.mns.cn-beijing.aliyuncs.com/'
     MNS_SECURITY_TOKEN = ''
-    SUBSCRIBE_QUEUE_NAME = 'test-order-trade-center'
 
 if 'develop' == MODE:
     MESSAGE_DEBUG_MODE = True
@@ -179,3 +173,9 @@ BDD_SERVER2PORT = {
 }
 
 PROMOTION_RESULT_VERSION = '2' #促销结果数据版本号
+
+# redis锁，前缀lk
+REGISTERED_LOCK_NAMES = {
+	'__prefix': 'lk:',
+	'order_action': 'o_ac:',
+}

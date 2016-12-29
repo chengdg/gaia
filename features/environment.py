@@ -17,6 +17,22 @@ from eaglet.core.cache import utils as cache_utils
 
 #from core.service import celeryconfig
 
+
+# 临时检测bdd时的数据库是否是本地
+# def get_ip(domain):
+# 	import socket
+# 	ip = socket.gethostbyname(domain)
+# 	return ip
+
+if settings.DATABASES['default']['HOST'] != 'db.dev.com':
+	raise RuntimeError("Do not run BDD when connect online database")
+# else:
+# 	ip = get_ip('db.dev.com')
+# 	if ip != '127.0.0.1':
+# 		raise RuntimeError("Do not run BDD when connect online database")
+
+
+
 ######################################################################################
 # __clear_all_account_data: 清空账号数据
 ######################################################################################
@@ -44,99 +60,22 @@ def __clear_all_app_data():
 	for clean_module in clean_modules:
 		clean_module.clean()
 
-def __make_password(raw_password):
-	import hashlib
-
-	algorithm = 'sha1'
-	salt = '69e44'
-	hash = hashlib.sha1(salt + raw_password).hexdigest()
-	return "%s$%s$%s" % (algorithm, salt, hash)
-
-
-######################################################################################
-# __create_system_user: 创建系统用户
-######################################################################################
-def __create_system_user(username):
-	"""
-	创建系统用户
-	"""
-	from db.account import models as account_models
-
-	try:
-		user = account_models.User.select().dj_where(username=username).get()
-		#已经存在，不再创建
-	except:
-		user = account_models.User.create(
-			username = username,
-			first_name = username,
-			password = __make_password('test')
-		)
-
-		profile = account_models.UserProfile.create(
-			user = user,
-			webapp_id = 0,
-			webapp_type = account_models.WEBAPP_TYPE_MALL
-		)
-
-	client = bdd_util.login(user)
-	data = {
-		'corp_id': user.id
-	}
-	response = client.put('/mall/default_configs/', data)
-	bdd_util.assert_api_call_success(response)
-
-	return user
-
-
-def __create_weizoom_corporation():
-	from db.account import models as account_models
-
-	try:
-		profile = account_models.UserProfile.select().dj_where(webapp_type=account_models.WEBAPP_TYPE_WEIZOOM).get()
-		account_models.User.update(username='weizoom').dj_where(id=profile.user_id).execute()
-		#已经存在，不再创建，直接返回
-	except:
-		user = account_models.User.create(
-			username = 'weizoom',
-			password = __make_password('test')
-		)
-
-		profile = account_models.UserProfile.create(
-			user = user,
-			webapp_id = 0,
-			webapp_type = account_models.WEBAPP_TYPE_WEIZOOM
-		)
-
-
-def __create_self_run_platform_account(username):
-	from db.account import models as account_models
-
-	try:
-		user = account_models.User.select().dj_where(username=username).get()
-		#已经存在，不再创建，直接返回
-	except:
-		user = account_models.User.create(
-			username = username,
-			password = __make_password('test')
-		)
-
-		profile = account_models.UserProfile.create(
-			user = user,
-			webapp_id = 0,
-			webapp_type = account_models.WEBAPP_TYPE_WEIZOOM_MALL
-		)
 
 def before_all(context):
 	# cache_utils.clear_db()
-	# __clear_all_account_data()
-	
-	__create_system_user('jobs')
-	__create_system_user('bill')
-	__create_system_user('tom')
+	# __clear_all_account_data()	
+	from features.util import account_util
+	account_util.create_general_corp('jobs')
+	account_util.create_general_corp('nokia')
 
-	__create_weizoom_corporation()
-	__create_self_run_platform_account('zhouxun')
-	__create_self_run_platform_account('yangmi')
+	account_util.create_general_corp('bill')
+	account_util.create_general_corp('tom')
+
+	account_util.create_weizoom_corp('weizoom')
+
+	account_util.create_self_run_platform('zhouxun', u'周迅')
+	account_util.create_self_run_platform('yangmi', u'杨幂')
+
 
 	#创建test case，使用assert
 	context.tc = unittest.TestCase('__init__')

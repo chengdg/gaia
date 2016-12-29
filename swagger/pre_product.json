@@ -1,0 +1,122 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "Mantis Pre_Product Model Property API"
+    },
+    "paths": {
+        "/mall/pre_product/": {
+            "put": {
+                "summary": "创建待审核商品",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "formData",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },{
+                        "name": "name",
+                        "in": "formData",
+                        "description": "商品名称",
+                        "required": true,
+                        "type": "string"
+                    },{
+                        "name": "promotion_title",
+                        "in": "formData",
+                        "description": "促销标题",
+                        "required": false,
+                        "type": "string"
+                    },{
+                        "name": "has_product_model",
+                        "in": "formData",
+                        "description": "是否是多规格商品",
+                        "required": false,
+                        "type": "bool"
+                    },{
+                        "name": "price",
+                        "in": "formData",
+                        "description": "商品价格",
+                        "required": true,
+                        "type": "float"
+                    },{
+                        "name": "weight",
+                        "in": "formData",
+                        "description": "商品重量",
+                        "required": true,
+                        "type": "float"
+                    },{
+                        "name": "stock",
+                        "in": "formData",
+                        "description": "库存",
+                        "required": true,
+                        "type": "int"
+                    },{
+                        "name": "limit_zone_type",
+                        "in": "formData",
+                        "description": "发货地区类型设置",
+                        "required": true,
+                        "type": "int"
+                    },{
+                        "name": "limit_zone",
+                        "in": "formData",
+                        "description": "发货地区",
+                        "required": true,
+                        "type": "int"
+                    },{
+                        "name": "postage_id",
+                        "in": "formData",
+                        "description": "运费模版id",
+                        "required": true,
+                        "type": "int"
+                    },{
+                        "name": "postage_money",
+                        "in": "formData",
+                        "description": "运费",
+                        "required": false,
+                        "type": "float"
+                    },{
+                        "name": "has_same_postage",
+                        "in": "formData",
+                        "description": "是否使用统一运费",
+                        "required": false,
+                        "type": "bool"
+                    },{
+                        "name": "remark",
+                        "in": "formData",
+                        "description": "商品描述",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "pre_product"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {}
+                        }
+                    },
+                    "500": {
+                        "description": "fail",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "errMsg": "错误信息"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+
+    }
+}

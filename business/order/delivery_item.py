@@ -13,6 +13,7 @@ from business.order.delivery_item_product_repository import DeliveryItemProductR
 from business.order.process_order_after_delivery_item_service import ProcessOrderAfterDeliveryItemService
 from db.express import models as express_models
 from db.mall import models as mall_models
+from util.send_phone_msg import send_phone_captcha
 from gaia_conf import TOPIC
 import logging
 
@@ -53,7 +54,9 @@ class DeliveryItem(business_model.Model):
 
 	@cached_context_property
 	def express_company_name_text(self):
-		self.context['corp'].express_delivery_repository.get_company_by_value(self.express_company_name_value)
+		express_company_name = self.context['corp'].express_delivery_repository.get_company_by_value(
+			self.express_company_name_value)
+		return express_company_name
 
 	def __init__(self, db_model):
 		business_model.Model.__init__(self)
@@ -104,9 +107,9 @@ class DeliveryItem(business_model.Model):
 			product_names.append(product.name)
 			total_count += product.count
 		return {
-			'total_sale_price':total_sale_price,
-			'product_names':product_names,
-			'total_count':total_count
+			'total_sale_price': total_sale_price,
+			'product_names': product_names,
+			'total_count': total_count
 		}
 
 	@staticmethod
@@ -298,6 +301,7 @@ class DeliveryItem(business_model.Model):
 				delivery_item.refunding_info = {
 					'cash': refunding_info.cash,
 					'weizoom_card_money': refunding_info.weizoom_card_money,
+					'member_card_money': refunding_info.member_card_money,
 					'integral': refunding_info.integral,
 					'integral_money': refunding_info.integral_money,
 					'coupon_money': refunding_info.coupon_money,
@@ -309,6 +313,7 @@ class DeliveryItem(business_model.Model):
 				delivery_item.refunding_info = {
 					'cash': 0,
 					'weizoom_card_money': 0,
+					'member_card_money': 0,
 					'integral': 0,
 					'integral_money': 0,
 					'coupon_money': 0,
@@ -351,18 +356,21 @@ class DeliveryItem(business_model.Model):
 			if supplier_user:
 				delivery_item.supplier_info = {
 					'name': supplier_user.name,
-					'supplier_type': 'supplier_user'
+					'supplier_type': 'supplier_user',
+					'supplier_tel': ''
 				}
 			elif supplier:
 				supplier = id2supplier.get(db_model.supplier, None)
 				delivery_item.supplier_info = {
 					'name': supplier.name,
-					'supplier_type': 'supplier'
+					'supplier_type': 'supplier',
+					'supplier_tel': supplier.supplier_tel
 				}
 			else:
 				delivery_item.supplier_info = {
 					'name': '',
-					'supplier_type': 'None'
+					'supplier_type': 'None',
+					'supplier_tel': ''
 				}
 
 	def pay(self, payment_time, corp):
@@ -466,6 +474,11 @@ class DeliveryItem(business_model.Model):
 		process_order_after_delivery_item_service = ProcessOrderAfterDeliveryItemService.get(corp)
 		process_order_after_delivery_item_service.process_order(self)
 
+		# [compatibility]: 兼容apiserver当只有一个出货单的时候，直接显示订单的发货信息
+		mall_models.Order.update(express_company_name=express_company_name_value, express_number=express_number,
+		                         is_100=with_logistics_trace, leader_name=leader_name).dj_where(
+			id=self.origin_order_id).execute()
+
 		return True, ''
 
 	def update_ship_info(self, corp, with_logistics_trace, express_company_name_value, express_number, leader_name):
@@ -480,9 +493,13 @@ class DeliveryItem(business_model.Model):
 		self.__send_msg_to_topic('delivery_item_ship_info_updated', self.status, self.status)
 
 		self.__record_operation_log(self.bid, corp.username, action_text)
+		# [compatibility]: 兼容apiserver当只有一个出货单的时候，直接显示订单的发货信息
+		mall_models.Order.update(express_company_name=express_company_name_value, express_number=express_number,
+		                         is_100=with_logistics_trace, leader_name=leader_name).dj_where(
+			id=self.origin_order_id).execute()
 		return True, ''
 
-	def apply_for_refunding(self, corp, cash, weizoom_card_money, coupon_money, integral):
+	def apply_for_refunding(self, corp, cash, weizoom_card_money, member_card_money, coupon_money, integral):
 
 		if self.status in (mall_models.ORDER_STATUS_GROUP_REFUNDING, mall_models.ORDER_STATUS_REFUNDING):
 			return False, 'Error Status'
@@ -502,11 +519,12 @@ class DeliveryItem(business_model.Model):
 			integral_each_yuan = integral_strategy.integral_each_yuan
 			integral_money = round(integral / integral_each_yuan, 2)
 
-			total = cash + weizoom_card_money + coupon_money + integral_money
+			total = cash + weizoom_card_money + coupon_money + integral_money + member_card_money
 
 			self.refunding_info = {
 				"cash": cash,
 				"weizoom_card_money": weizoom_card_money,
+				"member_card_money": member_card_money,
 				"coupon_money": coupon_money,
 				"integral": integral,
 				"integral_money": integral_money,
@@ -542,7 +560,8 @@ class DeliveryItem(business_model.Model):
 			# 更新订单的金额信息
 			mall_models.Order.update(final_price=mall_models.Order.final_price - self.refunding_info['cash'],
 			                         weizoom_card_money=mall_models.Order.weizoom_card_money - self.refunding_info[
-				                         'weizoom_card_money']).dj_where(id=self.origin_order_id).execute()
+				                         'weizoom_card_money']- self.refunding_info[
+				                         'member_card_money']).dj_where(id=self.origin_order_id).execute()
 		self.__save()
 
 		self.__send_msg_to_topic('delivery_item_refunded', from_status, to_status)
@@ -589,6 +608,7 @@ class DeliveryItem(business_model.Model):
 				delivery_item_id=self.id,
 				cash=self.refunding_info['cash'],
 				weizoom_card_money=self.refunding_info['weizoom_card_money'],
+				member_card_money=self.refunding_info['member_card_money'],
 				integral=self.refunding_info['integral'],
 				integral_money=self.refunding_info['integral_money'],
 				coupon_money=self.refunding_info['coupon_money'],
@@ -599,3 +619,19 @@ class DeliveryItem(business_model.Model):
 			mall_models.OrderHasRefund.update(finished=True).dj_where(delivery_item_id=self.id).execute()
 
 		db_model.save()
+
+	def send_phone_message(self):
+
+		if self.has_db_record:
+			supplier_tel = self.supplier_info['supplier_tel']
+			data = {
+                    "phones": str(supplier_tel),
+                    "content": {
+                        "order_id": self.bid,
+                        "ship_name": self.ship_name
+                    },
+                    "sms_code": "SMS_34465265"
+                }		
+			rs = send_phone_captcha(data)
+
+

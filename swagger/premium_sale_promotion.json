@@ -1,0 +1,361 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "zeus API doc"
+    },
+    "paths": {
+        "/promotion/premium_sale_promotion/": {
+            "get": {
+                "summary": "获取具体某个买赠促销活动",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "promotion"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/PremiumSalePromotion"
+                        }
+                    }
+                }
+            },
+            "put":{
+                "summary": "创建 买赠促销活动",
+                "parameters": [
+                    {
+                        "name": "",
+                        "in": "body",
+                        "description": "postage config的name",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/NewPremiumSalePromotion"
+                        }
+                    }
+                ],
+                "tags": [
+                    "promotion"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+
+                    }
+                }
+
+            },
+            "delete": {
+                "summary": "删除具体买赠促销活动",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "ids",
+                        "in": "query",
+                        "description": "[id,...]",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "promotion"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        },
+        "/promotion/premium_sale_promotions": {
+            "get": {
+                "summary": "买赠促销活动列表",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "filters",
+                        "in": "query",
+                        "description": "查询条件(json字符串)",
+                        "required": false,
+                        "type": "string",
+                        "format": "类似{'__f-name-contains':'abc', '__f-product_name-contains':'def'}这样的查询对象"
+                    }
+                ],
+                "tags": [
+                    "promotion"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/PremiumSalePromotionList"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "PremiumSalePromotionList": {
+            "type": "object",
+            "properties": {
+                "pageinfo": {
+                    "type": "object",
+                    "description": "分页信息"
+                },
+                "premium_sale_promotions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/PremiumSalePromotion"
+                    },
+                    "minItems": 0
+                }
+            }
+        },
+        "PremiumSalePromotion": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": ""
+                },
+
+                "promotion_title": {
+                    "type": "string",
+                    "description": "促销广告语"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "促销名称"
+                },
+                "end_date": {
+                    "type": "string",
+                    "description": "促销结束时间"
+                },
+                "start_date": {
+                    "type": "string",
+                    "description": "促销start时间"
+                },
+
+                "product_info": {
+                    "$ref": "#/definitions/PremiumPromotedProductInfo"
+                },
+
+                "member_grade_id": {
+                    "type": "string",
+                    "description": "会员等级id"
+
+                },
+                "status": {
+                    "type": "string",
+                    "description": "状态,",
+                    "enum": ["1未开始","2进行中","3已结束","4已删除","5已失效"]
+
+                },
+                "detail":{
+                    "$ref": "#/definitions/PremiumSaleDetailInfo"
+                }
+
+            }
+        },
+        "NewPremiumSalePromotion": {
+            "type": "object",
+            "properties": {
+                "corp_id": {
+                    "type": "number",
+                    "description": ""
+                },
+                "promotion_info": {
+                    "type": "object",
+                    "properties": {
+                        "name": {
+                            "type": "string",
+                            "description": ""
+                        },
+                        "promotion_title": {
+                            "type": "string",
+                            "description": "促销广告语"
+                        },
+                        "type": {
+                            "type": "string",
+                            "description": "促销类型premium_sale"
+                        },
+                        "member_grade": {
+                            "type": "number",
+                            "description": "可参与活动的会员等级"
+                        },
+                        "start_date": {
+                            "type": "string",
+                            "description": "促销开始时间"
+                        },
+                        "end_date": {
+                            "type": "string",
+                            "description": "促销结束时间"
+                        }
+                    }
+                },
+                "detail_info": {
+                    "type": "object",
+                    "properties": {
+                        "premium_count": {
+                            "type": "number",
+
+                            "description": "赠送基数"
+                        },
+                        "count": {
+                            "type": "number",
+
+                            "description": "购买 基数"
+                        },
+                        "unit": {
+                            "type": "number",
+                            "description": "赠送单位"
+                        },
+                        "premium_product_id": {
+                            "type": "number",
+                            "description": "赠送的商品id"
+                        },
+                        "is_enable_cycle": {
+                            "type": "number",
+                            "description": "是否可循环购买 true: false (默认true)"
+                        }
+                    }
+
+                },
+                "product_info": {
+                    "type": "object",
+                    "properties": {
+                        "product_ids": {
+                            "type": "array",
+                            "description": "商品id",
+                            "items": {
+                                "type": "number"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "PremiumPromotedProductInfo":{
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "number",
+                    "description": "商品的id"
+                },
+                "base_info": {
+                    "$ref": "#/definitions/ReturnBaseInfo"
+                },
+                "models_info": {
+                    "$ref": "#/definitions/ModelsInfo"
+                },
+                "image_info": {
+                    "$ref": "#/definitions/ImageInfo"
+                },
+
+                "categories": {
+                    "$ref": "#/definitions/ReturnCategories"
+                },
+                "supplier": {
+                    "$ref": "#/definitions/ReturnSupplier"
+                },
+                "classifications": {
+                    "$ref": "#/definitions/ReturnClassifications"
+                }
+            }
+        },
+        "PremiumSaleDetailInfo":{
+          "type": "object",
+            "properties": {
+
+              "count": {
+                      "type": "string",
+                      "description": "主商品购买基数"
+              },
+
+              "is_enable_cycle_mode": {
+                      "type": "boolean",
+                      "description": "是否可以循环购买true/false"
+              },
+              "premium_products": {
+                  "type": "array",
+                  "items": {
+                      "$ref": "#/definitions/PremiumSaleProductInfo"
+                  },
+                  "minItems": 0
+              }
+            }
+        },
+        "PremiumSaleProductInfo":{
+            "type": "object",
+            "properties": {
+
+              "premium_unit": {
+                      "type": "string",
+                      "description": "赠送单元"
+              },
+
+              "name": {
+                      "type": "string",
+                      "description": "商品名"
+              },
+              "premium_count": {
+                      "type": "string",
+                      "description": "赠送基数"
+              },
+              "premium_product_id": {
+                      "type": "string",
+                      "description": "赠送的商品id"
+              },
+              "thumbnails_url": {
+                  "type": "string",
+                  "description": "赠送的商品id"
+              },
+              "supplier": {
+                  "type": "string",
+                  "description": "供货商id"
+              }
+            }
+        }
+
+    }
+}

@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
+import json
 
 from business import model as business_model
 from business.order.delivery_item import DeliveryItem
 from db.mall import models as mall_models
+from db.member import models as member_models
 from gaia_conf import TOPIC
 from bdem import msgutil
 from datetime import datetime, timedelta
@@ -56,6 +58,7 @@ class Order(business_model.Model):
 		'webapp_user_id',
 
 		'weizoom_card_money',
+		'member_card_money',
 		'delivery_time',  # 配送时间字符串
 		'is_first_order',
 		'supplier_user_id',
@@ -72,10 +75,12 @@ class Order(business_model.Model):
 		'refunding_info',
 		'save_money',
 		'origin_weizoom_card_money',
+		'origin_member_card_money',
 		'origin_final_price',
 		'status_logs',
 		'operation_logs',
 		'weizoom_card_info',
+		'member_card_info',
 		'extra_coupon_info',
 
 		'integral_type',  # 订单中使用积分的类型。'order':整单抵扣,'product':积分应用
@@ -123,7 +128,11 @@ class Order(business_model.Model):
 			# 支付信息
 			order.pay_interface_type = db_model.pay_interface_type
 			order.pay_interface_type_code = mall_models.PAYTYPE2STR[order.pay_interface_type]
-			order.payment_time = db_model.payment_time
+
+			if db_model.status in (mall_models.ORDER_STATUS_CANCEL, mall_models.ORDER_STATUS_NOT):
+				order.payment_time = ''
+			else:
+				order.payment_time = db_model.payment_time
 
 			# 金额信息
 			order.final_price = db_model.final_price
@@ -132,6 +141,7 @@ class Order(business_model.Model):
 			order.coupon_money = db_model.coupon_money
 			order.postage = db_model.postage
 			order.weizoom_card_money = db_model.weizoom_card_money
+			order.member_card_money = db_model.member_card_money
 			order.integral_money = db_model.integral_money
 			order.integral = db_model.integral
 			order.promotion_saved_money = db_model.promotion_saved_money
@@ -180,6 +190,7 @@ class Order(business_model.Model):
 			with_status_logs = fill_options.get('with_status_logs')
 			with_operation_logs = fill_options.get('with_operation_logs')
 			with_weizoom_card = fill_options.get("with_weizoom_card")
+			with_member_card = fill_options.get("with_member_card")
 			with_coupon = fill_options.get("with_coupon")
 			with_extra_promotion_info = fill_options.get("extra_promotion_info")
 
@@ -212,6 +223,9 @@ class Order(business_model.Model):
 
 			if with_weizoom_card:
 				Order.__fill_weizoom_card(orders, order_ids)
+
+			if with_member_card:
+				Order.__fill_member_card(orders, order_ids)
 
 			if with_group_buy_info:
 				Order.__fill_group_buy(orders, order_ids)
@@ -271,14 +285,14 @@ class Order(business_model.Model):
 				coupon = id2coupon[order.coupon_id]
 				order.extra_coupon_info = {
 					'bid': coupon.bid,
-					'type': coupon.rule.type
-
+					'type': coupon.rule.type,
+					'name': coupon.rule.name
 				}
-
 			else:
 				order.extra_coupon_info = {
 					'bid': '',
-					'type': ''
+					'type': '',
+					'name': ''
 				}
 
 	@staticmethod
@@ -293,10 +307,29 @@ class Order(business_model.Model):
 			if info:
 				order.weizoom_card_info = {
 					'trade_id': info.trade_id,
-					'used_card': info.used_card
+					'used_card': json.loads(info.used_card)
 				}
 			else:
-				order.weizoom_card_info = {}
+				order.weizoom_card_info = {
+					'trade_id': '',
+					'used_card': ''
+				}
+
+	@staticmethod
+	def __fill_member_card(orders, order_ids):
+		order_bids = [order.bid for order in orders]
+		infos = member_models.MemberCardLog.select().dj_where(order_id__in=order_bids)
+
+		bid2infos = {info.order_id: info for info in infos}
+
+		for order in orders:
+			info = bid2infos.get(order.bid)
+			if info:
+				order.member_card_info = {
+					'trade_id': info.trade_id
+				}
+			else:
+				order.member_card_info = {}
 
 	@staticmethod
 	def __fill_delivery_items(orders, fill_options):
@@ -372,6 +405,7 @@ class Order(business_model.Model):
 						'to_status_code': mall_models.ORDER_STATUS2MEANINGFUL_WORD[log.to_status],
 						'time': log.created_at
 					})
+
 	@staticmethod
 	def __fill_group_buy(orders, order_ids):
 		"""
@@ -398,6 +432,9 @@ class Order(business_model.Model):
 					'weizoom_card_money': sum(
 						[delivery_item.refunding_info['weizoom_card_money'] for delivery_item in order.delivery_items if
 						 delivery_item.refunding_info['finished']]),
+					'member_card_money': sum(
+						[delivery_item.refunding_info['weizoom_card_money'] for delivery_item in order.delivery_items if
+						 delivery_item.refunding_info['finished']]),
 					'integral_money': sum(
 						[delivery_item.refunding_info['integral_money'] for delivery_item in order.delivery_items if
 						 delivery_item.refunding_info['finished']]),
@@ -414,6 +451,7 @@ class Order(business_model.Model):
 				order.refunding_info = {
 					'cash': 0,
 					'weizoom_card_money': 0,
+					'member_card_money': 0,
 					'integral': 0,
 					'integral_money': 0,
 					'coupon_money': 0,
@@ -436,11 +474,15 @@ class Order(business_model.Model):
 		for order in orders:
 			order.origin_weizoom_card_money = order.weizoom_card_money + order.refunding_info[
 				'weizoom_card_money']
+			order.origin_member_card_money = order.weizoom_card_money + order.refunding_info[
+				'member_card_money']
 			order.origin_final_price = order.final_price + order.refunding_info['cash']
 
 			total_product_origin_price = order.__get_total_origin_product_price()
-			order.save_money = round(float(total_product_origin_price) + float(order.postage) - float(
-				order.origin_final_price, ) - float(order.origin_weizoom_card_money), 2)
+			order.save_money = round(
+				(float(total_product_origin_price) + float(order.postage) - float(
+				order.origin_final_price) - float(order.origin_weizoom_card_money)
+			                          - float(order.origin_member_card_money)),2)
 
 	@staticmethod
 	def __fill_operation_logs(orders, order_ids):
@@ -700,7 +742,8 @@ class Order(business_model.Model):
 		"""
 		db_model = self.context['db_model']
 		db_model.status = self.status
-		db_model.payment_time = self.payment_time
+		if self.payment_time:
+			db_model.payment_time = self.payment_time
 		db_model.is_first_order = self.is_first_order
 		db_model.remark = self.remark
 		db_model.final_price = self.final_price

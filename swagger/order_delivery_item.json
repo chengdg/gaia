@@ -97,9 +97,13 @@
 													"type": "string",
 													"description": "子订单编号"
 												},
-												"express_company_name": {
+												"express_company_name_value": {
 													"type": "string",
-													"description": "快递公司名称"
+													"description": "快递公司名称(编号)"
+												},
+												"express_company_name_text": {
+													"type": "string",
+													"description": "快递公司名称(汉字)"
 												},
 												"created_at": {
 													"type": "string",
