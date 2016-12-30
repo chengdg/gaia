@@ -411,8 +411,7 @@ ONLY_SALE_LIMIT = 2 #仅售
 PRE_PRODUCT_STATUS = {
 	'NOT_YET': 0, #尚未提交审核
 	'SUBMIT': 1, #提交审核
-	'REFUSED': 2, #驳回
-	'ACCEPT': 3 #审核通过
+	'REFUSED': 2 #驳回
 }
 
 class PreProduct(models.Model):
@@ -438,12 +437,15 @@ class PreProduct(models.Model):
 	postage_money = models.DecimalField(max_digits=65, decimal_places=2, default=0.00) #统一运费金额
 	postage_id = models.IntegerField(default=0)# 默认模板运费id
 	remark = models.TextField(default='')  # 备注
-	is_updated = models.BooleanField(default=False)  # 是否更新
+
 	review_status = models.IntegerField(default=PRE_PRODUCT_STATUS['NOT_YET'])#审核状态
 	refuse_reason = models.TextField(default='')  # 驳回原因
-	is_deleted = models.BooleanField(default=False)
-	created_at = models.DateTimeField(auto_now_add=True)  # 添加时间
 	mall_product_id = models.IntegerField(default=0)  # 审核通过后与mall_product记录关联
+	is_updated = models.BooleanField(default=False)  # 是否更新
+	is_accepted = models.BooleanField(default=False)  # 是否已审核通过
+	is_deleted = models.BooleanField(default=False)
+
+	created_at = models.DateTimeField(auto_now_add=True)  # 添加时间
 
 	class Meta(object):
 		db_table = 'mall_pre_product'

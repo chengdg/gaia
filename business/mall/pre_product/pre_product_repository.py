@@ -25,7 +25,12 @@ class PreProductRepository(business_model.Service):
 
 	def get_pre_product(self, product_id):
 		db_model = mall_models.PreProduct.select().dj_where(id=product_id, is_deleted=False).get()
-		return PreProduct(db_model)
+		pre_product = PreProduct(db_model)
+		# 如果是已审核通过的商品，则获取商品池的库存
+		if pre_product.is_accepted:
+			pass
+
+		return pre_product
 
 	def get_pre_products(self, product_ids):
 		db_models = mall_models.PreProduct.select().dj_where(id__in=product_ids, is_deleted=False)

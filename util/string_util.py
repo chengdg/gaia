@@ -78,3 +78,6 @@ def hex_to_byte(hex_str):
         bytes.append(chr(int(hex_str[i:i+2], 16 )))
 
     return ''.join(bytes)
+
+def raw_html(str):
+    return str.replace('<', '&lt;').replace('>', '&gt;').replace('&', '&amp;')

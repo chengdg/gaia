@@ -29,6 +29,7 @@ class PreProduct(business_model.Model):
 		'postage_id',
 		'is_deleted',
 		'is_updated',
+		'is_accepted',
 		'review_status',
 		'refuse_reason',
 		'remark',
@@ -49,11 +50,11 @@ class PreProduct(business_model.Model):
 		:return: 待入库, 已入库, 入库驳回
 		"""
 		status_text = u'待入库'
-		if self.review_status == mall_models.PRE_PRODUCT_STATUS['ACCEPT']:
+		if self.is_accepted:
 			status_text = u'已入库'
-		elif self.review_status == mall_models.PRE_PRODUCT_STATUS['REFUSED'] and not self.is_updated:
+		elif self.review_status == mall_models.PRE_PRODUCT_STATUS['REFUSED'] and not self.is_accepted:
 			status_text = u'入库驳回>>'
-		elif self.review_status == mall_models.PRE_PRODUCT_STATUS['REFUSED'] and self.is_updated:
+		elif self.review_status == mall_models.PRE_PRODUCT_STATUS['REFUSED'] and self.is_accepted:
 			status_text = u'修改驳回>>'
 
 		return status_text

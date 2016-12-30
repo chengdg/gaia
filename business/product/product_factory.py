@@ -4,6 +4,7 @@ import json
 from eaglet.core import watchdog
 
 from business import model as business_model
+from business.mall.corporation_factory import CorporationFactory
 from business.product.product import Product
 from db.mall import models as mall_models
 from product_pool import ProductPool
@@ -247,7 +248,10 @@ class ProductFactory(business_model.Service):
 				'custom_models': []
 			}
 
-			created_product = self.create_product({
+			#切换为weizoom_corp创建商品
+			weizoom_corp = CorporationFactory.get_weizoom_corporation()
+
+			created_product = weizoom_corp.create_product({
 				'base_info': base_info,
 				'image_info': image_info,
 				'logistics_info': logistics_info,
@@ -258,7 +262,8 @@ class ProductFactory(business_model.Service):
 			})
 
 			mall_models.PreProduct.update(
-				review_status = mall_models.PRE_PRODUCT_STATUS['ACCEPT'],
+				review_status = mall_models.PRE_PRODUCT_STATUS['NOT_YET'],
+				is_accepted = True,
 				is_updated = False,
 				mall_product_id = created_product.id
 			).dj_where(id=product_id, is_deleted=False).execute()

@@ -5,6 +5,8 @@ from eaglet.decorator import param_required
 
 from business.mall.pre_product.pre_product_factory import PreProductFactory
 
+from util import string_util
+
 
 class APreProduct(api_resource.ApiResource):
 	"""
@@ -26,13 +28,13 @@ class APreProduct(api_resource.ApiResource):
 			'price': str(pre_product.product_price) if pre_product.product_price > 0 else str(pre_product.settlement_price),
 			'settlement_price': str(pre_product.settlement_price),
 			'weight': '%s' % pre_product.weight,
-			'store': pre_product.store,
+			'stock': pre_product.stock,
 			'has_limit_time': pre_product.has_limit_time,
 			'valid_time_from': '' if not pre_product.valid_time_from else pre_product.valid_time_from.strftime(
 				"%Y-%m-%d %H:%M"),
 			'valid_time_to': '' if not pre_product.valid_time_to else pre_product.valid_time_to.strftime("%Y-%m-%d %H:%M"),
 			'limit_settlement_price': str(pre_product.limit_settlement_price),
-			'remark': pre_product.remark,
+			'remark': string_util.raw_html(pre_product.remark),
 			'product_model': [], #TODO
 			'images': [],
 			'limit_zone_type': pre_product.limit_zone_type,
@@ -46,7 +48,6 @@ class APreProduct(api_resource.ApiResource):
 	def put(args):
 		pre_product_factory = PreProductFactory.get(args['corp'])
 		pre_product = pre_product_factory.create_pre_product({
-			'owner_id': args['corp'].id,
 			'name': args['name'],
 			'promotion_title': args.get('promotion_title', ''),
 			'has_product_model': args.get('has_product_model', False),
