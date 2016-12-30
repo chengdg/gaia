@@ -48,7 +48,7 @@ DUMP_API_CALL_RESULT = True
 DUMP_FORMATTED_INNER_ERROR_MSG = False
 
 # settings for WAPI Logger
-if MODE == 'develop':
+if 'develop' == MODE:
     WAPI_LOGGER_ENABLED = False # Debug环境下不记录wapi详细数据
     WAPI_LOGGER_SERVER_HOST = 'mongo.weapp.com'
     WAPI_LOGGER_SERVER_PORT = 27017
@@ -122,8 +122,8 @@ MAIL_NOTIFY_ACCOUNT_SMTP = u'smtp.dm.aliyun.com'
 
 
 # settings for WAPI Logger
-if MODE == 'develop' or MODE == 'test':
-
+# if MODE == 'develop' or MODE == 'test':
+if 'develop' == MODE or'test' == MODE:
     EN_VARNISH = False
     #WAPI_ACCESS_TOKEN_REQUIRED = True
 else:
