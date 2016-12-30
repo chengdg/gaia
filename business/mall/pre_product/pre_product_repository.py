@@ -13,10 +13,11 @@ class PreProductRepository(business_model.Service):
 		}
 		if query_dict.get('customer_name'):
 			pass
-		if self.corp.is_weizoom_corp:
+		if self.corp.is_weizoom_corp():
 			query['review_status'] = mall_models.PRE_PRODUCT_STATUS['SUBMIT']
 		else:
 			query['owner_id'] = self.corp.id
+
 		db_models = mall_models.PreProduct.select().dj_where(**query)
 
 		pageinfo, db_models = paginator.paginate(db_models, page_info.cur_page, page_info.count_per_page)

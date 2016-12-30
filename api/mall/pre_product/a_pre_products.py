@@ -26,20 +26,18 @@ class APreProducts(api_resource.ApiResource):
 		for pre_product in pre_products:
 			rows.append({
 				'id': pre_product.id,
-				'owner_id': corp.id,
 				'classification_id': pre_product.classification_id,
-				'product_name': pre_product.product_name,
+				'name': pre_product.name,
 				'customer_name': '', #?
 				'total_sales': 0, #TODO 获取已入库商品的销量
-				'product_status': pre_product.status_text,
-				'product_status_value': 0, #?
+				'status': pre_product.status_text,
+				'status_value': 0, #?
 				'classification_name_nav': pre_product.classification_nav,
-				'is_update': pre_product.is_update,
+				'is_updated': pre_product.is_updated,
 				'customer_from_text': '', #?
 				'refuse_reason': pre_product.refuse_reason,
 				'label_names': [] #TODO商品标签
 			})
-
 		return {
 			'rows': rows,
 			'pageinfo': pageinfo.to_dict()
