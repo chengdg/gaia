@@ -21,6 +21,7 @@ class PreProductFactory(business_model.Service):
 		pre_product_model = mall_models.PreProduct.create(
 			owner_id = self.corp.id,
 			name = args['name'],
+			classification_id = args.get('classification_id', 0),
 			promotion_title = args.get('promotion_title', ''),
 			has_product_model = args.get('has_product_model', False),
 			price = args.get('price', 0),

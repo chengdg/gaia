@@ -28,15 +28,20 @@ class APreProducts(api_resource.ApiResource):
 				'id': pre_product.id,
 				'classification_id': pre_product.classification_id,
 				'name': pre_product.name,
-				'customer_name': '', #?
+				'price': pre_product.price,
+				'settlement_price': pre_product.settlement_price,
 				'total_sales': 0, #TODO 获取已入库商品的销量
-				'status': pre_product.status_text,
-				'status_value': 0, #?
+				'stock': pre_product.stock,
+				'status_text': pre_product.status_text,
+				'status': pre_product.review_status,
 				'classification_name_nav': pre_product.classification_nav,
 				'is_updated': pre_product.is_updated,
-				'customer_from_text': '', #?
+				'is_accepted': pre_product.is_accepted,
 				'refuse_reason': pre_product.refuse_reason,
-				'label_names': [] #TODO商品标签
+				'remark': pre_product.remark,
+				'created_at': pre_product.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+				'images': [], #TODO
+				'label_names': [] #TODO 商品标签
 			})
 		return {
 			'rows': rows,

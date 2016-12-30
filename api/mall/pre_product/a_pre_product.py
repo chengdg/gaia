@@ -49,6 +49,7 @@ class APreProduct(api_resource.ApiResource):
 		pre_product_factory = PreProductFactory.get(args['corp'])
 		pre_product = pre_product_factory.create_pre_product({
 			'name': args['name'],
+			'classification_id': args.get('classification_id', 0),
 			'promotion_title': args.get('promotion_title', ''),
 			'has_product_model': args.get('has_product_model', False),
 			'price': args.get('price', 0),
