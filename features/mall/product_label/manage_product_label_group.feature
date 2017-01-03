@@ -7,7 +7,7 @@ Feature:商品标签分组的新增、删除
 Background:
 	Given weizoom登录系统
 	
-@gaia @mall @product @product_label @label_group @aix
+@gaia @mall @product @product_label @label_group
 Scenario:1 运营人员新增商品标签分组
 	When weizoom新增商品标签分组
 		"""
@@ -28,7 +28,7 @@ Scenario:1 运营人员新增商品标签分组
 		|  省市  |              |
 		|基本信息|              |
 
-@gaia @mall @product @product_label @label_group @aix
+@gaia @mall @product @product_label @label_group
 Scenario:2 运营人员删除商品标签分组
 	When weizoom新增商品标签分组
 		"""

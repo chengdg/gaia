@@ -438,7 +438,7 @@ class PreProduct(models.Model):
 	postage_id = models.IntegerField(default=0)# 默认模板运费id
 	remark = models.TextField(default='')  # 备注
 
-	review_status = models.IntegerField(default=PRE_PRODUCT_STATUS['NOT_YET'])#审核状态
+	review_status = models.IntegerField(default=PRE_PRODUCT_STATUS['SUBMIT'])#审核状态
 	refuse_reason = models.TextField(default='')  # 驳回原因
 	mall_product_id = models.IntegerField(default=0)  # 审核通过后与mall_product记录关联
 	is_updated = models.BooleanField(default=False)  # 是否更新

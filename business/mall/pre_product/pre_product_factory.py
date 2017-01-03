@@ -18,10 +18,12 @@ class PreProductFactory(business_model.Service):
 		if db_models.count() > 0:
 			return u'商品名已存在'
 
+		classification_id = args['classification_id']
+
 		pre_product_model = mall_models.PreProduct.create(
 			owner_id = self.corp.id,
 			name = args['name'],
-			classification_id = args.get('classification_id', 0),
+			classification_id = classification_id,
 			promotion_title = args.get('promotion_title', ''),
 			has_product_model = args.get('has_product_model', False),
 			price = args.get('price', 0),
@@ -34,5 +36,9 @@ class PreProductFactory(business_model.Service):
 			has_same_postage = args.get('has_same_postage', True),
 			remark = args.get('remark', '')
 		)
+
+		#增加商品分类下的商品数
+		classification = self.corp.product_classification_repository.get_product_classification(classification_id)
+		classification.add_product(pre_product_model.id)
 
 		return pre_product_model

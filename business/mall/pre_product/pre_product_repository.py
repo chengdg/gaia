@@ -3,26 +3,37 @@
 from eaglet.core import paginator
 
 from business import model as business_model
+from business.account.user_profile import UserProfile
 from db.mall import models as mall_models
 from pre_product import PreProduct
 
 class PreProductRepository(business_model.Service):
 	def filter(self, query_dict, page_info):
-		query = {
-			'is_deleted': False
-		}
-		if query_dict.get('customer_name'):
+		db_models = mall_models.PreProduct.select().dj_where(is_deleted=False)
+
+		if query_dict.get('owner_name'):
 			pass
 		if self.corp.is_weizoom_corp():
-			query['review_status'] = mall_models.PRE_PRODUCT_STATUS['SUBMIT']
+			db_models = db_models.where(
+				(mall_models.PreProduct.review_status << [mall_models.PRE_PRODUCT_STATUS['SUBMIT'], mall_models.PRE_PRODUCT_STATUS['REFUSED']])
+				| (mall_models.PreProduct.is_accepted == True)
+			)
 		else:
-			query['owner_id'] = self.corp.id
+			db_models = db_models.dj_where(owner_id=self.corp.id)
 
-		db_models = mall_models.PreProduct.select().dj_where(**query)
+
+		owner_ids = [p.owner_id for p in db_models]
+		owner_id2name = UserProfile.get_user_id_2_username(owner_ids)
 
 		pageinfo, db_models = paginator.paginate(db_models, page_info.cur_page, page_info.count_per_page)
 
-		return pageinfo, [PreProduct(model) for model in db_models]
+		PreProducts = []
+		for model in db_models:
+			pre_product = PreProduct(model)
+			setattr(pre_product.__class__, 'owner_name', owner_id2name[model.owner_id])
+			PreProducts.append(pre_product)
+
+		return pageinfo, PreProducts
 
 	def get_pre_product(self, product_id):
 		db_model = mall_models.PreProduct.select().dj_where(id=product_id, is_deleted=False).get()

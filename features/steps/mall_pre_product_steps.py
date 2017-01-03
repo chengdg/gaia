@@ -26,13 +26,31 @@ def __product_names2ids_str(name_list):
 	models = mall_models.PreProduct.select().dj_where(name__in=name_list)
 	return [m.id for m in models]
 
-@when(u"{user}创建待审核商品")
-def step_impl(context, user):
+def __classification_name2id(classification_name):
+	return mall_models.Classification.select().dj_where(name=classification_name).get().id
+
+def __get_operations(context, status):
+	#运营
+	operations = []
+	if bdd_util.is_weizoom_corp(context.corp.id):
+		if status == mall_models.PRE_PRODUCT_STATUS['SUBMIT']:
+			operations.append(u'通过')
+			operations.append(u'驳回')
+		operations.append(u'删除')
+	else:
+		operations.append(u'编辑')
+
+	return ' '.join(operations)
+
+@when(u"{user}创建商品分类为'{classification_name}'的待审核商品")
+def step_impl(context, user, classification_name):
 	datas = json.loads(context.text)
+	classification_id = __classification_name2id(classification_name)
 	for data in datas:
 		response = context.client.put('/mall/pre_product/', {
 			'corp_id': bdd_util.get_user_id_for(user),
-			'name': data['product_name'],
+			'classification_id': classification_id,
+			'name': data['name'],
 			'promotion_title': data['promotion_title'],
 			'has_product_model': data['has_product_model'],
 			'price': data['price'],
@@ -53,3 +71,22 @@ def step_impl(context, user):
 		'product_ids': json.dumps(__product_names2ids_str(datas))
 	})
 	bdd_util.assert_api_call_success(response)
+
+@then(u"{user}查看待审核商品列表")
+def step_impl(context, user):
+	expected = bdd_util.table2list(context)
+	response = context.client.get('/mall/pre_products/', {
+		'corp_id': bdd_util.get_user_id_for(user)
+	})
+
+	actual = response.data['rows']
+
+	for row in actual:
+		row['classfication'] = row['classification_name_nav']
+		row['created_time'] = u'创建时间'
+		row['operation'] = __get_operations(context, row['status'])
+		row['status'] = row['status_text']
+
+	bdd_util.assert_list(expected, actual)
+
+

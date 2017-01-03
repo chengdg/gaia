@@ -26,6 +26,7 @@ class APreProducts(api_resource.ApiResource):
 		for pre_product in pre_products:
 			rows.append({
 				'id': pre_product.id,
+				'owner_name': pre_product.owner_name,
 				'classification_id': pre_product.classification_id,
 				'name': pre_product.name,
 				'price': pre_product.price,
@@ -45,6 +46,7 @@ class APreProducts(api_resource.ApiResource):
 			})
 		return {
 			'rows': rows,
-			'pageinfo': pageinfo.to_dict()
+			'pageinfo': pageinfo.to_dict(),
+			'is_weizoom_corp': corp.is_weizoom_corp()
 		}
 		

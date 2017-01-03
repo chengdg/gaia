@@ -250,8 +250,7 @@ class ProductFactory(business_model.Service):
 
 			#切换为weizoom_corp创建商品
 			weizoom_corp = CorporationFactory.get_weizoom_corporation()
-
-			created_product = weizoom_corp.create_product({
+			created_product = ProductFactory.get(weizoom_corp).create_product({
 				'base_info': base_info,
 				'image_info': image_info,
 				'logistics_info': logistics_info,

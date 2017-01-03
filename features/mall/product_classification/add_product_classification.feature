@@ -3,7 +3,7 @@ Feature: 添加商品分类
 	Jobs能通过管理系统为管理商城添加的"商品分类"
 """
 
-@gaia @mall @mall.product @mall.product_classification @aix
+@gaia @mall @mall.product @mall.product_classification
 Scenario:1 添加无商品的商品分类
 
 	Given weizoom登录系统
