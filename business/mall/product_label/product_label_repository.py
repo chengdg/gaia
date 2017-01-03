@@ -14,7 +14,7 @@ class ProductLabelRepository(business_model.Service):
 
 	def get_labels(self, label_ids):
 		db_models = mall_models.ProductLabel.select().dj_where(id__in=label_ids, is_deleted=False)
-		return [ProductLabel(model) for model in db_models], {model.id: model.label_group_id for model in db_models}
+		return [ProductLabel(model) for model in db_models]
 
 	def delete_labels(self, label_ids):
 		mall_models.ProductLabel.update(is_deleted=True).dj_where(id__in=label_ids).execute()

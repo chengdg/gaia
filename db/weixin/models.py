@@ -220,3 +220,65 @@ class News(models.Model):
         db_table = 'material_news'
         verbose_name = '图文消息'
         verbose_name_plural = '图文消息'
+
+#########################################################################
+# WeixinUser：微信用户
+#########################################################################
+class WeixinUser(models.Model):
+    username = models.CharField(max_length=100, unique=True)
+    webapp_id = models.CharField(max_length=16, verbose_name='对应的webapp id')
+    fake_id = models.CharField(max_length=50, default="") #微信公众平台字段fakeId
+    nick_name = models.CharField(max_length=256) #微信公众平台字段nickName
+    weixin_user_remark_name = models.CharField(max_length=64) #微信公众平台字段remarkName,暂未使用
+    weixin_user_icon = models.CharField(max_length=1024) #微信公众平台字段icon
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_head_image_received = models.BooleanField(default=False) #是否接收到头像
+    head_image_retry_count = models.IntegerField(default=0) #接收头像的重试次数
+    is_subscribed = models.BooleanField(default=True) #是否关注  0 ：取消关注 ，1 ：关注
+
+    class Meta(object):
+        managed = False
+        ordering = ['-id']
+        db_table = 'app_weixin_user'
+        verbose_name = '微信用户'
+        verbose_name_plural = '微信用户'
+
+#########################################################################
+# RealTimeInfo：实时信息, 和所绑定的微信公众号关联
+#########################################################################
+class RealTimeInfo(models.Model):
+    mpuser = models.ForeignKey(WeixinMpUser)
+    unread_count = models.IntegerField(default=0, db_index=True) #未读消息数
+
+    class Meta(object):
+        managed = False
+        db_table = 'weixin_message_realtime_info'
+        verbose_name = '微信消息实时状态信息'
+        verbose_name_plural = '微信消息实时状态信息'
+
+#########################################################################
+# Session：会话抽象
+#########################################################################
+class Session(models.Model):
+    mpuser = models.ForeignKey(WeixinMpUser, related_name='owned_sessions')
+    weixin_user = models.ForeignKey(WeixinUser, to_field='username', db_column='weixin_user_username')
+    latest_contact_content = models.CharField(max_length=1024) #最后一次交互消息内容
+    latest_contact_created_at = models.DateTimeField(auto_now_add=True) #最后一次交互时间
+    is_latest_contact_by_viper = models.BooleanField(default=False) #最后一次交互是否是客户发出的
+    unread_count = models.IntegerField(default=0) #未读消息数
+    is_show = models.BooleanField(default=False) #是否显示(是否填充对应的WeixinUser)
+    created_at = models.DateTimeField(auto_now_add=True)
+    weixin_created_at = models.CharField(max_length=50) #微信平台提供的创建时间
+    retry_count = models.IntegerField(default=0) #重試次數
+    #add by bert at 20.0
+    message_id = models.IntegerField(default=0)
+    #add by slzhu
+    member_user_username = models.CharField(default='', max_length=100)
+    member_message_id = models.IntegerField(default=0)
+    member_latest_content = models.CharField(default='', max_length=1024) #粉丝最近一条消息
+    member_latest_created_at = models.CharField(default='', max_length=50) #粉丝最近一条消息时间
+    is_replied = models.BooleanField(default=False) #是否回复过
+
+    class Meta(object):
+        ordering = ['-latest_contact_created_at']
+        db_table = 'weixin_message_session'

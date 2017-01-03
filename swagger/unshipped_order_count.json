@@ -1,0 +1,57 @@
+{
+	"swagger": "2.0",
+	"info": {
+		"version": "0.0.1",
+		"title": "zeus API doc"
+	},
+	"paths": {
+		"/order/unshipped_orders_count": {
+			"get": {
+				"summary": "获得待发货的订单数量",
+				"parameters": [
+					{
+						"name": "corp_id",
+						"required": true
+					}
+				],
+				"tags": [
+					"order"
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32",
+									"description": "当存在正在执行或未下载的任务时，创建失败返回500"
+								},
+								"data": {
+									"type": "object",
+									"properties": {
+										"unship_orders_count": {
+											"type": "string",
+											"description": "待发货订单数量"
+										},
+										"weixin_messages_count": {
+											"type": "string",
+											"description": "微信信息条数"
+										}
+									}
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
