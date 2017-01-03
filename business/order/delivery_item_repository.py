@@ -42,6 +42,17 @@ class DeliveryItemRepository(business_model.Model):
 		else:
 			return None
 
+
+	def get_delivery_items(self, id, fill_options=None,role_type=''):
+		db_models = self.__get_db_models_for_corp()
+		supplier_id = 10086
+		db_models = db_models.dj_where(supplier=supplier_id)
+		delivery_items = DeliveryItem.from_models(
+			{"models": db_models, 'fill_options': fill_options, 'corp': self.corp})
+
+		return delivery_items
+
+
 	def get_delivery_item_by_bid(self, bid, fill_options=None):
 		db_models = self.__get_db_models_for_corp()
 		db_models = db_models.dj_where(order_id=bid)
