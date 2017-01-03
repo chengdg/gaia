@@ -63,7 +63,7 @@ And jobs已添加商品规格
 #  }]
 #  """
 
-  @ztqb
+
   Scenario:1 下单
 
     Given weizoom登录系统
