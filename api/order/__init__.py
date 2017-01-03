@@ -16,4 +16,5 @@ import a_delivery_item_phone_message_notification
 import a_released_order
 import a_released_delivery_item
 import a_unshipped_orders_count
+import a_supplier_delivery_items
 

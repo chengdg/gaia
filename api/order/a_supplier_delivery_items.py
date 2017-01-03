@@ -31,14 +31,14 @@ class ASupplierDeliveryItems(api_resource.ApiResource):
 
 		fill_options = {
 			'with_products': True,
-			'with_refunding_info': True,
+			# 'with_refunding_info': True,
 			'with_express_details': True,
-			'with_supplier': True,
-			'with_operation_logs': True
+			# 'with_supplier': True,
+			# 'with_operation_logs': True
 		}
 
 
-		pageinfo, delivery_items = delivery_item_repository.delivery_items(filters, target_page, fill_options,role_type='')
+		pageinfo, delivery_items = delivery_item_repository.get_delivery_items(filters, target_page, fill_options)
 
 		encode_delivery_item_service = EncodeDeliveryItemService.get(corp)
 
@@ -57,5 +57,5 @@ class ASupplierDeliveryItems(api_resource.ApiResource):
 		# order_dicts = [order.to_dict() for order in orders]
 		return {
 			'page_info': pageinfo.to_dict(),
-			'orders': datas
+			'delivery_items': datas
 		}
