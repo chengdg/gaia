@@ -337,8 +337,7 @@ def __get_products(context, corp_name, type_name=u'在售'):
             url = TYPE2URL['different_corp_tmpl'] % other_corp_id
     else:
         url = TYPE2URL[type_name]
-    print '---------------------------------->'
-    print url
+
     response = context.client.get(url)
     bdd_util.assert_api_call_success(response)
     
@@ -463,7 +462,6 @@ def step_impl(context, user, type_name):
                     del product['bar_code']
                 expected.append(product)
         else:
-            print context.text
             expected = json.loads(context.text)
 
     bdd_util.assert_list(expected, actual)
