@@ -34,7 +34,7 @@ class APreProduct(api_resource.ApiResource):
 				"%Y-%m-%d %H:%M"),
 			'valid_time_to': '' if not pre_product.valid_time_to else pre_product.valid_time_to.strftime("%Y-%m-%d %H:%M"),
 			'limit_settlement_price': str(pre_product.limit_settlement_price),
-			'remark': string_util.raw_html(pre_product.remark),
+			'remark': pre_product.remark,
 			'product_model': [], #TODO
 			'images': [],
 			'limit_zone_type': pre_product.limit_zone_type,

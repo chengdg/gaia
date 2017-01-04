@@ -46,7 +46,6 @@ class APreProducts(api_resource.ApiResource):
 			})
 		return {
 			'rows': rows,
-			'pageinfo': pageinfo.to_dict(),
-			'is_weizoom_corp': corp.is_weizoom_corp()
+			'pageinfo': pageinfo.to_dict()
 		}
 		
