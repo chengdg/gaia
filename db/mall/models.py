@@ -981,6 +981,9 @@ class OrderHasProduct(models.Model):
 	integral_sale_id = models.IntegerField(default=0) #使用的积分应用的id
 	origin_order_id = models.IntegerField(default=0) # 原始(母)订单id，用于微众精选拆单
 	purchase_price = models.FloatField(default=0)  # 采购单价
+	thumbnail_url = models.CharField(max_length=1024, default='')  # 商品图片
+	weight = models.FloatField(default=0)
+	product_model_name_texts = models.CharField(max_length=1024, default='[]')  # 规格名称的值
 
 	class Meta(object):
 		db_table = 'mall_order_has_product'
