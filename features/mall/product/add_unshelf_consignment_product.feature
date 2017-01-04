@@ -1,4 +1,4 @@
-Feature: 添加新的推广商品
+Feature: 添加代销商品
 """
 
 """
@@ -76,7 +76,7 @@ Background:
 		}]
 		"""
 
-@unshelf_consignment
+@unshelf_consignment @gaia
 Scenario:1 weizoom已经有了商品
 
 	Given weizoom登录系统
