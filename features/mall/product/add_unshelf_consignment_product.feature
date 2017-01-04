@@ -76,7 +76,7 @@ Background:
 		}]
 		"""
 
-@unshelf_consignment @gaia
+@gaia @unshelf_consignment
 Scenario:1 weizoom已经有了商品
 
 	Given weizoom登录系统
