@@ -146,7 +146,9 @@ class OrderRepository(business_model.Model):
 
 			# 关联表
 			if '__f-product_name-contain' in filters:
-				order_ids = [db_model.id for db_model in db_models]
+
+				tmp_db_models = db_models.select(mall_models.Order.id)
+				order_ids = [db_model.id for db_model in tmp_db_models]
 
 				ohs_list = mall_models.OrderHasProduct.select().dj_where(order_id__in=order_ids)
 
@@ -251,8 +253,6 @@ class OrderRepository(business_model.Model):
 				order_filter_parse_result.update({
 					'order_id__in': get_intersection_of_some_filters(order_bid_filters)
 				})
-
-
 
 			if order_filter_parse_result:
 				db_models = db_models.dj_where(**order_filter_parse_result)
