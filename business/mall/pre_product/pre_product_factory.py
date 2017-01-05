@@ -19,9 +19,13 @@ class PreProductFactory(business_model.Service):
 			postage_id = postage_info.get('postage_id', 0),
 			unified_postage_money = postage_info['unified_postage_money'],
 			stocks = 0,
+			price = base_info.get('price', 0.0),
 			purchase_price = base_info.get('purchase_price', 0.0),
 			limit_zone_type = int(postage_info.get('limit_zone_type', '0')),
-			limit_zone = int(postage_info.get('limit_zone', '0'))
+			limit_zone = int(postage_info.get('limit_zone', '0')),
+			pending_status = mall_models.PRODUCT_PENDING_STATUS['SUBMIT'],
+			is_pre_product = True,
+			is_accepted = False
 		)
 
 		return pre_product
@@ -131,6 +135,7 @@ class PreProductFactory(business_model.Service):
 			'name': name,
 			'promotion_title': promotion_title,
 			'detail': detail,
+			'price': price,
 			'purchase_price': purchase_price
 		}
 
@@ -164,12 +169,13 @@ class PreProductFactory(business_model.Service):
 		return pre_product_model
 
 	def pending_pre_product(self, pre_product_ids):
+		print (pre_product_ids)
 		#更新待审核商品状态
 		mall_models.Product.update(
 			pending_status = mall_models.PRODUCT_PENDING_STATUS['NOT_YET'],
 			is_updated = False,
 			is_accepted = True
-		).dj_where(id__in=pre_product_ids, is_pre_product=True)
+		).dj_where(id__in=pre_product_ids, is_pre_product=True).execute()
 
 		corp = self.corp
 		# 将商品放入product pool

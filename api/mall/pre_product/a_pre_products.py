@@ -48,4 +48,3 @@ class APreProducts(api_resource.ApiResource):
 			'rows': rows,
 			'pageinfo': pageinfo.to_dict()
 		}
-		

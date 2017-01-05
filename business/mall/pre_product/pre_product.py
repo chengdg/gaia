@@ -38,10 +38,20 @@ class PreProduct(business_model.Model):
 		if model:
 			self._init_slot_from_model(model)
 			self.__init_classification()
+			self.__init_stocks()
 
 	def __init_classification(self):
 		db_model = mall_models.ClassificationHasProduct.select().dj_where(product_id=self.id).first()
 		self.classification_id = 0 if not db_model else db_model.classification_id
+
+	def __init_stocks(self):
+		db_models = mall_models.ProductModel.select().dj_where(product_id=self.id, is_deleted=False)
+		if db_models.count() > 1:
+			all_model_stocks = [db_model.stocks for db_model in db_models].sort()
+			self.stocks = '{}~{}'.format(all_model_stocks[0], sum(all_model_stocks))
+		else:
+			self.stocks = db_models.first().stocks
+
 
 	@property
 	def status_text(self):

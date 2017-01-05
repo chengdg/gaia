@@ -61,7 +61,7 @@ Background:
 		|  武汉鸭脖  |分类12--分类24|10.00|200|  创建时间 |   待入库   |编辑|
 		|   ipad     |分类11--分类21|3000.00|200| 创建时间 |   待入库   |编辑|
 
-@gaia @mall @product @pre_product @pending_pre_product @aix1
+@gaia @mall @product @pre_product @pending_pre_product @aix
 Scenario:1 运营审核通过客户创建的商品
 	Given weizoom登录系统
 	Then weizoom查看待审核商品列表

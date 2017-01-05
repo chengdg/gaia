@@ -5,9 +5,6 @@ from eaglet.decorator import param_required
 
 from business.mall.pre_product.pre_product_factory import PreProductFactory
 
-from util import string_util
-
-
 class APreProduct(api_resource.ApiResource):
 	"""
 	待审核商品
@@ -39,7 +36,7 @@ class APreProduct(api_resource.ApiResource):
 			'classification_name_nav': pre_product.classification_nav
 		}
 
-	@param_required(['corp_id', 'name'])
+	@param_required(['corp_id', 'name', '?has_multi_models:bool', '?models:json'])
 	def put(args):
 		pre_product_factory = PreProductFactory.get(args['corp'])
 		pre_product = pre_product_factory.create_pre_product({

@@ -23,7 +23,7 @@ def __postage_type_name2bool(name):
 		return False
 
 def __product_names2ids_str(name_list):
-	models = mall_models.PreProduct.select().dj_where(name__in=name_list)
+	models = mall_models.Product.select().dj_where(name__in=name_list, is_pre_product=True)
 	return [m.id for m in models]
 
 def __classification_name2id(classification_name):
@@ -33,7 +33,7 @@ def __get_operations(context, status):
 	#运营
 	operations = []
 	if bdd_util.is_weizoom_corp(context.corp.id):
-		if status == mall_models.PRE_PRODUCT_STATUS['SUBMIT']:
+		if status == mall_models.PRODUCT_PENDING_STATUS['SUBMIT']:
 			operations.append(u'通过')
 			operations.append(u'驳回')
 		operations.append(u'删除')
@@ -52,14 +52,14 @@ def step_impl(context, user, classification_name):
 			'classification_id': classification_id,
 			'name': data['name'],
 			'promotion_title': data['promotion_title'],
-			'has_product_model': data['has_product_model'],
+			'has_multi_models': data['has_product_model'],
 			'price': data['price'],
 			'weight': data['weight'],
-			'stock': data['stock'],
+			'stocks': data['stock'],
 			'limit_zone_type': __limit_type_name2number(data['limit_zone_type']),
 			'has_same_postage': __postage_type_name2bool(data['postage_type']),
 			'postage_money': data['postage_money'],
-			'remark': data['remark']
+			'detail': data['remark']
 		})
 		bdd_util.assert_api_call_success(response)
 
@@ -86,6 +86,7 @@ def step_impl(context, user):
 		row['created_time'] = u'创建时间'
 		row['operation'] = __get_operations(context, row['status'])
 		row['status'] = row['status_text']
+		row['stock'] = row['stocks']
 
 	bdd_util.assert_list(expected, actual)
 

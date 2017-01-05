@@ -26,30 +26,12 @@ def __add_classification(context, datas, level, father_id):
 			if children:
 				__add_classification(context, children, level+1, response.data['id'])
 
-def __add_classification_dict(context, datas, level, father_id):
-	for classification in datas:
-		data = {
-			"corp_id": context.corp.id,
-			"name": classification,
-			"level": level,
-			"father_id": father_id
-		}
-		response = context.client.put('/mall/product_classification/', data)
-		bdd_util.assert_api_call_success(response)
-		children = datas.get(classification)
-		if children:
-			__add_classification_dict(context, children, level+1, response.data['id'])
-
-
 @when(u"{user}添加商品分类")
 def step_impl(context, user):
 	datas = json.loads(context.text)
 	level = 1
 	father_id = 0
-	if isinstance(datas, list):
-		__add_classification(context, datas, level, father_id)
-	else:
-		__add_classification_dict(context, datas, level, father_id)
+	__add_classification(context, datas, level, father_id)
 
 
 @then(u"{user}能获取商品分类列表")

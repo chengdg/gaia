@@ -374,7 +374,7 @@ class Product(models.Model):
 	price = models.FloatField(default=0.0)  # 商品价格
 	introduction = models.CharField(max_length=256, default='')  # 商品简介
 	weight = models.FloatField(default=0.0)  # 重量
-	thumbnails_url = models.CharField(max_length=1024)  # 商品缩略图
+	thumbnails_url = models.CharField(max_length=1024, default='')  # 商品缩略图
 	pic_url = models.CharField(max_length=1024, default='')  # 商品图
 	detail = models.TextField(default='')  # 商品详情
 	remark = models.TextField(default='')  # 备注

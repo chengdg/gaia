@@ -28,7 +28,7 @@
                         "required": false,
                         "type": "string"
                     },{
-                        "name": "has_product_model",
+                        "name": "has_multi_models",
                         "in": "formData",
                         "description": "是否是多规格商品",
                         "required": false,
@@ -46,7 +46,7 @@
                         "required": true,
                         "type": "float"
                     },{
-                        "name": "stock",
+                        "name": "stocks",
                         "in": "formData",
                         "description": "库存",
                         "required": true,
@@ -82,7 +82,7 @@
                         "required": false,
                         "type": "bool"
                     },{
-                        "name": "remark",
+                        "name": "detail",
                         "in": "formData",
                         "description": "商品描述",
                         "required": true,
