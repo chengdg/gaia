@@ -23,24 +23,19 @@ class APreProduct(api_resource.ApiResource):
 		
 		return {
 			'id': pre_product.id,
-			'product_name': pre_product.name,
-			'title': pre_product.title,
-			'price': str(pre_product.product_price) if pre_product.product_price > 0 else str(pre_product.settlement_price),
-			'settlement_price': str(pre_product.settlement_price),
+			'name': pre_product.name,
+			'promotion_title': pre_product.promotion_title,
+			'price': str(pre_product.price) if pre_product.price > 0 else str(pre_product.purchase_price),
+			'purchase_price': str(pre_product.purchase_price),
 			'weight': '%s' % pre_product.weight,
-			'stock': pre_product.stock,
-			'has_limit_time': pre_product.has_limit_time,
-			'valid_time_from': '' if not pre_product.valid_time_from else pre_product.valid_time_from.strftime(
-				"%Y-%m-%d %H:%M"),
-			'valid_time_to': '' if not pre_product.valid_time_to else pre_product.valid_time_to.strftime("%Y-%m-%d %H:%M"),
-			'limit_settlement_price': str(pre_product.limit_settlement_price),
-			'remark': pre_product.remark,
-			'product_model': [], #TODO
+			'stocks': pre_product.stocks,
+			'detail': pre_product.detail,
+			'models': [], #TODO
 			'images': [],
 			'limit_zone_type': pre_product.limit_zone_type,
-			'limit_zone_id': pre_product.limit_zone,
+			'limit_zone': pre_product.limit_zone,
 			'has_same_postage': pre_product.has_same_postage,
-			'postage_money': '%.2f' % pre_product.postage_money,
+			'postage_money': '%.2f' % pre_product.unified_postage_money,
 			'classification_name_nav': pre_product.classification_nav
 		}
 
@@ -51,16 +46,17 @@ class APreProduct(api_resource.ApiResource):
 			'name': args['name'],
 			'classification_id': args.get('classification_id', 0),
 			'promotion_title': args.get('promotion_title', ''),
-			'has_product_model': args.get('has_product_model', False),
+			'has_multi_models': args.get('has_multi_models', False),
+			'models': args.get('models', []),
 			'price': args.get('price', 0),
 			'weight': args.get('weight', 0),
-			'stock': args.get('stock', 0),
+			'stocks': args.get('stocks', 0),
 			'limit_zone_type': args.get('limit_zone_type', 0),
 			'limit_zone': args.get('limit_zone', 0),
 			'postage_id': args.get('postage_id', 0),
 			'postage_money': args.get('postage_money', 0),
 			'has_same_postage': args.get('has_same_postage', True),
-			'remark': args.get('remark', '')
+			'detail': args.get('detail', '')
 		})
 
 		if not isinstance(pre_product, basestring):

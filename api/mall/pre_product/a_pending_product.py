@@ -3,7 +3,7 @@
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
 
-from business.product.product_factory import ProductFactory
+from business.mall.pre_product.pre_product_factory import PreProductFactory
 from db.mall import models as mall_models
 
 class APendingProduct(api_resource.ApiResource):
@@ -16,8 +16,8 @@ class APendingProduct(api_resource.ApiResource):
 		corp = args['corp']
 		product_ids = args['product_ids']
 
-		product_factory = ProductFactory.get(corp)
-		product_factory.create_product_from_pre_product(product_ids)
+		pre_product_factory = PreProductFactory.get(corp)
+		pre_product_factory.pending_pre_product(product_ids)
 
 		return {}
 
@@ -29,9 +29,9 @@ class APendingProduct(api_resource.ApiResource):
 		product_id = args['product_id']
 		reason = args['reason']
 
-		mall_models.PreProduct.update(
+		mall_models.Product.update(
 			refuse_reason = reason,
-			review_status = mall_models.PRE_PRODUCT_STATUS['REFUSED']
+			pending_status = mall_models.PRODUCT_PENDING_STATUS['REFUSED']
 		).dj_where(id=product_id).execute()
 
 		return {}

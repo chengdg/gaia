@@ -30,16 +30,16 @@ class APreProducts(api_resource.ApiResource):
 				'classification_id': pre_product.classification_id,
 				'name': pre_product.name,
 				'price': pre_product.price,
-				'settlement_price': pre_product.settlement_price,
+				'purchase_price': pre_product.purchase_price,
 				'total_sales': 0, #TODO 获取已入库商品的销量
-				'stock': pre_product.stock,
+				'stocks': pre_product.stocks,
 				'status_text': pre_product.status_text,
-				'status': pre_product.review_status,
+				'status': pre_product.pending_status,
 				'classification_name_nav': pre_product.classification_nav,
 				'is_updated': pre_product.is_updated,
 				'is_accepted': pre_product.is_accepted,
 				'refuse_reason': pre_product.refuse_reason,
-				'remark': pre_product.remark,
+				'detail': pre_product.detail,
 				'created_at': pre_product.created_at.strftime('%Y-%m-%d %H:%M:%S'),
 				'images': [], #TODO
 				'label_names': [] #TODO 商品标签

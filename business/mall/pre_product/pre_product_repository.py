@@ -9,14 +9,14 @@ from pre_product import PreProduct
 
 class PreProductRepository(business_model.Service):
 	def filter(self, query_dict, page_info):
-		db_models = mall_models.PreProduct.select().dj_where(is_deleted=False)
+		db_models = mall_models.Product.select().dj_where(is_deleted=False, is_pre_product=True)
 
 		if query_dict.get('owner_name'):
 			pass
 		if self.corp.is_weizoom_corp():
 			db_models = db_models.where(
-				(mall_models.PreProduct.review_status << [mall_models.PRE_PRODUCT_STATUS['SUBMIT'], mall_models.PRE_PRODUCT_STATUS['REFUSED']])
-				| (mall_models.PreProduct.is_accepted == True)
+				(mall_models.Product.pending_status << [mall_models.PRODUCT_PENDING_STATUS['SUBMIT'], mall_models.PRODUCT_PENDING_STATUS['REFUSED']])
+				| (mall_models.Product.is_accepted == True)
 			)
 		else:
 			db_models = db_models.dj_where(owner_id=self.corp.id)
@@ -36,7 +36,7 @@ class PreProductRepository(business_model.Service):
 		return pageinfo, PreProducts
 
 	def get_pre_product(self, product_id):
-		db_model = mall_models.PreProduct.select().dj_where(id=product_id, is_deleted=False).get()
+		db_model = mall_models.Product.select().dj_where(id=product_id, is_deleted=False, is_pre_product=True).get()
 		pre_product = PreProduct(db_model)
 		# 如果是已审核通过的商品，则获取商品池的库存
 		if pre_product.is_accepted:
@@ -45,5 +45,5 @@ class PreProductRepository(business_model.Service):
 		return pre_product
 
 	def get_pre_products(self, product_ids):
-		db_models = mall_models.PreProduct.select().dj_where(id__in=product_ids, is_deleted=False)
+		db_models = mall_models.Product.select().dj_where(id__in=product_ids, is_deleted=False, is_pre_product=True)
 		return [PreProduct(db_model) for db_model in db_models]
