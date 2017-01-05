@@ -8,6 +8,9 @@ from features.util import bdd_util
 from db.mall import models as mall_models
 
 def __add_classification(context, datas, level, father_id):
+	if type(datas) == dict:
+		datas=[datas]
+
 	for classification2children in datas:
 		for classification in classification2children:
 			data = {
