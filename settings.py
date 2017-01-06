@@ -3,8 +3,6 @@
 import os
 import logging
 
-
-DEBUG = True
 PROJECT_HOME = os.path.dirname(os.path.abspath(__file__))
 
 MODE = os.environ.get('_SERVICE_MODE', 'develop')
@@ -64,6 +62,7 @@ if 'develop' == MODE:
 
     DUMP_READABLE_EXCEPTION_STACK = True
     ENABLE_SQL_LOG = False #是否dump peewee产生的sql查询
+    DEBUG = True
 else:
     # 真实环境暂时关闭
     #WAPI_LOGGER_ENABLED = False
@@ -78,6 +77,7 @@ else:
     WEAPP_HOST = "http://weapp.weizoom.com/"
     H5_HOST = "http://mall.weizoom.com/"
     ENABLE_SQL_LOG = False #是否dump peewee产生的sql查询
+    DEBUG = False
 
 #缓存相关配置
 REDIS_HOST = os.environ.get('_REDIS_HOST', 'redis.weapp.com')
@@ -127,31 +127,24 @@ if 'develop' == MODE or'test' == MODE:
     EN_VARNISH = False
     #WAPI_ACCESS_TOKEN_REQUIRED = True
 else:
-
     EN_VARNISH = True
 
-if 'develop' == MODE:
-    DOMAIN = 'dev.weapp.com'
-    H5_DOMAIN = 'mall.weizoom.com'
-elif 'test' == MODE:
-    DOMAIN = 'testweapp.weizoom.com'
-    H5_DOMAIN = 'mall.weizoom.com'
-else:
-    DOMAIN = 'weapp.weizoom.com'
-    H5_DOMAIN = 'mall.weizoom.com'
+# if 'deploy' == MODE:
+#     MNS_ACCESS_KEY_ID = 'LTAICKQ4rQBofAhF'
+#     MNS_ACCESS_KEY_SECRET = 'bPKU71c0cfrui4bWgGPO96tLiOJ0PZ'
+#     MNS_ENDPOINT = 'http://1615750970594173.mns.cn-hangzhou.aliyuncs.com/'
+#     MNS_SECURITY_TOKEN = ''
+#
+# else:
+#     MNS_ACCESS_KEY_ID = 'LTAICKQ4rQBofAhF'
+#     MNS_ACCESS_KEY_SECRET = 'bPKU71c0cfrui4bWgGPO96tLiOJ0PZ'
+#     MNS_ENDPOINT = 'https://1615750970594173.mns.cn-beijing.aliyuncs.com/'
+#     MNS_SECURITY_TOKEN = ''
 
-
-if 'deploy' == MODE:
-    MNS_ACCESS_KEY_ID = 'LTAICKQ4rQBofAhF'
-    MNS_ACCESS_KEY_SECRET = 'bPKU71c0cfrui4bWgGPO96tLiOJ0PZ'
-    MNS_ENDPOINT = 'http://1615750970594173.mns.cn-hangzhou.aliyuncs.com/'
-    MNS_SECURITY_TOKEN = ''
-
-else:
-    MNS_ACCESS_KEY_ID = 'LTAICKQ4rQBofAhF'
-    MNS_ACCESS_KEY_SECRET = 'bPKU71c0cfrui4bWgGPO96tLiOJ0PZ'
-    MNS_ENDPOINT = 'https://1615750970594173.mns.cn-beijing.aliyuncs.com/'
-    MNS_SECURITY_TOKEN = ''
+MNS_ACCESS_KEY_ID = os.environ.get('MNS_ACCESS_KEY_ID', 'LTAICKQ4rQBofAhF')
+MNS_ACCESS_KEY_SECRET = os.environ.get('MNS_ACCESS_KEY_SECRET', 'bPKU71c0cfrui4bWgGPO96tLiOJ0PZ')
+MNS_ENDPOINT = os.environ.get('MNS_ENDPOINT', 'https://1615750970594173.mns.cn-beijing.aliyuncs.com/')
+MNS_SECURITY_TOKEN = os.environ.get('MNS_SECURITY_TOKEN', '')
 
 if 'develop' == MODE:
     MESSAGE_DEBUG_MODE = True
