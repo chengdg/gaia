@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import json
 
 from business import model as business_model
 from business.mall.corporation_factory import CorporationFactory
@@ -29,6 +30,7 @@ class PreProduct(business_model.Model):
 		'refuse_reason',
 		'detail',
 		'created_at',
+		'models'
 	)
 
 	def __init__(self, model):
@@ -38,20 +40,68 @@ class PreProduct(business_model.Model):
 		if model:
 			self._init_slot_from_model(model)
 			self.__init_classification()
-			self.__init_stocks()
+			self.__init_models()
 
 	def __init_classification(self):
 		db_model = mall_models.ClassificationHasProduct.select().dj_where(product_id=self.id).first()
 		self.classification_id = 0 if not db_model else db_model.classification_id
 
-	def __init_stocks(self):
-		db_models = mall_models.ProductModel.select().dj_where(product_id=self.id, is_deleted=False)
-		if db_models.count() > 1:
-			all_model_stocks = [db_model.stocks for db_model in db_models].sort()
+	def __init_models(self):
+		"""
+		初始化商品规格信息
+		"""
+		pre_product_models = mall_models.ProductModel.select().dj_where(product_id=self.id, is_deleted=False)
+		#商品库存
+		if pre_product_models.dj_where(is_standard=False).count() > 0:
+			all_model_stocks = [pre_product_model.stocks for pre_product_model in pre_product_models]
+			all_model_stocks.sort()
 			self.stocks = '{}~{}'.format(all_model_stocks[0], sum(all_model_stocks))
 		else:
-			self.stocks = db_models.first().stocks
+			self.stocks = pre_product_models.first().stocks
 
+		#商品规格
+		pre_product_model_ids = [pre_product_model.id for pre_product_model in pre_product_models]
+		property_values = mall_models.ProductModelHasPropertyValue.select().dj_where(model_id__in=pre_product_model_ids)
+
+		property_value_ids = [property_value.property_value_id for property_value in property_values]
+		pre_product_model_property_values = mall_models.ProductModelPropertyValue.select().dj_where(id__in=property_value_ids)
+
+		self.models = self.__format_models_data(pre_product_model_property_values)
+
+	def __format_models_data(self, pre_product_model_property_values):
+		property_ids = []
+		rows = []
+		for product_model_property_value in pre_product_model_property_values:
+			if product_model_property_value.property_id not in property_ids:
+				property_ids.append(product_model_property_value.property_id)
+		pre_product_model_properties = mall_models.ProductModelProperty.select().dj_where(id__in=property_ids)
+
+		property_id2model_property_value = {}
+		for model_property_value in pre_product_model_property_values:
+			if model_property_value.property_id not in property_id2model_property_value:
+				property_id2model_property_value[model_property_value.property_id] = [{
+					'name': model_property_value.name,
+					'pic_url': model_property_value.pic_url,
+					'id': model_property_value.id
+				}]
+			else:
+				property_id2model_property_value[model_property_value.property_id].append({
+					'name': model_property_value.name,
+					'pic_url': model_property_value.pic_url,
+					'id': model_property_value.id
+				})
+
+		for pre_product_model_property in pre_product_model_properties:
+			if pre_product_model_property.id in property_id2model_property_value:
+				pre_product_model_value = property_id2model_property_value[pre_product_model_property.id]
+				rows.append({
+					'id': pre_product_model_property.id,
+					'product_model_name': pre_product_model_property.name,
+					'model_type': pre_product_model_property.type,
+					'product_model_value': '' if not pre_product_model_value else json.dumps(pre_product_model_value),
+				})
+
+		return rows
 
 	@property
 	def status_text(self):
@@ -83,8 +133,8 @@ class PreProduct(business_model.Model):
 		"""
 		是否多规格
 		"""
-		db_models = mall_models.ProductModel.select().dj_where(product_id=self.id)
-		return db_models.count() > 1
+		db_models = mall_models.ProductModel.select().dj_where(product_id=self.id, is_standard=False, is_deleted=False)
+		return db_models.count() > 0
 
 	@property
 	def has_same_postage(self):

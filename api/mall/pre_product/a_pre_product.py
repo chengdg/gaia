@@ -27,7 +27,7 @@ class APreProduct(api_resource.ApiResource):
 			'weight': '%s' % pre_product.weight,
 			'stocks': pre_product.stocks,
 			'detail': pre_product.detail,
-			'models': [], #TODO
+			'models': pre_product.models,
 			'images': [],
 			'limit_zone_type': pre_product.limit_zone_type,
 			'limit_zone': pre_product.limit_zone,
