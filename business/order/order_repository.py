@@ -146,15 +146,18 @@ class OrderRepository(business_model.Model):
 
 			# 关联表
 			if '__f-product_name-contain' in filters:
-				order_ids = [db_model.id for db_model in db_models]
 
-				ohs_list = mall_models.OrderHasProduct.select().dj_where(order_id__in=order_ids)
+				# tmp_db_models = db_models.select(mall_models.Order.id)
+				# order_ids = [db_model.id for db_model in tmp_db_models]
 
-				target_page = PageInfo.get_max_page()
-				product_filters = {'__f-name-contain': filters['__f-product_name-contain']}
-				products, pageinfo = self.corp.product_pool.get_products(target_page, filters=product_filters)
-				product_ids = [product.id for product in products]
-				ohs_list = ohs_list.dj_where(product_id__in=product_ids)
+				# ohs_list = mall_models.OrderHasProduct.select().dj_where(order_id__in=order_ids, product_name__icontains=filters['__f-product_name-contain'])
+				ohs_list = mall_models.OrderHasProduct.select().dj_where(product_name__icontains=filters['__f-product_name-contain'])
+
+				# target_page = PageInfo.get_max_page()
+				# product_filters = {'__f-name-contain': filters['__f-product_name-contain']}
+				# products, pageinfo = self.corp.product_pool.get_products(target_page, filters=product_filters)
+				# product_ids = [product.id for product in products]
+				# ohs_list = ohs_list.dj_where(product_id__in=product_ids)
 				# use_should_in_order_ids = True
 				# if should_in_order_ids:
 				# 	should_in_order_ids = list(
@@ -166,7 +169,7 @@ class OrderRepository(business_model.Model):
 
 			if '__f-is_group_buy-equal' in filters:
 				if filters['__f-is_group_buy-equal'] == 'true':
-					use_should_in_order_bids = True
+					# use_should_in_order_bids = True
 					# should_in_order_bids.extend(self.context['valid_group_order_bids'])
 					# should_in_order_bids_by_group_search = self.context['valid_group_order_bids']
 
@@ -251,8 +254,6 @@ class OrderRepository(business_model.Model):
 				order_filter_parse_result.update({
 					'order_id__in': get_intersection_of_some_filters(order_bid_filters)
 				})
-
-
 
 			if order_filter_parse_result:
 				db_models = db_models.dj_where(**order_filter_parse_result)
