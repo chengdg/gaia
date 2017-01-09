@@ -14,13 +14,13 @@ class AMemberOrderIntegral(api_resource.ApiResource):
 	resource = 'member_order_integral'
 
 
-	@param_required(['corp','order_id','from_status','to_status'])
+	@param_required(['corp','order_id'])
 	def post(args):
 
 		order_id = args['order_id']
 		corp = args['corp']
-		from_status = args['from_status']
-		to_status = args['to_status']
+		# from_status = args['from_status']
+		# to_status = args['to_status']
 		fill_options = {
 			'with_member': True,
 			'with_delivery_items': {
