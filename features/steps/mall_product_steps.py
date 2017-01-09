@@ -324,7 +324,8 @@ def __get_products(context, corp_name, type_name=u'在售'):
       u'待售': '/product/offshelf_products/?corp_id=%d' % context.corp.id,
       u'在售': '/product/onshelf_products/?corp_id=%d' % context.corp.id,
       u'same_corp_tmpl': '/product/unshelf_pooled_products/?corp_id=%d',
-      u'different_corp_tmpl': '/product/pooled_products/?corp_id=%d'
+      u'different_corp_tmpl': '/product/pooled_products/?corp_id=%d',
+      u'待销': '/product/unshelf_consignment_products/?corp_id=%d' % context.corp.id,
     }
 
     if u'商品池' in type_name:
@@ -336,6 +337,7 @@ def __get_products(context, corp_name, type_name=u'在售'):
             url = TYPE2URL['different_corp_tmpl'] % other_corp_id
     else:
         url = TYPE2URL[type_name]
+
     response = context.client.get(url)
     bdd_util.assert_api_call_success(response)
     
@@ -659,3 +661,13 @@ def step_impl(context, user):
 
     response = context.client.put('/product/unshelf_pooled_products/', data)
     bdd_util.assert_api_call_success(response)
+
+
+@when(u"{user}可以获得代销商品列表")
+def step_impl(context, user):
+
+    promotes = json.loads(context.text)
+    if isinstance(promotes, dict):
+        promotes = [promotes]
+
+    __create_promote(promotes, context, user)

@@ -36,7 +36,7 @@ def __binding_wexin_mp_account(user=None):
     if weixin_user_models.ComponentInfo.select().dj_where(is_active=True).count() == 0:
         component_info = weixin_user_models.ComponentInfo.create(
             app_id="wx8209f1f63f0b1d26",
-            app_secret="component_secret",
+            app_secret="temp_component_secret",
             component_verify_ticket="",
             token="",
             ase_key="",
