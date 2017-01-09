@@ -5,6 +5,7 @@ from eaglet.core import watchdog
 
 from business import model as business_model
 from business.mall.corporation_factory import CorporationFactory
+from business.product.global_product_repository import GlobalProductRepository
 from business.product.product import Product
 from db.mall import models as mall_models
 from product_pool import ProductPool
@@ -30,14 +31,18 @@ class ProductFactory(business_model.Service):
 			postage_type=logistics_info['postage_type'],
 			postage_id=logistics_info.get('postage_id', 0),
 			unified_postage_money=logistics_info['unified_postage_money'],
-			stocks=base_info['min_limit'],
-			is_member_product=base_info["is_member_product"],
+			stocks=base_info.get('min_limit', 0),
+			is_member_product=base_info.get("is_member_product", False),
 			supplier=base_info.get('supplier_id', 0),
 			purchase_price=base_info.get('purchase_price', 0.0),
-			is_enable_bill=base_info['is_enable_bill'],
+			is_enable_bill=base_info.get('is_enable_bill', False),
 			is_delivery=base_info.get('is_delivery', 'false') == 'true',
 			limit_zone_type=int(logistics_info.get('limit_zone_type', '0')),
-			limit_zone=int(logistics_info.get('limit_zone_id', '0'))
+			limit_zone=int(logistics_info.get('limit_zone_id', '0')),
+
+			pending_status=mall_models.PRODUCT_PENDING_STATUS['NOT_YET'],
+			is_pre_product=base_info.get('is_pre_product', False),
+			is_accepted=False
 		)
 		
 		return product
@@ -63,12 +68,8 @@ class ProductFactory(business_model.Service):
 		if classification_id == 0:
 			return
 
-		mall_models.ClassificationHasProduct.create(
-			classification = classification_id,
-			product_id = product.id,
-			woid = self.corp.id,
-			display_index = 0
-		)
+		classification = self.corp.product_classification_repository.get_product_classification(classification_id)
+		classification.add_product(product.id)
 
 	def __set_product_models(self, product, models_info):
 		# 处理standard商品规格
@@ -100,9 +101,9 @@ class ProductFactory(business_model.Service):
 				price=standard_model['price'],
 				purchase_price=standard_model['purchase_price'],
 				weight=standard_model['weight'],
-				stock_type=mall_models.PRODUCT_STOCK_TYPE_UNLIMIT if standard_model['stock_type'] == 'unlimit' else mall_models.PRODUCT_STOCK_TYPE_LIMIT,
+				stock_type=mall_models.PRODUCT_STOCK_TYPE_UNLIMIT if standard_model.get('stock_type', 'limit') == 'unlimit' else mall_models.PRODUCT_STOCK_TYPE_LIMIT,
 				stocks=standard_model['stocks'],
-				user_code=standard_model['user_code'],
+				user_code=standard_model.get('user_code', ''),
 				is_deleted=False
 			)
 
@@ -160,15 +161,20 @@ class ProductFactory(business_model.Service):
 
 	def create_product(self, args):
 		"""
-		创建自营商品
+		创建商品(原始)
 		"""
 		base_info = args['base_info']
 		models_info = args['models_info']
-		image_info = args['image_info']
+		image_info = args.get('image_info', {
+			'images': []
+		})
 		logistics_info = args['logistics_info']
-		pay_info = args['pay_info']
-		categories = args['categories']
-		properties = args['properties']
+		pay_info = args.get('pay_info', {
+			'is_use_online_pay_interface': False,
+			'is_use_cod_pay_interface': False
+		})
+		categories = args.get('categories', [])
+		properties = args.get('properties', [])
 
 		product = self.__create_product(base_info, image_info, logistics_info, pay_info)
 		self.__add_product_to_categories(product, categories)
@@ -177,13 +183,14 @@ class ProductFactory(business_model.Service):
 		self.__set_product_models(product, models_info)
 		self.__add_properties_to_product(product, properties)
 
-		corp = self.corp
-		#将商品放入product pool
-		corp.product_pool.add_products([product.id])
-		#将商品放入待售shelf
-		corp.forsale_shelf.add_products([product.id])
-
 		return product
+
+	def create_verified_product(self, args):
+		"""
+		创建已审核(自营)商品
+		"""
+		product_db_model = self.create_product(args)
+		Product(product_db_model).verify(args['corp'])
 
 	def create_consignment_product(self, args):
 		"""

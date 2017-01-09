@@ -228,7 +228,8 @@ class ProductClassification(business_model.Model):
 		mall_models.ClassificationHasProduct.create(
 			classification = self.id,
 			product_id = product_id,
-			woid = CorporationFactory.get().id
+			woid = CorporationFactory.get().id,
+			display_index = 0
 		)
 
 	@property
@@ -247,3 +248,11 @@ class ProductClassification(business_model.Model):
 					curr_classification_ids.append(child.id)
 
 		return product_count
+
+	def get_nav(self):
+		"""
+		商品分类层级
+		"""
+		corp = CorporationFactory.get()
+		classifications = corp.product_classification_repository.get_product_classification_tree_by_end(self.id)
+		return '--'.join([classification.name for classification in classifications])

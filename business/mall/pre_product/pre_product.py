@@ -10,26 +10,10 @@ class PreProduct(business_model.Model):
 	待审核商品
 	"""
 	__slots__ = (
-		'id',
-		'name',
-		'promotion_title',
-		'price',
-		'purchase_price',
-		'weight',
-		'stocks',
-		'postage_type',
-		'classification_id',
-		'limit_zone_type',
-		'unified_postage_money',
-		'limit_zone',
-		'postage_id',
-		'is_deleted',
 		'is_updated',
 		'is_accepted',
 		'pending_status',
 		'refuse_reason',
-		'detail',
-		'created_at',
 		'models'
 	)
 

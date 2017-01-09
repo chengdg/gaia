@@ -47,7 +47,7 @@ def step_impl(context, user, classification_name):
 	datas = json.loads(context.text)
 	classification_id = __classification_name2id(classification_name)
 	for data in datas:
-		response = context.client.put('/mall/pre_product/', {
+		response = context.client.put('/product/pre_product/', {
 			'corp_id': bdd_util.get_user_id_for(user),
 			'classification_id': classification_id,
 			'name': data['name'],
@@ -66,7 +66,7 @@ def step_impl(context, user, classification_name):
 @when(u"{user}审核通过待审核商品")
 def step_impl(context, user):
 	datas = json.loads(context.text)
-	response = context.client.put('/mall/pending_product/', {
+	response = context.client.put('/product/verified_product/', {
 		'corp_id': bdd_util.get_user_id_for(user),
 		'product_ids': json.dumps(__product_names2ids_str(datas))
 	})
@@ -75,7 +75,7 @@ def step_impl(context, user):
 @then(u"{user}查看待审核商品列表")
 def step_impl(context, user):
 	expected = bdd_util.table2list(context)
-	response = context.client.get('/mall/pre_products/', {
+	response = context.client.get('/product/pre_products/', {
 		'corp_id': bdd_util.get_user_id_for(user)
 	})
 
@@ -85,9 +85,22 @@ def step_impl(context, user):
 		row['classfication'] = row['classification_name_nav']
 		row['created_time'] = u'创建时间'
 		row['operation'] = __get_operations(context, row['status'])
-		row['status'] = row['status_text']
-		row['stock'] = row['stocks']
+		row['status'] = row['pending_status_text']
+		row['stock'] = row['stocks'][0] if len(row['stocks']) == 1 else '~'.join(row['stocks'])
+		row['price'] = row['price_info']['display_price']
 
 	bdd_util.assert_list(expected, actual)
+
+@when(u"{user}提交商品审核")
+def step_impl(context, user):
+	datas = json.loads(context.text)
+	product_ids = __product_names2ids_str(datas)
+	for product_id in product_ids:
+		response = context.client.put('/product/pending_product/', {
+			'corp_id': bdd_util.get_user_id_for(user),
+			'product_id': product_id
+		})
+
+		bdd_util.assert_api_call_success(response)
 
 

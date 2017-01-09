@@ -5,9 +5,9 @@
         "title": "Mantis Pre_Product Model Property API"
     },
     "paths": {
-        "/mall/pre_product/": {
+        "/product/pre_product/": {
             "put": {
-                "summary": "创建待审核商品",
+                "summary": "创建原始(未审核)商品",
                 "parameters": [
                     {
                         "name": "corp_id",
