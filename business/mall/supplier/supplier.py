@@ -64,7 +64,7 @@ class Supplier(business_model.Model):
 		if '__divide_info' in self.context:
 			return self.context['__divide_info']
 		else:
-			divide_info = DivideRebateInfo(mall_models.SupplierDivideRebateInfo.select().dj_where(supplier_id=self.id).get())
+			divide_info = DivideRebateInfo(mall_models.SupplierDivideRebateInfo.select().dj_where(supplier_id=self.id).first())
 			self.context['__divide_info'] = divide_info
 			return divide_info
 
