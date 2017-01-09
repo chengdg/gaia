@@ -185,7 +185,7 @@ def __format_product_post_data(context, product):
         'logistics_info': json.dumps(logistics_info),
         'image_info': json.dumps(image_info),
         'categories': json.dumps(categories),
-        'properties': json.dumps(product.get('properties', [])),        
+        'properties': json.dumps(product.get('properties', [])),
     }
 
     return data
@@ -344,7 +344,12 @@ def __get_products(context, corp_name, type_name=u'在售'):
     #         url += '&%s=%s' % (key, context.query_param[key])
 
     products = []
-    for product in response.data["products"]:
+    response_products = response.data["products"]
+
+    if response_products:
+        response_products = sorted(response_products, key=lambda k: k.get('id'))
+
+    for product in response_products:
         data = {}
         data['name'] = product['name']
         data['create_type'] = product['create_type']
