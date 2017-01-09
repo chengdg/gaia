@@ -35,10 +35,10 @@ class PostageConfigFactory(object):
 		postage_config = mall_models.PostageConfig.create(
 			owner=corp_id,
 			name=name,
-			first_weight=default_config['first_weight'],
-			first_weight_price=default_config['first_weight_price'],
-			added_weight=default_config['added_weight'],
-			added_weight_price=default_config['added_weight_price'],
+			first_weight=round(float(default_config.get('first_weight', 0.0)), 1),
+			first_weight_price=round(float(default_config.get('first_weight_price', 0.0)), 2),
+			added_weight=str(round(float(default_config.get('added_weight', 0.0)), 1)),
+			added_weight_price=str(round(float(default_config.get('added_weight_price', 0.0)), 2)),
 			is_enable_special_config=args['is_enable_special_config'],
 			is_enable_free_config=args['is_enable_free_config'],
 			is_used=False
@@ -52,8 +52,8 @@ class PostageConfigFactory(object):
 					destination=special_config.get('destinations', ''),
 					first_weight=round(float(special_config.get('first_weight', 0.0)), 1),
 					first_weight_price=round(float(special_config.get('first_weight_price', 0.0)), 2),
-					added_weight=round(float(special_config.get('added_weight', 0.0)), 1),
-					added_weight_price=round(float(special_config.get('added_weight_price', 0.0)), 2)
+					added_weight=str(round(float(special_config.get('added_weight', 0.0)), 1)),
+					added_weight_price=str(round(float(special_config.get('added_weight_price', 0.0)), 2))
 				)
 				
 		if is_enable_free_config:
@@ -101,10 +101,10 @@ class PostageConfigFactory(object):
 
 		mall_models.PostageConfig.update(
 			name=name,
-			first_weight=default_config['first_weight'],
-			first_weight_price=default_config['first_weight_price'],
-			added_weight=default_config['added_weight'],
-			added_weight_price=default_config['added_weight_price'],
+			first_weight=round(float(default_config.get('first_weight', 0.0)), 1),
+			first_weight_price=round(float(default_config.get('first_weight_price', 0.0)), 2),
+			added_weight=str(round(float(default_config.get('added_weight', 0.0)), 1)),
+			added_weight_price=str(round(float(default_config.get('added_weight_price', 0.0)), 2)),
 			is_enable_special_config=args['is_enable_special_config'],
 			is_enable_free_config=args['is_enable_free_config']
 		).dj_where(owner_id=corp_id, id=id).execute()
@@ -118,8 +118,8 @@ class PostageConfigFactory(object):
 					destination=special_config.get('destinations', ''),
 					first_weight=round(float(special_config.get('first_weight', 0.0)), 1),
 					first_weight_price=round(float(special_config.get('first_weight_price', 0.0)), 2),
-					added_weight=round(float(special_config.get('added_weight', 0.0)), 1),
-					added_weight_price=round(float(special_config.get('added_weight_price', 0.0)), 2)
+					added_weight=str(round(float(special_config.get('added_weight', 0.0)), 1)),
+					added_weight_price=str(round(float(special_config.get('added_weight_price', 0.0)), 2))
 				)
 				
 		mall_models.FreePostageConfig.delete().dj_where(owner_id=corp_id, postage_config_id=id).execute()
