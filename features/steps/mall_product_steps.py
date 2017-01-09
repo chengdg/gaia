@@ -346,12 +346,7 @@ def __get_products(context, corp_name, type_name=u'在售'):
     #         url += '&%s=%s' % (key, context.query_param[key])
 
     products = []
-    response_products = response.data["products"]
-
-    if response_products:
-        response_products = sorted(response_products, key=lambda k: k.get('id'))
-
-    for product in response_products:
+    for product in response.data["products"]:
         data = {}
         data['name'] = product['name']
         data['create_type'] = product['create_type']
