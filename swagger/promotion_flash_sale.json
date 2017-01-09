@@ -5,7 +5,7 @@
         "title": "Hermes Flash Sale Promotion API"
     },
     "paths": {
-        "/promotion/flash_sales/": {
+        "/promotion/flash_sale_promotions/": {
             "get": {
                 "summary": "获取限时抢购促销活动列表",
                 "parameters": [
