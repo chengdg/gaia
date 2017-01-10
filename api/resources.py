@@ -8,3 +8,4 @@ import product
 import auth
 import deprecated
 import weixin
+import message
