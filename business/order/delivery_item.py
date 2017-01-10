@@ -197,7 +197,7 @@ class DeliveryItem(business_model.Model):
 				express_number__in=express_numbers
 			)
 
-			name_number2express_push_id = {str(push.express_company_name + '__' + push.express_number): push.id for push
+			name_number2express_push_id = {(push.express_company_name + '__' + push.express_number): push.id for push
 			                               in express_push_list}
 
 			express_push_ids = []

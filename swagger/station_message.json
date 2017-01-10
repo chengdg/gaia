@@ -1,0 +1,346 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "Station Message API"
+    },
+    "paths": {
+        "/message/messages/": {
+            "get": {
+                "summary": "获取站内消息列表",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "该请求用户的corp_id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "station_message"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/MessageList"
+                        }
+                    }
+                }
+            }
+        },
+        "/message/message/": {
+            "get": {
+                "summary": "获取站内消息详情",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "message的id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "station_message"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/Message"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "summary": "创建站内消息",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "formData",
+                        "description": "用户的corp_id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "title",
+                        "in": "formData",
+                        "description": "站内消息的标题",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "content",
+                        "in": "formData",
+                        "description": "站内消息的内容",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "attachments",
+                        "in": "formData",
+                        "description": "站内消息的附件",
+                        "required": false,
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/definitions/SimpleAttachment"
+                        },
+                        "minItems": 0
+                    }
+                ],
+                "tags": [
+                    "station_message"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "description": "创建的站内消息的id"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "修改站内消息",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "formData",
+                        "description": "站内消息的id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "title",
+                        "in": "formData",
+                        "description": "站内消息的标题",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "content",
+                        "in": "formData",
+                        "description": "站内消息的内容",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "attachments",
+                        "in": "formData",
+                        "description": "站内消息的附件",
+                        "required": false,
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/definitions/SimpleAttachment"
+                        },
+                        "minItems": 0
+                    }
+                ],
+                "tags": [
+                    "station_message"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "删除站内消息",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "formData",
+                        "description": "站内消息的id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "station_message"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        },
+        "/message/user_has_message/": {
+            "post": {
+                "summary": "修改用户是否已读站内消息",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "formData",
+                        "description": "用户的corp_id",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "message_id",
+                        "in": "formData",
+                        "description": "站内消息的id",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "is_read",
+                        "in": "formData",
+                        "description": "是否已读此消息",
+                        "required": true,
+                        "type": "boolean"
+                    }
+                ],
+                "tags": [
+                    "station_message"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "MessageList": {
+            "type": "object",
+            "properties": {
+                "messages": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/SimpleMessage"
+                    },
+                    "minItems": 0
+                },
+                "unread_count": {
+                    "type": "integer",
+                    "description": "该用户未读的消息数目"
+                }
+            }
+        },
+        "SimpleMessage": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": ""
+                },
+                "title": {
+                    "type": "string",
+                    "description": "站内消息的标题"
+                },
+                "content": {
+                    "type": "string",
+                    "description": "站内消息的内容"
+                },
+                "created_at": {
+                    "type": "string",
+                    "description": "创建时间"
+                },
+                "is_read": {
+                    "type": "boolean",
+                    "description": "该用户是否已读过此消息"
+                }
+            }
+        },
+        "Message": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "object",
+                    "properties": {
+                        "id": {
+                            "type": "string",
+                            "description": "站内消息的id"
+                        },
+                        "title": {
+                            "type": "string",
+                            "description": "站内消息的标题"
+                        },
+                        "content": {
+                            "type": "string",
+                            "description": "站内消息的内容"
+                        },
+                        "attachments": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/Attachment"
+                            },
+                            "minItems": 0
+                        },
+                        "created_at": {
+                            "type": "string",
+                            "description": "创建时间"
+                        }
+                    }
+                }
+            }
+        },
+        "Attachment": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": "站内消息的附件的id"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "附件的文件名"
+                },
+                "type": {
+                    "type": "string",
+                    "description": "附件的文件类型"
+                },
+                "path": {
+                    "type": "string",
+                    "description": "附件的文件路径"
+                }
+            }
+        },
+        "SimpleAttachment": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "附件的文件名"
+                },
+                "type": {
+                    "type": "string",
+                    "description": "附件的文件类型"
+                },
+                "path": {
+                    "type": "string",
+                    "description": "附件的文件路径"
+                }
+            }
+        }
+    }
+}

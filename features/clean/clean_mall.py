@@ -3,8 +3,10 @@ import logging
 
 from db.mall import models as mall_models
 from db.mall import promotion_models
+from db.station_message import models as message_models
 from db.member import models as member_models
 from db.account import models as account_models
+
 
 def clean():
 	logging.info('clean database for mall')
@@ -88,3 +90,8 @@ def clean():
 
 	#限定区域
 	mall_models.ProductLimitZoneTemplate.delete().execute()
+
+	# 站内消息
+	message_models.UserHasMessage.delete().execute()
+	message_models.MessageAttachment.delete().execute()
+	message_models.Message.delete().execute()

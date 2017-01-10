@@ -210,6 +210,7 @@ def step_impl(context, user, classification_name):
 	actual = []
 	for data in resp_datas:
 		label_group_name = label_group_id2name(data['label_group_id'])
+		data['label_ids'].sort()
 		label_ids = map(lambda x: label_id2name(x), data['label_ids'])
 		actual.append({
 			'label_group_name': label_group_name,

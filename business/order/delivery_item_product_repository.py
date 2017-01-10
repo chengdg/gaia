@@ -70,11 +70,11 @@ class DeliveryItemProductRepository(business_model.Model):
 				db_promotion_result = json.loads(promotion.promotion_result_json)
 				premium_product_ids.extend(p['id'] for p in db_promotion_result['premium_products'])
 
-		current_premium_products = self.corp.product_pool.get_products_by_ids(premium_product_ids,
-		                                                                      {"with_product_model": True,
-		                                                                       "with_property": True,
-		                                                                       "with_model_property_info": True})
-		id2current_premium_products = {p.id: p for p in current_premium_products}
+		# current_premium_products = self.corp.product_pool.get_products_by_ids(premium_product_ids,
+		#                                                                       {"with_product_model": True,
+		#                                                                        "with_property": True,
+		#                                                                        "with_model_property_info": True})
+		# id2current_premium_products = {p.id: p for p in current_premium_products}
 
 		delivery_item_ohs_id2origin_order_ohs = {}
 		delivery_item_ohs_id2integral_sale_promotion = {}
@@ -146,8 +146,8 @@ class DeliveryItemProductRepository(business_model.Model):
 			delivery_item_product.context['index'] = r.id
 
 			if r.product_model_name == 'standard':
-				delivery_item_product.product_model_name_texts = []
-				delivery_item_product.weight = product.standard_model.weight if product.standard_model else 0
+				delivery_item_product.product_model_name_texts = json.loads(r.product_model_name_texts)
+				delivery_item_product.weight = r.weight
 
 				delivery_item_product.model_id = product.standard_model.id if product.standard_model else 0
 
@@ -155,16 +155,14 @@ class DeliveryItemProductRepository(business_model.Model):
 				for custom_model in product.custom_models:
 					if r.product_model_name == custom_model.name:
 						delivery_item_product.model_id = custom_model.id
-						delivery_item_product.product_model_name_texts = []
-						delivery_item_product.weight = custom_model.weight if custom_model else 0
-						for value in custom_model.property_values:
-							delivery_item_product.product_model_name_texts.append(value['name'])
+						delivery_item_product.product_model_name_texts = json.loads(r.product_model_name_texts)
+						delivery_item_product.weight = r.weight
 						break
 
 				if not delivery_item_product.product_model_name_texts:
 					delivery_item_product.product_model_name_texts = [value.name for value in
 					                                                  product_model_name2values[r.product_model_name]]
-			delivery_item_product.thumbnails_url = product.thumbnails_url
+			delivery_item_product.thumbnails_url = r.thumbnail_url
 			delivery_item_product.is_deleted = product.is_deleted
 
 			promotion = id2promotion.get(r.promotion_id, None)
@@ -193,12 +191,9 @@ class DeliveryItemProductRepository(business_model.Model):
 							'http') == -1 else premium_product['thumbnails_url']
 					premium_delivery_item_product.id = premium_product['id']
 
-					current_premium_product = id2current_premium_products[premium_product['id']]
+					# current_premium_product = id2current_premium_products[premium_product['id']]
 
-					if current_premium_product.standard_model:
-						premium_delivery_item_product.weight = current_premium_product.standard_model.weight
-					else:
-						premium_delivery_item_product.weight = 0
+					premium_delivery_item_product.weight = premium_product.get('weight',0)
 
 					premium_delivery_item_product.promotion_info = {
 						'type': 'premium_sale:premium_product',  # 赠品

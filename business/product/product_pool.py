@@ -349,6 +349,7 @@ class ProductPool(business_model.Model):
 		pool_products = mall_models.ProductPool.select().dj_where(product_id__in=product_ids)
 		id2product = dict([(product.id, product) for product in products])
 		for pool_product in pool_products:
+			product = id2product[pool_product.product_id]
 			if pool_product.type == mall_models.PP_TYPE_SYNC:
 				product.create_type = 'sync'
 				product.sync_at = pool_product.sync_at
@@ -356,7 +357,6 @@ class ProductPool(business_model.Model):
 				product.create_type = 'create'
 
 		#按照product_ids中id的顺序对products进行顺序调整
-		id2product = dict([(product.id, product) for product in products])
 		result = []
 		for product_id in product_ids:
 			product_id = int(product_id)
