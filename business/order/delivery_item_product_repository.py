@@ -96,10 +96,9 @@ class DeliveryItemProductRepository(business_model.Model):
 			for order_has_promotion in order_has_promotions:
 				db_promotion_result = json.loads(order_has_promotion.promotion_result_json)
 				if order_has_promotion.order_id == delivery_item_ohs.origin_order_id and str(
-										delivery_item_ohs.product_id) + '-' + delivery_item_ohs.product_model_name == db_promotion_result.get(
-						'integral_product_info'):
+						delivery_item_ohs.product_id) + '-' + delivery_item_ohs.product_model_name == db_promotion_result.get(
+					'integral_product_info'):
 					delivery_item_ohs_id2integral_sale_promotion[delivery_item_ohs.id] = order_has_promotion
-
 
 		products = self.corp.product_pool.get_products_by_ids(product_ids,
 		                                                      {"with_product_model": True, "with_property": True,
@@ -122,7 +121,7 @@ class DeliveryItemProductRepository(business_model.Model):
 
 			product = product_id2product[r.product_id]
 
-			promotion = id2promotion.get(r.promotion_id, None) if r.promotion_id else None # 积分应用的promotion_id为0，需要单独处理
+			promotion = id2promotion.get(r.promotion_id, None) if r.promotion_id else None  # 积分应用的promotion_id为0，需要单独处理
 			if promotion:
 				db_promotion_result = json.loads(promotion.promotion_result_json)
 				# type种类:flash_sale、integral_sale、premium_sale
@@ -211,9 +210,9 @@ class DeliveryItemProductRepository(business_model.Model):
 
 					premium_delivery_item_product.delivery_item_id = r.order_id
 					premium_delivery_item_product.context['index'] = r.id + 1
-					premium_delivery_item_product.origin_price = premium_product.get('price',0)
+					premium_delivery_item_product.origin_price = premium_product.get('price', 0)
 					premium_delivery_item_product.sale_price = 0
-					premium_delivery_item_product.show_sale_price = premium_product.get('price',0)  # 为了前端能够显示
+					premium_delivery_item_product.show_sale_price = premium_product.get('price', 0)  # 为了前端能够显示
 					premium_delivery_item_product.total_origin_price = 0
 					premium_delivery_item_product.product_model_name_texts = []
 
@@ -270,7 +269,12 @@ class DeliveryItemProductRepository(business_model.Model):
 				delivery_item_id2products[product.delivery_item_id] = [product]
 
 		for delivery_item in delivery_items:
-			delivery_item.products = delivery_item_id2products[delivery_item.id]
+			# todo 使用get兼容历史错误数据，需要修正数据库
+			# 历史订单中的错误数据修复 - 自营订单有出货单记录，但没对应的mall_order_has_product记录
+			# select o1.id,o1.origin_order_id,o1.created_at,h.id from mall_order  as o1  left join  mall_order_has_product as h on o1.id=h.order_id where o1.origin_order_id>0 and h.id is null order by o1.created_at;
+
+			# delivery_item.products = delivery_item_id2products[delivery_item.id]
+			delivery_item.products = delivery_item_id2products.get(delivery_item.id, [])
 
 			# 排序
 			delivery_item.products.sort(lambda x, y: cmp(x.context["index"], y.context["index"]))

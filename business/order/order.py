@@ -474,7 +474,7 @@ class Order(business_model.Model):
 		for order in orders:
 			order.origin_weizoom_card_money = order.weizoom_card_money + order.refunding_info[
 				'weizoom_card_money']
-			order.origin_member_card_money = order.weizoom_card_money + order.refunding_info[
+			order.origin_member_card_money = order.member_card_money + order.refunding_info[
 				'member_card_money']
 			order.origin_final_price = order.final_price + order.refunding_info['cash']
 

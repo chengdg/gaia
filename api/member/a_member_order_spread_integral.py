@@ -14,13 +14,12 @@ class AMemberOrderIntegral(api_resource.ApiResource):
 	resource = 'member_order_spread_integral'
 
 
-	@param_required(['corp','order_id','from_status','to_status'])
+	@param_required(['corp','order_id'])
 	def post(args):
 
 		order_id = args['order_id']
 		corp = args['corp']
-		from_status = args['from_status']
-		to_status = args['to_status']
+
 		fill_options = {
 			'with_member': True,
 			'with_delivery_items': {
@@ -29,8 +28,6 @@ class AMemberOrderIntegral(api_resource.ApiResource):
 
 		}
 		order = corp.order_repository.get_order(order_id, fill_options)
-
-		member = corp.member_repository.get_member_by_id(order.member_info['id'])
 
 		# member.increase_integral_after_finish_order(order)  # 对应购买商品返积分功能
 		# member.update_pay_info(order, from_status, to_status)

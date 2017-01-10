@@ -1,0 +1,135 @@
+{
+	"swagger": "2.0",
+	"info": {
+		"version": "0.0.1",
+		"title": "zeus API doc"
+	},
+	"paths": {
+		"/member/member_order_integral": {
+			"post": {
+				"summary": "会员订单积分",
+				"parameters": [
+					{
+						"name": "corp_id",
+						"in": "query",
+						"required": true
+					},
+					{
+						"name": "order_id",
+						"in": "query",
+						"required": true
+					}
+				],
+				"tags": [
+					"member"
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/member/member_order_spread_integral": {
+			"post": {
+				"summary": "会员订单分享积分",
+				"parameters": [
+					{
+						"name": "corp_id",
+						"in": "query",
+						"required": true
+					},
+					{
+						"name": "order_id",
+						"in": "query",
+						"required": true
+					}
+				],
+				"tags": [
+					"member"
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/member/member_order_grade": {
+			"post": {
+				"summary": "会员订单等级",
+				"parameters": [
+					{
+						"name": "corp_id",
+						"in": "query",
+						"required": true
+					},
+					{
+						"name": "member_id",
+						"in": "query",
+						"required": true
+					}
+				],
+				"tags": [
+					"member"
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

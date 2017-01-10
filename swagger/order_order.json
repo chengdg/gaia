@@ -602,8 +602,8 @@
 														"used_card": {
 															"type": "array",
 															"description": "卡号列表",
-															"items":{
-																"type":"string"
+															"items": {
+																"type": "string"
 															}
 														}
 													}
@@ -1008,6 +1008,58 @@
 						"type": "string",
 						"required": false
 					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/order/released_order": {
+			"put": {
+				"summary": "释放的订单",
+				"parameters": [
+					{
+						"name": "corp_id",
+						"in": "query",
+						"required": true
+					},
+					{
+						"name": "order_id",
+						"in": "query",
+						"required": true
+					},
+					{
+						"name": "from_status",
+						"in": "query",
+						"required": true
+					},
+					{
+						"name": "to_status",
+						"in": "query",
+						"required": true
+					}
+				],
+				"tags": [
+					"order"
 				],
 				"responses": {
 					"200": {

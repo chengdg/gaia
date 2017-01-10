@@ -185,7 +185,7 @@ def __format_product_post_data(context, product):
         'logistics_info': json.dumps(logistics_info),
         'image_info': json.dumps(image_info),
         'categories': json.dumps(categories),
-        'properties': json.dumps(product.get('properties', [])),        
+        'properties': json.dumps(product.get('properties', [])),
     }
 
     return data
