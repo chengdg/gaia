@@ -76,7 +76,7 @@ class FillPromotionDetailService(busniess_model.Service):
 		for relation in relations:
 			promotion_id2product_ids[relation.promotion_id].append(relation.product_id)
 		product_ids = [relation.product_id for relation in relations]
-		products = GlobalProductRepository.get(None).get_products_by_ids(product_ids=product_ids)
+		products = GlobalProductRepository.get().get_products_by_ids(product_ids=product_ids)
 		fill_options = {
 			'with_sales': True,
 			"with_image": True,
