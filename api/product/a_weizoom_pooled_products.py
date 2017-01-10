@@ -45,7 +45,7 @@ class AWeizoomPooledProducts(api_resource.ApiResource):
 		#恢复当前公司
 		CorporationFactory.set(corp)
 
-		encode_product_service = EncodeProductService.get(corp)
+		encode_product_service = EncodeProductService.get()
 		datas = []
 		for product in products:
 			base_info = encode_product_service.get_base_info(product)

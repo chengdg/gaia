@@ -314,7 +314,7 @@ class ProductPool(business_model.Model):
 			product_models = mall_models.Product.select().dj_where(id__in=product_ids)
 
 		products = [Product(model) for model in product_models]
-		fill_product_detail_service = FillProductDetailService.get(self.corp)
+		fill_product_detail_service = FillProductDetailService.get()
 		fill_product_detail_service.fill_detail(products, fill_options)
 
 		#按照product_ids中id的顺序对products进行顺序调整
@@ -343,7 +343,7 @@ class ProductPool(business_model.Model):
 		product_models = mall_models.Product.select().dj_where(id__in=product_ids)
 		products = [Product(model) for model in product_models]
 
-		fill_product_detail_service = FillProductDetailService.get(self.corp)
+		fill_product_detail_service = FillProductDetailService.get()
 		fill_product_detail_service.fill_detail(products, fill_options)
 
 		pool_products = mall_models.ProductPool.select().dj_where(product_id__in=product_ids)

@@ -40,7 +40,7 @@ class ACPSPromotedProducts(api_resource.ApiResource):
 		else:
 			products, pageinfo = corp.product_pool.search_promoted_products(filters, target_page)
 
-		encode_product_service = EncodeProductService.get(corp)
+		encode_product_service = EncodeProductService.get()
 
 		datas = []
 		for product in products:

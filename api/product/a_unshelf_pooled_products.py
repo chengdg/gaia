@@ -47,7 +47,7 @@ class AUnshelfPooledProducts(api_resource.ApiResource):
 
 		products, pageinfo = corp.product_pool.get_products(target_page, fill_options, options, filters)
 
-		encode_product_service = EncodeProductService.get(corp)
+		encode_product_service = EncodeProductService.get()
 		datas = []
 		for product in products:
 			base_info = encode_product_service.get_base_info(product)

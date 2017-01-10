@@ -15,8 +15,8 @@ class PromotionRepository(business_model.Service):
 		models = promotion_models.Promotion.select().dj_where(id__in=promotion_ids,
 															  owner_id=self.corp.id)
 		promotions = [Promotion(model) for model in models]
-		fill_promotion_detail_service = FillPromotionDetailService(self.corp)
-		fill_promotion_detail_service.fill_detail(promotions, self.corp, fill_options)
+		fill_promotion_detail_service = FillPromotionDetailService()
+		fill_promotion_detail_service.fill_detail(promotions, fill_options)
 		return promotions
 
 	def delete_promotions(self, promotion_ids):
@@ -150,8 +150,8 @@ class PromotionRepository(business_model.Service):
 
 		pageinfo, promotions = paginator.paginate(promotions, page_info.cur_page, page_info.count_per_page)
 		promotions = [Promotion(promotion) for promotion in promotions]
-		fill_promotion_detail_service = FillPromotionDetailService(self.corp)
-		fill_promotion_detail_service.fill_detail(promotions, self.corp, fill_options)
+		fill_promotion_detail_service = FillPromotionDetailService()
+		fill_promotion_detail_service.fill_detail(promotions, fill_options)
 
 		return promotions, pageinfo
 

@@ -10,7 +10,6 @@ import json
 
 from eaglet.decorator import param_required
 
-from business.product.product import Product
 from db.mall import models as mall_models
 from eaglet.core import watchdog
 from business import model as business_model

@@ -39,7 +39,7 @@ class EncodePromotionService(business_model.Service):
 		if promotion.products:
 			result = []
 			for product in promotion.products:
-				encode_product_service = EncodeProductService.get(self.corp)
+				encode_product_service = EncodeProductService.get()
 				base_info = encode_product_service.get_base_info(product)
 				models_info = encode_product_service.get_models_info(product)
 				supplier = encode_product_service.get_supplier_info(product)

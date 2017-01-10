@@ -4,6 +4,7 @@
 """
 from business.mall.corporation_factory import CorporationFactory
 from business import model as business_model
+from business.product.global_product_repository import GlobalProductRepository
 from db.mall import models as mall_models
 from db.mall import promotion_models
 import settings
@@ -39,7 +40,7 @@ class PremiumSale(business_model.Model):
 
 		premium_sale_products = promotion_models.PremiumSaleProduct.select().dj_where(premium_sale_id=premium_sale_model.id)
 		product_ids = [premium_sale_product.product_id for premium_sale_product in premium_sale_products]
-		products = corp.product_pool.get_products_by_ids(product_ids=product_ids)
+		products = GlobalProductRepository.get().get_products_by_ids(product_ids=product_ids)
 
 		id2product = dict([(product.id, product) for product in products])
 		premium_products = []

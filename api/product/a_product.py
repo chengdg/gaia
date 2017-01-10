@@ -4,6 +4,7 @@
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
 
+from business.product.global_product_repository import GlobalProductRepository
 from business.product.product_factory import ProductFactory
 from business.product.update_product_service import UpdateProductService
 from business.product.encode_product_service import EncodeProductService
@@ -30,12 +31,12 @@ class AProduct(api_resource.ApiResource):
 			'with_classification': True,
 			'with_product_promotion': True
 		}
-		products = corp.product_pool.get_products_by_ids(ids, fill_options)
+		products = GlobalProductRepository.get().get_products_by_ids(ids, fill_options)
 		if len(products) == 0:
 			return {}
 		else:
 			product = products[0]
-			encode_product_service = EncodeProductService.get(corp)
+			encode_product_service = EncodeProductService.get()
 
 			data = {
 				"id": product.id,

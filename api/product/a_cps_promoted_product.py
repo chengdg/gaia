@@ -29,7 +29,7 @@ class ACPSPromotedProduct(api_resource.ApiResource):
 		product = corp.product_pool.get_product_by_id(product_id)
 		if product:
 			product.apply_cps_promotion(money, stock, time_from, time_to, sale_count, total_money)
-			encode_product_service = EncodeProductService.get(corp)
+			encode_product_service = EncodeProductService.get()
 
 			cps_promotion_info = encode_product_service.get_cps_promotion_info(product)
 			return {

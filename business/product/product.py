@@ -1,24 +1,13 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime
-import json
-from bdem import msgutil
 
-import settings
-from eaglet.decorator import param_required
-from eaglet.utils.resource_client import Resource
-
-from db.mall import models as mall_models
-from db.mall import promotion_models
-from db.account import models as account_models
-from business.account.user_profile import UserProfile
-from business import model as business_model
 from eaglet.core import watchdog
 from eaglet.core.exceptionutil import unicode_full_stack
 
-
-
+from db.mall import models as mall_models
+from business import model as business_model
 from business.decorator import cached_context_property
 
+import settings
 
 class Product(business_model.Model):
 	"""

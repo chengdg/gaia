@@ -7,6 +7,7 @@ from business.mall.promotion.promotion import Promotion
 from business.mall.promotion.integral_sale import IntegralSale
 from business.mall.promotion.flash_sale import FlashSale
 from business.mall.promotion.premium_sale import PremiumSale
+from business.product.global_product_repository import GlobalProductRepository
 from db.mall import promotion_models
 from db.mall import models as mall_models
 
@@ -49,7 +50,7 @@ class FillPromotionDetailService(busniess_model.Service):
 			integral_sale.calculate_discount()
 			detail_id2promotion[integral_sale_id].detail = integral_sale
 
-	def __fill_premium_sale_details(self, promotions, corp):
+	def __fill_premium_sale_details(self, promotions):
 		"""
 		填充与买赠相关的`促销商品详情`
 		"""
@@ -75,14 +76,14 @@ class FillPromotionDetailService(busniess_model.Service):
 		for relation in relations:
 			promotion_id2product_ids[relation.promotion_id].append(relation.product_id)
 		product_ids = [relation.product_id for relation in relations]
-		products = self.corp.product_pool.get_products_by_ids(product_ids=product_ids)
+		products = GlobalProductRepository.get().get_products_by_ids(product_ids)
 		fill_options = {
 			'with_sales': True,
 			"with_image": True,
 			"with_product_model": True
 		}
 		from business.product.fill_product_detail_service import FillProductDetailService
-		fill_product_detail_service = FillProductDetailService.get(self.corp)
+		fill_product_detail_service = FillProductDetailService.get()
 		fill_product_detail_service.fill_detail(products, fill_options)
 		id2product = dict([(product.id, product) for product in products])
 
@@ -92,7 +93,7 @@ class FillPromotionDetailService(busniess_model.Service):
 							 if product_id in temp_product_ids]
 			promotion.products = temp_products
 
-	def fill_detail(self, promotions, corp, options):
+	def fill_detail(self, promotions, options):
 		"""
 		为促销填充促销特定数据
 		"""
@@ -103,14 +104,14 @@ class FillPromotionDetailService(busniess_model.Service):
 			if promotion_type == promotion_models.PROMOTION_TYPE_FLASH_SALE:
 				self.__fill_flash_sale_details(promotions)
 			elif promotion_type == promotion_models.PROMOTION_TYPE_PREMIUM_SALE:
-				self.__fill_premium_sale_details(promotions, corp)
+				self.__fill_premium_sale_details(promotions)
 			elif promotion_type == promotion_models.PROMOTION_TYPE_INTEGRAL_SALE:
 				self.__fill_integral_sale_rule_details(promotions)
 		# 填充促销商品的信息
 		if options.get('with_product', False):
 			self.__fill_promotions_product_detail(promotions)
 
-	def fill_detail_for_products(self, corp, products):
+	def fill_detail_for_products(self, products):
 		"""
 		为商品添加促销详细信息
 		"""
@@ -130,15 +131,12 @@ class FillPromotionDetailService(busniess_model.Service):
 				# 跳过已结束、已删除的促销活动
 				continue
 
-			if promotion_db_model.owner_id != int(corp.id):
-				continue
-
 			promotion = Promotion(promotion_db_model)
 			promotions.append(promotion)
 		fill_options = {
 			'with_products': False
 		}
-		self.fill_detail(promotions, corp, fill_options)
+		self.fill_detail(promotions, fill_options)
 		# 为所有的product设置product.promotion
 		for promotion in promotions:
 			product_id = promotion_id2product_id.get(promotion.id, None)

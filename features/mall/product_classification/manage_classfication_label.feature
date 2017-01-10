@@ -111,7 +111,7 @@ Scenario:1 运营人员为分类配置标签
 		"""
 		[{
 			"label_group_name":"省市",
-			"labels":["江苏","黑龙江"]
+			"labels":["江苏", "黑龙江"]
 		},{
 			"label_group_name":"基本信息",
 			"labels":["男","女"]

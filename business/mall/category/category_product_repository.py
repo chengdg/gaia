@@ -5,6 +5,7 @@ from copy import copy, deepcopy
 from eaglet.decorator import param_required
 from eaglet.core import api_resource
 from business import model as business_model
+from business.product.global_product_repository import GlobalProductRepository
 from db.mall import models as mall_models
 from eaglet.core import paginator
 from eaglet.core.db import models as eaglet_db
@@ -52,7 +53,7 @@ class CategoryProductRepository(object):
 			'with_category': True,
 			'with_sales': True
 		}
-		products = CorporationFactory.get().product_pool.get_products_by_ids(product_ids, fill_options)
+		products = GlobalProductRepository.get().get_products_by_ids(product_ids, fill_options)
 		category_products = []
 		for product in products:
 			category_product = CategoryProduct(product)

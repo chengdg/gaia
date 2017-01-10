@@ -33,7 +33,7 @@ class AOffshelfProducts(api_resource.ApiResource):
 		else:
 			products, pageinfo = corp.forsale_shelf.get_products(target_page)
 
-		encode_product_service = EncodeProductService.get(corp)
+		encode_product_service = EncodeProductService.get()
 		datas = []
 		for product in products:
 			base_info = encode_product_service.get_base_info(product)

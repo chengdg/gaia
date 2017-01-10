@@ -4,6 +4,7 @@
 
 """
 from business import model as business_model
+from business.product.global_product_repository import GlobalProductRepository
 from business.product.update_product_service import UpdateProductService
 from db.mall import models as mall_models
 
@@ -34,7 +35,7 @@ class ReleaseDeliveryItemResourceService(business_model.Service):
 			product_ids = [p.id for p in delivery_item_products]
 			product_id2delivery_item_product = {p.id: p for p in delivery_item_products}
 
-			products = corp.product_pool.get_products_by_ids(product_ids)
+			products = GlobalProductRepository.get().get_products_by_ids(product_ids)
 			#
 			# for delivery_item_product in delivery_item_products:
 			# 	product = corp.product_pool.get_products_by_ids([delivery_item_product.id])[0]

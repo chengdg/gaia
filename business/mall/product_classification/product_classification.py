@@ -193,7 +193,8 @@ class ProductClassification(business_model.Model):
 			label_id2classifi[label_id] = model.classification_id
 
 		corp = CorporationFactory.get()
-		labels, label_id2group_id = corp.product_label_repository.get_labels(all_label_ids)
+		labels = corp.product_label_repository.get_labels(all_label_ids)
+		label_id2group_id = {db_model.id: db_model.label_group_id for db_model in mall_models.ProductLabel.select().dj_where(id__in=all_label_ids, is_deleted=False)}
 
 		label_group_has_label = dict()
 		classification_has_own_label = dict()

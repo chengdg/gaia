@@ -12,6 +12,7 @@ from eaglet.decorator import param_required
 
 import settings
 from business.order.delivery_item_product import DeliveryItemProduct
+from business.product.global_product_repository import GlobalProductRepository
 from db.mall import models as mall_models
 from business import model as business_model
 
@@ -70,7 +71,7 @@ class DeliveryItemProductRepository(business_model.Model):
 				db_promotion_result = json.loads(promotion.promotion_result_json)
 				premium_product_ids.extend(p['id'] for p in db_promotion_result['premium_products'])
 
-		current_premium_products = self.corp.product_pool.get_products_by_ids(premium_product_ids,
+		current_premium_products = GlobalProductRepository.get().get_products_by_ids(premium_product_ids,
 		                                                                      {"with_product_model": True,
 		                                                                       "with_property": True,
 		                                                                       "with_model_property_info": True})
@@ -100,7 +101,7 @@ class DeliveryItemProductRepository(business_model.Model):
 					'integral_product_info'):
 					delivery_item_ohs_id2integral_sale_promotion[delivery_item_ohs.id] = order_has_promotion
 
-		products = self.corp.product_pool.get_products_by_ids(product_ids,
+		products = GlobalProductRepository.get().get_products_by_ids(product_ids,
 		                                                      {"with_product_model": True, "with_property": True,
 		                                                       "with_model_property_info": True})
 		product_id2product = {p.id: p for p in products}

@@ -3,8 +3,10 @@
 import datetime
 
 from business import model as business_model
+from business.mall.product_classification.product_classification_repository import ProductClassificationRepository
+from business.mall.product_label.product_label_repository import ProductLabelRepository
+from business.mall.supplier.supplier_repository import SupplierRepository
 
-from business.product.product import Product
 from business.product.model.product_model_generator import ProductModelGenerator
 from business.mall.promotion.fill_promotion_detail_service import FillPromotionDetailService
 from db.mall import models as mall_models
@@ -18,7 +20,7 @@ class FillProductDetailService(business_model.Service):
 	"""
 	对商品集合批量进行详情填充的服务
 	"""
-	def __fill_shelve_status(self, corp, products):
+	def __fill_shelve_status(self, products):
 		"""
 		填充商品货架状态相关细节
 		"""
@@ -27,7 +29,7 @@ class FillProductDetailService(business_model.Service):
 
 		product_ids = [product.id for product in products]
 		id2product = dict([(product.id, product) for product in products])
-		for p in mall_models.ProductPool.select().dj_where(product_id__in=product_ids, woid=self.corp.id):
+		for p in mall_models.ProductPool.select().dj_where(product_id__in=product_ids):
 			product = id2product[p.product_id]
 			if p.status == mall_models.PP_STATUS_ON:
 				product.set_shelve_type('on_shelf')
@@ -39,7 +41,7 @@ class FillProductDetailService(business_model.Service):
 				product.set_shelve_type('deleted')
 			product.display_index = p.display_index
 
-	def __fill_model_detail(self, corp, products, is_enable_model_property_info=False):
+	def __fill_model_detail(self, products, is_enable_model_property_info=False):
 		"""填充商品规格相关细节
 		向product中添加is_use_custom_model, models, used_system_model_properties三个属性
 		"""
@@ -49,10 +51,10 @@ class FillProductDetailService(business_model.Service):
 			return
 
 		#TODO2: 因为这里是静态方法，所以目前无法使用product.context['corp']，构造基于Object的临时解决方案，需要优化
-		product_model_generator = ProductModelGenerator.get(corp)
+		product_model_generator = ProductModelGenerator.get()
 		product_model_generator.fill_models_for_products(products, is_enable_model_property_info)
 
-	def __fill_category_detail(self, corp, product_ids, id2product):
+	def __fill_category_detail(self, product_ids, id2product):
 		"""填充商品分类信息相关细节
 		"""
 		# 获取product关联的category集合
@@ -174,7 +176,7 @@ class FillProductDetailService(business_model.Service):
 						'max_price': 0,
 					}
 
-	def __fill_property_detail(self, corp, products, product_ids):
+	def __fill_property_detail(self, products, product_ids):
 		"""
 		填充商品属性相关细节
 		"""
@@ -187,7 +189,7 @@ class FillProductDetailService(business_model.Service):
 				"value": product_property.value
 			})
 
-	def __fill_supplier_detail(self, corp, products, product_ids):
+	def __fill_supplier_detail(self, products, product_ids):
 		"""
 		填充供应商相关细节
 		"""
@@ -196,19 +198,19 @@ class FillProductDetailService(business_model.Service):
 		for product in products:
 			supplier2products.setdefault(product.supplier_id, []).append(product)
 		
-		suppliers = corp.supplier_repository.get_suppliers_by_ids(supplier_ids)
+		suppliers = SupplierRepository.get().get_suppliers_by_ids(supplier_ids)
 		for supplier in suppliers:
 			for product in supplier2products[supplier.id]:
 				product.supplier = supplier
 
-	def __fill_classification_detail(self, corp, products, product_ids, id2product):
+	def __fill_classification_detail(self, products, product_ids, id2product):
 		"""
 		填充供应商相关细节
 		"""
 		# 如果已经下线的分类还在使用,就是错误数据,这里的woid没有目前没有作用
 		relations = mall_models.ClassificationHasProduct.select().dj_where(product_id__in=product_ids)
 
-		classifications = corp.product_classification_repository.get_product_classifications()
+		classifications = ProductClassificationRepository.get().get_product_classifications()
 		id2classification = dict([(classification.id, classification) for classification in classifications])
 
 		for relation in relations:
@@ -227,7 +229,7 @@ class FillProductDetailService(business_model.Service):
 			classification_list.sort(lambda x,y: cmp(x.level, y.level))
 			product.classification_lists.append(classification_list)
 
-	def __fill_label_detail(self, corp, products, product_ids):
+	def __fill_label_detail(self, products, product_ids):
 		"""
 		填充商品标签的信息
 		"""
@@ -239,7 +241,7 @@ class FillProductDetailService(business_model.Service):
 			label_ids.append(relation.label_id)
 			product_id2label_ids.setdefault(relation.product_id, []).append(relation.label_id)
 
-		labels = corp.product_label_repository.get_labels(label_ids)
+		labels = ProductLabelRepository.get().get_labels(label_ids)
 		id2label = dict([(label.id, label)for label in labels])
 		for product in products:
 			product.labels = []
@@ -249,7 +251,7 @@ class FillProductDetailService(business_model.Service):
 			for label_id in product_label_ids:
 				product.labels.append(id2label[label_id])
 
-	def __fill_sales_detail(slef, corp, products, product_ids, id2product):
+	def __fill_sales_detail(slef, products, product_ids, id2product):
 		"""填充商品销售情况相关细节
 		"""
 		for product in products:
@@ -260,20 +262,20 @@ class FillProductDetailService(business_model.Service):
 			if id2product.has_key(product_id):
 				id2product[product_id].sales = sales.sales
 
-	def __fill_promotion_detail(self, corp, products):
+	def __fill_promotion_detail(self, products):
 		"""
 		填充商品促销的信息
 		"""
-		fill_promotion_detail_service = FillPromotionDetailService.get(corp)
-		fill_promotion_detail_service.fill_detail_for_products(corp, products)
+		fill_promotion_detail_service = FillPromotionDetailService.get()
+		fill_promotion_detail_service.fill_detail_for_products(products)
 
-	def __fill_cps_promoteion_info(self, corp, products, product_ids, id2product):
+	def __fill_cps_promoteion_info(self, products, product_ids, id2product):
 		"""
 		填充商品的cps推广信息
 		"""
 		promotion_infos = mall_models.PromoteDetail.select().dj_where(product_id__in=product_ids,
 																	  promote_status=mall_models.PROMOTING)
-		pool_product_models = mall_models.ProductPool.select().dj_where(product_id__in=product_ids, woid=self.corp.id)
+		pool_product_models = mall_models.ProductPool.select().dj_where(product_id__in=product_ids)
 		id2pool_products = dict([(pool.product_id, pool) for pool in pool_product_models])
 		for promotion in promotion_infos:
 			product = id2product.get(promotion.product_id)
@@ -329,38 +331,38 @@ class FillProductDetailService(business_model.Service):
 
 		if options.get('with_price', False):
 			#price需要商品规格信息
-			self.__fill_model_detail(self.corp, products, is_enable_model_property_info)
+			self.__fill_model_detail(products, is_enable_model_property_info)
 			self.__fill_display_price(products)
 
 		if options.get('with_product_model', False):
-			self.__fill_model_detail(self.corp, products, is_enable_model_property_info)
+			self.__fill_model_detail(products, is_enable_model_property_info)
 
 		if options.get('with_shelve_status', False):
-			self.__fill_shelve_status(self.corp, products)
+			self.__fill_shelve_status(products)
 
 		if options.get('with_product_promotion', False):
-			self.__fill_promotion_detail(self.corp, products)
+			self.__fill_promotion_detail(products)
 
 		if options.get('with_image', False):
-			self.__fill_image_detail(self.corp, products, product_ids)
+			self.__fill_image_detail(products, product_ids)
 
 		if options.get('with_property', False):
-			self.__fill_property_detail(self.corp, products, product_ids)
+			self.__fill_property_detail(products, product_ids)
 
 		if options.get('with_category', False):
-			self.__fill_category_detail(self.corp, product_ids, id2product)
+			self.__fill_category_detail(product_ids, id2product)
 
 		if options.get('with_supplier_info', False):
-			self.__fill_supplier_detail(self.corp, products, product_ids)
+			self.__fill_supplier_detail(products, product_ids)
 
 		if options.get('with_classification', False):
-			self.__fill_classification_detail(self.corp, products, product_ids, id2product)
+			self.__fill_classification_detail(products, product_ids, id2product)
 
 		if options.get('with_sales', False):
-			self.__fill_sales_detail(self.corp, products, product_ids, id2product)
+			self.__fill_sales_detail(products, product_ids, id2product)
 
 		if options.get('with_product_label', False):
-			self.__fill_label_detail(self.corp, products, product_ids)
+			self.__fill_label_detail(products, product_ids)
 
 		if options.get('with_cps_promotion_info', False):
-			self.__fill_cps_promoteion_info(self.corp, products, product_ids, id2product)
+			self.__fill_cps_promoteion_info(products, product_ids, id2product)
