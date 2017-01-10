@@ -68,7 +68,7 @@
                 }
             }
         },
-        "/mall/classification/": {
+        "/mall/product_classification/": {
             "put": {
                 "summary": "创建商品分类",
                 "parameters": [
