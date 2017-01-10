@@ -171,6 +171,7 @@ class DeliveryItem(business_model.Model):
 					delivery_item_id2details[detail.order_id] = [detail]
 
 			for delivery_item in delivery_items:
+				delivery_item.express_details = []
 				express_details = delivery_item_id2details.get(delivery_item.id)
 				if express_details:
 					for detail in express_details:
