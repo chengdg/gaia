@@ -348,7 +348,7 @@ class OrderRepository(business_model.Model):
 				running_group_order_bids = ["-running_group_order_bids"]
 
 			if not failed_group_order_bids:
-				running_group_order_bids = ["-failed_group_order_bids"]
+				failed_group_order_bids = ["-failed_group_order_bids"]
 
 			ignored_group_orders = db_models.select(mall_models.Order.order_id).where(
 				(mall_models.Order.order_id.in_(running_group_order_bids)) | (
