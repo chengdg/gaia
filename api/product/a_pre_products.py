@@ -42,8 +42,7 @@ class APreProducts(api_resource.ApiResource):
 				'purchase_price': pre_product.purchase_price,
 				'total_sales': 0, #TODO 获取已入库商品的销量
 				'stocks': pre_product.stocks,
-				'pending_status_text': pre_product.pending_status_text,
-				'status': pre_product.pending_status,
+				'status': pre_product.status,
 				'classification_name_nav': pre_product.classification_nav,
 				'is_updated': pre_product.is_updated,
 				'is_accepted': pre_product.is_accepted,

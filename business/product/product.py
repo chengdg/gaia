@@ -107,7 +107,7 @@ class Product(business_model.Model):
 		#审核状态
 		'is_updated',
 		'is_accepted',
-		'pending_status',
+		'status',
 		'refuse_reason',
 
 	)
@@ -178,24 +178,24 @@ class Product(business_model.Model):
 		return stocks if len(stocks) > 0 else stocks[0]
 
 	@property
-	def pending_status_text(self):
+	def status_text(self):
 		"""
 		:return: 待审核, 审核中, 已审核, 入库驳回
 		"""
-		pending_status_text = u'待审核'
+		status_text = u'待审核'
 
 		if self.is_accepted:
-			pending_status_text = u'已审核'
+			status_text = u'已审核'
 
-		if self.pending_status == mall_models.PRODUCT_PENDING_STATUS['REFUSED'] and not self.is_accepted:
-			pending_status_text = u'入库驳回>>'
-		elif self.pending_status == mall_models.PRODUCT_PENDING_STATUS['REFUSED'] and self.is_accepted:
-			pending_status_text = u'修改驳回>>'
+		if self.status == mall_models.PRODUCT_STATUS['REFUSED'] and not self.is_accepted:
+			status_text = u'入库驳回>>'
+		elif self.status == mall_models.PRODUCT_STATUS['REFUSED'] and self.is_accepted:
+			status_text = u'修改驳回>>'
 
-		if self.pending_status == mall_models.PRODUCT_PENDING_STATUS['SUBMIT']:
-			pending_status_text = u'审核中'
+		if self.status == mall_models.PRODUCT_STATUS['SUBMIT']:
+			status_text = u'审核中'
 
-		return pending_status_text
+		return status_text
 
 	@property
 	def has_multi_models(self):
@@ -224,7 +224,7 @@ class Product(business_model.Model):
 
 		# 更新商品状态
 		mall_models.Product.update(
-			pending_status=mall_models.PRODUCT_PENDING_STATUS['NOT_YET'],
+			status=mall_models.PRODUCT_STATUS['NOT_YET'],
 			is_updated=False,
 			is_accepted=True
 		).dj_where(id=product_id).execute()
@@ -234,7 +234,7 @@ class Product(business_model.Model):
 		提交审核
 		"""
 		mall_models.Product.update(
-			pending_status=mall_models.PRODUCT_PENDING_STATUS['SUBMIT']
+			status=mall_models.PRODUCT_STATUS['SUBMIT']
 		).dj_where(id=self.id).execute()
 
 	def refuse_verify(self, reason):
@@ -243,7 +243,7 @@ class Product(business_model.Model):
 		"""
 		mall_models.Product.update(
 			refuse_reason=reason,
-			pending_status=mall_models.PRODUCT_PENDING_STATUS['REFUSED']
+			status=mall_models.PRODUCT_STATUS['REFUSED']
 		).dj_where(id=self.id).execute()
 
 	# 如果规格有图片就显示，如果没有，使用缩略图

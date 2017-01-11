@@ -356,7 +356,7 @@ PRODUCT_ZONE_NO_LIMIT = 0 #不限制
 PRODUCT_ZONE_FORBIDDEN_SALE = 1 #禁售
 PRODUCT_ZONE_ONLY_SALE = 2 #仅售
 
-PRODUCT_PENDING_STATUS = {
+PRODUCT_STATUS = {
 	'NOT_YET': 0, #尚未提交审核
 	'SUBMIT': 1, #提交审核
 	'REFUSED': 2 #驳回
@@ -413,7 +413,7 @@ class Product(models.Model):
 
 	#待审核商品
 	is_pre_product = models.BooleanField(default=False)  # 是否待审核商品
-	pending_status = models.IntegerField(default=PRODUCT_PENDING_STATUS['NOT_YET'])  # 审核状态
+	status = models.IntegerField(default=PRODUCT_STATUS['NOT_YET'])  # 审核状态
 	refuse_reason = models.TextField(default='')  # 驳回原因
 	is_updated = models.BooleanField(default=False) #是否已更新
 	is_accepted = models.BooleanField(default=True)  # 审核是否已通过

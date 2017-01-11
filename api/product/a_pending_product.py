@@ -16,8 +16,9 @@ class APendingProduct(api_resource.ApiResource):
 	@param_required(['corp_id', 'product_id:int'])
 	def put(args):
 		product_id = args['product_id']
+		corp = args['corp']
 
-		product = GlobalProductRepository.get().get_product(product_id)
+		product = corp.product_pool.get_product_by_id(product_id)
 		product.submit_verify()
 
 		return {}

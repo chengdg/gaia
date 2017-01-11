@@ -16,6 +16,30 @@ def __limit_type_name2number(name):
 	else:
 		return -1
 
+def __get_product_status_text(status, is_accepted):
+	"""
+	:return: 待审核, 审核中, 已审核, 入库驳回
+	"""
+	PRODUCT_STATUS = {
+		'NOT_YET': 0, #尚未提交审核
+		'SUBMIT': 1, #提交审核
+		'REFUSED': 2 #驳回
+	}
+	status_text = u'待审核'
+
+	if is_accepted:
+		status_text = u'已审核'
+
+	if status == PRODUCT_STATUS['REFUSED'] and not is_accepted:
+		status_text = u'入库驳回'
+	elif status == PRODUCT_STATUS['REFUSED'] and is_accepted:
+		status_text = u'修改驳回'
+
+	if status == PRODUCT_STATUS['SUBMIT']:
+		status_text = u'审核中'
+
+	return status_text
+
 def __postage_type_name2bool(name):
 	if u"统一运费" == name:
 		return True
@@ -33,7 +57,7 @@ def __get_operations(context, status):
 	#运营
 	operations = []
 	if bdd_util.is_weizoom_corp(context.corp.id):
-		if status == mall_models.PRODUCT_PENDING_STATUS['SUBMIT']:
+		if status == mall_models.PRODUCT_STATUS['SUBMIT']:
 			operations.append(u'通过')
 			operations.append(u'驳回')
 		operations.append(u'删除')
@@ -85,7 +109,7 @@ def step_impl(context, user):
 		row['classfication'] = row['classification_name_nav']
 		row['created_time'] = u'创建时间'
 		row['operation'] = __get_operations(context, row['status'])
-		row['status'] = row['pending_status_text']
+		row['status'] = __get_product_status_text(row['status'], row['is_accepted'])
 		row['stock'] = row['stocks'][0] if len(row['stocks']) == 1 else '~'.join(row['stocks'])
 		row['price'] = row['price_info']['display_price']
 		row['owner_name'] = 'jobs'#TODO

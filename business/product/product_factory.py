@@ -5,7 +5,6 @@ from eaglet.core import watchdog
 
 from business import model as business_model
 from business.mall.corporation_factory import CorporationFactory
-from business.product.global_product_repository import GlobalProductRepository
 from business.product.product import Product
 from db.mall import models as mall_models
 from product_pool import ProductPool
@@ -17,7 +16,7 @@ class ProductFactory(business_model.Service):
 	商品工厂
 	"""
 	def __create_product(self, base_info, image_info, logistics_info, pay_info):
-		product = mall_models.Product.create(
+		product_model = mall_models.Product.create(
 			owner=self.corp.id,
 			name=base_info.get('name', '').strip(),
 			promotion_title=base_info.get('promotion_title', '').strip(),
@@ -40,12 +39,12 @@ class ProductFactory(business_model.Service):
 			limit_zone_type=int(logistics_info.get('limit_zone_type', '0')),
 			limit_zone=int(logistics_info.get('limit_zone_id', '0')),
 
-			pending_status=mall_models.PRODUCT_PENDING_STATUS['NOT_YET'],
+			status=mall_models.PRODUCT_STATUS['NOT_YET'],
 			is_pre_product=base_info.get('is_pre_product', False),
 			is_accepted=False
 		)
 		
-		return product
+		return Product(product_model)
 
 	def __add_product_to_categories(self, product, category_ids):
 		"""
@@ -189,8 +188,8 @@ class ProductFactory(business_model.Service):
 		"""
 		创建已审核(自营)商品
 		"""
-		product_db_model = self.create_product(args)
-		Product(product_db_model).verify(args['corp'])
+		product = self.create_product(args)
+		product.verify(self.corp)
 
 	def create_consignment_product(self, args):
 		"""

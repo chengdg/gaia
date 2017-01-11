@@ -15,6 +15,7 @@ from db.account import models as account_model
 
 from business.product.product_shelf import ProductShelf
 from business.product.product_pool import ProductPool
+from business.product.global_product_repository import GlobalProductRepository
 from business.product.property_template.property_template_repository import PropertyTemplateRepository
 from business.product.model.product_model_property_repository import ProductModelPropertyRepository
 
@@ -120,6 +121,10 @@ class Corporation(business_model.Model):
 		return ProductPool.get_for_corp({
 			"corp": self
 		})
+
+	@property
+	def global_product_repository(self):
+		return GlobalProductRepository.get(self)
 
 	@property
 	def category_repository(self):

@@ -18,7 +18,7 @@ class GlobalProductRepository(business_model.Service):
 			pass
 		if query_dict['corp'].is_weizoom_corp():
 			db_models = db_models.where(
-				(mall_models.Product.pending_status << [mall_models.PRODUCT_PENDING_STATUS['SUBMIT'], mall_models.PRODUCT_PENDING_STATUS['REFUSED']])
+				(mall_models.Product.status << [mall_models.PRODUCT_STATUS['SUBMIT'], mall_models.PRODUCT_STATUS['REFUSED']])
 				| (mall_models.Product.is_accepted == True)
 			)
 		else:
@@ -41,13 +41,11 @@ class GlobalProductRepository(business_model.Service):
 
 	def get_product(self, product_id, fill_options=None):
 		db_model = mall_models.Product.select().dj_where(id=product_id, is_deleted=False).get()
-		product_model = Product(db_model)
-		fill_options = fill_options if fill_options else {}
-		self.__fill_product_details([product_model], fill_options)
-		return product_model
+		product = Product(db_model)
+		self.__fill_product_details([product], fill_options)
+		return product
 
 	def get_products_by_ids(self, product_ids, fill_options=None):
-		fill_options = fill_options if fill_options else {}
 		product_models = mall_models.Product.select().dj_where(id__in=product_ids)
 		products = [Product(model) for model in product_models]
 
