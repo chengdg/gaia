@@ -131,6 +131,8 @@ class Product(business_model.Model):
 			self.supplier_id = self.supplier
 			self.supplier = None
 			self.promotions = []
+			self.create_type = None
+			self.sync_at = None
 
 	@property
 	def is_sellout(self):
@@ -145,18 +147,6 @@ class Product(business_model.Model):
 		[property setter] 是否卖光
 		"""
 		pass
-
-	# @property
-	# def classification_nav(self):
-	# 	"""
-	# 	商品分类层级
-	# 	"""
-	#
-	# 	classification_id = mall_models.ClassificationHasProduct.select().dj_where(product_id=self.id).get().classification_id
-	# 	corp = CorporationFactory.get()
-	# 	classifications = corp.product_classification_repository.get_product_classification_tree_by_end(
-	# 		classification_id)
-	# 	return '--'.join([classification.name for classification in classifications])
 
 	@property
 	def stocks(self):

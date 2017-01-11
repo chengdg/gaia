@@ -310,7 +310,6 @@ def table2list(context):
 	expected = []
 	for row in context.table:
 		data = {}
-		print "tttttttttttttttttable"
 		for heading in row.headings:
 			if ':' in heading:
 				real_heading, value_type = heading.split(':')

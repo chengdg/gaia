@@ -4,19 +4,19 @@ from eaglet.core import paginator
 
 from business import model as business_model
 from business.account.user_profile import UserProfile
-from business.product.fill_product_detail_service import FillProductDetailService
 from db.mall import models as mall_models
 from product import Product
 
 class GlobalProductRepository(business_model.Service):
+	def __fill_product_details(self, products, fill_options):
+		from business.product.fill_product_detail_service import FillProductDetailService
+		FillProductDetailService.get().fill_detail(products, fill_options)
+
 	def filter_products(self, query_dict, page_info, fill_options=None):
 		db_models = mall_models.Product.select().dj_where(is_deleted=False)
 
 		if query_dict.get('owner_name'):
 			pass
-		print ('---------------------')
-		print (query_dict['corp'].is_weizoom_corp())
-		print ('---------------------')
 		if query_dict['corp'].is_weizoom_corp():
 			db_models = db_models.where(
 				(mall_models.Product.pending_status << [mall_models.PRODUCT_PENDING_STATUS['SUBMIT'], mall_models.PRODUCT_PENDING_STATUS['REFUSED']])
@@ -41,7 +41,7 @@ class GlobalProductRepository(business_model.Service):
 			products.append(pre_product)
 
 		fill_options = fill_options if fill_options else {}
-		FillProductDetailService.get().fill_detail(products, fill_options)
+		self.__fill_product_details(products, fill_options)
 
 		return pageinfo, products
 
@@ -49,16 +49,15 @@ class GlobalProductRepository(business_model.Service):
 		db_model = mall_models.Product.select().dj_where(id=product_id, is_deleted=False).get()
 		product_model = Product(db_model)
 		fill_options = fill_options if fill_options else {}
-		FillProductDetailService.get().fill_detail([product_model], fill_options)
+		self.__fill_product_details([product_model], fill_options)
 		return product_model
 
 	def get_products_by_ids(self, product_ids, fill_options=None):
 		fill_options = fill_options if fill_options else {}
 		product_models = mall_models.Product.select().dj_where(id__in=product_ids)
 		products = [Product(model) for model in product_models]
-		from business.product.fill_product_detail_service import FillProductDetailService
-		fill_product_detail_service = FillProductDetailService.get(None)
-		fill_product_detail_service.fill_detail(products, fill_options)
+
+		self.__fill_product_details(products, fill_options)
 
 		pool_products = mall_models.ProductPool.select().dj_where(product_id__in=product_ids)
 		id2product = dict([(product.id, product) for product in products])

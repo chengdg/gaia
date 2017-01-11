@@ -227,9 +227,11 @@ class FillProductDetailService(business_model.Service):
 
 		for relation in relations:
 			classification_list = []
+			classification_nav_list = []
 			product = id2product[relation.product_id]
 			classification = id2classification[relation.classification_id]
 			classification_list.append(classification)
+			classification_nav_list.append(classification.name)
 
 			while True:
 				if classification.father_id == 0:
@@ -237,9 +239,12 @@ class FillProductDetailService(business_model.Service):
 
 				classification = id2classification[classification.father_id]
 				classification_list.append(classification)
+				classification_nav_list.append(classification.name)
 
 			classification_list.sort(lambda x,y: cmp(x.level, y.level))
+			classification_nav_list.reverse()
 			product.classification_lists.append(classification_list)
+			product.classification_nav = '--'.join(classification_nav_list)
 
 	def __fill_label_detail(self, corp, products, product_ids):
 		"""

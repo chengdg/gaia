@@ -9,7 +9,7 @@ from business.product.global_product_repository import GlobalProductRepository
 
 class APreProducts(api_resource.ApiResource):
 	"""
-	待审核商品集合
+	原始商品集合
 	"""
 	app = "product"
 	resource = "pre_products"
@@ -18,15 +18,11 @@ class APreProducts(api_resource.ApiResource):
 	def get(args):
 
 		fill_options = {
-			'with_category': False,
 			'with_price': True,
 			'with_image': True,
 			'with_product_model': True,
 			'with_model_property_info': True,
-			'with_property': False,
-			'with_supplier_info': True,
 			'with_classification': True,
-			'with_product_promotion': False
 		}
 		page_info = PageInfo.create({
 			"cur_page": int(args.get('cur_page', 1)),
@@ -43,6 +39,7 @@ class APreProducts(api_resource.ApiResource):
 				'classification_id': pre_product.classification_id,
 				'name': pre_product.name,
 				'price_info': pre_product.price_info,
+				'purchase_price': pre_product.purchase_price,
 				'total_sales': 0, #TODO 获取已入库商品的销量
 				'stocks': pre_product.stocks,
 				'pending_status_text': pre_product.pending_status_text,
