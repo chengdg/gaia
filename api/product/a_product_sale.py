@@ -8,9 +8,9 @@ from business.product.product_factory import ProductFactory
 from business.product.update_product_service import UpdateProductService
 
 
-class AProductStock(api_resource.ApiResource):
+class AProductSale(api_resource.ApiResource):
 	"""
-	商品库存
+	商品销量
 	"""
 	app = "product"
 	resource = "product_sale"

@@ -32,6 +32,126 @@
                     }
                 }
             }
+        },
+        "/mall/supplier/": {
+            "put": {
+                "summary": "添加单个供货商",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "responsible_person",
+                        "in": "query",
+                        "description": "责任人",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "supplier_tel",
+                        "in": "query",
+                        "description": "供货商电话",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "supplier_address",
+                        "in": "query",
+                        "description": "供货商地址",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "remark",
+                        "in": "query",
+                        "description": "备注",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "description": "类型",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "settlement_period",
+                        "in": "query",
+                        "description": "结算类型",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "divide_info",
+                        "in": "query",
+                        "description": "分成信息",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "retail_info",
+                        "in": "query",
+                        "description": "",
+                        "required": false,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "order_config"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+
+                    }
+                }
+            },
+            "delete": {
+                "summary": "删除单个供货商",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "order_config"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+
+                    }
+                }
+            }
         }
     },
     "definitions": {

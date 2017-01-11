@@ -214,6 +214,42 @@
                 }
             }
         },
+        "/product/product_sale/": {
+            "post": {
+                "summary": "商品销量",
+                "parameters": [
+                    {
+                        "name": "corp",
+                        "in": "query",
+                        "description": "",
+                        "required": true
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "商品的id",
+                        "required": true
+                    },
+                    {
+                        "name": "changed_count",
+                        "in": "query",
+                        "description": "修改数量,如果要减可以使用-1",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "product"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        },
         "/product/pooled_products/": {
             "get": {
                 "summary": "获取商品池中的商品集合",
@@ -251,7 +287,7 @@
                 }
             }
         },
-        "/product/product_creation_option/": {
+        "/product/creation_option/": {
             "get": {
                 "summary": "获取商品创建参数",
                 "parameters": [
