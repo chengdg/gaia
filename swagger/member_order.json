@@ -130,6 +130,58 @@
 					}
 				}
 			}
+		},
+		"/member/member_pay_info": {
+			"post": {
+				"summary": "会员支付信息",
+				"parameters": [
+					{
+						"name": "corp_id",
+						"in": "query",
+						"required": true
+					},
+					{
+						"name": "order_id",
+						"in": "query",
+						"required": true
+					},
+					{
+						"name": "from_status",
+						"in": "query",
+						"required": true
+					},
+					{
+						"name": "to_status",
+						"in": "query",
+						"required": true
+					}
+				],
+				"tags": [
+					"member"
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 	}
 }
