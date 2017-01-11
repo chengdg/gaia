@@ -159,8 +159,8 @@ def create_general_corp(username, display_name=None):
 
 
 def create_weizoom_corp(username, display_name=None):
-    return __create_corp(username, display_name, SELF_RUN_PLATFORM)
+    return __create_corp(username, display_name, WEIZOOM_CORP)
 
 
 def create_self_run_platform(username, display_name=None):
-    return __create_corp(username, display_name, WEIZOOM_CORP)
+    return __create_corp(username, display_name, SELF_RUN_PLATFORM)
