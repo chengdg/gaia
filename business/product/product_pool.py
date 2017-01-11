@@ -235,8 +235,11 @@ class ProductPool(business_model.Model):
 			pool_product_models = pool_product_models.order_by(*order_fields)
 
 		#获取查询结果
-		product_ids = [pool_product_model.product_id for pool_product_model in pool_product_models]
-		product2poolmodel = dict([(pool_product_model.product_id, pool_product_model) for pool_product_model in pool_product_models])
+		product_ids = []
+		product2poolmodel = dict()
+		for pool_product_model in pool_product_models:
+			product_ids.append(pool_product_model.product_id)
+			product2poolmodel[pool_product_model.product_id] = pool_product_model
 		copy_product_ids = copy.copy(product_ids)
 		#在mall_product_model中进行过滤
 		product_model_filters = type2filters['product_model']
