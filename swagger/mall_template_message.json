@@ -1,0 +1,95 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "Hermes Mall Notify API"
+    },
+    "paths": {
+        "/mall/template_message/": {
+            "get": {
+                "summary": "模板消息",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "send_point",
+                        "in": "query",
+                        "description": "0:订单支付 1:发货通知",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "order"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/Template"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "Template": {
+            "type": "object",
+            "properties": {
+                "owner_id": {
+                    "type": "integer",
+                    "description": "用户ID"
+                },
+                "template_message_id": {
+                    "type": "integer",
+                    "description": "模版消息id"
+                },
+                "industry": {
+                    "type": "integer",
+                    "description": "行业"
+                },
+                "template_id": {
+                    "type": "integer",
+                    "description": "模版id"
+                },
+                "first_text": {
+                    "type": "string",
+                    "description": "模板信息描述"
+                },
+                "remark_text": {
+                    "type": "string",
+                    "description": "备注信息描述"
+                },
+                "type": {
+                    "type": "integer",
+                    "description": "行业类型 0：主营行业 1：副营行业"
+                },
+                "status": {
+                    "type": "integer",
+                    "description": "是否启用 0：不启用 1：启用"
+                },
+                "created_at": {
+                    "type": "string",
+                    "description": "创建时间"
+                },
+                "attribute": {
+                    "type": "string",
+                    "description": "属性"
+                },
+                "title": {
+                    "type": "string",
+                    "description": "标题"
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,54 @@
+{
+	"swagger": "2.0",
+	"info": {
+		"version": "0.0.1",
+		"title": "Hermes Weixin Material API"
+	},
+	"paths": {
+		"/weixin/mpuser_access_token": {
+			"get": {
+				"summary": "获取微信用户token",
+				"parameters": [
+					{
+						"name": "corp_id",
+						"required": true,
+						"description": "ID"
+					}
+				],
+				"tags": [
+					"weixin"
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32",
+									"description": "当存在正在执行或未下载的任务时，创建失败返回500"
+								},
+								"data": {
+									"type": "object",
+									"properties": {
+										"access_token": {
+		                                    "type": "string",
+		                                    "description": "微信授权信息"
+		                                }
+									}
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
