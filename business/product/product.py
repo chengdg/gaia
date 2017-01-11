@@ -1,17 +1,9 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime
-import json
-from bdem import msgutil
-
 import settings
-from eaglet.decorator import param_required
-from eaglet.utils.resource_client import Resource
 
 from business.mall.corporation_factory import CorporationFactory
 from db.mall import models as mall_models
 from db.mall import promotion_models
-from db.account import models as account_models
-from business.account.user_profile import UserProfile
 from business import model as business_model
 from eaglet.core import watchdog
 from eaglet.core.exceptionutil import unicode_full_stack
@@ -176,26 +168,6 @@ class Product(business_model.Model):
 			stocks.append(unlimit)
 
 		return stocks if len(stocks) > 0 else stocks[0]
-
-	@property
-	def status_text(self):
-		"""
-		:return: 待审核, 审核中, 已审核, 入库驳回
-		"""
-		status_text = u'待审核'
-
-		if self.is_accepted:
-			status_text = u'已审核'
-
-		if self.status == mall_models.PRODUCT_STATUS['REFUSED'] and not self.is_accepted:
-			status_text = u'入库驳回>>'
-		elif self.status == mall_models.PRODUCT_STATUS['REFUSED'] and self.is_accepted:
-			status_text = u'修改驳回>>'
-
-		if self.status == mall_models.PRODUCT_STATUS['SUBMIT']:
-			status_text = u'审核中'
-
-		return status_text
 
 	@property
 	def has_multi_models(self):
