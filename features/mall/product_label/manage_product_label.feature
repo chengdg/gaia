@@ -18,7 +18,7 @@ Background:
 		}]
 		"""
 
-@gaia @mall @product @product_label @label @aix
+@gaia @mall @product @product_label
 Scenario:1 运营人员新增商品标签
 	When weizoom添加商品标签
 		"""
@@ -42,7 +42,7 @@ Scenario:1 运营人员新增商品标签
 		|  省市  |  江苏,黑龙江,广东,浙江,北京,江西  |
 		|基本信息| 男,女,新生儿,9-13岁,14-18岁,成年  | 
 
-@gaia @mall @product @product_label @label @aix
+@gaia @mall @product @product_label
 Scenario:2 运营人员删除商品标签
 	Given weizoom登录系统
 	

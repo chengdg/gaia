@@ -294,10 +294,10 @@ class OrderRepository(business_model.Model):
 	def __get_db_models_for_corp(self):
 		webapp_id = self.corp.webapp_id
 		user_id = self.corp.id
-		sync_able_status_list = [mall_models.ORDER_STATUS_PAYED_SUCCESSED,
+		sync_able_status_list = (mall_models.ORDER_STATUS_PAYED_SUCCESSED,
 		                         mall_models.ORDER_STATUS_PAYED_NOT_SHIP,
 		                         mall_models.ORDER_STATUS_PAYED_SHIPED,
-		                         mall_models.ORDER_STATUS_SUCCESSED]
+		                         mall_models.ORDER_STATUS_SUCCESSED)
 
 		if self.corp.type != 'normal':
 			db_models = mall_models.Order.select().dj_where(webapp_id=webapp_id, origin_order_id__lte=0,
@@ -337,9 +337,22 @@ class OrderRepository(business_model.Model):
 			self.context['valid_group_order_bids'] = successful_group_order_bids
 
 			# 忽略的团购订单
-			ignored_group_orders = db_models.where(
-				(mall_models.Order.order_id << running_group_order_bids) | (
-					(mall_models.Order.order_id << failed_group_order_bids) & (mall_models.Order.status.not_in(
+			# ignored_group_orders = db_models.select(mall_models.Order.order_id).where(
+			# 	(mall_models.Order.order_id << running_group_order_bids) | (
+			# 		(mall_models.Order.order_id << failed_group_order_bids) & (mall_models.Order.status.not_in(
+			# 			[mall_models.ORDER_STATUS_GROUP_REFUNDING, mall_models.ORDER_STATUS_GROUP_REFUNDED]) & (
+			# 			                                                           mall_models.Order.final_price > 0))))
+
+			# hack peewee in
+			if not running_group_order_bids:
+				running_group_order_bids = ["-running_group_order_bids"]
+
+			if not failed_group_order_bids:
+				failed_group_order_bids = ["-failed_group_order_bids"]
+
+			ignored_group_orders = db_models.select(mall_models.Order.order_id).where(
+				(mall_models.Order.order_id.in_(running_group_order_bids)) | (
+					(mall_models.Order.order_id.in_(failed_group_order_bids)) & (mall_models.Order.status.not_in(
 						[mall_models.ORDER_STATUS_GROUP_REFUNDING, mall_models.ORDER_STATUS_GROUP_REFUNDED]) & (
 						                                                           mall_models.Order.final_price > 0))))
 

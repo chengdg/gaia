@@ -5,7 +5,8 @@
         "title": "Hermes Image Group API"
     },
     "paths": {
-        "/order/config/": {
+
+        "/mall/integral_strategy/": {
             "get": {
                 "summary": "积分规则",
                 "parameters": [

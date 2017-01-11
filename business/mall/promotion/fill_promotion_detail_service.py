@@ -7,6 +7,7 @@ from business.mall.promotion.promotion import Promotion
 from business.mall.promotion.integral_sale import IntegralSale
 from business.mall.promotion.flash_sale import FlashSale
 from business.mall.promotion.premium_sale import PremiumSale
+from business.product.global_product_repository import GlobalProductRepository
 from db.mall import promotion_models
 from db.mall import models as mall_models
 
@@ -75,7 +76,7 @@ class FillPromotionDetailService(busniess_model.Service):
 		for relation in relations:
 			promotion_id2product_ids[relation.promotion_id].append(relation.product_id)
 		product_ids = [relation.product_id for relation in relations]
-		products = self.corp.product_pool.get_products_by_ids(product_ids=product_ids)
+		products = GlobalProductRepository.get().get_products_by_ids(product_ids=product_ids)
 		fill_options = {
 			'with_sales': True,
 			"with_image": True,
@@ -114,6 +115,8 @@ class FillPromotionDetailService(busniess_model.Service):
 		"""
 		为商品添加促销详细信息
 		"""
+		if not corp:
+			return
 		id2product = dict([(product.id, product) for product in products])
 		product_ids = id2product.keys()
 

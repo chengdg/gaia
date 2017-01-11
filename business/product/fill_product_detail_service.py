@@ -1,12 +1,13 @@
-# coding=utf-8
-# -*- utf-8 -*-
-import datetime
+# -*- coding: utf-8 -*-
 
 from business import model as business_model
-
+from business.mall.product_classification.product_classification_repository import ProductClassificationRepository
+from business.mall.product_label.product_label_repository import ProductLabelRepository
+from business.mall.supplier.supplier_repository import SupplierRepository
 from business.product.product import Product
 from business.product.model.product_model_generator import ProductModelGenerator
 from business.mall.promotion.fill_promotion_detail_service import FillPromotionDetailService
+
 from db.mall import models as mall_models
 from db.mall import promotion_models
 from gaia_conf import TOPIC
@@ -17,12 +18,22 @@ import settings
 class FillProductDetailService(business_model.Service):
 	"""
 	对商品集合批量进行详情填充的服务
+
+	商品详情信息分类两类：动态信息和静态信息
+		静态信息：指商品的[供应商]填充的信息，包括商品名、图片、分类等
+		动态信息：指商品的[代销商]填充的信息，包括商品分组等
+
+	使用此service，对于静态信息，只需要提供product_id(s),
+	而对于动态信息，还需要提供corp信息，如果没有corp，则直接返回空
+
+	注意传递的fill_options, 需要将动态选项和静态选项分离
+
 	"""
 	def __fill_shelve_status(self, corp, products):
 		"""
 		填充商品货架状态相关细节
 		"""
-		if len(products) == 0:
+		if len(products) == 0 or not corp:
 			return
 
 		product_ids = [product.id for product in products]
@@ -49,12 +60,15 @@ class FillProductDetailService(business_model.Service):
 			return
 
 		#TODO2: 因为这里是静态方法，所以目前无法使用product.context['corp']，构造基于Object的临时解决方案，需要优化
-		product_model_generator = ProductModelGenerator.get(corp)
+		product_model_generator = ProductModelGenerator.get(None)
 		product_model_generator.fill_models_for_products(products, is_enable_model_property_info)
 
 	def __fill_category_detail(self, corp, product_ids, id2product):
-		"""填充商品分类信息相关细节
 		"""
+		填充商品分类信息相关细节
+		"""
+		if not corp:
+			return
 		# 获取product关联的category集合
 		for key, product in id2product.items():
 			product.categories = []
@@ -196,7 +210,7 @@ class FillProductDetailService(business_model.Service):
 		for product in products:
 			supplier2products.setdefault(product.supplier_id, []).append(product)
 		
-		suppliers = corp.supplier_repository.get_suppliers_by_ids(supplier_ids)
+		suppliers = SupplierRepository.get(None).get_suppliers_by_ids(supplier_ids)
 		for supplier in suppliers:
 			for product in supplier2products[supplier.id]:
 				product.supplier = supplier
@@ -208,14 +222,16 @@ class FillProductDetailService(business_model.Service):
 		# 如果已经下线的分类还在使用,就是错误数据,这里的woid没有目前没有作用
 		relations = mall_models.ClassificationHasProduct.select().dj_where(product_id__in=product_ids)
 
-		classifications = corp.product_classification_repository.get_product_classifications()
+		classifications = ProductClassificationRepository.get(None).get_product_classifications()
 		id2classification = dict([(classification.id, classification) for classification in classifications])
 
 		for relation in relations:
 			classification_list = []
+			classification_nav_list = []
 			product = id2product[relation.product_id]
 			classification = id2classification[relation.classification_id]
 			classification_list.append(classification)
+			classification_nav_list.append(classification.name)
 
 			while True:
 				if classification.father_id == 0:
@@ -223,9 +239,12 @@ class FillProductDetailService(business_model.Service):
 
 				classification = id2classification[classification.father_id]
 				classification_list.append(classification)
+				classification_nav_list.append(classification.name)
 
 			classification_list.sort(lambda x,y: cmp(x.level, y.level))
+			classification_nav_list.reverse()
 			product.classification_lists.append(classification_list)
+			product.classification_nav = '--'.join(classification_nav_list)
 
 	def __fill_label_detail(self, corp, products, product_ids):
 		"""
@@ -239,7 +258,7 @@ class FillProductDetailService(business_model.Service):
 			label_ids.append(relation.label_id)
 			product_id2label_ids.setdefault(relation.product_id, []).append(relation.label_id)
 
-		labels = corp.product_label_repository.get_labels(label_ids)
+		labels = ProductLabelRepository.get(None).get_labels(label_ids)
 		id2label = dict([(label.id, label)for label in labels])
 		for product in products:
 			product.labels = []
@@ -271,9 +290,11 @@ class FillProductDetailService(business_model.Service):
 		"""
 		填充商品的cps推广信息
 		"""
+		if not corp:
+			return
 		promotion_infos = mall_models.PromoteDetail.select().dj_where(product_id__in=product_ids,
 																	  promote_status=mall_models.PROMOTING)
-		pool_product_models = mall_models.ProductPool.select().dj_where(product_id__in=product_ids, woid=self.corp.id)
+		pool_product_models = mall_models.ProductPool.select().dj_where(product_id__in=product_ids, woid=corp.id)
 		id2pool_products = dict([(pool.product_id, pool) for pool in pool_product_models])
 		for promotion in promotion_infos:
 			product = id2product.get(promotion.product_id)

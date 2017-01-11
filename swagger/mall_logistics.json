@@ -386,6 +386,357 @@
                     }
                 }
             }
+        },
+        "/mall/default_configs": {
+            "put": {
+                "description": "商户的默认商城配置",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "limit_zone",
+                    "logistics"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+
+                    }
+                }
+            }
+        },
+        "/mall/config": {
+            "get": {
+                "description": "获取商城配置",
+                "parameters": [
+                    {
+                        "name": "corp",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "logistics"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "title": "zones",
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/MallConfig"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "更新商城配置",
+                "parameters": [
+                    {
+                        "name": "woid",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "show_product_sales",
+                        "in": "query",
+                        "description": "通用设置，商品销量",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "show_product_sort",
+                        "in": "query",
+                        "description": "通用设置，销量排行",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "show_product_search",
+                        "in": "query",
+                        "description": "通用设置， 商品搜索框",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "show_shopping_cart",
+                        "in": "query",
+                        "description": "通用设置， 购物车",
+                        "required": false,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "logistics"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "title": "zones",
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/MallConfig"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/mall/webapp_config": {
+            "get": {
+                "description": "针对webapp的配置",
+                "parameters": [
+                    {
+                        "name": "corp",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "logistics"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "title": "zones",
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/MallConfig"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "更新商城配置",
+                "parameters": [
+                    {
+                        "name": "woid",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "show_product_sales",
+                        "in": "query",
+                        "description": "通用设置，商品销量",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "show_product_sort",
+                        "in": "query",
+                        "description": "通用设置，销量排行",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "show_product_search",
+                        "in": "query",
+                        "description": "通用设置， 商品搜索框",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "show_shopping_cart",
+                        "in": "query",
+                        "description": "通用设置， 购物车",
+                        "required": false,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "logistics"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "title": "zones",
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/MallConfig"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/mall/store_name": {
+            "get": {
+                "description": "供货商名称",
+                "parameters": [
+                    {
+                        "name": "webapp_ids",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "logistics"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "title": "store_names",
+                            "type": "object",
+                            "description": "webapp_id2store_name"
+                        }
+
+                    }
+                }
+            }
+        },
+        "/mall/express_delivery": {
+            "put": {
+                "description": "创建物流公司",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "remark",
+                        "in": "query",
+                        "description": "备注",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "company_id",
+                        "in": "query",
+                        "description": "物流公司名",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "logistics"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            },
+            "post": {
+                "description": "更新物流公司信息",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "company_id",
+                        "in": "query",
+                        "description": "物流公司id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "remark",
+                        "in": "query",
+                        "description": "备注",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "logistics"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            },
+            "delete": {
+                "description": "删除物流公司信息",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "logistics"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -701,6 +1052,31 @@
                 "city_name": {
                     "type": "string",
                     "description": "城市名称"
+                }
+            }
+        },
+        "MallConfig": {
+            "type": "object",
+            "properties": {
+                "city_id": {
+                    "type": "string",
+                    "description": "通用设置，商品销量"
+                },
+                "show_product_sort": {
+                    "type": "string",
+                    "description": "通用设置，销量排行"
+                },
+                "show_product_search": {
+                    "type": "string",
+                    "description": "通用设置， 商品搜索框"
+                },
+                "show_shopping_cart": {
+                    "type": "string",
+                    "description": "通用设置， 购物车"
+                },
+                "created_at": {
+                    "type": "string",
+                    "description": "添加时间"
                 }
             }
         }

@@ -23,3 +23,8 @@ import a_cps_promoted_product
 import a_cps_promoted_products
 import a_unprocessed_cps_promoted_products_count
 import a_processed_cps_promoted_products
+
+import a_pre_product
+import a_pre_products
+import a_pending_product
+import a_verified_product

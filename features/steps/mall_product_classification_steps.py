@@ -26,7 +26,6 @@ def __add_classification(context, datas, level, father_id):
 			if children:
 				__add_classification(context, children, level+1, response.data['id'])
 
-
 @when(u"{user}添加商品分类")
 def step_impl(context, user):
 	datas = json.loads(context.text)
@@ -66,8 +65,6 @@ def step_impl(context, user):
 	__change_empty_dict_to_none(name2classification)
 
 	expected = json.loads(context.text)
-	print (actual)
-	print (expected)
 	bdd_util.assert_dict(expected, actual)
 
 
@@ -186,10 +183,9 @@ def step_impl(context, user, classification_name):
 def step_impl(context, user):
 	expected = bdd_util.table2list(context)
 	for one in expected:
-		one['operation'] = one['operation'].split(',')
+		if one.has_key('operation'):
+			one['operation'] = one['operation'].split(',')
 	actual = __view_classification_list(context, user)
-	print (expected)
-	print (actual)
 	bdd_util.assert_list(expected, actual)
 
 @then(u"{user}查看商品分类'{classification_name}'的二级分类")
@@ -197,10 +193,9 @@ def step_impl(context, user, classification_name):
 	classification_id = __classification_name2id(classification_name)
 	expected = bdd_util.table2list(context)
 	for one in expected:
-		one['operation'] = one['operation'].split(',')
+		if one.has_key('operation'):
+			one['operation'] = one['operation'].split(',')
 	actual = __view_classification_list(context, user, classification_id)
-	print (expected)
-	print (actual)
 	bdd_util.assert_list(expected, actual)
 
 @then(u"{user}查看商品分类'{classification_name}'的标签")
@@ -215,14 +210,13 @@ def step_impl(context, user, classification_name):
 	actual = []
 	for data in resp_datas:
 		label_group_name = label_group_id2name(data['label_group_id'])
+		data['label_ids'].sort()
 		label_ids = map(lambda x: label_id2name(x), data['label_ids'])
 		actual.append({
 			'label_group_name': label_group_name,
 			'labels': label_ids
 		})
 
-	print (expected)
-	print (actual)
 	bdd_util.assert_list(expected, actual)
 
 
@@ -251,6 +245,7 @@ def __view_classification_list(context, user, father_id=0):
 		else:
 			operation_list.append(u'配置标签')
 		use_data['operation'] = operation_list
+		use_data['product_count'] = one['product_count']
 		use_data_list.append(use_data)
 
 	return use_data_list

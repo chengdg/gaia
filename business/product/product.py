@@ -1,16 +1,9 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime
-import json
-from bdem import msgutil
-
 import settings
-from eaglet.decorator import param_required
-from eaglet.utils.resource_client import Resource
 
+from business.mall.corporation_factory import CorporationFactory
 from db.mall import models as mall_models
 from db.mall import promotion_models
-from db.account import models as account_models
-from business.account.user_profile import UserProfile
 from business import model as business_model
 from eaglet.core import watchdog
 from eaglet.core.exceptionutil import unicode_full_stack
@@ -54,6 +47,8 @@ class Product(business_model.Model):
 		'supplier_id',
 		'supplier',
 		'classification_lists',
+		'classification_id',
+		'classification_nav',
 		#'supplier_user_id',
 
 		#商品规格信息
@@ -99,7 +94,14 @@ class Product(business_model.Model):
 
 		#时间信息
 		'created_at',
-		'sync_at'
+		'sync_at',
+
+		#审核状态
+		'is_updated',
+		'is_accepted',
+		'status',
+		'refuse_reason',
+
 	)
 
 	def __init__(self, model=None):
@@ -121,6 +123,8 @@ class Product(business_model.Model):
 			self.supplier_id = self.supplier
 			self.supplier = None
 			self.promotions = []
+			self.create_type = None
+			self.sync_at = None
 
 	@property
 	def is_sellout(self):
@@ -137,53 +141,82 @@ class Product(business_model.Model):
 		pass
 
 	@property
-	def total_stocks(self):
+	def stocks(self):
 		"""
-		[property] 商品总库存
+		商品库存,如：[1,15,18,无限] 或者 15 取决于规格数量
 		"""
-		context = self.context
-		if not 'total_stocks' in context:
-			context['total_stocks'] = 0
-			models = self.models
-			# if self.is_use_custom_model:
-			# 	models = self.models[1:]
-			# else:
-			# 	models = self.models
+		stocks = []
+		unlimit = None
 
-			if not models or len(models) == 0:
-				context['total_stocks'] = 0
-				return context['total_stocks']
-			is_dict = (type(models[0]) == dict)
+		product_models = mall_models.ProductModel.select().dj_where(product_id=self.id, is_deleted=False)
 
-			# for model in models:
-			# 	stock_type = model['stock_type'] if is_dict else model.stock_type
-			# 	stocks = model['stocks'] if is_dict else model.stocks
-			# 	if stock_type == mall_models.PRODUCT_STOCK_TYPE_UNLIMIT:
-			# 		context['total_stocks'] = u'无限'
-			# 		return context['total_stocks']
-			# 	else:
-			# 		context['total_stocks'] = context['total_stocks'] + stocks
-
-			# 有无限的规格
-			has_unlimited_model = False
-			for model in models:
-				stock_type = model['stock_type'] if is_dict else model.stock_type
-				if stock_type == mall_models.PRODUCT_STOCK_TYPE_UNLIMIT:
-					has_unlimited_model = True
-					break
-			if has_unlimited_model:
-				context['total_stocks'] = u'无限'
-				return context['total_stocks']
+		if product_models.dj_where(is_standard=False).count() > 0:
+			for product_model in product_models:
+				if product_model.stock_type == mall_models.PRODUCT_STOCK_TYPE_UNLIMIT:
+					unlimit = u'无限'
+				else:
+					stocks.append(product_model.stocks)
+		else:
+			product_model = product_models.first()
+			if product_model.stock_type == mall_models.PRODUCT_STOCK_TYPE_UNLIMIT:
+				stocks = u'无限'
 			else:
-				realtime_stock = RealtimeStock.from_product_id({
-					'product_id': self.id
-				}).model2stock
-				stock_dicts = realtime_stock.values()
-				# stock_dicts:[{'stock_type': 1, 'stocks': 1}, {'stock_type': 1, 'stocks': 2}, {'stock_type': 1, 'stocks': 3}]
-				for s in stock_dicts:
-					context['total_stocks'] = context['total_stocks'] + s['stocks']
+				stocks.append(product_model.stocks)
 
-		return context['total_stocks']
+		stocks.sort()
+		if unlimit:
+			stocks.append(unlimit)
+
+		return stocks if len(stocks) > 0 else stocks[0]
+
+	@property
+	def has_multi_models(self):
+		"""
+		是否多规格
+		"""
+		db_models = mall_models.ProductModel.select().dj_where(product_id=self.id, is_standard=False, is_deleted=False)
+		return db_models.count() > 0
+
+	@property
+	def has_same_postage(self):
+		"""
+		是否统一运费
+		"""
+		return self.postage_type == mall_models.POSTAGE_TYPE_UNIFIED
+
+	def verify(self, corp):
+		"""
+		审核通过
+		"""
+		product_id = self.id
+		# 将商品放入product pool
+		corp.product_pool.add_products([product_id])
+		# 将商品放入待售shelf
+		corp.forsale_shelf.add_products([product_id])
+
+		# 更新商品状态
+		mall_models.Product.update(
+			status=mall_models.PRODUCT_STATUS['NOT_YET'],
+			is_updated=False,
+			is_accepted=True
+		).dj_where(id=product_id).execute()
+
+	def submit_verify(self):
+		"""
+		提交审核
+		"""
+		mall_models.Product.update(
+			status=mall_models.PRODUCT_STATUS['SUBMIT']
+		).dj_where(id=self.id).execute()
+
+	def refuse_verify(self, reason):
+		"""
+		驳回
+		"""
+		mall_models.Product.update(
+			refuse_reason=reason,
+			status=mall_models.PRODUCT_STATUS['REFUSED']
+		).dj_where(id=self.id).execute()
 
 	# 如果规格有图片就显示，如果没有，使用缩略图
 	@property
