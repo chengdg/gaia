@@ -22,7 +22,7 @@ Background:
 		}]
 		"""
 
-@gaia @mall @mall.product @mall.product_classification @aix
+@gaia @mall @mall.product @mall.product_classification
 Scenario:1 Jobs删除已存在的商品分类
 	Given weizoom登录系统
 	When weizoom删除商品分类'分类12'

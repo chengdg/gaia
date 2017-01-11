@@ -15,10 +15,10 @@ from db.account import models as account_model
 
 from business.product.product_shelf import ProductShelf
 from business.product.product_pool import ProductPool
+from business.product.global_product_repository import GlobalProductRepository
 from business.product.property_template.property_template_repository import PropertyTemplateRepository
 from business.product.model.product_model_property_repository import ProductModelPropertyRepository
 
-from business.mall.pre_product.pre_product_repository import PreProductRepository
 from business.mall.category.category_repository import CategoryRepository
 from business.mall.image_group.image_group_repository import ImageGroupRepository
 from business.mall.pay.pay_interface_repository import PayInterfaceRepository
@@ -123,6 +123,10 @@ class Corporation(business_model.Model):
 		})
 
 	@property
+	def global_product_repository(self):
+		return GlobalProductRepository.get(self)
+
+	@property
 	def category_repository(self):
 		return CategoryRepository.get(self)
 
@@ -133,10 +137,6 @@ class Corporation(business_model.Model):
 	@property
 	def product_property_template_repository(self):
 		return PropertyTemplateRepository.get(self)
-
-	@property
-	def pre_product_repository(self):
-		return PreProductRepository(self)
 
 	@property
 	def product_model_property_repository(self):

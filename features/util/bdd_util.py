@@ -83,6 +83,9 @@ def login(user, password=None, **kwargs):
 def get_user_id_for(username):
 	return User.get(User.username == username).id
 
+def is_weizoom_corp(corp_id):
+	return UserProfile.select().dj_where(user_id=corp_id).first().webapp_type == 2
+
 
 def get_member_for(username, webapp_id):
 	"""
@@ -307,7 +310,6 @@ def table2list(context):
 	expected = []
 	for row in context.table:
 		data = {}
-		print "tttttttttttttttttable"
 		for heading in row.headings:
 			if ':' in heading:
 				real_heading, value_type = heading.split(':')

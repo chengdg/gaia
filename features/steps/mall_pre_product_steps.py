@@ -16,6 +16,30 @@ def __limit_type_name2number(name):
 	else:
 		return -1
 
+def __get_product_status_text(status, is_accepted):
+	"""
+	:return: 待审核, 审核中, 已审核, 入库驳回
+	"""
+	PRODUCT_STATUS = {
+		'NOT_YET': 0, #尚未提交审核
+		'SUBMIT': 1, #提交审核
+		'REFUSED': 2 #驳回
+	}
+	status_text = u'待审核'
+
+	if is_accepted:
+		status_text = u'已审核'
+
+	if status == PRODUCT_STATUS['REFUSED'] and not is_accepted:
+		status_text = u'入库驳回'
+	elif status == PRODUCT_STATUS['REFUSED'] and is_accepted:
+		status_text = u'修改驳回'
+
+	if status == PRODUCT_STATUS['SUBMIT']:
+		status_text = u'审核中'
+
+	return status_text
+
 def __postage_type_name2bool(name):
 	if u"统一运费" == name:
 		return True
@@ -23,33 +47,85 @@ def __postage_type_name2bool(name):
 		return False
 
 def __product_names2ids_str(name_list):
-	models = mall_models.PreProduct.select().dj_where(name__in=name_list)
+	models = mall_models.Product.select().dj_where(name__in=name_list, is_pre_product=True)
 	return [m.id for m in models]
 
-@when(u"{user}创建待审核商品")
-def step_impl(context, user):
+def __classification_name2id(classification_name):
+	return mall_models.Classification.select().dj_where(name=classification_name).get().id
+
+def __get_operations(context, status):
+	#运营
+	operations = []
+	if bdd_util.is_weizoom_corp(context.corp.id):
+		if status == mall_models.PRODUCT_STATUS['SUBMIT']:
+			operations.append(u'通过')
+			operations.append(u'驳回')
+		operations.append(u'删除')
+	else:
+		operations.append(u'编辑')
+
+	return ' '.join(operations)
+
+@when(u"{user}创建商品分类为'{classification_name}'的待审核商品")
+def step_impl(context, user, classification_name):
 	datas = json.loads(context.text)
+	classification_id = __classification_name2id(classification_name)
 	for data in datas:
-		response = context.client.put('/mall/pre_product/', {
+		response = context.client.put('/product/pre_product/', {
 			'corp_id': bdd_util.get_user_id_for(user),
-			'name': data['product_name'],
+			'classification_id': classification_id,
+			'name': data['name'],
 			'promotion_title': data['promotion_title'],
-			'has_product_model': data['has_product_model'],
+			'has_multi_models': data['has_product_model'],
 			'price': data['price'],
 			'weight': data['weight'],
-			'stock': data['stock'],
+			'stocks': data['stock'],
 			'limit_zone_type': __limit_type_name2number(data['limit_zone_type']),
 			'has_same_postage': __postage_type_name2bool(data['postage_type']),
 			'postage_money': data['postage_money'],
-			'remark': data['remark']
+			'detail': data['remark']
 		})
 		bdd_util.assert_api_call_success(response)
 
 @when(u"{user}审核通过待审核商品")
 def step_impl(context, user):
 	datas = json.loads(context.text)
-	response = context.client.put('/mall/pending_product/', {
+	response = context.client.put('/product/verified_product/', {
 		'corp_id': bdd_util.get_user_id_for(user),
 		'product_ids': json.dumps(__product_names2ids_str(datas))
 	})
 	bdd_util.assert_api_call_success(response)
+
+@then(u"{user}查看待审核商品列表")
+def step_impl(context, user):
+	expected = bdd_util.table2list(context)
+	response = context.client.get('/product/pre_products/', {
+		'corp_id': bdd_util.get_user_id_for(user)
+	})
+
+	actual = response.data['rows']
+
+	for row in actual:
+		row['classfication'] = row['classification_name_nav']
+		row['created_time'] = u'创建时间'
+		row['operation'] = __get_operations(context, row['status'])
+		row['status'] = __get_product_status_text(row['status'], row['is_accepted'])
+		row['stock'] = row['stocks'][0] if len(row['stocks']) == 1 else '~'.join(row['stocks'])
+		row['price'] = row['price_info']['display_price']
+		row['owner_name'] = 'jobs'#TODO
+
+	bdd_util.assert_list(expected, actual)
+
+@when(u"{user}提交商品审核")
+def step_impl(context, user):
+	datas = json.loads(context.text)
+	product_ids = __product_names2ids_str(datas)
+	for product_id in product_ids:
+		response = context.client.put('/product/pending_product/', {
+			'corp_id': bdd_util.get_user_id_for(user),
+			'product_id': product_id
+		})
+
+		bdd_util.assert_api_call_success(response)
+
+

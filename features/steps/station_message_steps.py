@@ -31,7 +31,7 @@ def step_get_messages(context, user):
 	response = context.client.get('/message/messages/', data)
 	messages = response.data['messages']
 	actual = [{'title': msg['title'], 'creat_time': msg['created_at']} for msg in messages]
-	expected = bdd_util.table2dict(context)
+	expected = bdd_util.table2list(context)
 	# expected = []
 	bdd_util.print_json(expected)
 	now_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")

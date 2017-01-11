@@ -26,7 +26,7 @@ Feature: 客户查看站内消息
 		}]
 		"""
 
-  @gaia @mantis @station_message @jrs
+  @gaia @station_message
   Scenario: 用户查看站内消息
     Given manager登录系统
     When manager查看站内信息列表

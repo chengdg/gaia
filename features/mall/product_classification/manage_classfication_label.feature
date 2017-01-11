@@ -51,7 +51,7 @@ Background:
 			"labels":["男", "女","新生儿","9-13岁","14-18岁","成年"]
 		}]
 		"""
-@gaia @mall @mall.product @classfication_label @aix
+@gaia @mall @mall.product @classfication_label
 Scenario:1 运营人员为分类配置标签
 	When weizoom为商品分类'平板电脑'配置标签
 		"""
@@ -170,7 +170,7 @@ Scenario:1 运营人员为分类配置标签
 		|     肥皂    |修改,删除,配置特殊资质,已配置标签|
 		|   清洁用品  |修改,删除,配置特殊资质,已配置标签|
 
-@gaia @mall @mall.product @classfication_label @aix
+@gaia @mall @mall.product @classfication_label
 Scenario:1 运营人员删除一级分类的标签后查看二级分类的标签
 	Then weizoom查看商品分类列表
 		|classfication_name|      operation      |

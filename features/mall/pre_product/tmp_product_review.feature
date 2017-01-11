@@ -18,11 +18,10 @@ Background:
 @gaia @mall @product @pending_product_tmp @aix
 Scenario:1 客户添加无规格商品
 	Given jobs登录系统
-	When jobs创建待审核商品
+	When jobs创建商品分类为'分类11'的待审核商品
 		"""
 		[{
-			"classification_name": "分类11",
-			"product_name": "武汉鸭脖",
+			"name": "武汉鸭脖",
 			"promotion_title":"武汉鸭脖",
 			"has_product_model": false,
 			"price":10.00,
