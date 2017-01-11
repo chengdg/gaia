@@ -718,6 +718,43 @@
                 }
             }
         },
+        "/product/promotion_products/": {
+            "get": {
+                "summary": "获得促销活动可以选用的商品集合",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "products": {
+                                    "$ref": "#/definitions/ProductInProductList"
+                                },
+                                "pageinfo": {
+                                    "type": "object",
+                                    "description": "分页信息"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/product/deleted_products/": {
             "put": {
                 "summary": "将商品集合删除",

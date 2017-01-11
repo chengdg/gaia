@@ -13,7 +13,7 @@ class APromotionProducts(api_resource.ApiResource):
 	'''
 	获得促销活动可以选用的商品集合.
 	'''
-	app = 'mall'
+	app = 'product'
 	resource = 'promotion_products'
 
 	@param_required(['owner_id', 'type'])
