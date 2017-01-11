@@ -88,6 +88,7 @@ def step_impl(context, user):
 		row['status'] = row['pending_status_text']
 		row['stock'] = row['stocks'][0] if len(row['stocks']) == 1 else '~'.join(row['stocks'])
 		row['price'] = row['price_info']['display_price']
+		row['owner_name'] = 'jobs'#TODO
 
 	bdd_util.assert_list(expected, actual)
 

@@ -90,11 +90,6 @@ class UserProfile(business_model.Model):
 		return self.context['db_model'].user.username
 
 	@staticmethod
-	def get_user_id_2_username(user_ids):
-		profile_models = account_models.UserProfile.select().dj_where(user_id__in=user_ids)
-		return {p.user_id: p.user.username for p in profile_models}
-
-	@staticmethod
 	@param_required(['user_ids'])
 	def get_user_id_2_store_name(args):
 		profile_models = account_models.UserProfile.select().dj_where(user_id__in=args['user_ids'])

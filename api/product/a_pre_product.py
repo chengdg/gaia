@@ -18,15 +18,12 @@ class APreProduct(api_resource.ApiResource):
 		product_id = args.get('product_id')
 
 		fill_options = {
-			'with_category': False,
 			'with_price': True,
 			'with_image': True,
 			'with_product_model': True,
 			'with_model_property_info': True,
-			'with_property': False,
 			'with_supplier_info': True,
-			'with_classification': True,
-			'with_product_promotion': False
+			'with_classification': True
 		}
 
 		pre_product = GlobalProductRepository.get().get_product(product_id, fill_options)
@@ -107,12 +104,6 @@ class APreProduct(api_resource.ApiResource):
 		})
 
 		return {}
-
-	def post(self):
-		pass
-
-	def delete(self):
-		pass
 
 
 

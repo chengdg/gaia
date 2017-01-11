@@ -35,7 +35,7 @@ class APreProducts(api_resource.ApiResource):
 		for pre_product in pre_products:
 			rows.append({
 				'id': pre_product.id,
-				'owner_name': pre_product.owner_name,
+				'owner_name': '', #TODO
 				'classification_id': pre_product.classification_id,
 				'name': pre_product.name,
 				'price_info': pre_product.price_info,

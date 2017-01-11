@@ -3,7 +3,6 @@
 from eaglet.core import paginator
 
 from business import model as business_model
-from business.account.user_profile import UserProfile
 from db.mall import models as mall_models
 from product import Product
 
@@ -25,10 +24,6 @@ class GlobalProductRepository(business_model.Service):
 		else:
 			db_models = db_models.dj_where(owner_id=query_dict['corp'].id)
 
-
-		owner_ids = [p.owner_id for p in db_models]
-		owner_id2name = UserProfile.get_user_id_2_username(owner_ids)
-
 		if page_info:
 			pageinfo, db_models = paginator.paginate(db_models, page_info.cur_page, page_info.count_per_page)
 		else:
@@ -37,7 +32,6 @@ class GlobalProductRepository(business_model.Service):
 		products = []
 		for model in db_models:
 			pre_product = Product(model)
-			setattr(pre_product.__class__, 'owner_name', owner_id2name[model.owner_id])
 			products.append(pre_product)
 
 		fill_options = fill_options if fill_options else {}
