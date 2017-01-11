@@ -14,6 +14,7 @@ class AProvinceCity(api_resource.ApiResource):
 	@param_required(['corp_id'])
 	def get(args):
 		corp = args['corp']
+		
 		zones = corp.province_city_repository.get_zones()
 
 		return {'zones': zones}
