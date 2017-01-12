@@ -1,3 +1,4 @@
+
 Feature:客户增加发货人
 	
 @gaia @add_electric_shipper @xzh
@@ -39,7 +40,7 @@ Scenario:1 客户增加发货人
 		"business_name":"爱伲咖啡",
 		"mobile_num":"13813984402",
 		"remark":"测试",
-		"operate":['设为默认','编辑','删除']
+		"operate":"'设为默认','编辑','删除'"
 		},{
 		"shipper":"tuxiaobao",
 		"province":"江苏省",

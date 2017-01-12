@@ -55,10 +55,7 @@ Background:
 @gaia @delete_electric_shipper @xzh
 Scenario:1 jobs删除默认的发货人
 	Given jobs登录系统
-	When jobs删除发货人
-		"""
-		['aini']
-		"""
+	When jobs删除名称为'aini'的发货人
 	Then jobs能获得发货人列表
 		"""
 		[{
