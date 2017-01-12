@@ -737,6 +737,102 @@
                     }
                 }
             }
+        },
+        "/mall/express_deliveries": {
+            "get": {
+                "description": "物流公司列表",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "logistics"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        },
+        "/mall/express_delivery_companies": {
+            "get": {
+                "description": "快递公司集合",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "logistics"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "array",
+                            "items":{
+                                "$ref": "#/definitions/ExpressDeliveryCompany"
+                            }
+
+                        }
+                    }
+                }
+            }
+        },
+        "/mall/express_delivery_display_index": {
+            "post": {
+                "description": "更新物流公司display index",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "direction",
+                        "in": "query",
+                        "description": "up相当于+/其他",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "物流公司id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "logistics"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -1052,6 +1148,27 @@
                 "city_name": {
                     "type": "string",
                     "description": "城市名称"
+                }
+            }
+        },
+        "ExpressDeliveryCompany": {
+            "type": "object",
+             "properties": {
+                "company_id": {
+                    "type": "string",
+                    "description": ""
+                },
+                "name": {
+                    "type": "string",
+                    "description": ""
+                },
+                "value": {
+                    "type": "string",
+                    "description": ""
+                },
+                "kdniao_value": {
+                    "type": "string",
+                    "description": ""
                 }
             }
         },
