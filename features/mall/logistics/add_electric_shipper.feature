@@ -1,5 +1,7 @@
-Frature:客户增加发货人
-Background:
+Feature:客户增加发货人
+	
+@gaia @add_electric_shipper
+Scenario:1 客户增加发货人
 	Given jobs登录系统
 	When jobs新增发货人
 		"""
