@@ -831,7 +831,67 @@
                 }
             }
         },
+        "/product/pre_products/": {
+            "get": {
+                "summary": "获取原始(未审核)商品",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "formData",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "pre_product"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/PreProducts"
+                        }
+                    }
+                }
+            }
+        },
         "/product/pre_product/": {
+            "get": {
+                "summary": "获取原始(未审核)商品",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "formData",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },{
+                        "name": "product_id",
+                        "in": "formData",
+                        "description": "商品id",
+                        "required": true,
+                        "type": "int"
+                    }
+                ],
+                "tags": [
+                    "pre_product"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/PreProduct"
+                        }
+                    }
+                }
+            },
             "put": {
                 "summary": "创建原始(未审核)商品",
                 "parameters": [
@@ -1097,6 +1157,246 @@
                 },
                 "categories(json字符串)": {
                     "$ref": "#/definitions/ProductCategories"
+                }
+            }
+        },
+        "PreProducts": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number",
+                        "description": ""
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "商品名称"
+                    },
+                    "owner_name": {
+                        "type": "string",
+                        "description": "所属商家名称"
+                    },
+                    "classification_id": {
+                        "type": "int",
+                        "description": "商品分类id"
+                    },
+                    "price_info": {
+                        "type": "object",
+                        "description": "商品价格信息",
+                        "properties": {
+                            "display_price": {
+                                "type": "number",
+                                "description": "展示价格"
+                            },
+                            "min_price": {
+                                "type": "number",
+                                "description": "最低价格"
+                            },
+                            "max_price": {
+                                "type": "number",
+                                "description": "最高价格"
+                            }
+                        }
+                    },
+                    "purchase_price": {
+                        "type": "number",
+                        "description": "商品结算价"
+                    },
+                    "stocks": {
+                        "type": "number",
+                        "description": "商品库存"
+                    },
+                    "status": {
+                        "type": "number",
+                        "description": "商品状态"
+                    },
+                    "label_names": {
+                        "type": "array",
+                        "description": "商品标签",
+                        "items": {
+                            "type": "string",
+                            "description": "商品标签名称"
+                        }
+                    },
+                    "images": {
+                        "type": "array",
+                        "description": "商品轮播图",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "int",
+                                    "description": ""
+                                },
+                                "url": {
+                                    "type": "string",
+                                    "description": "图片路径"
+                                },
+                                "link_url": {
+                                    "type": "string",
+                                    "description": "图片链接"
+                                },
+                                "width": {
+                                    "type": "string",
+                                    "description": "图片宽"
+                                },
+                                "height": {
+                                    "type": "string",
+                                    "description": "图片高"
+                                }
+                            }
+                        }
+                    },
+                    "detail": {
+                        "type": "string",
+                        "description": "商品详情"
+                    },
+                    "refuse_reason": {
+                        "type": "string",
+                        "description": "驳回原因"
+                    },
+                    "is_updated": {
+                        "type": "bool",
+                        "description": "是否更新"
+                    },
+                    "is_accepted": {
+                        "type": "bool",
+                        "description": "是否审核通过"
+                    },
+                    "classification_name_nav": {
+                        "type": "string",
+                        "description": "商品分类导航"
+                    }
+                }
+            }
+        },
+        "PreProduct": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "number",
+                    "description": ""
+                },
+                "name": {
+                    "type": "string",
+                    "description": "商品名称"
+                },
+                "promotion_title": {
+                    "type": "string",
+                    "description": "商品促销标题"
+                },
+                "price_info": {
+                    "type": "object",
+                    "description": "商品价格信息",
+                    "properties": {
+                        "display_price": {
+                            "type": "number",
+                            "description": "展示价格"
+                        },
+                        "min_price": {
+                            "type": "number",
+                            "description": "最低价格"
+                        },
+                        "max_price": {
+                            "type": "number",
+                            "description": "最高价格"
+                        }
+                    }
+                },
+                "weight": {
+                    "type": "number",
+                    "description": "商品重量"
+                },
+                "stocks": {
+                    "type": "number",
+                    "description": "商品库存"
+                },
+                "detail": {
+                    "type": "string",
+                    "description": "商品详情"
+                },
+                "models": {
+                    "type": "array",
+                    "description": "商品规格信息",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "description": "规格名称"
+                            },
+                            "price": {
+                                "type": "number",
+                                "description": "价格"
+                            },
+                            "purchase_price": {
+                                "type": "number",
+                                "description": "成交价"
+                            },
+                            "stock_type": {
+                                "type": "number",
+                                "description": "库存类型"
+                            },
+                            "stocks": {
+                                "type": "number",
+                                "description": "库存"
+                            },
+                            "user_code": {
+                                "type": "string",
+                                "description": ""
+                            }
+                        }
+                    }
+                },
+                "images": {
+                    "type": "array",
+                    "description": "商品轮播图",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "int",
+                                "description": ""
+                            },
+                            "url": {
+                                "type": "string",
+                                "description": "图片路径"
+                            },
+                            "link_url": {
+                                "type": "string",
+                                "description": "图片链接"
+                            },
+                            "width": {
+                                "type": "string",
+                                "description": "图片宽"
+                            },
+                            "height": {
+                                "type": "string",
+                                "description": "图片高"
+                            }
+                        }
+                    }
+                },
+                "limit_zone_type": {
+                    "type": "int",
+                    "description": "商品禁售区设置"
+                },
+                "limit_zone": {
+                    "type": "int",
+                    "description": "商品禁售区"
+                },
+                "has_same_postage": {
+                    "type": "bool",
+                    "description": "是否统一运费"
+                },
+                "postage_money": {
+                    "type": "number",
+                    "description": "统一运费"
+                },
+                "classification_name_nav": {
+                    "type": "string",
+                    "description": "商品分类导航"
                 }
             }
         },
