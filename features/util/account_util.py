@@ -141,20 +141,8 @@ def __create_corp(username, display_name, webapp_type):
     return user
 
 
-def __create_supplier(user):
-    mall_models.Supplier.create(
-        owner=user,
-        name=user.username,
-        responsible_person=user.username, 
-        supplier_tel='10086',
-        supplier_address=u'火星',
-        remark='aaaaaa'
-
-    )
-
 def create_general_corp(username, display_name=None):
     user = __create_corp(username, display_name, GENERAL_CORP)
-    __create_supplier(user)
     return user
 
 
@@ -163,4 +151,5 @@ def create_weizoom_corp(username, display_name=None):
 
 
 def create_self_run_platform(username, display_name=None):
-    return __create_corp(username, display_name, SELF_RUN_PLATFORM)
+    user = __create_corp(username, display_name, SELF_RUN_PLATFORM)
+    return user

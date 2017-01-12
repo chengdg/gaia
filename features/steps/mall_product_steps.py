@@ -107,7 +107,9 @@ def __format_product_post_data(context, product):
     }
     #基本信息
     if product.get('supplier', None):
-        supplier = mall_models.Supplier.select().dj_where(owner_id=context.corp.id, name=product['supplier']).get()
+        # supplier = mall_models.Supplier.select().dj_where(owner_id=context.corp.id, name=product['supplier']).get()
+
+        supplier = mall_models.Supplier.select().dj_where(name=product['supplier']).get()
         supplier_id = supplier.id
     else:
         supplier_id = 0
@@ -409,12 +411,39 @@ def __get_products(context, corp_name, type_name=u'在售'):
     return products
 
 
+def __create_supplier(username):
+    owner_id = bdd_util.get_user_id_for(username)
+    supplier = mall_models.Supplier.create(
+        owner=bdd_util.get_user_id_for(username),
+        name=username,
+        responsible_person=username,
+        supplier_tel='10086',
+        supplier_address=u'火星',
+        remark='aaaaaa'
+
+    )
+    return supplier
+
+
+def __get_supplier_name(username):
+    supplier = mall_models.Supplier.select().dj_where(name=username).first()
+    if supplier:
+        return supplier.name
+    else:
+        supplier = __create_supplier(username)
+        return supplier.name
+
+
 @when(u"{user}添加商品")
 def step_add_property(context, user):
     products = json.loads(context.text)
     if isinstance(products, dict):
         products = [products]
     for product in products:
+
+        if 'supplier' not in product:
+            # 填充默认供货商为自己
+            product['supplier'] = __get_supplier_name(user)
         __create_product(context, product)
 
 
