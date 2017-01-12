@@ -2,7 +2,6 @@ Feature: 简单下单模板
 
   Background:
 
-  @ztqb
   Scenario:1 下单
 
     Given zhouxun登录系统
@@ -236,3 +235,163 @@ Feature: 简单下单模板
         ]
     """
 
+
+  Scenario:2 两个供货商下单
+
+    Given jobs登录系统
+    When jobs添加商品
+  """
+  [
+  {
+      "name": "黄桥烧饼",
+      "swipe_images": [{
+          "url": "/static/test_resource_img/hangzhou3.jpg"
+      }],
+      "model": {
+          "models": {
+              "standard": {
+                  "price": 30.1,
+                  "purchase_price": 1.0,
+                  "stock_type": "有限",
+                  "stocks": 30
+              }
+          }
+      }
+    }
+  ]
+  """
+
+
+
+    Given zhouxun登录系统
+    And zhouxun已添加商品规格
+  """
+  [{
+      "name": "颜色",
+      "type": "图片",
+      "values": [{
+          "name": "黑色",
+          "image": "/static/test_resource_img/icon_color/black.png"
+      }, {
+          "name": "白色",
+          "image": "/static/test_resource_img/icon_color/white.png"
+      }]
+  }, {
+      "name": "尺寸",
+      "type": "文字",
+      "values": [{
+          "name": "M"
+      }, {
+          "name": "S"
+      }]
+  }]
+  """
+    When zhouxun添加支付方式
+      """
+      [{
+          "type": "微信支付",
+          "is_active": "启用",
+          "version": 3,
+          "weixin_appid": "app_id_1",
+          "mch_id": "mch_id_1",
+          "api_key": "api_key_1",
+          "paysign_key": "paysign_key_1"
+      }]
+      """
+
+    When zhouxun添加商品
+    """
+    [{
+      "name": "东坡肘子",
+
+      "swipe_images": [{
+          "url": "/static/test_resource_img/hangzhou1.jpg"
+      }, {
+          "url": "/static/test_resource_img/hangzhou2.jpg"
+      }, {
+          "url": "/static/test_resource_img/hangzhou3.jpg"
+      }],
+      "model": {
+          "models": {
+              "standard": {
+                  "price": 11.12,
+                  "purchase_price": 1.1,
+                  "stock_type": "无限"
+              }
+          }
+      }
+    }]
+    """
+    When zhouxun添加代销商品
+    """
+    ["黄桥烧饼"]
+    """
+    When zhouxun将商品移动到'在售'货架
+    """
+    ["东坡肘子", "黄桥烧饼"]
+    """
+    Given bill关注zhouxun的公众号::apiserver
+    When bill访问zhouxun的webapp::apiserver
+    When bill购买zhouxun的商品::apiserver
+    """
+    {
+      "order_id":"002",
+      "date":"2016-01-01",
+      "ship_name": "bill",
+      "ship_tel": "13811223344",
+      "ship_area": "北京市 北京市 海淀区",
+      "ship_address": "泰兴大厦",
+      "pay_type": "微信支付",
+      "products":[{
+          "name":"东坡肘子",
+          "count":1
+      },{
+          "name":"黄桥烧饼",
+          "count":1
+      }],
+      "postage": 0.00,
+      "customer_message": "bill购买无规格商品1"
+    }
+    """
+    Given zhouxun登录系统
+    Then zhouxun获得订单列表
+    """
+    [
+      {
+        "bid":"002",
+        "delivery_items": [
+          {
+
+            "supplier_info": {
+              "supplier_type": "supplier",
+              "name": "zhouxun"
+            },
+            "products": [
+              {
+                "count": 1,
+                "name": "东坡肘子"
+              }
+            ]
+          },
+          {
+            "status_code": "created",
+
+            "supplier_info": {
+              "supplier_type": "supplier",
+              "name": "jobs"
+            },
+
+            "products": [
+              {
+                "count": 1,
+
+                "name": "黄桥烧饼"
+              }
+            ]
+
+          }
+        ]
+
+      }
+    ]
+    """
