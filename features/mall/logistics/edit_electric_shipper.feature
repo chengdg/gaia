@@ -36,8 +36,7 @@ Background:
 		"post_code":"02134",
 		"business_name":"爱伲咖啡",
 		"mobile_num":"13813984402",
-		"remark":"测试",
-		"operate":['设为默认','编辑','删除']
+		"remark":"测试"
 		},{
 		"shipper":"tuxiaobao",
 		"province":"江苏省",
@@ -47,8 +46,7 @@ Background:
 		"post_code":"02134",
 		"business_name":"土小宝食品",
 		"mobile_num":"13813984405",
-		"remark":"测试1",
-		"operate":['设为默认','编辑','删除']
+		"remark":"测试1"
 		}]
 		"""
 
@@ -80,8 +78,7 @@ Scenario:1 客户编辑发货人信息
 		"post_code":"02134",
 		"business_name":"爱伲咖啡",
 		"mobile_num":"13813984406",
-		"remark":"测试",
-		"operate":['设为默认','编辑','删除']
+		"remark":"测试"
 		},{
 		"shipper":"tuxiaobao",
 		"province":"江苏省",
@@ -91,8 +88,7 @@ Scenario:1 客户编辑发货人信息
 		"post_code":"02134",
 		"business_name":"土小宝食品",
 		"mobile_num":"13813984405",
-		"remark":"测试1",
-		"operate":['设为默认','编辑','删除']
+		"remark":"测试1"
 		}]
 		"""
 
