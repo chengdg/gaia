@@ -31,9 +31,17 @@ Background:
 		"""
 	Then jobs 查看发货人列表
 		|shipper|mobile_num |        area        |particular_address|post_code|operate|
-		|aini(默认)|13813984402|江苏省-南京市-栖霞区|   文昌东路437号  |  02134  |删除 删除|
-		|tuxiaobao|13813984405|江苏省-南京市-玄武区|  玄武路127号   |  02134  |设为默认 删除 删除|
-@gaia @delete_electric_shipper
+		|aini|13813984402|江苏省-南京市-栖霞区|   文昌东路437号  |  02134  |设为默认 编辑 删除|
+		|tuxiaobao|13813984405|江苏省-南京市-玄武区|  玄武路127号   |  02134  |设为默认 编辑 删除|
+	When jobs 设置默认发货人
+			"""
+			['aini']
+			"""
+	Then jobs 查看发货人列表
+		|shipper|mobile_num |        area        |particular_address|post_code|operate|
+		|aini|13813984402|江苏省-南京市-栖霞区|   文昌东路437号  |  02134  |编辑 删除|
+		|tuxiaobao|13813984405|江苏省-南京市-玄武区|  玄武路127号   |  02134  |设为默认 编辑 删除|	
+@gaia @delete_electric_shipper @xzh
 Scenario:1 jobs删除默认的发货人
 	Given jobs登录系统
 	When jobs删除发货人
@@ -42,9 +50,9 @@ Scenario:1 jobs删除默认的发货人
 		"""
 	Then jobs查看发货人列表
 		|shipper|mobile_num |        area        |particular_address|post_code|operate|
-		|aini(默认)|13813984402|江苏省-南京市-栖霞区|   文昌东路437号  |  02134  |删除 删除|
-		|tuxiaobao|13813984405|江苏省-南京市-玄武区|  玄武路127号   |  02134  |设为默认 删除 删除|
-@gaia @delete_electric_shipper
+		|aini|13813984402|江苏省-南京市-栖霞区|   文昌东路437号  |  02134  |编辑 删除|
+		|tuxiaobao|13813984405|江苏省-南京市-玄武区|  玄武路127号   |  02134  |设为默认 编辑 删除|
+@gaia @delete_electric_shipper @xzh
 Scenario:2 jobs删除非默认的发货人
 	Given jobs登录系统
 	When jobs删除发货人
@@ -53,4 +61,4 @@ Scenario:2 jobs删除非默认的发货人
 		"""
 	Then jobs查看发货人列表
 		|shipper|mobile_num |        area        |particular_address|post_code|operate|
-		|aini(默认)|13813984402|江苏省-南京市-栖霞区|   文昌东路437号  |  02134  |删除 删除|
+		|aini|13813984402|江苏省-南京市-栖霞区|   文昌东路437号  |  02134  |编辑 删除|
