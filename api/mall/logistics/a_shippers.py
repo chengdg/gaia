@@ -11,7 +11,7 @@ from business.mall.logistics.shipper import Shipper
 
 class AShippers(api_resource.ApiResource):
 	app = 'mall'
-	resource = 'a_shippers'
+	resource = 'shippers'
 
 	@param_required(['corp_id'])
 	def get(args):

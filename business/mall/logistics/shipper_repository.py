@@ -36,7 +36,7 @@ class ShipperRepository(business_model.Service):
 		"""
 		获取corp中所有的发货人
 		"""
-		shipper_models = mall_models.ShipperMessages.select().dj_where(owner_id=self.corp.id).order_by(-mall_models.ShipperMessages.id)
+		shipper_models = mall_models.ShipperMessages.select().dj_where(owner_id=self.corp.id).order_by(mall_models.ShipperMessages.created_at)
 		datas = []
 		for model in shipper_models:
 			shipper = Shipper(model)
