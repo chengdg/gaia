@@ -17,7 +17,6 @@ import notify
 import product_classification
 import product_label
 
-import a_promotion_products
 
 import promotion
 

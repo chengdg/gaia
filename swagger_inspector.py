@@ -49,9 +49,11 @@ swagger_path = os.path.join(project_home, 'swagger')
 swagger_api_list = get_swagger_api_list(swagger_path)
 
 print('******result:******')
+
+print(u"共有{}个API,{}个API文档".format(len(resource_api_list),len(swagger_api_list)))
+
 missing_swagger_doc = list(set(resource_api_list) - set(swagger_api_list))
 redundant_swagger_doc = list(set(swagger_api_list) - set(resource_api_list))
-print(u"缺少文档：{}".format(str(missing_swagger_doc)))
+print(u"缺少文档：共计{}个. {}".format(len(missing_swagger_doc), str(missing_swagger_doc)))
 
-print(u"有文档但没接口:{}".format(str(redundant_swagger_doc)))
-
+print(u"有文档但没接口:共计{}个. {}".format(len(redundant_swagger_doc), str(redundant_swagger_doc)))

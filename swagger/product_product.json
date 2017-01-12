@@ -718,6 +718,7 @@
                 }
             }
         },
+
         "/product/deleted_products/": {
             "put": {
                 "summary": "将商品集合删除",

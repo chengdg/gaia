@@ -1,0 +1,67 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "Hermes Mall Notify API"
+    },
+    "paths": {
+        "/member/member_openid/": {
+            "get": {
+                "summary": "通过会员ID获取openid",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "member_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "member"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/SocialAccount"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "SocialAccount": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "description": "账户ID"
+                },
+                "openid": {
+                    "type": "string",
+                    "description": "会员的openid"
+                },
+                "webapp_id": {
+                    "type": "integer",
+                    "description": "用户ID"
+                },
+                "token": {
+                    "type": "string",
+                    "description": "账户授权信息"
+                }
+            }
+        }
+    }
+}
