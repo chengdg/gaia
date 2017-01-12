@@ -25,7 +25,7 @@ Background:
 		"remark":"测试1"
 		}]
 		"""
-	Then jobs获得发货人列表
+	Then jobs能获得发货人列表
 		"""
 		[{
 		"shipper":"aini",
@@ -69,7 +69,7 @@ Scenario:1 客户编辑发货人信息
 		"remark":"测试"
 		}
 		"""
-	Then jobs获得发货人列表
+	Then jobs能获得发货人列表
 		"""
 		[{
 		"shipper":"aini",

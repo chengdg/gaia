@@ -31,7 +31,7 @@ Background:
 		"remark":"测试1"
 		}]
 		"""
-	Then jobs 获得发货人列表
+	Then jobs能获得发货人列表
 		"""
 		[{
 		"shipper":"aini",
@@ -64,7 +64,7 @@ Scenario:1 客户设置默认发货人
 		"""
 		['tuxiaobao']
 		"""
-	Then jobs获得发货人列表
+	Then jobs能获得发货人列表
 		"""
 		[{
 		"shipper":"aini",

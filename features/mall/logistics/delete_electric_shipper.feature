@@ -28,7 +28,7 @@ Background:
 		"remark":"测试1"
 		}]
 		"""
-	Then jobs获得发货人列表
+	Then jobs能获得发货人列表
 		"""
 		[{
 		"shipper":"aini",
@@ -61,7 +61,7 @@ Scenario:1 jobs删除默认的发货人
 		"""
 		['aini']
 		"""
-	Then jobs获得发货人列表
+	Then jobs能获得发货人列表
 		"""
 		[{
 		"shipper":"tuxiaobao",

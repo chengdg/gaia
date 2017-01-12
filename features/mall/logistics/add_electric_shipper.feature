@@ -27,7 +27,7 @@ Scenario:1 客户增加发货人
 		"remark":"测试1"
 		}]
 		"""
-	Then jobs获得发货人列表
+	Then jobs能获得发货人列表
 		"""
 		[{
 		"shipper":"aini",
