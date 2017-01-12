@@ -74,3 +74,9 @@ class Shipper(business_model.Model):
 		).dj_where(id=self.id).execute()
 		return Shipper(shipper)
 
+	def set_used(self):
+			"""
+			将当前发货人设置为"使用"
+			"""
+			mall_models.ShipperMessages.update(is_active=False).dj_where(id__not=self.id).execute()
+			mall_models.ShipperMessages.update(is_active=True).dj_where(id=self.id).execute()
