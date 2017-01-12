@@ -1,4 +1,4 @@
-Frature:客户删除发货人
+Feature:客户删除发货人
 	"""
 	1.jobs删除默认的发货人
 	2.jobs删除非默认的发货人
@@ -9,7 +9,9 @@ Background:
 		"""
 		[{
 		"shipper":"aini",
-		"area":['江苏省','南京市','栖霞区'],
+		"province":"江苏省",
+		"city":"南京市",
+		"district":"栖霞区",
 		"particular_address":"文昌东路437号",
 		"post_code":"02134",
 		"business_name":"爱伲咖啡",
@@ -17,8 +19,10 @@ Background:
 		"remark":"测试"
 		},{
 		"shipper":"tuxiaobao",
-		"area":['江苏省','南京市','玄武区'],
-		"particular_address":"玄武路127号",
+		"province":"江苏省",
+		"city":"南京市",
+		"district":"栖霞区",
+		"particular_address":"玄武区",
 		"post_code":"02134",
 		"business_name":"土小宝食品",
 		"mobile_num":"13813984405",

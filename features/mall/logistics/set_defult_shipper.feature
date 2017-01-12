@@ -1,4 +1,4 @@
-Frature:客户设置默认发货人
+Feature:客户设置默认发货人
 	#每个账号新建的第一个发货人自动设为默认
 Background:
 	Given jobs登录系统
@@ -6,13 +6,15 @@ Background:
 		"""
 		[{
 		"shipper":"aini",
-		"area":['江苏省','南京市','栖霞区'],
+		"province":"江苏省",
+		"city":"南京市",
+		"district":"栖霞区",
 		"particular_address":"文昌东路437号",
 		"post_code":"02134",
 		"business_name":"爱伲咖啡",
 		"mobile_num":"13813984402",
 		"remark":"测试"
-		}}
+		}]
 		"""
 	Then jobs查看发货人列表
 		|shipper|mobile_num |        area        |particular_address|post_code|operate|
@@ -22,7 +24,9 @@ Background:
 		"""
 		[{
 		"shipper":"tuxiaobao",
-		"area":['江苏省','南京市','玄武区'],
+		"province":"江苏省",
+		"city":"南京市",
+		"district":"玄武区",
 		"particular_address":"玄武路127号",
 		"post_code":"02134",
 		"business_name":"土小宝食品",
