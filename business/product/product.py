@@ -143,7 +143,7 @@ class Product(business_model.Model):
 	@property
 	def stocks(self):
 		"""
-		商品库存,如：[1,15,18,无限] 或者 15 取决于规格数量
+		商品库存,如：[1,15,18,无限]
 		"""
 		stocks = []
 		unlimit = None
@@ -167,7 +167,7 @@ class Product(business_model.Model):
 		if unlimit:
 			stocks.append(unlimit)
 
-		return stocks if len(stocks) > 0 else stocks[0]
+		return stocks
 
 	@property
 	def has_multi_models(self):

@@ -45,7 +45,7 @@ class APreProduct(api_resource.ApiResource):
 			'classification_name_nav': pre_product.classification_nav
 		}
 
-	@param_required(['corp_id', 'name', '?has_multi_models:bool', '?models:json'])
+	@param_required(['corp_id', 'name', '?has_multi_models:bool', '?models:json', 'images:json'])
 	def put(args):
 		name = args['name']
 		promotion_title = args.get('promotion_title', '')

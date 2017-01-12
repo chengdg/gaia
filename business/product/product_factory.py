@@ -117,9 +117,9 @@ class ProductFactory(business_model.Service):
 				purchase_price=custom_model.get('purchase_price', 0),
 				price=custom_model['price'],
 				weight=custom_model['weight'],
-				stock_type=mall_models.PRODUCT_STOCK_TYPE_UNLIMIT if custom_model['stock_type'] == 'unlimit' else mall_models.PRODUCT_STOCK_TYPE_LIMIT,
+				stock_type=mall_models.PRODUCT_STOCK_TYPE_UNLIMIT if custom_model.get('stock_type', 'limit') == 'unlimit' else mall_models.PRODUCT_STOCK_TYPE_LIMIT,
 				stocks=custom_model['stocks'],
-				user_code=custom_model['user_code']
+				user_code=custom_model.get('user_code', '')
 			)
 
 			for property in custom_model['properties']:

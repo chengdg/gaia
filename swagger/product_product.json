@@ -912,6 +912,24 @@
                         "description": "商品描述",
                         "required": true,
                         "type": "string"
+                    },{
+                        "name": "models",
+                        "in": "formData",
+                        "description": "商品多规格配置",
+                        "required": false,
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/definitions/Model"
+                        }
+                    },{
+                        "name": "images",
+                        "in": "formData",
+                        "description": "商品轮播图",
+                        "required": true,
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/definitions/Image"
+                        }
                     }
                 ],
                 "tags": [
