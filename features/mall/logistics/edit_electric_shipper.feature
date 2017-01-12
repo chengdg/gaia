@@ -25,7 +25,7 @@ Background:
 		"remark":"测试1"
 		}]
 		"""
-	Then jobs 获得发货人列表
+	Then jobs获得发货人列表
 		"""
 		[{
 		"shipper":"aini",
