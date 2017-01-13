@@ -91,9 +91,6 @@ class DeliveryItemProductRepository(business_model.Model):
 		#                                                        "with_model_property_info": True})
 		# product_id2product = {p.id: p for p in products}
 
-		product_model_name2values = self.corp.product_model_property_repository.get_order_product_model_values(
-			custom_model_names)
-
 		delivery_item_products = []
 		for r in ohs_db_model_list:
 
@@ -131,22 +128,10 @@ class DeliveryItemProductRepository(business_model.Model):
 			delivery_item_product.delivery_item_id = r.order_id
 			delivery_item_product.context['index'] = r.id
 
-			if r.product_model_name == 'standard':
-				delivery_item_product.product_model_name_texts = json.loads(r.product_model_name_texts)
-				delivery_item_product.weight = r.weight
+			delivery_item_product.model_id = r.product_model_id
+			delivery_item_product.product_model_name_texts = json.loads(r.product_model_name_texts)
+			delivery_item_product.weight = r.weight
 
-				#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!product.standard_model.id!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-				delivery_item_product.model_id = r.product_model_id
-
-			else:
-				#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!product.custom_models!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-				delivery_item_product.model_id = r.product_model_id
-				delivery_item_product.product_model_name_texts = json.loads(r.product_model_name_texts)
-				delivery_item_product.weight = r.weight
-
-				if not delivery_item_product.product_model_name_texts:
-					delivery_item_product.product_model_name_texts = [value.name for value in
-					                                                  product_model_name2values[r.product_model_name]]
 			delivery_item_product.thumbnails_url = r.thumbnail_url
 
 			promotion = id2promotion.get(r.promotion_id, None)
@@ -248,7 +233,12 @@ class DeliveryItemProductRepository(business_model.Model):
 				delivery_item_id2products[product.delivery_item_id] = [product]
 
 		for delivery_item in delivery_items:
-			delivery_item.products = delivery_item_id2products[delivery_item.id]
+			# todo 使用get兼容历史错误数据，需要修正数据库
+			# 历史订单中的错误数据修复 - 自营订单有出货单记录，但没对应的mall_order_has_product记录
+			# select o1.id,o1.origin_order_id,o1.created_at,h.id from mall_order  as o1  left join  mall_order_has_product as h on o1.id=h.order_id where o1.origin_order_id>0 and h.id is null order by o1.created_at;
+
+			# delivery_item.products = delivery_item_id2products[delivery_item.id]
+			delivery_item.products = delivery_item_id2products.get(delivery_item.id, [])
 
 			# 排序
 			delivery_item.products.sort(lambda x, y: cmp(x.context["index"], y.context["index"]))
