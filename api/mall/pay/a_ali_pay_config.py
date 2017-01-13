@@ -32,8 +32,3 @@ class AAliPayConfig(api_resource.ApiResource):
                 ali_pay_interface.disable()
 
         return {}
-
-
-    @param_required([])
-    def delete(args):
-        return {}

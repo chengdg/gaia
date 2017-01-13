@@ -22,7 +22,7 @@ class ARefundingDeliveryItem(api_resource.ApiResource):
 
 		cash = float(args.get('cash', 0))
 		weizoom_card_money = float(args.get('weizoom_card_money', 0))
-		member_card_money = float(args.get('weizoom_card_money', 0))
+		member_card_money = float(args.get('member_card_money', 0))
 		coupon_money = float(args.get('coupon_money', 0))
 
 		integral = float(args.get('integral', 0))

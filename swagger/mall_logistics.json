@@ -168,7 +168,7 @@
                     }
                 }
             }
-        },
+        },       
         "/mall/active_postage_config/": {
             "put": {
                 "description": "将postage config设置为当前使用的postage config",
@@ -202,6 +202,334 @@
                                 "id": {
                                     "type": "number",
                                     "description": "被选中的postage config对象的id"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/mall/shippers/": {
+            "get": {
+                "summary": "获取发货人列表",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "logistics"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/ShippersList"
+                        }
+                    }
+                }
+            }
+        },
+        "/mall/shipper/": {
+            "get": {
+                "summary": "获取指定发货人的详情",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "limit_zone", "logistics"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/ShippersInList"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "summary": "添加单个发货人",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "tel_number",
+                        "in": "query",
+                        "description": "手机号",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "province",
+                        "in": "query",
+                        "description": "省的id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "city",
+                        "in": "query",
+                        "description": "城市id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "district",
+                        "in": "query",
+                        "description": "区/县id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "address",
+                        "in": "query",
+                        "description": "详细地址",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "postcode",
+                        "in": "query",
+                        "description": "邮政编码",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "company_name",
+                        "in": "query",
+                        "description": "单位名称",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "remark",
+                        "in": "query",
+                        "description": "备注",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "is_active",
+                        "in": "query",
+                        "description": "是否选中",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "logistics"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+
+                    }
+                }
+            },
+            "post": {
+                "summary": "修改指定发货人",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "tel_number",
+                        "in": "query",
+                        "description": "手机号",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "province",
+                        "in": "query",
+                        "description": "省的id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "city",
+                        "in": "query",
+                        "description": "城市id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "district",
+                        "in": "query",
+                        "description": "区/县id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "address",
+                        "in": "query",
+                        "description": "详细地址",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "postcode",
+                        "in": "query",
+                        "description": "邮政编码",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "company_name",
+                        "in": "query",
+                        "description": "单位名称",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "remark",
+                        "in": "query",
+                        "description": "备注",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "is_active",
+                        "in": "query",
+                        "description": "是否选中",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "limit zone", "logistics"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "删除单个发货人",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "logistics"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+
+                    }
+                }
+            }
+        },
+        "/mall/active_shipper/": {
+            "put": {
+                "summary": "启用当前的发货人",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "type": "string",
+                        "required": true,
+                        "description": ""
+                    }
+                ],
+                "tags": [
+                    "logistics"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "number",
+                                    "description": "被选中的发货人的id"
                                 }
                             }
                         }
@@ -737,6 +1065,102 @@
                     }
                 }
             }
+        },
+        "/mall/express_deliveries": {
+            "get": {
+                "description": "物流公司列表",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "logistics"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        },
+        "/mall/express_delivery_companies": {
+            "get": {
+                "description": "快递公司集合",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "logistics"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "array",
+                            "items":{
+                                "$ref": "#/definitions/ExpressDeliveryCompany"
+                            }
+
+                        }
+                    }
+                }
+            }
+        },
+        "/mall/express_delivery_display_index": {
+            "post": {
+                "description": "更新物流公司display index",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "direction",
+                        "in": "query",
+                        "description": "up相当于+/其他",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "物流公司id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "logistics"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -1055,6 +1479,27 @@
                 }
             }
         },
+        "ExpressDeliveryCompany": {
+            "type": "object",
+             "properties": {
+                "company_id": {
+                    "type": "string",
+                    "description": ""
+                },
+                "name": {
+                    "type": "string",
+                    "description": ""
+                },
+                "value": {
+                    "type": "string",
+                    "description": ""
+                },
+                "kdniao_value": {
+                    "type": "string",
+                    "description": ""
+                }
+            }
+        },
         "MallConfig": {
             "type": "object",
             "properties": {
@@ -1078,6 +1523,68 @@
                     "type": "string",
                     "description": "添加时间"
                 }
+            }
+        },
+        "ShippersList": {
+            "type": "object",
+            "properties": {
+                "suppliers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ShippersInList"
+                    },
+                    "minItems": 0
+                }
+            }
+        },
+        "ShippersInList": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "description": ""
+                },
+                "name": {
+                    "type": "string",
+                    "description": "发货人名称"
+                },
+                "tel_number": {
+                    "type": "string",
+                    "description": "发货人电话"
+                },
+                "province": {
+                    "type": "string",
+                    "description": "省份id"
+                },
+                "city": {
+                    "type": "string",
+                    "description": "城市id"
+                },
+                "district": {
+                    "type": "string",
+                    "description": "区/县id"
+                },
+                "address": {
+                    "type": "string",
+                    "description": "详细地址"
+                },
+                "postcode": {
+                    "type": "string",
+                    "description": "邮政编码"
+                },
+                "company_name": {
+                    "type": "string",
+                    "description": "单位名称"
+                },
+                "remark": {
+                    "type": "string",
+                    "description": "备注"
+                },
+                "is_active": {
+                    "type": "boolean",
+                    "description": "当前发货人是否被选中"
+                }
+
             }
         }
     }

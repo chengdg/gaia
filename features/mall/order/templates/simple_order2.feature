@@ -16,7 +16,7 @@ Feature:客户创建待审核商品
 		}]
 		"""
 
-  @ztqb
+
   Scenario:1 客户添加无规格商品
     Given jobs登录系统
     When jobs创建待审核商品
