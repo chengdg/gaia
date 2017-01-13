@@ -116,7 +116,6 @@ Scenario:1 创建供应商供应的商品
 		"""
 		{
 			"name": "黄桥烧饼",
-			"supplier": "",
 			"classification": ""
 		}
 		"""
@@ -201,8 +200,6 @@ Scenario:1 创建代销的商品
 		"""
 		[{
 			"name": "黄桥烧饼",
-			"supplier": "",
-			"supplier_type": "",
 			"classification": "",
 			"price": 30.1,
 			"stocks": 30,

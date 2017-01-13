@@ -4,7 +4,6 @@ import os
 import logging
 
 
-DEBUG = True
 PROJECT_HOME = os.path.dirname(os.path.abspath(__file__))
 
 MODE = os.environ.get('_SERVICE_MODE', 'develop')
@@ -78,6 +77,13 @@ else:
     WEAPP_HOST = "http://weapp.weizoom.com/"
     H5_HOST = "http://mall.weizoom.com/"
     ENABLE_SQL_LOG = False #是否dump peewee产生的sql查询
+
+if 'develop' == MODE:
+    DEBUG = True
+elif 'test' == MODE:
+    DEBUG = True
+else:
+    DEBUG = False
 
 #缓存相关配置
 REDIS_HOST = os.environ.get('_REDIS_HOST', 'redis.weapp.com')

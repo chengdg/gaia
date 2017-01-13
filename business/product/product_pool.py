@@ -1,6 +1,8 @@
 # coding=utf-8
 # -*- utf-8 -*-
 
+import copy
+
 from eaglet.decorator import param_required
 from eaglet.core import paginator
 
@@ -229,12 +231,16 @@ class ProductPool(business_model.Model):
 		else:
 			pool_product_models = mall_models.ProductPool.select().dj_where(status__not=mall_models.PP_STATUS_DELETE)			
 		if len(order_fields) > 0:
+			# 考虑可以使用内存排序,而不是mysql自己排序
 			pool_product_models = pool_product_models.order_by(*order_fields)
 
 		#获取查询结果
-		product_ids = [pool_product_model.product_id for pool_product_model in pool_product_models]
-		product2poolmodel = dict([(pool_product_model.product_id, pool_product_model) for pool_product_model in pool_product_models])
-
+		product_ids = []
+		product2poolmodel = dict()
+		for pool_product_model in pool_product_models:
+			product_ids.append(pool_product_model.product_id)
+			product2poolmodel[pool_product_model.product_id] = pool_product_model
+		copy_product_ids = copy.copy(product_ids)
 		#在mall_product_model中进行过滤
 		product_model_filters = type2filters['product_model']
 		if product_model_filters:
@@ -245,8 +251,8 @@ class ProductPool(business_model.Model):
 				product_model_filters['stock_type'] = mall_models.PRODUCT_STOCK_TYPE_LIMIT
 
 			product_model_models = mall_models.ProductModel.select().dj_where(**product_model_filters)
-			temp_product_ids = [model.product_id for model in product_model_models]
-			product_ids = sorted(list(set(temp_product_ids)), key=product_ids.index)
+			product_ids = [model.product_id for model in product_model_models]
+			# product_ids = sorted(list(set(temp_product_ids)), key=product_ids.index)
 
 		#在mall_category_has_product中进行过滤
 		product_category_filters = type2filters['product_category']
@@ -308,8 +314,12 @@ class ProductPool(business_model.Model):
 		if product_info_filters:
 			product_info_filters['id__in'] = product_ids
 			product_models = mall_models.Product.select().dj_where(**product_info_filters)
+			# mysql使用in查询会将in列表值先排序再二分搜索,固需要再次排序.
+			product_models = sorted(product_models, key=lambda k: copy_product_ids.index(k.id))
 			pageinfo, product_models = paginator.paginate(product_models, page_info.cur_page, page_info.count_per_page)
 		else:
+			# 对product_ids 进行内存排序,按照最原始查出来的顺序,并去掉重复数据
+			product_ids = sorted(list(set(product_ids)), key=copy_product_ids.index)
 			pageinfo, product_ids = paginator.paginate(product_ids, page_info.cur_page, page_info.count_per_page)
 			product_models = mall_models.Product.select().dj_where(id__in=product_ids)
 
