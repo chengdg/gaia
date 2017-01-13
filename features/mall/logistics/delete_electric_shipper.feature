@@ -20,30 +20,6 @@ Background:
 		"shipper":"tuxiaobao",
 		"province":"江苏省",
 		"city":"南京市",
-		"district":"栖霞区",
-		"particular_address":"玄武区",
-		"post_code":"02134",
-		"business_name":"土小宝食品",
-		"mobile_num":"13813984405",
-		"remark":"测试1"
-		}]
-		"""
-	Then jobs能获得发货人列表
-		"""
-		[{
-		"shipper":"aini",
-		"province":"江苏省",
-		"city":"南京市",
-		"district":"栖霞区",
-		"particular_address":"文昌东路437号",
-		"post_code":"02134",
-		"business_name":"爱伲咖啡",
-		"mobile_num":"13813984402",
-		"remark":"测试"
-		},{
-		"shipper":"tuxiaobao",
-		"province":"江苏省",
-		"city":"南京市",
 		"district":"玄武区",
 		"particular_address":"玄武路127号",
 		"post_code":"02134",

@@ -39,8 +39,7 @@ Scenario:1 客户增加发货人
 		"post_code":"02134",
 		"business_name":"爱伲咖啡",
 		"mobile_num":"13813984402",
-		"remark":"测试",
-		"operate":"'设为默认','编辑','删除'"
+		"remark":"测试"
 		},{
 		"shipper":"tuxiaobao",
 		"province":"江苏省",
