@@ -148,8 +148,6 @@ class DeliveryItemProductRepository(business_model.Model):
 					delivery_item_product.product_model_name_texts = [value.name for value in
 					                                                  product_model_name2values[r.product_model_name]]
 			delivery_item_product.thumbnails_url = r.thumbnail_url
-			#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!product.is_deleted!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-			delivery_item_product.is_deleted = r.product_is_deleted
 
 			promotion = id2promotion.get(r.promotion_id, None)
 			if promotion and promotion.promotion_type == 'premium_sale':
