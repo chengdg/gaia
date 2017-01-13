@@ -31,5 +31,18 @@
 	"dev": {
 		"rebuild": "no",
 		"init": "$standard"
+	},
+
+	"register": {
+		"locations": [{
+			"path": "/static",
+			"root": ".",
+			"type": "root"
+		}],
+		"proxy_locations": [{
+			"service": "api-gateway",
+			"path": "/gaia/",
+			"type": "service_redirect"
+		}]
 	}
 }
