@@ -114,7 +114,7 @@ Background:
 			}]
 		}
 		"""
-	When jobs添加运费配置
+	When jobs添加邮费配置
 		"""
 		[{
 			"name": "圆通",
@@ -162,11 +162,7 @@ Background:
 			}]
 		}]
 		"""
-	When jobs设置默认运费配置
-		"""
-		['EMS']
-		"""
-	Given jobs登录系统
+	When jobs选择'EMS'运费配置
 	When jobs创建商品分类为'分类24'的待审核商品
 		"""
 		[{
@@ -179,7 +175,7 @@ Background:
 			"limit_zone_type":"仅发货地区",
 			"limit_zone_model_name":"仅售地区1",
 			"postage_type": "使用默认运费模板:EMS",
-			"images":"一张图片",
+			"images":['一张图片'],
 			"remark":"周黑鸭 鲜卤鸭脖 230g/袋 办公室休闲零食 肉干小食"
 		}]
 		"""
@@ -195,7 +191,7 @@ Background:
 			"limit_zone_type":"不发货地区",
 			"limit_zone_model_name":"禁售地区",
 			"postage_type": "使用默认运费模板:EMS",
-			"images":"2张图片",
+			"images":['2张图片'],
 			"remark":"苹果平板，大屏看电视"
 		}]
 		"""
@@ -209,19 +205,19 @@ Background:
 				"黑色 S":{
 					"price":3.00,
 					"weight":5.00,
-					"stocks":200.00
+					"stocks":200
 				}
 			},{
 				"白色 M":{
 					"price":5.50,
 					"weight":7.00,
-					"stocks":300.00
+					"stocks":300
 				}
 			}],
 			"limit_zone_type":"仅发货地区",
 			"limit_zone_model_name":"仅售地区",
 			"postage_type": "使用默认运费模板:EMS",
-			"images":"多规格图片",
+			"images":['多规格图片'],
 			"remark":"多规格商品1"
 		}]
 		"""
