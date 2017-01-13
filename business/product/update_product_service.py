@@ -291,4 +291,4 @@ class UpdateProductService(business_model.Service):
 			mall_models.ProductSales.update(
 				sales=mall_models.ProductSales.sales + changed_count).dj_where(product_id=product_id).execute()
 		else:
-			mall_models.ProductSales.create(product_id=product_id, sales=changed_count)
+			mall_models.ProductSales.create(product=product_id, sales=changed_count)
