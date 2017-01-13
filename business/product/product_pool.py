@@ -307,9 +307,6 @@ class ProductPool(business_model.Model):
 				product_ids = [promote.product_id for promote in mall_models.PromoteDetail.select().dj_where(**product_promotion_filter_values)]
 				# product_ids = list(set(product_ids) - set(promoted_product_ids))
 
-		# 对product_ids 进行内存排序,按照最原始查出来的顺序,并去掉重复数据
-		product_ids = sorted(list(set(product_ids)), key=copy_product_ids.index)
-
 		#在mall_product表中进行过滤
 		product_info_filters = type2filters['product_info']
 		if supplier_ids is not None:
@@ -317,8 +314,12 @@ class ProductPool(business_model.Model):
 		if product_info_filters:
 			product_info_filters['id__in'] = product_ids
 			product_models = mall_models.Product.select().dj_where(**product_info_filters)
+			# mysql使用in查询会将in列表值先排序再二分搜索,固需要再次排序.
+			product_models = sorted(product_models, key=lambda k: copy_product_ids.index(k.id))
 			pageinfo, product_models = paginator.paginate(product_models, page_info.cur_page, page_info.count_per_page)
 		else:
+			# 对product_ids 进行内存排序,按照最原始查出来的顺序,并去掉重复数据
+			product_ids = sorted(list(set(product_ids)), key=copy_product_ids.index)
 			pageinfo, product_ids = paginator.paginate(product_ids, page_info.cur_page, page_info.count_per_page)
 			product_models = mall_models.Product.select().dj_where(id__in=product_ids)
 

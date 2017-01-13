@@ -30,7 +30,8 @@ class Command(BaseCommand):
 					product_id=product.id,
 					status=status,
 					display_index=9999999,
-					type=mall_models.PP_TYPE_CREATE
+					type=mall_models.PP_TYPE_CREATE,
+					sync_at=product.created_at
 				)
 
 
