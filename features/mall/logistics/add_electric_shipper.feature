@@ -1,7 +1,7 @@
 
 Feature:客户增加发货人
 	
-@gaia @add_electric_shipper @xzh
+@gaia @add_electric_shipper @xzh 
 Scenario:1 客户增加发货人
 	Given jobs登录系统
 	When jobs添加发货人

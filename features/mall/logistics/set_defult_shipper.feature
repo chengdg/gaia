@@ -27,25 +27,11 @@ Background:
 		}]
 		"""
 
-	When jobs添加发货人	
-		"""
-		[{
-		"shipper":"tuxiaobao",
-		"province":"江苏省",
-		"city":"南京市",
-		"district":"玄武区",
-		"particular_address":"玄武路127号",
-		"post_code":"02134",
-		"business_name":"土小宝食品",
-		"mobile_num":"13813984405",
-		"remark":"测试1"
-		}]
-		"""
-@gaia @set_defult_shipper @xzh
+@gaia @set_defult_shipper @xzh @zph
 Scenario:1 客户设置默认发货人
 	Given jobs登录系统
-	When jobs选择名称为'aini'为默认发货人
-	Then jobs能获得发货人列表
+	When jobs启用名称为'aini'的发货人
+	Then jobs能获得发货人是否启用列表
 		"""
 		[{
 		"shipper":"aini",
