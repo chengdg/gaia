@@ -474,18 +474,11 @@ class Order(business_model.Model):
 		for order in orders:
 			order.origin_weizoom_card_money = order.weizoom_card_money + order.refunding_info[
 				'weizoom_card_money']
-			print('----aaaa',order.member_card_money,order.refunding_info[
-				'member_card_money'])
 			order.origin_member_card_money = order.member_card_money + order.refunding_info[
 				'member_card_money']
 			order.origin_final_price = order.final_price + order.refunding_info['cash']
 
 			total_product_origin_price = order.__get_total_origin_product_price()
-
-
-			print('----xxxxxxxxx',total_product_origin_price,order.postage,order.origin_final_price,order.origin_weizoom_card_money,order.origin_member_card_money)
-
-
 			order.save_money = round(
 				(float(total_product_origin_price) + float(order.postage) - float(
 				order.origin_final_price) - float(order.origin_weizoom_card_money)
