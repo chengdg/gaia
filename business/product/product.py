@@ -145,7 +145,7 @@ class Product(business_model.Model):
 		"""
 		商品库存,如：[1,15,18,无限]
 		"""
-		stocks = []
+		stocks = set()
 		unlimit = None
 
 		product_models = mall_models.ProductModel.select().dj_where(product_id=self.id, is_deleted=False)
@@ -155,17 +155,19 @@ class Product(business_model.Model):
 				if product_model.stock_type == mall_models.PRODUCT_STOCK_TYPE_UNLIMIT:
 					unlimit = u'无限'
 				else:
-					stocks.append(product_model.stocks)
+					stocks.add(product_model.stocks)
 		else:
 			product_model = product_models.first()
 			if product_model.stock_type == mall_models.PRODUCT_STOCK_TYPE_UNLIMIT:
-				stocks = u'无限'
+				unlimit = u'无限'
 			else:
-				stocks.append(product_model.stocks)
+				stocks.add(product_model.stocks)
 
-		stocks.sort()
 		if unlimit:
-			stocks.append(unlimit)
+			stocks.add(unlimit)
+
+		stocks = list(stocks)
+		stocks.sort()
 
 		return stocks
 
