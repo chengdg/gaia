@@ -50,7 +50,7 @@ Background:
 		}]
 		"""
 
-@gaia @edit_electric_shipper @xzh @zph
+@gaia @features @mall @logic @electric_shipper @edit_electric_shipper @xzh @zph
 Scenario:1 客户编辑发货人信息
 	Given jobs登录系统
 	When jobs编辑发货人'aini'的信息

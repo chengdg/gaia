@@ -27,7 +27,7 @@ Background:
 		}]
 		"""
 
-@gaia @set_defult_shipper @xzh @zph
+@gaia @features @mall @logic @electric_shipper @set_defult_shipper @xzh @zph
 Scenario:1 客户设置默认发货人
 	Given jobs登录系统
 	When jobs启用名称为'aini'的发货人

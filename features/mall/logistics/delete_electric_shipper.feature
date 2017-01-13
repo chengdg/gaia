@@ -28,7 +28,7 @@ Background:
 		"remark":"测试1"
 		}]
 		"""
-@gaia @delete_electric_shipper @xzh @zph
+@gaia @features @mall @logic @electric_shipper @delete_electric_shipper  @zph
 Scenario:1 jobs删除默认的发货人
 	Given jobs登录系统
 	When jobs删除名称为'aini'的发货人
