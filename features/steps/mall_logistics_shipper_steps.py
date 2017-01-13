@@ -122,3 +122,39 @@ def step_impl(context, user,name):
 
     response = context.client.post(url, arg)
     bdd_util.assert_api_call_success(response)
+
+
+@when(u"{user}启用名称为'{name}'的发货人")
+def step_impl(context, user,name):
+
+    url = '/mall/active_shipper/?_method=put'
+
+    corp_id = context.corp.id
+    id = __get_shipper_id(context.corp.id, name)
+
+    arg = {
+        "corp_id" : corp_id,
+        "id" : id
+    }
+
+    response = context.client.post(url, arg)
+    bdd_util.assert_api_call_success(response)
+
+
+@then(u"{user}能获得发货人是否启用列表")
+def step_impl(context, user):  
+
+    url = '/mall/shippers/?_method=get'
+    expected = json.loads(context.text)
+
+    response = context.client.get(url, {"corp_id": context.corp.id})
+    shippers = response.data['shippers']
+    actuals = []
+    for shipper in shippers:
+        is_use = shipper['is_active']
+        actuals.append({
+                'shipper' : shipper['name'],
+                'is_use' : is_use,
+            })
+
+    bdd_util.assert_list(expected, actuals)
