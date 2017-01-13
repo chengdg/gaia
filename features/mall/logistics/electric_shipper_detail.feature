@@ -28,7 +28,8 @@ Background:
 @gaia @features @mall @logic @electric_shipper @electric_shipper_detail @xzh 
 Scenario:1 客户获得制定发货人详情
 	Given jobs登录系统
-	Then jobs获得发货人'aini'的详情
+	When jobs获得发货人'aini'的详情
+	Then jobs获得发货人列表
 		"""
 		[{
 		"shipper":"aini",
