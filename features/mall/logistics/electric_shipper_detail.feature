@@ -26,10 +26,10 @@ Background:
 		}]
 		"""
 @gaia @features @mall @logic @electric_shipper @electric_shipper_detail @xzh 
-Scenario:1 客户获得制定发货人详情
+Scenario:1 客户获取指定发货人详情
 	Given jobs登录系统
-	When jobs获得发货人'aini'的详情
-	Then jobs获得发货人列表
+
+	Then jobs能获得指定发货人'aini'的列表
 		"""
 		[{
 		"shipper":"aini",

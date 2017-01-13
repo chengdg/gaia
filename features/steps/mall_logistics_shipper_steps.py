@@ -158,3 +158,36 @@ def step_impl(context, user):
             })
 
     bdd_util.assert_list(expected, actuals)
+
+
+@then(u"{user}能获得指定发货人'{name}'的列表")
+def step_impl(context, user,name):
+    expected = json.loads(context.text)
+    url = '/mall/shipper/?_method=get'
+
+    corp_id = context.corp.id
+    id = __get_shipper_id(context.corp.id, name)
+    arg = {
+        "corp_id" : corp_id,
+        "id" : id
+    }
+    response = context.client.post(url, arg)
+    shipper = response.data['shipper']
+    actuals = []
+
+    province = ID2PROVINCE[int(shipper['province'])]
+    city = ID2CITY[int(shipper['city'])]
+    district = ID2DISTRICT[int(shipper['district'])]
+    actuals.append({
+            'shipper' : shipper['name'],
+            'province' : province,
+            'city' : city,
+            'district' : district,
+            'particular_address' : shipper['address'],
+            'post_code' : shipper['postcode'],
+            'business_name' : shipper['company_name'],
+            'mobile_num' : shipper['tel_number'],
+            'remark' : shipper['remark'],
+        })
+
+    bdd_util.assert_list(expected, actuals)
