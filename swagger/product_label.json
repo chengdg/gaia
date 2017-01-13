@@ -40,6 +40,152 @@
                     }
                 }
             }
+        },
+        "/mall/product_label_group/": {
+            "put": {
+                "description": "创建商品标签分组",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "formData",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },{
+                        "name": "label_group_name",
+                        "in": "formData",
+                        "description": "标签分组名",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product_label"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "int",
+                                    "description": "商品标签分组id"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "删除商品标签分组",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "formData",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },{
+                        "name": "label_group_id",
+                        "in": "formData",
+                        "description": "标签分组id",
+                        "required": true,
+                        "type": "int"
+                    }
+                ],
+                "tags": [
+                    "product_label"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        },
+        "/mall/product_label/": {
+            "put": {
+                "description": "创建商品标签",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "formData",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },{
+                        "name": "label_group_id",
+                        "in": "formData",
+                        "description": "标签分组id",
+                        "required": true,
+                        "type": "int"
+                    },{
+                        "name": "label_name",
+                        "in": "formData",
+                        "description": "标签名",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product_label"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "label": {
+                                    "type": "object",
+                                    "properties": {
+                                        "$ref": "#/definitions/ProductLabel"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "删除商品标签",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "formData",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },{
+                        "name": "label_id",
+                        "in": "formData",
+                        "description": "标签id",
+                        "required": true,
+                        "type": "int"
+                    }
+                ],
+                "tags": [
+                    "product_label"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -75,6 +221,27 @@
                     "description": "商品标签的名字"
 				}
 			}
-		}
+		},
+        "ProductLabel": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "int",
+                    "description": "标签id"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "标签名"
+                },
+                "label_group_id": {
+                    "type": "int",
+                    "description": "所属标签分组id"
+                },
+                "created_at": {
+                    "type": "string",
+                    "description": "创建时间"
+                }
+            }
+        }
     }
 }

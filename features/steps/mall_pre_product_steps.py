@@ -16,6 +16,11 @@ def __limit_type_name2number(name):
 	else:
 		return -1
 
+def __limit_zone_name2id(name, corp_id):
+	if not name:
+		return 0
+	return mall_models.ProductLimitZoneTemplate.select().dj_where(owner_id=corp_id, name=name).get().id
+
 def __get_product_status_text(status, is_accepted):
 	"""
 	:return: 待审核, 审核中, 已审核, 入库驳回
@@ -46,6 +51,13 @@ def __postage_type_name2bool(name):
 	else:
 		return False
 
+def __postage_name2id(name, corp_id):
+	if u"统一运费" == name:
+		return 0
+	else:
+		postage_name = name.split(':')[1]
+		return mall_models.PostageConfig.select().dj_where(owner_id=corp_id, is_deleted=False, is_used=True, name=postage_name).get().id
+
 def __product_names2ids_str(name_list):
 	models = mall_models.Product.select().dj_where(name__in=name_list, is_pre_product=True)
 	return [m.id for m in models]
@@ -66,23 +78,125 @@ def __get_operations(context, status):
 
 	return ' '.join(operations)
 
+def __format_image_info(images):
+	return json.dumps({
+		"images": [{
+			"url": image,
+			"width": 80,
+			"height": 80
+		}for image in images]
+	})
+
+def __format_product_models(context, models):
+	result_models = []
+	if len(models) == 0:
+		return result_models
+	for name, model in models.items():
+		data = {
+			'price': model['price'],
+			'weight': model['weight'],
+			'stocks': model['stocks']
+		}
+		normalized_model_name, model_properties = __parse_model_name(context, name)
+		data['name'] = normalized_model_name
+		data['properties'] = model_properties
+
+		# 在数据库中查询是否已存在该model，如果存在，则是更新；否则，为创建
+		try:
+			existed_product_model = mall_models.ProductModel.select().dj_where(owner_id=context.corp.id, name=normalized_model_name, is_deleted=False).get()
+		except:
+			existed_product_model = None
+		if existed_product_model:
+			data['id'] = existed_product_model.id
+		else:
+			data['id'] = normalized_model_name
+
+		result_models.append(data)
+
+	return json.dumps(result_models)
+
+def __parse_model_name(context, model_name):
+    """
+    解析model name（黑色 M），生成
+    1. 标准model_name: 2:5_3:6
+    2. model properties: [{property_id:2, property_value_id:5}, {property_id:3, property_value_id:6}]
+    """
+    properties = list(mall_models.ProductModelProperty.select().dj_where(owner_id=context.corp.id))
+    property_ids = [property.id for property in properties]
+    property_values = list(mall_models.ProductModelPropertyValue.select().dj_where(property_id__in=property_ids))
+
+    name2value = {}
+    for property_value in property_values:
+        name = property_value.name
+        name2value[name] = property_value
+
+    #从显示用的model_name(黑色 M)构造标准model_name(2:5_3:6)
+    normalized_model_name_items = []
+    #从model_name(黑色 M)获得model properties
+    model_properties = []
+    for property_value_name in model_name.split(' '):
+        #property_value_name: '黒'' 或是 'M'
+        property_value = name2value[property_value_name]
+        normalized_model_name_item = '%d:%d' % (property_value.property_id, property_value.id)
+        normalized_model_name_items.append(normalized_model_name_item)
+        model_properties.append({
+            'property_id': property_value.property_id,
+            'property_value_id': property_value.id
+        })
+    normalized_model_name = '_'.join(normalized_model_name_items)
+
+    return normalized_model_name, model_properties
+
+def __format_price(price):
+	"""
+	两位小数，不足补0
+	"""
+	price = str(price)
+	str_arr = price.split('.')
+	if len(str_arr) == 1:
+		return '{}.00'.format(price)
+	elif len(str_arr[1]) == 1:
+		return '{}0'.format(price)
+	else:
+		return price
+
+def __get_stocks_area(stocks):
+	if len(stocks) == 1:
+		result = str(stocks[0])
+	else:
+		result = u'{}~{}'.format(stocks[0], stocks[-1])
+	return result
+
+def __format_price_area(price_info):
+	min_price = price_info['min_price']
+	max_price = price_info['max_price']
+	if min_price == max_price:
+		return min_price
+	else:
+		return '{}~{}'.format(__format_price(min_price), __format_price(max_price))
+
 @when(u"{user}创建商品分类为'{classification_name}'的待审核商品")
 def step_impl(context, user, classification_name):
 	datas = json.loads(context.text)
 	classification_id = __classification_name2id(classification_name)
+	corp_id = context.corp.id
 	for data in datas:
 		response = context.client.put('/product/pre_product/', {
-			'corp_id': bdd_util.get_user_id_for(user),
+			'corp_id': corp_id,
 			'classification_id': classification_id,
 			'name': data['name'],
 			'promotion_title': data['promotion_title'],
 			'has_multi_models': data['has_product_model'],
-			'price': data['price'],
-			'weight': data['weight'],
-			'stocks': data['stock'],
+			'price': data.get('price', 0.00),
+			'weight': data.get('weight', 0.00),
+			'stocks': data.get('stock', 0),
+			'models': __format_product_models(context, data.get('models', [])),
 			'limit_zone_type': __limit_type_name2number(data['limit_zone_type']),
+			'limit_zone': __limit_zone_name2id(data.get('limit_zone_name', ''), corp_id),
 			'has_same_postage': __postage_type_name2bool(data['postage_type']),
-			'postage_money': data['postage_money'],
+			'postage_money': data.get('postage_money', 0.00),
+			'postage_id': __postage_name2id(data['postage_type'], corp_id),
+			'images': __format_image_info(data['images']),
 			'detail': data['remark']
 		})
 		bdd_util.assert_api_call_success(response)
@@ -100,7 +214,7 @@ def step_impl(context, user):
 def step_impl(context, user):
 	expected = bdd_util.table2list(context)
 	response = context.client.get('/product/pre_products/', {
-		'corp_id': bdd_util.get_user_id_for(user)
+		'corp_id': context.corp.id
 	})
 
 	actual = response.data['rows']
@@ -110,8 +224,8 @@ def step_impl(context, user):
 		row['created_time'] = u'创建时间'
 		row['operation'] = __get_operations(context, row['status'])
 		row['status'] = __get_product_status_text(row['status'], row['is_accepted'])
-		row['stock'] = row['stocks'][0] if len(row['stocks']) == 1 else '~'.join(row['stocks'])
-		row['price'] = row['price_info']['display_price']
+		row['stock'] = __get_stocks_area(row['stocks'])
+		row['price'] = __format_price_area(row['price_info'])
 		row['owner_name'] = 'jobs'#TODO
 
 	bdd_util.assert_list(expected, actual)

@@ -11,7 +11,7 @@ class APostageConfigs(api_resource.ApiResource):
     app = 'mall'
     resource = 'postage_configs'
 
-    @param_required(['corp'])
+    @param_required(['corp_id'])
     def get(args):
         corp = args['corp']
         postage_configs = corp.postage_config_repository.get_postage_configs()
