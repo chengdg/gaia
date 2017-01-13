@@ -322,26 +322,23 @@ class ProductPool(business_model.Model):
 			product_ids = sorted(list(set(product_ids)), key=copy_product_ids.index)
 			pageinfo, product_ids = paginator.paginate(product_ids, page_info.cur_page, page_info.count_per_page)
 			product_models = mall_models.Product.select().dj_where(id__in=product_ids)
+			product_models = sorted(product_models, key=lambda k: product_ids.index(k.id))
 
 		products = [Product(model) for model in product_models]
 		fill_product_detail_service = FillProductDetailService.get(self.corp)
 		fill_product_detail_service.fill_detail(products, fill_options)
 
-		#按照product_ids中id的顺序对products进行顺序调整
-		id2product = dict([(product.id, product) for product in products])
 		result = []
-		for product_id in product_ids:
-			product_id = int(product_id)
-			#因为products中的结果是分页后的结果，所以并不是所有的product_id对应的商品都在products中，这里需要判断
-			product = id2product.get(product_id, None)
-			if product:
-				pool_product_model = product2poolmodel[product.id]
-				if pool_product_model.type == mall_models.PP_TYPE_SYNC:
-					product.create_type = 'sync'
-				else:
-					product.create_type = 'create'
-				product.sync_at = pool_product_model.sync_at
-				result.append(product)
+
+		for product in products:
+			pool_product_model = product2poolmodel[product.id]
+			if pool_product_model.type == mall_models.PP_TYPE_SYNC:
+				product.create_type = 'sync'
+			else:
+				product.create_type = 'create'
+			product.sync_at = pool_product_model.sync_at
+			result.append(product)
+
 		return result, pageinfo
 
 	def get_products_by_ids(self, product_ids, fill_options={}):
