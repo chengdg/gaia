@@ -5,6 +5,7 @@ from behave import *
 from features.util import bdd_util
 from db.mall import models as mall_models
 from db.account import models as account_models
+from business.mall.logistics.shipper import Shipper
 
 import logging
 
@@ -69,5 +70,55 @@ def step_impl(context, user):
                 'mobile_num' : shipper['tel_number'],
                 'remark' : shipper['remark'],
             })
-        
+
     bdd_util.assert_list(expected, actuals)
+
+def __get_shipper_id(corp_id, name):
+    shipper = mall_models.ShipperMessages.select().dj_where(owner_id=corp_id, name=name).get()
+    return shipper.id
+
+
+@when(u"{user}删除名称为'{name}'的发货人")
+def step_impl(context, user,name):
+
+    url = '/mall/shipper/?_method=delete'
+
+    corp_id = context.corp.id
+    id = __get_shipper_id(context.corp.id, name)
+
+    arg ={
+        "corp_id" : corp_id,
+        "id" : id,
+    }
+    response = context.client.post(url, arg)
+    bdd_util.assert_api_call_success(response)
+
+
+@when(u"{user}编辑发货人'{name}'的信息")
+def step_impl(context, user,name):
+    data = json.loads(context.text)
+    url = '/mall/shipper/?_method=post'
+
+    corp_id = context.corp.id
+    id = __get_shipper_id(context.corp.id, name)
+
+    province_id = PROVINCE2ID[data['province']]
+    city_id = CITY2ID[data['city']]
+    district_id = DISTRICT2ID[data['district']]
+    arg = {
+        "corp_id" : corp_id,
+        "id" : id,
+        "name" : data['shipper'],
+        "tel_number" : data['mobile_num'],
+        "province" : province_id,
+        "city" : city_id,
+        "district" : district_id,
+        "address" : data['particular_address'],
+        "postcode" : data['post_code'],
+        "company_name" : data['business_name'],
+        "remark" : data['remark'],
+        "is_active" : "false"
+    }
+
+    response = context.client.post(url, arg)
+    bdd_util.assert_api_call_success(response)
