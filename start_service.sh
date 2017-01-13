@@ -18,7 +18,7 @@ if [ "${CAN_START_SERVICE}" == "false" ]; then
 fi
 
 if [ "$_PROCESS_COUNT" == "" ]; then
-	_PROCESS_COUNT=8
+	_PROCESS_COUNT=10
 fi
 echo "process count: ${_PROCESS_COUNT}"
 
