@@ -41,6 +41,9 @@ def clean():
 	mall_models.Image.delete().execute()
 	mall_models.ImageGroup.delete().execute()
 
+	#发货人信息
+	mall_models.Shipper.delete().execute()
+
 	#商品属性模板
 	mall_models.ProductProperty.delete().execute()
 	mall_models.TemplateProperty.delete().execute()
