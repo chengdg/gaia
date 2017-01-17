@@ -561,7 +561,8 @@ class DeliveryItem(business_model.Model):
 			# 更新订单的金额信息
 			mall_models.Order.update(final_price=mall_models.Order.final_price - self.refunding_info['cash'],
 			                         weizoom_card_money=mall_models.Order.weizoom_card_money - self.refunding_info[
-				                         'weizoom_card_money']- self.refunding_info[
+				                         'weizoom_card_money'],
+			                         member_card_money=mall_models.Order.member_card_money - self.refunding_info[
 				                         'member_card_money']).dj_where(id=self.origin_order_id).execute()
 		self.__save()
 
@@ -626,13 +627,11 @@ class DeliveryItem(business_model.Model):
 		if self.has_db_record:
 			supplier_tel = self.supplier_info['supplier_tel']
 			data = {
-                    "phones": str(supplier_tel),
-                    "content": {
-                        "order_id": self.bid,
-                        "ship_name": self.ship_name
-                    },
-                    "sms_code": "SMS_34465265"
-                }		
+				"phones": str(supplier_tel),
+				"content": {
+					"order_id": self.bid,
+					"ship_name": self.ship_name
+				},
+				"sms_code": "SMS_34465265"
+			}
 			rs = send_phone_captcha(data)
-
-
