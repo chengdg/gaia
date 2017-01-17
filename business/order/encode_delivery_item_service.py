@@ -43,7 +43,7 @@ class EncodeDeliveryItemService(business_model.Service):
 			                     'show_sale_price': product.show_sale_price,
 			                     'count': product.count,
 			                     'thumbnails_url': product.thumbnails_url,
-			                     'model_id': product.model_id,
+			                     'is_deleted': product.is_deleted,
 			                     'weight': product.weight,
 			                     'total_origin_price': product.total_origin_price,
 			                     'product_model_name_texts': product.product_model_name_texts,
