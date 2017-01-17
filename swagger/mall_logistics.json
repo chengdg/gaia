@@ -1476,6 +1476,26 @@
                 "city_name": {
                     "type": "string",
                     "description": "城市名称"
+                },
+                "districts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/District"
+                    },
+                    "minItems": 0
+                }
+            }
+        },
+        "District": {
+            "type": "object",
+            "properties": {
+                "district_id": {
+                    "type": "number",
+                    "description": "区县id"
+                },
+                "district_name": {
+                    "type": "string",
+                    "description": "区县名称"
                 }
             }
         },
