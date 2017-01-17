@@ -3,7 +3,7 @@
 import os
 import json
 
-from utils.command import BaseCommand
+from util.command import BaseCommand
 
 
 class Command(BaseCommand):
