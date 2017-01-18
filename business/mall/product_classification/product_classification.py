@@ -223,7 +223,14 @@ class ProductClassification(business_model.Model):
 		"""
 		增加分类下的商品
 		"""
-		mall_models.Classification.update(product_count=mall_models.Classification.product_count+1).dj_where(id=self.id).execute()
+		#首先解除该商品和其他分类的关系
+		old_relation = mall_models.ClassificationHasProduct.select().dj_where(product_id=product_id).first()
+		if old_relation:
+			old_classification_id = old_relation.classification_id
+			old_relation.delete().execute()
+			mall_models.Classification.update(product_count=mall_models.Classification.product_count - 1).dj_where(
+				id=old_classification_id).execute()
+
 		#建立关系
 		mall_models.ClassificationHasProduct.create(
 			classification = self.id,
@@ -231,6 +238,8 @@ class ProductClassification(business_model.Model):
 			woid = CorporationFactory.get().id,
 			display_index = 0
 		)
+		mall_models.Classification.update(product_count=mall_models.Classification.product_count + 1).dj_where(
+			id=self.id).execute()
 
 	@property
 	def total_product_count(self):
