@@ -99,9 +99,9 @@ class ExpressBillAccount(models.Model):
 	"""
 	owner = models.ForeignKey(User)
 	express_name = models.CharField(max_length=50) #快递公司
-	customer_name = models.CharField(max_length=256) #CustomerName
-	customer_pwd = models.CharField(max_length=256)  #CustomerPwd
-	logistics_number = models.CharField(max_length=256) #物流月结号
+	customer_name = models.CharField(max_length=256) #商户代码/编号/id
+	customer_pwd = models.CharField(max_length=256)  #商户密码/密钥
+	logistics_number = models.CharField(max_length=256) #密码串/月结号
 	sendsite = models.CharField(max_length=256) #网点名称
 	remark = models.TextField(null=True) #备注
 	is_deleted = models.BooleanField(default=False) #是否删除

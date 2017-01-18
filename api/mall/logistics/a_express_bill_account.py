@@ -10,6 +10,9 @@ from business.mall.logistics.express_bill_account import ExpressBillAccount
 
 
 class AExpressBillAccount(api_resource.ApiResource):
+	"""
+	获取电子面单账号
+	"""
 	app = 'mall'
 	resource = 'express_bill_account'
 
