@@ -28,3 +28,4 @@ import a_pre_product
 import a_pre_products
 import a_pending_product
 import a_verified_product
+import a_onshelf_simple_products

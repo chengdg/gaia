@@ -514,6 +514,43 @@
                 }
             }
         },
+        "/product/onshelf_simple_products/": {
+            "get": {
+                "summary": "获取在售简单商品集合",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "products": {
+                                    "$ref": "#/definitions/ReturnBaseInfo"
+                                },
+                                "pageinfo": {
+                                    "type": "object",
+                                    "description": "分页信息"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/product/offshelf_products/": {
             "get": {
                 "summary": "获取待售商品集合",
@@ -1574,6 +1611,10 @@
                 "created_at": {
                     "type": "string",
                     "description": "创建时间"
+                },
+                "thumbnails_url": {
+                    "type": "string",
+                    "description": "图片"
                 }
             }
         },
