@@ -82,7 +82,7 @@ class APreProduct(api_resource.ApiResource):
 			'postage_id': postage_id,
 			'unified_postage_money': unified_postage_money,
 			'limit_zone_type': limit_zone_type,
-			'limit_zone': limit_zone
+			'limit_zone_id': limit_zone
 		}
 
 		models_info = {
@@ -143,7 +143,7 @@ class APreProduct(api_resource.ApiResource):
 			'postage_id': postage_id,
 			'unified_postage_money': unified_postage_money,
 			'limit_zone_type': limit_zone_type,
-			'limit_zone': limit_zone
+			'limit_zone_id': limit_zone
 		}
 
 		models_info = {

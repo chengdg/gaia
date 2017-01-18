@@ -121,9 +121,9 @@ class UpdateProductService(business_model.Service):
 			product_model = mall_models.ProductModel.update(
 				price=new_model['price'],
 				weight=new_model['weight'],
-				stock_type=mall_models.PRODUCT_STOCK_TYPE_UNLIMIT if new_model['stock_type'] == 'unlimit' else mall_models.PRODUCT_STOCK_TYPE_LIMIT,
+				stock_type=mall_models.PRODUCT_STOCK_TYPE_UNLIMIT if new_model.get('stock_type', 'limit') == 'unlimit' else mall_models.PRODUCT_STOCK_TYPE_LIMIT,
 				stocks=new_model['stocks'],
-				user_code=new_model['user_code'],
+				user_code=new_model.get('user_code', ''),
 				purchase_price=new_model['purchase_price']
 			).dj_where(owner_id=self.corp.id, id=new_model['id']).execute()
 
@@ -247,7 +247,7 @@ class UpdateProductService(business_model.Service):
 		categories = args.get('categories', [])
 		properties = args.get('properties', [])
 
-		product = self.__update_product(product_id, base_info, image_info, logistics_info, pay_info)
+		self.__update_product(product_id, base_info, image_info, logistics_info, pay_info)
 		self.__update_product_categories(product_id, categories)
 		self.__update_product_images(product_id, image_info)
 		self.__update_product_models(product_id, models_info)
@@ -255,7 +255,6 @@ class UpdateProductService(business_model.Service):
 		self.__update_product_classifications(product_id, base_info)
 		# 更新缓存
 		self.__send_msg_to_topic(product_id, "product_updated")
-		return product
 
 	def update_product_price(self, product_id, price_infos):
 		"""
