@@ -193,3 +193,23 @@ class ProductShelf(business_model.Model):
 		products, pageinfo = product_pool.get_products(page_info, fill_options, options, filters)
 
 		return products, pageinfo
+
+	def get_simple_products(self, page_info, filters):
+		"""
+		获取货架上所有商品
+		"""
+		product_pool = self.corp.product_pool
+		filters['__f-status-equal'] = mall_models.PP_STATUS_ON
+
+		fill_options = {
+			'with_price': True,
+			'with_category': True,
+		}
+
+		options = {
+			'order_options': ['display_index', '-onshelf_time', '-id']
+		}
+
+		products, pageinfo = product_pool.get_products(page_info, fill_options, options, filters)
+
+		return products, pageinfo

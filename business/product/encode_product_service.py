@@ -27,7 +27,8 @@ class EncodeProductService(business_model.Service):
 			"is_member_product": product.is_member_product,
 			"is_delivery": product.is_delivery,
 			"sync_at": product.sync_at.strftime('%Y-%m-%d %H:%M') if product.sync_at else None,
-			"created_at": product.created_at.strftime('%Y-%m-%d %H:%M')
+			"created_at": product.created_at.strftime('%Y-%m-%d %H:%M'),
+			"thumbnails_url": product.thumbnails_url,
 		}
 
 		return data
@@ -260,3 +261,14 @@ class EncodeProductService(business_model.Service):
 
 	def encode(self, product):
 		pass
+
+	def get_price_info(self, product):
+		price_info = product.price_info
+		if price_info:
+			return {
+				'display_price': price_info['display_price'],
+				'display_original_price': price_info['display_original_price'],
+				'display_market_price': price_info['display_market_price'],
+				'min_price': price_info['min_price'],
+				'max_price': price_info['max_price'],
+			}
