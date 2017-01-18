@@ -24,6 +24,7 @@ from business.mall.image_group.image_group_repository import ImageGroupRepositor
 from business.mall.pay.pay_interface_repository import PayInterfaceRepository
 from business.mall.logistics.postage_config_repository import PostageConfigRepository
 from business.mall.logistics.shipper_repository import ShipperRepository
+from business.mall.logistics.express_bill_account_repository import ExpressBillAccountRepository
 from business.mall.logistics.express_delivery_repository import ExpressDeliveryRepository
 from business.mall.logistics.limit_zone_repository import LimitZoneRepository
 from business.mall.logistics.province_city_repository import ProvinceCityRepository
@@ -162,6 +163,10 @@ class Corporation(business_model.Model):
 	@property
 	def shipper_repository(self):
 		return ShipperRepository(self)
+
+	@property
+	def express_bill_account_repository(self):
+		return ExpressBillAccountRepository(self)
 
 	@property
 	def mall_config_repository(self):
