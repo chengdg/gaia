@@ -30,7 +30,6 @@ class DeliveryItemProduct(business_model.Model):
 		'weight',
 		'delivery_item_id',
 		'thumbnails_url',
-		'is_deleted',
 		'total_origin_price',
 		'promotion_info',
 		'product_model_name_texts',
