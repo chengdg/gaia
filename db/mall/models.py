@@ -460,7 +460,6 @@ class Product(models.Model):
 	#待审核商品
 	is_pre_product = models.BooleanField(default=False)  # 是否待审核商品
 	status = models.IntegerField(default=PRODUCT_STATUS['NOT_YET'])  # 审核状态
-	refuse_reason = models.TextField(default='')  # 驳回原因
 	is_updated = models.BooleanField(default=False) #是否已更新
 	is_accepted = models.BooleanField(default=True)  # 审核是否已通过
 
@@ -473,7 +472,7 @@ class ProductRefuseLogs(models.Model):
 	审核商品驳回日志
 	"""
 	product_id = models.IntegerField(default=-1) # 商品id
-	refuse_reasons = models.CharField(max_length=1024, default='') #驳回原因
+	refuse_reason = models.CharField(max_length=1024, default='') #驳回原因
 	created_at = models.DateTimeField(auto_now_add=True)
 
 	class Meta(object):

@@ -48,6 +48,7 @@ class APreProduct(api_resource.ApiResource):
 			'classification_name_nav': pre_product.classification_nav,
 			'status': pre_product.status,
 			'is_accepted': pre_product.is_accepted,
+			'refuse_reasons': pre_product.refuse_reasons,
 			'is_updated': pre_product.is_updated
 		}
 

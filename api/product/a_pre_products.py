@@ -48,7 +48,7 @@ class APreProducts(api_resource.ApiResource):
 				'classification_nav': pre_product.classification_nav,
 				'is_updated': pre_product.is_updated,
 				'is_accepted': pre_product.is_accepted,
-				'refuse_reason': pre_product.refuse_reason,
+				'refuse_reasons': pre_product.refuse_reasons,
 				'detail': pre_product.detail,
 				'created_at': pre_product.created_at.strftime('%Y-%m-%d %H:%M:%S'),
 				'images': pre_product.swipe_images,
