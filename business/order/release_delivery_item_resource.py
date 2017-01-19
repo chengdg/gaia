@@ -31,18 +31,18 @@ class ReleaseDeliveryItemResourceService(business_model.Service):
 			mall_models.MEANINGFUL_WORD2ORDER_STATUS[from_status] != mall_models.ORDER_STATUS_NOT)  # 已经支付过的订单，已增加过销量
 
 			delivery_item_products = delivery_item.products
-			product_ids = [p.id for p in delivery_item_products]
-			product_id2delivery_item_product = {p.id: p for p in delivery_item_products}
-
-			products = corp.product_pool.get_products_by_ids(product_ids)
+			# product_ids = [p.id for p in delivery_item_products]
+			# product_id2delivery_item_product = {p.id: p for p in delivery_item_products}
+			#
+			# products = corp.product_pool.get_products_by_ids(product_ids)
 			#
 			# for delivery_item_product in delivery_item_products:
 			# 	product = corp.product_pool.get_products_by_ids([delivery_item_product.id])[0]
 			#
 			# 	product.update_sales(delivery_item_product.count)
 
-			for product in products:
-				delivery_item_product = product_id2delivery_item_product[product.id]
+			for delivery_item_product in delivery_item_products:
+				# delivery_item_product = product_id2delivery_item_product[product.id]
 
 				# 更新销量库存
 				# product.update_stock(delivery_item_product.product_model_name, delivery_item_product.count)
