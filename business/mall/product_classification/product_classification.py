@@ -227,7 +227,7 @@ class ProductClassification(business_model.Model):
 		old_relation = mall_models.ClassificationHasProduct.select().dj_where(product_id=product_id).first()
 		if old_relation:
 			old_classification_id = old_relation.classification_id
-			old_relation.delete().execute()
+			old_relation.delete_instance()
 			mall_models.Classification.update(product_count=mall_models.Classification.product_count - 1).dj_where(
 				id=old_classification_id).execute()
 

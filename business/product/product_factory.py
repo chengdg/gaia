@@ -63,8 +63,8 @@ class ProductFactory(business_model.Service):
 		"""
 		将商品加入到多个商品分类中
 		"""
-		classification_id = int(base_info.get('classification_id', 0))
-		if classification_id == 0:
+		classification_id = int(base_info.get('classification_id'))
+		if not classification_id:
 			return
 
 		classification = self.corp.product_classification_repository.get_product_classification(classification_id)

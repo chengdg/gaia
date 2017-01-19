@@ -124,7 +124,7 @@ class UpdateProductService(business_model.Service):
 				stock_type=mall_models.PRODUCT_STOCK_TYPE_UNLIMIT if new_model.get('stock_type', 'limit') == 'unlimit' else mall_models.PRODUCT_STOCK_TYPE_LIMIT,
 				stocks=new_model['stocks'],
 				user_code=new_model.get('user_code', ''),
-				purchase_price=new_model['purchase_price']
+				purchase_price=new_model.get('purchase_price', 0.0)
 			).dj_where(owner_id=self.corp.id, id=new_model['id']).execute()
 
 	def __delete_custom_models(self, need_delete_ids):
@@ -217,8 +217,8 @@ class UpdateProductService(business_model.Service):
 		"""
 		更新商品分类
 		"""
-		classification_id = int(base_info.get('classification_id', 0))
-		if classification_id == 0:
+		classification_id = int(base_info.get('classification_id'))
+		if not classification_id:
 			return
 
 		classification = self.corp.product_classification_repository.get_product_classification(classification_id)
