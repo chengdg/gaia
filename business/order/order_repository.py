@@ -360,8 +360,8 @@ class OrderRepository(business_model.Model):
 
 			self.context['valid_group_order_bids'] = list(
 				set(all_order_bids).difference(set(invalid_group_order_bids)))
-
-			db_models = db_models.dj_where(order_id__notin=invalid_group_order_bids)
+			if invalid_group_order_bids:
+				db_models = db_models.dj_where(order_id__notin=invalid_group_order_bids)
 
 		db_models = db_models.order_by(mall_models.Order.id.desc())
 		return db_models
