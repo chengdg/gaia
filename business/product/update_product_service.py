@@ -141,7 +141,6 @@ class UpdateProductService(business_model.Service):
 		更新定制规格
 		"""
 		custom_models = models_info['custom_models']
-		print custom_models
 		existed_models = [model for model in mall_models.ProductModel.select().dj_where(product_id=product_id, is_deleted=False) if not model.is_standard]
 		existed_model_ids = set([model.id for model in existed_models])
 		if len(custom_models) == 0:
