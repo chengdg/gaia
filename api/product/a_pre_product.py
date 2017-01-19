@@ -37,7 +37,7 @@ class APreProduct(api_resource.ApiResource):
 			'weight': pre_product.weight,
 			'stocks': pre_product.stocks,
 			'detail': pre_product.detail,
-			'models': [pre_product.standard_model] if pre_product.standard_model else pre_product.custom_models,
+			'models': pre_product.custom_models,
 			'images': pre_product.swipe_images,
 			'limit_zone_type': pre_product.limit_zone_type,
 			'limit_zone': pre_product.limit_zone,

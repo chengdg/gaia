@@ -467,6 +467,18 @@ class Product(models.Model):
 	class Meta(object):
 		db_table = 'mall_product'
 
+
+class ProductRefuseLogs(models.Model):
+	"""
+	审核商品驳回日志
+	"""
+	product_id = models.IntegerField(default=-1) # 商品id
+	refuse_reasons = models.CharField(max_length=1024, default='') #驳回原因
+	created_at = models.DateTimeField(auto_now_add=True)
+
+	class Meta(object):
+		db_table = 'mall_product_refuse_logs'
+
 class CategoryHasProduct(models.Model):
 	"""
 	<category, product>关系
