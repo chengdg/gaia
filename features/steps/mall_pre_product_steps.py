@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import HTMLParser
 import json
 
 from behave import *
@@ -62,7 +63,11 @@ def __product_names2ids_str(name_list):
 	models = mall_models.Product.select().dj_where(name__in=name_list, is_pre_product=True)
 	return [m.id for m in models]
 
-def __classification_name2id(classification_name):
+def __classification_name2id(classification_name, product_name):
+	if not classification_name:
+		product_id = mall_models.Product.select().dj_where(name=product_name, is_pre_product=True).get().id
+		return mall_models.ClassificationHasProduct.select().dj_where(product_id=product_id).get().classification_id
+
 	return mall_models.Classification.select().dj_where(name=classification_name).get().id
 
 def __get_operations(context, status):
@@ -79,13 +84,11 @@ def __get_operations(context, status):
 	return ' '.join(operations)
 
 def __format_image_info(images):
-	return json.dumps({
-		"images": [{
+	return [{
 			"url": image,
 			"width": 80,
 			"height": 80
 		}for image in images]
-	})
 
 def __format_product_models(context, models):
 	result_models = []
@@ -113,7 +116,7 @@ def __format_product_models(context, models):
 
 		result_models.append(data)
 
-	return json.dumps(result_models)
+	return result_models
 
 def __parse_model_name(context, model_name):
     """
@@ -175,29 +178,85 @@ def __format_price_area(price_info):
 	else:
 		return '{}~{}'.format(__format_price(min_price), __format_price(max_price))
 
+def __format_post_data(context, post):
+	corp_id = context.corp.id
+	custom_models = __format_product_models(context, post.get('models', []))
+
+	has_multi_models = post.get('has_product_model', False)
+	price = post.get('price', 0.0)
+	purchase_price = post.get('purchase_price', 0.0)
+	weight = post.get('weight', 0)
+	stocks = post.get('stock', 0)
+	images = __format_image_info(post.get('images', []))
+	classification_id = __classification_name2id(post.get('classification', ''), post['name'])
+
+	parser = HTMLParser.HTMLParser()
+
+	base_info = {
+		'name': post['name'],
+		'promotion_title': post.get('promotion_title', ''),
+		'detail': parser.unescape(post.get('detail', '')),
+		'price': price,
+		'purchase_price': purchase_price,
+		'classification_id': classification_id,
+		'is_pre_product': True
+	}
+
+	image_info = {'images': images}
+
+	postage_info = {
+		'postage_type': __postage_type_name2bool(post['postage_type']),
+		'postage_id': __postage_name2id(post.get('postage_type', 0), corp_id),
+		'unified_postage_money': post.get('postage_money', 0),
+		'limit_zone_type': __limit_type_name2number(post['limit_zone_type']),
+		'limit_zone_id': __limit_zone_name2id(post.get('limit_zone_name', ''), corp_id)
+	}
+
+	models_info = {
+		'is_use_custom_model': has_multi_models,
+		'standard_model': {
+			'price': price,
+			'purchase_price': purchase_price,
+			'weight': weight,
+			'stocks': stocks,
+			'stock_type': 'limit',
+		},
+		'custom_models': custom_models
+	}
+
+	return json.dumps(base_info), json.dumps(postage_info), json.dumps(models_info), json.dumps(image_info)
+
 @when(u"{user}创建商品分类为'{classification_name}'的待审核商品")
 def step_impl(context, user, classification_name):
 	datas = json.loads(context.text)
-	classification_id = __classification_name2id(classification_name)
 	corp_id = context.corp.id
 	for data in datas:
+		data['classification'] = classification_name
+		base_info, postage_info, models_info, image_info = __format_post_data(context, data)
 		response = context.client.put('/product/pre_product/', {
 			'corp_id': corp_id,
-			'classification_id': classification_id,
-			'name': data['name'],
-			'promotion_title': data['promotion_title'],
-			'has_multi_models': data['has_product_model'],
-			'price': data.get('price', 0.00),
-			'weight': data.get('weight', 0.00),
-			'stocks': data.get('stock', 0),
-			'models': __format_product_models(context, data.get('models', [])),
-			'limit_zone_type': __limit_type_name2number(data['limit_zone_type']),
-			'limit_zone': __limit_zone_name2id(data.get('limit_zone_name', ''), corp_id),
-			'has_same_postage': __postage_type_name2bool(data['postage_type']),
-			'postage_money': data.get('postage_money', 0.00),
-			'postage_id': __postage_name2id(data['postage_type'], corp_id),
-			'images': __format_image_info(data['images']),
-			'detail': data['remark']
+			'base_info': base_info,
+			'logistics_info': postage_info,
+			'models_info': models_info,
+			'image_info': image_info
+		})
+		bdd_util.assert_api_call_success(response)
+
+@when(u"{user}编辑待审核商品信息")
+def step_impl(context, user):
+	datas = json.loads(context.text)
+	corp_id = context.corp.id
+	for data in datas:
+		product_id = __product_names2ids_str([data['name']])[0]
+		print ('product_id======', product_id)
+		base_info, postage_info, models_info, image_info = __format_post_data(context, data)
+		response = context.client.post('/product/pre_product/', {
+			'corp_id': corp_id,
+			'product_id': product_id,
+			'base_info': base_info,
+			'logistics_info': postage_info,
+			'models_info': models_info,
+			'image_info': image_info
 		})
 		bdd_util.assert_api_call_success(response)
 

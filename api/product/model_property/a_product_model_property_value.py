@@ -3,8 +3,6 @@ __author__ = 'Eugene'
 
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
-from eaglet.core import watchdog
-from eaglet.core.exceptionutil import unicode_full_stack
 
 class AProductModelPropertyValue(api_resource.ApiResource):
     """

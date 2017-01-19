@@ -232,6 +232,7 @@ class FillProductDetailService(business_model.Service):
 			classification = id2classification[relation.classification_id]
 			classification_list.append(classification)
 			classification_nav_list.append(classification.name)
+			product.classification_id = relation.classification_id
 
 			while True:
 				if classification.father_id == 0:
