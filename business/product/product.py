@@ -100,8 +100,6 @@ class Product(business_model.Model):
 		'is_updated',
 		'is_accepted',
 		'status',
-		'refuse_reason',
-
 	)
 
 	def __init__(self, model=None):
