@@ -100,8 +100,6 @@ class Product(business_model.Model):
 		'is_updated',
 		'is_accepted',
 		'status',
-		'refuse_reason',
-
 	)
 
 	def __init__(self, model=None):
@@ -139,6 +137,14 @@ class Product(business_model.Model):
 		[property setter] 是否卖光
 		"""
 		pass
+
+	@property
+	def refuse_reasons(self):
+		"""
+		驳回原因日志
+		"""
+		logs_models = mall_models.ProductRefuseLogs.select().dj_where(product_id=self.id)
+		return [{'reason': log.refuse_reason, 'created_at': log.created_at.strftime('%Y-%m-%d %H:%M:%S')} for log in logs_models]
 
 	@property
 	def stocks(self):
@@ -215,10 +221,15 @@ class Product(business_model.Model):
 		"""
 		驳回
 		"""
+		mall_models.ProductRefuseLogs.create(
+			product_id = self.id,
+			refuse_reason = reason
+		)
+
 		mall_models.Product.update(
-			refuse_reason=reason,
 			status=mall_models.PRODUCT_STATUS['REFUSED']
 		).dj_where(id=self.id).execute()
+
 
 	# 如果规格有图片就显示，如果没有，使用缩略图
 	@property

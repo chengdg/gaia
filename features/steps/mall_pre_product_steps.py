@@ -279,7 +279,7 @@ def step_impl(context, user):
 	actual = response.data['rows']
 
 	for row in actual:
-		row['classfication'] = row['classification_name_nav']
+		row['classfication'] = row['classification_nav']
 		row['created_time'] = u'创建时间'
 		row['operation'] = __get_operations(context, row['status'])
 		row['status'] = __get_product_status_text(row['status'], row['is_accepted'])
