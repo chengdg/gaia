@@ -80,10 +80,10 @@ class UpdateProductService(business_model.Service):
 			mall_models.ProductModel.update(
 				price=standard_model['price'],
 				weight=standard_model['weight'],
-				stock_type=mall_models.PRODUCT_STOCK_TYPE_UNLIMIT if standard_model['stock_type'] == 'unlimit' else mall_models.PRODUCT_STOCK_TYPE_LIMIT,
+				stock_type=mall_models.PRODUCT_STOCK_TYPE_UNLIMIT if standard_model.get('stock_type', 'limit') == 'unlimit' else mall_models.PRODUCT_STOCK_TYPE_LIMIT,
 				stocks=standard_model['stocks'],
 				user_code=standard_model.get('user_code', ''),
-				purchase_price=standard_model['purchase_price'],
+				purchase_price=standard_model.get('purchase_price', 0.0),
 				is_deleted=False
 			).dj_where(owner_id=corp_id, product_id=product_id, name='standard').execute()
 
@@ -100,10 +100,10 @@ class UpdateProductService(business_model.Service):
 				is_standard=False,
 				price=custom_model['price'],
 				weight=custom_model['weight'],
-				stock_type=mall_models.PRODUCT_STOCK_TYPE_UNLIMIT if custom_model['stock_type'] == 'unlimit' else mall_models.PRODUCT_STOCK_TYPE_LIMIT,
+				stock_type=mall_models.PRODUCT_STOCK_TYPE_UNLIMIT if custom_model.get('stock_type', 'limit') == 'unlimit' else mall_models.PRODUCT_STOCK_TYPE_LIMIT,
 				stocks=custom_model['stocks'],
-				user_code=custom_model['user_code'],
-				purchase_price=custom_model['purchase_price']
+				user_code=custom_model.get('user_code', ''),
+				purchase_price=custom_model.get('purchase_price', 0.0)
 			)
 
 			for property in custom_model['properties']:
