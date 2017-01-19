@@ -45,6 +45,7 @@ EVENT_DISPATCHER = 'redis'
 #信息输出配置
 DUMP_API_CALL_RESULT = True
 DUMP_FORMATTED_INNER_ERROR_MSG = False
+ENABLE_CONSOLE = (os.environ.get('_ENABLE_API_SERVICE_CONSOLE', '0') == '1')
 
 # settings for WAPI Logger
 if 'develop' == MODE:

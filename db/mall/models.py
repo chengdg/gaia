@@ -89,6 +89,52 @@ class District(models.Model):
 		verbose_name = '区县列表'
 		verbose_name_plural = '区县列表'
 
+#########################################################################
+# 电子面单账号相关Model
+#########################################################################
+
+class ExpressBillAccount(models.Model):
+	"""	
+	电子面单账号
+	"""
+	owner = models.ForeignKey(User)
+	express_name = models.CharField(max_length=50) #快递公司
+	customer_name = models.CharField(max_length=256) #商户代码/编号/id
+	customer_pwd = models.CharField(max_length=256)  #商户密码/密钥
+	logistics_number = models.CharField(max_length=256) #密码串/月结号
+	sendsite = models.CharField(max_length=256) #网点名称
+	remark = models.TextField(null=True) #备注
+	is_deleted = models.BooleanField(default=False) #是否删除
+	created_at = models.DateTimeField(auto_now_add=True)
+
+	class Meta(object):
+		db_table = 'mall_express_bill_account'
+
+
+#########################################################################
+# 发货人相关Model
+#########################################################################
+
+class Shipper(models.Model):
+	"""	
+	发货人信息
+	"""
+	owner = models.ForeignKey(User)
+	name = models.CharField(max_length=50) #发货人
+	tel_number = models.CharField(max_length=15) #手机号
+	province = models.CharField(max_length=50) #发货地区省
+	city = models.CharField(max_length=50) #市
+	district = models.CharField(max_length=512) #区/县
+	address = models.CharField(max_length=256) #详细地址
+	postcode = models.CharField(max_length=50) #邮政编码
+	company_name = models.CharField(max_length=50) #单位名称
+	remark = models.TextField(null=True) #备注
+	is_active = models.BooleanField(default=False) #是否默认
+	is_deleted = models.BooleanField(default=False) #是否删除
+	created_at = models.DateTimeField(auto_now_add=True)
+
+	class Meta(object):
+		db_table = 'mall_shipper'
 
 
 #########################################################################
@@ -1010,7 +1056,11 @@ class OrderHasProduct(models.Model):
 	integral_sale_id = models.IntegerField(default=0) #使用的积分应用的id
 	origin_order_id = models.IntegerField(default=0) # 原始(母)订单id，用于微众精选拆单
 	purchase_price = models.FloatField(default=0)  # 采购单价
-
+	thumbnail_url = models.CharField(max_length=1024, default='')  # 商品图片
+	weight = models.FloatField(default=0)
+	product_model_name_texts = models.CharField(max_length=1024, default='[]')  # 规格名称的值
+	product_model_id = models.IntegerField(default=0) # 规格ID
+	
 	class Meta(object):
 		db_table = 'mall_order_has_product'
 

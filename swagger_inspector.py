@@ -4,12 +4,12 @@ swagger文档检查器
 """
 import json
 import os
-
-from api import resources
-from eaglet.core.api_resource import APPRESOURCE2CLASS
+import collections
 
 
-def get_resource_api_list(APPRESOURCE2CLASS):
+def get_resource_api_list():
+	from api import resources
+	from eaglet.core.api_resource import APPRESOURCE2CLASS
 	resource_api_list = []
 	for (app_resource, resource_cls) in APPRESOURCE2CLASS.items():
 		app, resource = app_resource.split('-')
@@ -41,7 +41,7 @@ def get_swagger_api_list(swagger_path):
 	return swagger_api_list
 
 
-resource_api_list = get_resource_api_list(APPRESOURCE2CLASS)
+resource_api_list = get_resource_api_list()
 
 project_home = os.path.split(os.path.realpath(__file__))[0].split('.git')[0]
 
@@ -54,6 +54,10 @@ print(u"共有{}个API,{}个API文档".format(len(resource_api_list),len(swagger
 
 missing_swagger_doc = list(set(resource_api_list) - set(swagger_api_list))
 redundant_swagger_doc = list(set(swagger_api_list) - set(resource_api_list))
-print(u"缺少文档：共计{}个. {}".format(len(missing_swagger_doc), str(missing_swagger_doc)))
 
+repetitive_swagger_path = filter(lambda x: x[1] > 1, collections.Counter(swagger_api_list).iteritems())
+
+
+print(u"缺少文档：共计{}个. {}".format(len(missing_swagger_doc), str(missing_swagger_doc)))
 print(u"有文档但没接口:共计{}个. {}".format(len(redundant_swagger_doc), str(redundant_swagger_doc)))
+print(u"重复的文档:共计{}个. {}".format(len(repetitive_swagger_path), str(repetitive_swagger_path)))
