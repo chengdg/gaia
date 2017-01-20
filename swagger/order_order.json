@@ -5,7 +5,7 @@
 		"title": "zeus API doc"
 	},
 	"paths": {
-				"/order/orders": {
+		"/order/orders": {
 			"get": {
 				"summary": "订单列表",
 				"parameters": [
@@ -481,11 +481,15 @@
 				"parameters": [
 					{
 						"name": "corp_id",
-						"required": true
+						"in": "query",
+						"required": true,
+						"type": "string"
 					},
 					{
 						"name": "id",
-						"required": true
+						"in": "query",
+						"required": true,
+						"type": "string"
 					}
 				],
 				"tags": [
@@ -815,7 +819,7 @@
 																		"description": "供货商名称"
 																	},
 																	"supplier_type": {
-																		"type": "类型",
+																		"type": "string",
 																		"description": "supplier/supplier_user/None"
 																	}
 																}
@@ -991,21 +995,27 @@
 				"parameters": [
 					{
 						"name": "corp_id",
-						"required": true
+						"required": true,
+						"in": "query",
+						"type": "string"
 					},
 					{
 						"name": "id",
-						"required": true
+						"required": true,
+						"in": "query",
+						"type": "string"
 					},
 					{
 						"name": "new_final_price",
-						"type": "number",
-						"required": false
+						"type": "string",
+						"required": false,
+						"in": "query",
 					},
 					{
 						"name": "new_remark",
 						"type": "string",
-						"required": false
+						"required": false,
+						"in": "query",
 					}
 				],
 				"responses": {
