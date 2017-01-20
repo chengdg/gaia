@@ -1009,13 +1009,13 @@
 						"name": "new_final_price",
 						"type": "string",
 						"required": false,
-						"in": "query",
+						"in": "query"
 					},
 					{
 						"name": "new_remark",
 						"type": "string",
 						"required": false,
-						"in": "query",
+						"in": "query"
 					}
 				],
 				"responses": {
