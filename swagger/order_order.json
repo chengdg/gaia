@@ -160,7 +160,7 @@
 																},
 																"bill_type": {
 																	"type": "integer",
-																	"description": "发票类型"
+																	"description": "发票类型， 0：无发票，1：个人发票，2：公司发票"
 																},
 																"remark": {
 																	"type": "string",
@@ -169,6 +169,14 @@
 																"is_first_order": {
 																	"type": "boolean",
 																	"description": "是否是首单"
+																},
+																"express_company_name_text": {
+																	"type": "string",
+																	"description": "快递公司名称"
+																},
+																"express_company_name_value": {
+																	"type": "string",
+																	"description": "快递公司代码"
 																},
 																"refunding_info": {
 																	"type": "object",
@@ -324,6 +332,10 @@
 																			"with_logistics": {
 																				"type": "boolean",
 																				"description": "是否使用物流"
+																			},
+																			"with_logistics_trace": {
+																				"type": "boolean",
+																				"description": "是否使用物流追踪"
 																			},
 																			"refunding_info": {
 																				"type": "object",
@@ -625,7 +637,7 @@
 												},
 												"bill_type": {
 													"type": "integer",
-													"description": "发票类型"
+													"description": "发票类型， 0：无发票，1：个人发票，2：公司发票"
 												},
 												"remark": {
 													"type": "string",
@@ -634,6 +646,14 @@
 												"is_first_order": {
 													"type": "boolean",
 													"description": "是否是首单"
+												},
+												"express_company_name_text": {
+													"type": "string",
+													"description": "快递公司名称"
+												},
+												"express_company_name_value": {
+													"type": "string",
+													"description": "快递公司代码"
 												},
 												"refunding_info": {
 													"type": "object",
@@ -847,6 +867,10 @@
 															"with_logistics": {
 																"type": "boolean",
 																"description": "是否使用物流"
+															},
+															"with_logistics_trace": {
+																"type": "boolean",
+																"description": "是否使用物流追踪"
 															},
 															"refunding_info": {
 																"type": "object",

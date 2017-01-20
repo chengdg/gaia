@@ -131,6 +131,10 @@
 						"name": "weizoom_card_money",
 						"required": false,
 						"description": "申请退款的微众卡金额"
+					},					{
+						"name": "member_card_money",
+						"required": false,
+						"description": "申请退款的会员卡金额"
 					},
 					{
 						"name": "coupon_money",
