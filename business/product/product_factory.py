@@ -30,7 +30,6 @@ class ProductFactory(business_model.Service):
 			postage_type=logistics_info['postage_type'],
 			postage_id=logistics_info.get('postage_id', 0),
 			unified_postage_money=logistics_info['unified_postage_money'],
-			weight = base_info.get('weight', 0.0),
 			stocks=base_info.get('min_limit', 0),
 			is_member_product=base_info.get("is_member_product", False),
 			supplier=base_info.get('supplier_id', 0),
