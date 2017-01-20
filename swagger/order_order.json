@@ -1048,23 +1048,27 @@
 				"parameters": [
 					{
 						"name": "corp_id",
+						"required": true,
 						"in": "query",
-						"required": true
+						"type": "string"
 					},
 					{
 						"name": "order_id",
+						"required": true,
 						"in": "query",
-						"required": true
+						"type": "string"
 					},
 					{
 						"name": "from_status",
-						"in": "query",
-						"required": true
+						"type": "string",
+						"required": false,
+						"in": "query"
 					},
 					{
 						"name": "to_status",
-						"in": "query",
-						"required": true
+						"type": "string",
+						"required": false,
+						"in": "query"
 					}
 				],
 				"tags": [
