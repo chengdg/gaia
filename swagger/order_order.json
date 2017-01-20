@@ -183,31 +183,31 @@
 																	"properties": {
 																		"weizoom_card_money": {
 																			"type": "number",
-																			"description": "订单已经退款的微众卡金额"
+																			"description": "订单已经退款完成的微众卡金额"
 																		},
 																		"member_card_money": {
 																			"type": "number",
-																			"description": "订单已经退款的会员卡金额"
+																			"description": "订单已经退款完成的会员卡金额"
 																		},
 																		"coupon_money": {
 																			"type": "number",
-																			"description": "订单已经退款的优惠券金额"
+																			"description": "订单已经退款完成的优惠券金额"
 																		},
 																		"integral": {
 																			"type": "number",
-																			"description": "订单已经退款的积分"
+																			"description": "订单已经退款完成的积分"
 																		},
 																		"integral_money": {
 																			"type": "number",
-																			"description": "订单已经退款的积分金额"
+																			"description": "订单已经退款完成的积分金额"
 																		},
 																		"cash": {
 																			"type": "number",
-																			"description": "订单已经退款的现金金额"
+																			"description": "订单已经退款完成的现金金额"
 																		},
 																		"total": {
 																			"type": "number",
-																			"description": "订单已经退款的总金额"
+																			"description": "订单已经退款完成的总金额"
 																		}
 																	}
 																},
@@ -656,31 +656,31 @@
 													"properties": {
 														"weizoom_card_money": {
 															"type": "number",
-															"description": "订单已经退款的微众卡金额"
+															"description": "订单已经退款完成的微众卡金额"
 														},
 														"member_card_money": {
 															"type": "number",
-															"description": "订单已经退款的会员卡金额"
+															"description": "订单已经退款完成的会员卡金额"
 														},
 														"coupon_money": {
 															"type": "number",
-															"description": "订单已经退款的优惠券金额"
+															"description": "订单已经退款完成的优惠券金额"
 														},
 														"integral": {
 															"type": "number",
-															"description": "订单已经退款的积分"
+															"description": "订单已经退款完成的积分"
 														},
 														"integral_money": {
 															"type": "number",
-															"description": "订单已经退款的积分金额"
+															"description": "订单已经退款完成的积分金额"
 														},
 														"cash": {
 															"type": "number",
-															"description": "订单已经退款的现金金额"
+															"description": "订单已经退款完成的现金金额"
 														},
 														"total": {
 															"type": "number",
-															"description": "订单已经退款的总金额"
+															"description": "订单已经退款完成的总金额"
 														}
 													}
 												},
