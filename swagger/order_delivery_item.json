@@ -223,10 +223,6 @@
 																"type": "number",
 																"description": "售价"
 															},
-															"show_sale_price": {
-																"type": "number",
-																"description": "商品的显示售价，通常和售价一致，只有赠品时，售价为0，而显示商品价格"
-															},
 															"id": {
 																"type": "integer",
 																"description": "商品id"

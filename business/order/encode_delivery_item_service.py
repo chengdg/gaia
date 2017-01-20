@@ -40,7 +40,6 @@ class EncodeDeliveryItemService(business_model.Service):
 			                     'name': product.name,
 			                     'origin_price': product.origin_price,
 			                     'sale_price': product.sale_price,
-			                     'show_sale_price': product.show_sale_price,
 			                     'count': product.count,
 			                     'thumbnails_url': product.thumbnails_url,
 			                     'model_id': product.model_id,
