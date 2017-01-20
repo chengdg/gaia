@@ -383,6 +383,22 @@ class ProductPool(business_model.Model):
 
 	def delete_products(self, product_ids):
 		"""
+		删除未入商品池的原始商品
+		"""
+		mall_models.Product.update(is_deleted=True).dj_where(id__in=product_ids,
+															 is_accepted=False,
+															 is_pre_product=True).execute()
+		#从商品分类中去除
+		def __handle_classification(product_id):
+			classification_id = self.get_product_by_id(product_id, {'with_classification': True}).classification_id
+			print (classification_id)
+			classification = self.corp.product_classification_repository.get_product_classification(classification_id)
+			classification.delete_product(product_id)
+
+		map(__handle_classification, product_ids)
+
+	def delete_verified_products(self, product_ids):
+		"""
 		从商品池删除商品
 		@param product_ids:
 		@return:

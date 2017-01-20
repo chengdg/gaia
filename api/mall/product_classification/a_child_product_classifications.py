@@ -24,7 +24,8 @@ class AChildProductClassifications(api_resource.ApiResource):
                 'id': product_classification.id,
                 'name': product_classification.name,
                 'level': product_classification.level,
-                'father_id': product_classification.father_id
+                'father_id': product_classification.father_id,
+                'product_count': product_classification.total_product_count
             })
 
         return {

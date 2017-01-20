@@ -1060,6 +1060,39 @@
                         }
                     }
                 }
+            },
+            "delete": {
+                "summary": "删除原始(未审核通过)商品",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "formData",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },{
+                        "name": "product_id",
+                        "in": "formData",
+                        "description": "商品id",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "tags": [
+                    "pre_product"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {}
+                        }
+                    }
+                }
             }
         },
         "/product/pending_product/": {
