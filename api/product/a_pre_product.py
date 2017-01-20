@@ -34,7 +34,7 @@ class APreProduct(api_resource.ApiResource):
 			'name': pre_product.name,
 			'promotion_title': pre_product.promotion_title,
 			'price_info': pre_product.price_info,
-			'weight': 0.0 if not pre_product.standard_model else pre_product.standard_model['weight'],
+			'weight': 0.0 if not pre_product.standard_model else pre_product.standard_model.weight,
 			'stocks': pre_product.stocks,
 			'detail': pre_product.detail,
 			'models': pre_product.custom_models,
