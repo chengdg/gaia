@@ -185,7 +185,7 @@ Scenario: 1 修改出货单物流信息
 		"with_logistics_trace":true,
 		"express_company_name_value":"申通快递",
 		"express_number":"987654321",
-		"leader_name":"zhouxun|001修改物流信息",
+		"leader_name":"zhouxun|001修改发货信息",
 		"time":"2016-10-06 10:11:00"
 	}
 	"""
@@ -216,11 +216,11 @@ Scenario: 1 修改出货单物流信息
 			"operator":"客户",
 			"time":"2016-10-01 10:01:00"
 		},{
-			"action_text":"发货",
+			"action_text":"订单发货-zhouxun",
 			"operator":"zhouxun",
 			"time":"2016-10-05 10:11:00"
 		},{
-			"action_text":"修改发货信息",
+			"action_text":"修改发货信息-zhouxun",
 			"operator":"zhouxun",
 			"time":"2016-10-06 10:11:00"
 		}],
@@ -235,7 +235,7 @@ Scenario: 1 修改出货单物流信息
 			}],
 			"express_company_name_text":"申通快递",
 			"express_number": "987654321",
-			"leader_name":"zhouxun|001修改物流信息"
+			"leader_name":"zhouxun|001修改发货信息"
 		}]
 	}
 	"""
@@ -248,7 +248,7 @@ Scenario: 1 修改出货单物流信息
 		"with_logistics_trace":false,
 		"express_company_name_value":"其他物流",
 		"express_number":"123456789",
-		"leader_name":"yangmi|002修改物流信息",
+		"leader_name":"yangmi|002修改发货信息",
 		"time":"2016-10-06 10:12:00"
 	}
 	"""
@@ -275,7 +275,7 @@ Scenario: 1 修改出货单物流信息
 			"operator":"客户",
 			"time":"2016-10-02 10:01:00"
 		},{
-			"action_text":"发货订单-yangmi",
+			"action_text":"订单发货-yangmi",
 			"operator":"zhouxun",
 			"time":"2016-10-05 10:11:00"
 		},{
@@ -308,7 +308,7 @@ Scenario: 1 修改出货单物流信息
 			"status_code": "shipped",
 			"express_company_name_text":"其他物流",
 			"express_number": "123456789",
-			"leader_name":"yangmi|002修改物流信息"
+			"leader_name":"yangmi|002修改发货信息"
 		}]
 	}
 	"""
@@ -321,7 +321,7 @@ Scenario: 1 修改出货单物流信息
 		"with_logistics_trace":false,
 		"express_company_name_value":"其他物流1",
 		"express_number":"123456788",
-		"leader_name":"其他物流|003修改物流信息",
+		"leader_name":"其他物流|003修改发货信息",
 		"time":"2016-10-06 10:13:00"
 	}
 	"""
@@ -334,7 +334,7 @@ Scenario: 1 修改出货单物流信息
 		"with_logistics_trace":true,
 		"express_company_name_value":"顺丰速运",
 		"express_number":"987654322",
-		"leader_name":"其他物流|003修改物流信息",
+		"leader_name":"其他物流|003修改发货信息",
 		"time":"2016-10-06 10:14:00"
 	}
 	"""
@@ -367,11 +367,11 @@ Scenario: 1 修改出货单物流信息
 			"operator":"客户",
 			"time":"2016-10-03 10:01:00"
 		},{
-			"action_text":"发货订单-zhouxun",
+			"action_text":"订单发货-zhouxun",
 			"operator":"zhouxun",
 			"time":"2016-10-05 10:11:00"
 		},{
-			"action_text":"发货订单-yangmi",
+			"action_text":"订单发货-yangmi",
 			"operator":"zhouxun",
 			"time":"2016-10-05 10:11:00"
 		},{
@@ -395,7 +395,7 @@ Scenario: 1 修改出货单物流信息
 			"status_code": "shipped",
 			"express_company_name_text":"其他物流1",
 			"express_number": "123456788",
-			"leader_name":"其他物流|003修改物流信息"
+			"leader_name":"其他物流|003修改发货信息"
 		},{
 			"supplier_info": {
 				"supplier_type": "supplier",
@@ -408,7 +408,7 @@ Scenario: 1 修改出货单物流信息
 			"status_code": "shipped",
 			"express_company_name_text":"顺丰速运",
 			"express_number": "987654322",
-			"leader_name":"其他物流|003修改物流信息"
+			"leader_name":"其他物流|003修改发货信息"
 		}]
 	}
 	"""
