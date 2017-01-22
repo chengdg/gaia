@@ -1,9 +1,9 @@
-Feature: 对订单进行发货
+Feature: 对出货单进行发货
 	"""
-		zhouxun能为用户订单进行发货
-		1 对订单进行发货，使用物流（非其他）
-		2 对订单进行发货，使用其他物流
-		3 对订单进行发货，不使用物流
+		zhouxun能为用户出货单进行发货
+		1 对出货单进行发货，使用物流（非其他）
+		2 对出货单进行发货，使用其他物流
+		3 对出货单进行发货，不使用物流
 	"""
 
 Background:
@@ -133,9 +133,9 @@ Background:
 	"""		
 	When bill使用支付方式'微信支付'进行支付订单'003'于2016-10-03 10:01:00::apiserver
 
-Scenario: 1 对订单进行发货，使用物流（非其他）
+Scenario: 1 对出货单进行发货，使用物流（非其他）
 	Given zhouxun登录系统
-	When zhouxun对订单进行发货
+	When zhouxun对出货单进行发货
 		"""
 		[{
 			"delivery_item_bid":"001-zhouxun",
@@ -267,7 +267,7 @@ Scenario: 1 对订单进行发货，使用物流（非其他）
 		},{
 			"action_text":"发货",
 			"operator":"zhouxun",
-			"time":"2016-10-01 10:11:00"
+			"time":"2016-10-05 10:11:00"
 		}],
 		"delivery_items": [{
 			"supplier_info": {
@@ -404,9 +404,9 @@ Scenario: 1 对订单进行发货，使用物流（非其他）
 		}]
 	}
 	"""
-Scenario: 2 对订单进行发货，使用其他物流
+Scenario: 2 对出货单进行发货，使用其他物流
 	Given zhouxun登录系统
-	When zhouxun对订单进行发货
+	When zhouxun对出货单进行发货
 		"""
 		[{
 			"delivery_item_bid":"001-zhouxun",
@@ -465,7 +465,7 @@ Scenario: 2 对订单进行发货，使用其他物流
 		},{
 			"action_text":"发货",
 			"operator":"zhouxun",
-			"time":"2016-10-01 10:11:00"
+			"time":"2016-10-05 10:11:00"
 		}],
 		"delivery_items": [{
 			"supplier_info": {
@@ -483,9 +483,9 @@ Scenario: 2 对订单进行发货，使用其他物流
 	}
 	"""
 
-Scenario: 3 对订单进行发货，不使用物流
+Scenario: 3 对出货单进行发货，不使用物流
 	Given zhouxun登录系统
-	When zhouxun对订单进行发货
+	When zhouxun对出货单进行发货
 		"""
 		[{
 			"delivery_item_bid":"002-zhouxun",
