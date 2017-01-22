@@ -69,7 +69,7 @@ Scenario:1 管理员退款单供货商的订单-待发货
 	When bill使用支付方式'微信支付'进行支付订单'001'于2016-01-01 10:00:00::apiserver
 
 	Given zhouxun登录系统
-	When zhouxun'申请退款'出货单'001-zhouxun'于'2016-01-02 10:00:00'
+	When zhouxun申请退款出货单'001-zhouxun'于'2016-01-02 10:00:00'
 		"""
 		{
 			"cash":10.00,
@@ -378,7 +378,7 @@ Scenario:2 管理员退款多供货商的订单-已发货
 			"time":"2016-02-01 11:00:00"
 		}]
 		"""
-	When zhouxun'申请退款'出货单'002-zhouxun'于'2016-02-02 10:00:00'
+	When zhouxun申请退款出货单'002-zhouxun'于'2016-02-02 10:00:00'
 		"""
 		{
 			"cash":0.00,
@@ -738,7 +738,7 @@ Scenario:3 管理员退款多供货商的订单-带运费-待发货，已完成
 		}]
 		"""
 	When zhouxun完成出货单'003-zhouxun'于'2016-03-03 10:00:00'
-	When zhouxun'申请退款'出货单'003-zhouxun'于'2016-03-04 10:00:00'
+	When zhouxun申请退款出货单'003-zhouxun'于'2016-03-04 10:00:00'
 		"""
 		{
 			"cash":0.00,
@@ -748,7 +748,7 @@ Scenario:3 管理员退款多供货商的订单-带运费-待发货，已完成
 			"member_card_money":0.00
 		}
 		"""
-	When zhouxun'申请退款'出货单'003-yangmi'于'2016-03-04 11:00:00'
+	When zhouxun申请退款出货单'003-yangmi'于'2016-03-04 11:00:00'
 		"""
 		{
 			"cash":10.00,
@@ -1198,7 +1198,7 @@ Scenario:4 管理员退款使用微众卡全额支付的订单
 			"""
 
 	Given zhouxun登录系统
-	When zhouxun'申请退款'出货单'004-zhouxun'于'2016-04-02 10:00:00'
+	When zhouxun申请退款出货单'004-zhouxun'于'2016-04-02 10:00:00'
 		"""
 		{
 			"cash":0.00,
@@ -1395,7 +1395,7 @@ Scenario:4 管理员退款使用微众卡全额支付的订单
 					"member_card_money":0.00,
 					"coupon_money": 10.00,
 					"integral": 424,
-					"integral_money": 24.20,
+					"integral_money": 21.20,
 					"total": 51.55
 					},
 				"supplier_info": {
@@ -1521,7 +1521,7 @@ Scenario:5 管理员退款使用积分的订单
 	Given zhouxun登录系统
 	Then bill在zhouxun的webapp中拥有100会员积分::weapp
 
-	When zhouxun'申请退款'出货单'005-zhouxun'于'2016-05-02 10:00:00'
+	When zhouxun申请退款出货单'005-zhouxun'于'2016-05-02 10:00:00'
 		"""
 		{
 			"cash":10.00,
@@ -1628,9 +1628,9 @@ Scenario:5 管理员退款使用积分的订单
 			"product_price": 50.11,
 			"postage":0.00,
 			"save_money": 20.00,
-			"origin_final_price": 50.11,
+			"origin_final_price": 30.11,
 			"origin_weizoom_card_money": 0.00,
-			"final_price": 50.11,
+			"final_price": 30.11,
 			"weizoom_card_money": 0.00,
 			"integral": 400,
 			"integral_money": 20.00,
@@ -1805,7 +1805,7 @@ Scenario:6 管理员退款使用优惠券的订单
 		}
 		"""
 
-	When zhouxun'申请退款'出货单'006-zhouxun'于'2016-06-02 10:00:00'
+	When zhouxun申请退款出货单'006-zhouxun'于'2016-06-02 10:00:00'
 		"""
 		{
 			"cash":10.00,
@@ -1994,7 +1994,7 @@ Scenario:6 管理员退款使用优惠券的订单
 		}]
 		"""
 
-Scenario:7 管理员退款订单，商品销量和库存
+Scenario:7 管理员退款出货单，商品销量和库存
 	Given yangmi登录系统
 	When yangmi添加商品
 		"""
@@ -2214,7 +2214,7 @@ Scenario:7 管理员退款订单，商品销量和库存
 		}]
 		"""
 
-	When zhouxun'申请退款'出货单'007-zhouxun'于'2016-07-04 10:00:00'
+	When zhouxun申请退款出货单'007-zhouxun'于'2016-07-04 10:00:00'
 		"""
 		{
 			"cash":0.00,
@@ -2224,7 +2224,7 @@ Scenario:7 管理员退款订单，商品销量和库存
 			"member_card_money":0.00
 		}
 		"""
-	When zhouxun'申请退款'出货单'007-yangmi'于'2016-07-04 11:00:00'
+	When zhouxun申请退款出货单'007-yangmi'于'2016-07-04 11:00:00'
 		"""
 		{
 			"cash":10.00,
@@ -2270,7 +2270,7 @@ Scenario:7 管理员退款订单，商品销量和库存
 		}]
 		"""
 
-Scenario:8 管理员退款订单，会员信息
+Scenario:8 管理员退款出货单，会员信息
 	Given yangmi登录系统
 	When yangmi添加商品
 		"""
@@ -2444,7 +2444,7 @@ Scenario:8 管理员退款订单，会员信息
 		}]
 		"""
 
-	When zhouxun'申请退款'出货单'008-zhouxun'于'2016-08-04 10:00:00'
+	When zhouxun申请退款出货单'008-zhouxun'于'2016-08-04 10:00:00'
 		"""
 		{
 			"cash":0.00,
@@ -2454,7 +2454,7 @@ Scenario:8 管理员退款订单，会员信息
 			"member_card_money":0.00
 		}
 		"""
-	When zhouxun'申请退款'出货单'008-yangmi'于'2016-08-04 11:00:00'
+	When zhouxun申请退款出货单'008-yangmi'于'2016-08-04 11:00:00'
 		"""
 		{
 			"cash":10.00,
