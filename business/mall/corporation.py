@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from eaglet.decorator import cached_context_property
 
 from business import model as business_model
 from business.coupon.coupon_repository import CouponRepository
@@ -55,10 +56,33 @@ class Corporation(business_model.Model):
 		'name',
 		'type',
 		'webapp_id',
-		'username'
+		'username',
+
+		'company_name',
+		'purchase_method',
+		'points',
+		'clear_period',
+		'customer_from',
+		'max_product_count',
+
+		'contact',
+		'contact_phone',
+		'valid_time_from',
+		'valid_time_to',
+		'note',
+
+		'status',
+		'created_at',
+
+		'pre_sale_tel',
+		'after_sale_tel',
+		'service_tel',
+		'service_qq_first',
+		'service_qq_second'
 	)
 
 	def __init__(self, owner_id):
+		business_model.Model.__init__(self)
 		self.id = owner_id
 		self.name = 'unknown'
 		if owner_id:
@@ -81,6 +105,38 @@ class Corporation(business_model.Model):
 		else:
 			self.webapp_id = 0
 			self.type = 'normal'
+
+	@cached_context_property
+	def details(self):
+		"""
+		填充corp详情
+		"""
+		corp_models = account_model.CorpInfo.select().dj_where(id=self.id)
+		if corp_models.count() > 0:
+			corp_model = corp_models.first()
+			self.name = corp_model.name
+			self.company_name = corp_model.company_name
+			self.purchase_method = corp_model.purchase_method
+			self.points = corp_model.points
+			self.clear_period = corp_model.clear_period
+			self.customer_from = corp_model.customer_from
+			self.max_product_count = corp_model.max_product_count
+			self.contact = corp_model.contact
+			self.contact_phone = corp_model.contact_phone
+			self.valid_time_from = corp_model.valid_time_from
+			self.valid_time_to = corp_model.valid_time_to
+			self.note = corp_model.note
+			self.status = corp_model.status
+			self.created_at = corp_model.created_at
+			self.pre_sale_tel = corp_model.pre_sale_tel
+			self.after_sale_tel = corp_model.after_sale_tel
+			self.service_tel = corp_model.service_tel
+			self.service_qq_first = corp_model.service_qq_first
+			self.service_qq_second = corp_model.service_qq_second
+
+		return self
+
+
 
 	def is_self_run_platform(self):
 		"""

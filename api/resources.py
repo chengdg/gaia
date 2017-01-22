@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import account
 import mall
 import member
 import order
