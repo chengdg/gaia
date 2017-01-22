@@ -22,6 +22,10 @@ def get_delivery_item_bid(bid):
 		return bid
 
 
+def get_supplier_name_by_id(id):
+	return mall_models.Supplier.select().dj_where(id=id).first().name
+
+
 @then(u"{user}获得订单列表")
 def step_impl(context, user):
 	url = '/order/orders/?corp_id=%d' % context.corp.id
@@ -37,8 +41,22 @@ def step_impl(context, user):
 	# 	o['is_group_buying'] = o['is_group_buy']
 	# 	o['ship_area'] = o['ship_area_text']
 	# 	o['buyer'] = o['member_info']['name']
+
+
+	for order in actual:
+		for delivery_item in order['delivery_items']:
+			real_bid = delivery_item['bid']
+			if "^" in real_bid:
+				x_bid = real_bid.split("^")[0] + '-' + str(get_supplier_name_by_id(real_bid.split("^")[1].replace("s","")))
+				delivery_item['bid'] = x_bid
 	expected = json.loads(context.text)
 	bdd_util.assert_list(expected, actual)
+
+
+def __alert_order_payment_time(bid, payment_time):
+	mall_models.Order.update(payment_time=payment_time).dj_where(order_id__icontains=bid).execute()
+	mall_models.OrderOperationLog.update(created_at=payment_time).dj_where(order_id__icontains=bid, action__icontains=u"支付").execute()
+	mall_models.OrderStatusLog.update(created_at=payment_time).dj_where(order_id__icontains=bid, to_status=mall_models.ORDER_STATUS_PAYED_NOT_SHIP).execute()
 
 
 @when(u"{user}支付订单'{bid}'")
@@ -47,8 +65,14 @@ def step_impl(context, user, bid):
 		"corp_id": context.corp.id,
 		"id": get_order_id_by_bid(bid)
 	}
-	response = context.client.put('/order/paid_order/', data)
 
+	response = context.client.put('/order/paid_order/', data)
+	try:
+		payment_time = json.loads(context.text)['time']
+		__alert_order_payment_time(bid, payment_time)
+	except BaseException as e:
+
+		pass
 	bdd_util.assert_api_call_success(response)
 
 
@@ -78,7 +102,7 @@ def step_impl(context, user):
 	bdd_util.assert_api_call_success(response)
 
 
-@then(u"{user}获得'{bid}'订单详情")
+@then(u"{user}获得订单'{bid}'")
 def step_impl(context, user, bid):
 	order_id = get_order_id_by_bid(bid)
 	url = '/order/order/?corp_id=%d&id=%d' % (context.corp.id, order_id)
