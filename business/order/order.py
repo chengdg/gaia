@@ -136,7 +136,7 @@ class Order(business_model.Model):
 
 			# 金额信息
 			order.final_price = db_model.final_price
-			print('----final',order.final_price)
+
 			order.product_price = db_model.product_price
 			order.edit_money = db_model.edit_money
 			order.coupon_money = db_model.coupon_money

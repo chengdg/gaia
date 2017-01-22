@@ -227,14 +227,14 @@ def diff(local, other):
 	"""
 
 	def _recursive_diff(l, r, res, path='/'):
-		if type(l) != type(r):
-			res.append({
-				'replace': path,
-				'actual': r,
-				'details': 'type',
-				'expected': l
-			})
-			return
+		# if type(l) != type(r) and not (isinstance(l, basestring) and isinstance(r, basestring)):
+		# 	res.append({
+		# 		'replace': path,
+		# 		'actual': r,
+		# 		'details': 'type',
+		# 		'expected': l
+		# 	})
+		# 	return
 
 		delim = '/' if path != '/' else ''
 
@@ -274,6 +274,7 @@ def diff(local, other):
 				for i, item in enumerate(l[:minl]):
 					_recursive_diff(item, r[i], res, delim.join([path, str(i)]))
 		else:  # both items are atomic
+			l, r = convert_to_same_type(l, r)
 			if l != r:
 				res.append({
 					'replace': path,
