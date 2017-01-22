@@ -162,13 +162,13 @@ Scenario:1 支付包含单个供货商单个商品（无规格）的订单
 				"is_subscribed":true,
 				"name":"bill"
 				},
-			"is_first_order"true,
+			"is_first_order":true,
 			"ship_name": "bill",
 			"ship_tel":"13811223344",
 			"ship_area_text":"北京市 北京市 海淀区",
 			"ship_address": "泰兴大厦",
 			"pay_money":11.10,
-			"is_weizoom_order":false,
+			"is_weizoom_order":true,
 			"final_price":11.10,
 			"weizoom_card_money":0.00,
 			"member_card_money":0.00,
@@ -179,9 +179,6 @@ Scenario:1 支付包含单个供货商单个商品（无规格）的订单
 					"bid":"001-zhouxun",
 					"status_code":"paid",
 					"ship_name": "bill",
-					"ship_tel":"13811223344",
-					"ship_area_text":"北京市 北京市 海淀区",
-					"ship_address":"泰兴大厦",
 					"created_at":"2016-01-01 00:00:00",
 					"payment_time":"2016-01-02 00:00:00",
 					"customer_message":"bill购买无规格商品1",
@@ -194,7 +191,6 @@ Scenario:1 支付包含单个供货商单个商品（无规格）的订单
 					"products":
 						[{
 							"name":"无规格商品1",
-							"thumbnails_url":"/static/test_resource_img/hangzhou1.jpg",
 							"sale_price":10.10,
 							"origin_price":10.10,
 							"count":1
@@ -245,14 +241,13 @@ Scenario:1 支付包含单个供货商单个商品（无规格）的订单
 					"products":
 						[{
 							"name":"无规格商品1",
-							"thumbnails_url":"/static/test_resource_img/hangzhou1.jpg",
 							"sale_price":10.10,
 							"origin_price":10.10,
 							"count":1
 						}],
 					"postage":1.00,
 					"status_code":"paid",
-					"opertion_logs":
+					"operation_logs":
 						[{
 							"action_text":"下单",
 							"operator":"客户",
@@ -275,17 +270,18 @@ Scenario:1 支付包含单个供货商单个商品（无规格）的订单
 	Then zhouxun能获得'在售'商品列表
 		"""
 		[{
-			"name": "黄桥烧饼",
-			"sales":1
-		},{
 			"name": "多规格商品2",
 			"sales":0
 		},{
 			"name": "无规格商品1",
 			"sales":0
+		},{
+			"name": "黄桥烧饼",
+			"sales":1
 		}]
 		"""
 
+@ztqb
 Scenario:2 支付包含多个供货商多个商品（无规格+多规格）的订单
 	#jobs-黄桥烧饼（1.00 *2,运费1.00）
 	#zhouxun-无规格商品1（10.10 *1,运费1.00）
@@ -402,7 +398,7 @@ Scenario:2 支付包含多个供货商多个商品（无规格+多规格）的�
 					"from_status_code":"created",
 					"to_status_code":"paid",
 					"time":"2016-01-02 00:00:00"
-				}]
+				}],
 			"operation_logs":
 				[{
 					"action_text":"下单",
@@ -427,7 +423,7 @@ Scenario:2 支付包含多个供货商多个商品（无规格+多规格）的�
 						}],
 					"postage":1.00,
 					"status_code":"paid",
-					"opertion_logs":
+					"operation_logs":
 						[{
 							"action_text":"下单",
 							"operator":"客户",
@@ -458,7 +454,7 @@ Scenario:2 支付包含多个供货商多个商品（无规格+多规格）的�
 						}],
 					"postage":1.00,
 					"status_code":"paid",
-					"opertion_logs":
+					"operation_logs":
 						[{
 							"action_text":"下单",
 							"operator":"客户",
@@ -469,11 +465,11 @@ Scenario:2 支付包含多个供货商多个商品（无规格+多规格）的�
 							"time":"2016-01-02 00:00:00"
 						}]
 				}],
-			"product_price":50.40,
+			"product_price":52.40,
 			"postage":2.00,
 			"save_money":0.00,
-			"pay_money":52.40,
-			"final_price":52.40,
+			"pay_money":54.40,
+			"final_price":54.40,
 			"weizoom_card_money":0.00,
 			"member_card_money":0.00
 		}
@@ -481,13 +477,13 @@ Scenario:2 支付包含多个供货商多个商品（无规格+多规格）的�
 	Then zhouxun能获得'在售'商品列表
 		"""
 		[{
-			"name":"黄桥烧饼",
-			"sales":2
-		},{
 			"name":"多规格商品2",
 			"sales":2
 		},{
 			"name":"无规格商品1",
 			"sales":1
+		},{
+			"name":"黄桥烧饼",
+			"sales":2
 		}]
 		"""
