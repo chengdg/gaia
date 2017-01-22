@@ -503,7 +503,8 @@ def step_impl(context, user, type_name):
 def step_impl(context, user, product_name):
     product = __get_product(context, product_name)
 
-    product['supplier'] = product['supplier'].name if product['supplier'] else None
+    # 所有商品都有supplier
+    # product['supplier'] = product['supplier'].name if product['supplier'] else None
 
     update_data = json.loads(context.text)
     for key, value in update_data.items():
