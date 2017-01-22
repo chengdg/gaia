@@ -3,6 +3,8 @@ Feature:管理员申请退款出货单
 Background:
 
 Scenario:1 管理员退款单供货商的订单-待发货
+	Given 重置'apiserver'的bdd环境
+
 	Given zhouxun登录系统
 	When zhouxun添加支付方式
 		"""
@@ -236,6 +238,9 @@ Scenario:1 管理员退款单供货商的订单-待发货
 		"""
 
 Scenario:2 管理员退款多供货商的订单-已发货
+	Given 重置'apiserver'的bdd环境
+	Given 重置'weapp'的bdd环境
+
 	Given yangmi登录系统
 	When yangmi添加商品
 		"""
@@ -592,6 +597,9 @@ Scenario:2 管理员退款多供货商的订单-已发货
 		"""
 
 Scenario:3 管理员退款多供货商的订单-带运费-待发货，已完成
+	Given 重置'apiserver'的bdd环境
+	Given 重置'weapp'的bdd环境
+
 	Given yangmi登录系统
 	When yangmi添加商品
 		"""
@@ -1011,6 +1019,8 @@ Scenario:3 管理员退款多供货商的订单-带运费-待发货，已完成
 
 Scenario:4 管理员退款使用微众卡全额支付的订单
 	Given 重置'weizoom_card'的bdd环境
+	Given 重置'apiserver'的bdd环境
+	Given 重置'weapp'的bdd环境
 
 	Given yangmi登录系统
 	When yangmi添加商品
@@ -1205,8 +1215,18 @@ Scenario:4 管理员退款使用微众卡全额支付的订单
 				"card_remaining":38.45
 			}
 			"""
+	#查看会员使用微众卡数据
+		Given zhouxun登录系统
+		Then zhouxun获得'bill'的购买信息::weapp
+			"""
+			{
+				"purchase_amount":61.55,
+				"purchase_number":1,
+				"customer_price":61.55,
+				"money_wcard":61.55
+			}
+			"""
 
-	Given zhouxun登录系统
 	When zhouxun申请退款出货单'004-zhouxun'
 		"""
 		{
@@ -1232,6 +1252,17 @@ Scenario:4 管理员退款使用微众卡全额支付的订单
 			"""
 			{
 				"card_remaining":38.45
+			}
+			"""
+	#查看会员使用微众卡数据
+		Given zhouxun登录系统
+		Then zhouxun获得'bill'的购买信息::weapp
+			"""
+			{
+				"purchase_amount":61.55,
+				"purchase_number":1,
+				"customer_price":61.55,
+				"money_wcard":61.55
 			}
 			"""
 
@@ -1429,6 +1460,9 @@ Scenario:4 管理员退款使用微众卡全额支付的订单
 		"""
 
 Scenario:5 管理员退款使用积分的订单
+	Given 重置'apiserver'的bdd环境
+	Given 重置'weapp'的bdd环境
+
 	Given zhouxun登录系统
 	When zhouxun添加支付方式
 		"""
@@ -1700,6 +1734,9 @@ Scenario:5 管理员退款使用积分的订单
 		"""
 
 Scenario:6 管理员退款使用优惠券的订单
+	Given 重置'apiserver'的bdd环境
+	Given 重置'weapp'的bdd环境
+
 	Given zhouxun登录系统
 	When zhouxun添加支付方式
 		"""
@@ -2007,6 +2044,9 @@ Scenario:6 管理员退款使用优惠券的订单
 		"""
 
 Scenario:7 管理员退款出货单，商品销量和库存
+	Given 重置'apiserver'的bdd环境
+	Given 重置'weapp'的bdd环境
+
 	Given yangmi登录系统
 	When yangmi添加商品
 		"""
@@ -2290,6 +2330,9 @@ Scenario:7 管理员退款出货单，商品销量和库存
 		"""
 
 Scenario:8 管理员退款出货单，会员信息
+	Given 重置'apiserver'的bdd环境
+	Given 重置'weapp'的bdd环境
+
 	Given yangmi登录系统
 	When yangmi添加商品
 		"""
@@ -2463,7 +2506,7 @@ Scenario:8 管理员退款出货单，会员信息
 		"""
 
 	#会员列表数据
-	Then zhouxun可以获得会员列表
+	Then zhouxun可以获得会员列表::weapp
 		"""
 		[{
 			"name": "bill",
@@ -2497,7 +2540,7 @@ Scenario:8 管理员退款出货单，会员信息
 		"""
 
 	#会员列表数据
-	Then zhouxun可以获得会员列表
+	Then zhouxun可以获得会员列表::weapp
 		"""
 		[{
 			"name": "bill",
