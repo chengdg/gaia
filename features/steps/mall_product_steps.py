@@ -451,6 +451,9 @@ def step_add_property(context, user):
 def step_add_property(context, user):
     products = json.loads(context.text)
     for product in products:
+        if 'supplier' not in product:
+            # 填充默认供货商为自己
+            product['supplier'] = __get_supplier_name(user)
         __create_product(context, product)
 
 

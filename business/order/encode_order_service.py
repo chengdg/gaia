@@ -11,7 +11,7 @@ class EncodeOrderService(business_model.Service):
 			'pay_interface_type_code': order.pay_interface_type_code,
 			'payment_time': order.payment_time,
 			'final_price': order.final_price,
-			'product_price': order.final_price,
+			'product_price': order.product_price,
 			'edit_money': order.edit_money,
 			'bid_with_edit_money': order.bid_with_edit_money,
 			'ship_name': order.ship_name,
