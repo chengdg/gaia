@@ -69,14 +69,15 @@ Scenario:1 管理员退款单供货商的订单-待发货
 	When bill使用支付方式'微信支付'进行支付订单'001'于2016-01-01 10:00:00::apiserver
 
 	Given zhouxun登录系统
-	When zhouxun申请退款出货单'001-zhouxun'于'2016-01-02 10:00:00'
+	When zhouxun申请退款出货单'001-zhouxun'
 		"""
 		{
 			"cash":10.00,
 			"weizoom_card_money":0.00,
 			"coupon_money":40.11,
 			"integral":0,
-			"member_card_money":0.00
+			"member_card_money":0.00,
+			"time": "2016-01-02 10:00:00"
 		}
 		"""
 
@@ -378,14 +379,15 @@ Scenario:2 管理员退款多供货商的订单-已发货
 			"time":"2016-02-01 11:00:00"
 		}]
 		"""
-	When zhouxun申请退款出货单'002-zhouxun'于'2016-02-02 10:00:00'
+	When zhouxun申请退款出货单'002-zhouxun'
 		"""
 		{
 			"cash":0.00,
 			"weizoom_card_money":0.00,
 			"coupon_money":40.10,
 			"integral":229,
-			"member_card_money":0.00
+			"member_card_money":0.00,
+			"time": "2016-02-02 10:00:00"
 		}
 		"""
 
@@ -737,25 +739,32 @@ Scenario:3 管理员退款多供货商的订单-带运费-待发货，已完成
 			"time":"2016-03-02 10:00:00"
 		}]
 		"""
-	When zhouxun完成出货单'003-zhouxun'于'2016-03-03 10:00:00'
-	When zhouxun申请退款出货单'003-zhouxun'于'2016-03-04 10:00:00'
+	When zhouxun完成出货单'003-zhouxun'
+		"""
+		{
+			"time": "2016-03-03 10:00:00"
+		}
+		"""
+	When zhouxun申请退款出货单'003-zhouxun'
 		"""
 		{
 			"cash":0.00,
 			"weizoom_card_money":0.00,
 			"coupon_money":50.10,
 			"integral":229,
-			"member_card_money":0.00
+			"member_card_money":0.00,
+			"time": "2016-03-04 10:00:00"
 		}
 		"""
-	When zhouxun申请退款出货单'003-yangmi'于'2016-03-04 11:00:00'
+	When zhouxun申请退款出货单'003-yangmi'
 		"""
 		{
 			"cash":10.00,
 			"weizoom_card_money":0.00,
 			"coupon_money":10.00,
 			"integral":0,
-			"member_card_money":0.00
+			"member_card_money":0.00,
+			"time": "2016-03-04 11:00:00"
 		}
 		"""
 
@@ -1198,14 +1207,15 @@ Scenario:4 管理员退款使用微众卡全额支付的订单
 			"""
 
 	Given zhouxun登录系统
-	When zhouxun申请退款出货单'004-zhouxun'于'2016-04-02 10:00:00'
+	When zhouxun申请退款出货单'004-zhouxun'
 		"""
 		{
 			"cash":0.00,
 			"weizoom_card_money":20.35,
 			"coupon_money":10.00,
 			"integral":424,
-			"member_card_money":0.00
+			"member_card_money":0.00,
+			"time": "2016-04-02 10:00:00"
 		}
 		"""
 
@@ -1521,14 +1531,15 @@ Scenario:5 管理员退款使用积分的订单
 	Given zhouxun登录系统
 	Then bill在zhouxun的webapp中拥有100会员积分::weapp
 
-	When zhouxun申请退款出货单'005-zhouxun'于'2016-05-02 10:00:00'
+	When zhouxun申请退款出货单'005-zhouxun'
 		"""
 		{
 			"cash":10.00,
 			"weizoom_card_money":0.00,
 			"coupon_money":30.11,
 			"integral":200,
-			"member_card_money":0.00
+			"member_card_money":0.00,
+			"time": "2016-05-02 10:00:00"
 		}
 		"""
 
@@ -1805,14 +1816,15 @@ Scenario:6 管理员退款使用优惠券的订单
 		}
 		"""
 
-	When zhouxun申请退款出货单'006-zhouxun'于'2016-06-02 10:00:00'
+	When zhouxun申请退款出货单'006-zhouxun'
 		"""
 		{
 			"cash":10.00,
 			"weizoom_card_money":0.00,
 			"coupon_money":40.11,
 			"integral":0,
-			"member_card_money":0.00
+			"member_card_money":0.00,
+			"time": "2016-06-02 10:00:00"
 		}
 		"""
 
@@ -2177,7 +2189,12 @@ Scenario:7 管理员退款出货单，商品销量和库存
 			"time":"2016-07-02 10:00:00"
 		}]
 		"""
-	When zhouxun完成出货单'007-zhouxun'于'2016-07-03 10:00:00'
+	When zhouxun完成出货单'007-zhouxun'
+		"""
+		{
+			"time": "2016-07-03 10:00:00"
+		}
+		"""
 
 	#商品销量和库存
 	Then zhouxun能获得'在售'商品列表
@@ -2214,24 +2231,26 @@ Scenario:7 管理员退款出货单，商品销量和库存
 		}]
 		"""
 
-	When zhouxun申请退款出货单'007-zhouxun'于'2016-07-04 10:00:00'
+	When zhouxun申请退款出货单'007-zhouxun'
 		"""
 		{
 			"cash":0.00,
 			"weizoom_card_money":0.00,
 			"coupon_money":50.10,
 			"integral":229,
-			"member_card_money":0.00
+			"member_card_money":0.00,
+			"time": "2016-07-04 10:00:00"
 		}
 		"""
-	When zhouxun申请退款出货单'007-yangmi'于'2016-07-04 11:00:00'
+	When zhouxun申请退款出货单'007-yangmi'
 		"""
 		{
 			"cash":10.00,
 			"weizoom_card_money":0.00,
 			"coupon_money":10.00,
 			"integral":0,
-			"member_card_money":0.00
+			"member_card_money":0.00,
+			"time": "2016-07-04 11:00:00"
 		}
 		"""
 
@@ -2418,7 +2437,12 @@ Scenario:8 管理员退款出货单，会员信息
 			"time":"2016-08-02 10:00:00"
 		}]
 		"""
-	When zhouxun完成出货单'008-zhouxun'于'2016-08-03 10:00:00'
+	When zhouxun完成出货单'008-zhouxun'
+		"""
+		{
+			"time": "2016-08-03 10:00:00"
+		}
+		"""
 	When zhouxun对出货单进行发货
 		"""
 		[{
@@ -2431,7 +2455,12 @@ Scenario:8 管理员退款出货单，会员信息
 			"time":"2016-08-02 10:00:00"
 		}]
 		"""
-	When zhouxun完成出货单'008-yangmi'于'2016-08-03 10:00:00'
+	When zhouxun完成出货单'008-yangmi'
+		"""
+		{
+			"time": "2016-08-03 10:00:00"
+		}
+		"""
 
 	#会员列表数据
 	Then zhouxun可以获得会员列表
@@ -2444,24 +2473,26 @@ Scenario:8 管理员退款出货单，会员信息
 		}]
 		"""
 
-	When zhouxun申请退款出货单'008-zhouxun'于'2016-08-04 10:00:00'
+	When zhouxun申请退款出货单'008-zhouxun'
 		"""
 		{
 			"cash":0.00,
 			"weizoom_card_money":0.00,
 			"coupon_money":50.10,
 			"integral":229,
-			"member_card_money":0.00
+			"member_card_money":0.00,
+			"time": "2016-08-04 10:00:00"
 		}
 		"""
-	When zhouxun申请退款出货单'008-yangmi'于'2016-08-04 11:00:00'
+	When zhouxun申请退款出货单'008-yangmi'
 		"""
 		{
 			"cash":10.00,
 			"weizoom_card_money":0.00,
 			"coupon_money":10.00,
 			"integral":0,
-			"member_card_money":0.00
+			"member_card_money":0.00,
+			"time": "2016-08-04 11:00:00"
 		}
 		"""
 
