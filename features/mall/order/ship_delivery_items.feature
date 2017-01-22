@@ -267,7 +267,7 @@ Scenario: 1 对出货单进行发货，使用物流（非其他）
 		},{
 			"action_text":"发货",
 			"operator":"zhouxun",
-			"time":"2016-10-01 10:11:00"
+			"time":"2016-10-05 10:11:00"
 		}],
 		"delivery_items": [{
 			"supplier_info": {
@@ -465,7 +465,7 @@ Scenario: 2 对出货单进行发货，使用其他物流
 		},{
 			"action_text":"发货",
 			"operator":"zhouxun",
-			"time":"2016-10-01 10:11:00"
+			"time":"2016-10-05 10:11:00"
 		}],
 		"delivery_items": [{
 			"supplier_info": {
