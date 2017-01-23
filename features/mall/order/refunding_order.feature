@@ -2,6 +2,7 @@ Feature:管理员申请退款出货单
 
 Background:
 
+@order
 Scenario:1 管理员退款单供货商的订单-待发货
 	Given 重置'apiserver'的bdd环境
 
@@ -237,6 +238,7 @@ Scenario:1 管理员退款单供货商的订单-待发货
 		}]
 		"""
 
+@order
 Scenario:2 管理员退款多供货商的订单-已发货
 	Given 重置'apiserver'的bdd环境
 	Given 重置'weapp'的bdd环境
@@ -596,6 +598,7 @@ Scenario:2 管理员退款多供货商的订单-已发货
 		}]
 		"""
 
+@order
 Scenario:3 管理员退款多供货商的订单-带运费-待发货，已完成
 	Given 重置'apiserver'的bdd环境
 	Given 重置'weapp'的bdd环境
@@ -1017,6 +1020,7 @@ Scenario:3 管理员退款多供货商的订单-带运费-待发货，已完成
 		}]
 		"""
 
+@order
 Scenario:4 管理员退款使用微众卡全额支付的订单
 	Given 重置'weizoom_card'的bdd环境
 	Given 重置'apiserver'的bdd环境
@@ -1459,6 +1463,7 @@ Scenario:4 管理员退款使用微众卡全额支付的订单
 		}]
 		"""
 
+@order
 Scenario:5 管理员退款使用积分的订单
 	Given 重置'apiserver'的bdd环境
 	Given 重置'weapp'的bdd环境
@@ -1733,6 +1738,7 @@ Scenario:5 管理员退款使用积分的订单
 		}]
 		"""
 
+@order
 Scenario:6 管理员退款使用优惠券的订单
 	Given 重置'apiserver'的bdd环境
 	Given 重置'weapp'的bdd环境
@@ -2043,6 +2049,7 @@ Scenario:6 管理员退款使用优惠券的订单
 		}]
 		"""
 
+@order
 Scenario:7 管理员退款出货单，商品销量和库存
 	Given 重置'apiserver'的bdd环境
 	Given 重置'weapp'的bdd环境
@@ -2329,6 +2336,7 @@ Scenario:7 管理员退款出货单，商品销量和库存
 		}]
 		"""
 
+@order
 Scenario:8 管理员退款出货单，会员信息
 	Given 重置'apiserver'的bdd环境
 	Given 重置'weapp'的bdd环境
@@ -2550,6 +2558,7 @@ Scenario:8 管理员退款出货单，会员信息
 		}]
 		"""
 
+@order
 Scenario:9 管理员退款出货单，积分设置为1元=0积分
 	Given 重置'apiserver'的bdd环境
 
