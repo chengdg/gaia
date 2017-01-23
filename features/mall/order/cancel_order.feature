@@ -500,7 +500,7 @@ Scenario: 3 管理员取消使用了订单积分的订单
 #			"integral": 21
 #		}, {
 #			"content": "购物抵扣",
-#			"integral": 21
+#			"integral": -21
 #		}, {
 #			"content": "首次关注",
 #			"integral": 50
@@ -652,12 +652,23 @@ Scenario: 4 管理员取消使用了商品积分的订单
 			"integral": 20
 		}, {
 			"content": "购物抵扣",
-			"integral": 20
-		}, {
-			"content": "首次关注",
-			"integral": 50
+			"integral": -20
 		}]
 		"""
+#	Then zhouxun能获得bill的积分日志::weapp
+#		"""
+#		[{
+#			"content": "取消订单 返还积分",
+#			"integral": 20
+#		}, {
+#			"content": "购物抵扣",
+#			"integral": -20
+#		}, {
+#			"content": "首次关注",
+#			"integral": 50
+#		}]
+#		"""
+
 
 @order
 Scenario: 5 管理员取消使用了通用券的订单
