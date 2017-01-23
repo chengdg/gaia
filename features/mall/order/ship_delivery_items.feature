@@ -434,7 +434,7 @@ Scenario: 1 对出货单进行发货，使用物流（非其他）
 			}],
 			"status_code": "paid",
 			"with_logistics":false,
-			"with_logistics_trace":false,
+			"with_logistics_trace":true,
 			"express_company_name_text": "",
 			"express_number": "",
 			"leader_name":""
