@@ -47,7 +47,7 @@ class ADeliveryItem(api_resource.ApiResource):
 		else:
 			return 500, {}
 
-	@param_required(['corp'])
+	@param_required(['corp', 'delivery_item_id'])
 	def post(args):
 
 		corp = args['corp']
@@ -58,8 +58,8 @@ class ADeliveryItem(api_resource.ApiResource):
 			if 'new_ship_info' in args:
 				new_ship_info = json.loads(args['new_ship_info'])
 
-				with_logistics = new_ship_info['with_logistics'] == "true"
-				with_logistics_trace = new_ship_info['with_logistics_trace'] == "true"
+				with_logistics = new_ship_info['with_logistics'] in ('true', True)
+				with_logistics_trace = new_ship_info['with_logistics_trace'] in ('true', True)
 				express_company_name_value = new_ship_info['express_company_name_value']
 				leader_name = new_ship_info['leader_name']
 				express_number = new_ship_info['express_number']

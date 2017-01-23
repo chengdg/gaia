@@ -71,7 +71,7 @@ Background:
 
 	When zhouxun将商品移动到'在售'货架
 	"""
-		["东坡肘子zhouxun", "叫花鸡zhouxun","土豆yangmi"]
+		["东坡肘子zhouxun","土豆yangmi"]
 	"""
 	Given bill关注zhouxun的公众号::apiserver
 	When bill访问zhouxun的webapp::apiserver
@@ -197,15 +197,15 @@ Scenario: 1 修改出货单物流信息
 		"status_logs":[{
 			"from_status_code":"",
 			"to_status_code":"created",
-			"time":"2016-10-01 10:00:00",
+			"time":"2016-10-01 10:00:00"
 		},{
 			"from_status_code":"created",
 			"to_status_code":"paid",
-			"time":"2016-10-01 10:01:00",
+			"time":"2016-10-01 10:01:00"
 		},{
 			"from_status_code":"paid",
 			"to_status_code":"shipped",
-			"time":"2016-10-05 10:11:00",
+			"time":"2016-10-05 10:11:00"
 		}],
 		"operation_logs":[{
 			"action_text":"下单",
@@ -216,11 +216,11 @@ Scenario: 1 修改出货单物流信息
 			"operator":"客户",
 			"time":"2016-10-01 10:01:00"
 		},{
-			"action_text":"订单发货-zhouxun",
+			"action_text":"订单发货",
 			"operator":"zhouxun",
 			"time":"2016-10-05 10:11:00"
 		},{
-			"action_text":"修改发货信息-zhouxun",
+			"action_text":"修改发货信息",
 			"operator":"zhouxun",
 			"time":"2016-10-06 10:11:00"
 		}],
@@ -260,11 +260,11 @@ Scenario: 1 修改出货单物流信息
 		"status_logs":[{
 			"from_status_code":"",
 			"to_status_code":"created",
-			"time":"2016-10-02 10:00:00",
+			"time":"2016-10-02 10:00:00"
 		},{
 			"from_status_code":"created",
 			"to_status_code":"paid",
-			"time":"2016-10-02 10:01:00",
+			"time":"2016-10-02 10:01:00"
 		}],
 		"operation_logs":[{
 			"action_text":"下单",
@@ -275,11 +275,11 @@ Scenario: 1 修改出货单物流信息
 			"operator":"客户",
 			"time":"2016-10-02 10:01:00"
 		},{
-			"action_text":"订单发货-yangmi",
+			"action_text":"订单发货",
 			"operator":"zhouxun",
 			"time":"2016-10-05 10:11:00"
 		},{
-			"action_text":"修改发货信息-yangmi",
+			"action_text":"修改发货信息",
 			"operator":"zhouxun",
 			"time":"2016-10-06 10:12:00"
 		}],
@@ -348,15 +348,15 @@ Scenario: 1 修改出货单物流信息
 		"status_logs":[{
 			"from_status_code":"",
 			"to_status_code":"created",
-			"time":"2016-10-03 10:00:00",
+			"time":"2016-10-03 10:00:00"
 		},{
 			"from_status_code":"created",
 			"to_status_code":"paid",
-			"time":"2016-10-03 10:01:00",
+			"time":"2016-10-03 10:01:00"
 		},{
 			"from_status_code":"paid",
 			"to_status_code":"shipped",
-			"time":"2016-10-05 10:11:00",
+			"time":"2016-10-05 10:11:00"
 		}],
 		"operation_logs":[{
 			"action_text":"下单",
@@ -367,19 +367,19 @@ Scenario: 1 修改出货单物流信息
 			"operator":"客户",
 			"time":"2016-10-03 10:01:00"
 		},{
-			"action_text":"订单发货-zhouxun",
+			"action_text":"订单发货",
 			"operator":"zhouxun",
 			"time":"2016-10-05 10:11:00"
 		},{
-			"action_text":"订单发货-yangmi",
+			"action_text":"订单发货",
 			"operator":"zhouxun",
 			"time":"2016-10-05 10:11:00"
 		},{
-			"action_text":"修改发货信息-zhouxun",
+			"action_text":"修改发货信息",
 			"operator":"zhouxun",
 			"time":"2016-10-06 10:13:00"
 		},{
-			"action_text":"修改发货信息-yangmi",
+			"action_text":"修改发货信息",
 			"operator":"zhouxun",
 			"time":"2016-10-06 10:14:00"
 		}],
