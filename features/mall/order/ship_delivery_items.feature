@@ -68,7 +68,7 @@ Background:
 
 	When zhouxun将商品移动到'在售'货架
 	"""
-		["东坡肘子zhouxun", "叫花鸡zhouxun","土豆yangmi"]
+		["东坡肘子zhouxun","土豆yangmi"]
 	"""
 	Given bill关注zhouxun的公众号::apiserver
 	When bill访问zhouxun的webapp::apiserver
