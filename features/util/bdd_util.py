@@ -219,7 +219,7 @@ def convert_to_same_type(a, b):
 
 
 
-def diff(local, other):
+def diff(local, other, ignore_keys):
 	""" Calculates the difference between two JSON documents.
 		All resulting changes are relative to @a local.
 
@@ -240,6 +240,8 @@ def diff(local, other):
 
 		if isinstance(l, dict):
 			for k, v in l.iteritems():
+				if ignore_keys and k in ignore_keys:
+					continue
 				new_path = delim.join([path, k])
 				if k not in r:
 					res.append({'remove': new_path, 'expected': v})
@@ -287,11 +289,8 @@ def diff(local, other):
 	return result
 
 
-
-
-
-def supper_assert(expected, actual):
-	result = diff(expected, actual)
+def supper_assert(expected, actual, ignore_key):
+	result = diff(expected, actual, ignore_key)
 	if len(result) > 0:
 		print('************ASSERT ERROR************\n')
 		print(json.dumps(result, indent=2).decode("unicode-escape"))
@@ -303,7 +302,7 @@ def supper_assert(expected, actual):
 ###########################################################################
 # assert_dict: 验证expected中的数据都出现在了actual中
 ###########################################################################
-def assert_dict(expected, actual):
+def assert_dict(expected, actual,ignore_keys=None):
 	# global tc
 	# is_dict_actual = isinstance(actual, dict)
 	# for key in expected:
@@ -326,12 +325,12 @@ def assert_dict(expected, actual):
 	# 			e.args = ('\n'.join(items),)
 	# 			print('\n'.join(items))
 	# 			raise e
-	supper_assert(expected, actual)
+	supper_assert(expected, actual, ignore_keys)
 
 ###########################################################################
 # assert_list: 验证expected中的数据都出现在了actual中
 ###########################################################################
-def assert_list(expected, actual, key=None):
+def assert_list(expected, actual, ignore_keys=None):
 	# global tc
 	# tc.assertEquals(len(expected), len(actual), "list %s's length is not equals. e:%d != a:%d" % (key, len(expected), len(actual)))
 	#
@@ -348,7 +347,7 @@ def assert_list(expected, actual, key=None):
 	# 			items = ['\n<<<<<', 'e: %s' % str(expected), 'a: %s' % str(actual), 'key: %s' % key, e.args[0], '>>>>>\n']
 	# 			e.args = ('\n'.join(items),)
 	# 			raise e
-	supper_assert(expected, actual)
+	supper_assert(expected, actual, ignore_keys)
 
 ###########################################################################
 # assert_expected_list_in_actual: 验证expected中的数据都出现在了actual中
@@ -386,7 +385,8 @@ def assert_api_call_success(response):
 # print_json: 将对象以json格式输出
 ###########################################################################
 def print_json(obj):
-	print json.dumps(obj, indent=True)
+	# print json.dumps(obj, indent=True)
+	print(json.dumps(obj, indent=2).decode("unicode-escape"))
 
 
 def table2list(context):

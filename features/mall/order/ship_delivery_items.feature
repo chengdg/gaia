@@ -133,7 +133,7 @@ Background:
 	"""		
 	When bill使用支付方式'微信支付'进行支付订单'003'于2016-10-03 10:01:00::apiserver
 
-@order
+@order @ztqb
 Scenario: 1 对出货单进行发货，使用物流（非其他）
 	Given zhouxun登录系统
 	When zhouxun对出货单进行发货
@@ -247,15 +247,15 @@ Scenario: 1 对出货单进行发货，使用物流（非其他）
 		"status_logs":[{
 			"from_status_code":"",
 			"to_status_code":"created",
-			"time":"2016-10-01 10:00:00",
+			"time":"2016-10-01 10:00:00"
 		},{
 			"from_status_code":"created",
 			"to_status_code":"paid",
-			"time":"2016-10-01 10:01:00",
+			"time":"2016-10-01 10:01:00"
 		},{
 			"from_status_code":"paid",
 			"to_status_code":"shipped",
-			"time":"2016-10-05 10:11:00",
+			"time":"2016-10-05 10:11:00"
 		}],
 		"operation_logs":[{
 			"action_text":"下单",
@@ -266,7 +266,7 @@ Scenario: 1 对出货单进行发货，使用物流（非其他）
 			"operator":"客户",
 			"time":"2016-10-01 10:01:00"
 		},{
-			"action_text":"订单发货-zhouxun",
+			"action_text":"订单发货",
 			"operator":"zhouxun",
 			"time":"2016-10-05 10:11:00"
 		}],
@@ -293,15 +293,15 @@ Scenario: 1 对出货单进行发货，使用物流（非其他）
 		"status_logs":[{
 			"from_status_code":"",
 			"to_status_code":"created",
-			"time":"2016-10-02 10:00:00",
+			"time":"2016-10-02 10:00:00"
 		},{
 			"from_status_code":"created",
 			"to_status_code":"paid",
-			"time":"2016-10-02 10:01:00",
+			"time":"2016-10-02 10:01:00"
 		},{
 			"from_status_code":"paid",
 			"to_status_code":"shipped",
-			"time":"2016-10-05 10:11:00",
+			"time":"2016-10-05 10:11:00"
 		}],
 		"operation_logs":[{
 			"action_text":"下单",
@@ -312,11 +312,11 @@ Scenario: 1 对出货单进行发货，使用物流（非其他）
 			"operator":"客户",
 			"time":"2016-10-02 10:01:00"
 		},{
-			"action_text":"订单发货-zhouxun",
+			"action_text":"订单发货",
 			"operator":"zhouxun",
 			"time":"2016-10-05 10:11:00"
 		},{
-			"action_text":"订单发货-yangmi",
+			"action_text":"订单发货",
 			"operator":"zhouxun",
 			"time":"2016-10-05 10:11:00"
 		}],
@@ -357,11 +357,11 @@ Scenario: 1 对出货单进行发货，使用物流（非其他）
 		"status_logs":[{
 			"from_status_code":"",
 			"to_status_code":"created",
-			"time":"2016-10-03 10:00:00",
+			"time":"2016-10-03 10:00:00"
 		},{
 			"from_status_code":"created",
 			"to_status_code":"paid",
-			"time":"2016-10-03 10:01:00",
+			"time":"2016-10-03 10:01:00"
 		}],
 		"operation_logs":[{
 			"action_text":"下单",
@@ -372,7 +372,7 @@ Scenario: 1 对出货单进行发货，使用物流（非其他）
 			"operator":"客户",
 			"time":"2016-10-03 10:01:00"
 		},{
-			"action_text":"订单发货-zhouxun",
+			"action_text":"订单发货",
 			"operator":"zhouxun",
 			"time":"2016-10-05 10:11:00"
 		}],

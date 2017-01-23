@@ -4,6 +4,8 @@ import types
 import json
 
 from behave import *
+
+from business.mall.logistics.express_delivery_repository import COMPANIES
 from features.util import bdd_util
 from db.mall import models as mall_models
 
@@ -18,6 +20,12 @@ def get_delivery_item_bid(bid):
 		supplier_id = mall_models.Supplier.select().dj_where(name=supplier_name).first().id
 
 		return bid.split("^")[0] + "^" + str(supplier_id) + "s"
+
+	elif "-" in bid:
+		supplier_name = bid.split("-")[1]
+		supplier_id = mall_models.Supplier.select().dj_where(name=supplier_name).first().id
+
+		return bid.split("-")[0] + "^" + str(supplier_id) + "s"
 	else:
 		return bid
 
@@ -47,16 +55,19 @@ def step_impl(context, user):
 		for delivery_item in order['delivery_items']:
 			real_bid = delivery_item['bid']
 			if "^" in real_bid:
-				x_bid = real_bid.split("^")[0] + '-' + str(get_supplier_name_by_id(real_bid.split("^")[1].replace("s","")))
+				x_bid = real_bid.split("^")[0] + '-' + str(
+					get_supplier_name_by_id(real_bid.split("^")[1].replace("s", "")))
 				delivery_item['bid'] = x_bid
 	expected = json.loads(context.text)
 	bdd_util.assert_list(expected, actual)
 
 
-def __alert_order_payment_time(bid, payment_time):
+def __alert_order_action_time(bid, payment_time, to_status, action):
 	mall_models.Order.update(payment_time=payment_time).dj_where(order_id__icontains=bid).execute()
-	mall_models.OrderOperationLog.update(created_at=payment_time).dj_where(order_id__icontains=bid, action__icontains=u"支付").execute()
-	mall_models.OrderStatusLog.update(created_at=payment_time).dj_where(order_id__icontains=bid, to_status=mall_models.ORDER_STATUS_PAYED_NOT_SHIP).execute()
+	mall_models.OrderOperationLog.update(created_at=payment_time).dj_where(order_id__icontains=bid,
+	                                                                       action__icontains=action).execute()
+	mall_models.OrderStatusLog.update(created_at=payment_time).dj_where(order_id__icontains=bid,
+	                                                                    to_status=to_status).execute()
 
 
 @when(u"{user}支付订单'{bid}'")
@@ -69,7 +80,7 @@ def step_impl(context, user, bid):
 	response = context.client.put('/order/paid_order/', data)
 	try:
 		payment_time = json.loads(context.text)['time']
-		__alert_order_payment_time(bid, payment_time)
+		__alert_order_action_time(bid, payment_time, mall_models.ORDER_STATUS_PAYED_NOT_SHIP, u'支付')
 	except BaseException as e:
 
 		pass
@@ -86,19 +97,33 @@ def step_impl(context, user, bid):
 	bdd_util.assert_api_call_success(response)
 
 
+for company in COMPANIES:
+	company['unicode_name'] = company['name'].decode('utf-8')
+
+
+def __get_express_company_name_value_by_name(name):
+	for company in COMPANIES:
+		if name == company['unicode_name']:
+			return company['value']
+
+	return ''
+
+
 @when(u"{user}对出货单进行发货")
 def step_impl(context, user):
 	ship_infos = json.loads(context.text)
 
 	for ship_info in ship_infos:
 		ship_info['delivery_item_bid'] = get_delivery_item_bid(ship_info['delivery_item_bid'])
+		ship_info['express_company_name_value'] = __get_express_company_name_value_by_name(
+			ship_info['express_company_name_value'])
 
 	data = {
 		"corp_id": context.corp.id,
 		"ship_infos": json.dumps(ship_infos)
 	}
 	response = context.client.put('/order/shipped_delivery_items/', data)
-	print(response.body)
+	bdd_util.print_json(response.body['data'])
 	bdd_util.assert_api_call_success(response)
 
 
@@ -110,6 +135,10 @@ def step_impl(context, user, bid):
 	bdd_util.assert_api_call_success(response)
 	actual = response.data["order"]
 
+
+	# 暂时不验证时间
+
+	# for delivey_item
 	# for o in actual:
 	# 	o['order_no'] = o['bid']
 	# 	o['methods_of_payment'] = mall_models.PAYTYPE2NAME[mall_models.PAYSTR2TYPE[o['pay_interface_type_code']]]
@@ -119,4 +148,4 @@ def step_impl(context, user, bid):
 	# 	o['ship_area'] = o['ship_area_text']
 	# 	o['buyer'] = o['member_info']['name']
 	expected = json.loads(context.text)
-	bdd_util.assert_dict(expected, actual)
+	bdd_util.assert_dict(expected, actual, ignore_keys=['time'])
