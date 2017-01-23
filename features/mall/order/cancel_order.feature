@@ -31,6 +31,13 @@ Background:
 		}]
 		"""
 	Given zhouxun登录系统
+	And zhouxun设定会员积分策略
+		"""
+		{
+			"integral_each_yuan": 2,
+			"use_ceiling": 50
+		}
+		"""
 	And zhouxun已添加商品规格
 		"""
 		[{
@@ -369,13 +376,6 @@ Scenario: 3 管理员取消使用了订单积分的订单
 	1.zhouxun取消待支付订单，积分退回
 
 	Given zhouxun登录系统
-	And zhouxun设定会员积分策略
-		"""
-		{
-			"integral_each_yuan": 2,
-			"use_ceiling": 50
-		}
-		"""
 	When bill访问zhouxun的webapp::apiserver
 	When bill获得zhouxun的50会员积分::weapp
 	Then bill在zhouxun的webapp中拥有50会员积分::weapp
@@ -501,12 +501,6 @@ Scenario: 4 管理员取消使用了商品积分的订单
 	1.zhouxun取消待支付订单，积分退回
 
 	Given zhouxun登录系统
-	And zhouxun设定会员积分策略
-		"""
-		{
-			"integral_each_yuan": 2
-		}
-		"""
 	When jobs创建积分应用活动::weapp
 		"""
 		[{

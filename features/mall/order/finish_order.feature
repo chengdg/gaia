@@ -25,6 +25,12 @@ Background:
 		}]
 		"""
 	Given zhouxun登录系统
+	And jobs设定会员积分策略
+		"""
+		{
+			"be_member_increase_count": 20
+		}
+		"""
 	And zhouxun已添加商品规格
 		"""
 		[{
@@ -461,8 +467,60 @@ Scenario: 3 管理员标记完成订单，会员获得购物返积分
 	1.zhouxun完成多个供货商的1个出货单，查看会员积分(不变)
 	2.zhouxun完成多个供货商的订单，查看会员积分(增加)
 
-	
+	Given zhouxun登录系统
+	And jobs设定会员积分策略
+		"""
+		{
 
+			"buy_award_count_for_buyer":21,
+			"order_money_percentage_for_each_buy":0.5,
+		}
+		"""
+	When bill访问zhouxun的webapp::apiserver
+	When bill购买zhouxun的商品::apiserver
+		"""
+		{
+			"order_id":"001",
+			"date":"2017-01-20 10:00:00",
+			"ship_name": "bill",
+			"ship_tel": "13811223344",
+			"ship_area": "北京市 北京市 海淀区",
+			"ship_address": "泰兴大厦",
+			"pay_type": "微信支付",
+			"products": [{
+				"name": "zhouxun商品3",
+				"count": 1
+			}, {
+				"name": "jobs商品1",
+				"count": 1
+			}]
+		}
+		"""
+	When bill使用支付方式'微信支付'进行支付订单'001'于2017-01-20 10:10:00::apiserver
+	Given zhouxun登录系统
+	When zhouxun对出货单进行发货
+		"""
+		[{
+			"delivery_item_bid":"001-zhouxun",
+			"time":"2017-01-20 10:10:10"
+		}, {
+			"delivery_item_bid":"001-jobs",
+			"time":"2017-01-20 10:10:10"
+		}]
+		"""
+	When zhouxun标记完成出货单'001-zhouxun'
+		"""
+		{
+			"time":"2017-01-20 11:10:10"
+		}
+		"""
+	Then zhouxun能获得bill的积分日志::weapp
+		"""
+		[{
+			"content": "首次关注",
+			"integral": 20
+		}]
+		"""
 
 
 
