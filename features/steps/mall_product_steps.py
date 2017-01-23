@@ -323,11 +323,11 @@ def __create_consignment_product(product_names, user, context):
 
 def __get_products(context, corp_name, type_name=u'在售'):
     TYPE2URL = {
-      u'待售': '/product/offshelf_products/?corp_id=%d' % context.corp.id,
-      u'在售': '/product/onshelf_products/?corp_id=%d' % context.corp.id,
+      u'待售': '/product/offshelf_products/?corp_id=%d',
+      u'在售': '/product/onshelf_products/?corp_id=%d',
       u'same_corp_tmpl': '/product/unshelf_pooled_products/?corp_id=%d',
       u'different_corp_tmpl': '/product/pooled_products/?corp_id=%d',
-      u'待销': '/product/unshelf_consignment_products/?corp_id=%d' % context.corp.id,
+      u'待销': '/product/unshelf_consignment_products/?corp_id=%d'
     }
 
     if u'商品池' in type_name:
@@ -338,7 +338,12 @@ def __get_products(context, corp_name, type_name=u'在售'):
         else:
             url = TYPE2URL['different_corp_tmpl'] % other_corp_id
     else:
-        url = TYPE2URL[type_name]
+        other_corp_name = type_name[:-2]
+
+        if corp_name == other_corp_name:
+            url = TYPE2URL[type_name[-2:]] % int(bdd_util.get_user_id_for(other_corp_name))
+        else:
+            url = TYPE2URL[type_name[-2:]] % context.corp.id
 
     response = context.client.get(url)
     bdd_util.assert_api_call_success(response)
@@ -614,12 +619,12 @@ def step_impl(context, user):
 def step_impl(context, user):
 
     product_names = json.loads(context.text)
-
+    user = mall_models.User.select().dj_where(username=user).first()
     for product_name in product_names:
         db_product = mall_models.Product.select().dj_where(name=product_name).get()
 
         data = {
-            "corp_id": context.corp.id,
+            "corp_id": user.id,
             "product_id": db_product.id
         }
 
@@ -637,7 +642,7 @@ def step_impl(context, user, shelf_name):
 
     if shelf_name == u'在售':
         data = {
-            'corp_id': context.corp.id,
+            'corp_id': bdd_util.get_user_id_for(user),
             'product_ids': json.dumps(product_ids)
         }
 
@@ -695,3 +700,18 @@ def step_impl(context, user):
         promotes = [promotes]
 
     __create_promote(promotes, context, user)
+
+
+@when(u"{user}设置商品显示顺序")
+def step_impl(context, user):
+
+    products = json.loads(context.text)
+    for product in products:
+
+        product_model = mall_models.Product.select().dj_where(name=product.get('name')).first()
+        data = {
+            'corp_id': bdd_util.get_user_id_for(user),
+            'id': product_model.id,
+            'position': product.get('position')
+        }
+        context.client.post('/product/product_position/', data)

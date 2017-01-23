@@ -145,20 +145,20 @@ Scenario:1 weizoom已经有了商品
 		"""
 
 
-	Then zhouxun能获得'待销'商品列表
+	Then zhouxun能获得'zhouxun待销'商品列表
 		"""
 		[{
 			"name": "叫花鸡",
 			"create_type": "sync",
 			"price": 12.00,
 			"stocks": 3,
+			"categories": "",
 			"sales": 0,
 			"image": "/static/test_resource_img/hangzhou2.jpg"
 		}, {
 			"name": "东坡肘子",
 			"create_type": "sync",
 			"bar_code": "zhouzi_1",
-			"categories": "分类1,分类2,分类3",
 			"price": 11.12,
 			"stocks": "无限",
 			"sales": 0,
