@@ -178,11 +178,11 @@ Scenario:1 管理员退款成功单供货商的订单-待发货
 				"operator":"客户",
 				"time":"2016-01-01 10:00:00"
 			},{
-				"action_text":"退款-zhouxun",
+				"action_text":"退款",
 				"operator":"zhouxun",
 				"time":"2016-01-02 10:00:00"
 			},{
-				"action_text":"退款完成-zhouxun",
+				"action_text":"退款完成",
 				"operator":"zhouxun",
 				"time":"2016-01-02 11:00:00"
 			}],
@@ -222,11 +222,11 @@ Scenario:1 管理员退款成功单供货商的订单-待发货
 					"operator":"zhouxun",
 					"time":"2016-01-01 10:00:00"
 				},{
-					"action_text":"退款-zhouxun",
+					"action_text":"退款",
 					"operator":"zhouxun",
 					"time":"2016-01-02 10:00:00"
 				},{
-					"action_text":"退款完成-zhouxun",
+					"action_text":"退款完成",
 					"operator":"zhouxun",
 					"time":"2016-01-02 11:00:00"
 				}],
@@ -518,18 +518,6 @@ Scenario:2 管理员退款成功多供货商的订单-已发货
 				"action_text":"支付",
 				"operator":"客户",
 				"time":"2016-02-01 10:00:00"
-			},{
-				"action_text":"订单发货-zhouxun",
-				"operator":"zhouxun",
-				"time":"2016-02-01 11:00:00"
-			},{
-				"action_text":"退款-zhouxun",
-				"operator":"zhouxun",
-				"time":"2016-02-02 10:00:00"
-			},{
-				"action_text":"退款完成-zhouxun",
-				"operator":"zhouxun",
-				"time":"2016-02-02 11:00:00"
 			}],
 			"pay_interface_type_code": "alipay"
 			"couponMoney": 0.00,
@@ -588,15 +576,15 @@ Scenario:2 管理员退款成功多供货商的订单-已发货
 					"operator":"客户",
 					"time":"2016-02-01 10:00:00"
 				},{
-					"action_text":"订单发货-zhouxun",
+					"action_text":"订单发货",
 					"operator":"zhouxun",
 					"time":"2016-02-01 11:00:00"
 				},{
-					"action_text":"退款-zhouxun",
+					"action_text":"退款",
 					"operator":"zhouxun",
 					"time":"2016-02-02 10:00:00"
 				},{
-					"action_text":"退款完成-zhouxun",
+					"action_text":"退款完成",
 					"operator":"zhouxun",
 					"time":"2016-02-02 11:00:00"
 				}],
@@ -939,27 +927,11 @@ Scenario:3 管理员退款成功多供货商的订单-带运费-待发货，已�
 				"operator":"客户",
 				"time":"2016-03-01 10:00:00"
 			},{
-				"action_text":"发货-zhouxun",
-				"operator":"zhouxun",
-				"time":"2016-03-02 10:00:00"
-			},{
-				"action_text":"完成-zhouxun",
-				"operator":"zhouxun",
-				"time":"2016-03-03 10:00:00"
-			},{
-				"action_text":"退款-zhouxun",
-				"operator":"zhouxun",
-				"time":"2016-03-04 10:00:00"
-			},{
-				"action_text":"退款-yangmi",
+				"action_text":"退款",
 				"operator":"zhouxun",
 				"time":"2016-03-04 11:00:00"
 			},{
-				"action_text":"退款完成-zhouxun",
-				"operator":"zhouxun",
-				"time":"2016-03-04 12:00:00"
-			},{
-				"action_text":"退款完成-yangmi",
+				"action_text":"退款完成",
 				"operator":"zhouxun",
 				"time":"2016-03-04 13:00:00"
 			}],
@@ -1009,11 +981,11 @@ Scenario:3 管理员退款成功多供货商的订单-带运费-待发货，已�
 					"operator":"客户",
 					"time":"2016-03-01 10:00:00"
 				},{
-					"action_text":"退款-zhouxun",
+					"action_text":"退款",
 					"operator":"zhouxun",
 					"time":"2016-03-04 11:00:00"
 				},{
-					"action_text":"退款完成-zhouxun",
+					"action_text":"退款完成",
 					"operator":"zhouxun",
 					"time":"2016-03-04 12:00:00"
 				}],
@@ -1038,19 +1010,19 @@ Scenario:3 管理员退款成功多供货商的订单-带运费-待发货，已�
 					"operator":"客户",
 					"time":"2016-03-01 10:00:00"
 				},{
-					"action_text":"订单发货-zhouxun",
+					"action_text":"订单发货",
 					"operator":"zhouxun",
 					"time":"2016-03-02 10:00:00"
 				},{
-					"action_text":"完成-zhouxun",
+					"action_text":"完成",
 					"operator":"zhouxun",
 					"time":"2016-03-03 10:00:00"
 				},{
-					"action_text":"退款-zhouxun",
+					"action_text":"退款",
 					"operator":"zhouxun",
 					"time":"2016-03-04 10:00:00"
 				},{
-					"action_text":"退款完成-zhouxun",
+					"action_text":"退款完成",
 					"operator":"zhouxun",
 					"time":"2016-03-04 13:00:00"
 				}],
@@ -1436,14 +1408,6 @@ Scenario:4 管理员退款成功使用微众卡全额支付的订单
 				"action_text":"支付",
 				"operator":"客户",
 				"time":"2016-04-01 00:00:00"
-			},{
-				"action_text":"退款-zhouxun",
-				"operator":"zhouxun",
-				"time":"2016-04-02 10:00:00"
-			},{
-				"action_text":"退款完成-zhouxun",
-				"operator":"zhouxun",
-				"time":"2016-04-02 11:00:00"
 			}],
 			"pay_interface_type_code": "preference"
 			"couponMoney": 0.00,
@@ -1502,11 +1466,11 @@ Scenario:4 管理员退款成功使用微众卡全额支付的订单
 					"operator":"客户",
 					"time":"2016-04-01 00:00:00"
 				},{
-					"action_text":"退款-zhouxun",
+					"action_text":"退款",
 					"operator":"zhouxun",
 					"time":"2016-04-02 10:00:00"
 				},{
-					"action_text":"退款完成-zhouxun",
+					"action_text":"退款完成",
 					"operator":"zhouxun",
 					"time":"2016-04-02 11:00:00"
 				}],
@@ -1756,11 +1720,11 @@ Scenario:5 管理员退款成功使用积分的订单
 				"operator":"客户",
 				"time":"2016-05-01 10:00:00"
 			},{
-				"action_text":"退款-zhouxun",
+				"action_text":"退款",
 				"operator":"zhouxun",
 				"time":"2016-05-02 10:00:00"
 			},{
-				"action_text":"退款完成-zhouxun",
+				"action_text":"退款完成",
 				"operator":"zhouxun",
 				"time":"2016-05-02 11:00:00"
 			}],
@@ -1800,11 +1764,11 @@ Scenario:5 管理员退款成功使用积分的订单
 					"operator":"客户",
 					"time":"2016-05-01 10:00:00"
 				},{
-					"action_text":"退款-zhouxun",
+					"action_text":"退款",
 					"operator":"zhouxun",
 					"time":"2016-05-02 10:00:00"
 				},{
-					"action_text":"退款完成-zhouxun",
+					"action_text":"退款完成",
 					"operator":"zhouxun",
 					"time":"2016-05-02 11:00:00"
 				}],
@@ -2085,11 +2049,11 @@ Scenario:6 管理员退款成功使用优惠券的订单
 				"operator":"客户",
 				"time":"2016-06-01 10:00:00"
 			},{
-				"action_text":"退款-zhouxun",
+				"action_text":"退款",
 				"operator":"zhouxun",
 				"time":"2016-06-02 10:00:00"
 			},{
-				"action_text":"退款完成-zhouxun",
+				"action_text":"退款完成",
 				"operator":"zhouxun",
 				"time":"2016-06-02 11:00:00"
 			}],
@@ -2129,11 +2093,11 @@ Scenario:6 管理员退款成功使用优惠券的订单
 					"operator":"zhouxun",
 					"time":"2016-06-01 10:00:00"
 				},{
-					"action_text":"退款-zhouxun",
+					"action_text":"退款",
 					"operator":"zhouxun",
 					"time":"2016-06-02 10:00:00"
 				},{
-					"action_text":"退款完成-zhouxun",
+					"action_text":"退款完成",
 					"operator":"zhouxun",
 					"time":"2016-06-02 11:00:00"
 				}],
