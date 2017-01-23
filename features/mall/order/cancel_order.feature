@@ -31,14 +31,22 @@ Background:
 		}]
 		"""
 	Given zhouxun登录系统
-	And zhouxun设定会员积分策略
+	When zhouxun更新积分规则为
 		"""
 		{
 			"integral_each_yuan": 2,
-			"use_ceiling": 50
+			"be_member_increase_count": 0,
+			"click_shared_url_increase_count": 0,
+			"buy_award_count_for_buyer": 0,
+			"order_money_percentage_for_each_buy": 0,
+			"buy_via_shared_url_increase_count_for_author": 0,
+			"buy_via_offline_increase_count_for_author": 0,
+			"buy_via_offline_increase_count_percentage_for_author": 0,
+			"use_ceiling": 50,
+			"review_increase": 0
 		}
 		"""
-	And zhouxun已添加商品规格
+	Given zhouxun已添加商品规格
 		"""
 		[{
 			"name": "颜色",
@@ -118,7 +126,7 @@ Background:
 		"""
 	Given bill关注zhouxun的公众号::apiserver
 
-@order
+@order @ztqb
 Scenario: 1 管理员取消多规格商品的订单
 	1.zhouxun取消待支付订单，多规格商品的库存退回
 
@@ -152,12 +160,12 @@ Scenario: 1 管理员取消多规格商品的订单
 			"model": {
 				"models": {
 					"黑色 M": {
-						"price": 10.1,
+						"price": 10.0,
 						"stock_type": "有限",
 						"stocks": 9
 					},
 					"白色 S": {
-						"price": 20.2,
+						"price": 20.0,
 						"stock_type": "有限",
 						"stocks": 19
 					}
@@ -178,12 +186,12 @@ Scenario: 1 管理员取消多规格商品的订单
 			"model": {
 				"models": {
 					"黑色 M": {
-						"price": 10.1,
+						"price": 10.0,
 						"stock_type": "有限",
 						"stocks": 10
 					},
 					"白色 S": {
-						"price": 20.2,
+						"price": 20.0,
 						"stock_type": "有限",
 						"stocks": 20
 					}
