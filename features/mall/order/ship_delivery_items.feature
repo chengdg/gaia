@@ -187,7 +187,12 @@ Scenario: 1 对出货单进行发货，使用物流（非其他）
 				"count": 1,
 				"name": "东坡肘子zhouxun"
 			}],
-			"status_code": "shipped"
+			"status_code": "shipped",
+			"with_logistics":true,
+			"with_logistics_trace":true,
+			"express_company_name": "圆通速递",
+			"express_number": "147258366",
+			"leader_name":""
 		},{
 			"supplier_info": {
 				"supplier_type": "supplier",
@@ -197,7 +202,12 @@ Scenario: 1 对出货单进行发货，使用物流（非其他）
 				"count": 1,
 				"name": "土豆yangmi"
 			}],
-			"status_code": "paid"
+			"status_code": "paid",
+			"with_logistics":false,
+			"with_logistics_trace":false,
+			"express_company_name": "",
+			"express_number": "",
+			"leader_name":""
 		}]
 	},{
 		"bid":"002",
@@ -211,7 +221,12 @@ Scenario: 1 对出货单进行发货，使用物流（非其他）
 				"count": 1,
 				"name": "东坡肘子zhouxun"
 			}],
-			"status_code": "shipped"
+			"status_code": "shipped",
+			"with_logistics":true,
+			"with_logistics_trace":true,
+			"express_company_name": "申通快递",
+			"express_number": "147258368",
+			"leader_name":"zhouxun|002-1"
 		},{
 			"supplier_info": {
 				"supplier_type": "supplier",
@@ -221,7 +236,12 @@ Scenario: 1 对出货单进行发货，使用物流（非其他）
 				"count": 1,
 				"name": "土豆yangmi"
 			}],
-			"status_code": "shipped"
+			"status_code": "shipped",
+			"with_logistics":true,
+			"with_logistics_trace":true,
+			"express_company_name": "申通快递",
+			"express_number": "147258367",
+			"leader_name":"yangmi"
 		}]
 	},{
 		"bid":"001",
@@ -235,7 +255,12 @@ Scenario: 1 对出货单进行发货，使用物流（非其他）
 				"count": 1,
 				"name": "东坡肘子zhouxun"
 			}],
-			"status_code": "shipped"
+			"status_code": "shipped",
+			"with_logistics":true,
+			"with_logistics_trace":true,
+			"express_company_name": "顺丰速运",
+			"express_number": "147258369",
+			"leader_name":"zhouxun|001"
 		}]
 	}]
 	"""
