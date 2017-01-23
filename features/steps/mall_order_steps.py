@@ -86,7 +86,7 @@ def step_impl(context, user, bid):
 	bdd_util.assert_api_call_success(response)
 
 
-@when(u"{user}批量发货出货单")
+@when(u"{user}对出货单进行发货")
 def step_impl(context, user):
 	ship_infos = json.loads(context.text)
 
