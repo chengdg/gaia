@@ -111,7 +111,7 @@ Background:
 		"""
 	Given bill关注zhouxun的公众号::apiserver
 
-
+@order
 Scenario: 1 管理员取消多规格商品的订单
 	1.zhouxun取消待支付订单，多规格商品的库存退回
 
@@ -236,7 +236,7 @@ Scenario: 1 管理员取消多规格商品的订单
 		}
 		"""
 
-
+@order
 Scenario: 2 管理员取消多个供货商商品的订单
 	1.zhouxun取消待支付订单，供货商的商品库存退回
 
@@ -364,7 +364,7 @@ Scenario: 2 管理员取消多个供货商商品的订单
 		}
 		"""
 
-
+@order
 Scenario: 3 管理员取消使用了订单积分的订单
 	1.zhouxun取消待支付订单，积分退回
 
@@ -496,7 +496,7 @@ Scenario: 3 管理员取消使用了订单积分的订单
 		}]
 		"""
 
-
+@order
 Scenario: 4 管理员取消使用了商品积分的订单
 	1.zhouxun取消待支付订单，积分退回
 
@@ -644,7 +644,7 @@ Scenario: 4 管理员取消使用了商品积分的订单
 		}]
 		"""
 
-
+@order
 Scenario: 5 管理员取消使用了通用券的订单
 	1.zhouxun取消待支付订单，通用券退回
 
@@ -789,7 +789,7 @@ Scenario: 5 管理员取消使用了通用券的订单
 		}
 		"""
 
-
+@order
 Scenario: 6 管理员取消使用了多商品券的订单
 	1.zhouxun取消待支付订单，多商品券退回
 
@@ -954,7 +954,7 @@ Scenario: 6 管理员取消使用了多商品券的订单
 		}
 		"""
 
-
+@order
 Scenario: 7 管理员取消使用了微众卡的订单
 	1.zhouxun取消待支付订单，微众卡退回
 

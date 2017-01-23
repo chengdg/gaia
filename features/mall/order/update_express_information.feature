@@ -174,7 +174,7 @@ Background:
 	}]
 	"""
 
-
+@order
 Scenario: 1 修改出货单物流信息
 	Given zhouxun登录系统
 	#修改普通物流公司信息为另一个普通物流公司信息
