@@ -71,7 +71,7 @@ Background:
 
 	When zhouxun将商品移动到'在售'货架
 		"""
-			["东坡肘子zhouxun", "叫花鸡zhouxun","土豆yangmi"]
+			["东坡肘子zhouxun","土豆yangmi"]
 		"""
 	Given bill关注zhouxun的公众号::apiserver
 	When bill访问zhouxun的webapp::apiserver
@@ -174,7 +174,7 @@ Background:
 		}]
 		"""
 
-@order
+@order @ztqb
 Scenario: 1 修改出货单物流信息
 	Given zhouxun登录系统
 	#修改普通物流公司信息为另一个普通物流公司信息
@@ -197,15 +197,15 @@ Scenario: 1 修改出货单物流信息
 			"status_logs":[{
 				"from_status_code":"",
 				"to_status_code":"created",
-				"time":"2016-10-01 10:00:00",
+				"time":"2016-10-01 10:00:00"
 			},{
 				"from_status_code":"created",
 				"to_status_code":"paid",
-				"time":"2016-10-01 10:01:00",
+				"time":"2016-10-01 10:01:00"
 			},{
 				"from_status_code":"paid",
 				"to_status_code":"shipped",
-				"time":"2016-10-05 10:11:00",
+				"time":"2016-10-05 10:11:00"
 			}],
 			"operation_logs":[{
 				"action_text":"下单",
@@ -276,11 +276,11 @@ Scenario: 1 修改出货单物流信息
 			"status_logs":[{
 				"from_status_code":"",
 				"to_status_code":"created",
-				"time":"2016-10-02 10:00:00",
+				"time":"2016-10-02 10:00:00"
 			},{
 				"from_status_code":"created",
 				"to_status_code":"paid",
-				"time":"2016-10-02 10:01:00",
+				"time":"2016-10-02 10:01:00"
 			}],
 			"operation_logs":[{
 				"action_text":"下单",
@@ -386,15 +386,15 @@ Scenario: 1 修改出货单物流信息
 			"status_logs":[{
 				"from_status_code":"",
 				"to_status_code":"created",
-				"time":"2016-10-03 10:00:00",
+				"time":"2016-10-03 10:00:00"
 			},{
 				"from_status_code":"created",
 				"to_status_code":"paid",
-				"time":"2016-10-03 10:01:00",
+				"time":"2016-10-03 10:01:00"
 			},{
 				"from_status_code":"paid",
 				"to_status_code":"shipped",
-				"time":"2016-10-05 10:11:00",
+				"time":"2016-10-05 10:11:00"
 			}],
 			"operation_logs":[{
 				"action_text":"下单",
