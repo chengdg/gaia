@@ -208,11 +208,11 @@ Scenario: 1 管理员标记完成一个供货商的订单
 				"operator":"客户",
 				"time":"2017-01-20 10:10:00"
 			},{
-				"action_text":"订单发货-zhouxun",
+				"action_text":"订单发货",
 				"operator":"zhouxun",
 				"time":"2017-01-20 10:10:10"
 			},{
-				"action_text":"完成-zhouxun",
+				"action_text":"完成",
 				"operator":"zhouxun",
 				"time":"2017-01-20 11:10:10"
 			}],
@@ -228,11 +228,11 @@ Scenario: 1 管理员标记完成一个供货商的订单
 					"operator":"客户",
 					"time":"2017-01-20 10:10:00"
 				},{
-					"action_text":"订单发货-zhouxun",
+					"action_text":"订单发货",
 					"operator":"zhouxun",
 					"time":"2017-01-20 10:10:10"
 				},{
-					"action_text":"完成-zhouxun",
+					"action_text":"完成",
 					"operator":"zhouxun",
 					"time":"2017-01-20 11:10:10"
 				}]
@@ -340,11 +340,11 @@ Scenario: 2 管理员标记完成多个供货商的订单
 					"operator":"客户",
 					"time":"2017-01-20 10:10:00"
 				},{
-					"action_text":"订单发货-zhouxun",
+					"action_text":"订单发货",
 					"operator":"zhouxun",
 					"time":"2017-01-20 10:10:10"
 				},{
-					"action_text":"完成-zhouxun",
+					"action_text":"完成",
 					"operator":"zhouxun",
 					"time":"2017-01-20 11:10:10"
 				}],
@@ -359,7 +359,7 @@ Scenario: 2 管理员标记完成多个供货商的订单
 					"operator":"客户",
 					"time":"2017-01-20 10:10:00"
 				},{
-					"action_text":"订单发货-jobs",
+					"action_text":"订单发货",
 					"operator":"zhouxun",
 					"time":"2017-01-20 10:10:10"
 				}]
@@ -433,11 +433,11 @@ Scenario: 2 管理员标记完成多个供货商的订单
 					"operator":"客户",
 					"time":"2017-01-20 10:10:00"
 				},{
-					"action_text":"订单发货-zhouxun",
+					"action_text":"订单发货",
 					"operator":"zhouxun",
 					"time":"2017-01-20 10:10:10"
 				},{
-					"action_text":"完成-zhouxun",
+					"action_text":"完成",
 					"operator":"zhouxun",
 					"time":"2017-01-20 11:10:10"
 				}],
@@ -452,11 +452,11 @@ Scenario: 2 管理员标记完成多个供货商的订单
 					"operator":"客户",
 					"time":"2017-01-20 10:10:00"
 				},{
-					"action_text":"订单发货-jobs",
+					"action_text":"订单发货",
 					"operator":"zhouxun",
 					"time":"2017-01-20 10:10:10"
 				},{
-					"action_text":"完成-jobs",
+					"action_text":"完成",
 					"operator":"zhouxun",
 					"time":"2017-01-20 11:11:10"
 				}]
