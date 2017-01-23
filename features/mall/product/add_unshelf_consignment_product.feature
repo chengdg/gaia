@@ -138,14 +138,14 @@ Scenario:1 weizoom已经有了商品
 		}]
 
 		"""
-
+	Given weizoom登录系统
 	When zhouxun添加代销商品
 		"""
 		["东坡肘子", "叫花鸡"]
 		"""
 
 
-	Then zhouxun能获得'zhouxun待销'商品列表
+	Then zhouxun能获得'待销'商品列表
 		"""
 		[{
 			"name": "叫花鸡",

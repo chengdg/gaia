@@ -100,7 +100,7 @@ Scenario: 设置zhouxun的商品列表商品排列顺序
 		}]
 
 		"""
-
+	Given zhouxun登录系统
 	When zhouxun添加代销商品
 		"""
 		["东坡肘子-weizoom", "叫花鸡-weizoom", "水晶虾仁-weizoom"]
@@ -128,7 +128,7 @@ Scenario: 设置zhouxun的商品列表商品排列顺序
 	}]
 	"""
 
-	Then zhouxun能获得'zhouxun在售'商品列表
+	Then zhouxun能获得'在售'商品列表
 		"""
 		[{
 			"name": "叫花鸡-weizoom"
