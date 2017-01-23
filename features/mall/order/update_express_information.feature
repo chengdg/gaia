@@ -311,7 +311,7 @@ Scenario: 1 修改出货单物流信息
 				}],
 				"status_code": "paid",
 				"with_logistics":false,
-				"with_logistics_trace":false,
+				"with_logistics_trace":true,
 				"express_company_name_text":"",
 				"express_number": "",
 				"leader_name":""
