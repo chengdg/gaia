@@ -2,6 +2,7 @@
 
 from eaglet.core import api_resource
 
+from business.common.page_info import PageInfo
 from business.mall.corporation_repository import CorporationRepository
 
 
@@ -13,12 +14,17 @@ class ACorps(api_resource.ApiResource):
 	resource = 'corps'
 
 	def get(args):
-		corps = CorporationRepository().get_corps()
+		page_info = PageInfo.create({
+			"cur_page": int(args.get('cur_page', 1)),
+			"count_per_page": int(args.get('count_per_page', 15))
+		})
+		page_info, corps = CorporationRepository().filter_corps(args, page_info)
 
-		return [{
+		rows = [{
 			'corp_id': corp.id,
-			'corp_name': corp.details.name,
-			'username': corp.details.username,
+			'name': corp.details.name,
+			'company_name': corp.details.company_name,
+			'username': corp.username,
 			'is_weizoom_corp': corp.is_weizoom_corp(),
 			'max_product_count': corp.details.max_product_count,
 			'classification_ids': corp.details.classification_ids,
@@ -31,3 +37,8 @@ class ACorps(api_resource.ApiResource):
 			'valid_time_to': corp.details.valid_time_to,
 			'status': corp.details.status
 		} for corp in corps]
+
+		return {
+			'rows': rows,
+			'pageinfo': page_info.to_dict()
+		}

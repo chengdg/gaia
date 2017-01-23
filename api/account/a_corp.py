@@ -3,6 +3,9 @@
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
 
+from business.mall.corporation import Corporation
+
+
 class ACorp(api_resource.ApiResource):
 	"""
 	账户配置
@@ -13,13 +16,14 @@ class ACorp(api_resource.ApiResource):
 	@param_required(['corp_id'])
 	def get(args):
 
-		corp = args['corp']
+		corp = Corporation(args['corp_id'])
 
 		return {
 			'corp_id': corp.id,
-			'corp_name': corp.details.name,
+			'name': corp.details.name,
+			'company_name': corp.details.company_name,
 			'username': corp.username,
-			'type': corp.type,
+			'is_weizoom_corp': corp.is_weizoom_corp(),
 			'max_product_count': corp.details.max_product_count,
 			'classification_ids': corp.details.classification_ids,
 			'purchase_method': corp.details.purchase_method,
@@ -42,7 +46,7 @@ class ACorp(api_resource.ApiResource):
 
 	@param_required(['corp_id', 'is_weizoom_corp:bool'])
 	def post(args):
-		corp = args['corp']
+		corp = Corporation(args['corp_id'])
 		corp.update(args)
 
 		return {}

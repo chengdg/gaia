@@ -85,7 +85,6 @@ class Corporation(business_model.Model):
 	def __init__(self, owner_id):
 		business_model.Model.__init__(self)
 		self.id = owner_id
-		self.name = 'unknown'
 		self.status = -1
 		if owner_id:
 			_account_user_profile = account_model.UserProfile.select().dj_where(user_id=owner_id).first()
@@ -113,9 +112,8 @@ class Corporation(business_model.Model):
 		"""
 		填充corp详情
 		"""
-		corp_models = account_model.CorpInfo.select().dj_where(id=self.id)
-		if corp_models.count() > 0:
-			corp_model = corp_models.first()
+		corp_model = account_model.CorpInfo.select().dj_where(id=self.id).first()
+		if corp_model:
 			self.name = corp_model.name
 			self.company_name = corp_model.company_name
 			self.purchase_method = corp_model.purchase_method
@@ -123,6 +121,7 @@ class Corporation(business_model.Model):
 			self.clear_period = corp_model.clear_period
 			self.customer_from = corp_model.customer_from
 			self.max_product_count = corp_model.max_product_count
+			self.classification_ids = corp_model.classification_ids
 			self.contact = corp_model.contact
 			self.contact_phone = corp_model.contact_phone
 			self.valid_time_from = corp_model.valid_time_from
@@ -153,13 +152,13 @@ class Corporation(business_model.Model):
 			corp_model.update(**update_data).execute()
 
 	def update(self, args):
-		self.update_login_info(args)
+		self.update_base_info(args)
 		if not args['is_weizoom_corp']:
 			self.update_mall_info(args)
 			self.update_service_info(args)
 
 	def update_service_info(self, args):
-		update_field_list = ['pre_sale_tel', 'after_sale_tel', 'service_tel', 'service_qq_first', 'service_qq_second', 'note',
+		update_field_list = ['pre_sale_tel', 'after_sale_tel', 'service_tel', 'service_qq_first', 'service_qq_second',
 							 'classification_ids']
 		self.__update(args, update_field_list)
 
@@ -170,11 +169,11 @@ class Corporation(business_model.Model):
 		update_field_list = ['company_name', 'name', 'purchase_method', 'points', 'clear_period', 'max_product_count', 'classification_ids']
 		self.__update(args, update_field_list)
 
-	def update_login_info(self, args):
+	def update_base_info(self, args):
 		"""
-		更新登录信息
+		更新帐号信息
 		"""
-		update_field_list = ['username', 'password', 'valid_time_from', 'valid_time_to', 'contact', 'contact_phone']
+		update_field_list = ['is_weizoom_corp', 'note', 'contact', 'contact_phone']
 		self.__update(args, update_field_list)
 
 	def is_self_run_platform(self):
