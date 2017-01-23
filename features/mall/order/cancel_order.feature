@@ -118,7 +118,7 @@ Background:
 		"""
 	Given bill关注zhouxun的公众号::apiserver
 
-@order
+@gaia @order
 Scenario: 1 管理员取消多规格商品的订单
 	1.zhouxun取消待支付订单，多规格商品的库存退回
 
@@ -127,7 +127,7 @@ Scenario: 1 管理员取消多规格商品的订单
 		"""
 		{
 			"order_id":"001",
-			"date":"2017-01-20 10:00:00",
+			"date":"2017-01-20 00:00:00",
 			"ship_name": "bill",
 			"ship_tel": "13811223344",
 			"ship_area": "北京市 北京市 海淀区",
@@ -196,11 +196,11 @@ Scenario: 1 管理员取消多规格商品的订单
 		[{
 			"bid": "001",
 			"status_code": "cancelled",
-			"created_at": "2017-01-20 10:00:00",
+			"created_at": "2017-01-20 00:00:00",
 			"delivery_items": [{
 				"bid": "001-zhouxun",
 				"status_code": "cancelled",
-				"created_at": "2017-01-20 10:00:00"
+				"created_at": "2017-01-20 00:00:00"
 			}]
 		}]
 		"""
@@ -212,7 +212,7 @@ Scenario: 1 管理员取消多规格商品的订单
 			"status_logs": [{
 				"from_status_code":"",
 				"to_status_code":"created",
-				"time":"2017-01-20 10:00:00"
+				"time":"2017-01-20 00:00:00"
 			},{
 				"from_status_code":"created",
 				"to_status_code":"cancelled",
@@ -221,7 +221,7 @@ Scenario: 1 管理员取消多规格商品的订单
 			"operation_logs": [{
 				"action_text":"下单",
 				"operator":"客户",
-				"time":"2017-01-20 10:00:00"
+				"time":"2017-01-20 00:00:00"
 			},{
 				"action_text":"取消订单",
 				"operator":"zhouxun",

@@ -402,7 +402,7 @@ class DeliveryItem(business_model.Model):
 		from_status = self.status
 		to_status = mall_models.ORDER_STATUS_CANCEL
 		if self.has_db_record:
-			action_text = u"支付"
+			action_text = u"取消订单"
 
 			self.status = to_status
 

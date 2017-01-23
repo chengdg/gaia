@@ -143,7 +143,12 @@ def step_impl(context, user, bid):
 	response = context.client.get(url)
 	bdd_util.assert_api_call_success(response)
 	actual = response.data["order"]
-
+	for delivery_item in actual['delivery_items']:
+		real_bid = delivery_item['bid']
+		if "^" in real_bid:
+			x_bid = real_bid.split("^")[0] + '-' + str(
+				get_supplier_name_by_id(real_bid.split("^")[1].replace("s", "")))
+			delivery_item['bid'] = x_bid
 	# 暂时不验证时间
 
 	# for delivey_item
