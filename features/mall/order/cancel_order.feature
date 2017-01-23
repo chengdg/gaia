@@ -1,8 +1,8 @@
 # __author__ : "冯雪静"
 
 Feature: 管理员在weapp中取消订单
-"""
-管理员取消待支付订单
+	"""
+	管理员取消待支付订单
 		1.管理员取消多规格商品的订单，多规格商品库存退回正确
 		2.管理员取消多供货商商品的订单，商品库存退回正确
 		3.管理员取消使用订单积分的订单，积分退回正确
@@ -10,7 +10,7 @@ Feature: 管理员在weapp中取消订单
 		5.管理员取消使用通用券的订单，通用券退回正确
 		6.管理员取消使用多商品券的订单，多商品券退回正确
 		7.管理员取消使用微众卡的订单，微众卡退回正确
-"""
+	"""
 Background:
 	Given 重置'weapp'的bdd环境
 	Given 重置'apiserver'的bdd环境
@@ -35,15 +35,7 @@ Background:
 		"""
 		{
 			"integral_each_yuan": 2,
-			"be_member_increase_count": 0,
-			"click_shared_url_increase_count": 0,
-			"buy_award_count_for_buyer": 0,
-			"order_money_percentage_for_each_buy": 0,
-			"buy_via_shared_url_increase_count_for_author": 0,
-			"buy_via_offline_increase_count_for_author": 0,
-			"buy_via_offline_increase_count_percentage_for_author": 0,
-			"use_ceiling": 50,
-			"review_increase": 0
+			"be_member_increase_count": 50
 		}
 		"""
 	Given zhouxun已添加商品规格
@@ -160,12 +152,12 @@ Scenario: 1 管理员取消多规格商品的订单
 			"model": {
 				"models": {
 					"黑色 M": {
-						"price": 10.0,
+						"price": 10.00,
 						"stock_type": "有限",
 						"stocks": 9
 					},
 					"白色 S": {
-						"price": 20.0,
+						"price": 20.00,
 						"stock_type": "有限",
 						"stocks": 19
 					}
@@ -186,12 +178,12 @@ Scenario: 1 管理员取消多规格商品的订单
 			"model": {
 				"models": {
 					"黑色 M": {
-						"price": 10.0,
+						"price": 10.00,
 						"stock_type": "有限",
 						"stocks": 10
 					},
 					"白色 S": {
-						"price": 20.0,
+						"price": 20.00,
 						"stock_type": "有限",
 						"stocks": 20
 					}
@@ -289,7 +281,7 @@ Scenario: 2 管理员取消多个供货商商品的订单
 			"model": {
 				"models": {
 					"standard": {
-						"price": 30.1,
+						"price": 10.01,
 						"stock_type": "有限",
 						"stocks": 30
 					}
@@ -304,7 +296,7 @@ Scenario: 2 管理员取消多个供货商商品的订单
 			"model": {
 				"models": {
 					"standard": {
-						"price": 11.1,
+						"price": 11.00,
 						"stock_type": "有限",
 						"stocks": 30
 					}
@@ -384,6 +376,14 @@ Scenario: 3 管理员取消使用了订单积分的订单
 	1.zhouxun取消待支付订单，积分退回
 
 	Given zhouxun登录系统
+	When zhouxun更新积分规则为
+		"""
+		{
+			"integral_each_yuan": 2,
+			"be_member_increase_count": 50,
+			"use_ceiling": 50
+		}
+		"""
 	When bill访问zhouxun的webapp::apiserver
 	When bill获得zhouxun的50会员积分::weapp
 	Then bill在zhouxun的webapp中拥有50会员积分::weapp
