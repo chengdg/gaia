@@ -269,7 +269,9 @@ def diff(local, other, ignore_keys):
 					res.append({
 						'add': delim.join([path, str(i)]),
 						'actual': item,
-						'details': 'array-item'
+						'details': 'array-item',
+						'expected_length': ll,
+						'actual_length': lr
 					})
 			minl = min(ll, lr)
 			if minl > 0:

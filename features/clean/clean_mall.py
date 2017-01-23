@@ -20,6 +20,7 @@ def clean():
 	mall_models.OrderCardInfo.delete().execute()
 	account_models.AccessToken.delete().execute()
 	member_models.MemberInfo.delete().execute()
+	member_models.MemberIntegralLog.delete().execute()
 	member_models.MemberBrowseRecord.delete().execute()
 	member_models.MemberHasTag.delete().execute()
 	member_models.MemberHasSocialAccount.delete().execute()

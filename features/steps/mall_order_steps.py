@@ -169,6 +169,11 @@ def step_impl(context, user, bid):
 			delivery_item['bid'] = x_bid
 	# 暂时不验证时间
 
+	if actual['integral_type'] == 'order':
+		actual['integral_type'] = u'整单抵扣'
+	elif actual['integral_type'] == 'product':
+		actual['integral_type'] = u'积分应用'
+
 	# for delivey_item
 	# for o in actual:
 	# 	o['order_no'] = o['bid']

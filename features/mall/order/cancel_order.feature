@@ -243,7 +243,7 @@ Scenario: 1 管理员取消多规格商品的订单
 		}
 		"""
 
-@order @ztqb
+@gaia @order
 Scenario: 2 管理员取消多个供货商商品的订单
 	1.zhouxun取消待支付订单，供货商的商品库存退回
 
@@ -344,34 +344,36 @@ Scenario: 2 管理员取消多个供货商商品的订单
 				"operator":"zhouxun",
 				"time":"2017-01-20 10:10:00"
 			}],
-			"delivery_items": [{
+			"delivery_items":
+			[{
 				"bid": "001-zhouxun",
 				"status_code": "cancelled",
 				"operation_logs": [{
-					"action_text":"下单",
-					"operator":"客户",
-					"time":"2017-01-20 00:00:00"
-				},{
-					"action_text":"取消订单",
-					"operator":"zhouxun",
-					"time":"2017-01-20 10:10:00"
-				}],
-				"bid": "001-jobs",
-				"status_code": "cancelled",
-				"operation_logs": [{
-					"action_text":"下单",
-					"operator":"客户",
-					"time":"2017-01-20 00:00:00"
-				},{
-					"action_text":"取消订单",
-					"operator":"zhouxun",
-					"time":"2017-01-20 10:10:00"
-				}]
-			}]
+					"action_text": "下单",
+					"operator": "客户",
+					"time": "2017-01-20 00:00:00"
+				}, {
+					"action_text": "取消订单",
+					"operator": "zhouxun",
+					"time": "2017-01-20 10:10:00"
+				}]},
+				{
+					"bid": "001-jobs",
+					"status_code": "cancelled",
+					"operation_logs": [{
+						"action_text": "下单",
+						"operator": "客户",
+						"time": "2017-01-20 00:00:00"
+					}, {
+						"action_text": "取消订单",
+						"operator": "zhouxun",
+						"time": "2017-01-20 10:10:00"
+					}]}
+			]
 		}
 		"""
 
-@order
+@gaia @order
 Scenario: 3 管理员取消使用了订单积分的订单
 	1.zhouxun取消待支付订单，积分退回
 
@@ -385,8 +387,8 @@ Scenario: 3 管理员取消使用了订单积分的订单
 		}
 		"""
 	When bill访问zhouxun的webapp::apiserver
-	When bill获得zhouxun的50会员积分::weapp
-	Then bill在zhouxun的webapp中拥有50会员积分::weapp
+	When bill获得zhouxun的50会员积分::apiserver
+	Then bill在zhouxun的webapp中拥有50会员积分::apiserver
 	When bill购买zhouxun的商品::apiserver
 		"""
 		{
@@ -408,7 +410,7 @@ Scenario: 3 管理员取消使用了订单积分的订单
 			}]
 		}
 		"""
-	Then bill在zhouxun的webapp中拥有29会员积分::weapp
+	Then bill在zhouxun的webapp中拥有29会员积分::apiserver
 	Given zhouxun登录系统
 	When zhouxun取消订单'001'
 	Then zhouxun获得订单列表
@@ -489,7 +491,21 @@ Scenario: 3 管理员取消使用了订单积分的订单
 		}
 		"""
 	When bill访问zhouxun的webapp::apiserver
-	Then bill在zhouxun的webapp中拥有50会员积分::weapp
+	Then bill在zhouxun的webapp中拥有50会员积分::apiserver
+	Given zhouxun登录系统::weapp
+#	Then zhouxun能获得bill的积分日志::weapp
+#		"""
+#		[{
+#			"content": "取消订单 返还积分",
+#			"integral": 21
+#		}, {
+#			"content": "购物抵扣",
+#			"integral": 21
+#		}, {
+#			"content": "首次关注",
+#			"integral": 50
+#		}]
+#		"""
 	Then zhouxun能获得bill的积分日志::weapp
 		"""
 		[{
@@ -497,10 +513,7 @@ Scenario: 3 管理员取消使用了订单积分的订单
 			"integral": 21
 		}, {
 			"content": "购物抵扣",
-			"integral": 21
-		}, {
-			"content": "首次关注",
-			"integral": 50
+			"integral": -21
 		}]
 		"""
 
@@ -525,8 +538,8 @@ Scenario: 4 管理员取消使用了商品积分的订单
 		}]
 		"""
 	When bill访问zhouxun的webapp::weapp
-	When bill获得zhouxun的50会员积分::weapp
-	Then bill在zhouxun的webapp中拥有50会员积分::weapp
+	When bill获得zhouxun的50会员积分::apiserver
+	Then bill在zhouxun的webapp中拥有50会员积分::apiserver
 	When bill购买zhouxun的商品::apiserver
 		"""
 		{
@@ -550,7 +563,7 @@ Scenario: 4 管理员取消使用了商品积分的订单
 			}]
 		}
 		"""
-	Then bill在zhouxun的webapp中拥有30会员积分::weapp
+	Then bill在zhouxun的webapp中拥有30会员积分::apiserver
 	Given zhouxun登录系统
 	When zhouxun取消订单'001'
 	Then zhouxun获得订单列表
@@ -631,7 +644,7 @@ Scenario: 4 管理员取消使用了商品积分的订单
 		}
 		"""
 	When bill访问zhouxun的webapp::apiserver
-	Then bill在zhouxun的webapp中拥有50会员积分::weapp
+	Then bill在zhouxun的webapp中拥有50会员积分::apiserver
 	Then zhouxun能获得bill的积分日志::weapp
 		"""
 		[{
