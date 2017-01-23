@@ -291,7 +291,7 @@ Scenario: 1 对出货单进行发货，使用物流（非其他）
 			"operator":"客户",
 			"time":"2016-10-01 10:01:00"
 		},{
-			"action_text":"订单发货-zhouxun",
+			"action_text":"订单发货",
 			"operator":"zhouxun",
 			"time":"2016-10-05 10:11:00"
 		}],
@@ -340,11 +340,11 @@ Scenario: 1 对出货单进行发货，使用物流（非其他）
 			"operator":"客户",
 			"time":"2016-10-02 10:01:00"
 		},{
-			"action_text":"订单发货-zhouxun",
+			"action_text":"订单发货",
 			"operator":"zhouxun",
 			"time":"2016-10-05 10:11:00"
 		},{
-			"action_text":"订单发货-yangmi",
+			"action_text":"订单发货",
 			"operator":"zhouxun",
 			"time":"2016-10-05 10:11:00"
 		}],
@@ -404,7 +404,7 @@ Scenario: 1 对出货单进行发货，使用物流（非其他）
 			"operator":"客户",
 			"time":"2016-10-03 10:01:00"
 		},{
-			"action_text":"订单发货-zhouxun",
+			"action_text":"订单发货",
 			"operator":"zhouxun",
 			"time":"2016-10-05 10:11:00"
 		}],
