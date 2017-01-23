@@ -8,7 +8,6 @@ Feature:管理员给订单添加备注信息
 	"""
 
 Background:
-	Given 重置'weapp'的bdd环境
 	Given 重置'apiserver'的bdd环境
 	Given jobs登录系统
 	When jobs添加商品
@@ -91,7 +90,7 @@ Background:
 		}
 		"""
 
-@order
+@gaia @order
 Scenario:1 给订单添加备注信息，备注信息少于300字
 	Given zhouxun登录系统
 	When zhouxun给订单添加备注信息
@@ -116,7 +115,7 @@ Scenario:1 给订单添加备注信息，备注信息少于300字
 		}
 		"""
 
-@order
+@gaia @order
 Scenario:2 给订单添加备注信息，备注信息等于300字
 	Given zhouxun登录系统
 	When zhouxun给订单添加备注信息
@@ -141,7 +140,7 @@ Scenario:2 给订单添加备注信息，备注信息等于300字
 		}
 		"""
 
-@order
+@gaia @order
 Scenario:3 给多供货商的订单添加备注信息
 
 	When bill访问zhouxun的webapp::apiserver
@@ -162,30 +161,31 @@ Scenario:3 给多供货商的订单添加备注信息
 				},{
 					"name":"jobs商品1",
 					"count":1
-				}],
-			"postage":0.00,
-			"customer_message": "bill购买无规格商品1"
+				}]
 		}
 		"""
 	Given zhouxun登录系统
 	When zhouxun给订单添加备注信息
 		"""
 		{
-			"bid":"001",
+			"bid":"002",
 			"remark":"备注信息少于300字！！"
 		}
 		"""
 	Then zhouxun获得订单列表
 		"""
 		[{
-			"bid": "001",
+			"bid": "002",
 			"remark":"备注信息少于300字！！"
+		},{
+			"bid": "001",
+			"remark":""
 		}]
 		"""
-	Then zhouxun获得订单'001'
+	Then zhouxun获得订单'002'
 		"""
 		{
-			"bid": "001",
+			"bid": "002",
 			"remark":"备注信息少于300字！！"
 		}
 		"""

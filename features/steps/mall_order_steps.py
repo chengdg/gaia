@@ -127,6 +127,15 @@ def step_impl(context, user):
 	bdd_util.assert_api_call_success(response)
 
 
+@when(u"{user}给订单添加备注信息")
+def step_impl(context, user):
+	order_id = get_order_id_by_bid(json.loads(context.text)['bid'])
+	remark = json.loads(context.text)['remark']
+	url = '/order/order/?corp_id=%d&id=%d' % (context.corp.id, order_id)
+	response = context.client.post(url, data={'new_remark': remark})
+	bdd_util.assert_api_call_success(response)
+
+
 @then(u"{user}获得订单'{bid}'")
 def step_impl(context, user, bid):
 	order_id = get_order_id_by_bid(bid)
@@ -134,7 +143,6 @@ def step_impl(context, user, bid):
 	response = context.client.get(url)
 	bdd_util.assert_api_call_success(response)
 	actual = response.data["order"]
-
 
 	# 暂时不验证时间
 
