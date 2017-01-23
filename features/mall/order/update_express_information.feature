@@ -174,7 +174,7 @@ Background:
 		}]
 		"""
 
-@order @ztqb
+@gaia @order
 Scenario: 1 修改出货单物流信息
 	Given zhouxun登录系统
 	#修改普通物流公司信息为另一个普通物流公司信息
@@ -318,7 +318,7 @@ Scenario: 1 修改出货单物流信息
 				"express_number": "",
 				"leader_name":""
 			},{
-				"bid": "001-yangmi",
+				"bid": "002-yangmi",
 				"supplier_info": {
 					"supplier_type": "supplier",
 					"name": "yangmi"
@@ -413,7 +413,7 @@ Scenario: 1 修改出货单物流信息
 				"time":"2016-10-05 10:11:00"
 			}],
 			"delivery_items": [{
-				"bid": "001-zhouxun",
+				"bid": "003-zhouxun",
 				"supplier_info": {
 					"supplier_type": "supplier",
 					"name": "zhouxun"
@@ -446,7 +446,7 @@ Scenario: 1 修改出货单物流信息
 				"express_number": "123456788",
 				"leader_name":"其他物流|003修改发货信息"
 			},{
-				"bid": "001-yangmi",
+				"bid": "003-yangmi",
 				"supplier_info": {
 					"supplier_type": "supplier",
 					"name": "yangmi"
