@@ -221,6 +221,7 @@ Scenario: 1 修改出货单物流信息
 				"time":"2016-10-05 10:11:00"
 			}],
 			"delivery_items": [{
+				"bid": "001-zhouxun",
 				"supplier_info": {
 					"supplier_type": "supplier",
 					"name": "zhouxun"
@@ -292,6 +293,7 @@ Scenario: 1 修改出货单物流信息
 				"time":"2016-10-02 10:01:00"
 			}],
 			"delivery_items": [{
+				"bid": "002-zhouxun",
 				"supplier_info": {
 					"supplier_type": "supplier",
 					"name": "zhouxun"
@@ -316,6 +318,7 @@ Scenario: 1 修改出货单物流信息
 				"express_number": "",
 				"leader_name":""
 			},{
+				"bid": "001-yangmi",
 				"supplier_info": {
 					"supplier_type": "supplier",
 					"name": "yangmi"
@@ -343,7 +346,7 @@ Scenario: 1 修改出货单物流信息
 				}],
 				"status_code": "shipped",
 				"with_logistics":true,
-				"with_logistics_trace":true,
+				"with_logistics_trace":false,
 				"express_company_name_text":"其他物流",
 				"express_number": "123456789",
 				"leader_name":"yangmi|002修改发货信息"
@@ -410,6 +413,7 @@ Scenario: 1 修改出货单物流信息
 				"time":"2016-10-05 10:11:00"
 			}],
 			"delivery_items": [{
+				"bid": "001-zhouxun",
 				"supplier_info": {
 					"supplier_type": "supplier",
 					"name": "zhouxun"
@@ -442,6 +446,7 @@ Scenario: 1 修改出货单物流信息
 				"express_number": "123456788",
 				"leader_name":"其他物流|003修改发货信息"
 			},{
+				"bid": "001-yangmi",
 				"supplier_info": {
 					"supplier_type": "supplier",
 					"name": "yangmi"
