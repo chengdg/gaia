@@ -170,14 +170,6 @@
 																	"type": "boolean",
 																	"description": "是否是首单"
 																},
-																"express_company_name_text": {
-																	"type": "string",
-																	"description": "快递公司名称"
-																},
-																"express_company_name_value": {
-																	"type": "string",
-																	"description": "快递公司代码"
-																},
 																"refunding_info": {
 																	"type": "object",
 																	"properties": {
@@ -642,14 +634,6 @@
 												"is_first_order": {
 													"type": "boolean",
 													"description": "是否是首单"
-												},
-												"express_company_name_text": {
-													"type": "string",
-													"description": "快递公司名称"
-												},
-												"express_company_name_value": {
-													"type": "string",
-													"description": "快递公司代码"
 												},
 												"refunding_info": {
 													"type": "object",
