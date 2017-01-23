@@ -517,12 +517,12 @@ Scenario: 3 管理员取消使用了订单积分的订单
 		}]
 		"""
 
-@order
+@order @ztqb
 Scenario: 4 管理员取消使用了商品积分的订单
 	1.zhouxun取消待支付订单，积分退回
 
-	Given zhouxun登录系统
-	When jobs创建积分应用活动::weapp
+	Given zhouxun登录系统::weapp
+	When zhouxun创建积分应用活动::weapp
 		"""
 		[{
 			"name": "多商品积分应用1",
@@ -537,7 +537,7 @@ Scenario: 4 管理员取消使用了商品积分的订单
 			}]
 		}]
 		"""
-	When bill访问zhouxun的webapp::weapp
+	When bill访问zhouxun的webapp::apiserver
 	When bill获得zhouxun的50会员积分::apiserver
 	Then bill在zhouxun的webapp中拥有50会员积分::apiserver
 	When bill购买zhouxun的商品::apiserver
