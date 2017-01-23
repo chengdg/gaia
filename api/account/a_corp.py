@@ -21,6 +21,7 @@ class ACorp(api_resource.ApiResource):
 			'username': corp.username,
 			'type': corp.type,
 			'max_product_count': corp.details.max_product_count,
+			'classification_ids': corp.details.classification_ids,
 			'purchase_method': corp.details.purchase_method,
 			'points': corp.details.points,
 			'clear_period': corp.details.clear_period,
@@ -39,6 +40,9 @@ class ACorp(api_resource.ApiResource):
 			'service_qq_second': corp.details.service_qq_second
 		}
 
-	@param_required(['corp_id'])
+	@param_required(['corp_id', 'is_weizoom_corp:bool'])
 	def post(args):
-		pass
+		corp = args['corp']
+		corp.update(args)
+
+		return {}

@@ -64,6 +64,7 @@ class Corporation(business_model.Model):
 		'clear_period',
 		'customer_from',
 		'max_product_count',
+		'classification_ids',
 
 		'contact',
 		'contact_phone',
@@ -85,6 +86,7 @@ class Corporation(business_model.Model):
 		business_model.Model.__init__(self)
 		self.id = owner_id
 		self.name = 'unknown'
+		self.status = -1
 		if owner_id:
 			_account_user_profile = account_model.UserProfile.select().dj_where(user_id=owner_id).first()
 			self.webapp_id = _account_user_profile.webapp_id
@@ -136,7 +138,44 @@ class Corporation(business_model.Model):
 
 		return self
 
+	def __update(self, args, update_field_list):
+		update_data = dict()
+		for field_name in update_field_list:
+			field_value = args.get(field_name)
+			if not field_value == None:
+				update_data[field_name] = field_value
+		corp_id = self.id
+		corp_model = account_model.CorpInfo.select().dj_where(id=corp_id).get()
+		if not corp_model:
+			update_data['id'] = corp_id
+			account_model.CorpInfo.create(**update_data)
+		else:
+			corp_model.update(**update_data).execute()
 
+	def update(self, args):
+		self.update_login_info(args)
+		if not args['is_weizoom_corp']:
+			self.update_mall_info(args)
+			self.update_service_info(args)
+
+	def update_service_info(self, args):
+		update_field_list = ['pre_sale_tel', 'after_sale_tel', 'service_tel', 'service_qq_first', 'service_qq_second', 'note',
+							 'classification_ids']
+		self.__update(args, update_field_list)
+
+	def update_mall_info(self, args):
+		"""
+		更新商户商城配置
+		"""
+		update_field_list = ['company_name', 'name', 'purchase_method', 'points', 'clear_period', 'max_product_count', 'classification_ids']
+		self.__update(args, update_field_list)
+
+	def update_login_info(self, args):
+		"""
+		更新登录信息
+		"""
+		update_field_list = ['username', 'password', 'valid_time_from', 'valid_time_to', 'contact', 'contact_phone']
+		self.__update(args, update_field_list)
 
 	def is_self_run_platform(self):
 		"""
