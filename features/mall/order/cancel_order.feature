@@ -243,7 +243,7 @@ Scenario: 1 管理员取消多规格商品的订单
 		}
 		"""
 
-@order
+@order @ztqb
 Scenario: 2 管理员取消多个供货商商品的订单
 	1.zhouxun取消待支付订单，供货商的商品库存退回
 
@@ -309,15 +309,15 @@ Scenario: 2 管理员取消多个供货商商品的订单
 		[{
 			"bid": "001",
 			"status_code": "cancelled",
-			"created_at": "2017-01-20 10:00:00",
+			"created_at": "2017-01-20 00:00:00",
 			"delivery_items": [{
 				"bid": "001-zhouxun",
 				"status_code": "cancelled",
-				"created_at": "2017-01-20 10:00:00"
+				"created_at": "2017-01-20 00:00:00"
 			},{
 				"bid": "001-jobs",
 				"status_code": "cancelled",
-				"created_at": "2017-01-20 10:00:00"
+				"created_at": "2017-01-20 00:00:00"
 			}]
 		}]
 		"""
@@ -329,7 +329,7 @@ Scenario: 2 管理员取消多个供货商商品的订单
 			"status_logs": [{
 				"from_status_code":"",
 				"to_status_code":"created",
-				"time":"2017-01-20 10:00:00"
+				"time":"2017-01-20 00:00:00"
 			},{
 				"from_status_code":"created",
 				"to_status_code":"cancelled",
@@ -350,7 +350,7 @@ Scenario: 2 管理员取消多个供货商商品的订单
 				"operation_logs": [{
 					"action_text":"下单",
 					"operator":"客户",
-					"time":"2017-01-20 10:00:00"
+					"time":"2017-01-20 00:00:00"
 				},{
 					"action_text":"取消订单",
 					"operator":"zhouxun",
@@ -361,7 +361,7 @@ Scenario: 2 管理员取消多个供货商商品的订单
 				"operation_logs": [{
 					"action_text":"下单",
 					"operator":"客户",
-					"time":"2017-01-20 10:00:00"
+					"time":"2017-01-20 00:00:00"
 				},{
 					"action_text":"取消订单",
 					"operator":"zhouxun",
