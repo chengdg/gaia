@@ -1069,7 +1069,7 @@ Scenario:4 管理员退款使用微众卡全额支付的订单
 			}]
 		}]
 		"""
-	And zhouxun已有微众卡支付权限
+	And zhouxun开通使用微众卡权限::weapp
 	When zhouxun添加支付方式
 		"""
 		[{

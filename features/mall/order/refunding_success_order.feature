@@ -1087,8 +1087,6 @@ Scenario:4 管理员退款成功使用微众卡全额支付的订单
 	Given 重置'apiserver'的bdd环境
 	Given 重置'weapp'的bdd环境
 
-	Given 重置'weizoom_card'的bdd环境
-
 	Given yangmi登录系统
 	When yangmi添加商品
 		"""
@@ -1136,7 +1134,7 @@ Scenario:4 管理员退款成功使用微众卡全额支付的订单
 			}]
 		}]
 		"""
-	And zhouxun已有微众卡支付权限
+	And zhouxun开通使用微众卡权限::weapp
 	When zhouxun添加支付方式
 		"""
 		[{
