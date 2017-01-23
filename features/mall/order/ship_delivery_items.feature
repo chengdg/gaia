@@ -291,7 +291,7 @@ Scenario: 1 对出货单进行发货，使用物流（非其他）
 			"operator":"客户",
 			"time":"2016-10-01 10:01:00"
 		},{
-			"action_text":"订单发货",
+			"action_text":"订单发货-zhouxun",
 			"operator":"zhouxun",
 			"time":"2016-10-05 10:11:00"
 		}],
@@ -304,7 +304,10 @@ Scenario: 1 对出货单进行发货，使用物流（非其他）
 				"count": 1,
 				"name": "东坡肘子zhouxun"
 			}],
-			"express_company_name_text":"顺丰速运",
+			"status_code": "shipped",
+			"with_logistics":true,
+			"with_logistics_trace":true,
+			"express_company_name": "顺丰速运",
 			"express_number": "147258369",
 			"leader_name":"zhouxun|001"
 		}]
@@ -337,11 +340,11 @@ Scenario: 1 对出货单进行发货，使用物流（非其他）
 			"operator":"客户",
 			"time":"2016-10-02 10:01:00"
 		},{
-			"action_text":"订单发货",
+			"action_text":"订单发货-zhouxun",
 			"operator":"zhouxun",
 			"time":"2016-10-05 10:11:00"
 		},{
-			"action_text":"订单发货",
+			"action_text":"订单发货-yangmi",
 			"operator":"zhouxun",
 			"time":"2016-10-05 10:11:00"
 		}],
@@ -355,8 +358,10 @@ Scenario: 1 对出货单进行发货，使用物流（非其他）
 				"name": "东坡肘子zhouxun"
 			}],
 			"status_code": "shipped",
-			"express_company_name_text":"顺丰速运",
-			"express_number": "147258369",
+			"with_logistics":true,
+			"with_logistics_trace":true,
+			"express_company_name": "申通快递",
+			"express_number": "147258368",
 			"leader_name":"zhouxun|002-1"
 		},{
 			"supplier_info": {
@@ -368,8 +373,10 @@ Scenario: 1 对出货单进行发货，使用物流（非其他）
 				"name": "土豆yangmi"
 			}],
 			"status_code": "shipped",
-			"express_company_name_text":"顺丰速运",
-			"express_number": "147258369",
+			"with_logistics":true,
+			"with_logistics_trace":true,
+			"express_company_name": "申通快递",
+			"express_number": "147258367",
 			"leader_name":"yangmi"
 		}]
 	}
@@ -397,7 +404,7 @@ Scenario: 1 对出货单进行发货，使用物流（非其他）
 			"operator":"客户",
 			"time":"2016-10-03 10:01:00"
 		},{
-			"action_text":"订单发货",
+			"action_text":"订单发货-zhouxun",
 			"operator":"zhouxun",
 			"time":"2016-10-05 10:11:00"
 		}],
@@ -411,8 +418,10 @@ Scenario: 1 对出货单进行发货，使用物流（非其他）
 				"name": "东坡肘子zhouxun"
 			}],
 			"status_code": "shipped",
-			"express_company_name_text":"顺丰速运",
-			"express_number": "147258369",
+			"with_logistics":true,
+			"with_logistics_trace":true,
+			"express_company_name": "圆通速递",
+			"express_number": "147258366",
 			"leader_name":""
 		},{
 			"supplier_info": {
@@ -424,7 +433,9 @@ Scenario: 1 对出货单进行发货，使用物流（非其他）
 				"name": "土豆yangmi"
 			}],
 			"status_code": "paid",
-			"express_company_name_text":"",
+			"with_logistics":false,
+			"with_logistics_trace":false,
+			"express_company_name": "",
 			"express_number": "",
 			"leader_name":""
 		}]
