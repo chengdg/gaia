@@ -1694,40 +1694,6 @@ Scenario:5 管理员退款成功使用积分的订单
 		[{
 			"bid": "005",
 			"status_code": "refunded",
-			"status_logs":[{
-				"from_status_code":"",
-				"to_status_code":"created",
-				"time":"2016-05-01 00:00:00"
-			},{
-				"from_status_code":"created",
-				"to_status_code":"paid",
-				"time":"2016-05-01 10:00:00"
-			},{
-				"from_status_code":"paid",
-				"to_status_code":"refunding",
-				"time":"2016-05-02 10:00:00"
-			},{
-				"from_status_code":"refunding",
-				"to_status_code":"refunded",
-				"time":"2016-05-02 11:00:00"
-			}],
-			"operation_logs":[{
-				"action_text":"下单",
-				"operator":"客户",
-				"time":"2016-05-01 00:00:00"
-			},{
-				"action_text":"支付",
-				"operator":"客户",
-				"time":"2016-05-01 10:00:00"
-			},{
-				"action_text":"退款",
-				"operator":"zhouxun",
-				"time":"2016-05-02 10:00:00"
-			},{
-				"action_text":"退款完成",
-				"operator":"zhouxun",
-				"time":"2016-05-02 11:00:00"
-			}],
 			"pay_interface_type_code": "weixin_pay"
 			"couponMoney": 0.00,
 			"pay_money": 20.11,
@@ -1755,23 +1721,6 @@ Scenario:5 管理员退款成功使用积分的订单
 			"delivery_items": [{
 				"bid": "005-zhouxun",
 				"status_code": "refunded",
-				"operation_logs":[{
-					"action_text":"下单",
-					"operator":"客户",
-					"time":"2016-05-01 00:00:00"
-				},{
-					"action_text":"支付",
-					"operator":"客户",
-					"time":"2016-05-01 10:00:00"
-				},{
-					"action_text":"退款",
-					"operator":"zhouxun",
-					"time":"2016-05-02 10:00:00"
-				},{
-					"action_text":"退款完成",
-					"operator":"zhouxun",
-					"time":"2016-05-02 11:00:00"
-				}],
 				"postage": 0.00,
 				"refunding_info": {
 					"finished": true,
@@ -2023,40 +1972,6 @@ Scenario:6 管理员退款成功使用优惠券的订单
 		[{
 			"bid": "006",
 			"status_code": "refunded",
-			"status_logs":[{
-				"from_status_code":"",
-				"to_status_code":"created",
-				"time":"2016-06-01 00:00:00"
-			},{
-				"from_status_code":"created",
-				"to_status_code":"paid",
-				"time":"2016-06-01 10:00:00"
-			},{
-				"from_status_code":"paid",
-				"to_status_code":"refunding",
-				"time":"2016-06-02 10:00:00"
-			},{
-				"from_status_code":"refunding",
-				"to_status_code":"refunded",
-				"time":"2016-06-02 11:00:00"
-			}],
-			"operation_logs":[{
-				"action_text":"下单",
-				"operator":"客户",
-				"time":"2016-06-01 00:00:00"
-			},{
-				"action_text":"支付",
-				"operator":"客户",
-				"time":"2016-06-01 10:00:00"
-			},{
-				"action_text":"退款",
-				"operator":"zhouxun",
-				"time":"2016-06-02 10:00:00"
-			},{
-				"action_text":"退款完成",
-				"operator":"zhouxun",
-				"time":"2016-06-02 11:00:00"
-			}],
 			"pay_interface_type_code": "weixin_pay"
 			"couponMoney": 10.00,
 			"pay_money": 30.11,
@@ -2084,23 +1999,6 @@ Scenario:6 管理员退款成功使用优惠券的订单
 			"delivery_items": [{
 				"bid": "006-zhouxun",
 				"status_code": "refunded",
-				"operation_logs":[{
-					"action_text":"下单",
-					"operator":"客户",
-					"time":"2016-06-01 00:00:00"
-				},{
-					"action_text":"支付",
-					"operator":"zhouxun",
-					"time":"2016-06-01 10:00:00"
-				},{
-					"action_text":"退款",
-					"operator":"zhouxun",
-					"time":"2016-06-02 10:00:00"
-				},{
-					"action_text":"退款完成",
-					"operator":"zhouxun",
-					"time":"2016-06-02 11:00:00"
-				}],
 				"postage": 0.00,
 				"refunding_info": {
 					"finished": true,
