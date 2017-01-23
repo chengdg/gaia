@@ -260,7 +260,7 @@ Scenario:2 管理员退款多供货商的订单-已发货
 		"""
 
 	Given zhouxun登录系统
-	Given zhouxun设定会员积分策略::weapp
+	Given zhouxun设定会员积分策略
 		"""
 		{
 			"integral_each_yuan": 20
@@ -621,7 +621,7 @@ Scenario:3 管理员退款多供货商的订单-带运费-待发货，已完成
 		"""
 
 	Given zhouxun登录系统
-	Given zhouxun设定会员积分策略::weapp
+	Given zhouxun设定会员积分策略
 		"""
 		{
 			"integral_each_yuan": 20
@@ -1041,7 +1041,7 @@ Scenario:4 管理员退款使用微众卡全额支付的订单
 		"""
 
 	Given zhouxun登录系统
-	Given zhouxun设定会员积分策略::weapp
+	Given zhouxun设定会员积分策略
 		"""
 		{
 			"integral_each_yuan": 20
@@ -1504,7 +1504,7 @@ Scenario:5 管理员退款使用积分的订单
 		["无规格商品1", "无规格商品2"]
 		"""
 
-	Given zhouxun设定会员积分策略::weapp
+	Given zhouxun设定会员积分策略
 		"""
 		{
 			"integral_each_yuan": 20
@@ -2068,7 +2068,7 @@ Scenario:7 管理员退款出货单，商品销量和库存
 		"""
 
 	Given zhouxun登录系统
-	Given zhouxun设定会员积分策略::weapp
+	Given zhouxun设定会员积分策略
 		"""
 		{
 			"integral_each_yuan": 20
@@ -2354,7 +2354,7 @@ Scenario:8 管理员退款出货单，会员信息
 		"""
 
 	Given zhouxun登录系统
-	Given zhouxun设定会员积分策略::weapp
+	Given zhouxun设定会员积分策略
 		"""
 		{
 			"integral_each_yuan": 20
@@ -2561,7 +2561,7 @@ Scenario:9 管理员退款出货单，积分设置为1元=0积分
 			"is_active": "启用"
 		}]
 		"""
-	Given zhouxun设定会员积分策略::weapp
+	Given zhouxun设定会员积分策略
 		"""
 		{
 			"integral_each_yuan": 20
@@ -2625,7 +2625,7 @@ Scenario:9 管理员退款出货单，积分设置为1元=0积分
 	When bill使用支付方式'微信支付'进行支付订单'009'于2016-09-01 10:00:00::apiserver
 
 	Given zhouxun登录系统
-	Given zhouxun设定会员积分策略::weapp
+	Given zhouxun设定会员积分策略
 		"""
 		{
 			"integral_each_yuan": 0
