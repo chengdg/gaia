@@ -133,7 +133,7 @@ Background:
 	"""		
 	When bill使用支付方式'微信支付'进行支付订单'003'于2016-10-03 10:01:00::apiserver
 
-@order
+@order @ztqb
 Scenario: 1 对出货单进行发货，使用物流（非其他）
 	Given zhouxun登录系统
 	When zhouxun对出货单进行发货
@@ -142,7 +142,7 @@ Scenario: 1 对出货单进行发货，使用物流（非其他）
 			"delivery_item_bid":"001-zhouxun",
 			"with_logistics":true,
 			"with_logistics_trace":true,
-			"express_company_name_text_value":"顺丰速运",
+			"express_company_name_value":"顺丰速运",
 			"express_number":"147258369",
 			"leader_name":"zhouxun|001",
 			"time":"2016-10-05 10:11:00"
@@ -150,7 +150,7 @@ Scenario: 1 对出货单进行发货，使用物流（非其他）
 			"delivery_item_bid":"002-zhouxun",
 			"with_logistics":true,
 			"with_logistics_trace":true,
-			"express_company_name_text_value":"申通快递",
+			"express_company_name_value":"申通快递",
 			"express_number":"147258368",
 			"leader_name":"zhouxun|002-1",
 			"time":"2016-10-05 10:11:00"
@@ -158,7 +158,7 @@ Scenario: 1 对出货单进行发货，使用物流（非其他）
 			"delivery_item_bid":"002-yangmi",
 			"with_logistics":true,
 			"with_logistics_trace":true,
-			"express_company_name_text_value":"申通快递",
+			"express_company_name_value":"申通快递",
 			"express_number":"147258367",
 			"leader_name":"yangmi",
 			"time":"2016-10-05 10:11:00"
@@ -166,7 +166,7 @@ Scenario: 1 对出货单进行发货，使用物流（非其他）
 			"delivery_item_bid":"003-zhouxun",
 			"with_logistics":true,
 			"with_logistics_trace":true,
-			"express_company_name_text_value":"圆通速递",
+			"express_company_name_value":"圆通速递",
 			"express_number":"147258366",
 			"leader_name":"",
 			"time":"2016-10-05 10:11:00"
@@ -205,7 +205,7 @@ Scenario: 1 对出货单进行发货，使用物流（非其他）
 			"status_code": "paid",
 			"with_logistics":false,
 			"with_logistics_trace":false,
-			"express_company_name_text": "",
+			"express_company_name": "",
 			"express_number": "",
 			"leader_name":""
 		}]
@@ -307,7 +307,7 @@ Scenario: 1 对出货单进行发货，使用物流（非其他）
 			"status_code": "shipped",
 			"with_logistics":true,
 			"with_logistics_trace":true,
-			"express_company_name_text": "顺丰速运",
+			"express_company_name": "顺丰速运",
 			"express_number": "147258369",
 			"leader_name":"zhouxun|001"
 		}]
@@ -360,7 +360,7 @@ Scenario: 1 对出货单进行发货，使用物流（非其他）
 			"status_code": "shipped",
 			"with_logistics":true,
 			"with_logistics_trace":true,
-			"express_company_name_text": "申通快递",
+			"express_company_name": "申通快递",
 			"express_number": "147258368",
 			"leader_name":"zhouxun|002-1"
 		},{
@@ -375,7 +375,7 @@ Scenario: 1 对出货单进行发货，使用物流（非其他）
 			"status_code": "shipped",
 			"with_logistics":true,
 			"with_logistics_trace":true,
-			"express_company_name_text": "申通快递",
+			"express_company_name": "申通快递",
 			"express_number": "147258367",
 			"leader_name":"yangmi"
 		}]
@@ -420,7 +420,7 @@ Scenario: 1 对出货单进行发货，使用物流（非其他）
 			"status_code": "shipped",
 			"with_logistics":true,
 			"with_logistics_trace":true,
-			"express_company_name_text": "圆通速递",
+			"express_company_name": "圆通速递",
 			"express_number": "147258366",
 			"leader_name":""
 		},{
@@ -451,7 +451,7 @@ Scenario: 2 对出货单进行发货，使用其他物流
 			"delivery_item_bid":"001-zhouxun",
 			"with_logistics":true,
 			"with_logistics_trace":false,
-			"express_company_name_text_value":"其他物流",
+			"express_company_name_value":"其他物流",
 			"express_number":"138123456",
 			"leader_name":"其他物流|001",
 			"time":"2016-10-05 10:11:00"
@@ -515,7 +515,7 @@ Scenario: 2 对出货单进行发货，使用其他物流
 				"count": 1,
 				"name": "东坡肘子zhouxun"
 			}],
-			"express_company_name_text_text":"其他物流",
+			"express_company_name_text":"其他物流",
 			"express_number": "138123456",
 			"leader_name":"其他物流|001"
 		}]
@@ -531,7 +531,7 @@ Scenario: 3 对出货单进行发货，不使用物流
 			"delivery_item_bid":"002-zhouxun",
 			"with_logistics":false,
 			"with_logistics_trace":false,
-			"express_company_name_text_value":"",
+			"express_company_name_value":"",
 			"express_number":"",
 			"leader_name":"zhouxun|002-1",
 			"time":"2016-10-05 10:11:00"
@@ -539,7 +539,7 @@ Scenario: 3 对出货单进行发货，不使用物流
 			"delivery_item_bid":"002-yangmi",
 			"with_logistics":false,
 			"with_logistics_trace":false,
-			"express_company_name_text_value":"",
+			"express_company_name_value":"",
 			"express_number":"",
 			"leader_name":"",
 			"time":"2016-10-05 10:11:00"
@@ -620,7 +620,7 @@ Scenario: 3 对出货单进行发货，不使用物流
 				"name": "东坡肘子zhouxun"
 			}],
 			"status_code": "shipped",
-			"express_company_name_text_text":"",
+			"express_company_name_text":"",
 			"express_number": "",
 			"leader_name":"zhouxun|002-1"
 		},{
@@ -633,7 +633,7 @@ Scenario: 3 对出货单进行发货，不使用物流
 				"name": "土豆yangmi"
 			}],
 			"status_code": "shipped",
-			"express_company_name_text_text":"",
+			"express_company_name_text":"",
 			"express_number": "",
 			"leader_name":""
 		}]

@@ -305,7 +305,7 @@
 																				"type": "string",
 																				"description": "子订单编号"
 																			},
-																			"express_company_name": {
+																			"express_company_name_test": {
 																				"type": "string",
 																				"description": "快递公司名称"
 																			},
@@ -828,7 +828,7 @@
 																"type": "string",
 																"description": "子订单编号"
 															},
-															"express_company_name": {
+															"express_company_name_text": {
 																"type": "string",
 																"description": "快递公司名称"
 															},

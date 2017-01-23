@@ -118,7 +118,7 @@ Background:
 		"""
 	Given bill关注zhouxun的公众号::apiserver
 
-@order @ztqb
+@order
 Scenario: 1 管理员取消多规格商品的订单
 	1.zhouxun取消待支付订单，多规格商品的库存退回
 
