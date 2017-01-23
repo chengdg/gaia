@@ -115,8 +115,9 @@ def step_impl(context, user):
 
 	for ship_info in ship_infos:
 		ship_info['delivery_item_bid'] = get_delivery_item_bid(ship_info['delivery_item_bid'])
-		ship_info['express_company_name_value'] = __get_express_company_name_value_by_name(
-			ship_info['express_company_name_value'])
+		if ship_info['with_logistics_trace']:
+			ship_info['express_company_name_value'] = __get_express_company_name_value_by_name(
+				ship_info['express_company_name_value'])
 
 	data = {
 		"corp_id": context.corp.id,

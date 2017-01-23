@@ -133,7 +133,7 @@ Background:
 	"""		
 	When bill使用支付方式'微信支付'进行支付订单'003'于2016-10-03 10:01:00::apiserver
 
-@order
+@gaia @order
 Scenario: 1 对出货单进行发货，使用物流（非其他）
 	Given zhouxun登录系统
 	When zhouxun对出货单进行发货
@@ -434,7 +434,7 @@ Scenario: 1 对出货单进行发货，使用物流（非其他）
 	}
 	"""
 
-@order
+@gaia @order
 Scenario: 2 对出货单进行发货，使用其他物流
 	Given zhouxun登录系统
 	When zhouxun对出货单进行发货
@@ -452,6 +452,10 @@ Scenario: 2 对出货单进行发货，使用其他物流
 	Then zhouxun获得订单列表
 	"""
 	[{
+		"bid":"003"
+	},{
+		"bid":"002"
+	},{
 		"bid":"001",
 		"status_code": "shipped",
 		"delivery_items": [{
@@ -480,15 +484,15 @@ Scenario: 2 对出货单进行发货，使用其他物流
 		"status_logs":[{
 			"from_status_code":"",
 			"to_status_code":"created",
-			"time":"2016-10-01 10:00:00",
+			"time":"2016-10-01 10:00:00"
 		},{
 			"from_status_code":"created",
 			"to_status_code":"paid",
-			"time":"2016-10-01 10:01:00",
+			"time":"2016-10-01 10:01:00"
 		},{
 			"from_status_code":"paid",
 			"to_status_code":"shipped",
-			"time":"2016-10-05 10:11:00",
+			"time":"2016-10-05 10:11:00"
 		}],
 		"operation_logs":[{
 			"action_text":"下单",
@@ -522,7 +526,7 @@ Scenario: 2 对出货单进行发货，使用其他物流
 	}
 	"""
 
-@order
+@gaia @order
 Scenario: 3 对出货单进行发货，不使用物流
 	Given zhouxun登录系统
 	When zhouxun对出货单进行发货
@@ -549,6 +553,8 @@ Scenario: 3 对出货单进行发货，不使用物流
 	Then zhouxun获得订单列表
 	"""
 	[{
+		"bid":"003"
+	},{
 		"bid":"002",
 		"status_code": "shipped",
 		"delivery_items": [{
@@ -582,6 +588,8 @@ Scenario: 3 对出货单进行发货，不使用物流
 			"express_number": "",
 			"leader_name":""
 		}]
+	},{
+		"bid":"001"
 	}]
 	"""
 
@@ -593,15 +601,15 @@ Scenario: 3 对出货单进行发货，不使用物流
 		"status_logs":[{
 			"from_status_code":"",
 			"to_status_code":"created",
-			"time":"2016-10-02 10:00:00",
+			"time":"2016-10-02 10:00:00"
 		},{
 			"from_status_code":"created",
 			"to_status_code":"paid",
-			"time":"2016-10-02 10:01:00",
+			"time":"2016-10-02 10:01:00"
 		},{
 			"from_status_code":"paid",
 			"to_status_code":"shipped",
-			"time":"2016-10-05 10:11:00",
+			"time":"2016-10-05 10:11:00"
 		}],
 		"operation_logs":[{
 			"action_text":"下单",
