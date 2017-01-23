@@ -272,7 +272,7 @@ Scenario: 1 修改出货单物流信息
 		"""
 		{
 			"bid":"002",
-			"status_code": "shipped",
+			"status_code": "paid",
 			"status_logs":[{
 				"from_status_code":"",
 				"to_status_code":"created",
@@ -382,7 +382,7 @@ Scenario: 1 修改出货单物流信息
 		"""
 		{
 			"bid":"003",
-			"status_code": "paid",
+			"status_code": "shipped",
 			"status_logs":[{
 				"from_status_code":"",
 				"to_status_code":"created",
