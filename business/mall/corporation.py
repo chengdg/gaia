@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import json
+
 from eaglet.decorator import cached_context_property
 
 from business import model as business_model
@@ -140,13 +142,27 @@ class Corporation(business_model.Model):
 	def __update(self, args, update_field_list):
 		update_data = dict()
 		for field_name in update_field_list:
-			field_value = args.get(field_name)
+			if ':' in field_name:
+				transfer_type = field_name.split(':')[1]
+				field_name = field_name.split(':')[0]
+
+				if transfer_type == "int":
+					field_value = int(field_value)
+				elif transfer_type == 'bool':
+					field_value = field_value in ("True", "true", True)
+				elif transfer_type == "float":
+					field_value = float(field_value)
+				elif transfer_type == "json":
+					field_value = json.loads(field_value)
+			else:
+				field_value = args.get(field_name)
 			if not field_value == None:
 				update_data[field_name] = field_value
 		corp_id = self.id
-		corp_model = account_model.CorpInfo.select().dj_where(id=corp_id).get()
+		corp_model = account_model.CorpInfo.select().dj_where(id=corp_id).first()
 		if not corp_model:
 			update_data['id'] = corp_id
+			update_data['status'] = account_model.CORP_STATUS['OFF_LINE']
 			account_model.CorpInfo.create(**update_data)
 		else:
 			corp_model.update(**update_data).execute()
@@ -166,7 +182,7 @@ class Corporation(business_model.Model):
 		"""
 		更新商户商城配置
 		"""
-		update_field_list = ['company_name', 'name', 'purchase_method', 'points', 'clear_period', 'max_product_count', 'classification_ids']
+		update_field_list = ['company_name', 'name', 'purchase_method', 'points:float', 'clear_period', 'max_product_count', 'classification_ids']
 		self.__update(args, update_field_list)
 
 	def update_base_info(self, args):

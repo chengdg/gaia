@@ -100,6 +100,13 @@ class UserProfile(models.Model):
 CLEAR_PERIOD_MONTH = 1 #自然月
 CLEAR_PERIOD_15TH_DAY = 2 #15天
 CLEAR_PERIOD_WEEK = 3 #自然周
+
+CORP_STATUS = {
+	'NO_RECORD': -1,
+	'OFF_LINE':0,
+	'ON_LINE': 1,
+	'NOT_VALID': 2
+}
 class CorpInfo(models.Model):
 	"""
 	corp详情
@@ -120,7 +127,7 @@ class CorpInfo(models.Model):
 	valid_time_to = models.DateTimeField(null=True)  # 有效范围结束时间
 	note = models.CharField(max_length=1024, default='')  # 备注
 
-	status = models.IntegerField(default=-1)  # 账号状态 -1未配置 0停用中，1开启中，2不在有效期内
+	status = models.IntegerField(default=CORP_STATUS['NO_RECORD'])  # 账号状态 -1未配置 0停用中，1开启中，2不在有效期内
 	is_deleted = models.BooleanField(default=False, verbose_name='用户是否有效')  # 是否删除
 	created_at = models.DateTimeField(auto_now_add=True)  # 创建时间
 
