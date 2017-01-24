@@ -118,7 +118,7 @@ Background:
 		"""
 		["无规格商品1","多规格商品2","黄桥烧饼"]
 		"""
-@gaia @order @order_order
+@order @order_order
 Scenario:1 支付包含单个供货商单个商品（无规格）的订单
 	Given bill关注zhouxun的公众号::apiserver
 	When bill访问zhouxun的webapp::apiserver 
@@ -281,7 +281,7 @@ Scenario:1 支付包含单个供货商单个商品（无规格）的订单
 		}]
 		"""
 
-@gaia @order @order_order
+@order @order_order
 Scenario:2 支付包含多个供货商多个商品（无规格+多规格）的订单
 	#jobs-黄桥烧饼（1.00 *2,运费1.00）
 	#zhouxun-无规格商品1（10.10 *1,运费1.00）
