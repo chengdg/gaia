@@ -34,7 +34,7 @@ class ACorps(api_resource.ApiResource):
 			'contact': corp.details.contact,
 			'contact_phone': corp.details.contact_phone,
 			'status': corp.details.status,
-			'created_at': corp.details.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+			'created_at': corp.details.created_at.strftime('%Y-%m-%d %H:%M:%S') if corp.details.created_at else '',
 		} for corp in corps]
 
 		return {

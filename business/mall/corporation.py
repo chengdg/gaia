@@ -126,8 +126,6 @@ class Corporation(business_model.Model):
 			self.classification_ids = corp_model.classification_ids
 			self.contact = corp_model.contact
 			self.contact_phone = corp_model.contact_phone
-			self.valid_time_from = corp_model.valid_time_from
-			self.valid_time_to = corp_model.valid_time_to
 			self.note = corp_model.note
 			self.status = corp_model.status
 			self.created_at = corp_model.created_at

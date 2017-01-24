@@ -34,7 +34,7 @@ class ACorp(api_resource.ApiResource):
 			'note': corp.details.note,
 			'customer_from': corp.details.customer_from,
 			'status': corp.details.status,
-			'created_at': corp.details.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+			'created_at': corp.details.created_at.strftime('%Y-%m-%d %H:%M:%S') if corp.details.created_at else '',
 			'pre_sale_tel': corp.details.pre_sale_tel,
 			'after_sale_tel': corp.details.after_sale_tel,
 			'service_tel': corp.details.service_tel,
