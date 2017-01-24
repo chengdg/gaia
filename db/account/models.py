@@ -101,12 +101,6 @@ CLEAR_PERIOD_MONTH = 1 #自然月
 CLEAR_PERIOD_15TH_DAY = 2 #15天
 CLEAR_PERIOD_WEEK = 3 #自然周
 
-CORP_STATUS = {
-	'NO_RECORD': -1,
-	'OFF_LINE':0,
-	'ON_LINE': 1,
-	'NOT_VALID': 2
-}
 class CorpInfo(models.Model):
 	"""
 	corp详情
@@ -128,6 +122,7 @@ class CorpInfo(models.Model):
 	note = models.CharField(max_length=1024, default='')  # 备注
 
 	created_at = models.DateTimeField(auto_now_add=True)  # 创建时间
+	status = models.BooleanField(default=False)
 
 	pre_sale_tel = models.CharField(max_length=32, default='')  # 售前电话
 	after_sale_tel = models.CharField(max_length=32, default='')  # 售后电话

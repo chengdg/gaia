@@ -78,6 +78,7 @@ class Corporation(business_model.Model):
 		'note',
 
 		'created_at',
+		'status',
 
 		'pre_sale_tel',
 		'after_sale_tel',
@@ -89,6 +90,7 @@ class Corporation(business_model.Model):
 	def __init__(self, owner_id):
 		business_model.Model.__init__(self)
 		self.id = owner_id
+		self.status = 0
 		if owner_id:
 			_account_user_profile = account_model.UserProfile.select().dj_where(user_id=owner_id).first()
 			self.webapp_id = _account_user_profile.webapp_id
@@ -132,6 +134,7 @@ class Corporation(business_model.Model):
 			self.contact_phone = corp_model.contact_phone
 			self.note = corp_model.note
 			self.created_at = corp_model.created_at
+			self.status = int(corp_model.status)
 			self.pre_sale_tel = corp_model.pre_sale_tel
 			self.after_sale_tel = corp_model.after_sale_tel
 			self.service_tel = corp_model.service_tel
@@ -163,7 +166,8 @@ class Corporation(business_model.Model):
 		corp_model = account_model.CorpInfo.select().dj_where(id=self.id).first()
 		if not corp_model:
 			account_model.CorpInfo.create(
-				id = self.id
+				id = self.id,
+				status = True
 			)
 		self.update_base_info(args)
 		if not self.is_weizoom_corp():

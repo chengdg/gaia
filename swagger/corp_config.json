@@ -29,21 +29,21 @@
                         "schema": {
                             "type": "object",
                             "properties": {
-                                "order_expired_day": {
+                                "corp_id": {
                                     "type": "integer",
-                                    "description": "未付款订单过期时间"
+                                    "description": ""
                                 },
-                                "is_share_page": {
-                                    "type": "boolean",
-                                    "description": "是否提示分享挣积分"
-                                },
-                                "background_image": {
+                                "name": {
                                     "type": "string",
-                                    "description": "弹层背景图片"
+                                    "description": "公司简称"
                                 },
-                                "share_image": {
+                                "company_name": {
                                     "type": "string",
-                                    "description": "分享图片"
+                                    "description": "公司全称"
+                                },
+                                "username": {
+                                    "type": "string",
+                                    "description": "登录名"
                                 },
                                 "share_describe": {
                                     "type": "string",
