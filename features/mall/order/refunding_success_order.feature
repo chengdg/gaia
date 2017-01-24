@@ -96,7 +96,6 @@ Scenario:1 管理员退款成功单供货商的订单-待发货
 			"bid": "001",
 			"status_code": "refunded",
 			"pay_interface_type_code": "weixin_pay"
-			"coupon_money": 0.00,
 			"pay_money": 40.11,
 			"product_price": 50.11,
 			"postage":0.00,
@@ -107,8 +106,6 @@ Scenario:1 管理员退款成功单供货商的订单-待发货
 			"final_price": 40.11,
 			"weizoom_card_money": 0.00,
 			"member_card_money": 0.00,
-			"integral": 0,
-			"integral_money": 0.00,
 			"refunding_info": {
 				"cash": 10.00,
 				"weizoom_card_money": 0.00,
@@ -187,7 +184,6 @@ Scenario:1 管理员退款成功单供货商的订单-待发货
 				"time":"2016-01-02 11:00:00"
 			}],
 			"pay_interface_type_code": "weixin_pay"
-			"couponMoney": 0.00,
 			"pay_money": 40.11,
 			"product_price": 50.11,
 			"postage":0.00,
@@ -196,11 +192,6 @@ Scenario:1 管理员退款成功单供货商的订单-待发货
 			"origin_weizoom_card_money": 0.00,
 			"final_price": 40.11,
 			"weizoom_card_money": 0.00,
-			"integral": 0,
-			"integral_money": 0.00,
-			"weizoom_card_info": {
-				"used_card": []
-			},
 			"refunding_info": {
 				"cash": 10.00,
 				"weizoom_card_money": 0.00,
@@ -439,9 +430,6 @@ Scenario:2 管理员退款成功多供货商的订单-已发货
 			"final_price": 61.55,
 			"weizoom_card_money": 0.00,
 			"member_card_money": 0.00,
-			"integral": 0,
-			"integral_money": 0.00,
-			"coupon_money": 0.00,
 			"refunding_info": {
 				"cash": 0.00,
 				"weizoom_card_money": 0.00,
@@ -520,7 +508,6 @@ Scenario:2 管理员退款成功多供货商的订单-已发货
 				"time":"2016-02-01 10:00:00"
 			}],
 			"pay_interface_type_code": "alipay"
-			"couponMoney": 0.00,
 			"pay_money": 61.55,
 			"product_price": 61.55,
 			"postage":0.00,
@@ -529,11 +516,6 @@ Scenario:2 管理员退款成功多供货商的订单-已发货
 			"origin_weizoom_card_money": 0.00,
 			"final_price": 61.55,
 			"weizoom_card_money": 0.00,
-			"integral": 0,
-			"integral_money": 0.00,
-			"weizoom_card_info": {
-				"used_card": []
-			},
 			"refunding_info": {
 				"cash": 0.00,
 				"weizoom_card_money": 0.00,
@@ -818,7 +800,6 @@ Scenario:3 管理员退款成功多供货商的订单-带运费-待发货，已�
 			"bid": "003",
 			"status_code": "refunded",
 			"pay_interface_type_code": "alipay"
-			"coupon_money": 0.00,
 			"pay_money": 71.55,
 			"product_price": 61.55,
 			"postage":20.00,
@@ -829,8 +810,6 @@ Scenario:3 管理员退款成功多供货商的订单-带运费-待发货，已�
 			"final_price": 71.55,
 			"weizoom_card_money": 0.00,
 			"member_card_money": 0.00,
-			"integral": 0,
-			"integral_money": 0.00,
 			"refunding_info": {
 				"cash": 10.00,
 				"weizoom_card_money": 0.00,
@@ -936,7 +915,6 @@ Scenario:3 管理员退款成功多供货商的订单-带运费-待发货，已�
 				"time":"2016-03-04 13:00:00"
 			}],
 			"pay_interface_type_code": "alipay"
-			"couponMoney": 0.00,
 			"pay_money": 71.55,
 			"product_price": 61.55,
 			"postage":20.00,
@@ -945,11 +923,6 @@ Scenario:3 管理员退款成功多供货商的订单-带运费-待发货，已�
 			"origin_weizoom_card_money": 0.00,
 			"final_price": 71.55,
 			"weizoom_card_money": 0.00,
-			"integral": 0,
-			"integral_money": 0.00,
-			"weizoom_card_info": {
-				"used_card": []
-			},
 			"refunding_info": {
 				"cash": 10.00,
 				"weizoom_card_money": 0.00,
@@ -1319,7 +1292,6 @@ Scenario:4 管理员退款成功使用微众卡全额支付的订单
 			"bid": "004",
 			"status_code": "paid",
 			"pay_interface_type_code": "preference"
-			"coupon_money": 0.00,
 			"pay_money": 41.20,
 			"product_price": 61.55,
 			"postage":0.00,
@@ -1330,8 +1302,6 @@ Scenario:4 管理员退款成功使用微众卡全额支付的订单
 			"final_price": 0.00,
 			"weizoom_card_money": 41.20,
 			"member_card_money": 0.00,
-			"integral": 0,
-			"integral_money": 0.00,
 			"refunding_info": {
 				"cash": 0.00,
 				"weizoom_card_money": 20.35,
@@ -1410,7 +1380,6 @@ Scenario:4 管理员退款成功使用微众卡全额支付的订单
 				"time":"2016-04-01 00:00:00"
 			}],
 			"pay_interface_type_code": "preference"
-			"couponMoney": 0.00,
 			"pay_money": 41.20,
 			"product_price": 61.55,
 			"postage":0.00,
@@ -1419,8 +1388,6 @@ Scenario:4 管理员退款成功使用微众卡全额支付的订单
 			"origin_weizoom_card_money": 61.55,
 			"final_price": 0.00,
 			"weizoom_card_money": 41.20,
-			"integral": 0,
-			"integral_money": 0.00,
 			"weizoom_card_info": {
 				"used_card": ["100000001"]
 			},
@@ -1650,7 +1617,6 @@ Scenario:5 管理员退款成功使用积分的订单
 			"member_card_money": 0.00,
 			"integral": 400,
 			"integral_money": 20.00,
-			"coupon_money": 0.00,
 			"refunding_info": {
 				"cash": 10.00,
 				"weizoom_card_money": 0.00,
@@ -1695,7 +1661,6 @@ Scenario:5 管理员退款成功使用积分的订单
 			"bid": "005",
 			"status_code": "refunded",
 			"pay_interface_type_code": "weixin_pay"
-			"couponMoney": 0.00,
 			"pay_money": 20.11,
 			"product_price": 50.11,
 			"postage":0.00,
@@ -1926,8 +1891,6 @@ Scenario:6 管理员退款成功使用优惠券的订单
 			"final_price": 30.11,
 			"weizoom_card_money": 0.00,
 			"member_card_money": 0.00,
-			"integral": 0,
-			"integral_money": 0.00,
 			"coupon_money": 10.00,
 			"refunding_info": {
 				"cash": 10.00,
@@ -1982,11 +1945,6 @@ Scenario:6 管理员退款成功使用优惠券的订单
 			"origin_weizoom_card_money": 0.00,
 			"final_price": 30.11,
 			"weizoom_card_money": 0.00,
-			"integral": 0,
-			"integral_money": 0.00,
-			"weizoom_card_info": {
-				"used_card": []
-			},
 			"refunding_info": {
 				"cash": 10.00,
 				"weizoom_card_money": 0.00,
