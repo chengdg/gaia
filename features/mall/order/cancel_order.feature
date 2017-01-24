@@ -517,7 +517,7 @@ Scenario: 3 管理员取消使用了订单积分的订单
 		}]
 		"""
 
-@order @ztqb
+@order
 Scenario: 4 管理员取消使用了商品积分的订单
 	1.zhouxun取消待支付订单，积分退回
 
@@ -670,7 +670,7 @@ Scenario: 4 管理员取消使用了商品积分的订单
 #		"""
 
 
-@order
+@gaia @order
 Scenario: 5 管理员取消使用了通用券的订单
 	1.zhouxun取消待支付订单，通用券退回
 
@@ -720,7 +720,7 @@ Scenario: 5 管理员取消使用了通用券的订单
 	Then zhouxun能获得优惠券'通用券1'的码库::weapp
 		"""
 		{
-			"coupon_1": {
+			"coupon1_id_1": {
 				"money": 10.00,
 				"status": "已使用",
 				"consumer": "bill",
@@ -806,7 +806,7 @@ Scenario: 5 管理员取消使用了通用券的订单
 	Then zhouxun能获得优惠券'通用券1'的码库::weapp
 		"""
 		{
-			"coupon_1": {
+			"coupon1_id_1": {
 				"money": 10.00,
 				"status": "未使用",
 				"consumer": "",
@@ -815,7 +815,7 @@ Scenario: 5 管理员取消使用了通用券的订单
 		}
 		"""
 
-@order
+@gaia @order
 Scenario: 6 管理员取消使用了多商品券的订单
 	1.zhouxun取消待支付订单，多商品券退回
 
@@ -829,7 +829,7 @@ Scenario: 6 管理员取消使用了多商品券的订单
 			"start_date": "今天",
 			"end_date": "1天后",
 			"coupon_id_prefix": "coupon1_id_",
-			"coupon_product": "zhouxun商品3, jobs商品1,"
+			"coupon_product": "zhouxun商品3,jobs商品1"
 		}]
 		"""
 	When zhouxun为会员发放优惠券::weapp
@@ -868,7 +868,7 @@ Scenario: 6 管理员取消使用了多商品券的订单
 	Then zhouxun能获得优惠券'多商品券1'的码库::weapp
 		"""
 		{
-			"coupon_1": {
+			"coupon1_id_1": {
 				"money": 10.00,
 				"status": "已使用",
 				"consumer": "bill",
@@ -967,10 +967,10 @@ Scenario: 6 管理员取消使用了多商品券的订单
 			}]
 		}
 		"""
-	Then zhouxun能获得优惠券'多商品券'的码库::weapp
+	Then zhouxun能获得优惠券'多商品券1'的码库::weapp
 		"""
 		{
-			"coupon_1": {
+			"coupon1_id_1": {
 				"money": 10.00,
 				"status": "未使用",
 				"consumer": "",
@@ -979,7 +979,7 @@ Scenario: 6 管理员取消使用了多商品券的订单
 		}
 		"""
 
-@order
+@order @ztqb
 Scenario: 7 管理员取消使用了微众卡的订单
 	1.zhouxun取消待支付订单，微众卡退回
 

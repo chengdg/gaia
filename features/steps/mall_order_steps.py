@@ -52,6 +52,13 @@ def step_impl(context, user):
 
 
 	for order in actual:
+
+		if order['extra_coupon_info']['type'] == 'all_products_coupon':
+			order['extra_coupon_info']['type'] = u'通用券'
+		elif order['extra_coupon_info']['type'] == 'multi_products_coupon':
+			order['extra_coupon_info']['type'] = u'多商品券'
+
+
 		for delivery_item in order['delivery_items']:
 			real_bid = delivery_item['bid']
 			if "^" in real_bid:
@@ -161,6 +168,10 @@ def step_impl(context, user, bid):
 	response = context.client.get(url)
 	bdd_util.assert_api_call_success(response)
 	actual = response.data["order"]
+	if actual['extra_coupon_info']['type'] == 'all_products_coupon':
+		actual['extra_coupon_info']['type'] = u'通用券'
+	elif actual['extra_coupon_info']['type'] == 'multi_products_coupon':
+		actual['extra_coupon_info']['type'] = u'多商品券'
 	for delivery_item in actual['delivery_items']:
 		real_bid = delivery_item['bid']
 		if "^" in real_bid:

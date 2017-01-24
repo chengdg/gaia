@@ -105,8 +105,7 @@ class DeliveryItemProductRepository(business_model.Model):
 			# product = product_id2product[r.product_id]
 
 			promotion = id2promotion.get(r.promotion_id, None)
-			print('------promotion_id',r.promotion_id)
-			print('----2',promotion.id)
+
 			if promotion:
 				db_promotion_result = json.loads(promotion.promotion_result_json)
 				# type种类:flash_sale、integral_sale、premium_sale
@@ -187,9 +186,7 @@ class DeliveryItemProductRepository(business_model.Model):
 				promotion_info['grade_discount_money'] = r.grade_discounted_money
 
 			# 填充限时抢购金额
-			print('======\n\n\n\n')
-			print('-----promotion',promotion)
-			print(db_promotion_result)
+
 			if promotion:
 				if promotion.promotion_type == "flash_sale":
 					promotion_info['promotion_saved_money'] = db_promotion_result['promotion_saved_money']
@@ -197,11 +194,6 @@ class DeliveryItemProductRepository(business_model.Model):
 				# 填充积分应用
 				integral_product_info = db_promotion_result.get('integral_product_info')
 				if integral_product_info:
-					print('---------------integral_product_info',integral_product_info)
-
-					print('-----addd',str(delivery_item_product.id) + '-' + delivery_item_product.product_model_name)
-
-					print('equal-----',integral_product_info==str(delivery_item_product.id) + '-' + delivery_item_product.product_model_name)
 
 					if integral_product_info == str(
 							delivery_item_product.id) + '-' + delivery_item_product.product_model_name:
