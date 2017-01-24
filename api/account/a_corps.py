@@ -33,9 +33,8 @@ class ACorps(api_resource.ApiResource):
 			'clear_period': corp.details.clear_period,
 			'contact': corp.details.contact,
 			'contact_phone': corp.details.contact_phone,
-			'valid_time_from': corp.details.valid_time_from,
-			'valid_time_to': corp.details.valid_time_to,
-			'status': corp.details.status
+			'status': corp.details.status,
+			'created_at': corp.details.created_at.strftime('%Y-%m-%d %H:%M:%S'),
 		} for corp in corps]
 
 		return {

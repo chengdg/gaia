@@ -123,8 +123,6 @@ class CorpInfo(models.Model):
 
 	contact = models.CharField(max_length=32, default='')  # 联系人
 	contact_phone = models.CharField(max_length=16, default='')  # 手机号
-	valid_time_from = models.DateTimeField(null=True)  # 有效范围开始时间
-	valid_time_to = models.DateTimeField(null=True)  # 有效范围结束时间
 	note = models.CharField(max_length=1024, default='')  # 备注
 
 	status = models.IntegerField(default=CORP_STATUS['NO_RECORD'])  # 账号状态 -1未配置 0停用中，1开启中，2不在有效期内
