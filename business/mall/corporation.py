@@ -178,15 +178,14 @@ class Corporation(business_model.Model):
 			self.update_service_info(args)
 
 	def update_service_info(self, args):
-		update_field_list = ['pre_sale_tel', 'after_sale_tel', 'service_tel', 'service_qq_first', 'service_qq_second',
-							 'classification_ids']
+		update_field_list = ['pre_sale_tel', 'after_sale_tel', 'service_tel', 'service_qq_first', 'service_qq_second']
 		self.__update(args, update_field_list)
 
 	def update_mall_info(self, args):
 		"""
 		更新商户商城配置
 		"""
-		update_field_list = ['company_name', 'name', 'purchase_method', 'points:float', 'clear_period',
+		update_field_list = ['purchase_method', 'points:float', 'clear_period',
 							 'rebate_money', 'rebate_proport', 'default_rebate_proport', 'max_product_count', 'classification_ids']
 		self.__update(args, update_field_list)
 
@@ -194,7 +193,7 @@ class Corporation(business_model.Model):
 		"""
 		更新帐号信息
 		"""
-		update_field_list = ['note', 'contact', 'contact_phone']
+		update_field_list = ['name', 'company_name', 'note', 'contact', 'contact_phone']
 		self.__update(args, update_field_list)
 
 	def is_self_run_platform(self):
