@@ -113,7 +113,6 @@ class CorpInfo(models.Model):
 	"""
 	name = models.CharField(max_length=32, default='')	#公司简称(店铺名)
 	company_name = models.CharField(max_length=32, default='')	#公司全称
-	is_weizoom_corp = models.BooleanField(default=False)
 	purchase_method = models.IntegerField(default=1) #采购方式
 	points = models.FloatField(default=0) #零售价返点
 	rebate_money = models.FloatField(default=0) #返点起点金额

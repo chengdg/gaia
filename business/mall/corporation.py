@@ -173,7 +173,7 @@ class Corporation(business_model.Model):
 
 	def update(self, args):
 		self.update_base_info(args)
-		if not args['is_weizoom_corp']:
+		if not self.is_weizoom_corp():
 			self.update_mall_info(args)
 			self.update_service_info(args)
 
@@ -194,7 +194,7 @@ class Corporation(business_model.Model):
 		"""
 		更新帐号信息
 		"""
-		update_field_list = ['is_weizoom_corp', 'note', 'contact', 'contact_phone']
+		update_field_list = ['note', 'contact', 'contact_phone']
 		self.__update(args, update_field_list)
 
 	def is_self_run_platform(self):

@@ -59,6 +59,14 @@ Scenario:1 weizoom修改账号信息
 			"service_qq_second":245079415
 		}
 		"""
+	When weizoom配置'jobs'的账号信息
+		"""
+		{
+			"account_type":"运营",
+			"name":"运营1号机",
+			"note":"土小宝客户体验账号"
+		}
+		"""
 	Then weizoom能获取账号列表
 		|shop_name|company_name|customer_from|username|created_at|classfications|purchase_type|max_product_count|operation|
 		|爱昵咖啡|爱昵咖啡有限责任公司|   --   |    jobs    |创建时间|分类22|零售价返点|200|编辑|
