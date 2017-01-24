@@ -154,6 +154,11 @@ Scenario: 1 管理员标记完成一个供货商的订单
 		"""
 		[{
 			"delivery_item_bid":"001-zhouxun",
+			"with_logistics":false,
+			"with_logistics_trace":false,
+			"express_company_name_value":"",
+			"express_number":"",
+			"leader_name":"",
 			"time":"2017-01-20 10:10:10"
 		}]
 		"""
@@ -280,9 +285,19 @@ Scenario: 2 管理员标记完成多个供货商的订单
 		"""
 		[{
 			"delivery_item_bid":"001-zhouxun",
+			"with_logistics":false,
+			"with_logistics_trace":false,
+			"express_company_name_value":"",
+			"express_number":"",
+			"leader_name":"",
 			"time":"2017-01-20 10:10:10"
 		}, {
 			"delivery_item_bid":"001-jobs",
+			"with_logistics":false,
+			"with_logistics_trace":false,
+			"express_company_name_value":"",
+			"express_number":"",
+			"leader_name":"",
 			"time":"2017-01-20 10:10:10"
 		}]
 		"""
@@ -504,9 +519,19 @@ Scenario: 3 管理员标记完成订单，会员获得购物返积分
 		"""
 		[{
 			"delivery_item_bid":"001-zhouxun",
+			"with_logistics":false,
+			"with_logistics_trace":false,
+			"express_company_name_value":"",
+			"express_number":"",
+			"leader_name":"",
 			"time":"2017-01-20 10:10:10"
 		}, {
 			"delivery_item_bid":"001-jobs",
+			"with_logistics":false,
+			"with_logistics_trace":false,
+			"express_company_name_value":"",
+			"express_number":"",
+			"leader_name":"",
 			"time":"2017-01-20 10:10:10"
 		}]
 		"""
@@ -627,9 +652,19 @@ Scenario: 4 管理员标记完成使用微众卡的订单
 		"""
 		[{
 			"delivery_item_bid":"001-zhouxun",
+			"with_logistics":false,
+			"with_logistics_trace":false,
+			"express_company_name_value":"",
+			"express_number":"",
+			"leader_name":"",
 			"time":"2017-01-20 10:10:10"
 		}, {
 			"delivery_item_bid":"001-jobs",
+			"with_logistics":false,
+			"with_logistics_trace":false,
+			"express_company_name_value":"",
+			"express_number":"",
+			"leader_name":"",
 			"time":"2017-01-20 10:10:10"
 		}]
 		"""
@@ -728,9 +763,19 @@ Scenario: 5 管理员标记完成订单，满足一个条件会员等级自动�
 		"""
 		[{
 			"delivery_item_bid":"001-zhouxun",
+			"with_logistics":false,
+			"with_logistics_trace":false,
+			"express_company_name_value":"",
+			"express_number":"",
+			"leader_name":"",
 			"time":"2017-01-20 10:10:10"
 		}, {
 			"delivery_item_bid":"001-jobs",
+			"with_logistics":false,
+			"with_logistics_trace":false,
+			"express_company_name_value":"",
+			"express_number":"",
+			"leader_name":"",
 			"time":"2017-01-20 10:10:10"
 		}]
 		"""
@@ -809,9 +854,19 @@ Scenario: 6 管理员标记完成订单，必须满足全部条件会员等级�
 		"""
 		[{
 			"delivery_item_bid":"001-zhouxun",
+			"with_logistics":false,
+			"with_logistics_trace":false,
+			"express_company_name_value":"",
+			"express_number":"",
+			"leader_name":"",
 			"time":"2017-01-20 10:10:10"
 		}, {
 			"delivery_item_bid":"001-jobs",
+			"with_logistics":false,
+			"with_logistics_trace":false,
+			"express_company_name_value":"",
+			"express_number":"",
+			"leader_name":"",
 			"time":"2017-01-20 10:10:10"
 		}]
 		"""
@@ -857,6 +912,11 @@ Scenario: 6 管理员标记完成订单，必须满足全部条件会员等级�
 		"""
 		[{
 			"delivery_item_bid":"001-zhouxun",
+			"with_logistics":false,
+			"with_logistics_trace":false,
+			"express_company_name_value":"",
+			"express_number":"",
+			"leader_name":"",
 			"time":"2017-01-20 10:10:10"
 		}]
 		"""
