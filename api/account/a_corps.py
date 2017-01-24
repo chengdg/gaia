@@ -20,8 +20,6 @@ class ACorps(api_resource.ApiResource):
 		})
 		page_info, corps = CorporationRepository().filter_corps(args, page_info)
 
-		print corps
-
 		rows = [{
 			'corp_id': corp.id,
 			'name': corp.details.name,

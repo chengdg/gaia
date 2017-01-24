@@ -44,7 +44,7 @@ class ACorp(api_resource.ApiResource):
 			'service_qq_second': corp.details.service_qq_second
 		}
 
-	@param_required(['corp_id', 'is_weizoom_corp:bool'])
+	@param_required(['corp_id'])
 	def post(args):
 		corp = Corporation(args['corp_id'])
 		corp.update(args)

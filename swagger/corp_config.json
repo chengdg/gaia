@@ -1,0 +1,157 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "Gaia API"
+    },
+    "paths": {
+        "/account/corp/": {
+            "get": {
+                "summary": "获取corp配置",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "要获取的corp id",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "tags": [
+                    "corp_config"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "order_expired_day": {
+                                    "type": "integer",
+                                    "description": "未付款订单过期时间"
+                                },
+                                "is_share_page": {
+                                    "type": "boolean",
+                                    "description": "是否提示分享挣积分"
+                                },
+                                "background_image": {
+                                    "type": "string",
+                                    "description": "弹层背景图片"
+                                },
+                                "share_image": {
+                                    "type": "string",
+                                    "description": "分享图片"
+                                },
+                                "share_describe": {
+                                    "type": "string",
+                                    "description": "分享描述"
+                                },
+                                "material_id": {
+                                    "type": "integer",
+                                    "description": "图文素材id"
+                                },
+                                "title": {
+                                    "type": "string",
+                                    "description": "图文素材标题"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "修改订单设置",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "order_expired_day",
+                        "required": true,
+                        "type": "integer",
+                        "description": "未付款订单过期时间"
+                    },
+                    {
+                        "name": "is_share_page",
+                        "required": true,
+                        "type": "boolean",
+                        "description": "是否提示分享挣积分"
+                    },
+                    {
+                        "name": "background_image",
+                        "required": true,
+                        "type": "string",
+                        "description": "弹层背景图片"
+                    },
+                    {
+                        "name": "share_image",
+                        "required": true,
+                        "type": "string",
+                        "description": "分享图片"
+                    },
+                    {
+                        "name": "share_describe",
+                        "required": true,
+                        "type": "string",
+                        "description": "分享描述"
+                    },
+                    {
+                        "name": "material_id",
+                        "required": true,
+                        "type": "integer",
+                        "description": "图文素材id"
+                    }
+                ],
+                "tags": [
+                    "order_config"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "order_expired_day": {
+                                    "type": "integer",
+                                    "description": "未付款订单过期时间"
+                                },
+                                "is_share_page": {
+                                    "type": "boolean",
+                                    "description": "是否提示分享挣积分"
+                                },
+                                "background_image": {
+                                    "type": "string",
+                                    "description": "弹层背景图片"
+                                },
+                                "share_image": {
+                                    "type": "string",
+                                    "description": "分享图片"
+                                },
+                                "share_describe": {
+                                    "type": "string",
+                                    "description": "分享描述"
+                                },
+                                "material_id": {
+                                    "type": "integer",
+                                    "description": "图文素材id"
+                                },
+                                "title": {
+                                    "type": "string",
+                                    "description": "图文素材标题"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

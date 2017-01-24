@@ -43,6 +43,9 @@ def clean():
 	mall_models.PostageConfig.delete().dj_where(name__not=u'免运费').execute()
 	mall_models.PostageConfig.update(is_used=True).dj_where(name=u'免运费').execute()
 
+	#corp配置
+	account_models.CorpInfo.delete().execute()
+
 	#图片分组
 	mall_models.Image.delete().execute()
 	mall_models.ImageGroup.delete().execute()

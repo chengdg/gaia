@@ -147,14 +147,10 @@ class Corporation(business_model.Model):
 				transfer_type = field_name.split(':')[1]
 				field_name = field_name.split(':')[0]
 
-				if transfer_type == "int":
-					field_value = int(field_value)
-				elif transfer_type == 'bool':
+				if transfer_type == 'bool':
 					field_value = field_value in ("True", "true", True)
 				elif transfer_type == "float":
 					field_value = float(field_value)
-				elif transfer_type == "json":
-					field_value = json.loads(field_value)
 			else:
 				field_value = args.get(field_name)
 
