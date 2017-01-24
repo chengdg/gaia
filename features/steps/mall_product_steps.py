@@ -451,6 +451,9 @@ def step_add_property(context, user):
 def step_add_property(context, user):
     products = json.loads(context.text)
     for product in products:
+        if 'supplier' not in product:
+            # 填充默认供货商为自己
+            product['supplier'] = __get_supplier_name(user)
         __create_product(context, product)
 
 
@@ -500,7 +503,8 @@ def step_impl(context, user, type_name):
 def step_impl(context, user, product_name):
     product = __get_product(context, product_name)
 
-    product['supplier'] = product['supplier'].name if product['supplier'] else None
+    # 所有商品都有supplier
+    # product['supplier'] = product['supplier'].name if product['supplier'] else None
 
     update_data = json.loads(context.text)
     for key, value in update_data.items():

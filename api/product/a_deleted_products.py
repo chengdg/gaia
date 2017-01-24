@@ -20,6 +20,6 @@ class ADeletedProducts(api_resource.ApiResource):
 	def put(args):
 		corp = args['corp']
 		product_ids = json.loads(args['product_ids'])
-		corp.product_pool.delete_products(product_ids)
+		corp.product_pool.delete_verified_products(product_ids)
 
 		return {}

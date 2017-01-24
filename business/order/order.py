@@ -136,6 +136,7 @@ class Order(business_model.Model):
 
 			# 金额信息
 			order.final_price = db_model.final_price
+
 			order.product_price = db_model.product_price
 			order.edit_money = db_model.edit_money
 			order.coupon_money = db_model.coupon_money
@@ -391,8 +392,8 @@ class Order(business_model.Model):
 			# 下单时没状态日志
 			order.status_logs.append(
 				{
-					'from_status': None,
-					'from_status_code': None,
+					'from_status': "",
+					'from_status_code': "",
 					'to_status': mall_models.ORDER_STATUS_NOT,
 					'to_status_code': mall_models.ORDER_STATUS2MEANINGFUL_WORD[mall_models.ORDER_STATUS_NOT],
 					'time': order.created_at})

@@ -518,7 +518,10 @@ class DeliveryItem(business_model.Model):
 			# 只有自营出货单开启高端退款（然而并不知道用什么词替代"高端"
 			integral_strategy = corp.mall_config_repository.get_integral_strategy()
 			integral_each_yuan = integral_strategy.integral_each_yuan
-			integral_money = round(integral / integral_each_yuan, 2)
+			if integral_each_yuan:
+				integral_money = round(integral / integral_each_yuan, 2)
+			else:
+				integral_money = 0
 
 			total = cash + weizoom_card_money + coupon_money + integral_money + member_card_money
 

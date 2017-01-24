@@ -217,55 +217,138 @@ def convert_to_same_type(a, b):
 	return a, b
 	
 
+
+
+def diff(local, other):
+	""" Calculates the difference between two JSON documents.
+		All resulting changes are relative to @a local.
+
+		Returns diff formatted in form of extended JSON Patch (see IETF draft).
+	"""
+
+	def _recursive_diff(l, r, res, path='/'):
+		# if type(l) != type(r) and not (isinstance(l, basestring) and isinstance(r, basestring)):
+		# 	res.append({
+		# 		'replace': path,
+		# 		'actual': r,
+		# 		'details': 'type',
+		# 		'expected': l
+		# 	})
+		# 	return
+
+		delim = '/' if path != '/' else ''
+
+		if isinstance(l, dict):
+			for k, v in l.iteritems():
+				new_path = delim.join([path, k])
+				if k not in r:
+					res.append({'remove': new_path, 'expected': v})
+				else:
+					_recursive_diff(v, r[k], res, new_path)
+			for k, v in r.iteritems():
+				if k in l:
+					continue
+				# res.append({
+				# 	'add': delim.join([path, k]),
+				# 	'value': v
+				# })
+		elif isinstance(l, list):
+			ll = len(l)
+			lr = len(r)
+			if ll > lr:
+				for i, item in enumerate(l[lr:], start=lr):
+					res.append({
+						'remove': delim.join([path, str(i)]),
+						'expected': item,
+						'details': 'array-item'
+					})
+			elif lr > ll:
+				for i, item in enumerate(r[ll:], start=ll):
+					res.append({
+						'add': delim.join([path, str(i)]),
+						'actual': item,
+						'details': 'array-item'
+					})
+			minl = min(ll, lr)
+			if minl > 0:
+				for i, item in enumerate(l[:minl]):
+					_recursive_diff(item, r[i], res, delim.join([path, str(i)]))
+		else:  # both items are atomic
+			l, r = convert_to_same_type(l, r)
+			if l != r:
+				res.append({
+					'replace': path,
+					'actual': r,
+					'expected': l
+				})
+
+	result = []
+	_recursive_diff(local, other, result)
+	return result
+
+
+
+
+
+def supper_assert(expected, actual):
+	result = diff(expected, actual)
+	if len(result) > 0:
+		print('************ASSERT ERROR************\n')
+		print(json.dumps(result, indent=2).decode("unicode-escape"))
+		print('************ASSERT ERROR************\n')
+		raise RuntimeError(result)
+
+
+
 ###########################################################################
 # assert_dict: 验证expected中的数据都出现在了actual中
 ###########################################################################
 def assert_dict(expected, actual):
-	global tc
-	is_dict_actual = isinstance(actual, dict)
-	for key in expected:
-		expected_value = expected[key]
-		if is_dict_actual:
-			actual_value = actual[key]
-		else:
-			actual_value = getattr(actual, key)
-
-		if isinstance(expected_value, dict):
-			assert_dict(expected_value, actual_value)
-		elif isinstance(expected_value, list):
-			assert_list(expected_value, actual_value, key)
-		else:
-			expected_value, actual_value = convert_to_same_type(expected_value, actual_value)
-			try:
-				tc.assertEquals(expected_value, actual_value)
-			except Exception, e:
-				items = ['\n<<<<<', 'e: %s' % str(expected), 'a: %s' % str(actual), 'key: %s' % key, e.args[0], '>>>>>\n']
-				e.args = ('\n'.join(items),)
-				print('\n'.join(items))
-				raise e
-
+	# global tc
+	# is_dict_actual = isinstance(actual, dict)
+	# for key in expected:
+	# 	expected_value = expected[key]
+	# 	if is_dict_actual:
+	# 		actual_value = actual[key]
+	# 	else:
+	# 		actual_value = getattr(actual, key)
+	#
+	# 	if isinstance(expected_value, dict):
+	# 		assert_dict(expected_value, actual_value)
+	# 	elif isinstance(expected_value, list):
+	# 		assert_list(expected_value, actual_value, key)
+	# 	else:
+	# 		expected_value, actual_value = convert_to_same_type(expected_value, actual_value)
+	# 		try:
+	# 			tc.assertEquals(expected_value, actual_value)
+	# 		except Exception, e:
+	# 			items = ['\n<<<<<', 'e: %s' % str(expected), 'a: %s' % str(actual), 'key: %s' % key, e.args[0], '>>>>>\n']
+	# 			e.args = ('\n'.join(items),)
+	# 			print('\n'.join(items))
+	# 			raise e
+	supper_assert(expected, actual)
 
 ###########################################################################
 # assert_list: 验证expected中的数据都出现在了actual中
 ###########################################################################
 def assert_list(expected, actual, key=None):
-	global tc
-	tc.assertEquals(len(expected), len(actual), "list %s's length is not equals. e:%d != a:%d" % (key, len(expected), len(actual)))
-
-	for i in range(len(expected)):
-		expected_obj = expected[i]
-		actual_obj = actual[i]
-		if isinstance(expected_obj, dict):
-			assert_dict(expected_obj, actual_obj)
-		else:
-			expected_obj, actual_obj = convert_to_same_type(expected_obj, actual_obj)
-			try:
-				tc.assertEquals(expected_obj, actual_obj)
-			except Exception, e:
-				items = ['\n<<<<<', 'e: %s' % str(expected), 'a: %s' % str(actual), 'key: %s' % key, e.args[0], '>>>>>\n']
-				e.args = ('\n'.join(items),)
-				raise e
-
+	# global tc
+	# tc.assertEquals(len(expected), len(actual), "list %s's length is not equals. e:%d != a:%d" % (key, len(expected), len(actual)))
+	#
+	# for i in range(len(expected)):
+	# 	expected_obj = expected[i]
+	# 	actual_obj = actual[i]
+	# 	if isinstance(expected_obj, dict):
+	# 		assert_dict(expected_obj, actual_obj)
+	# 	else:
+	# 		expected_obj, actual_obj = convert_to_same_type(expected_obj, actual_obj)
+	# 		try:
+	# 			tc.assertEquals(expected_obj, actual_obj)
+	# 		except Exception, e:
+	# 			items = ['\n<<<<<', 'e: %s' % str(expected), 'a: %s' % str(actual), 'key: %s' % key, e.args[0], '>>>>>\n']
+	# 			e.args = ('\n'.join(items),)
+	# 			raise e
+	supper_assert(expected, actual)
 
 ###########################################################################
 # assert_expected_list_in_actual: 验证expected中的数据都出现在了actual中
@@ -325,54 +408,6 @@ def table2list(context):
 		expected.append(data)
 	return expected
 
-
-def get_order_has_product(order_code, product_name):
-	"""
-	从Weapp `test/bdd_util.py`迁移过来
-
-	@todo 待优化；用业务模型描述
-	"""
-	def _get_product_model_name(product_model_names):
-		if product_model_names != "standard":
-			pro_id, id = product_model_names.split(":")
-			#i = mall_models.ProductModelPropertyValue.get(id=id)
-			i = mall_models.ProductModelPropertyValue.select().dj_where(id=id, property_id=pro_id).first()#get(id=id, property_id=pro_id)
-			return i.name
-	order = mall_models.Order.get(order_id=order_code)
-
-	# 商品是否包含规格
-	if ":" in product_name:
-		product_name, product_model_name = product_name.split(":")
-		
-	order_has_product_list = mall_models.OrderHasProduct.select().dj_where(order_id=order.id, product_name=product_name)
-
-	if order_has_product_list.count() == 1:
-		# 如果商品不包含规格
-		return order_has_product_list[0]
-	else:
-		# 如果商品包含规格
-		# 查找到包含此规格的order_has_product
-		for order_has_product in order_has_product_list:
-			if product_model_name in _get_product_model_name(order_has_product.product_model_name):
-				return order_has_product
-	return None
-
-
-def get_webapp_id_for(username):
-	"""
-	获取user对应的webapp id
-	"""
-	user = User.get(username=username)
-	profile = UserProfile.get(user=user)
-	return profile.webapp_id
-
-
-def get_product_by(product_name):
-	product = mall_models.Product.get(name=product_name)
-	return product
-
-def get_member_by_id(member_id):
-	return Member.from_id({'webapp_owner': None, 'member_id': member_id})
 
 
 bdd_mock = {
