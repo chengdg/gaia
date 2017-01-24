@@ -88,7 +88,7 @@ Scenario:1 运营审核通过客户创建的商品
 	Then weizoom查看待审核商品列表
 		|name|owner_name|classfication|status|    operation   |
 		|  武汉鸭脖  |     jobs    |分类12--分类24|  审核中   |通过 驳回 删除|
-		|   ipad     |     jobs    |分类11--分类21|  已审核   |删除|
+		|   ipad     |     jobs    |分类11--分类21|  已审核   ||
 
 	Given jobs登录系统
 	Then jobs查看待审核商品列表

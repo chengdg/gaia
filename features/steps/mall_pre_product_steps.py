@@ -70,14 +70,15 @@ def __classification_name2id(classification_name, product_name):
 
 	return mall_models.Classification.select().dj_where(name=classification_name).get().id
 
-def __get_operations(context, status):
+def __get_operations(context, status, is_accepted):
 	#运营
 	operations = []
 	if bdd_util.is_weizoom_corp(context.corp.id):
 		if status == mall_models.PRODUCT_STATUS['SUBMIT']:
 			operations.append(u'通过')
 			operations.append(u'驳回')
-		operations.append(u'删除')
+		if not is_accepted:
+			operations.append(u'删除')
 	else:
 		operations.append(u'编辑')
 
@@ -248,7 +249,6 @@ def step_impl(context, user):
 	corp_id = context.corp.id
 	for data in datas:
 		product_id = __product_names2ids_str([data['name']])[0]
-		print ('product_id======', product_id)
 		base_info, postage_info, models_info, image_info = __format_post_data(context, data)
 		response = context.client.post('/product/pre_product/', {
 			'corp_id': corp_id,
@@ -264,7 +264,7 @@ def step_impl(context, user):
 def step_impl(context, user):
 	datas = json.loads(context.text)
 	response = context.client.put('/product/verified_product/', {
-		'corp_id': bdd_util.get_user_id_for(user),
+		'corp_id': context.corp.id,
 		'product_ids': json.dumps(__product_names2ids_str(datas))
 	})
 	bdd_util.assert_api_call_success(response)
@@ -281,7 +281,7 @@ def step_impl(context, user):
 	for row in actual:
 		row['classfication'] = row['classification_nav']
 		row['created_time'] = u'创建时间'
-		row['operation'] = __get_operations(context, row['status'])
+		row['operation'] = __get_operations(context, row['status'], row['is_accepted'])
 		row['status'] = __get_product_status_text(row['status'], row['is_accepted'])
 		row['stock'] = __get_stocks_area(row['stocks'])
 		row['price'] = __format_price_area(row['price_info'])
@@ -295,7 +295,19 @@ def step_impl(context, user):
 	product_ids = __product_names2ids_str(datas)
 	for product_id in product_ids:
 		response = context.client.put('/product/pending_product/', {
-			'corp_id': bdd_util.get_user_id_for(user),
+			'corp_id': context.corp.id,
+			'product_id': product_id
+		})
+
+		bdd_util.assert_api_call_success(response)
+
+@when(u"{user}删除待审核商品")
+def step_impl(context, user):
+	datas = json.loads(context.text)
+	product_ids = __product_names2ids_str(datas)
+	for product_id in product_ids:
+		response = context.client.delete('/product/pre_product/', {
+			'corp_id': context.corp.id,
 			'product_id': product_id
 		})
 

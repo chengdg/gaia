@@ -34,7 +34,7 @@ class APreProduct(api_resource.ApiResource):
 			'name': pre_product.name,
 			'promotion_title': pre_product.promotion_title,
 			'price_info': pre_product.price_info,
-			'weight': pre_product.weight,
+			'weight': '0.00' if not pre_product.standard_model else '%.2f' % pre_product.standard_model.weight,
 			'stocks': pre_product.stocks,
 			'detail': pre_product.detail,
 			'models': pre_product.custom_models,
@@ -80,5 +80,14 @@ class APreProduct(api_resource.ApiResource):
 		})
 
 		return {}
+
+	@param_required(['corp_id', 'product_id:int'])
+	def delete(args):
+		product_id = args['product_id']
+		corp = args['corp']
+		corp.product_pool.delete_products([product_id])
+
+		return {}
+
 
 		
