@@ -186,7 +186,8 @@ class Corporation(business_model.Model):
 		"""
 		更新商户商城配置
 		"""
-		update_field_list = ['company_name', 'name', 'purchase_method', 'points:float', 'clear_period', 'max_product_count', 'classification_ids']
+		update_field_list = ['company_name', 'name', 'purchase_method', 'points:float', 'clear_period',
+							 'rebate_money', 'rebate_proport', 'default_rebate_proport', 'max_product_count', 'classification_ids']
 		self.__update(args, update_field_list)
 
 	def update_base_info(self, args):
