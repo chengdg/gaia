@@ -13,7 +13,6 @@ class CorporationRepository(business_model.Model):
 		company_name = args.get('company_name')
 		username = args.get('username')
 		is_weizoom_corp = args.get('is_weizoom_corp')
-		status = args.get('status')
 
 		db_models = account_model.UserProfile.select()
 		corps = []
@@ -24,8 +23,6 @@ class CorporationRepository(business_model.Model):
 			if username and not company_name in corp.details.company_name:
 				continue
 			if not is_weizoom_corp == None and not bool(int(is_weizoom_corp)) == corp.is_weizoom_corp():
-				continue
-			if not status == None and not status == int(status):
 				continue
 			corps.append(corp)
 

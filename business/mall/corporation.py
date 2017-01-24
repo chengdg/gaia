@@ -77,7 +77,6 @@ class Corporation(business_model.Model):
 		'valid_time_to',
 		'note',
 
-		'status',
 		'created_at',
 
 		'pre_sale_tel',
@@ -90,7 +89,6 @@ class Corporation(business_model.Model):
 	def __init__(self, owner_id):
 		business_model.Model.__init__(self)
 		self.id = owner_id
-		self.status = -1
 		if owner_id:
 			_account_user_profile = account_model.UserProfile.select().dj_where(user_id=owner_id).first()
 			self.webapp_id = _account_user_profile.webapp_id
@@ -133,7 +131,6 @@ class Corporation(business_model.Model):
 			self.contact = corp_model.contact
 			self.contact_phone = corp_model.contact_phone
 			self.note = corp_model.note
-			self.status = corp_model.status
 			self.created_at = corp_model.created_at
 			self.pre_sale_tel = corp_model.pre_sale_tel
 			self.after_sale_tel = corp_model.after_sale_tel
@@ -160,18 +157,18 @@ class Corporation(business_model.Model):
 					field_value = json.loads(field_value)
 			else:
 				field_value = args.get(field_name)
+
 			if not field_value == None:
 				update_data[field_name] = field_value
-		corp_id = self.id
-		corp_model = account_model.CorpInfo.select().dj_where(id=corp_id).first()
-		if not corp_model:
-			update_data['id'] = corp_id
-			update_data['status'] = account_model.CORP_STATUS['OFF_LINE']
-			account_model.CorpInfo.create(**update_data)
-		else:
-			corp_model.update(**update_data).execute()
+
+		account_model.CorpInfo.update(**update_data).dj_where(id=self.id).execute()
 
 	def update(self, args):
+		corp_model = account_model.CorpInfo.select().dj_where(id=self.id).first()
+		if not corp_model:
+			account_model.CorpInfo.create(
+				id = self.id
+			)
 		self.update_base_info(args)
 		if not self.is_weizoom_corp():
 			self.update_mall_info(args)
@@ -186,7 +183,7 @@ class Corporation(business_model.Model):
 		更新商户商城配置
 		"""
 		update_field_list = ['purchase_method', 'points:float', 'clear_period',
-							 'rebate_money', 'rebate_proport', 'default_rebate_proport', 'max_product_count', 'classification_ids']
+							 'rebate_money:float', 'rebate_proport:float', 'default_rebate_proport:float', 'max_product_count', 'classification_ids']
 		self.__update(args, update_field_list)
 
 	def update_base_info(self, args):

@@ -20,6 +20,8 @@ class ACorps(api_resource.ApiResource):
 		})
 		page_info, corps = CorporationRepository().filter_corps(args, page_info)
 
+		print corps
+
 		rows = [{
 			'corp_id': corp.id,
 			'name': corp.details.name,
@@ -33,7 +35,6 @@ class ACorps(api_resource.ApiResource):
 			'clear_period': corp.details.clear_period,
 			'contact': corp.details.contact,
 			'contact_phone': corp.details.contact_phone,
-			'status': corp.details.status,
 			'created_at': corp.details.created_at.strftime('%Y-%m-%d %H:%M:%S') if corp.details.created_at else '',
 		} for corp in corps]
 

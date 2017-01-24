@@ -127,8 +127,6 @@ class CorpInfo(models.Model):
 	contact_phone = models.CharField(max_length=16, default='')  # 手机号
 	note = models.CharField(max_length=1024, default='')  # 备注
 
-	status = models.IntegerField(default=CORP_STATUS['NO_RECORD'])  # 账号状态 -1未配置 0停用中，1开启中，2不在有效期内
-	is_deleted = models.BooleanField(default=False, verbose_name='用户是否有效')  # 是否删除
 	created_at = models.DateTimeField(auto_now_add=True)  # 创建时间
 
 	pre_sale_tel = models.CharField(max_length=32, default='')  # 售前电话
@@ -139,7 +137,7 @@ class CorpInfo(models.Model):
 
 	class Meta(object):
 		db_table = "account_corp_info"
-
+		auto_increment = False #不使用自动创建的id
 
 class GaiaApp(models.Model):
 	"""
