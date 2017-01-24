@@ -116,6 +116,9 @@ class CorpInfo(models.Model):
 	is_weizoom_corp = models.BooleanField(default=False)
 	purchase_method = models.IntegerField(default=1) #采购方式
 	points = models.FloatField(default=0) #零售价返点
+	rebate_money = models.FloatField(default=0) #返点起点金额
+	rebate_proport = models.FloatField(default=0)  # 返点比例%
+	default_rebate_proport = models.FloatField(default=0)  # 默认返点比例%
 	clear_period = models.IntegerField(default=CLEAR_PERIOD_MONTH)
 	customer_from = models.IntegerField(default=1)  # 客户来源 0 PANDA ，1 渠道
 	max_product_count = models.IntegerField(default=10)  # 最多可创建商品个数

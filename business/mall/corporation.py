@@ -63,6 +63,9 @@ class Corporation(business_model.Model):
 		'company_name',
 		'purchase_method',
 		'points',
+		'rebate_money',
+		'rebate_proport',
+		'default_rebate_proport',
 		'clear_period',
 		'customer_from',
 		'max_product_count',
@@ -120,6 +123,9 @@ class Corporation(business_model.Model):
 			self.company_name = corp_model.company_name
 			self.purchase_method = corp_model.purchase_method
 			self.points = corp_model.points
+			self.rebate_money = corp_model.rebate_money
+			self.rebate_proport = corp_model.rebate_proport
+			self.default_rebate_proport = corp_model.default_rebate_proport
 			self.clear_period = corp_model.clear_period
 			self.customer_from = corp_model.customer_from
 			self.max_product_count = corp_model.max_product_count
