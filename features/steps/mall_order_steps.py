@@ -58,7 +58,6 @@ def step_impl(context, user):
 		elif order['extra_coupon_info']['type'] == 'multi_products_coupon':
 			order['extra_coupon_info']['type'] = u'多商品券'
 
-
 		for delivery_item in order['delivery_items']:
 			real_bid = delivery_item['bid']
 			if "^" in real_bid:
@@ -152,12 +151,25 @@ def step_impl(context, user, bid):
 	response = context.client.post('/order/delivery_item/', data)
 	bdd_util.assert_api_call_success(response)
 
+
 @when(u"{user}给订单添加备注信息")
 def step_impl(context, user):
 	order_id = get_id_by_bid(json.loads(context.text)['bid'])
 	remark = json.loads(context.text)['remark']
 	url = '/order/order/?corp_id=%d&id=%d' % (context.corp.id, order_id)
 	response = context.client.post(url, data={'new_remark': remark})
+	bdd_util.assert_api_call_success(response)
+
+
+@when(u"{user}标记完成出货单'{bid}'")
+def step_impl(context, user, bid):
+	bid = get_delivery_item_bid(bid)
+	delivery_item_id = get_id_by_bid(bid)
+	data = {
+		'corp_id': context.corp.id,
+		'delivery_item_id': delivery_item_id
+	}
+	response = context.client.put('/order/finished_delivery_item/', data)
 	bdd_util.assert_api_call_success(response)
 
 

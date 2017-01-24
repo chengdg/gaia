@@ -979,7 +979,7 @@ Scenario: 6 管理员取消使用了多商品券的订单
 		}
 		"""
 
-@order @ztqb
+@order
 Scenario: 7 管理员取消使用了微众卡的订单
 	1.zhouxun取消待支付订单，微众卡退回
 
