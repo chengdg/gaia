@@ -674,7 +674,7 @@ Scenario: 4 管理员取消使用了商品积分的订单
 Scenario: 5 管理员取消使用了通用券的订单
 	1.zhouxun取消待支付订单，通用券退回
 
-	Given zhouxun登录系统
+	Given zhouxun登录系统::weapp
 	When zhouxun添加优惠券规则::weapp
 		"""
 		[{
@@ -687,7 +687,7 @@ Scenario: 5 管理员取消使用了通用券的订单
 			"coupon_id_prefix": "coupon1_id_"
 		}]
 		"""
-	When jobs为会员发放优惠券::weapp
+	When zhouxun为会员发放优惠券::weapp
 		"""
 		{
 			"name": "通用券1",
@@ -716,7 +716,7 @@ Scenario: 5 管理员取消使用了通用券的订单
 			"coupon": "coupon1_id_1"
 		}
 		"""
-	Given zhouxun登录系统
+	Given zhouxun登录系统::weapp
 	Then zhouxun能获得优惠券'通用券1'的码库::weapp
 		"""
 		{
@@ -803,7 +803,7 @@ Scenario: 5 管理员取消使用了通用券的订单
 			}]
 		}
 		"""
-	Then jobs能获得优惠券'通用券1'的码库::weapp
+	Then zhouxun能获得优惠券'通用券1'的码库::weapp
 		"""
 		{
 			"coupon_1": {
@@ -819,7 +819,7 @@ Scenario: 5 管理员取消使用了通用券的订单
 Scenario: 6 管理员取消使用了多商品券的订单
 	1.zhouxun取消待支付订单，多商品券退回
 
-	Given zhouxun登录系统
+	Given zhouxun登录系统::weapp
 	When zhouxun添加优惠券规则::weapp
 		"""
 		[{
@@ -832,7 +832,7 @@ Scenario: 6 管理员取消使用了多商品券的订单
 			"coupon_product": "zhouxun商品3, jobs商品1,"
 		}]
 		"""
-	When jobs为会员发放优惠券::weapp
+	When zhouxun为会员发放优惠券::weapp
 		"""
 		{
 			"name": "多商品券1",
@@ -864,7 +864,7 @@ Scenario: 6 管理员取消使用了多商品券的订单
 			"coupon": "coupon1_id_1"
 		}
 		"""
-	Given zhouxun登录系统
+	Given zhouxun登录系统::weapp
 	Then zhouxun能获得优惠券'多商品券1'的码库::weapp
 		"""
 		{
@@ -967,7 +967,7 @@ Scenario: 6 管理员取消使用了多商品券的订单
 			}]
 		}
 		"""
-	Then jobs能获得优惠券'多商品券'的码库::weapp
+	Then zhouxun能获得优惠券'多商品券'的码库::weapp
 		"""
 		{
 			"coupon_1": {
@@ -985,7 +985,7 @@ Scenario: 7 管理员取消使用了微众卡的订单
 
 
 	Given 重置'weizoom_card'的bdd环境
-	Given zhouxun登录系统
+	Given zhouxun登录系统::weapp
 	When zhouxun开通使用微众卡权限::weapp
 	When zhouxun添加支付方式::weapp
 		"""
