@@ -14,7 +14,7 @@ class CorporationRepository(business_model.Model):
 			if not item.startswith('__f-'):
 				continue
 			_, field, match_strategy = item.split('-')
-			items[field] = args[field]
+			items[field] = args[item]
 		return items
 
 	def filter_corps(self, args=None, page_info=None):
@@ -33,11 +33,11 @@ class CorporationRepository(business_model.Model):
 		corps = []
 		for model in db_models:
 			corp = Corporation(model.user_id)
-			if status and not int(status) == -1 and not int(status) == corp.details.status:
-				continue
 			if not is_weizoom_corp == None and not int(is_weizoom_corp) == -1 and not bool(int(is_weizoom_corp)) == corp.is_weizoom_corp():
 				continue
 			if username and not username in corp.username:
+				continue
+			if status and not int(status) == -1 and not int(status) == corp.details.status:
 				continue
 			if company_name and not company_name in corp.details.company_name:
 				continue

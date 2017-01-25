@@ -90,6 +90,7 @@ class Corporation(business_model.Model):
 	def __init__(self, owner_id):
 		business_model.Model.__init__(self)
 		self.id = owner_id
+		self.company_name = ''
 		self.status = 0
 		if owner_id:
 			_account_user_profile = account_model.UserProfile.select().dj_where(user_id=owner_id).first()
