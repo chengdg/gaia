@@ -53,8 +53,10 @@ class GlobalProductRepository(business_model.Service):
 			classification_models = mall_models.Classification.select().dj_where(name__icontains=classification_name)
 			relation_models = mall_models.ClassificationHasProduct.select().dj_where(classification_id__in=[c.id for c in classification_models])
 			db_models = db_models.dj_where(id__in=[r.product_id for r in relation_models])
-		if not status == None or (not int(status) == self.FILTER_CONST['ALL']):
+		if not status == None:
 			status = int(status)
+			if status == self.FILTER_CONST['ALL']:
+				pass
 			if status in [self.FILTER_CONST['NOT_YET'], self.FILTER_CONST['SUBMIT']]:
 				db_models = db_models.dj_where(status=status)
 			elif status == self.FILTER_CONST['POOL_REFUSED']:
