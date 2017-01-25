@@ -473,37 +473,21 @@ class ProductContrast(models.Model):
 	表名：mall_product_contrast
 	"""
 	name = models.CharField(max_length=256)  # 商品名称
-	physical_unit = models.CharField(default='', max_length=256)  # 计量单位
 	price = models.FloatField(default=0.0)  # 商品价格
-	introduction = models.CharField(max_length=256, default='')  # 商品简介
 	weight = models.FloatField(default=0.0)  # 重量
-	thumbnails_url = models.CharField(max_length=1024, default='')  # 商品缩略图
-	pic_url = models.CharField(max_length=1024, default='')  # 商品图
+	images = models.TextField(default='')  # 商品轮播图list
+	product_models = models.TextField(default='') #商品规格json
 	detail = models.TextField(default='')  # 商品详情
-	remark = models.TextField(default='')  # 备注
 	stock_type = models.IntegerField(
 		default=PRODUCT_STOCK_TYPE_UNLIMIT)  # 0:无限 1:有限
 	stocks = models.IntegerField(default=-1)  # 起购数量
-	is_support_make_thanks_card = models.BooleanField(
-		default=False)  # 是否支持制作感恩贺卡
-	type = models.CharField(max_length=50,default=PRODUCT_DEFAULT_TYPE)  # 产品的类型
 	postage_id = models.IntegerField(default=-1)  # 运费id ，-1为使用统一运费
-	is_use_online_pay_interface = models.BooleanField(default=True)  # 在线支付方式
-	is_use_cod_pay_interface = models.BooleanField(default=False)  # 货到付款支付方式
 	promotion_title = models.CharField(max_length=256, default='')  # 促销标题
-	user_code = models.CharField(max_length=256, default='')  # 编码
-	bar_code = models.CharField(max_length=256, default='')  # 条码
 	unified_postage_money = models.FloatField(default=0.0)  # 统一运费金额
 	postage_type = models.CharField(max_length=125, default=POSTAGE_TYPE_UNIFIED)  # 运费类型
-	weshop_sync = models.IntegerField(default=0)  # 0不同步 1普通同步 2加价同步
-	is_member_product = models.BooleanField(default=False)  # 是否参加会员折扣
-	supplier = models.IntegerField(default=0) # 供货商
 	purchase_price = models.FloatField(default=0.0) # 进货价格(结算价)
-	is_enable_bill = models.BooleanField(default=False)  # 商品是否开具发票
-	is_delivery = models.BooleanField(default=False) # 是否勾选配送时间
 	limit_zone_type = models.IntegerField(default=PRODUCT_ZONE_NO_LIMIT) # 0不限制 1禁售 2仅售
 	limit_zone = models.IntegerField(default=0) # 限制地区的模板id
-
 
 	class Meta(object):
 		db_table = 'mall_product_contrast'
