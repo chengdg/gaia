@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+import json
+
+from eaglet.decorator import cached_context_property
 
 from business import model as business_model
 from business.coupon.coupon_repository import CouponRepository
@@ -55,12 +58,40 @@ class Corporation(business_model.Model):
 		'name',
 		'type',
 		'webapp_id',
-		'username'
+		'username',
+
+		'company_name',
+		'purchase_method',
+		'points',
+		'rebate_money',
+		'rebate_proport',
+		'default_rebate_proport',
+		'clear_period',
+		'customer_from',
+		'max_product_count',
+		'classification_ids',
+
+		'contact',
+		'contact_phone',
+		'valid_time_from',
+		'valid_time_to',
+		'note',
+
+		'created_at',
+		'status',
+
+		'pre_sale_tel',
+		'after_sale_tel',
+		'service_tel',
+		'service_qq_first',
+		'service_qq_second'
 	)
 
 	def __init__(self, owner_id):
+		business_model.Model.__init__(self)
 		self.id = owner_id
-		self.name = 'unknown'
+		self.company_name = ''
+		self.status = 0
 		if owner_id:
 			_account_user_profile = account_model.UserProfile.select().dj_where(user_id=owner_id).first()
 			self.webapp_id = _account_user_profile.webapp_id
@@ -81,6 +112,87 @@ class Corporation(business_model.Model):
 		else:
 			self.webapp_id = 0
 			self.type = 'normal'
+
+	@cached_context_property
+	def details(self):
+		"""
+		填充corp详情
+		"""
+		corp_model = account_model.CorpInfo.select().dj_where(id=self.id).first()
+		if corp_model:
+			self.name = corp_model.name
+			self.company_name = corp_model.company_name
+			self.purchase_method = corp_model.purchase_method
+			self.points = corp_model.points
+			self.rebate_money = corp_model.rebate_money
+			self.rebate_proport = corp_model.rebate_proport
+			self.default_rebate_proport = corp_model.default_rebate_proport
+			self.clear_period = corp_model.clear_period
+			self.customer_from = corp_model.customer_from
+			self.max_product_count = corp_model.max_product_count
+			self.classification_ids = corp_model.classification_ids
+			self.contact = corp_model.contact
+			self.contact_phone = corp_model.contact_phone
+			self.note = corp_model.note
+			self.created_at = corp_model.created_at
+			self.status = int(corp_model.status)
+			self.pre_sale_tel = corp_model.pre_sale_tel
+			self.after_sale_tel = corp_model.after_sale_tel
+			self.service_tel = corp_model.service_tel
+			self.service_qq_first = corp_model.service_qq_first
+			self.service_qq_second = corp_model.service_qq_second
+
+		return self
+
+	def __update(self, args, update_field_list):
+		update_data = dict()
+		for field_name in update_field_list:
+			if ':' in field_name:
+				transfer_type = field_name.split(':')[1]
+				field_name = field_name.split(':')[0]
+
+				if transfer_type == 'bool':
+					field_value = field_value in ("True", "true", True)
+				elif transfer_type == "float":
+					field_value = float(field_value)
+			else:
+				field_value = args.get(field_name)
+
+			if not field_value == None:
+				update_data[field_name] = field_value
+
+		account_model.CorpInfo.update(**update_data).dj_where(id=self.id).execute()
+
+	def update(self, args):
+		corp_model = account_model.CorpInfo.select().dj_where(id=self.id).first()
+		if not corp_model:
+			account_model.CorpInfo.create(
+				id = self.id,
+				status = True
+			)
+		self.update_base_info(args)
+		if not self.is_weizoom_corp():
+			self.update_mall_info(args)
+			self.update_service_info(args)
+
+	def update_service_info(self, args):
+		update_field_list = ['pre_sale_tel', 'after_sale_tel', 'service_tel', 'service_qq_first', 'service_qq_second']
+		self.__update(args, update_field_list)
+
+	def update_mall_info(self, args):
+		"""
+		更新商户商城配置
+		"""
+		update_field_list = ['purchase_method', 'points:float', 'clear_period',
+							 'rebate_money:float', 'rebate_proport:float', 'default_rebate_proport:float', 'max_product_count', 'classification_ids']
+		self.__update(args, update_field_list)
+
+	def update_base_info(self, args):
+		"""
+		更新帐号信息
+		"""
+		update_field_list = ['name', 'company_name', 'note', 'contact', 'contact_phone']
+		self.__update(args, update_field_list)
 
 	def is_self_run_platform(self):
 		"""
