@@ -45,17 +45,85 @@
                                     "type": "string",
                                     "description": "登录名"
                                 },
-                                "share_describe": {
-                                    "type": "string",
-                                    "description": "分享描述"
+                                "is_weizoom_corp": {
+                                    "type": "boolean",
+                                    "description": "是否微众公司"
                                 },
-                                "material_id": {
+                                "max_product_count": {
                                     "type": "integer",
-                                    "description": "图文素材id"
+                                    "description": "最大可添加商品数"
                                 },
-                                "title": {
+                                "classification_ids": {
                                     "type": "string",
-                                    "description": "图文素材标题"
+                                    "description": "商品分类集合字符串，','分割"
+                                },
+                                "purchase_method": {
+                                    "type": "integer",
+                                    "description": "采购方式"
+                                },
+                                "points": {
+                                    "type": "float",
+                                    "description": "零售返点"
+                                },
+                                "rebate_money": {
+                                    "type": "float",
+                                    "description": "分成起价"
+                                },
+                                "rebate_proport": {
+                                    "type": "float",
+                                    "description": "分成比例"
+                                },
+                                "default_rebate_proport": {
+                                    "type": "float",
+                                    "description": "默认分成比例"
+                                },
+                                "clear_period": {
+                                    "type": "integer",
+                                    "description": "结算周期"
+                                },
+                                "contact": {
+                                    "type": "string",
+                                    "description": "联系人"
+                                },
+                                "contact_phone": {
+                                    "type": "string",
+                                    "description": "联系手机"
+                                },
+                                "note": {
+                                    "type": "string",
+                                    "description": "备注"
+                                },
+                                "customer_from": {
+                                    "type": "string",
+                                    "description": "商户来源"
+                                },
+                                "created_at": {
+                                    "type": "string",
+                                    "description": "创建时间"
+                                },
+                                "status": {
+                                    "type": "integer",
+                                    "description": "帐号状态"
+                                },
+                                "pre_sale_tel": {
+                                    "type": "string",
+                                    "description": "售前电话"
+                                },
+                                "after_sale_tel": {
+                                    "type": "string",
+                                    "description": "售后电话"
+                                },
+                                "service_tel": {
+                                    "type": "string",
+                                    "description": "服务电话"
+                                },
+                                "service_qq_first": {
+                                    "type": "string",
+                                    "description": "服务qq1"
+                                },
+                                "service_qq_second": {
+                                    "type": "string",
+                                    "description": "服务qq2"
                                 }
                             }
                         }
@@ -63,52 +131,16 @@
                 }
             },
             "post": {
-                "summary": "修改订单设置",
+                "summary": "配置帐号信息",
                 "parameters": [
                     {
                         "name": "corp_id",
-                        "type": "string",
+                        "type": "int",
                         "required": true
-                    },
-                    {
-                        "name": "order_expired_day",
-                        "required": true,
-                        "type": "integer",
-                        "description": "未付款订单过期时间"
-                    },
-                    {
-                        "name": "is_share_page",
-                        "required": true,
-                        "type": "boolean",
-                        "description": "是否提示分享挣积分"
-                    },
-                    {
-                        "name": "background_image",
-                        "required": true,
-                        "type": "string",
-                        "description": "弹层背景图片"
-                    },
-                    {
-                        "name": "share_image",
-                        "required": true,
-                        "type": "string",
-                        "description": "分享图片"
-                    },
-                    {
-                        "name": "share_describe",
-                        "required": true,
-                        "type": "string",
-                        "description": "分享描述"
-                    },
-                    {
-                        "name": "material_id",
-                        "required": true,
-                        "type": "integer",
-                        "description": "图文素材id"
                     }
                 ],
                 "tags": [
-                    "order_config"
+                    "corp_config"
                 ],
                 "produces": [
                     "application/json"
@@ -119,37 +151,140 @@
                         "schema": {
                             "type": "object",
                             "properties": {
-                                "order_expired_day": {
-                                    "type": "integer",
-                                    "description": "未付款订单过期时间"
-                                },
-                                "is_share_page": {
-                                    "type": "boolean",
-                                    "description": "是否提示分享挣积分"
-                                },
-                                "background_image": {
-                                    "type": "string",
-                                    "description": "弹层背景图片"
-                                },
-                                "share_image": {
-                                    "type": "string",
-                                    "description": "分享图片"
-                                },
-                                "share_describe": {
-                                    "type": "string",
-                                    "description": "分享描述"
-                                },
-                                "material_id": {
-                                    "type": "integer",
-                                    "description": "图文素材id"
-                                },
-                                "title": {
-                                    "type": "string",
-                                    "description": "图文素材标题"
-                                }
                             }
                         }
                     }
+                }
+            }
+        },
+        "/account/corps/": {
+            "get": {
+                "summary": "获取账户列表",
+                "parameters": [],
+                "tags": [
+                    "corp_config"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "$ref": "#definitions/Corps"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "Corps": {
+            "type": "array",
+            "$ref": "#definitions/Corp"
+        },
+        "Corp": {
+            "type": "object",
+            "properties": {
+                "corp_id": {
+                    "type": "integer",
+                    "description": ""
+                },
+                "name": {
+                    "type": "string",
+                    "description": "公司简称"
+                },
+                "company_name": {
+                    "type": "string",
+                    "description": "公司全称"
+                },
+                "username": {
+                    "type": "string",
+                    "description": "登录名"
+                },
+                "is_weizoom_corp": {
+                    "type": "boolean",
+                    "description": "是否微众公司"
+                },
+                "max_product_count": {
+                    "type": "integer",
+                    "description": "最大可添加商品数"
+                },
+                "classification_ids": {
+                    "type": "string",
+                    "description": "商品分类集合字符串，','分割"
+                },
+                "purchase_method": {
+                    "type": "integer",
+                    "description": "采购方式"
+                },
+                "points": {
+                    "type": "float",
+                    "description": "零售返点"
+                },
+                "rebate_money": {
+                    "type": "float",
+                    "description": "分成起价"
+                },
+                "rebate_proport": {
+                    "type": "float",
+                    "description": "分成比例"
+                },
+                "default_rebate_proport": {
+                    "type": "float",
+                    "description": "默认分成比例"
+                },
+                "clear_period": {
+                    "type": "integer",
+                    "description": "结算周期"
+                },
+                "contact": {
+                    "type": "string",
+                    "description": "联系人"
+                },
+                "contact_phone": {
+                    "type": "string",
+                    "description": "联系手机"
+                },
+                "note": {
+                    "type": "string",
+                    "description": "备注"
+                },
+                "customer_from": {
+                    "type": "string",
+                    "description": "商户来源"
+                },
+                "created_at": {
+                    "type": "string",
+                    "description": "创建时间"
+                },
+                "status": {
+                    "type": "integer",
+                    "description": "帐号状态"
+                },
+                "pre_sale_tel": {
+                    "type": "string",
+                    "description": "售前电话"
+                },
+                "after_sale_tel": {
+                    "type": "string",
+                    "description": "售后电话"
+                },
+                "service_tel": {
+                    "type": "string",
+                    "description": "服务电话"
+                },
+                "service_qq_first": {
+                    "type": "string",
+                    "description": "服务qq1"
+                },
+                "service_qq_second": {
+                    "type": "string",
+                    "description": "服务qq2"
                 }
             }
         }
