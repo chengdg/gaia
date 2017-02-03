@@ -208,32 +208,25 @@ class Product(business_model.Model):
 			is_accepted=True
 		).dj_where(id=product_id).execute()
 
-	def update_product_contrast(self, corp):
+	def update_product_unverified(self, args):
 		"""
-		更新最后一次审核通过的商品信息
+		更新编辑审核通过后的商品信息
 		"""
 		product_id = self.id
-		product = corp.global_product_repository.get_product(product_id, {
-			'with_price': True,
-			'with_product_model': True,
-			'with_image': True,
-			'with_classification': True
+		product_data = json.dumps({
+			'base_info': args['base_info'],
+			'models_info': args['models_info'],
+			'image_info': args['image_info'],
+			'logistics_info': args['logistics_info']
 		})
-
-		product_data = json.dumps(product.to_dict())
-
-		print 'product_data ============>>>>'
-		print product_data
-
-		product_contrast_model = mall_models.ProductContrast.select().dj_where(product_id=product_id).first()
-		if product_contrast_model:
-			product_contrast_model.update_instance(product_data=product_data).execute()
+		product_unverified = mall_models.ProductUnverified.select().dj_where(product_id=product_id).first()
+		if product_unverified:
+			product_unverified.update(product_data=product_data).exectue()
 		else:
-			mall_models.ProductContrast.create(
+			mall_models.ProductUnverified.create(
 				product_id = product_id,
 				product_data = product_data
 			)
-
 
 	def submit_verify(self):
 		"""
@@ -242,6 +235,22 @@ class Product(business_model.Model):
 		mall_models.Product.update(
 			status=mall_models.PRODUCT_STATUS['SUBMIT']
 		).dj_where(id=self.id).execute()
+
+	def verify_modifications(self, corp):
+		"""
+		编辑审核
+		"""
+		product_id = self.id
+		product_data = json.loads(mall_models.ProductUnverified.select().dj_where(product_id=product_id).get().product_data)
+		from business.product.update_product_service import UpdateProductService
+		update_product_service = UpdateProductService.get(corp)
+		update_product_service.update_product(self.id, {
+			'corp': corp,
+			'base_info': product_data['base_info'],
+			'models_info': product_data['models_info'],
+			'logistics_info': product_data['logistics_info'],
+			'image_info': product_data['image_info']
+		})
 
 	def refuse_verify(self, reason):
 		"""

@@ -115,5 +115,5 @@ class GlobalProductRepository(business_model.Service):
 			result.append(id2product[product_id])
 		return result
 
-	def get_product_contrast(self, product_id):
-		return json.loads(mall_models.ProductContrast.select().dj_where(product_id=product_id).get().product_data)
+	def get_product_unverified(self, product_id):
+		return json.loads(mall_models.ProductUnverified.select().dj_where(product_id=product_id).get().product_data)
