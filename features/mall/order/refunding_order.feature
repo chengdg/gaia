@@ -1907,7 +1907,7 @@ Scenario:6 管理员退款使用优惠券的订单
 		}
 		"""
 
-@order @ztqb
+@gaia @order
 Scenario:7 管理员退款出货单，商品销量和库存
 	Given 重置'apiserver'的bdd环境
 	Given 重置'weapp'的bdd环境
@@ -2038,14 +2038,27 @@ Scenario:7 管理员退款出货单，商品销量和库存
 			}
 		},{
 			"name":"无规格商品1-zhouxun",
-			"stock_type": "有限",
-			"stocks": 100,
-			"sales": 0
+			"sales": 0,
+			"model": {
+				"models": {
+					"standard": {
+						"stock_type": "有限",
+						"stocks": 100
+					}
+				}
+			}
+
 		},{
 			"name":"无规格商品1-yangmi",
-			"stock_type": "有限",
-			"stocks": 100,
-			"sales": 0
+			"sales": 0,
+			"model": {
+				"models": {
+					"standard": {
+						"stock_type": "有限",
+						"stocks": 100
+					}
+				}
+			}
 		}]
 		"""
 	Given bill关注zhouxun的公众号::apiserver
@@ -2120,17 +2133,29 @@ Scenario:7 管理员退款出货单，商品销量和库存
 						"stocks": 99
 					}
 				}
-			}
+			},
 			"sales": 2
 		},{
 			"name":"无规格商品1-zhouxun",
-			"stock_type": "有限",
-			"stocks": 99,
+			"model": {
+				"models": {
+					"standard": {
+						"stock_type": "有限",
+						"stocks": 99
+					}
+				}
+			},
 			"sales": 1
 		},{
 			"name":"无规格商品1-yangmi",
-			"stock_type": "有限",
-			"stocks": 99,
+			"model": {
+				"models": {
+					"standard": {
+						"stock_type": "有限",
+						"stocks": 99
+					}
+				}
+			},
 			"sales": 1
 		}]
 		"""
@@ -2178,17 +2203,29 @@ Scenario:7 管理员退款出货单，商品销量和库存
 						"stocks": 99
 					}
 				}
-			}
+			},
 			"sales": 2
 		},{
 			"name":"无规格商品1-zhouxun",
-			"stock_type": "有限",
-			"stocks": 99,
+			"model": {
+				"models": {
+					"standard": {
+						"stock_type": "有限",
+						"stocks": 99
+					}
+				}
+			},
 			"sales": 1
 		},{
 			"name":"无规格商品1-yangmi",
-			"stock_type": "有限",
-			"stocks": 99,
+			"model": {
+				"models": {
+					"standard": {
+						"stock_type": "有限",
+						"stocks": 99
+					}
+				}
+			},
 			"sales": 1
 		}]
 		"""
@@ -2416,7 +2453,7 @@ Scenario:8 管理员退款出货单，会员信息
 		}]
 		"""
 
-@order
+@gaia @order
 Scenario:9 管理员退款出货单，积分设置为1元=0积分
 	Given 重置'apiserver'的bdd环境
 
@@ -2539,7 +2576,7 @@ Scenario:9 管理员退款出货单，积分设置为1元=0积分
 				"total": 0.00
 			},
 			"delivery_items": [{
-				"bid": "001-zhouxun",
+				"bid": "009-zhouxun",
 				"status_code": "refunding",
 				"refunding_info": {
 					"finished": false,
@@ -2569,7 +2606,7 @@ Scenario:9 管理员退款出货单，积分设置为1元=0积分
 
 	Then zhouxun获得订单'009'
 		"""
-		[{
+		{
 			"bid": "009",
 			"status_code": "refunding",
 			"status_logs":[{
@@ -2594,12 +2631,12 @@ Scenario:9 管理员退款出货单，积分设置为1元=0积分
 				"operator":"客户",
 				"time":"2016-09-01 10:00:00"
 			},{
-				"action_text":"退款-zhouxun",
+				"action_text":"退款",
 				"operator":"zhouxun",
 				"time":"2016-09-02 10:00:00"
 			}],
 			"pay_interface_type_code": "weixin_pay",
-			"couponMoney": 0.00,
+			"coupon_money": 0.00,
 			"pay_money": 50.11,
 			"product_price": 50.11,
 			"postage":0.00,
@@ -2631,10 +2668,10 @@ Scenario:9 管理员退款出货单，积分设置为1元=0积分
 					"time":"2016-09-01 00:00:00"
 				},{
 					"action_text":"支付",
-					"operator":"zhouxun",
+					"operator":"客户",
 					"time":"2016-09-01 10:00:00"
 				},{
-					"action_text":"退款-zhouxun",
+					"action_text":"退款",
 					"operator":"zhouxun",
 					"time":"2016-09-02 10:00:00"
 				}],
@@ -2661,10 +2698,10 @@ Scenario:9 管理员退款出货单，积分设置为1元=0积分
 					"count": 2
 				}]
 			}]
-		}]
+		}
 		"""
 
-@order
+@gaia @order
 Scenario:10 管理员退款含有限时抢购商品的出货单
 	Given 重置'apiserver'的bdd环境
 	Given 重置'weapp'的bdd环境
@@ -2709,7 +2746,7 @@ Scenario:10 管理员退款含有限时抢购商品的出货单
 		"""
 		["无规格商品1", "无规格商品2"]
 		"""
-
+	Given zhouxun登录系统::weapp
 	When zhouxun创建限时抢购活动::weapp
 		"""
 		[{
@@ -2769,7 +2806,7 @@ Scenario:10 管理员退款含有限时抢购商品的出货单
 			"status_code": "refunding",
 			"pay_interface_type_code": "weixin_pay",
 			"pay_money": 45.00,
-			"product_price": 50.11,
+			"product_price": 45.00,
 			"postage":0.00,
 			"save_money": 5.11,
 			"origin_final_price": 45.00,
@@ -2821,13 +2858,13 @@ Scenario:10 管理员退款含有限时抢购商品的出货单
 
 	Then zhouxun获得订单'010'
 		"""
-		[{
+		{
 			"bid": "010",
 			"status_code": "refunding",
 			"pay_interface_type_code": "weixin_pay",
-			"couponMoney": 0.00,
+			"coupon_money": 0.00,
 			"pay_money": 45.00,
-			"product_price": 50.11,
+			"product_price": 45,
 			"postage":0.00,
 			"save_money": 5.11,
 			"origin_final_price": 45.00,
@@ -2857,7 +2894,7 @@ Scenario:10 管理员退款含有限时抢购商品的出货单
 					"cash": 20.00,
 					"weizoom_card_money": 0.00,
 					"member_card_money":0.00,
-					"coupon_money": 45.00,
+					"coupon_money": 25.00,
 					"integral": 0,
 					"integral_money": 0.00,
 					"total": 45.00
@@ -2874,5 +2911,5 @@ Scenario:10 管理员退款含有限时抢购商品的出货单
 					"count": 2
 				}]
 			}]
-		}]
+		}
 		"""

@@ -358,26 +358,60 @@ def __get_products(context, corp_name, type_name=u'在售'):
         if 'categories' in product:
             data['categories'] = ','.join([category['name'] for category in product['categories']])
 
-        #规格
-        if 'models_info' in product:
-            models_info = product['models_info']
-            if not models_info['is_use_custom_model']:
-                model = models_info['standard_model']
-                data['price'] = model['price']
-                data['stocks'] = u'无限' if model['stock_type'] == 'unlimit' else model['stocks']
-                data['gross_profit'] = model['price'] - model['purchase_price']
-            else:
-                price_items = []
-                gross_profit_items = []
-                for model in models_info['custom_models']:
-                    price_items.append(model['price'])
-                    gross_profit_items.append(model['price'] - model['purchase_price'])
+        # #规格
+        # if 'models_info' in product:
+        #     models_info = product['models_info']
+        #     if not models_info['is_use_custom_model']:
+        #         model = models_info['standard_model']
+        #         data['price'] = model['price']
+        #         data['stocks'] = u'无限' if model['stock_type'] == 'unlimit' else model['stocks']
+        #         data['gross_profit'] = model['price'] - model['purchase_price']
+        #     else:
+        #         price_items = []
+        #         gross_profit_items = []
+        #         for model in models_info['custom_models']:
+        #             price_items.append(model['price'])
+        #             gross_profit_items.append(model['price'] - model['purchase_price'])
+        #
+        #         price_items.sort()
+        #         gross_profit_items.sort()
+        #         data['price'] = '%.2f~%.2f' % (price_items[0], price_items[-1])
+        #         data['gross_profit'] = '%.2f~%.2f' % (gross_profit_items[0], gross_profit_items[-1])
+        #         data['stocks'] = ""
 
-                price_items.sort()
-                gross_profit_items.sort()
-                data['price'] = '%.2f~%.2f' % (price_items[0], price_items[-1])
-                data['gross_profit'] = '%.2f~%.2f' % (gross_profit_items[0], gross_profit_items[-1])
-                data['stocks'] = ""
+
+        # 处理规格信息
+        product['model'] = {
+            'models': {}
+        }
+        resp_models_info = product['models_info']
+        product['is_use_custom_model'] = u'是' if resp_models_info['is_use_custom_model'] else u'否'
+        if resp_models_info['is_use_custom_model']:
+
+            for model in resp_models_info['custom_models']:
+                model_name_items = []
+                for property_value in model['property_values']:
+                    model_name_items.append(property_value['name'])
+                model_name = ' '.join(model_name_items)
+                product['model']['models'][model_name] = {
+                    "price": model['price'],
+                    "purchase_price": model['purchase_price'],
+                    "weight": model['weight'],
+                    "stock_type": u'无限' if model['stock_type'] == 'unlimit' else u'有限',
+                    "stocks": model['stocks']
+                }
+        else:
+            model = resp_models_info['standard_model']
+            model_name = model['name']
+            product['model']['models'][model_name] = {
+                "price": model['price'],
+                "purchase_price": model['purchase_price'],
+                "weight": model['weight'],
+                "stock_type": u'无限' if model['stock_type'] == 'unlimit' else u'有限',
+                "stocks": model['stocks']
+            }
+
+        data['model'] = product['model']
 
         data['image'] = product['image']
         data['sales'] = product.get('sales', 0)
