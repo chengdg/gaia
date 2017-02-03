@@ -1471,7 +1471,7 @@ Scenario:4 管理员退款成功使用微众卡全额支付的订单
 		}
 		"""
 
-@order @ztqb
+@order
 Scenario:5 管理员退款成功使用积分的订单
 	Given 重置'apiserver'的bdd环境
 	Given 重置'weapp'的bdd环境
@@ -1712,7 +1712,7 @@ Scenario:5 管理员退款成功使用积分的订单
 		}
 		"""
 
-@order
+@gaia @order
 Scenario:6 管理员退款成功使用优惠券的订单
 	Given 重置'apiserver'的bdd环境
 	Given 重置'weapp'的bdd环境
@@ -1726,10 +1726,11 @@ Scenario:6 管理员退款成功使用优惠券的订单
 		}]
 		"""
 	#创建优惠券-全体券10元
+	Given zhouxun登录系统::weapp
 	When zhouxun添加优惠券规则::weapp
 		"""
 		[{
-			"name": "全店通用券1",
+			"name": "全体券1",
 			"money": 10.00,
 			"limit_counts": "无限",
 			"count": 3,
@@ -1774,11 +1775,11 @@ Scenario:6 管理员退款成功使用优惠券的订单
 
 	Given bill关注zhouxun的公众号::apiserver
 
-	Given zhouxun登录系统
+	Given zhouxun登录系统::weapp
 	When zhouxun创建优惠券发放规则发放优惠券::weapp
 		"""
 		{
-			"name": "全店通用券1",
+			"name": "全体券1",
 			"count": 1,
 			"members": ["bill"]
 		}
@@ -1936,7 +1937,7 @@ Scenario:6 管理员退款成功使用优惠券的订单
 			"bid": "006",
 			"status_code": "refunded",
 			"pay_interface_type_code": "weixin_pay",
-			"couponMoney": 10.00,
+			"coupon_money": 10.00,
 			"pay_money": 30.11,
 			"product_price": 50.11,
 			"postage":0.00,
@@ -1983,7 +1984,7 @@ Scenario:6 管理员退款成功使用优惠券的订单
 		}
 		"""
 
-@order
+@order @ztqb
 Scenario:7 管理员退款成功出货单，对商品销量和库存的影响
 	Given 重置'apiserver'的bdd环境
 	Given 重置'weapp'的bdd环境
@@ -2115,7 +2116,7 @@ Scenario:7 管理员退款成功出货单，对商品销量和库存的影响
 						"stocks": 100
 					}
 				}
-			}
+			},
 			"sales": 0
 		},{
 			"name":"无规格商品1-yangmi",
@@ -2272,7 +2273,7 @@ Scenario:7 管理员退款成功出货单，对商品销量和库存的影响
 						"stocks": 100
 					}
 				}
-			}
+			},
 			"sales": 0
 		},{
 			"name":"无规格商品1-yangmi",
@@ -2713,7 +2714,7 @@ Scenario:9 管理员退款出货单，积分设置为1元=0积分
 				"time":"2016-09-02 11:00:00"
 			}],
 			"pay_interface_type_code": "weixin_pay",
-			"couponMoney": 0.00,
+			"coupon_money": 0.00,
 			"pay_money": 40.11,
 			"product_price": 50.11,
 			"postage":0.00,
