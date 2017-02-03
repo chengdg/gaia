@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import json
 
 from eaglet.core import paginator
 
@@ -113,3 +114,6 @@ class GlobalProductRepository(business_model.Service):
 			product_id = int(product_id)
 			result.append(id2product[product_id])
 		return result
+
+	def get_product_contrast(self, product_id):
+		return json.loads(mall_models.ProductContrast.select().dj_where(product_id=product_id).get().product_data)

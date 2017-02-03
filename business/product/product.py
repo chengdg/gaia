@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
-import settings
 
-from business.mall.corporation_factory import CorporationFactory
-from db.mall import models as mall_models
-from db.mall import promotion_models
-from business import model as business_model
+import json
+
 from eaglet.core import watchdog
 from eaglet.core.exceptionutil import unicode_full_stack
 
-
-
+from db.mall import models as mall_models
+from business import model as business_model
 from business.decorator import cached_context_property
+
+import settings
 
 
 class Product(business_model.Model):
@@ -208,6 +207,33 @@ class Product(business_model.Model):
 			is_updated=False,
 			is_accepted=True
 		).dj_where(id=product_id).execute()
+
+	def update_product_contrast(self, corp):
+		"""
+		更新最后一次审核通过的商品信息
+		"""
+		product_id = self.id
+		product = corp.global_product_repository.get_product(product_id, {
+			'with_price': True,
+			'with_product_model': True,
+			'with_image': True,
+			'with_classification': True
+		})
+
+		product_data = json.dumps(product.to_dict())
+
+		print 'product_data ============>>>>'
+		print product_data
+
+		product_contrast_model = mall_models.ProductContrast.select().dj_where(product_id=product_id).first()
+		if product_contrast_model:
+			product_contrast_model.update_instance(product_data=product_data).execute()
+		else:
+			mall_models.ProductContrast.create(
+				product_id = product_id,
+				product_data = product_data
+			)
+
 
 	def submit_verify(self):
 		"""

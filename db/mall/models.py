@@ -468,26 +468,12 @@ class Product(models.Model):
 
 class ProductContrast(models.Model):
 	"""
-	商品更新比对表
+	商品更新比对表(商品最后一次审核通过的信息)
 
 	表名：mall_product_contrast
 	"""
-	name = models.CharField(max_length=256)  # 商品名称
-	price = models.FloatField(default=0.0)  # 商品价格
-	weight = models.FloatField(default=0.0)  # 重量
-	images = models.TextField(default='')  # 商品轮播图list
-	product_models = models.TextField(default='') #商品规格json
-	detail = models.TextField(default='')  # 商品详情
-	stock_type = models.IntegerField(
-		default=PRODUCT_STOCK_TYPE_UNLIMIT)  # 0:无限 1:有限
-	stocks = models.IntegerField(default=-1)  # 起购数量
-	postage_id = models.IntegerField(default=-1)  # 运费id ，-1为使用统一运费
-	promotion_title = models.CharField(max_length=256, default='')  # 促销标题
-	unified_postage_money = models.FloatField(default=0.0)  # 统一运费金额
-	postage_type = models.CharField(max_length=125, default=POSTAGE_TYPE_UNIFIED)  # 运费类型
-	purchase_price = models.FloatField(default=0.0) # 进货价格(结算价)
-	limit_zone_type = models.IntegerField(default=PRODUCT_ZONE_NO_LIMIT) # 0不限制 1禁售 2仅售
-	limit_zone = models.IntegerField(default=0) # 限制地区的模板id
+	product_id = models.IntegerField(default=-1) #商品id
+	product_data = models.TextField() #商品信息
 
 	class Meta(object):
 		db_table = 'mall_product_contrast'
