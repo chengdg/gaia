@@ -224,3 +224,19 @@ def step_impl(context, user, bid):
 
 	response = context.client.put('/order/refunding_delivery_item/', data)
 	bdd_util.assert_api_call_success(response)
+
+
+@when(u"{user}退款成功出货单'{bid}'")
+def step_impl(context, user, bid):
+	"""
+	@type context: behave.runner.Context
+	"""
+	bid = get_delivery_item_bid(bid)
+	delivery_item_id = get_id_by_bid(bid)
+
+	data = json.loads(context.text)
+	data['delivery_item_id'] = delivery_item_id
+	data['corp_id'] = context.corp.id
+
+	response = context.client.put('/order/refunded_delivery_item/', data)
+	bdd_util.assert_api_call_success(response)
