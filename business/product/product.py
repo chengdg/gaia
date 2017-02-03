@@ -221,7 +221,7 @@ class Product(business_model.Model):
 		})
 		product_unverified = mall_models.ProductUnverified.select().dj_where(product_id=product_id).first()
 		if product_unverified:
-			product_unverified.update(product_data=product_data)
+			mall_models.ProductUnverified.update(product_data=product_data).dj_where(product_id=product_id).execute()
 		else:
 			mall_models.ProductUnverified.create(
 				product_id = product_id,
