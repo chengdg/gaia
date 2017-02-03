@@ -228,20 +228,15 @@ class Product(business_model.Model):
 				product_data = product_data
 			)
 
+		mall_models.Product.update(is_updated=True).dj_where(id=self.id).execute()
+
 	def submit_verify(self):
 		"""
 		提交审核
 		"""
-		if mall_models.Product.select().dj_where(id=self.id).get().is_accepted:
-
-			mall_models.Product.update(
-				status=mall_models.PRODUCT_STATUS['SUBMIT']
-			).dj_where(id=self.id).execute()
-		else:
-			mall_models.Product.update(
-				is_updated = True,
-				status=mall_models.PRODUCT_STATUS['SUBMIT']
-			).dj_where(id=self.id).execute()
+		mall_models.Product.update(
+			status=mall_models.PRODUCT_STATUS['SUBMIT']
+		).dj_where(id=self.id).execute()
 
 	def verify_modifications(self, corp):
 		"""
