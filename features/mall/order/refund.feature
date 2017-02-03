@@ -1238,15 +1238,16 @@ Scenario:4 管理员退款成功使用微众卡全额支付的订单
 #			"""
 	#查看会员使用微众卡数据
 		Given zhouxun登录系统
-		Then zhouxun获得'bill'的购买信息::weapp
-			"""
-			{
-				"purchase_amount":61.55,
-				"purchase_number":1,
-				"customer_price":61.55,
-				"money_wcard":61.55
-			}
-			"""
+	#此处不需要此验证
+#		Then zhouxun获得'bill'的购买信息::weapp
+#			"""
+#			{
+#				"purchase_amount":61.55,
+#				"purchase_number":1,
+#				"customer_price":61.55,
+#				"money_wcard":61.55
+#			}
+#			"""
 
 	When zhouxun申请退款出货单'004-zhouxun'
 		"""
@@ -1307,7 +1308,7 @@ Scenario:4 管理员退款成功使用微众卡全额支付的订单
 		[{
 			"bid": "004",
 			"status_code": "paid",
-			"pay_interface_type_code": "preference"
+			"pay_interface_type_code": "preference",
 			"pay_money": 41.20,
 			"product_price": 61.55,
 			"postage":0.00,
@@ -1361,11 +1362,11 @@ Scenario:4 管理员退款成功使用微众卡全额支付的订单
 					"count": 1
 				},{
 					"name":"多规格商品2-zhouxun",
-					"model": "黑色 M",
+					"product_model_name_texts": ["黑色","M"],
 					"count": 1
 				},{
 					"name":"多规格商品2-zhouxun",
-					"model": "白色 S",
+					"product_model_name_texts": ["白色", "S"],
 					"count": 1
 				}]
 			}]
@@ -1395,7 +1396,7 @@ Scenario:4 管理员退款成功使用微众卡全额支付的订单
 				"operator":"客户",
 				"time":"2016-04-01 00:00:00"
 			}],
-			"pay_interface_type_code": "preference"
+			"pay_interface_type_code": "preference",
 			"pay_money": 41.20,
 			"product_price": 61.55,
 			"postage":0.00,
@@ -1477,11 +1478,11 @@ Scenario:4 管理员退款成功使用微众卡全额支付的订单
 					"count": 1
 				},{
 					"name":"多规格商品2-zhouxun",
-					"model": "黑色 M",
+					"product_model_name_texts": ["黑色","M"],
 					"count": 1
 				},{
 					"name":"多规格商品2-zhouxun",
-					"model": "白色 S",
+					"product_model_name_texts": ["白色", "S"],
 					"count": 1
 				}]
 			}]
