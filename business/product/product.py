@@ -232,9 +232,16 @@ class Product(business_model.Model):
 		"""
 		提交审核
 		"""
-		mall_models.Product.update(
-			status=mall_models.PRODUCT_STATUS['SUBMIT']
-		).dj_where(id=self.id).execute()
+		if mall_models.Product.select().dj_where(id=self.id).get().is_accepted:
+
+			mall_models.Product.update(
+				status=mall_models.PRODUCT_STATUS['SUBMIT']
+			).dj_where(id=self.id).execute()
+		else:
+			mall_models.Product.update(
+				is_updated = True,
+				status=mall_models.PRODUCT_STATUS['SUBMIT']
+			).dj_where(id=self.id).execute()
 
 	def verify_modifications(self, corp):
 		"""
@@ -242,6 +249,7 @@ class Product(business_model.Model):
 		"""
 		product_id = self.id
 		product_data = json.loads(mall_models.ProductUnverified.select().dj_where(product_id=product_id).get().product_data)
+		mall_models.Product.update(is_updated=False).dj_where(id=self.id).execute()
 		from business.product.update_product_service import UpdateProductService
 		update_product_service = UpdateProductService.get(corp)
 		update_product_service.update_product(self.id, {
