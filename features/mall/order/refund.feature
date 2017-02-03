@@ -813,10 +813,10 @@ Scenario:3 管理员退款成功多供货商的订单-带运费-待发货，已�
 				"cash": 10.00,
 				"weizoom_card_money": 0.00,
 				"member_card_money": 0.00,
-				"coupon_money": 10.00,
-				"integral": 0,
-				"integral_money": 0.00,
-				"total": 0.00
+				"coupon_money": 60.10,
+				"integral":229,
+				"integral_money":11.45,
+				"total": 81.55
 			},
 			"delivery_items": [{
 				"bid": "003-yangmi",
@@ -827,10 +827,10 @@ Scenario:3 管理员退款成功多供货商的订单-带运费-待发货，已�
 					"cash": 10.00,
 					"weizoom_card_money": 0.00,
 					"member_card_money":0.00,
-					"coupon_money": 60.10,
-					"integral": 229,
-					"integral_money": 11.45,
-					"total": 81.55
+					"coupon_money": 10.00,
+					"integral": 0,
+					"integral_money": 0.00,
+					"total": 20.00
 					},
 				"supplier_info": {
 					"supplier_type": "supplier",
