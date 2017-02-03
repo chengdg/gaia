@@ -2095,11 +2095,6 @@ Scenario:7 管理员退款成功出货单，对商品销量和库存的影响
 	Then zhouxun能获得'在售'商品列表
 		"""
 		[{
-			"name":"无规格商品1-zhouxun",
-			"stock_type": "有限",
-			"stocks": 100,
-			"sales": 0
-		},{
 			"name":"多规格商品2-zhouxun",
 			"model":{
 				"models": {
@@ -2117,6 +2112,11 @@ Scenario:7 管理员退款成功出货单，对商品销量和库存的影响
 					}
 				}
 			},
+			"sales": 0
+		},{
+			"name":"无规格商品1-zhouxun",
+			"stock_type": "有限",
+			"stocks": 100,
 			"sales": 0
 		},{
 			"name":"无规格商品1-yangmi",
@@ -2182,11 +2182,6 @@ Scenario:7 管理员退款成功出货单，对商品销量和库存的影响
 	Then zhouxun能获得'在售'商品列表
 		"""
 		[{
-			"name":"无规格商品1-zhouxun",
-			"stock_type": "有限",
-			"stocks": 99,
-			"sales": 1
-		},{
 			"name":"多规格商品2-zhouxun",
 			"model":{
 				"models": {
@@ -2205,6 +2200,11 @@ Scenario:7 管理员退款成功出货单，对商品销量和库存的影响
 				}
 			}
 			"sales": 2
+		},{
+			"name":"无规格商品1-zhouxun",
+			"stock_type": "有限",
+			"stocks": 99,
+			"sales": 1
 		},{
 			"name":"无规格商品1-yangmi",
 			"stock_type": "有限",
@@ -2252,11 +2252,6 @@ Scenario:7 管理员退款成功出货单，对商品销量和库存的影响
 	Then zhouxun能获得'在售'商品列表
 		"""
 		[{
-			"name":"无规格商品1-zhouxun",
-			"stock_type": "有限",
-			"stocks": 100,
-			"sales": 0
-		},{
 			"name":"多规格商品2-zhouxun",
 			"model":{
 				"models": {
@@ -2274,6 +2269,11 @@ Scenario:7 管理员退款成功出货单，对商品销量和库存的影响
 					}
 				}
 			},
+			"sales": 0
+		},{
+			"name":"无规格商品1-zhouxun",
+			"stock_type": "有限",
+			"stocks": 100,
 			"sales": 0
 		},{
 			"name":"无规格商品1-yangmi",
