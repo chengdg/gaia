@@ -2,7 +2,7 @@ Feature:管理员申请退款出货单
 
 Background:
 
-@order
+@order @ztqb
 Scenario:1 管理员退款单供货商的订单-待发货
 	Given 重置'apiserver'的bdd环境
 
