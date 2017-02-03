@@ -208,3 +208,11 @@ def step_impl(context, user, bid):
 	# 	o['buyer'] = o['member_info']['name']
 	expected = json.loads(context.text)
 	bdd_util.assert_dict(expected, actual, ignore_keys=['time'])
+
+
+@when(u"{user}申请退款出货单'{bid}'")
+def step_impl(context, user ,bid):
+	"""
+	@type context: behave.runner.Context
+	"""
+	pass
