@@ -118,6 +118,7 @@ Background:
 		"""
 		["无规格商品1","多规格商品2","黄桥烧饼"]
 		"""
+
 @order @order_order
 Scenario:1 支付包含单个供货商单个商品（无规格）的订单
 	Given bill关注zhouxun的公众号::apiserver

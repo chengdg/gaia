@@ -2018,11 +2018,6 @@ Scenario:7 管理员退款出货单，商品销量和库存
 	Then zhouxun能获得'在售'商品列表
 		"""
 		[{
-			"name":"无规格商品1-yangmi",
-			"stock_type": "有限",
-			"stocks": 100,
-			"sales": 0
-		},{
 			"name":"多规格商品2-zhouxun",
 			"sales": 0,
 			"model":{
@@ -2043,6 +2038,11 @@ Scenario:7 管理员退款出货单，商品销量和库存
 			}
 		},{
 			"name":"无规格商品1-zhouxun",
+			"stock_type": "有限",
+			"stocks": 100,
+			"sales": 0
+		},{
+			"name":"无规格商品1-yangmi",
 			"stock_type": "有限",
 			"stocks": 100,
 			"sales": 0
@@ -2104,11 +2104,6 @@ Scenario:7 管理员退款出货单，商品销量和库存
 	Then zhouxun能获得'在售'商品列表
 		"""
 		[{
-			"name":"无规格商品1-yangmi",
-			"stock_type": "有限",
-			"stocks": 99,
-			"sales": 1
-		},{
 			"name":"多规格商品2-zhouxun",
 			"model":{
 				"models": {
@@ -2129,6 +2124,11 @@ Scenario:7 管理员退款出货单，商品销量和库存
 			"sales": 2
 		},{
 			"name":"无规格商品1-zhouxun",
+			"stock_type": "有限",
+			"stocks": 99,
+			"sales": 1
+		},{
+			"name":"无规格商品1-yangmi",
 			"stock_type": "有限",
 			"stocks": 99,
 			"sales": 1
@@ -2162,11 +2162,6 @@ Scenario:7 管理员退款出货单，商品销量和库存
 	Then zhouxun能获得'在售'商品列表
 		"""
 		[{
-			"name":"无规格商品1-yangmi",
-			"stock_type": "有限",
-			"stocks": 99,
-			"sales": 1
-		},{
 			"name":"多规格商品2-zhouxun",
 			"model":{
 				"models": {
@@ -2187,6 +2182,11 @@ Scenario:7 管理员退款出货单，商品销量和库存
 			"sales": 2
 		},{
 			"name":"无规格商品1-zhouxun",
+			"stock_type": "有限",
+			"stocks": 99,
+			"sales": 1
+		},{
+			"name":"无规格商品1-yangmi",
 			"stock_type": "有限",
 			"stocks": 99,
 			"sales": 1
