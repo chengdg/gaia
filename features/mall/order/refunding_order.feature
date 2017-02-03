@@ -2,7 +2,7 @@ Feature:管理员申请退款出货单
 
 Background:
 
-@order @ztqb
+@gaia @order
 Scenario:1 管理员退款单供货商的订单-待发货
 	Given 重置'apiserver'的bdd环境
 
@@ -89,7 +89,7 @@ Scenario:1 管理员退款单供货商的订单-待发货
 		[{
 			"bid": "001",
 			"status_code": "refunding",
-			"pay_interface_type_code": "weixin_pay"
+			"pay_interface_type_code": "weixin_pay",
 			"pay_money": 50.11,
 			"product_price": 50.11,
 			"postage":0.00,
@@ -104,7 +104,7 @@ Scenario:1 管理员退款单供货商的订单-待发货
 				"cash": 0.00,
 				"weizoom_card_money": 0.00,
 				"member_card_money": 0.00,
-				"coupon_money": 00.00,
+				"coupon_money": 0.00,
 				"integral": 0,
 				"integral_money": 0.00,
 				"total": 0.00
@@ -140,7 +140,7 @@ Scenario:1 管理员退款单供货商的订单-待发货
 
 	Then zhouxun获得订单'001'
 		"""
-		[{
+		{
 			"bid": "001",
 			"status_code": "refunding",
 			"status_logs":[{
@@ -169,7 +169,7 @@ Scenario:1 管理员退款单供货商的订单-待发货
 				"operator":"zhouxun",
 				"time":"2016-01-02 10:00:00"
 			}],
-			"pay_interface_type_code": "weixin_pay"
+			"pay_interface_type_code": "weixin_pay",
 			"pay_money": 50.11,
 			"product_price": 50.11,
 			"postage":0.00,
@@ -196,7 +196,7 @@ Scenario:1 管理员退款单供货商的订单-待发货
 					"time":"2016-01-01 00:00:00"
 				},{
 					"action_text":"支付",
-					"operator":"zhouxun",
+					"operator":"客户",
 					"time":"2016-01-01 10:00:00"
 				},{
 					"action_text":"退款",
@@ -226,10 +226,10 @@ Scenario:1 管理员退款单供货商的订单-待发货
 					"count": 2
 				}]
 			}]
-		}]
+		}
 		"""
 
-@order
+@gaia @order
 Scenario:2 管理员退款多供货商的订单-已发货
 	Given 重置'apiserver'的bdd环境
 	Given 重置'weapp'的bdd环境
@@ -253,13 +253,13 @@ Scenario:2 管理员退款多供货商的订单-已发货
 		"""
 
 	Given zhouxun登录系统
-	Given zhouxun设定会员积分策略
+	When zhouxun更新积分规则为
 		"""
 		{
 			"integral_each_yuan": 20
 		}
 		"""
-	And zhouxun已添加商品规格
+	Given zhouxun已添加商品规格
 		"""
 		[{
 			"name": "颜色",
@@ -394,7 +394,7 @@ Scenario:2 管理员退款多供货商的订单-已发货
 		[{
 			"bid": "002",
 			"status_code": "paid",
-			"pay_interface_type_code": "alipay"
+			"pay_interface_type_code": "alipay",
 			"pay_money": 61.55,
 			"product_price": 61.55,
 			"postage":0.00,
@@ -409,7 +409,7 @@ Scenario:2 管理员退款多供货商的订单-已发货
 				"cash": 0.00,
 				"weizoom_card_money": 0.00,
 				"member_card_money": 0.00,
-				"coupon_money": 00.00,
+				"coupon_money": 0.00,
 				"integral": 0,
 				"integral_money": 0.00,
 				"total": 0.00
@@ -448,11 +448,11 @@ Scenario:2 管理员退款多供货商的订单-已发货
 					"count": 1
 				},{
 					"name":"多规格商品2-zhouxun",
-					"model": "黑色 M",
+					"product_model_name_texts": ["黑色","M"],
 					"count": 1
 				},{
 					"name":"多规格商品2-zhouxun",
-					"model": "白色 S",
+					"product_model_name_texts": ["白色", "S"],
 					"count": 1
 				}]
 			}]
@@ -461,7 +461,7 @@ Scenario:2 管理员退款多供货商的订单-已发货
 
 	Then zhouxun获得订单'002'
 		"""
-		[{
+		{
 			"bid": "002",
 			"status_code": "paid",
 			"status_logs":[{
@@ -482,7 +482,7 @@ Scenario:2 管理员退款多供货商的订单-已发货
 				"operator":"客户",
 				"time":"2016-02-01 10:00:00"
 			}],
-			"pay_interface_type_code": "alipay"
+			"pay_interface_type_code": "alipay",
 			"pay_money": 61.55,
 			"product_price": 61.55,
 			"postage":0.00,
@@ -561,18 +561,18 @@ Scenario:2 管理员退款多供货商的订单-已发货
 					"count": 1
 				},{
 					"name":"多规格商品2-zhouxun",
-					"model": "黑色 M",
+					"product_model_name_texts": ["黑色","M"],
 					"count": 1
 				},{
 					"name":"多规格商品2-zhouxun",
-					"model": "白色 S",
+					"product_model_name_texts": ["白色", "S"],
 					"count": 1
 				}]
 			}]
-		}]
+		}
 		"""
 
-@order
+@gaia @order
 Scenario:3 管理员退款多供货商的订单-带运费-待发货，已完成
 	Given 重置'apiserver'的bdd环境
 	Given 重置'weapp'的bdd环境
@@ -598,13 +598,13 @@ Scenario:3 管理员退款多供货商的订单-带运费-待发货，已完成
 		"""
 
 	Given zhouxun登录系统
-	Given zhouxun设定会员积分策略
+	When zhouxun更新积分规则为
 		"""
 		{
 			"integral_each_yuan": 20
 		}
 		"""
-	And zhouxun已添加商品规格
+	Given zhouxun已添加商品规格
 		"""
 		[{
 			"name": "颜色",
@@ -724,7 +724,7 @@ Scenario:3 管理员退款多供货商的订单-带运费-待发货，已完成
 			"time":"2016-03-02 10:00:00"
 		}]
 		"""
-	When zhouxun完成出货单'003-zhouxun'
+	When zhouxun标记完成出货单'003-zhouxun'
 		"""
 		{
 			"time": "2016-03-03 10:00:00"
@@ -758,7 +758,7 @@ Scenario:3 管理员退款多供货商的订单-带运费-待发货，已完成
 		[{
 			"bid": "003",
 			"status_code": "refunding",
-			"pay_interface_type_code": "alipay"
+			"pay_interface_type_code": "alipay",
 			"pay_money": 81.55,
 			"product_price": 61.55,
 			"postage":20.00,
@@ -773,7 +773,7 @@ Scenario:3 管理员退款多供货商的订单-带运费-待发货，已完成
 				"cash": 0.00,
 				"weizoom_card_money": 0.00,
 				"member_card_money": 0.00,
-				"coupon_money": 00.00,
+				"coupon_money": 0.00,
 				"integral": 0,
 				"integral_money": 0.00,
 				"total": 0.00
@@ -823,11 +823,11 @@ Scenario:3 管理员退款多供货商的订单-带运费-待发货，已完成
 					"count": 1
 				},{
 					"name":"多规格商品2-zhouxun",
-					"model": "黑色 M",
+					"product_model_name_texts": ["黑色", "M"],
 					"count": 1
 				},{
 					"name":"多规格商品2-zhouxun",
-					"model": "白色 S",
+					"product_model_name_texts": ["白色","S"],
 					"count": 1
 				}]
 			}]
@@ -836,7 +836,7 @@ Scenario:3 管理员退款多供货商的订单-带运费-待发货，已完成
 
 	Then zhouxun获得订单'003'
 		"""
-		[{
+		{
 			"bid": "003",
 			"status_code": "refunding",
 			"status_logs":[{
@@ -865,7 +865,7 @@ Scenario:3 管理员退款多供货商的订单-带运费-待发货，已完成
 				"operator":"zhouxun",
 				"time":"2016-03-04 11:00:00"
 			}],
-			"pay_interface_type_code": "alipay"
+			"pay_interface_type_code": "alipay",
 			"pay_money": 81.55,
 			"product_price": 61.55,
 			"postage":20.00,
@@ -962,15 +962,15 @@ Scenario:3 管理员退款多供货商的订单-带运费-待发货，已完成
 					"count": 1
 				},{
 					"name":"多规格商品2-zhouxun",
-					"model": "黑色 M",
+					"product_model_name_texts": ["黑色", "M"],
 					"count": 1
 				},{
 					"name":"多规格商品2-zhouxun",
-					"model": "白色 S",
+					"product_model_name_texts": ["白色","S"],
 					"count": 1
 				}]
 			}]
-		}]
+		}
 		"""
 
 @order
@@ -998,7 +998,7 @@ Scenario:4 管理员退款使用微众卡全额支付的订单
 		"""
 
 	Given zhouxun登录系统
-	Given zhouxun设定会员积分策略
+	When zhouxun更新积分规则为
 		"""
 		{
 			"integral_each_yuan": 20
@@ -1044,7 +1044,7 @@ Scenario:4 管理员退款使用微众卡全额支付的订单
 				"name":"100元微众卡",
 				"prefix_value":"100",
 				"type":"virtual",
-				"money":"100.00",
+				"money":"10.00",
 				"num":"2",
 				"comments":"微众卡"
 			}]
@@ -1244,7 +1244,7 @@ Scenario:4 管理员退款使用微众卡全额支付的订单
 				"cash": 0.00,
 				"weizoom_card_money": 0.00,
 				"member_card_money": 0.00,
-				"coupon_money": 00.00,
+				"coupon_money": 0.00,
 				"integral": 0,
 				"integral_money": 0.00,
 				"total": 0.00
@@ -1406,7 +1406,7 @@ Scenario:4 管理员退款使用微众卡全额支付的订单
 		}]
 		"""
 
-@order
+@gaia @order
 Scenario:5 管理员退款使用积分的订单
 	Given 重置'apiserver'的bdd环境
 	Given 重置'weapp'的bdd环境
@@ -1452,12 +1452,13 @@ Scenario:5 管理员退款使用积分的订单
 		["无规格商品1", "无规格商品2"]
 		"""
 
-	Given zhouxun设定会员积分策略
+	When zhouxun更新积分规则为
 		"""
 		{
 			"integral_each_yuan": 20
 		}
 		"""
+	Given zhouxun登录系统::weapp
 	When zhouxun创建积分应用活动::weapp
 		"""
 		[{
@@ -1511,7 +1512,7 @@ Scenario:5 管理员退款使用积分的订单
 	When bill使用支付方式'微信支付'进行支付订单'005'于2016-05-01 10:00:00::apiserver
 
 	Given zhouxun登录系统
-	Then bill在zhouxun的webapp中拥有100会员积分::weapp
+	Then bill在zhouxun的webapp中拥有100会员积分::apiserver
 
 	When zhouxun申请退款出货单'005-zhouxun'
 		"""
@@ -1525,14 +1526,14 @@ Scenario:5 管理员退款使用积分的订单
 		}
 		"""
 
-	Then bill在zhouxun的webapp中拥有100会员积分::weapp
+	Then bill在zhouxun的webapp中拥有100会员积分::apiserver
 
 	Then zhouxun获得订单列表
 		"""
 		[{
 			"bid": "005",
 			"status_code": "refunding",
-			"pay_interface_type_code": "weixin_pay"
+			"pay_interface_type_code": "weixin_pay",
 			"pay_money": 30.11,
 			"product_price": 50.11,
 			"postage":0.00,
@@ -1549,7 +1550,7 @@ Scenario:5 管理员退款使用积分的订单
 				"cash": 0.00,
 				"weizoom_card_money": 0.00,
 				"member_card_money": 0.00,
-				"coupon_money": 00.00,
+				"coupon_money": 0.00,
 				"integral": 0,
 				"integral_money": 0.00,
 				"total": 0.00
@@ -1585,10 +1586,10 @@ Scenario:5 管理员退款使用积分的订单
 
 	Then zhouxun获得订单'005'
 		"""
-		[{
+		{
 			"bid": "005",
 			"status_code": "refunding",
-			"pay_interface_type_code": "weixin_pay"
+			"pay_interface_type_code": "weixin_pay",
 			"pay_money": 30.11,
 			"product_price": 50.11,
 			"postage":0.00,
@@ -1637,10 +1638,10 @@ Scenario:5 管理员退款使用积分的订单
 					"count": 2
 				}]
 			}]
-		}]
+		}
 		"""
 
-@order
+@gaia @order
 Scenario:6 管理员退款使用优惠券的订单
 	Given 重置'apiserver'的bdd环境
 	Given 重置'weapp'的bdd环境
@@ -1654,10 +1655,11 @@ Scenario:6 管理员退款使用优惠券的订单
 		}]
 		"""
 	#创建优惠券-全体券10元
+	Given zhouxun登录系统::weapp
 	When zhouxun添加优惠券规则::weapp
 		"""
 		[{
-			"name": "全店通用券1",
+			"name": "全体券1",
 			"money": 10.00,
 			"limit_counts": "无限",
 			"count": 3,
@@ -1706,7 +1708,7 @@ Scenario:6 管理员退款使用优惠券的订单
 	When zhouxun创建优惠券发放规则发放优惠券::weapp
 		"""
 		{
-			"name": "全店通用券1",
+			"name": "全体券1",
 			"count": 1,
 			"members": ["bill"]
 		}
@@ -1802,7 +1804,7 @@ Scenario:6 管理员退款使用优惠券的订单
 		[{
 			"bid": "006",
 			"status_code": "refunding",
-			"pay_interface_type_code": "weixin_pay"
+			"pay_interface_type_code": "weixin_pay",
 			"pay_money": 40.11,
 			"product_price": 50.11,
 			"postage":0.00,
@@ -1818,7 +1820,7 @@ Scenario:6 管理员退款使用优惠券的订单
 				"cash": 0.00,
 				"weizoom_card_money": 0.00,
 				"member_card_money": 0.00,
-				"coupon_money": 00.00,
+				"coupon_money": 0.00,
 				"integral": 0,
 				"integral_money": 0.00,
 				"total": 0.00
@@ -1854,11 +1856,11 @@ Scenario:6 管理员退款使用优惠券的订单
 
 	Then zhouxun获得订单'006'
 		"""
-		[{
+		{
 			"bid": "006",
 			"status_code": "refunding",
-			"pay_interface_type_code": "weixin_pay"
-			"couponMoney": 10.00,
+			"pay_interface_type_code": "weixin_pay",
+			"coupon_money": 10.00,
 			"pay_money": 40.11,
 			"product_price": 50.11,
 			"postage":0.00,
@@ -1902,10 +1904,10 @@ Scenario:6 管理员退款使用优惠券的订单
 					"count": 2
 				}]
 			}]
-		}]
+		}
 		"""
 
-@order
+@order @ztqb
 Scenario:7 管理员退款出货单，商品销量和库存
 	Given 重置'apiserver'的bdd环境
 	Given 重置'weapp'的bdd环境
@@ -1931,7 +1933,7 @@ Scenario:7 管理员退款出货单，商品销量和库存
 		"""
 
 	Given zhouxun登录系统
-	Given zhouxun设定会员积分策略
+	When zhouxun更新积分规则为
 		"""
 		{
 			"integral_each_yuan": 20
@@ -2022,6 +2024,7 @@ Scenario:7 管理员退款出货单，商品销量和库存
 			"sales": 0
 		},{
 			"name":"多规格商品2-zhouxun",
+			"sales": 0,
 			"model":{
 				"models": {
 					"黑色 M": {
@@ -2038,7 +2041,6 @@ Scenario:7 管理员退款出货单，商品销量和库存
 					}
 				}
 			}
-			"sales": 0
 		},{
 			"name":"无规格商品1-yangmi",
 			"stock_type": "有限",
@@ -2092,7 +2094,7 @@ Scenario:7 管理员退款出货单，商品销量和库存
 			"time":"2016-07-02 10:00:00"
 		}]
 		"""
-	When zhouxun完成出货单'007-zhouxun'
+	When zhouxun标记完成出货单'007-zhouxun'
 		"""
 		{
 			"time": "2016-07-03 10:00:00"
@@ -2218,7 +2220,7 @@ Scenario:8 管理员退款出货单，会员信息
 		"""
 
 	Given zhouxun登录系统
-	Given zhouxun设定会员积分策略
+	When zhouxun更新积分规则为
 		"""
 		{
 			"integral_each_yuan": 20
@@ -2344,7 +2346,7 @@ Scenario:8 管理员退款出货单，会员信息
 			"time":"2016-08-02 10:00:00"
 		}]
 		"""
-	When zhouxun完成出货单'008-zhouxun'
+	When zhouxun标记完成出货单'008-zhouxun'
 		"""
 		{
 			"time": "2016-08-03 10:00:00"
@@ -2362,7 +2364,7 @@ Scenario:8 管理员退款出货单，会员信息
 			"time":"2016-08-02 10:00:00"
 		}]
 		"""
-	When zhouxun完成出货单'008-yangmi'
+	When zhouxun标记完成出货单'008-yangmi'
 		"""
 		{
 			"time": "2016-08-03 10:00:00"
@@ -2426,7 +2428,7 @@ Scenario:9 管理员退款出货单，积分设置为1元=0积分
 			"is_active": "启用"
 		}]
 		"""
-	Given zhouxun设定会员积分策略
+	When zhouxun更新积分规则为
 		"""
 		{
 			"integral_each_yuan": 20
@@ -2490,7 +2492,7 @@ Scenario:9 管理员退款出货单，积分设置为1元=0积分
 	When bill使用支付方式'微信支付'进行支付订单'009'于2016-09-01 10:00:00::apiserver
 
 	Given zhouxun登录系统
-	Given zhouxun设定会员积分策略
+	When zhouxun更新积分规则为
 		"""
 		{
 			"integral_each_yuan": 0
@@ -2513,7 +2515,7 @@ Scenario:9 管理员退款出货单，积分设置为1元=0积分
 		[{
 			"bid": "009",
 			"status_code": "refunding",
-			"pay_interface_type_code": "weixin_pay"
+			"pay_interface_type_code": "weixin_pay",
 			"coupon_money": 0.00,
 			"pay_money": 50.11,
 			"product_price": 50.11,
@@ -2531,7 +2533,7 @@ Scenario:9 管理员退款出货单，积分设置为1元=0积分
 				"cash": 0.00,
 				"weizoom_card_money": 0.00,
 				"member_card_money": 0.00,
-				"coupon_money": 00.00,
+				"coupon_money": 0.00,
 				"integral": 0,
 				"integral_money": 0.00,
 				"total": 0.00
@@ -2596,7 +2598,7 @@ Scenario:9 管理员退款出货单，积分设置为1元=0积分
 				"operator":"zhouxun",
 				"time":"2016-09-02 10:00:00"
 			}],
-			"pay_interface_type_code": "weixin_pay"
+			"pay_interface_type_code": "weixin_pay",
 			"couponMoney": 0.00,
 			"pay_money": 50.11,
 			"product_price": 50.11,
@@ -2765,7 +2767,7 @@ Scenario:10 管理员退款含有限时抢购商品的出货单
 		[{
 			"bid": "010",
 			"status_code": "refunding",
-			"pay_interface_type_code": "weixin_pay"
+			"pay_interface_type_code": "weixin_pay",
 			"pay_money": 45.00,
 			"product_price": 50.11,
 			"postage":0.00,
@@ -2783,7 +2785,7 @@ Scenario:10 管理员退款含有限时抢购商品的出货单
 				"cash": 0.00,
 				"weizoom_card_money": 0.00,
 				"member_card_money": 0.00,
-				"coupon_money": 00.00,
+				"coupon_money": 0.00,
 				"integral": 0,
 				"integral_money": 0.00,
 				"total": 0.00
@@ -2822,7 +2824,7 @@ Scenario:10 管理员退款含有限时抢购商品的出货单
 		[{
 			"bid": "010",
 			"status_code": "refunding",
-			"pay_interface_type_code": "weixin_pay"
+			"pay_interface_type_code": "weixin_pay",
 			"couponMoney": 0.00,
 			"pay_money": 45.00,
 			"product_price": 50.11,

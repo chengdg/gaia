@@ -313,7 +313,7 @@ class Order(business_model.Model):
 			else:
 				order.weizoom_card_info = {
 					'trade_id': '',
-					'used_card': ''
+					'used_card': []
 				}
 
 	@staticmethod

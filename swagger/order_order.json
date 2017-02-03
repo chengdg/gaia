@@ -518,7 +518,7 @@
 													"type": "string",
 													"description": "订单编号"
 												},
-												"couponMoney": {
+												"coupon_money": {
 													"type": "number",
 													"description": "优惠券抵扣金额"
 												},

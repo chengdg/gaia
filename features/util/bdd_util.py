@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 import json
 import re
-from datetime import datetime,timedelta
+from datetime import datetime, timedelta
+from decimal import Decimal
+
+import six
 
 import settings
 from client import Client
@@ -10,12 +13,14 @@ from util import string_util
 from db.member import models as member_models
 from db.mall import models as mall_models
 import logging
+
 # from business.account.member import Member
 
 tc = None
 
 BOUNDARY = 'BoUnDaRyStRiNg'
 MULTIPART_CONTENT = 'multipart/form-data; boundary=%s' % BOUNDARY
+
 
 class WeappClient(Client):
 	def __init__(self, enforce_csrf_checks=False, **defaults):
@@ -25,9 +30,9 @@ class WeappClient(Client):
 		if settings.DUMP_TEST_REQUEST:
 			print '\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'
 			print '{{{ request'
-	
+
 		response = super(WeappClient, self).request(**request)
-	
+
 		if settings.DUMP_TEST_REQUEST:
 			print '}}}'
 			print '\n{{{ response'
@@ -36,12 +41,10 @@ class WeappClient(Client):
 			print '<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n'
 		return response
 
-
 	def reset(self):
 		self.cookies = SimpleCookie()
 		if hasattr(self, 'user'):
 			self.user = User()
-
 
 
 ###########################################################################
@@ -51,6 +54,7 @@ class Obj(object):
 	def __init__(self):
 		pass
 
+
 def login(user, password=None, **kwargs):
 	if not password:
 		password = 'test'
@@ -59,13 +63,13 @@ def login(user, password=None, **kwargs):
 		context = kwargs['context']
 		if hasattr(context, 'client'):
 			if context.client.webapp_user and context.client.webapp_user.username == user:
-				#如果已经登录了，且登录用户与user相同，直接返回
+				# 如果已经登录了，且登录用户与user相同，直接返回
 				return context.client
 			else:
-				#如果已经登录了，且登录用户不与user相同，退出登录
+				# 如果已经登录了，且登录用户不与user相同，退出登录
 				context.client.webapp_user = None
 
-	#client = WeappClient(HTTP_USER_AGENT='WebKit MicroMessenger Mozilla')
+	# client = WeappClient(HTTP_USER_AGENT='WebKit MicroMessenger Mozilla')
 	client = Client()
 	client.webapp_user = Obj()
 	client.webapp_user.username = user
@@ -82,6 +86,7 @@ def login(user, password=None, **kwargs):
 ###########################################################################
 def get_user_id_for(username):
 	return User.get(User.username == username).id
+
 
 def is_weizoom_corp(corp_id):
 	return UserProfile.select().dj_where(user_id=corp_id).first().webapp_type == 2
@@ -124,7 +129,7 @@ def get_date(str):
 		将字符串转成datetime对象
 		今天 -> 2014-4-18
 	"""
-	#处理expected中的参数
+	# 处理expected中的参数
 	today = datetime.now()
 	if str == u'今天':
 		delta = 0
@@ -139,7 +144,7 @@ def get_date(str):
 	elif u'天后' in str:
 		delta = int(str[:-2])
 	elif u'天前' in str:
-		delta = 0-int(str[:-2])
+		delta = 0 - int(str[:-2])
 	else:
 		tmp = str.split(' ')
 		if len(tmp) == 1:
@@ -152,7 +157,8 @@ def get_date(str):
 
 	return today + timedelta(delta)
 
-def get_date_to_time_interval (str):
+
+def get_date_to_time_interval(str):
 	"""
 		将如下格式转化为字符串形式的时间间隔
 		今天 -> 2014-2-13|2014-2-14
@@ -164,16 +170,23 @@ def get_date_to_time_interval (str):
 		result = m.group(1, 2, 3, 4)
 		if result:
 			if result[1] == u'天前' and result[3] == u'天前':
-				date_interval = "%s|%s" % (datetime.strftime(datetime.now()-timedelta(days=int(result[0])), "%Y-%m-%d"), datetime.strftime(datetime.now() - timedelta(days=int(result[2])),"%Y-%m-%d"))
+				date_interval = "%s|%s" % (
+					datetime.strftime(datetime.now() - timedelta(days=int(result[0])), "%Y-%m-%d"),
+					datetime.strftime(datetime.now() - timedelta(days=int(result[2])), "%Y-%m-%d"))
 			if result[1] == u'天前' and result[2] == u'' and result[3] == u'今天':
-				date_interval = "%s|%s" % (datetime.strftime(datetime.now() - timedelta(days=int(result[0])),"%Y-%m-%d"), datetime.strftime(datetime.now(),"%Y-%m-%d"))
+				date_interval = "%s|%s" % (
+					datetime.strftime(datetime.now() - timedelta(days=int(result[0])), "%Y-%m-%d"),
+					datetime.strftime(datetime.now(), "%Y-%m-%d"))
 			if result[1] == u'今天' and result[3] == u'明天':
-				date_interval = "%s|%s" % (datetime.strftime(datetime.now(), "%Y-%m-%d"), datetime.strftime(datetime.now() + timedelta(days=1),"%Y-%m-%d"))
+				date_interval = "%s|%s" % (datetime.strftime(datetime.now(), "%Y-%m-%d"),
+				                           datetime.strftime(datetime.now() + timedelta(days=1), "%Y-%m-%d"))
 	return date_interval
+
 
 def get_date_str(str):
 	date = get_date(str)
 	return date.strftime('%Y-%m-%d')
+
 
 def get_datetime_str(str):
 	"""保留小时数
@@ -181,9 +194,11 @@ def get_datetime_str(str):
 	date = get_date(str)
 	return '%s 00:00:00' % date.strftime('%Y-%m-%d')
 
+
 def get_datetime_no_second_str(str):
 	date = get_date(str)
 	return '%s 00:00' % date.strftime('%Y-%m-%d')
+
 
 def convert_to_same_type(a, b):
 	def to_same_type(target, other):
@@ -215,8 +230,17 @@ def convert_to_same_type(a, b):
 			return new_a, new_b
 
 	return a, b
-	
 
+
+def is_base_type(obj):
+	"""Determine if the object instance is of a protected type.
+
+	Objects of protected types are preserved as-is when passed to
+	force_text(strings_only=True).
+	"""
+	import datetime as datetime
+	return isinstance(obj,
+	                  six.integer_types + (type(None), float, Decimal, datetime.datetime, datetime.date, datetime.time))
 
 
 def diff(local, other, ignore_keys):
@@ -227,14 +251,14 @@ def diff(local, other, ignore_keys):
 	"""
 
 	def _recursive_diff(l, r, res, path='/'):
-		# if type(l) != type(r) and not (isinstance(l, basestring) and isinstance(r, basestring)):
-		# 	res.append({
-		# 		'replace': path,
-		# 		'actual': r,
-		# 		'details': 'type',
-		# 		'expected': l
-		# 	})
-		# 	return
+		if not is_base_type(l) and type(l) != type(r):
+			res.append({
+				'replace': path,
+				'actual': r,
+				'details': 'type',
+				'expected': l
+			})
+			return
 
 		delim = '/' if path != '/' else ''
 
@@ -300,11 +324,10 @@ def supper_assert(expected, actual, ignore_key):
 		raise RuntimeError(result)
 
 
-
 ###########################################################################
 # assert_dict: 验证expected中的数据都出现在了actual中
 ###########################################################################
-def assert_dict(expected, actual,ignore_keys=None):
+def assert_dict(expected, actual, ignore_keys=None):
 	# global tc
 	# is_dict_actual = isinstance(actual, dict)
 	# for key in expected:
@@ -329,6 +352,7 @@ def assert_dict(expected, actual,ignore_keys=None):
 	# 			raise e
 	supper_assert(expected, actual, ignore_keys)
 
+
 ###########################################################################
 # assert_list: 验证expected中的数据都出现在了actual中
 ###########################################################################
@@ -351,6 +375,7 @@ def assert_list(expected, actual, ignore_keys=None):
 	# 			raise e
 	supper_assert(expected, actual, ignore_keys)
 
+
 ###########################################################################
 # assert_expected_list_in_actual: 验证expected中的数据都出现在了actual中
 ###########################################################################
@@ -366,7 +391,8 @@ def assert_expected_list_in_actual(expected, actual):
 			try:
 				tc.assertEquals(expected_obj, actual_obj)
 			except Exception, e:
-				items = ['\n<<<<<', 'e: %s' % str(expected), 'a: %s' % str(actual), 'key: %s' % key, e.args[0], '>>>>>\n']
+				items = ['\n<<<<<', 'e: %s' % str(expected), 'a: %s' % str(actual), 'key: %s' % key, e.args[0],
+				         '>>>>>\n']
 				e.args = ('\n'.join(items),)
 				raise e
 
@@ -411,7 +437,6 @@ def table2list(context):
 	return expected
 
 
-
 bdd_mock = {
 	'notify_mail': ''
 }
@@ -423,6 +448,7 @@ def set_bdd_mock(mock_type, mock_content):
 
 def get_bdd_mock(mock_type):
 	return bdd_mock[mock_type]
+
 
 import copy
 
@@ -469,15 +495,16 @@ class JsonModifier(object):
 
 
 class ModifyRule(object):
-    """
-    如不实现相关方法,则返回原值
-    """
+	"""
+	如不实现相关方法,则返回原值
+	"""
 
-    def modify_key_func(self, key):
-        return key
+	def modify_key_func(self, key):
+		return key
 
-    def modify_value_func(self, value):
-        return value
+	def modify_value_func(self, value):
+		return value
+
 
 class ChangeKeyNameRule(ModifyRule):
 	def __init__(self, key_map):
