@@ -1984,7 +1984,7 @@ Scenario:6 管理员退款成功使用优惠券的订单
 		}
 		"""
 
-@order @ztqb
+@gaia @order
 Scenario:7 管理员退款成功出货单，对商品销量和库存的影响
 	Given 重置'apiserver'的bdd环境
 	Given 重置'weapp'的bdd环境
@@ -2115,13 +2115,25 @@ Scenario:7 管理员退款成功出货单，对商品销量和库存的影响
 			"sales": 0
 		},{
 			"name":"无规格商品1-zhouxun",
-			"stock_type": "有限",
-			"stocks": 100,
+			"model": {
+				"models": {
+					"standard": {
+						"stock_type": "有限",
+						"stocks": 100
+					}
+				}
+			},
 			"sales": 0
 		},{
 			"name":"无规格商品1-yangmi",
-			"stock_type": "有限",
-			"stocks": 100,
+			"model": {
+				"models": {
+					"standard": {
+						"stock_type": "有限",
+						"stocks": 100
+					}
+				}
+			},
 			"sales": 0
 		}]
 		"""
@@ -2198,17 +2210,29 @@ Scenario:7 管理员退款成功出货单，对商品销量和库存的影响
 						"stocks": 99
 					}
 				}
-			}
+			},
 			"sales": 2
 		},{
 			"name":"无规格商品1-zhouxun",
-			"stock_type": "有限",
-			"stocks": 99,
+			"model": {
+				"models": {
+					"standard": {
+						"stock_type": "有限",
+						"stocks": 99
+					}
+				}
+			},
 			"sales": 1
 		},{
 			"name":"无规格商品1-yangmi",
-			"stock_type": "有限",
-			"stocks": 99,
+			"model": {
+				"models": {
+					"standard": {
+						"stock_type": "有限",
+						"stocks": 99
+					}
+				}
+			},
 			"sales": 1
 		}]
 		"""
@@ -2272,18 +2296,30 @@ Scenario:7 管理员退款成功出货单，对商品销量和库存的影响
 			"sales": 0
 		},{
 			"name":"无规格商品1-zhouxun",
-			"stock_type": "有限",
-			"stocks": 100,
+			"model": {
+				"models": {
+					"standard": {
+						"stock_type": "有限",
+						"stocks": 100
+					}
+				}
+			},
 			"sales": 0
 		},{
 			"name":"无规格商品1-yangmi",
-			"stock_type": "有限",
-			"stocks": 100,
+			"model": {
+				"models": {
+					"standard": {
+						"stock_type": "有限",
+						"stocks": 100
+					}
+				}
+			},
 			"sales": 0
 		}]
 		"""
 
-@order
+@gaia @order
 Scenario:8 管理员退款成功出货单，对会员信息的影响
 	Given 重置'apiserver'的bdd环境
 	Given 重置'weapp'的bdd环境
@@ -2395,7 +2431,7 @@ Scenario:8 管理员退款成功出货单，对会员信息的影响
 	When bill购买zhouxun的商品::apiserver
 		"""
 		{
-			"order_id":"007",
+			"order_id":"008",
 			"date":"2016-07-01",
 			"ship_name": "bill",
 			"ship_tel": "13811223344",
@@ -2461,6 +2497,7 @@ Scenario:8 管理员退款成功出货单，对会员信息的影响
 		"""
 
 	#会员列表数据
+	Given zhouxun登录系统::weapp
 	Then zhouxun可以获得会员列表::weapp
 		"""
 		[{
@@ -2517,7 +2554,7 @@ Scenario:8 管理员退款成功出货单，对会员信息的影响
 		}]
 		"""
 
-@order
+@gaia @order
 Scenario:9 管理员退款出货单，积分设置为1元=0积分
 	Given 重置'apiserver'的bdd环境
 
@@ -2705,11 +2742,11 @@ Scenario:9 管理员退款出货单，积分设置为1元=0积分
 				"operator":"客户",
 				"time":"2016-09-01 10:00:00"
 			},{
-				"action_text":"退款-zhouxun",
+				"action_text":"退款",
 				"operator":"zhouxun",
 				"time":"2016-09-02 10:00:00"
 			},{
-				"action_text":"退款完成-zhouxun",
+				"action_text":"退款完成",
 				"operator":"zhouxun",
 				"time":"2016-09-02 11:00:00"
 			}],
@@ -2749,11 +2786,11 @@ Scenario:9 管理员退款出货单，积分设置为1元=0积分
 					"operator":"客户",
 					"time":"2016-09-01 10:00:00"
 				},{
-					"action_text":"退款-zhouxun",
+					"action_text":"退款",
 					"operator":"zhouxun",
 					"time":"2016-09-02 10:00:00"
 				},{
-					"action_text":"退款完成-zhouxun",
+					"action_text":"退款完成",
 					"operator":"zhouxun",
 					"time":"2016-09-02 11:00:00"
 				}],
