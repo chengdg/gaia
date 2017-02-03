@@ -2018,7 +2018,7 @@ Scenario:7 管理员退款出货单，商品销量和库存
 	Then zhouxun能获得'在售'商品列表
 		"""
 		[{
-			"name":"无规格商品1-zhouxun",
+			"name":"无规格商品1-yangmi",
 			"stock_type": "有限",
 			"stocks": 100,
 			"sales": 0
@@ -2042,13 +2042,12 @@ Scenario:7 管理员退款出货单，商品销量和库存
 				}
 			}
 		},{
-			"name":"无规格商品1-yangmi",
+			"name":"无规格商品1-zhouxun",
 			"stock_type": "有限",
 			"stocks": 100,
 			"sales": 0
 		}]
 		"""
-
 	Given bill关注zhouxun的公众号::apiserver
 	When bill访问zhouxun的webapp::apiserver 
 	When bill购买zhouxun的商品::apiserver
@@ -2105,7 +2104,7 @@ Scenario:7 管理员退款出货单，商品销量和库存
 	Then zhouxun能获得'在售'商品列表
 		"""
 		[{
-			"name":"无规格商品1-zhouxun",
+			"name":"无规格商品1-yangmi",
 			"stock_type": "有限",
 			"stocks": 99,
 			"sales": 1
@@ -2129,7 +2128,7 @@ Scenario:7 管理员退款出货单，商品销量和库存
 			}
 			"sales": 2
 		},{
-			"name":"无规格商品1-yangmi",
+			"name":"无规格商品1-zhouxun",
 			"stock_type": "有限",
 			"stocks": 99,
 			"sales": 1
@@ -2163,7 +2162,7 @@ Scenario:7 管理员退款出货单，商品销量和库存
 	Then zhouxun能获得'在售'商品列表
 		"""
 		[{
-			"name":"无规格商品1-zhouxun",
+			"name":"无规格商品1-yangmi",
 			"stock_type": "有限",
 			"stocks": 99,
 			"sales": 1
@@ -2187,7 +2186,7 @@ Scenario:7 管理员退款出货单，商品销量和库存
 			}
 			"sales": 2
 		},{
-			"name":"无规格商品1-yangmi",
+			"name":"无规格商品1-zhouxun",
 			"stock_type": "有限",
 			"stocks": 99,
 			"sales": 1
