@@ -1029,7 +1029,7 @@ Scenario:3 管理员退款成功多供货商的订单-带运费-待发货，已�
 		}
 		"""
 
-@order
+@order @ztqb
 Scenario:4 管理员退款成功使用微众卡全额支付的订单
 	Given 重置'weizoom_card'的bdd环境
 	Given 重置'apiserver'的bdd环境
@@ -1060,7 +1060,7 @@ Scenario:4 管理员退款成功使用微众卡全额支付的订单
 			"integral_each_yuan": 20
 		}
 		"""
-	And zhouxun已添加商品规格
+	Given zhouxun已添加商品规格
 		"""
 		[{
 			"name": "颜色",
@@ -1082,7 +1082,9 @@ Scenario:4 管理员退款成功使用微众卡全额支付的订单
 			}]
 		}]
 		"""
-	And zhouxun开通使用微众卡权限::weapp
+
+	Given zhouxun登录系统::weapp
+	When zhouxun开通使用微众卡权限::weapp
 	When zhouxun添加支付方式
 		"""
 		[{
@@ -1212,22 +1214,28 @@ Scenario:4 管理员退款成功使用微众卡全额支付的订单
 			"postage": 0.00
 		}
 		"""
+	Then bill能获得微众卡'100000001'的详情信息::apiserver
+		"""
+		{
+			"card_remain_value": 38.45
 
+		}
+		"""
 	#查看微众卡余额
-		When bill访问zhouxun的webapp::weapp
-		When bill进行微众卡余额查询::weapp
-			"""
-			{
-				"id":"100000001",
-				"password":"1234567"
-			}
-			"""
-		Then bill获得微众卡余额查询结果::weapp
-			"""
-			{
-				"card_remaining":38.45
-			}
-			"""
+#		When bill访问zhouxun的webapp::weapp
+#		When bill进行微众卡余额查询::weapp
+#			"""
+#			{
+#				"id":"100000001",
+#				"password":"1234567"
+#			}
+#			"""
+#		Then bill获得微众卡余额查询结果::weapp
+#			"""
+#			{
+#				"card_remaining":38.45
+#			}
+#			"""
 	#查看会员使用微众卡数据
 		Given zhouxun登录系统
 		Then zhouxun获得'bill'的购买信息::weapp
@@ -1259,20 +1267,29 @@ Scenario:4 管理员退款成功使用微众卡全额支付的订单
 		"""
 
 	#查看微众卡余额
-		When bill访问zhouxun的webapp::weapp
-		When bill进行微众卡余额查询::weapp
-			"""
-			{
-				"id":"100000001",
-				"password":"1234567"
-			}
-			"""
-		Then bill获得微众卡余额查询结果::weapp
-			"""
-			{
-				"card_remaining":38.45
-			}
-			"""
+#		When bill访问zhouxun的webapp::weapp
+#		When bill进行微众卡余额查询::weapp
+#			"""
+#			{
+#				"id":"100000001",
+#				"password":"1234567"
+#			}
+#			"""
+#		Then bill获得微众卡余额查询结果::weapp
+#			"""
+#			{
+#				"card_remaining":38.45
+#			}
+#			"""
+	When bill访问zhouxun的webapp::apiserver
+
+	Then bill能获得微众卡'100000001'的详情信息::apiserver
+		"""
+		{
+			"card_remain_value": 38.45
+
+		}
+		"""
 	#查看会员使用微众卡数据
 		Given zhouxun登录系统
 		Then zhouxun获得'bill'的购买信息::weapp
