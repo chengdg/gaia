@@ -600,7 +600,7 @@ Scenario:2 管理员退款成功多供货商的订单-已发货
 		}
 		"""
 
-@order @ztqb
+@gaia @order
 Scenario:3 管理员退款成功多供货商的订单-带运费-待发货，已完成
 	Given 重置'apiserver'的bdd环境
 	Given 重置'weapp'的bdd环境
@@ -1018,11 +1018,11 @@ Scenario:3 管理员退款成功多供货商的订单-带运费-待发货，已�
 					"count": 1
 				},{
 					"name":"多规格商品2-zhouxun",
-					"model": "黑色 M",
+					"product_model_name_texts": ["黑色","M"],
 					"count": 1
 				},{
 					"name":"多规格商品2-zhouxun",
-					"model": "白色 S",
+					"product_model_name_texts": ["白色", "S"],
 					"count": 1
 				}]
 			}]
@@ -1471,7 +1471,7 @@ Scenario:4 管理员退款成功使用微众卡全额支付的订单
 		}
 		"""
 
-@order
+@order @ztqb
 Scenario:5 管理员退款成功使用积分的订单
 	Given 重置'apiserver'的bdd环境
 	Given 重置'weapp'的bdd环境
@@ -1523,6 +1523,7 @@ Scenario:5 管理员退款成功使用积分的订单
 			"integral_each_yuan": 20
 		}
 		"""
+	Given zhouxun登录系统::weapp
 	When zhouxun创建积分应用活动::weapp
 		"""
 		[{
@@ -1576,7 +1577,7 @@ Scenario:5 管理员退款成功使用积分的订单
 	When bill使用支付方式'微信支付'进行支付订单'005'于2016-05-01 10:00:00::apiserver
 
 	Given zhouxun登录系统
-	Then bill在zhouxun的webapp中拥有100会员积分::weapp
+	Then bill在zhouxun的webapp中拥有100会员积分::apiserver
 
 	When zhouxun申请退款出货单'005-zhouxun'
 		"""
@@ -1596,7 +1597,7 @@ Scenario:5 管理员退款成功使用积分的订单
 		}
 		"""
 
-	Then bill在zhouxun的webapp中拥有100会员积分::weapp
+	Then bill在zhouxun的webapp中拥有100会员积分::apiserver
 
 	Then zhouxun获得订单列表
 		"""
