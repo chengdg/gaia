@@ -2193,7 +2193,7 @@ Scenario:7 管理员退款出货单，商品销量和库存
 		}]
 		"""
 
-@order
+@gaia @order
 Scenario:8 管理员退款出货单，会员信息
 	Given 重置'apiserver'的bdd环境
 	Given 重置'weapp'的bdd环境
@@ -2305,7 +2305,7 @@ Scenario:8 管理员退款出货单，会员信息
 	When bill购买zhouxun的商品::apiserver
 		"""
 		{
-			"order_id":"007",
+			"order_id":"008",
 			"date":"2016-07-01",
 			"ship_name": "bill",
 			"ship_tel": "13811223344",
@@ -2371,6 +2371,7 @@ Scenario:8 管理员退款出货单，会员信息
 		"""
 
 	#会员列表数据
+	Given zhouxun登录系统::weapp
 	Then zhouxun可以获得会员列表::weapp
 		"""
 		[{
@@ -2409,9 +2410,9 @@ Scenario:8 管理员退款出货单，会员信息
 		"""
 		[{
 			"name": "bill",
-			"pay_money": 81.55,
-			"unit_price": 81.55,
-			"pay_times": 1
+			"pay_money": "0.00",
+			"unit_price": "0.00",
+			"pay_times": 0
 		}]
 		"""
 
