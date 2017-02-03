@@ -878,7 +878,7 @@ Scenario:3 管理员退款成功多供货商的订单-带运费-待发货，已�
 		"""
 		{
 			"bid": "003",
-			"status_code": "refunding",
+			"status_code": "refunded",
 			"status_logs":[{
 				"from_status_code":"",
 				"to_status_code":"created",
@@ -926,7 +926,7 @@ Scenario:3 管理员退款成功多供货商的订单-带运费-待发货，已�
 				"cash": 10.00,
 				"weizoom_card_money": 0.00,
 				"member_card_money": 0.00,
-				"coupon_money": 60.11,
+				"coupon_money": 60.10,
 				"integral": 229,
 				"integral_money": 11.45,
 				"total": 81.55
