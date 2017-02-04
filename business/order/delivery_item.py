@@ -562,11 +562,22 @@ class DeliveryItem(business_model.Model):
 			self.refunding_info['finished'] = True
 
 			# 更新订单的金额信息
-			mall_models.Order.update(final_price=mall_models.Order.final_price - self.refunding_info['cash'],
-			                         weizoom_card_money=mall_models.Order.weizoom_card_money - self.refunding_info[
-				                         'weizoom_card_money'],
-			                         member_card_money=mall_models.Order.member_card_money - self.refunding_info[
-				                         'member_card_money']).dj_where(id=self.origin_order_id).execute()
+			current_order = mall_models.Order.select().dj_where(id=self.origin_order_id).first()
+
+			new_final_price = round(current_order.final_price - self.refunding_info['cash'], 2)
+			new_weizoom_card_money = round(current_order.weizoom_card_money - self.refunding_info[
+				'weizoom_card_money'], 2)
+			new_member_card_money = round(current_order.member_card_money - self.refunding_info[
+				'member_card_money'], 2)
+			mall_models.Order.update(final_price=new_final_price,
+			                         weizoom_card_money=new_weizoom_card_money,
+			                         member_card_money=new_member_card_money).dj_where(
+				id=self.origin_order_id).execute()
+		# mall_models.Order.update(final_price=mall_models.Order.final_price - self.refunding_info['cash'],
+		#                          weizoom_card_money=mall_models.Order.weizoom_card_money - self.refunding_info[
+		# 	                         'weizoom_card_money'],
+		#                          member_card_money=mall_models.Order.member_card_money - self.refunding_info[
+		# 	                         'member_card_money']).dj_where(id=self.origin_order_id).execute()
 		self.__save()
 
 		self.__send_msg_to_topic('delivery_item_refunded', from_status, to_status)

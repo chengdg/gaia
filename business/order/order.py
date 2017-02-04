@@ -473,17 +473,17 @@ class Order(business_model.Model):
 	def __fill_full_money_info(orders, order_ids):
 
 		for order in orders:
-			order.origin_weizoom_card_money = order.weizoom_card_money + order.refunding_info[
-				'weizoom_card_money']
-			order.origin_member_card_money = order.member_card_money + order.refunding_info[
-				'member_card_money']
-			order.origin_final_price = order.final_price + order.refunding_info['cash']
+			order.origin_weizoom_card_money = round(order.weizoom_card_money + order.refunding_info[
+				'weizoom_card_money'], 2)
+			order.origin_member_card_money = round(order.member_card_money + order.refunding_info[
+				'member_card_money'], 2)
+			order.origin_final_price = round(order.final_price + order.refunding_info['cash'], 2)
 
 			total_product_origin_price = order.__get_total_origin_product_price()
 			order.save_money = round(
 				(float(total_product_origin_price) + float(order.postage) - float(
-				order.origin_final_price) - float(order.origin_weizoom_card_money)
-			                          - float(order.origin_member_card_money)),2)
+					order.origin_final_price) - float(order.origin_weizoom_card_money) - float(
+					order.origin_member_card_money)), 2)
 
 	@staticmethod
 	def __fill_operation_logs(orders, order_ids):
