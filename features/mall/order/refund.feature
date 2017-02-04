@@ -1489,7 +1489,7 @@ Scenario:4 管理员退款成功使用微众卡全额支付的订单
 		}
 		"""
 
-@order @ztqb
+@gaia @order
 Scenario:5 管理员退款成功使用积分的订单
 	Given 重置'apiserver'的bdd环境
 	Given 重置'weapp'的bdd环境
