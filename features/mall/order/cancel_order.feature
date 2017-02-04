@@ -999,7 +999,7 @@ Scenario: 7 管理员取消使用了微众卡的订单
 		"""
 		[{
 			"name":"10元微众卡",
-			"prefix_value":"10",
+			"prefix_value":"100",
 			"type":"virtual",
 			"money":"10.00",
 			"num":"1",
@@ -1029,7 +1029,7 @@ Scenario: 7 管理员取消使用了微众卡的订单
 			"binding_shop":"zhouxun",
 			"weizoom_card_info":
 				{
-					"id":"000000001",
+					"id":"100000001",
 					"password":"1234567"
 				}
 		}
@@ -1055,16 +1055,15 @@ Scenario: 7 管理员取消使用了微众卡的订单
 				"count": 1
 			}],
 			"weizoom_card":[{
-				"card_name":"000000001",
+				"card_name":"100000001",
 				"card_pass":"1234567"
 			}]
 		}
 		"""
-	Then bill能获得微众卡'000000001'的详情信息::apiserver
+	Then bill能获得微众卡'100000001'的详情信息::apiserver
 		"""
 		{
 			"card_remain_value": 0.00
-
 		}
 		"""
 	When zhouxun取消订单'001'
@@ -1075,7 +1074,7 @@ Scenario: 7 管理员取消使用了微众卡的订单
 			"status_code": "cancelled",
 			"origin_weizoom_card_money": 10.00,
 			"weizoom_card_money": 10.00,
-			"delivery_items": [{
+			"delivery_items":[{
 				"bid": "001-zhouxun",
 				"status_code": "cancelled"
 				}]
@@ -1093,7 +1092,7 @@ Scenario: 7 管理员取消使用了微众卡的订单
 			"origin_weizoom_card_money": 10.00,
 			"weizoom_card_money": 10.00,
 			"weizoom_card_info": {
-				"used_card": ["000000001"]
+				"used_card": ["100000001"]
 			},
 			"delivery_items": [{
 				"bid": "001-zhouxun",
@@ -1105,10 +1104,9 @@ Scenario: 7 管理员取消使用了微众卡的订单
 		}
 		"""
 	When bill访问zhouxun的webapp::apiserver
-	Then bill能获得微众卡'000000001'的详情信息::apiserver
+	Then bill能获得微众卡'100000001'的详情信息::apiserver
 		"""
 		{
 			"card_remain_value": 10.00
-
 		}
 		"""
