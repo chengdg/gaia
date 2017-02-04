@@ -603,7 +603,7 @@ Scenario: 4 管理员标记完成使用微众卡的订单
 		"""
 		[{
 			"name":"10元微众卡",
-			"prefix_value":"10",
+			"prefix_value":"100",
 			"type":"virtual",
 			"money":"10.00",
 			"num":"1",
@@ -633,7 +633,7 @@ Scenario: 4 管理员标记完成使用微众卡的订单
 			"binding_shop":"zhouxun",
 			"weizoom_card_info":
 				{
-					"id":"000000001",
+					"id":"100000001",
 					"password":"1234567"
 				}
 		}
@@ -656,7 +656,7 @@ Scenario: 4 管理员标记完成使用微众卡的订单
 				"count": 1
 			}],
 			"weizoom_card":[{
-				"card_name":"000000001",
+				"card_name":100000001",
 				"card_pass":"1234567"
 			}]
 		}
