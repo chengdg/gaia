@@ -1044,7 +1044,7 @@ Scenario:4 管理员退款使用微众卡全额支付的订单
 				"name":"100元微众卡",
 				"prefix_value":"100",
 				"type":"virtual",
-				"money":"10.00",
+				"money":"100.00",
 				"num":"2",
 				"comments":"微众卡"
 			}]
