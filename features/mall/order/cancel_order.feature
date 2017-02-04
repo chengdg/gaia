@@ -979,7 +979,7 @@ Scenario: 6 管理员取消使用了多商品券的订单
 		}
 		"""
 
-@order
+@gaia @order
 Scenario: 7 管理员取消使用了微众卡的订单
 	1.zhouxun取消待支付订单，微众卡退回
 
@@ -1074,10 +1074,10 @@ Scenario: 7 管理员取消使用了微众卡的订单
 			"status_code": "cancelled",
 			"origin_weizoom_card_money": 10.00,
 			"weizoom_card_money": 10.00,
-			"delivery_items":[{
+			"delivery_items":[
+			{
 				"bid": "001-zhouxun",
 				"status_code": "cancelled"
-				}]
 			},{
 				"bid": "001-jobs",
 				"status_code": "cancelled"

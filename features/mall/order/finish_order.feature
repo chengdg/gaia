@@ -583,7 +583,7 @@ Scenario: 3 管理员标记完成订单，会员获得购物返积分
 		}]
 		"""
 
-@order
+@gaia @order
 Scenario: 4 管理员标记完成使用微众卡的订单
 	1.zhouxun完成使用微众卡多个供货商的订单，查看会员详情
 	查看会员积分(增加，但是购买商品返积分额外积分奖励-金额计算不包含微众卡的金额)
@@ -656,7 +656,7 @@ Scenario: 4 管理员标记完成使用微众卡的订单
 				"count": 1
 			}],
 			"weizoom_card":[{
-				"card_name":100000001",
+				"card_name":"100000001",
 				"card_pass":"1234567"
 			}]
 		}
@@ -689,6 +689,7 @@ Scenario: 4 管理员标记完成使用微众卡的订单
 			"time":"2017-01-20 11:10:10"
 		}
 		"""
+	Given zhouxun登录系统::weapp
 	When zhouxun访问'bill'会员详情::weapp
 	Then zhouxun获得'bill'的购买信息::weapp
 		"""
@@ -717,6 +718,18 @@ Scenario: 4 管理员标记完成使用微众卡的订单
 		"""
 	#购买返积分额外奖励的金额(金额不包含微众卡只计算现金)*比例
 	Then zhouxun能获得bill的积分日志::weapp
+#		"""
+#		[{
+#			"content":"购物返利",
+#			"integral":5
+#		},{
+#			"content":"购物返利",
+#			"integral":21
+#		},{
+#			"content": "首次关注",
+#			"integral": 20
+#		}]
+#		"""
 		"""
 		[{
 			"content":"购物返利",
@@ -724,9 +737,6 @@ Scenario: 4 管理员标记完成使用微众卡的订单
 		},{
 			"content":"购物返利",
 			"integral":21
-		},{
-			"content": "首次关注",
-			"integral": 20
 		}]
 		"""
 
