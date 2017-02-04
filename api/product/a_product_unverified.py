@@ -37,7 +37,7 @@ class AProductUnverified(api_resource.ApiResource):
 			'images': image_info,
 			'limit_zone_type': logistics_info['limit_zone_type'],
 			'limit_zone': logistics_info['limit_zone_id'],
-			'postage_money': '%.2f' % logistics_info.get('unified_postage_money', 0.00),
+			'postage_money': logistics_info['unified_postage_money'],
 			'classification_id': base_info['classification_id'],
 			'classification_name_nav': ProductClassificationRepository.get().get_product_classification(base_info['classification_id']).get_nav()
 		}
