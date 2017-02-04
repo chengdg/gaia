@@ -1158,18 +1158,10 @@ Scenario:4 管理员退款使用微众卡全额支付的订单
 		"""
 
 	#查看微众卡余额
-		When bill访问zhouxun的webapp::weapp
-		When bill进行微众卡余额查询::weapp
+		Then bill能获得微众卡'100000001'的详情信息::apiserver
 			"""
 			{
-				"id":"100000001",
-				"password":"1234567"
-			}
-			"""
-		Then bill获得微众卡余额查询结果::weapp
-			"""
-			{
-				"card_remaining":38.45
+				"card_remain_value": 38.45
 			}
 			"""
 	#查看会员使用微众卡数据
@@ -1197,18 +1189,10 @@ Scenario:4 管理员退款使用微众卡全额支付的订单
 		"""
 
 	#查看微众卡余额
-		When bill访问zhouxun的webapp::weapp
-		When bill进行微众卡余额查询::weapp
+		Then bill能获得微众卡'100000001'的详情信息::apiserver
 			"""
 			{
-				"id":"100000001",
-				"password":"1234567"
-			}
-			"""
-		Then bill获得微众卡余额查询结果::weapp
-			"""
-			{
-				"card_remaining":38.45
+				"card_remain_value": 38.45
 			}
 			"""
 	#查看会员使用微众卡数据
@@ -1293,7 +1277,6 @@ Scenario:4 管理员退款使用微众卡全额支付的订单
 			}]
 		}]
 		"""
-
 	Then zhouxun获得订单'004'
 		"""
 		[{
