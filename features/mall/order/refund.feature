@@ -1683,7 +1683,7 @@ Scenario:5 管理员退款成功使用积分的订单
 			"product_price": 50.11,
 			"postage":0.00,
 			"save_money": 20.00,
-			"origin_final_price": 20.11,
+			"origin_final_price": 30.11,
 			"origin_weizoom_card_money": 0.00,
 			"final_price": 20.11,
 			"weizoom_card_money": 0.00,
@@ -1699,7 +1699,7 @@ Scenario:5 管理员退款成功使用积分的订单
 				"coupon_money": 30.11,
 				"integral": 200,
 				"integral_money": 10.00,
-				"total": 0.00
+				"total": 50.11
 			},
 			"delivery_items": [{
 				"bid": "005-zhouxun",
