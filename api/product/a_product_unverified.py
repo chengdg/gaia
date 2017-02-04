@@ -34,7 +34,7 @@ class AProductUnverified(api_resource.ApiResource):
 			'stocks': models_info['standard_model']['stocks'],
 			'detail': base_info['detail'],
 			'models': models_info['custom_models'],
-			'images': image_info,
+			'images': image_info['images'],
 			'limit_zone_type': logistics_info['limit_zone_type'],
 			'limit_zone': logistics_info['limit_zone_id'],
 			'postage_money': logistics_info['unified_postage_money'],
