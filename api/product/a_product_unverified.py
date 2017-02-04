@@ -30,6 +30,8 @@ class AProductUnverified(api_resource.ApiResource):
 			'price_info': {
 				'display_price':base_info['price']
 			},
+			'has_same_postage': logistics_info['postage_type'] == 'unified_postage_type',
+			'has_multi_models': bool(models_info['custom_models']),
 			'weight': models_info['standard_model']['weight'],
 			'stocks': models_info['standard_model']['stocks'],
 			'detail': base_info['detail'],
