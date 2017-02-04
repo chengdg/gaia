@@ -240,7 +240,7 @@ class Product(business_model.Model):
 
 	def verify_modifications(self, corp):
 		"""
-		编辑审核
+		审核通过商品编辑内容
 		"""
 		product_id = self.id
 		product_data = json.loads(mall_models.ProductUnverified.select().dj_where(product_id=product_id).get().product_data)

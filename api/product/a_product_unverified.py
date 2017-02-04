@@ -53,5 +53,3 @@ class AProductUnverified(api_resource.ApiResource):
 		product.update_product_unverified(args)
 
 		return {}
-
-		
