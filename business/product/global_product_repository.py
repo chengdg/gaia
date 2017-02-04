@@ -116,4 +116,10 @@ class GlobalProductRepository(business_model.Service):
 		return result
 
 	def get_product_unverified(self, product_id):
-		return json.loads(mall_models.ProductUnverified.select().dj_where(product_id=product_id).get().product_data)
+		product_unverified_data = json.loads(mall_models.ProductUnverified.select().dj_where(product_id=product_id).get().product_data)
+		return {
+			'base_info': product_unverified_data['base_info'],
+			'models_info': product_unverified_data['models_info'],
+			'image_info': product_unverified_data['image_info'],
+			'logistics_info': product_unverified_data['logistics_info'],
+		}
