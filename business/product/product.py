@@ -5,7 +5,6 @@ import json
 from eaglet.core import watchdog
 from eaglet.core.exceptionutil import unicode_full_stack
 
-from business.mall.corporation import Corporation
 from db.mall import models as mall_models
 from business import model as business_model
 from business.decorator import cached_context_property
@@ -125,6 +124,7 @@ class Product(business_model.Model):
 			self.sync_at = None
 
 	def get_corp(self):
+		from business.mall.corporation import Corporation
 		return Corporation(self.owner_id)
 
 	@property
