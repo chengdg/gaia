@@ -260,6 +260,23 @@ def step_impl(context, user):
 		})
 		bdd_util.assert_api_call_success(response)
 
+@when(u"{user}编辑已审核商品信息")
+def step_impl(context, user):
+	datas = json.loads(context.text)
+	corp_id = context.corp.id
+	for data in datas:
+		product_id = __product_names2ids_str([data['name']])[0]
+		base_info, postage_info, models_info, image_info = __format_post_data(context, data)
+		response = context.client.put('/product/product_unverified/', {
+			'corp_id': corp_id,
+			'product_id': product_id,
+			'base_info': base_info,
+			'logistics_info': postage_info,
+			'models_info': models_info,
+			'image_info': image_info
+		})
+		bdd_util.assert_api_call_success(response)
+
 @when(u"{user}审核通过待审核商品")
 def step_impl(context, user):
 	datas = json.loads(context.text)

@@ -23,12 +23,12 @@ class AVerifiedProduct(api_resource.ApiResource):
 
 		return {}
 
-	@param_required(['corp_id', 'product_id:int'])
+	@param_required(['corp_id', 'product_ids:json'])
 	def post(args):
 		"""
 		编辑审核
 		"""
-		product_id = args['product_id']
-
-		product = GlobalProductRepository.get().get_product(product_id)
-		product.verify_modifications()
+		product_ids = args['product_ids']
+		products = GlobalProductRepository.get().get_products_by_ids(product_ids)
+		for product in products:
+			product.verify_modifications()

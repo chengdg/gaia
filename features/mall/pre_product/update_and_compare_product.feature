@@ -260,7 +260,7 @@ Scenario:1 客户修改除了库存的其余字段后，运营查看修改记录
 		|   ipad     |     jobs    |分类11--分类21|  已审核   |编辑|
 
 	Given jobs登录系统
-	Then jobs查看已审核商品列表
+	Then jobs查看待审核商品列表
 		|name|classfication|price|stock|created_time|status|operation|
 		|  武汉鸭脖  |分类12--分类24|10.00|200|  创建时间 |   已审核   |编辑|
 		|   ipad     |分类11--分类21|3000.00|200| 创建时间 |   已审核   |编辑|
