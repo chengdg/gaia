@@ -622,8 +622,8 @@ Scenario: 4 管理员取消使用了商品积分的订单
 					"origin_price": 10.01,
 					"promotion_info": {
 						"type": "integral_sale",
-						"integral_count": 0,
-						"integral_money": 0
+						"integral_count": 10,
+						"integral_money": 5.00
 					}
 				}]
 			},{
@@ -636,8 +636,8 @@ Scenario: 4 管理员取消使用了商品积分的订单
 					"origin_price": 11.00,
 					"promotion_info": {
 						"type": "integral_sale",
-						"integral_count": 0,
-						"integral_money": 0
+						"integral_count": 10,
+						"integral_money": 5.00
 					}
 				}]
 			}]
