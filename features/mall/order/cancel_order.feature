@@ -517,7 +517,7 @@ Scenario: 3 管理员取消使用了订单积分的订单
 		}]
 		"""
 
-@order
+@gaia @order
 Scenario: 4 管理员取消使用了商品积分的订单
 	1.zhouxun取消待支付订单，积分退回
 
