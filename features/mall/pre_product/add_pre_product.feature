@@ -166,7 +166,7 @@ Scenario:1 客户添加无规格商品
 		}]
 		"""
 	Then jobs查看待审核商品列表
-		|name|classfication|price|stock|created_time|status|operation|
+		|name|classification|price|stock|created_time|status|operation|
 		|  武汉鸭脖  |分类12--分类24|10.00|200|  创建时间 |   待审核   |编辑|
 		|   ipad     |分类11--分类21|3000.00|200| 创建时间 |   待审核   |编辑|
 
@@ -234,7 +234,7 @@ Scenario:2 客户添加多规格商品
 		}]
 		"""
 	Then jobs查看待审核商品列表
-		|name|classfication|price|stock|created_time|status|operation|
+		|name|classification|price|stock|created_time|status|operation|
 		|多规格商品1|分类11--分类23|3.00~5.50|200~300|  创建时间 |   待审核   |编辑|
 
 	Given weizoom登录系统

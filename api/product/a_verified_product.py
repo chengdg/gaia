@@ -32,3 +32,5 @@ class AVerifiedProduct(api_resource.ApiResource):
 		products = GlobalProductRepository.get().get_products_by_ids(product_ids)
 		for product in products:
 			product.verify_modifications()
+
+		return {}
