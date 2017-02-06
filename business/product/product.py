@@ -5,6 +5,7 @@ import json
 from eaglet.core import watchdog
 from eaglet.core.exceptionutil import unicode_full_stack
 
+from business.mall.corporation import Corporation
 from db.mall import models as mall_models
 from business import model as business_model
 from business.decorator import cached_context_property
@@ -123,6 +124,9 @@ class Product(business_model.Model):
 			self.create_type = None
 			self.sync_at = None
 
+	def get_corp(self):
+		return Corporation(self.owner_id)
+
 	@property
 	def is_sellout(self):
 		"""
@@ -238,14 +242,15 @@ class Product(business_model.Model):
 			status=mall_models.PRODUCT_STATUS['SUBMIT']
 		).dj_where(id=self.id).execute()
 
-	def verify_modifications(self, corp):
+	def verify_modifications(self):
 		"""
 		审核通过商品编辑内容
 		"""
 		product_id = self.id
 		product_data = json.loads(mall_models.ProductUnverified.select().dj_where(product_id=product_id).get().product_data)
-		mall_models.Product.update(is_updated=False).dj_where(id=self.id).execute()
+		mall_models.Product.update(is_updated=False, status=mall_models.PRODUCT_STATUS['NOT_YET']).dj_where(id=self.id).execute()
 		from business.product.update_product_service import UpdateProductService
+		corp = self.get_corp()
 		update_product_service = UpdateProductService.get(corp)
 		update_product_service.update_product(self.id, {
 			'corp': corp,
