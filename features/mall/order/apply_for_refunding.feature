@@ -1401,7 +1401,7 @@ Scenario:4 管理员退款使用微众卡全额支付的订单
 					"operator":"客户",
 					"time":"2016-04-01 00:00:00"
 				},{
-					"action_text":"发货",
+					"action_text":"订单发货",
 					"operator":"zhouxun",
 					"time":"2016-04-03 10:00:00"
 				},{
@@ -1430,7 +1430,7 @@ Scenario:4 管理员退款使用微众卡全额支付的订单
 					"operator":"客户",
 					"time":"2016-04-01 00:00:00"
 				},{
-					"action_text":"已发货",
+					"action_text":"订单发货",
 					"operator":"zhouxun",
 					"time":"2016-04-02 10:00:00"
 				},{

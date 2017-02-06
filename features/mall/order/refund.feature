@@ -1391,7 +1391,7 @@ Scenario:4 管理员退款成功使用微众卡全额支付的订单
 				"time":"2016-04-04 11:00:00"
 			},{
 				"from_status_code":"refunding",
-				"to_status_code":"refunded",
+				"to_status_code":"finished",
 				"time":"2016-04-04 12:00:00"
 			}],
 			"operation_logs":[{
@@ -1415,7 +1415,7 @@ Scenario:4 管理员退款成功使用微众卡全额支付的订单
 				"operator":"zhouxun",
 				"time":"2016-04-04 11:00:00"
 			},{
-				"action_text":"退款完成",
+				"action_text":"完成",
 				"operator":"zhouxun",
 				"time":"2016-04-04 12:00:00"
 			}],
@@ -1452,7 +1452,7 @@ Scenario:4 管理员退款成功使用微众卡全额支付的订单
 					"operator":"客户",
 					"time":"2016-04-01 00:00:00"
 				},{
-					"action_text":"发货",
+					"action_text":"订单发货",
 					"operator":"zhouxun",
 					"time":"2016-04-03 10:00:00"
 				},{
@@ -1481,7 +1481,7 @@ Scenario:4 管理员退款成功使用微众卡全额支付的订单
 					"operator":"客户",
 					"time":"2016-04-01 00:00:00"
 				},{
-					"action_text":"已发货",
+					"action_text":"订单发货",
 					"operator":"zhouxun",
 					"time":"2016-04-02 10:00:00"
 				},{
