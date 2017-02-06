@@ -1164,17 +1164,58 @@ Scenario:4 管理员退款使用微众卡全额支付的订单
 				"card_remain_value": 38.45
 			}
 			"""
-	#查看会员使用微众卡数据
+
+	Given zhouxun登录系统
+	When zhouxun对出货单进行发货
+		"""
+		[{
+			"delivery_item_bid":"004-zhouxun",
+			"with_logistics":true,
+			"with_logistics_trace":true,
+			"express_company_name_value":"顺丰速运",
+			"express_number":"147258369",
+			"leader_name":"zhouxun|004",
+			"time":"2016-04-02 10:00:00"
+		}]
+		"""
+	When zhouxun标记完成出货单'004-zhouxun'
+		"""
+		{
+			"time": "2016-04-02 11:00:00"
+		}
+		"""
+	When zhouxun对出货单进行发货
+		"""
+		[{
+			"delivery_item_bid":"004-yangmi",
+			"with_logistics":true,
+			"with_logistics_trace":true,
+			"express_company_name_value":"顺丰速运",
+			"express_number":"137258369",
+			"leader_name":"yangmi|004",
+			"time":"2016-04-03 10:00:00"
+		}]
+		"""
+	When zhouxun标记完成出货单'004-yangmi'
+		"""
+		{
+			"time": "2016-04-03 11:00:00"
+		}
+		"""
+
+	#查看会员使用微众卡数据,会员信息统计的是[已完成]订单
+		#当前订单状态为[已完成]
 		Given zhouxun登录系统::weapp
-#		Then zhouxun获得'bill'的购买信息::weapp
-#			"""
-#			{
-#				"purchase_amount":61.55,
-#				"purchase_number":1,
-#				"customer_price":61.55,
-#				"money_wcard":61.55
-#			}
-#			"""
+		Then zhouxun获得'bill'的购买信息::weapp
+			"""
+			{
+				"purchase_amount":61.55,
+				"purchase_number":1,
+				"customer_price":61.55,
+				"money_wcard":61.55
+			}
+			"""
+
 	Given zhouxun登录系统
 	When zhouxun申请退款出货单'004-zhouxun'
 		"""
@@ -1184,35 +1225,38 @@ Scenario:4 管理员退款使用微众卡全额支付的订单
 			"coupon_money":10.00,
 			"integral":424,
 			"member_card_money":0.00,
-			"time": "2016-04-02 10:00:00"
+			"time": "2016-04-04 11:00:00"
 		}
 		"""
 
 	#查看微众卡余额
+		When bill访问zhouxun的webapp::apiserver
 		Then bill能获得微众卡'100000001'的详情信息::apiserver
 			"""
 			{
 				"card_remain_value": 38.45
 			}
 			"""
-	#查看会员使用微众卡数据
+
+	#查看会员使用微众卡数据，会员信息统计的是[已完成]订单，退款的订单不统计
+		#当前订单状态[退款中]
 		Given zhouxun登录系统::weapp
-#		Then zhouxun获得'bill'的购买信息::weapp
-#			"""
-#			{
-#				"purchase_amount":61.55,
-#				"purchase_number":1,
-#				"customer_price":61.55,
-#				"money_wcard":61.55
-#			}
-#			"""
+		Then zhouxun获得'bill'的购买信息::weapp
+			"""
+			{
+				"purchase_amount":41.20,
+				"purchase_number":1,
+				"customer_price":41.20,
+				"money_wcard":41.20
+			}
+			"""
 
 	Given zhouxun登录系统
 	Then zhouxun获得订单列表
 		"""
 		[{
 			"bid": "004",
-			"status_code": "paid",
+			"status_code": "refunding",
 			"pay_interface_type_code": "preference",
 			"pay_money": 61.55,
 			"product_price": 61.55,
@@ -1235,7 +1279,7 @@ Scenario:4 管理员退款使用微众卡全额支付的订单
 			},
 			"delivery_items": [{
 				"bid": "004-yangmi",
-				"status_code": "paid",
+				"status_code": "finished",
 				"supplier_info": {
 					"supplier_type": "supplier",
 					"name": "yangmi"
@@ -1281,7 +1325,7 @@ Scenario:4 管理员退款使用微众卡全额支付的订单
 		"""
 		{
 			"bid": "004",
-			"status_code": "paid",
+			"status_code": "refunding",
 			"status_logs":[{
 				"from_status_code":"",
 				"to_status_code":"created",
@@ -1290,6 +1334,18 @@ Scenario:4 管理员退款使用微众卡全额支付的订单
 				"from_status_code":"created",
 				"to_status_code":"paid",
 				"time":"2016-04-01 00:00:00"
+			},{
+				"from_status_code":"paid",
+				"to_status_code":"shipped",
+				"time":"2016-04-03 10:00:00"
+			},{
+				"from_status_code":"shipped",
+				"to_status_code":"finished",
+				"time":"2016-04-03 11:00:00"
+			},{
+				"from_status_code":"finished",
+				"to_status_code":"refunding",
+				"time":"2016-04-04 11:00:00"
 			}],
 			"operation_logs":[{
 				"action_text":"下单",
@@ -1299,6 +1355,18 @@ Scenario:4 管理员退款使用微众卡全额支付的订单
 				"action_text":"支付",
 				"operator":"客户",
 				"time":"2016-04-01 00:00:00"
+			},{
+				"action_text":"订单发货",
+				"operator":"zhouxun",
+				"time":"2016-04-03 10:00:00"
+			},{
+				"action_text":"完成",
+				"operator":"zhouxun",
+				"time":"2016-04-03 11:00:00"
+			},{
+				"action_text":"退款",
+				"operator":"zhouxun",
+				"time":"2016-04-04 11:00:00"
 			}],
 			"pay_interface_type_code": "preference",
 			"pay_money": 61.55,
@@ -1323,7 +1391,7 @@ Scenario:4 管理员退款使用微众卡全额支付的订单
 			},
 			"delivery_items": [{
 				"bid": "004-yangmi",
-				"status_code": "paid",
+				"status_code": "finished",
 				"operation_logs":[{
 					"action_text":"下单",
 					"operator":"客户",
@@ -1332,6 +1400,14 @@ Scenario:4 管理员退款使用微众卡全额支付的订单
 					"action_text":"支付",
 					"operator":"客户",
 					"time":"2016-04-01 00:00:00"
+				},{
+					"action_text":"发货",
+					"operator":"zhouxun",
+					"time":"2016-04-03 10:00:00"
+				},{
+					"action_text":"完成",
+					"operator":"zhouxun",
+					"time":"2016-04-03 11:00:00"
 				}],
 				"postage": 0.00,
 				"supplier_info": {
@@ -1354,9 +1430,17 @@ Scenario:4 管理员退款使用微众卡全额支付的订单
 					"operator":"客户",
 					"time":"2016-04-01 00:00:00"
 				},{
-					"action_text":"退款",
+					"action_text":"已发货",
 					"operator":"zhouxun",
 					"time":"2016-04-02 10:00:00"
+				},{
+					"action_text":"完成",
+					"operator":"zhouxun",
+					"time":"2016-04-02 11:00:00"
+				},{
+					"action_text":"退款",
+					"operator":"zhouxun",
+					"time":"2016-04-04 11:00:00"
 				}],
 				"postage": 0.00,
 				"refunding_info": {
