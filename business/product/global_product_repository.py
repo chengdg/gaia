@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import json
 
 from eaglet.core import paginator
 
@@ -7,15 +8,31 @@ from db.mall import models as mall_models
 from product import Product
 
 class GlobalProductRepository(business_model.Service):
+	FILTER_CONST = {
+		'ALL': -1, #全部
+		'NOT_YET': 0, #未审核
+		'SUBMIT': 1, #审核中
+		'PASSED': 2, #审核通过
+		'POOL_REFUSED': 3, #入库驳回
+		'UPDATE_REFUSED': 4 #修改驳回
+	}
+
 	def __fill_product_details(self, products, fill_options):
 		from business.product.fill_product_detail_service import FillProductDetailService
 		FillProductDetailService.get().fill_detail(products, fill_options)
 
+	def __get_filter_params(self, args):
+		params = {}
+		for param in args:
+			if not param.startswith('__f-'):
+				continue
+			_, field, __ = param.split('-')
+			params[field] = args[param]
+		return params
+
 	def filter_products(self, query_dict, page_info, fill_options=None):
 		db_models = mall_models.Product.select().dj_where(is_deleted=False)
 
-		if query_dict.get('owner_name'):
-			pass
 		if query_dict['corp'].is_weizoom_corp():
 			db_models = db_models.where(
 				(mall_models.Product.status << [mall_models.PRODUCT_STATUS['SUBMIT'], mall_models.PRODUCT_STATUS['REFUSED']])
@@ -23,6 +40,36 @@ class GlobalProductRepository(business_model.Service):
 			)
 		else:
 			db_models = db_models.dj_where(owner_id=query_dict['corp'].id)
+
+		#筛选
+		filter = self.__get_filter_params(query_dict)
+		product_name = filter.get('name')
+		classification_name = filter.get('classification')
+		status = filter.get('status')
+		owner_name = filter.get('owner_name')
+
+		if product_name:
+			db_models = db_models.dj_where(name__icontains=product_name)
+		if classification_name:
+			classification_models = mall_models.Classification.select().dj_where(name__icontains=classification_name)
+			relation_models = mall_models.ClassificationHasProduct.select().dj_where(classification_id__in=[c.id for c in classification_models])
+			db_models = db_models.dj_where(id__in=[r.product_id for r in relation_models])
+		if not status == None:
+			status = int(status)
+			if status == self.FILTER_CONST['ALL']:
+				pass
+			if status in [self.FILTER_CONST['NOT_YET'], self.FILTER_CONST['SUBMIT']]:
+				db_models = db_models.dj_where(status=status)
+			elif status == self.FILTER_CONST['POOL_REFUSED']:
+				db_models = db_models.dj_where(status=mall_models.PRODUCT_STATUS['REFUSED'], is_accepted=False)
+			elif status == self.FILTER_CONST['UPDATE_REFUSED']:
+				db_models = db_models.dj_where(status=mall_models.PRODUCT_STATUS['REFUSED'], is_accepted=True, is_updated=True)
+			elif status == self.FILTER_CONST['PASSED']:
+				db_models = db_models.dj_where(status=mall_models.PRODUCT_STATUS['NOT_YET'], is_accepted=True)
+
+		if owner_name:
+			#TODO
+			pass
 
 		if page_info:
 			pageinfo, db_models = paginator.paginate(db_models, page_info.cur_page, page_info.count_per_page)
@@ -67,3 +114,14 @@ class GlobalProductRepository(business_model.Service):
 			product_id = int(product_id)
 			result.append(id2product[product_id])
 		return result
+
+	def get_product_unverified(self, product_id):
+		product_unverified_data = json.loads(mall_models.ProductUnverified.select().dj_where(product_id=product_id).get().product_data)
+
+		return {
+			'owner_id': self.get_product(product_id).owner_id,
+			'base_info': product_unverified_data['base_info'],
+			'models_info': product_unverified_data['models_info'],
+			'image_info': product_unverified_data['image_info'],
+			'logistics_info': product_unverified_data['logistics_info'],
+		}

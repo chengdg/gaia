@@ -43,6 +43,7 @@ class APreProduct(api_resource.ApiResource):
 			'limit_zone': pre_product.limit_zone,
 			'has_same_postage': pre_product.has_same_postage,
 			'has_multi_models': pre_product.has_multi_models,
+			'postage_id': pre_product.postage_id,
 			'postage_money': '%.2f' % pre_product.unified_postage_money,
 			'classification_id': pre_product.classification_id,
 			'classification_name_nav': pre_product.classification_nav,

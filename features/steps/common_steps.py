@@ -1,18 +1,17 @@
 # -*- coding: utf-8 -*-
-#import json
 
 from behave import *
 from features.util import bdd_util
-from db.mall import models as mall_models
 from db.account import models as account_models
-
-import logging
-
-from features.util import http
 
 class Corporation(object):
 	def __init__(self, id):
 		self.id = id
+
+	@property
+	def is_weizoom_corp(self):
+		_account_user_profile = account_models.UserProfile.select().dj_where(user_id=self.id).first()
+		return _account_user_profile.webapp_type == account_models.WEBAPP_TYPE_WEIZOOM
 
 
 @given(u"{user}登录系统")

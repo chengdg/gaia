@@ -216,7 +216,7 @@ class UpdateProductService(business_model.Service):
 		"""
 		更新商品分类
 		"""
-		classification_id = int(base_info.get('classification_id', 0))
+		classification_id = base_info.get('classification_id', 0)
 		if not classification_id:
 			return
 

@@ -147,7 +147,7 @@ Scenario:2 运营端删除正在使用商品分类
 		}]
 		"""
 	Then jobs查看待审核商品列表
-		|name|classfication|price|stock|created_time|status|operation|
+		|name|classification|price|stock|created_time|status|operation|
 		|  武汉鸭脖  |分类12--分类24|10.00|200|  创建时间 |   待审核   |编辑|
 		|   ipad     |分类11--分类21|3000.00|200| 创建时间 |   待审核   |编辑|
 
