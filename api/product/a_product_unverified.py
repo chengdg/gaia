@@ -25,6 +25,7 @@ class AProductUnverified(api_resource.ApiResource):
 		logistics_info = product_unverified_data['logistics_info']
 
 		return {
+			'owner_id': product_unverified_data['owner_id'],
 			'name': base_info['name'],
 			'promotion_title': base_info['promotion_title'],
 			'price_info': {
