@@ -1244,10 +1244,10 @@ Scenario:4 管理员退款使用微众卡全额支付的订单
 		Then zhouxun获得'bill'的购买信息::weapp
 			"""
 			{
-				"purchase_amount":41.20,
-				"purchase_number":1,
-				"customer_price":41.20,
-				"money_wcard":41.20
+				"purchase_amount":0.00,
+				"purchase_number":0,
+				"customer_price":0.00,
+				"money_wcard":0.00
 			}
 			"""
 

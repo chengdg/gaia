@@ -1282,7 +1282,7 @@ Scenario:4 管理员退款成功使用微众卡全额支付的订单
 			"""
 
 	#查看会员使用微众卡数据，会员信息统计的是[已完成]订单，退款的订单不统计
-		#当前订单状态[退款成功]
+		#当前订单状态[已完成]
 		Given zhouxun登录系统::weapp
 		Then zhouxun获得'bill'的购买信息::weapp
 			"""
@@ -1298,7 +1298,7 @@ Scenario:4 管理员退款成功使用微众卡全额支付的订单
 		"""
 		[{
 			"bid": "004",
-			"status_code": "refunded",
+			"status_code": "finished",
 			"pay_interface_type_code": "preference",
 			"pay_money": 41.20,
 			"product_price": 61.55,
@@ -1368,7 +1368,7 @@ Scenario:4 管理员退款成功使用微众卡全额支付的订单
 		"""
 		{
 			"bid": "004",
-			"status_code": "refunded",
+			"status_code": "finished",
 			"status_logs":[{
 				"from_status_code":"",
 				"to_status_code":"created",
