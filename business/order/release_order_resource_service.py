@@ -83,6 +83,17 @@ class ReleaseOrderResourceService(business_model.Service):
 					'data': data
 				})
 
+				is_success = resp and resp['code'] == 200
+				if is_success:
+					log = member_models.MemberCardLog.objects.filter(order_id=order.bid, reason=u'下单').first()
+					member_models.MemberCardLog.objects.create(
+						member_card_id=log.member_card_id,
+						trade_id=trade_id,
+						order_id=order.order_id,
+						reason=u"取消下单或下单失败",
+						price=log.price
+					)
+
 			# 退还会员卡
 			if order.member_card_money:
 				trade_id = order.member_card_info['trade_id']
