@@ -194,8 +194,15 @@ Scenario:1 添加标准规格商品
 		[{
 			"name": "叫花鸡",
 			"create_type": "create",
-			"price": 12.00,
-			"stocks": 3,
+			"model": {
+				"models": {
+					"standard": {
+						"stock_type": "有限",
+						"stocks": 3,
+						"price": 12.00
+					}
+				}
+			},
 			"sales": 0,
 			"image": "/static/test_resource_img/hangzhou2.jpg"
 		}, {
@@ -203,8 +210,17 @@ Scenario:1 添加标准规格商品
 			"create_type": "create",
 			"bar_code": "zhouzi_1",
 			"categories": "分类1,分类2,分类3",
-			"price": 11.12,
-			"stocks": "无限",
+			"model": {
+				"models": {
+					"standard": {
+						"stock_type": "无限",
+
+						"price": 11.12
+
+					}
+				}
+			},
+
 			"sales": 0,
 			"image": "/static/test_resource_img/hangzhou1.jpg"
 		}]

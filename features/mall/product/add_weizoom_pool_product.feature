@@ -120,7 +120,7 @@ Scenario:1 创建供应商供应的商品
 		}
 		"""
 
-@gaia @mall @mall.product @mall.product_management
+@gaia2 @mall @mall.product @mall.product_management
 Scenario:1 创建代销的商品
 	weizoom添加商品后：
 	1、zhouxun能获得weizoom商品池商品（创建时间倒序排列）

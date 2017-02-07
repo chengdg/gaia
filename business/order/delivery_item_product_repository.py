@@ -200,6 +200,7 @@ class DeliveryItemProductRepository(business_model.Model):
 				# 填充限时抢购金额
 				if promotion.promotion_type == "flash_sale":
 					promotion_info['promotion_saved_money'] = db_promotion_result['promotion_saved_money']
+					promotion_info['type'] = "flash_sale"
 
 				for promotion in promotions:
 					# 填充积分应用
