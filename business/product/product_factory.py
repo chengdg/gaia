@@ -63,7 +63,7 @@ class ProductFactory(business_model.Service):
 		"""
 		将商品加入到多个商品分类中
 		"""
-		classification_id = int(base_info.get('classification_id'))
+		classification_id = int(base_info.get('classification_id', 0))
 		if not classification_id:
 			return
 

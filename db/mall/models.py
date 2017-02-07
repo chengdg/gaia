@@ -466,6 +466,18 @@ class Product(models.Model):
 	class Meta(object):
 		db_table = 'mall_product'
 
+class ProductUnverified(models.Model):
+	"""
+	未审核的商品信息
+
+	表名：mall_product_unverified
+	"""
+	product_id = models.IntegerField(default=-1) #商品id
+	product_data = models.TextField() #商品信息
+
+	class Meta(object):
+		db_table = 'mall_product_unverified'
+
 
 class ProductRefuseLogs(models.Model):
 	"""

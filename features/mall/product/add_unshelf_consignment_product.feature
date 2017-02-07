@@ -150,17 +150,32 @@ Scenario:1 weizoom已经有了商品
 		[{
 			"name": "叫花鸡",
 			"create_type": "sync",
-			"price": 12.00,
-			"stocks": 3,
-			"categories": "",
+			"model": {
+				"models": {
+					"standard": {
+						"stock_type": "有限",
+						"stocks":3,
+						"price": 12.0
+
+					}
+				}
+			},
 			"sales": 0,
 			"image": "/static/test_resource_img/hangzhou2.jpg"
 		}, {
 			"name": "东坡肘子",
 			"create_type": "sync",
 			"bar_code": "zhouzi_1",
-			"price": 11.12,
-			"stocks": "无限",
+			"categories": "分类1,分类2,分类3",
+			"model": {
+				"models": {
+					"standard": {
+						"stock_type": "无限",
+						"price": 11.12
+
+					}
+				}
+			},
 			"sales": 0,
 			"image": "/static/test_resource_img/hangzhou1.jpg"
 		}]

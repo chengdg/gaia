@@ -6,7 +6,6 @@ from features.util import bdd_util
 from db.mall import models as mall_models
 from db.account import models as account_models
 
-
 def __get_boolean(product, field, default=False):
     return 'true' if product.get(field, default) == True else 'false'
 
@@ -26,12 +25,12 @@ def __parse_model_name(context, model_name):
         name = property_value.name
         name2value[name] = property_value
 
-    # 从显示用的model_name(黑色 M)构造标准model_name(2:5_3:6)
+    #从显示用的model_name(黑色 M)构造标准model_name(2:5_3:6)
     normalized_model_name_items = []
-    # 从model_name(黑色 M)获得model properties
+    #从model_name(黑色 M)获得model properties
     model_properties = []
     for property_value_name in model_name.split(' '):
-        # property_value_name: '黒'' 或是 'M'
+        #property_value_name: '黒'' 或是 'M'
         property_value = name2value[property_value_name]
         normalized_model_name_item = '%d:%d' % (property_value.property_id, property_value.id)
         normalized_model_name_items.append(normalized_model_name_item)
@@ -45,9 +44,9 @@ def __parse_model_name(context, model_name):
 
 
 def __format_product_models_info(context, product):
-    # 规格信息
+    #规格信息
     models_info = {
-        'is_use_custom_model': False,  # 是否使用定制规格
+        'is_use_custom_model': False, #是否使用定制规格
         'standard_model': {},
         'custom_models': []
     }
@@ -70,11 +69,9 @@ def __format_product_models_info(context, product):
                 data['name'] = normalized_model_name
                 data['properties'] = model_properties
 
-                # 在数据库中查询是否已存在该model，如果存在，则是更新；否则，为创建
+                #在数据库中查询是否已存在该model，如果存在，则是更新；否则，为创建
                 try:
-                    existed_product_model = mall_models.ProductModel.select().dj_where(owner_id=context.corp.id,
-                                                                                       name=normalized_model_name,
-                                                                                       is_deleted=False).get()
+                    existed_product_model = mall_models.ProductModel.select().dj_where(owner_id=context.corp.id, name=normalized_model_name, is_deleted=False).get()
                 except:
                     existed_product_model = None
                 if existed_product_model:
@@ -108,7 +105,7 @@ def __format_product_post_data(context, product):
         u'禁售': 1,
         u'仅售': 2
     }
-    # 基本信息
+    #基本信息
     if product.get('supplier', None):
         # supplier = mall_models.Supplier.select().dj_where(owner_id=context.corp.id, name=product['supplier']).get()
 
@@ -124,45 +121,43 @@ def __format_product_post_data(context, product):
         classification_id = 0
 
     base_info = {
-        'name': product['name'],  # 商品名
+        'name': product['name'], #商品名
         'type': product.get('type', 'object'),
-        'bar_code': product.get('bar_code', 'bar_code_default_value'),  # 商品条码
-        'min_limit': product.get('min_limit', '1'),  # 起购数量
-        'promotion_title': product.get('promotion_title', 'promotion_title_default_value'),  # 促销标题
-        'is_enable_bill': product.get('is_enable_bill', False),  # 是否使用发票
-        'detail': product.get('detail', u'商品的详情'),  # 详情
-        'is_member_product': product.get('is_member_product', False),  # 是否参与会员折扣
+        'bar_code': product.get('bar_code', 'bar_code_default_value'), #商品条码
+        'min_limit': product.get('min_limit', '1'), #起购数量
+        'promotion_title': product.get('promotion_title', 'promotion_title_default_value'), #促销标题
+        'is_enable_bill': product.get('is_enable_bill', False), #是否使用发票
+        'detail': product.get('detail', u'商品的详情'), #详情
+        'is_member_product': product.get('is_member_product', False), #是否参与会员折扣
         'supplier_id': supplier_id,
         'classification_id': classification_id
     }
 
-    # 规格信息
+    #规格信息
     models_info = __format_product_models_info(context, product)
 
-    # 支付信息
+    #支付信息
     pay_info = {
         'is_use_online_pay_interface': __get_boolean(product, 'is_use_online_pay_interface', True),
         'is_use_cod_pay_interface': __get_boolean(product, 'is_use_cod_pay_interface')
     }
 
-    # 运费信息
-    postage_type = 'unified_postage_type' if (
-    product.get('postage_type', u'统一运费') == u'统一运费') else 'custom_postage_type'
+    #运费信息
+    postage_type = 'unified_postage_type' if (product.get('postage_type', u'统一运费') == u'统一运费') else 'custom_postage_type'
     limit_zone_type = LIMIT_ZONE_TYPE[product.get('limit_zone_type', u'不限制')]
     limit_zone_name = product.get('limit_zone_name', u'')
     if limit_zone_name:
-        limit_zone_id = mall_models.ProductLimitZoneTemplate.select().dj_where(owner=context.corp.id,
-                                                                               name=limit_zone_name).first().id
+        limit_zone_id = mall_models.ProductLimitZoneTemplate.select().dj_where(owner=context.corp.id, name=limit_zone_name).first().id
     else:
         limit_zone_id = 0
     logistics_info = {
-        'unified_postage_money': product.get('unified_postage_money', '0.0'),  # 统一运费金额
-        'postage_type': postage_type,  # 运费类型
+        'unified_postage_money': product.get('unified_postage_money', '0.0'), #统一运费金额
+        'postage_type': postage_type, #运费类型
         'limit_zone_type': limit_zone_type,
         'limit_zone_id': limit_zone_id
     }
 
-    # 图片信息
+    #图片信息
     image_info = {
         'images': product.get('swipe_images', []),
         'thumbnails_url': ''
@@ -173,14 +168,14 @@ def __format_product_post_data(context, product):
         image['width'] = 100
         image['height'] = 100
 
-    # 分组信息
+    #分组信息
     categories = []
     category_names = product.get('categories', None)
     if category_names:
         for category_name in category_names:
             db_category = mall_models.ProductCategory.select().dj_where(
-                owner_id=context.corp.id,
-                name=category_name
+                owner_id = context.corp.id,
+                name = category_name
             ).get()
             categories.append(db_category.id)
 
@@ -196,7 +191,6 @@ def __format_product_post_data(context, product):
     }
 
     return data
-
 
 def __create_product(context, product):
     data = __format_product_post_data(context, product)
@@ -236,15 +230,15 @@ def __get_product(context, name):
         "supplier": resp_data['supplier']['name'] if resp_data['supplier'] else ""
     }
 
-    # 处理category
+    #处理category
     product['categories'] = [category['name'] for category in resp_data['categories']]
 
-    # 处理图片信息
+    #处理图片信息
     image_info = resp_data['image_info']
     product['swipe_images'] = image_info['images']
     product['thumbnails_url'] = image_info['thumbnails_url']
 
-    # 处理规格信息
+    #处理规格信息
     product['model'] = {
         'models': {}
     }
@@ -274,14 +268,13 @@ def __get_product(context, name):
             "stocks": model['stocks']
         }
 
-    # 处理物流信息
+    #处理物流信息
     logistics_info = resp_data['logistics_info']
     product['postage_type'] = u'统一运费' if logistics_info['postage_type'] == 'unified_postage_type' else u'运费模板'
     product['unified_postage_money'] = logistics_info['unified_postage_money']
     product['limit_zone_type'] = LIMIT_ZONE_TYPE_NUMBER2STR[logistics_info['limit_zone_type']]
-    product['limit_zone_name'] = mall_models.ProductLimitZoneTemplate.select().dj_where(
-        id=logistics_info['limit_zone_id']).first().name if logistics_info['limit_zone_id'] else ''
-    # 处理商品分类信息
+    product['limit_zone_name'] = mall_models.ProductLimitZoneTemplate.select().dj_where(id=logistics_info['limit_zone_id']).first().name if logistics_info['limit_zone_id'] else ''
+    #处理商品分类信息
     if len(resp_data['classifications']) == 0:
         product['classification'] = ''
     else:
@@ -292,12 +285,12 @@ def __get_product(context, name):
 
     return product
 
-
 def __create_promote(promotes, context, user):
     for promote in promotes:
         product = mall_models.Product.select().dj_where(name=promote.get('product_name')).first()
 
         if product:
+
             corp_id = context.corp.id
             data = {
                 'corp_id': corp_id,
@@ -317,6 +310,7 @@ def __create_consignment_product(product_names, user, context):
         product = mall_models.Product.select().dj_where(name=product_name).first()
 
         if product:
+
             corp_id = user.id
             data = {
                 'corp_id': corp_id,
@@ -327,14 +321,13 @@ def __create_consignment_product(product_names, user, context):
 
             bdd_util.assert_api_call_success(response)
 
-
 def __get_products(context, corp_name, type_name=u'在售'):
     TYPE2URL = {
-        u'待售': '/product/offshelf_products/?corp_id=%d' % context.corp.id,
-        u'在售': '/product/onshelf_products/?corp_id=%d' % context.corp.id,
-        u'same_corp_tmpl': '/product/unshelf_pooled_products/?corp_id=%d',
-        u'different_corp_tmpl': '/product/pooled_products/?corp_id=%d',
-        u'待销': '/product/unshelf_consignment_products/?corp_id=%d' % context.corp.id,
+      u'待售': '/product/offshelf_products/?corp_id=%d' % context.corp.id,
+      u'在售': '/product/onshelf_products/?corp_id=%d' % context.corp.id,
+      u'same_corp_tmpl': '/product/unshelf_pooled_products/?corp_id=%d',
+      u'different_corp_tmpl': '/product/pooled_products/?corp_id=%d',
+      u'待销': '/product/unshelf_consignment_products/?corp_id=%d' % context.corp.id,
     }
 
     if u'商品池' in type_name:
@@ -349,7 +342,7 @@ def __get_products(context, corp_name, type_name=u'在售'):
 
     response = context.client.get(url)
     bdd_util.assert_api_call_success(response)
-
+    
     # if hasattr(context, 'query_param'):
     #     for key in context.query_param.keys():
     #         url += '&%s=%s' % (key, context.query_param[key])
@@ -359,38 +352,72 @@ def __get_products(context, corp_name, type_name=u'在售'):
         data = {}
         data['name'] = product['name']
         data['create_type'] = product['create_type']
-        data['bar_code'] = product['bar_code']
+        data['bar_code'] = product['bar_code']        
 
-        # 分类
+        #分类
         if 'categories' in product:
             data['categories'] = ','.join([category['name'] for category in product['categories']])
 
-        # 规格
-        if 'models_info' in product:
-            models_info = product['models_info']
-            if not models_info['is_use_custom_model']:
-                model = models_info['standard_model']
-                data['price'] = model['price']
-                data['stocks'] = u'无限' if model['stock_type'] == 'unlimit' else model['stocks']
-                data['gross_profit'] = model['price'] - model['purchase_price']
-            else:
-                price_items = []
-                gross_profit_items = []
-                for model in models_info['custom_models']:
-                    price_items.append(model['price'])
-                    gross_profit_items.append(model['price'] - model['purchase_price'])
+        # #规格
+        # if 'models_info' in product:
+        #     models_info = product['models_info']
+        #     if not models_info['is_use_custom_model']:
+        #         model = models_info['standard_model']
+        #         data['price'] = model['price']
+        #         data['stocks'] = u'无限' if model['stock_type'] == 'unlimit' else model['stocks']
+        #         data['gross_profit'] = model['price'] - model['purchase_price']
+        #     else:
+        #         price_items = []
+        #         gross_profit_items = []
+        #         for model in models_info['custom_models']:
+        #             price_items.append(model['price'])
+        #             gross_profit_items.append(model['price'] - model['purchase_price'])
+        #
+        #         price_items.sort()
+        #         gross_profit_items.sort()
+        #         data['price'] = '%.2f~%.2f' % (price_items[0], price_items[-1])
+        #         data['gross_profit'] = '%.2f~%.2f' % (gross_profit_items[0], gross_profit_items[-1])
+        #         data['stocks'] = ""
 
-                price_items.sort()
-                gross_profit_items.sort()
-                data['price'] = '%.2f~%.2f' % (price_items[0], price_items[-1])
-                data['gross_profit'] = '%.2f~%.2f' % (gross_profit_items[0], gross_profit_items[-1])
-                data['stocks'] = ""
+
+        # 处理规格信息
+        product['model'] = {
+            'models': {}
+        }
+        resp_models_info = product['models_info']
+        product['is_use_custom_model'] = u'是' if resp_models_info['is_use_custom_model'] else u'否'
+        if resp_models_info['is_use_custom_model']:
+
+            for model in resp_models_info['custom_models']:
+                model_name_items = []
+                for property_value in model['property_values']:
+                    model_name_items.append(property_value['name'])
+                model_name = ' '.join(model_name_items)
+                product['model']['models'][model_name] = {
+                    "price": model['price'],
+                    "purchase_price": model['purchase_price'],
+                    "weight": model['weight'],
+                    "stock_type": u'无限' if model['stock_type'] == 'unlimit' else u'有限',
+                    "stocks": model['stocks']
+                }
+        else:
+            model = resp_models_info['standard_model']
+            model_name = model['name']
+            product['model']['models'][model_name] = {
+                "price": model['price'],
+                "purchase_price": model['purchase_price'],
+                "weight": model['weight'],
+                "stock_type": u'无限' if model['stock_type'] == 'unlimit' else u'有限',
+                "stocks": model['stocks']
+            }
+
+        data['model'] = product['model']
 
         data['image'] = product['image']
         data['sales'] = product.get('sales', 0)
         data['display_index'] = product['display_index']
 
-        # 供应商
+        #供应商
         data['supplier'] = ""
         data['supplier_type'] = ""
         if product['supplier']:
@@ -404,7 +431,7 @@ def __get_products(context, corp_name, type_name=u'在售'):
             elif supplier_type == 'retail':
                 data['supplier_type'] = u'零售返点'
 
-        # 商品分类信息
+        #商品分类信息
         if len(product['classifications']) == 0:
             data['classification'] = ''
         else:
@@ -458,6 +485,9 @@ def step_add_property(context, user):
 def step_add_property(context, user):
     products = json.loads(context.text)
     for product in products:
+        if 'supplier' not in product:
+            # 填充默认供货商为自己
+            product['supplier'] = __get_supplier_name(user)
         __create_product(context, product)
 
 
@@ -507,7 +537,8 @@ def step_impl(context, user, type_name):
 def step_impl(context, user, product_name):
     product = __get_product(context, product_name)
 
-    product['supplier'] = product['supplier'].name if product['supplier'] else None
+    # 所有商品都有supplier
+    # product['supplier'] = product['supplier'].name if product['supplier'] else None
 
     update_data = json.loads(context.text)
     for key, value in update_data.items():
@@ -531,8 +562,7 @@ def step_impl(context, user, product_name):
         else:
             model_name, _ = __parse_model_name(context, model_name)
 
-        product_model = mall_models.ProductModel.select().dj_where(owner_id=context.corp.id, product_id=product.id,
-                                                                   name=model_name).get()
+        product_model = mall_models.ProductModel.select().dj_where(owner_id=context.corp.id, product_id=product.id, name=model_name).get()
 
         price_infos.append({
             "model_id": product_model.id,
@@ -561,8 +591,7 @@ def step_impl(context, user, product_name):
         else:
             model_name, _ = __parse_model_name(context, model_name)
 
-        product_model = mall_models.ProductModel.select().dj_where(owner_id=context.corp.id, product_id=product.id,
-                                                                   name=model_name).get()
+        product_model = mall_models.ProductModel.select().dj_where(owner_id=context.corp.id, product_id=product.id, name=model_name).get()
 
         stock_type = stock_info['stock_type']
         stock_infos.append({
@@ -609,9 +638,9 @@ def step_impl(context, user):
         response = context.client.put('/product/consignment_product/', data)
         bdd_util.assert_api_call_success(response)
 
-
 @when(u"{user}将商品加入CPS推广")
 def step_impl(context, user):
+
     promotes = json.loads(context.text)
     if isinstance(promotes, dict):
         promotes = [promotes]
@@ -621,6 +650,7 @@ def step_impl(context, user):
 
 @when(u"{user}添加代销商品")
 def step_impl(context, user):
+
     product_names = json.loads(context.text)
 
     for product_name in product_names:

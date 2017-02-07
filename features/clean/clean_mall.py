@@ -11,9 +11,17 @@ from db.account import models as account_models
 def clean():
 	logging.info('clean database for mall')
 	mall_models.OrderHasProduct.delete().execute()
+	mall_models.OrderOperationLog.delete().execute()
+	mall_models.OrderStatusLog.delete().execute()
+	mall_models.OrderHasGroup.delete().execute()
+	mall_models.OrderHasPromotion.delete().execute()
+	mall_models.OrderHasRefund.delete().execute()
+	mall_models.OrderCardInfo.delete().execute()
 	mall_models.Order.delete().execute()
+
 	account_models.AccessToken.delete().execute()
 	member_models.MemberInfo.delete().execute()
+	member_models.MemberIntegralLog.delete().execute()
 	member_models.MemberBrowseRecord.delete().execute()
 	member_models.MemberHasTag.delete().execute()
 	member_models.MemberHasSocialAccount.delete().execute()
@@ -36,6 +44,9 @@ def clean():
 		mall_models.SpecialPostageConfig.delete().execute()
 	mall_models.PostageConfig.delete().dj_where(name__not=u'免运费').execute()
 	mall_models.PostageConfig.update(is_used=True).dj_where(name=u'免运费').execute()
+
+	#corp配置
+	account_models.CorpInfo.delete().execute()
 
 	#图片分组
 	mall_models.Image.delete().execute()

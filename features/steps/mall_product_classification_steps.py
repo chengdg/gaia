@@ -75,7 +75,7 @@ def step_impl(context, user, classification_name):
 		'classification_id': __classification_name2id(classification_name)
 	}
 	response = context.client.delete('/mall/product_classification/', data)
-	bdd_util.assert_api_call_success(response)
+	# bdd_util.assert_api_call_success(response)
 
 def __classification_name2id(classification_name):
 	return mall_models.Classification.select().dj_where(name=classification_name).get().id
@@ -89,20 +89,37 @@ def step_impl(context, user, classification_name):
 	classification = mall_models.Classification.select().dj_where(name=classification_name).get()
 
 	data = {
-		'corp_id': bdd_util.get_user_id_for(user),
+		'corp_id': context.corp.id,
 		'classification_id': classification.id
 	}
 	response = context.client.get('/mall/child_product_classifications/', data)
 
-	actual = {}
-	for classification in response.data['product_classifications']:
-		actual[classification['name']] = True
+	table_datas = context.table
 
-	expected = {}
-	for item in json.loads(context.text):
-		expected[item] = True
+	if context.table:
+		actual = []
+		for classification in response.data['product_classifications']:
+			actual.append({
+				'classfication_name': classification['name'],
+				'product_count': classification['product_count']
+			})
+		expected = []
+		for row in table_datas:
+			expected.append({
+				'classfication_name': row['classfication_name'],
+				'product_count': row['product_count']
+			})
+		bdd_util.assert_list(expected, actual)
+	else:
+		actual = {}
+		for classification in response.data['product_classifications']:
+			actual[classification['name']] = True
 
-	bdd_util.assert_dict(expected, actual)
+		expected = {}
+		for item in json.loads(context.text):
+			expected[item] = True
+
+		bdd_util.assert_dict(expected, actual)
 
 @When(u"{user}为商品分类'{classification_name}'配置特殊资质")
 def step_impl(context, user, classification_name):

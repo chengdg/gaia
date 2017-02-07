@@ -1,9 +1,11 @@
-#author:徐梓豪  2016-12-19
-Feature:编辑待审核商品
+#author:徐梓豪  2016-12-15
+Feature:运营删除未审核通过的商品
 	"""
-	1.编辑待审核商品
+	1.运营删除'未入库'的商品
+	2.运营删除'已审核'的商品
 	"""
 Background:
+
 	Given weizoom登录系统
 	When weizoom添加商品分类
 		"""
@@ -97,7 +99,6 @@ Background:
 			}]
 		}
 		"""
-
 	When jobs添加邮费配置
 		"""
 		[{
@@ -117,9 +118,7 @@ Background:
 			}]
 		}]
 		"""
-
 	When jobs选择'顺丰'运费配置
-
 	When jobs创建商品分类为'分类24'的待审核商品
 		"""
 		[{
@@ -132,7 +131,7 @@ Background:
 			"limit_zone_type":"仅发货地区",
 			"limit_zone_name":"仅售地区1",
 			"postage_type": "使用默认运费模板:顺丰",
-			"images":["图片1.png"],
+			"images":["wuhan.jpg"],
 			"remark":"周黑鸭 鲜卤鸭脖 230g/袋 办公室休闲零食 肉干小食"
 		}]
 		"""
@@ -148,7 +147,7 @@ Background:
 			"limit_zone_type":"不发货地区",
 			"limit_zone_name":"禁售地区",
 			"postage_type": "使用默认运费模板:顺丰",
-			"images":["图片1.png", "图片2.png"],
+			"images":["ipad1.jpg"],
 			"remark":"苹果平板，大屏看电视"
 		}]
 		"""
@@ -173,63 +172,70 @@ Background:
 			"limit_zone_type":"仅发货地区",
 			"limit_zone_name":"仅售地区",
 			"postage_type": "使用默认运费模板:顺丰",
-			"images":["多规格图片"],
+			"images":["duoguige.jpg"],
 			"remark":"多规格商品1"
-		}]
-		"""
-@gaia @mall @product @pre_product @edit_pre_product @aix
-Scenario:1 客户编辑已经创建的商品信息
-	Given jobs登录系统
-	When jobs编辑待审核商品信息
-		"""
-		[{
-			"name": "ipad",
-			"promotion_title":"苹果平板",
-			"has_product_model":false,
-			"price":2000.00,
-			"weight":2.00,
-			"stock":200,
-			"limit_zone_type":"不发货地区",
-			"limit_zone_model_name":"禁售地区",
-			"postage_type": "使用默认运费模板:顺丰",
-			"images":["图片1.png", "图片2.png"],
-			"remark":"苹果平板，大屏看电视"
 		}]
 		"""
 	Then jobs查看待审核商品列表
 		|name|classification|price|stock|created_time|status|operation|
 		|  武汉鸭脖  |分类12--分类24|10.00|200|  创建时间 |   待审核   |编辑|
-		|   ipad     |分类11--分类21|2000.00|200| 创建时间 |   待审核   |编辑|
-		| 多规格商品1|分类11--分类23|3.00~5.00|200~300|创建时间| 待审核|编辑|
-	When jobs编辑待审核商品信息
+		|   ipad     |分类11--分类21|3000.00|200| 创建时间 |   待审核   |编辑|
+		|多规格商品1|分类11--分类23|3.00~5.00|200~300|  创建时间 |   待审核   |编辑|
+
+	When jobs提交商品审核
 		"""
-		[{
-			"name":"多规格商品1",
-			"classification": "分类22",
-			"promotion_title":"多规格商品1",
-			"has_product_model":true,
-			"models":{
-				"黑色 S":{
-					"price":3.00,
-					"weight":5.00,
-					"stocks":200
-				},
-				"白色 M":{
-					"price":7.00,
-					"weight":7.00,
-					"stocks":400
-				}
-			},
-			"limit_zone_type":"仅发货地区",
-			"limit_zone_model_name":"仅售地区",
-			"postage_type": "使用默认运费模板:顺丰",
-			"images":["多规格图片"],
-			"remark":"多规格商品1"
-		}]
+		["武汉鸭脖", "ipad"]
 		"""
 
 	Then jobs查看待审核商品列表
 		|name|classification|price|stock|created_time|status|operation|
-		|  武汉鸭脖  |分类12--分类24|10.00|200|  创建时间 |   待审核   |编辑|
-		|   ipad     |分类11--分类21|2000.00|200| 创建时间 |   待审核   |编辑|
-		| 多规格商品1|分类11--分类22|3.00~7.00|200~400|创建时间| 待审核 |编辑|
+		|  武汉鸭脖  |分类12--分类24|10.00|200|  创建时间 |   审核中  |编辑|
+		|   ipad     |分类11--分类21|3000.00|200| 创建时间 |   审核中   |编辑|
+		|多规格商品1|分类11--分类23|3.00~5.00|200~300|  创建时间 |   待审核   |编辑|
+
+	Given weizoom登录系统
+
+	Then weizoom查看待审核商品列表
+		|name|owner_name|classification|status|    operation   |
+		|  武汉鸭脖  |     jobs    |分类12--分类24| 审核中   |通过 驳回 删除|
+		|   ipad     |     jobs    |分类11--分类21| 审核中   |通过 驳回 删除|
+
+	When weizoom审核通过待审核商品
+		"""
+		["ipad"]
+		"""
+
+	Then weizoom查看待审核商品列表
+		|name|owner_name|classification|status|    operation   |
+		|  武汉鸭脖  |     jobs    |分类12--分类24|  审核中   |通过 驳回 删除|
+		|   ipad     |     jobs    |分类11--分类21|  已审核   ||
+
+	Given jobs登录系统
+	Then jobs查看待审核商品列表
+		|name|classification|price|stock|created_time|status|operation|
+		|  武汉鸭脖  |分类12--分类24|10.00|200|  创建时间 |   审核中   |编辑|
+		|   ipad     |分类11--分类21|3000.00|200| 创建时间 |   已审核   |编辑|
+		|多规格商品1|分类11--分类23|3.00~5.00|200~300|  创建时间 |   待审核   |编辑|
+
+@gaia @mall @product @pre_product @delete_pre_product @aix
+Scenario:1 运营删除'审核中'的商品
+	Given weizoom登录系统
+	When weizoom删除待审核商品
+		"""
+		["武汉鸭脖"]
+		"""
+	Then weizoom查看待审核商品列表
+		|name|owner_name|classification|status|    operation   |
+		|   ipad     |     jobs    |分类11--分类21|  已审核   | |
+
+	Then weizoom查看商品分类列表
+		|classfication_name|product_count|
+		|      分类11      |     2     |
+		|      分类12      |     0     |
+		|      分类13      |     0     |
+
+	Given jobs登录系统
+	Then jobs查看待审核商品列表
+		|name|classification|price|stock|created_time|status|operation|
+		|   ipad     |分类11--分类21|3000.00|200| 创建时间 |   已审核   |编辑|
+		|多规格商品1|分类11--分类23|3.00~5.00|200~300|  创建时间 |   待审核   |编辑|

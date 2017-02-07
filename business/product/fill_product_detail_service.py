@@ -332,7 +332,8 @@ class FillProductDetailService(business_model.Service):
 			with_image: 填充商品轮播图信息
 			with_property: 填充商品属性信息
 			with_selected_category: 填充选中的分类信息
-			with_all_category: 填充所有商品分类详情
+			with_all_category: 填充所有商品分组详情
+			with_classification: 填充所有商品分类详情
 			with_sales: 填充商品销售详情
 			with_cps_promotion_info: 填充商品cps推广信息
 		"""

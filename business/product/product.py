@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
-import settings
 
-from business.mall.corporation_factory import CorporationFactory
-from db.mall import models as mall_models
-from db.mall import promotion_models
-from business import model as business_model
+import json
+
 from eaglet.core import watchdog
 from eaglet.core.exceptionutil import unicode_full_stack
 
-
-
+from db.mall import models as mall_models
+from business import model as business_model
 from business.decorator import cached_context_property
+
+import settings
 
 
 class Product(business_model.Model):
@@ -124,6 +123,10 @@ class Product(business_model.Model):
 			self.create_type = None
 			self.sync_at = None
 
+	def get_corp(self):
+		from business.mall.corporation import Corporation
+		return Corporation(self.owner_id)
+
 	@property
 	def is_sellout(self):
 		"""
@@ -209,6 +212,28 @@ class Product(business_model.Model):
 			is_accepted=True
 		).dj_where(id=product_id).execute()
 
+	def update_product_unverified(self, args):
+		"""
+		编辑商品信息(未审核)
+		"""
+		product_id = self.id
+		product_data = json.dumps({
+			'base_info': args['base_info'],
+			'models_info': args['models_info'],
+			'image_info': args['image_info'],
+			'logistics_info': args['logistics_info']
+		})
+		product_unverified = mall_models.ProductUnverified.select().dj_where(product_id=product_id).first()
+		if product_unverified:
+			mall_models.ProductUnverified.update(product_data=product_data).dj_where(product_id=product_id).execute()
+		else:
+			mall_models.ProductUnverified.create(
+				product_id = product_id,
+				product_data = product_data
+			)
+
+		mall_models.Product.update(is_updated=True).dj_where(id=self.id).execute()
+
 	def submit_verify(self):
 		"""
 		提交审核
@@ -216,6 +241,24 @@ class Product(business_model.Model):
 		mall_models.Product.update(
 			status=mall_models.PRODUCT_STATUS['SUBMIT']
 		).dj_where(id=self.id).execute()
+
+	def verify_modifications(self):
+		"""
+		审核通过商品的编辑内容
+		"""
+		product_id = self.id
+		product_data = json.loads(mall_models.ProductUnverified.select().dj_where(product_id=product_id).get().product_data)
+		mall_models.Product.update(is_updated=False, status=mall_models.PRODUCT_STATUS['NOT_YET']).dj_where(id=self.id).execute()
+		from business.product.update_product_service import UpdateProductService
+		corp = self.get_corp()
+		update_product_service = UpdateProductService.get(corp)
+		update_product_service.update_product(self.id, {
+			'corp': corp,
+			'base_info': product_data['base_info'],
+			'models_info': product_data['models_info'],
+			'logistics_info': product_data['logistics_info'],
+			'image_info': product_data['image_info']
+		})
 
 	def refuse_verify(self, reason):
 		"""

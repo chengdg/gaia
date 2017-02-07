@@ -1060,6 +1060,39 @@
                         }
                     }
                 }
+            },
+            "delete": {
+                "summary": "删除原始(未审核通过)商品",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "formData",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },{
+                        "name": "product_id",
+                        "in": "formData",
+                        "description": "商品id",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "tags": [
+                    "pre_product"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {}
+                        }
+                    }
+                }
             }
         },
         "/product/pending_product/": {
@@ -1152,6 +1185,142 @@
                         "description": "商品id集合",
                         "required": true,
                         "type": "array"
+                    }
+                ],
+                "tags": [
+                    "pre_product"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {}
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "审核通过商品更新",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "formData",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },{
+                        "name": "product_ids",
+                        "in": "formData",
+                        "description": "商品id集合",
+                        "required": true,
+                        "type": "array"
+                    }
+                ],
+                "tags": [
+                    "pre_product"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {}
+                        }
+                    }
+                }
+            }
+        },
+        "/product/product_unverified/": {
+            "get": {
+                "summary": "获取未审核的商品内容(编辑商品)",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "formData",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },{
+                        "name": "product_id",
+                        "in": "formData",
+                        "description": "商品id",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "tags": [
+                    "pre_product"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/PreProduct"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "summary": "创建未审核的商品内容(编辑商品)",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "formData",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },{
+                        "name": "product_id",
+                        "in": "formData",
+                        "description": "商品id",
+                        "required": true,
+                        "type": "integer"
+                    },{
+                        "name": "base_info",
+                        "in": "formData",
+                        "description": "商品基本信息",
+                        "required": true,
+                        "type": "json",
+                        "schema": {
+                            "$ref": "#/definitions/BaseInfo"
+                        }
+                    },{
+                        "name": "models_info",
+                        "in": "formData",
+                        "description": "商品规格信息",
+                        "required": true,
+                        "type": "json",
+                        "schema": {
+                            "$ref": "#/definitions/ModelsInfo"
+                        }
+                    },{
+                        "name": "image_info",
+                        "in": "formData",
+                        "description": "商品轮播图信息",
+                        "required": true,
+                        "type": "json",
+                        "schema": {
+                            "$ref": "#/definitions/ImageInfo"
+                        }
+                    },{
+                        "name": "logistics_info",
+                        "in": "formData",
+                        "description": "商品货运信息",
+                        "required": true,
+                        "type": "json",
+                        "schema": {
+                            "$ref": "#/definitions/LogisticsInfo"
+                        }
                     }
                 ],
                 "tags": [

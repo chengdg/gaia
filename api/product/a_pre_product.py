@@ -34,7 +34,7 @@ class APreProduct(api_resource.ApiResource):
 			'name': pre_product.name,
 			'promotion_title': pre_product.promotion_title,
 			'price_info': pre_product.price_info,
-			'weight': pre_product.weight,
+			'weight': '0.00' if not pre_product.standard_model else '%.2f' % pre_product.standard_model.weight,
 			'stocks': pre_product.stocks,
 			'detail': pre_product.detail,
 			'models': pre_product.custom_models,
@@ -43,6 +43,7 @@ class APreProduct(api_resource.ApiResource):
 			'limit_zone': pre_product.limit_zone,
 			'has_same_postage': pre_product.has_same_postage,
 			'has_multi_models': pre_product.has_multi_models,
+			'postage_id': pre_product.postage_id,
 			'postage_money': '%.2f' % pre_product.unified_postage_money,
 			'classification_id': pre_product.classification_id,
 			'classification_name_nav': pre_product.classification_nav,
@@ -80,5 +81,14 @@ class APreProduct(api_resource.ApiResource):
 		})
 
 		return {}
+
+	@param_required(['corp_id', 'product_id:int'])
+	def delete(args):
+		product_id = args['product_id']
+		corp = args['corp']
+		corp.product_pool.delete_products([product_id])
+
+		return {}
+
 
 		
