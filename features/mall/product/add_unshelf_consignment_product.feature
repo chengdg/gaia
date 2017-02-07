@@ -138,7 +138,7 @@ Scenario:1 weizoom已经有了商品
 		}]
 
 		"""
-	Given weizoom登录系统
+	Given zhouxun登录系统
 	When zhouxun添加代销商品
 		"""
 		["东坡肘子", "叫花鸡"]
