@@ -37,4 +37,4 @@ class ARefundingDeliveryItem(api_resource.ApiResource):
 			else:
 				return 500, {'msg': msg}
 		else:
-			return 500, {}
+			return 500, {'msg': 'not exist'}

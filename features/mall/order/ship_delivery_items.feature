@@ -68,7 +68,7 @@ Background:
 
 	When zhouxun将商品移动到'在售'货架
 	"""
-		["东坡肘子zhouxun", "叫花鸡zhouxun","土豆yangmi"]
+		["东坡肘子zhouxun","土豆yangmi"]
 	"""
 	Given bill关注zhouxun的公众号::apiserver
 	When bill访问zhouxun的webapp::apiserver
@@ -133,6 +133,7 @@ Background:
 	"""		
 	When bill使用支付方式'微信支付'进行支付订单'003'于2016-10-03 10:01:00::apiserver
 
+@gaiax @order
 Scenario: 1 对出货单进行发货，使用物流（非其他）
 	Given zhouxun登录系统
 	When zhouxun对出货单进行发货
@@ -186,7 +187,12 @@ Scenario: 1 对出货单进行发货，使用物流（非其他）
 				"count": 1,
 				"name": "东坡肘子zhouxun"
 			}],
-			"status_code": "shipped"
+			"status_code": "shipped",
+			"with_logistics":true,
+			"with_logistics_trace":true,
+			"express_company_name_text": "圆通速递",
+			"express_number": "147258366",
+			"leader_name":""
 		},{
 			"supplier_info": {
 				"supplier_type": "supplier",
@@ -196,7 +202,12 @@ Scenario: 1 对出货单进行发货，使用物流（非其他）
 				"count": 1,
 				"name": "土豆yangmi"
 			}],
-			"status_code": "paid"
+			"status_code": "paid",
+			"with_logistics":false,
+			"with_logistics_trace":true,
+			"express_company_name_text": "",
+			"express_number": "",
+			"leader_name":""
 		}]
 	},{
 		"bid":"002",
@@ -210,7 +221,12 @@ Scenario: 1 对出货单进行发货，使用物流（非其他）
 				"count": 1,
 				"name": "东坡肘子zhouxun"
 			}],
-			"status_code": "shipped"
+			"status_code": "shipped",
+			"with_logistics":true,
+			"with_logistics_trace":true,
+			"express_company_name_text": "申通快递",
+			"express_number": "147258368",
+			"leader_name":"zhouxun|002-1"
 		},{
 			"supplier_info": {
 				"supplier_type": "supplier",
@@ -220,7 +236,12 @@ Scenario: 1 对出货单进行发货，使用物流（非其他）
 				"count": 1,
 				"name": "土豆yangmi"
 			}],
-			"status_code": "shipped"
+			"status_code": "shipped",
+			"with_logistics":true,
+			"with_logistics_trace":true,
+			"express_company_name_text": "申通快递",
+			"express_number": "147258367",
+			"leader_name":"yangmi"
 		}]
 	},{
 		"bid":"001",
@@ -234,7 +255,12 @@ Scenario: 1 对出货单进行发货，使用物流（非其他）
 				"count": 1,
 				"name": "东坡肘子zhouxun"
 			}],
-			"status_code": "shipped"
+			"status_code": "shipped",
+			"with_logistics":true,
+			"with_logistics_trace":true,
+			"express_company_name_text": "顺丰速运",
+			"express_number": "147258369",
+			"leader_name":"zhouxun|001"
 		}]
 	}]
 	"""
@@ -246,15 +272,15 @@ Scenario: 1 对出货单进行发货，使用物流（非其他）
 		"status_logs":[{
 			"from_status_code":"",
 			"to_status_code":"created",
-			"time":"2016-10-01 10:00:00",
+			"time":"2016-10-01 10:00:00"
 		},{
 			"from_status_code":"created",
 			"to_status_code":"paid",
-			"time":"2016-10-01 10:01:00",
+			"time":"2016-10-01 10:01:00"
 		},{
 			"from_status_code":"paid",
 			"to_status_code":"shipped",
-			"time":"2016-10-05 10:11:00",
+			"time":"2016-10-05 10:11:00"
 		}],
 		"operation_logs":[{
 			"action_text":"下单",
@@ -265,7 +291,7 @@ Scenario: 1 对出货单进行发货，使用物流（非其他）
 			"operator":"客户",
 			"time":"2016-10-01 10:01:00"
 		},{
-			"action_text":"订单发货-zhouxun",
+			"action_text":"订单发货",
 			"operator":"zhouxun",
 			"time":"2016-10-05 10:11:00"
 		}],
@@ -278,7 +304,10 @@ Scenario: 1 对出货单进行发货，使用物流（非其他）
 				"count": 1,
 				"name": "东坡肘子zhouxun"
 			}],
-			"express_company_name_text":"顺丰速运",
+			"status_code": "shipped",
+			"with_logistics":true,
+			"with_logistics_trace":true,
+			"express_company_name_text": "顺丰速运",
 			"express_number": "147258369",
 			"leader_name":"zhouxun|001"
 		}]
@@ -292,15 +321,15 @@ Scenario: 1 对出货单进行发货，使用物流（非其他）
 		"status_logs":[{
 			"from_status_code":"",
 			"to_status_code":"created",
-			"time":"2016-10-02 10:00:00",
+			"time":"2016-10-02 10:00:00"
 		},{
 			"from_status_code":"created",
 			"to_status_code":"paid",
-			"time":"2016-10-02 10:01:00",
+			"time":"2016-10-02 10:01:00"
 		},{
 			"from_status_code":"paid",
 			"to_status_code":"shipped",
-			"time":"2016-10-05 10:11:00",
+			"time":"2016-10-05 10:11:00"
 		}],
 		"operation_logs":[{
 			"action_text":"下单",
@@ -311,11 +340,7 @@ Scenario: 1 对出货单进行发货，使用物流（非其他）
 			"operator":"客户",
 			"time":"2016-10-02 10:01:00"
 		},{
-			"action_text":"订单发货-zhouxun",
-			"operator":"zhouxun",
-			"time":"2016-10-05 10:11:00"
-		},{
-			"action_text":"订单发货-yangmi",
+			"action_text":"订单发货",
 			"operator":"zhouxun",
 			"time":"2016-10-05 10:11:00"
 		}],
@@ -329,8 +354,10 @@ Scenario: 1 对出货单进行发货，使用物流（非其他）
 				"name": "东坡肘子zhouxun"
 			}],
 			"status_code": "shipped",
-			"express_company_name_text":"顺丰速运",
-			"express_number": "147258369",
+			"with_logistics":true,
+			"with_logistics_trace":true,
+			"express_company_name_text": "申通快递",
+			"express_number": "147258368",
 			"leader_name":"zhouxun|002-1"
 		},{
 			"supplier_info": {
@@ -342,8 +369,10 @@ Scenario: 1 对出货单进行发货，使用物流（非其他）
 				"name": "土豆yangmi"
 			}],
 			"status_code": "shipped",
-			"express_company_name_text":"顺丰速运",
-			"express_number": "147258369",
+			"with_logistics":true,
+			"with_logistics_trace":true,
+			"express_company_name_text": "申通快递",
+			"express_number": "147258367",
 			"leader_name":"yangmi"
 		}]
 	}
@@ -356,11 +385,11 @@ Scenario: 1 对出货单进行发货，使用物流（非其他）
 		"status_logs":[{
 			"from_status_code":"",
 			"to_status_code":"created",
-			"time":"2016-10-03 10:00:00",
+			"time":"2016-10-03 10:00:00"
 		},{
 			"from_status_code":"created",
 			"to_status_code":"paid",
-			"time":"2016-10-03 10:01:00",
+			"time":"2016-10-03 10:01:00"
 		}],
 		"operation_logs":[{
 			"action_text":"下单",
@@ -370,8 +399,111 @@ Scenario: 1 对出货单进行发货，使用物流（非其他）
 			"action_text":"支付",
 			"operator":"客户",
 			"time":"2016-10-03 10:01:00"
+		}],
+		"delivery_items": [{
+			"supplier_info": {
+				"supplier_type": "supplier",
+				"name": "zhouxun"
+			},
+			"products": [{
+				"count": 1,
+				"name": "东坡肘子zhouxun"
+			}],
+			"status_code": "shipped",
+			"with_logistics":true,
+			"with_logistics_trace":true,
+			"express_company_name_text": "圆通速递",
+			"express_number": "147258366",
+			"leader_name":""
 		},{
-			"action_text":"订单发货-zhouxun",
+			"supplier_info": {
+				"supplier_type": "supplier",
+				"name": "yangmi"
+			},
+			"products": [{
+				"count": 1,
+				"name": "土豆yangmi"
+			}],
+			"status_code": "paid",
+			"with_logistics":false,
+			"with_logistics_trace":true,
+			"express_company_name_text": "",
+			"express_number": "",
+			"leader_name":""
+		}]
+	}
+	"""
+
+@gaiax @order
+Scenario: 2 对出货单进行发货，使用其他物流
+	Given zhouxun登录系统
+	When zhouxun对出货单进行发货
+		"""
+		[{
+			"delivery_item_bid":"001-zhouxun",
+			"with_logistics":true,
+			"with_logistics_trace":false,
+			"express_company_name_value":"其他物流-我的物流公司",
+			"express_number":"138123456",
+			"leader_name":"我的物流公司|001",
+			"time":"2016-10-05 10:11:00"
+		}]
+		"""
+	Then zhouxun获得订单列表
+	"""
+	[{
+		"bid":"003"
+	},{
+		"bid":"002"
+	},{
+		"bid":"001",
+		"status_code": "shipped",
+		"delivery_items": [{
+			"supplier_info": {
+				"supplier_type": "supplier",
+				"name": "zhouxun"
+			},
+			"products": [{
+				"count": 1,
+				"name": "东坡肘子zhouxun"
+			}],
+			"status_code": "shipped",
+			"with_logistics":true,
+			"with_logistics_trace":false,
+			"express_company_name_text": "其他物流-我的物流公司",
+			"express_number": "138123456",
+			"leader_name":"我的物流公司|001"
+		}]
+	}]
+	"""
+	Then zhouxun获得订单'001'
+	"""
+	{
+		"bid":"001",
+		"status_code": "shipped",
+		"status_logs":[{
+			"from_status_code":"",
+			"to_status_code":"created",
+			"time":"2016-10-01 10:00:00"
+		},{
+			"from_status_code":"created",
+			"to_status_code":"paid",
+			"time":"2016-10-01 10:01:00"
+		},{
+			"from_status_code":"paid",
+			"to_status_code":"shipped",
+			"time":"2016-10-05 10:11:00"
+		}],
+		"operation_logs":[{
+			"action_text":"下单",
+			"operator":"客户",
+			"time":"2016-10-01 10:00:00"
+		},{
+			"action_text":"支付",
+			"operator":"客户",
+			"time":"2016-10-01 10:01:00"
+		},{
+			"action_text":"订单发货",
 			"operator":"zhouxun",
 			"time":"2016-10-05 10:11:00"
 		}],
@@ -385,104 +517,16 @@ Scenario: 1 对出货单进行发货，使用物流（非其他）
 				"name": "东坡肘子zhouxun"
 			}],
 			"status_code": "shipped",
-			"express_company_name_text":"顺丰速运",
-			"express_number": "147258369",
-			"leader_name":""
-		},{
-			"supplier_info": {
-				"supplier_type": "supplier",
-				"name": "yangmi"
-			},
-			"products": [{
-				"count": 1,
-				"name": "土豆yangmi"
-			}],
-			"status_code": "paid",
-			"express_company_name_text":"",
-			"express_number": "",
-			"leader_name":""
-		}]
-	}
-	"""
-Scenario: 2 对出货单进行发货，使用其他物流
-	Given zhouxun登录系统
-	When zhouxun对出货单进行发货
-		"""
-		[{
-			"delivery_item_bid":"001-zhouxun",
 			"with_logistics":true,
 			"with_logistics_trace":false,
-			"express_company_name_value":"其他物流",
-			"express_number":"138123456",
-			"leader_name":"其他物流|001",
-			"time":"2016-10-05 10:11:00"
-		}]
-		"""
-	Then zhouxun获得订单列表
-	"""
-	[{
-		"bid":"001",
-		"status_code": "shipped",
-		"delivery_items": [{
-			"supplier_info": {
-				"supplier_type": "supplier",
-				"name": "zhouxun"
-			},
-			"products": [{
-				"count": 1,
-				"name": "东坡肘子zhouxun"
-			}],
-			"status_code": "shipped"
-		}]
-	}]
-	"""
-	Then zhouxun获得订单'001'
-	"""
-	{
-		"bid":"001",
-		"status_code": "shipped",
-		"status_logs":[{
-			"from_status_code":"",
-			"to_status_code":"created",
-			"time":"2016-10-01 10:00:00",
-		},{
-			"from_status_code":"created",
-			"to_status_code":"paid",
-			"time":"2016-10-01 10:01:00",
-		},{
-			"from_status_code":"paid",
-			"to_status_code":"shipped",
-			"time":"2016-10-05 10:11:00",
-		}],
-		"operation_logs":[{
-			"action_text":"下单",
-			"operator":"客户",
-			"time":"2016-10-01 10:00:00"
-		},{
-			"action_text":"支付",
-			"operator":"客户",
-			"time":"2016-10-01 10:01:00"
-		},{
-			"action_text":"订单发货-zhouxun",
-			"operator":"zhouxun",
-			"time":"2016-10-05 10:11:00"
-		}],
-		"delivery_items": [{
-			"supplier_info": {
-				"supplier_type": "supplier",
-				"name": "zhouxun"
-			},
-			"products": [{
-				"count": 1,
-				"name": "东坡肘子zhouxun"
-			}],
-			"express_company_name_text":"其他物流",
+			"express_company_name_text": "其他物流-我的物流公司",
 			"express_number": "138123456",
-			"leader_name":"其他物流|001"
+			"leader_name":"我的物流公司|001"
 		}]
 	}
 	"""
 
+@gaiax @order
 Scenario: 3 对出货单进行发货，不使用物流
 	Given zhouxun登录系统
 	When zhouxun对出货单进行发货
@@ -509,67 +553,10 @@ Scenario: 3 对出货单进行发货，不使用物流
 	Then zhouxun获得订单列表
 	"""
 	[{
+		"bid":"003"
+	},{
 		"bid":"002",
 		"status_code": "shipped",
-		"delivery_items": [{
-			"supplier_info": {
-				"supplier_type": "supplier",
-				"name": "zhouxun"
-			},
-			"products": [{
-				"count": 1,
-				"name": "东坡肘子zhouxun"
-			}],
-			"status_code": "shipped"
-		},{
-			"supplier_info": {
-				"supplier_type": "supplier",
-				"name": "yangmi"
-			},
-			"products": [{
-				"count": 1,
-				"name": "土豆yangmi"
-			}],
-			"status_code": "shipped"
-		}]
-	}]
-	"""
-
-	Then zhouxun获得订单'002'
-	"""
-	{
-		"bid":"002",
-		"status_code": "shipped",
-		"status_logs":[{
-			"from_status_code":"",
-			"to_status_code":"created",
-			"time":"2016-10-02 10:00:00",
-		},{
-			"from_status_code":"created",
-			"to_status_code":"paid",
-			"time":"2016-10-02 10:01:00",
-		},{
-			"from_status_code":"paid",
-			"to_status_code":"shipped",
-			"time":"2016-10-05 10:11:00",
-		}],
-		"operation_logs":[{
-			"action_text":"下单",
-			"operator":"客户",
-			"time":"2016-10-02 10:00:00"
-		},{
-			"action_text":"支付",
-			"operator":"客户",
-			"time":"2016-10-02 10:01:00"
-		},{
-			"action_text":"订单发货-zhouxun",
-			"operator":"zhouxun",
-			"time":"2016-10-05 10:11:00"
-		},{
-			"action_text":"订单发货-yangmi",
-			"operator":"zhouxun",
-			"time":"2016-10-05 10:11:00"
-		}],
 		"delivery_items": [{
 			"supplier_info": {
 				"supplier_type": "supplier",
@@ -580,7 +567,9 @@ Scenario: 3 对出货单进行发货，不使用物流
 				"name": "东坡肘子zhouxun"
 			}],
 			"status_code": "shipped",
-			"express_company_name_text":"",
+			"with_logistics":false,
+			"with_logistics_trace":false,
+			"express_company_name_text": "",
 			"express_number": "",
 			"leader_name":"zhouxun|002-1"
 		},{
@@ -593,7 +582,76 @@ Scenario: 3 对出货单进行发货，不使用物流
 				"name": "土豆yangmi"
 			}],
 			"status_code": "shipped",
-			"express_company_name_text":"",
+			"with_logistics":false,
+			"with_logistics_trace":false,
+			"express_company_name_text": "",
+			"express_number": "",
+			"leader_name":""
+		}]
+	},{
+		"bid":"001"
+	}]
+	"""
+
+	Then zhouxun获得订单'002'
+	"""
+	{
+		"bid":"002",
+		"status_code": "shipped",
+		"status_logs":[{
+			"from_status_code":"",
+			"to_status_code":"created",
+			"time":"2016-10-02 10:00:00"
+		},{
+			"from_status_code":"created",
+			"to_status_code":"paid",
+			"time":"2016-10-02 10:01:00"
+		},{
+			"from_status_code":"paid",
+			"to_status_code":"shipped",
+			"time":"2016-10-05 10:11:00"
+		}],
+		"operation_logs":[{
+			"action_text":"下单",
+			"operator":"客户",
+			"time":"2016-10-02 10:00:00"
+		},{
+			"action_text":"支付",
+			"operator":"客户",
+			"time":"2016-10-02 10:01:00"
+		},{
+			"action_text":"订单发货",
+			"operator":"zhouxun",
+			"time":"2016-10-05 10:11:00"
+		}],
+		"delivery_items": [{
+			"supplier_info": {
+				"supplier_type": "supplier",
+				"name": "zhouxun"
+			},
+			"products": [{
+				"count": 1,
+				"name": "东坡肘子zhouxun"
+			}],
+			"status_code": "shipped",
+			"with_logistics":false,
+			"with_logistics_trace":false,
+			"express_company_name_text": "",
+			"express_number": "",
+			"leader_name":"zhouxun|002-1"
+		},{
+			"supplier_info": {
+				"supplier_type": "supplier",
+				"name": "yangmi"
+			},
+			"products": [{
+				"count": 1,
+				"name": "土豆yangmi"
+			}],
+			"status_code": "shipped",
+			"with_logistics":false,
+			"with_logistics_trace":false,
+			"express_company_name_text": "",
 			"express_number": "",
 			"leader_name":""
 		}]
