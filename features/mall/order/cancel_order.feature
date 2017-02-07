@@ -6,10 +6,9 @@ Feature: 管理员在weapp中取消订单
 		1.管理员取消多规格商品的订单，多规格商品库存退回正确
 		2.管理员取消多供货商商品的订单，商品库存退回正确
 		3.管理员取消使用订单积分的订单，积分退回正确
-		4.管理员取消使用商品积分的订单，积分退回正确
-		5.管理员取消使用通用券的订单，通用券退回正确
-		6.管理员取消使用多商品券的订单，多商品券退回正确
-		7.管理员取消使用微众卡的订单，微众卡退回正确
+		4.管理员取消使用通用券的订单，通用券退回正确
+		5.管理员取消使用多商品券的订单，多商品券退回正确
+		6.管理员取消使用微众卡的订单，微众卡退回正确
 	"""
 Background:
 	Given 重置'weapp'的bdd环境
@@ -518,160 +517,7 @@ Scenario: 3 管理员取消使用了订单积分的订单
 		"""
 
 @gaiax @order
-Scenario: 4 管理员取消使用了商品积分的订单
-	1.zhouxun取消待支付订单，积分退回
-
-	Given zhouxun登录系统::weapp
-	When zhouxun创建积分应用活动::weapp
-		"""
-		[{
-			"name": "多商品积分应用1",
-			"start_date": "今天",
-			"end_date": "1天后",
-			"product_name": "jobs商品1,zhouxun商品3",
-			"is_permanant_active": false,
-			"rules": [{
-				"member_grade": "全部",
-				"discount": 49.95,
-				"discount_money": 5.00
-			}]
-		}]
-		"""
-	When bill访问zhouxun的webapp::apiserver
-	When bill获得zhouxun的50会员积分::apiserver
-	Then bill在zhouxun的webapp中拥有50会员积分::apiserver
-	When bill购买zhouxun的商品::apiserver
-		"""
-		{
-			"order_id":"001",
-			"date":"2017-01-20 10:00:00",
-			"ship_name": "bill",
-			"ship_tel": "13811223344",
-			"ship_area": "北京市 北京市 海淀区",
-			"ship_address": "泰兴大厦",
-			"pay_type": "微信支付",
-			"products": [{
-				"name": "zhouxun商品3",
-				"count": 1,
-				"integral": 10,
-				"integral_money": 5.00
-			}, {
-				"name": "jobs商品1",
-				"count": 1,
-				"integral": 10,
-				"integral_money": 5.00
-			}]
-		}
-		"""
-	Then bill在zhouxun的webapp中拥有30会员积分::apiserver
-	Given zhouxun登录系统
-	When zhouxun取消订单'001'
-	Then zhouxun获得订单列表
-		"""
-			[{
-				"bid": "001",
-				"status_code": "cancelled",
-				"integral_money": 10.00,
-				"integral": 20,
-				"delivery_items": [{
-					"bid": "001-zhouxun",
-					"status_code": "cancelled",
-					"products": [{
-						"name": "zhouxun商品3",
-						"count": 1,
-						"sale_price": 10.01,
-						"origin_price": 10.01,
-						"promotion_info": {
-							"type": "integral_sale",
-							"integral_count": 10,
-							"integral_money": 5.00
-						}
-					}]
-				},{
-					"bid": "001-jobs",
-					"status_code": "cancelled",
-					"products": [{
-						"name": "jobs商品1",
-						"count": 1,
-						"sale_price": 11.00,
-						"origin_price": 11.00,
-						"promotion_info": {
-							"type": "integral_sale",
-							"integral_count": 10,
-							"integral_money": 5.00
-						}
-					}]
-				}]
-			}]
-			"""
-	Then zhouxun获得订单'001'
-		"""
-		{
-			"bid": "001",
-			"status_code": "cancelled",
-			"integral_type": "积分应用",
-			"integral_money": 10.00,
-			"integral": 20,
-			"delivery_items": [{
-				"bid": "001-zhouxun",
-				"status_code": "cancelled",
-				"products": [{
-					"name": "zhouxun商品3",
-					"count": 1,
-					"sale_price": 10.01,
-					"origin_price": 10.01,
-					"promotion_info": {
-						"type": "integral_sale",
-						"integral_count": 10,
-						"integral_money": 5.00
-					}
-				}]
-			},{
-				"bid": "001-jobs",
-				"status_code": "cancelled",
-				"products": [{
-					"name": "jobs商品1",
-					"count": 1,
-					"sale_price": 11.00,
-					"origin_price": 11.00,
-					"promotion_info": {
-						"type": "integral_sale",
-						"integral_count": 10,
-						"integral_money": 5.00
-					}
-				}]
-			}]
-		}
-		"""
-	When bill访问zhouxun的webapp::apiserver
-	Then bill在zhouxun的webapp中拥有50会员积分::apiserver
-	Then zhouxun能获得bill的积分日志::weapp
-		"""
-		[{
-			"content": "取消订单 返还积分",
-			"integral": 20
-		}, {
-			"content": "购物抵扣",
-			"integral": -20
-		}]
-		"""
-#	Then zhouxun能获得bill的积分日志::weapp
-#		"""
-#		[{
-#			"content": "取消订单 返还积分",
-#			"integral": 20
-#		}, {
-#			"content": "购物抵扣",
-#			"integral": -20
-#		}, {
-#			"content": "首次关注",
-#			"integral": 50
-#		}]
-#		"""
-
-
-@gaiax @order
-Scenario: 5 管理员取消使用了通用券的订单
+Scenario: 4 管理员取消使用了通用券的订单
 	1.zhouxun取消待支付订单，通用券退回
 
 	Given zhouxun登录系统::weapp
@@ -816,7 +662,7 @@ Scenario: 5 管理员取消使用了通用券的订单
 		"""
 
 @gaiax @order
-Scenario: 6 管理员取消使用了多商品券的订单
+Scenario: 5 管理员取消使用了多商品券的订单
 	1.zhouxun取消待支付订单，多商品券退回
 
 	Given zhouxun登录系统::weapp
@@ -980,7 +826,7 @@ Scenario: 6 管理员取消使用了多商品券的订单
 		"""
 
 @gaiax @order
-Scenario: 7 管理员取消使用了微众卡的订单
+Scenario: 6 管理员取消使用了微众卡的订单
 	1.zhouxun取消待支付订单，微众卡退回
 
 
