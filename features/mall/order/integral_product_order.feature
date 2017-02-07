@@ -205,25 +205,11 @@ Scenario: 1 管理员取消使用了商品积分的订单
 			"integral": -20
 		}]
 		"""
-#	Then zhouxun能获得bill的积分日志::weapp
-#		"""
-#		[{
-#			"content": "取消订单 返还积分",
-#			"integral": 20
-#		}, {
-#			"content": "购物抵扣",
-#			"integral": -20
-#		}, {
-#			"content": "首次关注",
-#			"integral": 50
-#		}]
-#		"""
-
 
 @gaiax @order
 Scenario: 2 管理员退款使用积分的订单
 
-	Given jobs登录系统
+	Given zhouxun登录系统
 	When zhouxun添加商品
 		"""
 		[{
@@ -311,10 +297,8 @@ Scenario: 2 管理员退款使用积分的订单
 		}
 		"""
 	When bill使用支付方式'微信支付'进行支付订单'005'于2016-05-01 10:00:00::apiserver
-
-	Given zhouxun登录系统
 	Then bill在zhouxun的webapp中拥有100会员积分::apiserver
-
+	Given zhouxun登录系统
 	When zhouxun申请退款出货单'005-zhouxun'
 		"""
 		{
@@ -326,9 +310,6 @@ Scenario: 2 管理员退款使用积分的订单
 			"time": "2016-05-02 10:00:00"
 		}
 		"""
-
-	Then bill在zhouxun的webapp中拥有100会员积分::apiserver
-
 	Then zhouxun获得订单列表
 		"""
 		[{
@@ -441,7 +422,8 @@ Scenario: 2 管理员退款使用积分的订单
 			}]
 		}
 		"""
-
+	When bill访问zhouxun的webapp::apiserver 
+	Then bill在zhouxun的webapp中拥有100会员积分::apiserver
 
 @gaiax @order
 Scenario: 3 管理员退款成功使用积分的订单
@@ -534,10 +516,8 @@ Scenario: 3 管理员退款成功使用积分的订单
 		}
 		"""
 	When bill使用支付方式'微信支付'进行支付订单'005'于2016-05-01 10:00:00::apiserver
-
-	Given zhouxun登录系统
 	Then bill在zhouxun的webapp中拥有100会员积分::apiserver
-
+	Given zhouxun登录系统
 	When zhouxun申请退款出货单'005-zhouxun'
 		"""
 		{
@@ -555,9 +535,6 @@ Scenario: 3 管理员退款成功使用积分的订单
 			"time":"2016-05-02 11:00:00"
 		}
 		"""
-
-	Then bill在zhouxun的webapp中拥有100会员积分::apiserver
-
 	Then zhouxun获得订单列表
 		"""
 		[{
@@ -670,3 +647,5 @@ Scenario: 3 管理员退款成功使用积分的订单
 			}]
 		}
 		"""
+	When bill访问zhouxun的webapp::apiserver 
+	Then bill在zhouxun的webapp中拥有100会员积分::apiserver
