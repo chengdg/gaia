@@ -24,8 +24,8 @@ DATABASES = {
         'PASSWORD': 'weizoom',
         'HOST': DB_HOST,
         'PORT': DB_PORT,
-        # 'HOST': '103.29.16.139',#WEAPP_DB_HOST,
-        # 'PORT': '',
+        #'HOST': '103.29.16.139',#WEAPP_DB_HOST,
+        #'PORT': '',
         'CONN_MAX_AGE': 100
     }
 }
