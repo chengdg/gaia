@@ -240,7 +240,7 @@ def is_base_type(obj):
 	"""
 	import datetime as datetime
 	return isinstance(obj,
-	                  six.integer_types + (type(None), float, Decimal, datetime.datetime, datetime.date, datetime.time))
+	                  six.integer_types + (type(None), basestring, float, Decimal, datetime.datetime, datetime.date, datetime.time))
 
 
 def diff(local, other, ignore_keys):
@@ -252,6 +252,7 @@ def diff(local, other, ignore_keys):
 
 	def _recursive_diff(l, r, res, path='/'):
 		if not is_base_type(l) and type(l) != type(r):
+			print('-----l',type(l),type(r))
 			res.append({
 				'replace': path,
 				'actual': r,
