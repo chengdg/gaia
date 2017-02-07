@@ -161,10 +161,10 @@ Scenario:1 使用全店优惠券的单商品订单（优惠券全额抵扣）
 			"origin_final_price": 0.00,
 			"final_price": 0.00,
 			"coupon_money": 10.11,
-			"extra_coupon_info":[{
+			"extra_coupon_info":{
 				"bid":"coupon1_id_1",
 				"type":"all_products_coupon"
-			}],
+			},
 			"delivery_items": [{
 				"bid": "001-zhouxun",
 				"status_code": "paid",
@@ -187,10 +187,10 @@ Scenario:1 使用全店优惠券的单商品订单（优惠券全额抵扣）
 			"status_code": "paid",
 			"pay_interface_type_code": "preference",
 			"coupon_money": 10.11,
-			"extra_coupon_info":[{
+			"extra_coupon_info":{
 				"bid":"coupon1_id_1",
 				"type":"all_products_coupon"
-			}],
+			},
 			"pay_money": 0.00,
 			"product_price": 10.11,
 			"postage":0.00,
@@ -287,10 +287,10 @@ Scenario:2 使用全店优惠券的多供货商多规格商品订单（优惠券
 			"origin_final_price": 41.55,
 			"final_price": 41.55,
 			"coupon_money": 20.00,
-			"extra_coupon_info":[{
+			"extra_coupon_info":{
 				"bid":"coupon2_id_1",
 				"type":"all_products_coupon"
-			}]
+			},
 			"delivery_items": [{
 				"bid": "002-yangmi",
 				"status_code": "created",
@@ -332,10 +332,10 @@ Scenario:2 使用全店优惠券的多供货商多规格商品订单（优惠券
 			"status_code": "created",
 			"pay_interface_type_code": "weixin_pay",
 			"coupon_money": 20.00,
-			"extra_coupon_info":[{
+			"extra_coupon_info":{
 				"bid":"coupon2_id_1",
 				"type":"all_products_coupon"
-			}],
+			},
 			"pay_money": 41.55,
 			"product_price": 61.55,
 			"postage":0.00,
@@ -445,10 +445,10 @@ Scenario:3 使用多品券的多规格商品订单
 			"origin_final_price": 0.00,
 			"final_price": 0.00,
 			"coupon_money": 41.44,
-			"extra_coupon_info":[{
+			"extra_coupon_info":{
 				"bid":"coupon3_id_1",
 				"type":"multi_products_coupon"
-			}]
+			},
 			"delivery_items": [{
 				"bid": "003-zhouxun",
 				"status_code": "paid",
@@ -476,10 +476,10 @@ Scenario:3 使用多品券的多规格商品订单
 			"status_code": "paid",
 			"pay_interface_type_code": "preference",
 			"coupon_money": 41.44.,
-			"extra_coupon_info":[{
+			"extra_coupon_info":{
 				"bid":"coupon3_id_1",
 				"type":"multi_products_coupon"
-			}],
+			},
 			"pay_money": 0.00,
 			"product_price": 41.44,
 			"postage":0.00,
@@ -581,10 +581,10 @@ Scenario:4 使用多品券的多供货商多规格商品订单（优惠券金额
 			"origin_final_price": 10.11,
 			"final_price": 10.11,
 			"coupon_money": 51.44,
-			"extra_coupon_info":[{
+			"extra_coupon_info":{
 				"bid":"coupon4_id_1",
 				"type":"multi_products_coupon"
-			}]
+			},
 			"delivery_items": [{
 				"bid": "004-yangmi",
 				"status_code": "created",
@@ -626,10 +626,10 @@ Scenario:4 使用多品券的多供货商多规格商品订单（优惠券金额
 			"status_code": "created",
 			"pay_interface_type_code": "weixin_pay",
 			"coupon_money": 51.44.,
-			"extra_coupon_info":[{
+			"extra_coupon_info":{
 				"bid":"coupon4_id_1",
 				"type":"multi_products_coupon"
-			}],
+			},
 			"pay_money": 10.11,
 			"product_price": 51.44,
 			"postage":0.00,
