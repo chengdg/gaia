@@ -198,7 +198,7 @@ Scenario: 1 管理员取消使用了订单积分的订单
 		}]
 		"""
 
-@order
+@gaiax @order
 Scenario: 2 管理员退款使用订单积分的订单
 
 	Given zhouxun登录系统
@@ -384,7 +384,7 @@ Scenario: 2 管理员退款使用订单积分的订单
 	When bill访问zhouxun的webapp::apiserver
 	Then bill在zhouxun的webapp中拥有19会员积分::apiserver
 
-@order
+@gaia @order
 Scenario: 3 管理员退款成功使用订单积分的订单
 
 	Given zhouxun登录系统
@@ -482,7 +482,7 @@ Scenario: 3 管理员退款成功使用订单积分的订单
 			"weizoom_card_money": 0.00,
 			"member_card_money": 0.00,
 			"integral": 31,
-			"integral_money": 15.05
+			"integral_money": 15.05,
 			"refunding_info": {
 				"cash": 10.00,
 				"weizoom_card_money": 0.00,
@@ -577,4 +577,4 @@ Scenario: 3 管理员退款成功使用订单积分的订单
 		}
 		"""
 	When bill访问zhouxun的webapp::apiserver
-	Then bill在zhouxun的webapp中拥有100会员积分::apiserver
+	Then bill在zhouxun的webapp中拥有19会员积分::apiserver
