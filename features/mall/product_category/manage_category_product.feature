@@ -140,7 +140,7 @@ Scenario:2 调整分组中商品排序
 		}]
 		"""
 
-@gaia @mall @mall.product @mall.product_category @ztqb
+@gaia @mall @mall.product @mall.product_category
 Scenario:3 向分组中增加商品
 	向分组中添加商品后，能获得新的分组信息
 
