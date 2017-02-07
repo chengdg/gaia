@@ -1474,242 +1474,7 @@ Scenario:4 管理员退款使用微众卡全额支付的订单
 		"""
 
 @gaiax @order
-Scenario:5 管理员退款使用积分的订单
-	Given 重置'apiserver'的bdd环境
-	Given 重置'weapp'的bdd环境
-
-	Given zhouxun登录系统
-	When zhouxun添加支付方式
-		"""
-		[{
-			"type": "微信支付",
-			"is_active": "启用"
-		}]
-		"""
-
-	When zhouxun添加商品
-		"""
-		[{
-			"name": "无规格商品1",
-			"model":{
-				"models":{
-					"standard":{
-						"price": 10.11,
-						"purchase_price": 9.00,
-						"stock_type": "有限",
-						"stocks": 100
-					}
-				}
-			}
-		},{
-			"name": "无规格商品2",
-			"model":{
-				"models":{
-					"standard":{
-						"price": 20.00,
-						"purchase_price": 19.00,
-						"stock_type": "无限"
-					}
-				}
-			}
-		}]
-		"""
-	When zhouxun将商品移动到'在售'货架
-		"""
-		["无规格商品1", "无规格商品2"]
-		"""
-
-	When zhouxun更新积分规则为
-		"""
-		{
-			"integral_each_yuan": 20
-		}
-		"""
-	Given zhouxun登录系统::weapp
-	When zhouxun创建积分应用活动::weapp
-		"""
-		[{
-			"name": "积分应用活动1",
-			"start_date": "2015-10-10",
-			"end_date": "1天后",
-			"product_name": "无规格商品2",
-			"is_permanant_active": false,
-			"rules": [{
-				"member_grade": "全部",
-				"discount": 50,
-				"discount_money": 10.00
-			}]
-		}]
-		"""
-
-	Given bill关注zhouxun的公众号::apiserver
-
-	Given zhouxun登录系统
-	When zhouxun给"bill"加积分::weapp
-		"""
-		{
-			"integral":500,
-			"reason":""
-		}
-		"""
-
-	When bill访问zhouxun的webapp::apiserver 
-	When bill购买zhouxun的商品::apiserver
-		"""
-		{
-			"order_id":"005",
-			"date":"2016-05-01",
-			"ship_name": "bill",
-			"ship_tel": "13811223344",
-			"ship_area": "北京市 北京市 海淀区",
-			"ship_address": "泰兴大厦",
-			"pay_type": "微信支付",
-			"products":[{
-				"name":"无规格商品1",
-				"count":1
-			},{
-				"name":"无规格商品2",
-				"count":2,
-				"integral": 400,
-				"integral_money": 20.00
-			}],
-			"postage": 0.00
-		}
-		"""
-	When bill使用支付方式'微信支付'进行支付订单'005'于2016-05-01 10:00:00::apiserver
-
-	Given zhouxun登录系统
-	Then bill在zhouxun的webapp中拥有100会员积分::apiserver
-
-	When zhouxun申请退款出货单'005-zhouxun'
-		"""
-		{
-			"cash":10.00,
-			"weizoom_card_money":0.00,
-			"coupon_money":30.11,
-			"integral":200,
-			"member_card_money":0.00,
-			"time": "2016-05-02 10:00:00"
-		}
-		"""
-
-	Then bill在zhouxun的webapp中拥有100会员积分::apiserver
-
-	Then zhouxun获得订单列表
-		"""
-		[{
-			"bid": "005",
-			"status_code": "refunding",
-			"pay_interface_type_code": "weixin_pay",
-			"pay_money": 30.11,
-			"product_price": 50.11,
-			"postage":0.00,
-			"save_money": 20.00,
-			"origin_final_price": 30.11,
-			"origin_weizoom_card_money": 0.00,
-			"origin_member_card_money": 0.00,
-			"final_price": 30.11,
-			"weizoom_card_money": 0.00,
-			"member_card_money": 0.00,
-			"integral": 400,
-			"integral_money": 20.00,
-			"refunding_info": {
-				"cash": 0.00,
-				"weizoom_card_money": 0.00,
-				"member_card_money": 0.00,
-				"coupon_money": 0.00,
-				"integral": 0,
-				"integral_money": 0.00,
-				"total": 0.00
-			},
-			"delivery_items": [{
-				"bid": "005-zhouxun",
-				"status_code": "refunding",
-				"refunding_info": {
-					"finished": false,
-					"total_can_refund": 50.11,
-					"cash": 10.00,
-					"weizoom_card_money": 0.00,
-					"member_card_money":0.00,
-					"coupon_money": 30.11,
-					"integral": 200,
-					"integral_money": 10.00,
-					"total": 50.11
-					},
-				"supplier_info": {
-					"supplier_type": "supplier",
-					"name": "zhouxun"
-				},
-				"products": [{
-					"name": "无规格商品1",
-					"count": 1
-				},{
-					"name": "无规格商品2",
-					"count": 2
-				}]
-			}]
-		}]
-		"""
-
-	Then zhouxun获得订单'005'
-		"""
-		{
-			"bid": "005",
-			"status_code": "refunding",
-			"pay_interface_type_code": "weixin_pay",
-			"pay_money": 30.11,
-			"product_price": 50.11,
-			"postage":0.00,
-			"save_money": 20.00,
-			"origin_final_price": 30.11,
-			"origin_weizoom_card_money": 0.00,
-			"final_price": 30.11,
-			"weizoom_card_money": 0.00,
-			"integral": 400,
-			"integral_money": 20.00,
-			"weizoom_card_info": {
-				"used_card": []
-			},
-			"refunding_info": {
-				"cash": 0.00,
-				"weizoom_card_money": 0.00,
-				"member_card_money": 0.00,
-				"coupon_money": 0.00,
-				"integral": 0,
-				"integral_money": 0.00,
-				"total": 0.00
-			},
-			"delivery_items": [{
-				"bid": "005-zhouxun",
-				"status_code": "refunding",
-				"postage": 0.00,
-				"refunding_info": {
-					"finished": false,
-					"cash": 10.00,
-					"weizoom_card_money": 0.00,
-					"member_card_money":0.00,
-					"coupon_money": 30.11,
-					"integral": 200,
-					"integral_money": 10.00,
-					"total": 50.11
-					},
-				"supplier_info": {
-					"supplier_type": "supplier",
-					"name": "zhouxun"
-				},
-				"products": [{
-					"name": "无规格商品1",
-					"count": 1
-				},{
-					"name": "无规格商品2",
-					"count": 2
-				}]
-			}]
-		}
-		"""
-
-@gaiax @order
-Scenario:6 管理员退款使用优惠券的订单
+Scenario:5 管理员退款使用优惠券的订单
 	Given 重置'apiserver'的bdd环境
 	Given 重置'weapp'的bdd环境
 
@@ -1975,7 +1740,7 @@ Scenario:6 管理员退款使用优惠券的订单
 		"""
 
 @gaiax @order
-Scenario:7 管理员退款出货单，商品销量和库存
+Scenario:6 管理员退款出货单，商品销量和库存
 	Given 重置'apiserver'的bdd环境
 	Given 重置'weapp'的bdd环境
 
@@ -2298,7 +2063,7 @@ Scenario:7 管理员退款出货单，商品销量和库存
 		"""
 
 @gaiax @order
-Scenario:8 管理员退款出货单，会员信息
+Scenario:7 管理员退款出货单，会员信息
 	Given 重置'apiserver'的bdd环境
 	Given 重置'weapp'的bdd环境
 
@@ -2521,7 +2286,7 @@ Scenario:8 管理员退款出货单，会员信息
 		"""
 
 @gaiax @order
-Scenario:9 管理员退款出货单，积分设置为1元=0积分
+Scenario:8 管理员退款出货单，积分设置为1元=0积分
 	Given 重置'apiserver'的bdd环境
 
 	Given zhouxun登录系统
