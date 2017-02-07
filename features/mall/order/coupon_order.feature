@@ -198,7 +198,7 @@ Scenario:1 使用全店优惠券的单商品订单（优惠券全额抵扣）
 			"origin_final_price": 0.00,
 			"final_price": 0.00,
 			"delivery_items": [{
-				"bid": "006-zhouxun",
+				"bid": "001-zhouxun",
 				"status_code": "paid",
 				"postage": 0.00,
 				"supplier_info": {
@@ -475,7 +475,7 @@ Scenario:3 使用多品券的多规格商品订单
 			"bid": "003",
 			"status_code": "paid",
 			"pay_interface_type_code": "preference",
-			"coupon_money": 41.44.,
+			"coupon_money": 41.44,
 			"extra_coupon_info":{
 				"bid":"coupon3_id_1",
 				"type":"multi_products_coupon"
@@ -625,13 +625,13 @@ Scenario:4 使用多品券的多供货商多规格商品订单（优惠券金额
 			"bid": "004",
 			"status_code": "created",
 			"pay_interface_type_code": "weixin_pay",
-			"coupon_money": 51.44.,
+			"coupon_money": 51.44,
 			"extra_coupon_info":{
 				"bid":"coupon4_id_1",
 				"type":"multi_products_coupon"
 			},
 			"pay_money": 10.11,
-			"product_price": 51.44,
+			"product_price": 61.55,
 			"postage":0.00,
 			"save_money": 51.44,
 			"origin_final_price": 10.11,
