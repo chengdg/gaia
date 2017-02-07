@@ -96,6 +96,8 @@ Background:
 		["无规格商品1-zhouxun","多规格商品2-zhouxun","无规格商品1-yangmi"]
 		"""
 
+	Given bill关注zhouxun的公众号::apiserver
+
 @gaiax @order
 Scenario:1 使用全店优惠券的单商品订单（优惠券全额抵扣）
 	#创建通用券
@@ -125,7 +127,6 @@ Scenario:1 使用全店优惠券的单商品订单（优惠券全额抵扣）
 		}
 		"""
 
-	Given bill关注zhouxun的公众号::apiserver
 	When bill访问zhouxun的webapp::apiserver 
 	When bill购买zhouxun的商品::apiserver
 		"""
@@ -241,7 +242,6 @@ Scenario:2 使用全店优惠券的多供货商多规格商品订单（优惠券
 		}
 		"""
 
-	Given bill关注zhouxun的公众号::apiserver
 	When bill访问zhouxun的webapp::apiserver 
 	When bill购买zhouxun的商品::apiserver
 		"""
@@ -406,7 +406,6 @@ Scenario:3 使用多品券的多规格商品订单
 		}
 		"""
 
-	Given bill关注zhouxun的公众号::apiserver
 	When bill访问zhouxun的webapp::apiserver 
 	When bill购买zhouxun的商品::apiserver
 		"""
@@ -537,7 +536,6 @@ Scenario:4 使用多品券的多供货商多规格商品订单（优惠券金额
 		}
 		"""
 
-	Given bill关注zhouxun的公众号::apiserver
 	When bill访问zhouxun的webapp::apiserver 
 	When bill购买zhouxun的商品::apiserver
 		"""
