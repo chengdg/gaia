@@ -727,9 +727,23 @@ def step_impl(context, user):
 
 @when(u"{user}可以获得代销商品列表")
 def step_impl(context, user):
-
     promotes = json.loads(context.text)
     if isinstance(promotes, dict):
         promotes = [promotes]
 
     __create_promote(promotes, context, user)
+
+
+@when(u"{user}设置商品显示顺序")
+def step_impl(context, user):
+
+    products = json.loads(context.text)
+    for product in products:
+
+        product_model = mall_models.Product.select().dj_where(name=product.get('name')).first()
+        data = {
+            'corp_id': bdd_util.get_user_id_for(user),
+            'id': product_model.id,
+            'position': product.get('position')
+        }
+        context.client.post('/product/product_position/', data)
