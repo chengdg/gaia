@@ -199,7 +199,7 @@ class DeliveryItemProductRepository(business_model.Model):
 
 				# 填充限时抢购金额
 				if promotion.promotion_type == "flash_sale":
-					promotion_info['promotion_saved_money'] = db_promotion_result['promotion_saved_money']
+					promotion_info['promotion_saved_money'] = round(db_promotion_result['promotion_saved_money'], 2)
 					promotion_info['type'] = "flash_sale"
 
 				for promotion in promotions:
@@ -211,11 +211,10 @@ class DeliveryItemProductRepository(business_model.Model):
 
 						if integral_product_info == str(
 								delivery_item_product.id) + '-' + delivery_item_product.product_model_name:
-							promotion_info['integral_money'] = promotion.integral_money
+							promotion_info['integral_money'] = round(promotion.integral_money, 2)
 							promotion_info['integral_count'] = promotion.integral_count
 
 							if not promotion_info['type']:
-
 								promotion_info['type'] = 'integral_sale'
 
 			delivery_item_product.promotion_info = promotion_info
