@@ -252,7 +252,7 @@ def diff(local, other, ignore_keys):
 
 	def _recursive_diff(l, r, res, path='/'):
 		if not is_base_type(l) and type(l) != type(r):
-			print('-----l',type(l),type(r))
+
 			res.append({
 				'replace': path,
 				'actual': r,

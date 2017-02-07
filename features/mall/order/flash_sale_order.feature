@@ -234,7 +234,8 @@ Scenario:1 管理员支付含有限时抢购商品的订单（无规格商品）
 		"""
 @order
 Scenario:2 管理员支付含有限时抢购商品的订单（多规格商品）
-	#订单包含2个多规格的限时抢购商品
+	# 线上bug，暂时跳过
+	#订单包含2个多规格的限时抢购商品BUG 13389
 
 	Given bill关注zhouxun的公众号::apiserver
 	When bill访问zhouxun的webapp::apiserver 
