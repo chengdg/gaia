@@ -314,11 +314,11 @@ Scenario:2 使用全店优惠券的多供货商多规格商品订单（优惠券
 					"count": 1
 				},{
 					"name":"多规格商品2-zhouxun",
-					"model": "黑色 M",
+					"product_model_name_texts": ["黑色","M"],
 					"count": 1
 				},{
 					"name":"多规格商品2-zhouxun",
-					"model": "白色 S",
+					"product_model_name_texts": ["白色", "S"],
 					"count": 1
 				}]
 			}]
@@ -365,11 +365,11 @@ Scenario:2 使用全店优惠券的多供货商多规格商品订单（优惠券
 					"count": 1
 				},{
 					"name":"多规格商品2-zhouxun",
-					"model": "黑色 M",
+					"product_model_name_texts": ["黑色","M"],
 					"count": 1
 				},{
 					"name":"多规格商品2-zhouxun",
-					"model": "白色 S",
+					"product_model_name_texts": ["白色", "S"],
 					"count": 1
 				}]
 			}]
@@ -459,11 +459,11 @@ Scenario:3 使用多品券的多规格商品订单
 				},
 				"products": [{
 					"name":"多规格商品2-zhouxun",
-					"model": "黑色 M",
+					"product_model_name_texts": ["黑色","M"],
 					"count": 1
 				},{
 					"name":"多规格商品2-zhouxun",
-					"model": "白色 S",
+					"product_model_name_texts": ["白色", "S"],
 					"count": 1
 				}]
 			}]
@@ -496,11 +496,11 @@ Scenario:3 使用多品券的多规格商品订单
 				},
 				"products": [{
 					"name":"多规格商品2-zhouxun",
-					"model": "黑色 M",
+					"product_model_name_texts": ["黑色","M"],
 					"count": 1
 				},{
 					"name":"多规格商品2-zhouxun",
-					"model": "白色 S",
+					"product_model_name_texts": ["白色", "S"],
 					"count": 1
 				}]
 			}]
@@ -610,11 +610,11 @@ Scenario:4 使用多品券的多供货商多规格商品订单（优惠券金额
 					"count": 1
 				},{
 					"name":"多规格商品2-zhouxun",
-					"model": "黑色 M",
+					"product_model_name_texts": ["黑色","M"],
 					"count": 1
 				},{
 					"name":"多规格商品2-zhouxun",
-					"model": "白色 S",
+					"product_model_name_texts": ["白色", "S"],
 					"count": 1
 				}]
 			}]
@@ -661,11 +661,11 @@ Scenario:4 使用多品券的多供货商多规格商品订单（优惠券金额
 					"count": 1
 				},{
 					"name":"多规格商品2-zhouxun",
-					"model": "黑色 M",
+					"product_model_name_texts": ["黑色","M"],
 					"count": 1
 				},{
 					"name":"多规格商品2-zhouxun",
-					"model": "白色 S",
+					"product_model_name_texts": ["白色", "S"],
 					"count": 1
 				}]
 			}]
