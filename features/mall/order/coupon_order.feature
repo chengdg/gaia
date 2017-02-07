@@ -688,7 +688,6 @@ Scenario:5 管理员退款使用优惠券的订单,优惠券不返还
 		}]
 		"""
 
-	Given bill关注zhouxun的公众号::apiserver
 
 	Given zhouxun登录系统::weapp
 	When zhouxun创建优惠券发放规则发放优惠券::weapp
@@ -699,8 +698,7 @@ Scenario:5 管理员退款使用优惠券的订单,优惠券不返还
 			"members": ["bill"]
 		}
 		"""
-
-	When bill访问zhouxun的webapp::apiserver 
+	When bill访问zhouxun的webapp::apiserver
 	When bill购买zhouxun的商品::apiserver
 		"""
 		{
