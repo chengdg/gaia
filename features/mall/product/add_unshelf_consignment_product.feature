@@ -75,11 +75,6 @@ Background:
 			}
 		}]
 		"""
-
-@gaia @unshelf_consignment
-Scenario:1 weizoom已经有了商品
-
-	Given weizoom登录系统
 	When weizoom添加商品
 		"""
 		[{
@@ -138,6 +133,10 @@ Scenario:1 weizoom已经有了商品
 		}]
 
 		"""
+
+@gaia @unshelf_consignment
+Scenario:1 weizoom已经有了商品
+
 	Given zhouxun登录系统
 	When zhouxun添加代销商品
 		"""
@@ -148,35 +147,10 @@ Scenario:1 weizoom已经有了商品
 	Then zhouxun能获得'待销'商品列表
 		"""
 		[{
-			"name": "叫花鸡",
-			"create_type": "sync",
-			"model": {
-				"models": {
-					"standard": {
-						"stock_type": "有限",
-						"stocks":3,
-						"price": 12.0
+			"name": "叫花鸡"
 
-					}
-				}
-			},
-			"sales": 0,
-			"image": "/static/test_resource_img/hangzhou2.jpg"
 		}, {
-			"name": "东坡肘子",
-			"create_type": "sync",
-			"bar_code": "zhouzi_1",
-			"categories": "分类1,分类2,分类3",
-			"model": {
-				"models": {
-					"standard": {
-						"stock_type": "无限",
-						"price": 11.12
+			"name": "东坡肘子"
 
-					}
-				}
-			},
-			"sales": 0,
-			"image": "/static/test_resource_img/hangzhou1.jpg"
 		}]
 		"""
