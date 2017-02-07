@@ -811,7 +811,7 @@ Scenario:5 管理员退款使用优惠券的订单,优惠券不退回
 		}
 		"""
 
-@gaia @order
+@order
 Scenario:6 管理员取消使用了通用券的订单,通用券退回
 	Given zhouxun登录系统::weapp
 	When zhouxun添加优惠券规则::weapp
@@ -820,7 +820,7 @@ Scenario:6 管理员取消使用了通用券的订单,通用券退回
 			"name": "通用券4",
 			"money": 10.00,
 			"count": 1,
-			"start_date": "今天",
+			"start_date": "2015-01-01",
 			"end_date": "1天后",
 			"description":"使用说明",
 			"coupon_id_prefix": "coupon6_id_"
@@ -921,7 +921,7 @@ Scenario:6 管理员取消使用了通用券的订单,通用券退回
 		}
 		"""
 
-@gaia @order
+@order
 Scenario:7 管理员取消使用了多商品券的订单,多商品券退回
 	Given zhouxun登录系统::weapp
 	When zhouxun添加优惠券规则::weapp
@@ -930,7 +930,7 @@ Scenario:7 管理员取消使用了多商品券的订单,多商品券退回
 			"name": "多商品券3",
 			"money": 10.00,
 			"count": 1,
-			"start_date": "今天",
+			"start_date": "2015-01-01",
 			"end_date": "1天后",
 			"coupon_id_prefix": "coupon7_id_",
 			"coupon_product": "无规格商品1-yangmi"
