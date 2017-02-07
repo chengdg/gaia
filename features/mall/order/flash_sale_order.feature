@@ -190,7 +190,7 @@ Scenario:1 管理员支付含有限时抢购商品的订单（无规格商品）
 							"count":2,
 							"promotion_info":{
 								"type":"flash_sale",
-								"promotion_saved_money":10.22
+								"promotion_saved_money":5.11
 							}
 						}]
 				}]
@@ -219,7 +219,7 @@ Scenario:1 管理员支付含有限时抢购商品的订单（无规格商品）
 							"count":2,
 							"promotion_info":{
 								"type":"flash_sale",
-								"promotion_saved_money":10.22
+								"promotion_saved_money":5.11
 							}
 						}],
 					"status_code":"paid"
