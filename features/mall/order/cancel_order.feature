@@ -583,7 +583,7 @@ Scenario: 4 管理员取消使用了通用券的订单
 			"coupon_money": 10.00,
 			"extra_coupon_info": {
 				"bid": "coupon1_id_1",
-				"type": "通用券"
+				"type": "all_products_coupon"
 			},
 			"delivery_items": [{
 				"bid": "001-zhouxun",
@@ -620,7 +620,7 @@ Scenario: 4 管理员取消使用了通用券的订单
 			"coupon_money": 10.00,
 			"extra_coupon_info": {
 					"bid": "coupon1_id_1",
-					"type": "通用券"
+					"type": "all_products_coupon"
 				},
 			"delivery_items": [{
 				"bid": "001-zhouxun",
@@ -731,7 +731,7 @@ Scenario: 5 管理员取消使用了多商品券的订单
 			"coupon_money": 10.00,
 			"extra_coupon_info": {
 				"bid": "coupon1_id_1",
-				"type": "多商品券"
+				"type": "multi_products_coupon"
 			},
 			"delivery_items": [{
 				"bid": "001-zhouxun",
@@ -776,7 +776,7 @@ Scenario: 5 管理员取消使用了多商品券的订单
 			"coupon_money": 10.00,
 			"extra_coupon_info": {
 					"bid": "coupon1_id_1",
-					"type": "多商品券"
+					"type": "multi_products_coupon"
 				},
 			"delivery_items": [{
 				"bid": "001-zhouxun",
