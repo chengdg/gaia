@@ -120,7 +120,7 @@ Background:
 			"limit_period": 1
 		}]
 		"""
-
+@gaiax @order
 Scenario:1 管理员支付含有限时抢购商品的订单（无规格商品）
 	#订单包含1个无规格的限时抢购商品
 	Given bill关注zhouxun的公众号::apiserver
@@ -232,7 +232,7 @@ Scenario:1 管理员支付含有限时抢购商品的订单（无规格商品）
 			"member_card_money":0.00
 		}
 		"""
-
+@order
 Scenario:2 管理员支付含有限时抢购商品的订单（多规格商品）
 	#订单包含2个多规格的限时抢购商品
 
@@ -373,6 +373,7 @@ Scenario:2 管理员支付含有限时抢购商品的订单（多规格商品）
 		}
 		"""
 
+@gaiax @order
 Scenario:3 管理员退款含有限时抢购商品的出货单
 	Given bill关注zhouxun的公众号::apiserver
 	When bill访问zhouxun的webapp::apiserver 
@@ -439,7 +440,7 @@ Scenario:3 管理员退款含有限时抢购商品的出货单
 				"total": 0.00
 			},
 			"delivery_items": [{
-				"bid": "010-zhouxun",
+				"bid": "001-zhouxun",
 				"status_code": "refunding",
 				"refunding_info": {
 					"finished": false,
@@ -496,7 +497,7 @@ Scenario:3 管理员退款含有限时抢购商品的出货单
 				"total": 0.00
 			},
 			"delivery_items": [{
-				"bid": "010-zhouxun",
+				"bid": "001-zhouxun",
 				"status_code": "refunding",
 				"postage": 0.00,
 				"refunding_info": {
