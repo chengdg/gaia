@@ -90,7 +90,7 @@ Background:
 		}
 		"""
 
-@gaia @order
+@gaiax @order
 Scenario:1 给订单添加备注信息，备注信息少于300字
 	Given zhouxun登录系统
 	When zhouxun给订单添加备注信息
@@ -115,7 +115,7 @@ Scenario:1 给订单添加备注信息，备注信息少于300字
 		}
 		"""
 
-@gaia @order
+@gaiax @order
 Scenario:2 给订单添加备注信息，备注信息等于300字
 	Given zhouxun登录系统
 	When zhouxun给订单添加备注信息
@@ -140,7 +140,7 @@ Scenario:2 给订单添加备注信息，备注信息等于300字
 		}
 		"""
 
-@gaia @order
+@gaiax @order
 Scenario:3 给多供货商的订单添加备注信息
 
 	When bill访问zhouxun的webapp::apiserver
