@@ -671,7 +671,7 @@ Scenario:4 使用多品券的多供货商多规格商品订单（优惠券金额
 		"""
 
 @gaiax @order
-Scenario:5 管理员退款使用优惠券的订单,优惠券不返还
+Scenario:5 管理员退款使用优惠券的订单,优惠券不退回
 	#创建通用券10元
 	Given zhouxun登录系统::weapp
 	When zhouxun添加优惠券规则::weapp
@@ -807,6 +807,226 @@ Scenario:5 管理员退款使用优惠券的订单,优惠券不返还
 				"status": "未领取",
 				"consumer": "",
 				"target": ""
+			}
+		}
+		"""
+
+@gaia @order
+Scenario:6 管理员取消使用了通用券的订单,通用券退回
+	Given zhouxun登录系统::weapp
+	When zhouxun添加优惠券规则::weapp
+		"""
+		[{
+			"name": "通用券4",
+			"money": 10.00,
+			"count": 1,
+			"start_date": "今天",
+			"end_date": "1天后",
+			"description":"使用说明",
+			"coupon_id_prefix": "coupon6_id_"
+		}]
+		"""
+	When zhouxun为会员发放优惠券::weapp
+		"""
+		{
+			"name": "通用券4",
+			"count": 1,
+			"members": ["bill"]
+		}
+		"""
+
+	When bill访问zhouxun的webapp::apiserver
+	When bill购买zhouxun的商品::apiserver
+		"""
+		{
+			"order_id":"006",
+			"date":"2017-06-20 10:00:00",
+			"ship_name": "bill",
+			"ship_tel": "13811223344",
+			"ship_area": "北京市 北京市 海淀区",
+			"ship_address": "泰兴大厦",
+			"pay_type": "微信支付",
+			"products": [{
+				"name": "无规格商品1-zhouxun",
+				"count": 1
+			}],
+			"coupon": "coupon6_id_1"
+		}
+		"""
+
+	Given zhouxun登录系统::weapp
+	Then zhouxun能获得优惠券'通用券4'的码库::weapp
+		"""
+		{
+			"coupon4_id_1": {
+				"money": 10.00,
+				"status": "已使用",
+				"consumer": "bill",
+				"target": "bill"
+			}
+		}
+		"""
+
+	When zhouxun取消订单'006'
+
+	Then zhouxun获得订单列表
+		"""
+		[{
+			"bid": "006",
+			"status_code": "cancelled",
+			"coupon_money": 10.00,
+			"extra_coupon_info": {
+				"bid": "coupon6_id_1",
+				"type": "all_products_coupon"
+			},
+			"delivery_items": [{
+				"bid": "006-zhouxun",
+				"status_code": "cancelled",
+				"products": [{
+					"name": "无规格商品1-zhouxun",
+					"count": 1
+				}]
+			}]
+		}]
+		"""
+	Then zhouxun获得订单'006'
+		"""
+		{
+			"bid": "006",
+			"status_code": "cancelled",
+			"coupon_money": 10.00,
+			"extra_coupon_info": {
+					"bid": "coupon6_id_1",
+					"type": "all_products_coupon"
+				},
+			"delivery_items": [{
+				"bid": "006-zhouxun",
+				"status_code": "cancelled",
+				"products": [{
+					"name": "无规格商品1-zhouxun",
+					"count": 1
+				}]
+			}]
+		}
+		"""
+	Then zhouxun能获得优惠券'通用券4'的码库::weapp
+		"""
+		{
+			"coupon6_id_1": {
+				"money": 10.00,
+				"status": "未使用",
+				"consumer": "",
+				"target": "bill"
+			}
+		}
+		"""
+
+@gaia @order
+Scenario:7 管理员取消使用了多商品券的订单,多商品券退回
+	Given zhouxun登录系统::weapp
+	When zhouxun添加优惠券规则::weapp
+		"""
+		[{
+			"name": "多商品券3",
+			"money": 10.00,
+			"count": 1,
+			"start_date": "今天",
+			"end_date": "1天后",
+			"coupon_id_prefix": "coupon7_id_",
+			"coupon_product": "无规格商品1-yangmi"
+		}]
+		"""
+	When zhouxun为会员发放优惠券::weapp
+		"""
+		{
+			"name": "多商品券3",
+			"count": 1,
+			"members": ["bill"]
+		}
+		"""
+
+	When bill访问zhouxun的webapp::apiserver
+	When bill购买zhouxun的商品::apiserver
+		"""
+		{
+			"order_id":"007",
+			"date":"2017-07-20 10:00:00",
+			"ship_name": "bill",
+			"ship_tel": "13811223344",
+			"ship_area": "北京市 北京市 海淀区",
+			"ship_address": "泰兴大厦",
+			"pay_type": "微信支付",
+			"products": [{
+				"name": "无规格商品1-yangmi",
+				"count": 1
+			}],
+			"coupon": "coupon7_id_1"
+		}
+		"""
+
+	Given zhouxun登录系统::weapp
+	Then zhouxun能获得优惠券'多商品券3'的码库::weapp
+		"""
+		{
+			"coupon7_id_1": {
+				"money": 10.00,
+				"status": "已使用",
+				"consumer": "bill",
+				"target": "bill"
+			}
+		}
+		"""
+
+	When zhouxun取消订单'007'
+
+	Then zhouxun获得订单列表
+		"""
+		[{
+			"bid": "007",
+			"status_code": "cancelled",
+			"coupon_money": 10.00,
+			"extra_coupon_info": {
+				"bid": "coupon7_id_1",
+				"type": "multi_products_coupon"
+			},
+			"delivery_items": [{
+				"bid": "007-yangmi",
+				"status_code": "cancelled",
+				"products": [{
+					"name": "无规格商品1-yangmi",
+					"count": 1
+				}]
+			}]
+		}]
+		"""
+	Then zhouxun获得订单'007'
+		"""
+		{
+			"bid": "007",
+			"status_code": "cancelled",
+			"coupon_money": 10.00,
+			"extra_coupon_info": {
+					"bid": "coupon7_id_1",
+					"type": "multi_products_coupon"
+				},
+			"delivery_items": [{
+				"bid": "007-zhouxun",
+				"status_code": "cancelled",
+				"products": [{
+					"name": "无规格商品1-yangmi",
+					"count": 1
+				}]
+			}]
+		}
+		"""
+	Then zhouxun能获得优惠券'多商品券3'的码库::weapp
+		"""
+		{
+			"coupon7_id_1": {
+				"money": 10.00,
+				"status": "未使用",
+				"consumer": "",
+				"target": "bill"
 			}
 		}
 		"""
