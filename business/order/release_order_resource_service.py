@@ -101,7 +101,7 @@ class ReleaseOrderResourceService(business_model.Service):
 						member_models.MemberCardLog.create(
 							member_card_id=log.member_card_id,
 							trade_id=trade_id,
-							order_id=order.order_id,
+							order_id=order.bid,
 							reason=u"取消下单或下单失败",
 							price=log.price
 						)
