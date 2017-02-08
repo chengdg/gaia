@@ -99,7 +99,7 @@ class ReleaseOrderResourceService(business_model.Service):
 					log = member_models.MemberCardLog.select().dj_where(order_id=order.bid, reason=u'下单').first()
 					if log:
 						member_models.MemberCardLog.create(
-							member_card_id=log.member_card_id,
+							member_card=log.member_card_id,
 							trade_id=trade_id,
 							order_id=order.bid,
 							reason=u"取消下单或下单失败",
