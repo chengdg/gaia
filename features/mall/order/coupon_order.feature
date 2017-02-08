@@ -811,7 +811,7 @@ Scenario:5 管理员退款使用优惠券的订单,优惠券不退回
 		}
 		"""
 
-@order
+@ztqx @order
 Scenario:6 管理员取消使用了通用券的订单,通用券退回
 	Given zhouxun登录系统::weapp
 	When zhouxun添加优惠券规则::weapp
@@ -921,7 +921,7 @@ Scenario:6 管理员取消使用了通用券的订单,通用券退回
 		}
 		"""
 
-@order
+@gaiax @order
 Scenario:7 管理员取消使用了多商品券的订单,多商品券退回
 	Given zhouxun登录系统::weapp
 	When zhouxun添加优惠券规则::weapp
@@ -1010,7 +1010,7 @@ Scenario:7 管理员取消使用了多商品券的订单,多商品券退回
 					"type": "multi_products_coupon"
 				},
 			"delivery_items": [{
-				"bid": "007-zhouxun",
+				"bid": "007-yangmi",
 				"status_code": "cancelled",
 				"products": [{
 					"name": "无规格商品1-yangmi",
