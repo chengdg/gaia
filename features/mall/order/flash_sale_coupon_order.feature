@@ -337,7 +337,7 @@ Scenario: 2 使用全店优惠券的限时抢购商品订单（优惠券部分�
 			"final_price": 45.00,
 			"coupon_money": 20.00,
 			"extra_coupon_info":{
-				"bid":"coupon1_id_1",
+				"bid":"coupon2_id_1",
 				"type":"all_products_coupon"
 			},
 			"delivery_items": [{
@@ -388,7 +388,7 @@ Scenario: 2 使用全店优惠券的限时抢购商品订单（优惠券部分�
 			"pay_interface_type_code": "weixin_pay",
 			"coupon_money": 20.00,
 			"extra_coupon_info":{
-				"bid":"coupon1_id_1",
+				"bid":"coupon2_id_1",
 				"type":"all_products_coupon"
 			},
 			"pay_money": 45.00,
