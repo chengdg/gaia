@@ -811,7 +811,7 @@ Scenario:5 管理员退款使用优惠券的订单,优惠券不退回
 		}
 		"""
 
-@order
+@ztqx @order
 Scenario:6 管理员取消使用了通用券的订单,通用券退回
 	Given zhouxun登录系统::weapp
 	When zhouxun添加优惠券规则::weapp
@@ -858,7 +858,7 @@ Scenario:6 管理员取消使用了通用券的订单,通用券退回
 	Then zhouxun能获得优惠券'通用券4'的码库::weapp
 		"""
 		{
-			"coupon4_id_1": {
+			"coupon6_id_1": {
 				"money": 10.00,
 				"status": "已使用",
 				"consumer": "bill",
@@ -921,14 +921,14 @@ Scenario:6 管理员取消使用了通用券的订单,通用券退回
 		}
 		"""
 
-@order
+@gaiax @order
 Scenario:7 管理员取消使用了多商品券的订单,多商品券退回
 	Given zhouxun登录系统::weapp
 	When zhouxun添加优惠券规则::weapp
 		"""
 		[{
 			"name": "多商品券3",
-			"money": 10.00,
+			"money": 5.00,
 			"count": 1,
 			"start_date": "2015-01-01",
 			"end_date": "1天后",
@@ -969,7 +969,7 @@ Scenario:7 管理员取消使用了多商品券的订单,多商品券退回
 		"""
 		{
 			"coupon7_id_1": {
-				"money": 10.00,
+				"money": 5.00,
 				"status": "已使用",
 				"consumer": "bill",
 				"target": "bill"
@@ -984,7 +984,7 @@ Scenario:7 管理员取消使用了多商品券的订单,多商品券退回
 		[{
 			"bid": "007",
 			"status_code": "cancelled",
-			"coupon_money": 10.00,
+			"coupon_money": 5.00,
 			"extra_coupon_info": {
 				"bid": "coupon7_id_1",
 				"type": "multi_products_coupon"
@@ -1004,13 +1004,13 @@ Scenario:7 管理员取消使用了多商品券的订单,多商品券退回
 		{
 			"bid": "007",
 			"status_code": "cancelled",
-			"coupon_money": 10.00,
+			"coupon_money": 5.00,
 			"extra_coupon_info": {
 					"bid": "coupon7_id_1",
 					"type": "multi_products_coupon"
 				},
 			"delivery_items": [{
-				"bid": "007-zhouxun",
+				"bid": "007-yangmi",
 				"status_code": "cancelled",
 				"products": [{
 					"name": "无规格商品1-yangmi",
@@ -1023,7 +1023,7 @@ Scenario:7 管理员取消使用了多商品券的订单,多商品券退回
 		"""
 		{
 			"coupon7_id_1": {
-				"money": 10.00,
+				"money": 5.00,
 				"status": "未使用",
 				"consumer": "",
 				"target": "bill"
