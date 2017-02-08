@@ -928,7 +928,7 @@ Scenario:7 管理员取消使用了多商品券的订单,多商品券退回
 		"""
 		[{
 			"name": "多商品券3",
-			"money": 10.00,
+			"money": 5.00,
 			"count": 1,
 			"start_date": "2015-01-01",
 			"end_date": "1天后",
@@ -969,7 +969,7 @@ Scenario:7 管理员取消使用了多商品券的订单,多商品券退回
 		"""
 		{
 			"coupon7_id_1": {
-				"money": 10.00,
+				"money": 5.00,
 				"status": "已使用",
 				"consumer": "bill",
 				"target": "bill"
@@ -984,7 +984,7 @@ Scenario:7 管理员取消使用了多商品券的订单,多商品券退回
 		[{
 			"bid": "007",
 			"status_code": "cancelled",
-			"coupon_money": 10.00,
+			"coupon_money": 5.00,
 			"extra_coupon_info": {
 				"bid": "coupon7_id_1",
 				"type": "multi_products_coupon"
@@ -1004,7 +1004,7 @@ Scenario:7 管理员取消使用了多商品券的订单,多商品券退回
 		{
 			"bid": "007",
 			"status_code": "cancelled",
-			"coupon_money": 10.00,
+			"coupon_money": 5.00,
 			"extra_coupon_info": {
 					"bid": "coupon7_id_1",
 					"type": "multi_products_coupon"
@@ -1023,7 +1023,7 @@ Scenario:7 管理员取消使用了多商品券的订单,多商品券退回
 		"""
 		{
 			"coupon7_id_1": {
-				"money": 10.00,
+				"money": 5.00,
 				"status": "未使用",
 				"consumer": "",
 				"target": "bill"
