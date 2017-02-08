@@ -56,7 +56,7 @@ Background:
 			"model":{
 				"models":{
 					"黑色 M":{
-						"price": 30.10,
+						"price": 30.20,
 						"purchase_price":30.00,
 						"stock_type":"有限",
 							"stocks":10
@@ -168,7 +168,7 @@ Scenario: 1 使用全店优惠券的限时抢购商品订单（优惠券全额�
 			"pay_interface_type_code": "preference",
 			"pay_money": 0.00,
 			"product_price": 65.00,
-			"save_money": 70.41,
+			"save_money": 70.51,
 			"final_price": 0.00,
 			"coupon_money": 65.00,
 			"extra_coupon_info":{
@@ -186,11 +186,11 @@ Scenario: 1 使用全店优惠券的限时抢购商品订单（优惠券全额�
 					"name":"多规格商品3",
 					"product_model_name_texts":["黑色","M"],
 					"sale_price":30.00,
-					"origin_price":30.10,
+					"origin_price":30.20,
 					"count":1,
 					"promotion_info":{
 						"type":"flash_sale",
-						"promotion_saved_money":0.10
+						"promotion_saved_money":0.20
 					}
 				},{
 					"name":"多规格商品3",
@@ -228,7 +228,7 @@ Scenario: 1 使用全店优惠券的限时抢购商品订单（优惠券全额�
 			},
 			"pay_money": 0.00,
 			"product_price": 65.00,
-			"save_money": 70.41,
+			"save_money": 70.51,
 			"final_price": 0.00,
 			"delivery_items": [{
 				"bid": "001-zhouxun",
@@ -241,11 +241,11 @@ Scenario: 1 使用全店优惠券的限时抢购商品订单（优惠券全额�
 					"name":"多规格商品3",
 					"product_model_name_texts":["黑色","M"],
 					"sale_price":30.00,
-					"origin_price":30.10,
+					"origin_price":30.20,
 					"count":1,
 					"promotion_info":{
 						"type":"flash_sale",
-						"promotion_saved_money":0.10
+						"promotion_saved_money":0.20
 					}
 				},{
 					"name":"多规格商品3",
@@ -333,7 +333,7 @@ Scenario: 2 使用全店优惠券的限时抢购商品订单（优惠券部分�
 			"pay_interface_type_code": "weixin_pay",
 			"pay_money": 45.00,
 			"product_price": 65.00,
-			"save_money": 25.41,
+			"save_money": 25.51,
 			"final_price": 45.00,
 			"coupon_money": 20.00,
 			"extra_coupon_info":{
@@ -351,11 +351,11 @@ Scenario: 2 使用全店优惠券的限时抢购商品订单（优惠券部分�
 					"name":"多规格商品3",
 					"product_model_name_texts":["黑色","M"],
 					"sale_price":30.00,
-					"origin_price":30.10,
+					"origin_price":30.20,
 					"count":1,
 					"promotion_info":{
 						"type":"flash_sale",
-						"promotion_saved_money":0.10
+						"promotion_saved_money":0.20
 					}
 				},{
 					"name":"多规格商品3",
@@ -393,7 +393,7 @@ Scenario: 2 使用全店优惠券的限时抢购商品订单（优惠券部分�
 			},
 			"pay_money": 45.00,
 			"product_price": 65.00,
-			"save_money": 25.41,
+			"save_money": 25.51,
 			"final_price": 45.00,
 			"delivery_items": [{
 				"bid": "001-zhouxun",
@@ -406,11 +406,11 @@ Scenario: 2 使用全店优惠券的限时抢购商品订单（优惠券部分�
 					"name":"多规格商品3",
 					"product_model_name_texts":["黑色","M"],
 					"sale_price":30.00,
-					"origin_price":30.10,
+					"origin_price":30.20,
 					"count":1,
 					"promotion_info":{
 						"type":"flash_sale",
-						"promotion_saved_money":0.10
+						"promotion_saved_money":0.20
 					}
 				},{
 					"name":"多规格商品3",

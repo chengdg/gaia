@@ -62,7 +62,7 @@ Background:
 			"model":{
 				"models":{
 					"黑色 M":{
-						"price": 30.10,
+						"price": 30.20,
 						"purchase_price":30.00,
 						"stock_type":"有限",
 							"stocks":10
@@ -182,7 +182,7 @@ Scenario: 1 管理员支付含有限时抢购和积分商品的订单（多规�
 			"status_code":"paid",
 			"pay_money": 50.00,
 			"product_price": 65.00,
-			"save_money": 20.41,
+			"save_money": 20.51,
 			"final_price": 50.00,
 			"weizoom_card_money": 0.00,
 			"member_card_money": 0.00,
@@ -210,11 +210,11 @@ Scenario: 1 管理员支付含有限时抢购和积分商品的订单（多规�
 					"name":"多规格商品3",
 					"product_model_name_texts":["黑色","M"],
 					"sale_price":30.00,
-					"origin_price":30.10,
+					"origin_price":30.20,
 					"count":1,
 					"promotion_info":{
 						"type":"flash_sale",
-						"promotion_saved_money":0.10
+						"promotion_saved_money":0.20
 					}
 				},{
 					"name":"多规格商品3",
@@ -249,7 +249,7 @@ Scenario: 1 管理员支付含有限时抢购和积分商品的订单（多规�
 			"pay_interface_type_code":"weixin_pay",
 			"pay_money": 50.00,
 			"product_price": 65.00,
-			"save_money": 20.41,
+			"save_money": 20.51,
 			"final_price": 50.00,
 			"weizoom_card_money": 0.00,
 			"member_card_money": 0.00,
@@ -269,11 +269,11 @@ Scenario: 1 管理员支付含有限时抢购和积分商品的订单（多规�
 					"name":"多规格商品3",
 					"product_model_name_texts":["黑色","M"],
 					"sale_price":30.00,
-					"origin_price":30.10,
+					"origin_price":30.20,
 					"count":1,
 					"promotion_info":{
 						"type":"flash_sale",
-						"promotion_saved_money":0.10
+						"promotion_saved_money":0.20
 					}
 				},{
 					"name":"多规格商品3",
@@ -360,7 +360,7 @@ Scenario: 2 管理员退款含有限时抢购和积分商品的订单
 			"pay_interface_type_code": "weixin_pay",
 			"pay_money": 50.00,
 			"product_price": 65.00,
-			"save_money": 20.41,
+			"save_money": 20.51,
 			"origin_final_price": 50.00,
 			"origin_weizoom_card_money": 0.00,
 			"origin_member_card_money": 0.00,
@@ -400,11 +400,11 @@ Scenario: 2 管理员退款含有限时抢购和积分商品的订单
 					"name":"多规格商品3",
 					"product_model_name_texts":["黑色","M"],
 					"sale_price":30.00,
-					"origin_price":30.10,
+					"origin_price":30.20,
 					"count":1,
 					"promotion_info":{
 						"type":"flash_sale",
-						"promotion_saved_money":0.10
+						"promotion_saved_money":0.20
 					}
 				},{
 					"name":"多规格商品3",
@@ -437,7 +437,7 @@ Scenario: 2 管理员退款含有限时抢购和积分商品的订单
 			"pay_interface_type_code": "weixin_pay",
 			"pay_money": 50.00,
 			"product_price": 65.00,
-			"save_money": 20.41,
+			"save_money": 20.51,
 			"origin_final_price": 50.00,
 			"origin_weizoom_card_money": 0.00,
 			"final_price": 50.00,
@@ -478,11 +478,11 @@ Scenario: 2 管理员退款含有限时抢购和积分商品的订单
 					"name":"多规格商品3",
 					"product_model_name_texts":["黑色","M"],
 					"sale_price":30.00,
-					"origin_price":30.10,
+					"origin_price":30.20,
 					"count":1,
 					"promotion_info":{
 						"type":"flash_sale",
-						"promotion_saved_money":0.10
+						"promotion_saved_money":0.20
 					}
 				},{
 					"name":"多规格商品3",
@@ -575,7 +575,7 @@ Scenario: 3 管理员退款成功含有限时抢购和积分商品的订单
 			"pay_interface_type_code": "weixin_pay",
 			"pay_money": 40.00,
 			"product_price": 65.00,
-			"save_money": 20.41,
+			"save_money": 20.51,
 			"origin_final_price": 50.00,
 			"origin_weizoom_card_money": 0.00,
 			"origin_member_card_money": 0.00,
@@ -615,11 +615,11 @@ Scenario: 3 管理员退款成功含有限时抢购和积分商品的订单
 					"name":"多规格商品3",
 					"product_model_name_texts":["黑色","M"],
 					"sale_price":30.00,
-					"origin_price":30.10,
+					"origin_price":30.20,
 					"count":1,
 					"promotion_info":{
 						"type":"flash_sale",
-						"promotion_saved_money":0.10
+						"promotion_saved_money":0.20
 					}
 				},{
 					"name":"多规格商品3",
@@ -653,7 +653,7 @@ Scenario: 3 管理员退款成功含有限时抢购和积分商品的订单
 			"pay_interface_type_code": "weixin_pay",
 			"pay_money": 40.00,
 			"product_price": 65.00,
-			"save_money": 20.41,
+			"save_money": 20.51,
 			"origin_final_price": 50.00,
 			"origin_weizoom_card_money": 0.00,
 			"final_price": 40.00,
@@ -693,11 +693,11 @@ Scenario: 3 管理员退款成功含有限时抢购和积分商品的订单
 					"name":"多规格商品3",
 					"product_model_name_texts":["黑色","M"],
 					"sale_price":30.00,
-					"origin_price":30.10,
+					"origin_price":30.20,
 					"count":1,
 					"promotion_info":{
 						"type":"flash_sale",
-						"promotion_saved_money":0.10
+						"promotion_saved_money":0.20
 					}
 				},{
 					"name":"多规格商品3",
