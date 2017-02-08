@@ -118,42 +118,42 @@ Scenario: 1 管理员取消使用了商品积分的订单
 	When zhouxun取消订单'001'
 	Then zhouxun获得订单列表
 		"""
-			[{
-				"bid": "001",
+		[{
+			"bid": "001",
+			"status_code": "cancelled",
+			"integral_money": 10.00,
+			"integral": 20,
+			"delivery_items": [{
+				"bid": "001-zhouxun",
 				"status_code": "cancelled",
-				"integral_money": 10.00,
-				"integral": 20,
-				"delivery_items": [{
-					"bid": "001-zhouxun",
-					"status_code": "cancelled",
-					"products": [{
-						"name": "zhouxun商品3",
-						"count": 1,
-						"sale_price": 10.01,
-						"origin_price": 10.01,
-						"promotion_info": {
-							"type": "integral_sale",
-							"integral_count": 10,
-							"integral_money": 5.00
-						}
-					}]
-				},{
-					"bid": "001-jobs",
-					"status_code": "cancelled",
-					"products": [{
-						"name": "jobs商品1",
-						"count": 1,
-						"sale_price": 11.00,
-						"origin_price": 11.00,
-						"promotion_info": {
-							"type": "integral_sale",
-							"integral_count": 10,
-							"integral_money": 5.00
-						}
-					}]
+				"products": [{
+					"name": "zhouxun商品3",
+					"count": 1,
+					"sale_price": 10.01,
+					"origin_price": 10.01,
+					"promotion_info": {
+						"type": "integral_sale",
+						"integral_count": 10,
+						"integral_money": 5.00
+					}
+				}]
+			},{
+				"bid": "001-jobs",
+				"status_code": "cancelled",
+				"products": [{
+					"name": "jobs商品1",
+					"count": 1,
+					"sale_price": 11.00,
+					"origin_price": 11.00,
+					"promotion_info": {
+						"type": "integral_sale",
+						"integral_count": 10,
+						"integral_money": 5.00
+					}
 				}]
 			}]
-			"""
+		}]
+		"""
 	Then zhouxun获得订单'001'
 		"""
 		{
