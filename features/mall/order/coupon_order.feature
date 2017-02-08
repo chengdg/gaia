@@ -858,7 +858,7 @@ Scenario:6 管理员取消使用了通用券的订单,通用券退回
 	Then zhouxun能获得优惠券'通用券4'的码库::weapp
 		"""
 		{
-			"coupon4_id_1": {
+			"coupon6_id_1": {
 				"money": 10.00,
 				"status": "已使用",
 				"consumer": "bill",
