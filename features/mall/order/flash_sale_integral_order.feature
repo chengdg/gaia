@@ -1,5 +1,4 @@
 # __author__ : "冯雪静"
-
 Feature: 限时抢购和积分活动订单
 
 Background:
@@ -128,7 +127,7 @@ Background:
 	Given bill关注zhouxun的公众号::apiserver
 
 
-@order
+@gaiax @order
 Scenario: 1 管理员支付含有限时抢购和积分商品的订单（多规格商品）
 
 	When bill访问zhouxun的webapp::apiserver
@@ -299,9 +298,9 @@ Scenario: 1 管理员支付含有限时抢购和积分商品的订单（多规�
 		}
 		"""
 	When bill访问zhouxun的webapp::apiserver 
-	Then bill在zhouxun的webapp中拥有20会员积分::apiserve
+	Then bill在zhouxun的webapp中拥有20会员积分::apiserver
 
-@order
+@gaiax @order
 Scenario: 2 管理员退款含有限时抢购和积分商品的订单
 
 	When bill访问zhouxun的webapp::apiserver
@@ -510,7 +509,7 @@ Scenario: 2 管理员退款含有限时抢购和积分商品的订单
 	When bill访问zhouxun的webapp::apiserver
 	Then bill在zhouxun的webapp中拥有20会员积分::apiserver
 
-@order
+@gaiax @order
 Scenario: 3 管理员退款成功含有限时抢购和积分商品的订单
 
 	When bill访问zhouxun的webapp::apiserver
@@ -681,7 +680,7 @@ Scenario: 3 管理员退款成功含有限时抢购和积分商品的订单
 					"weizoom_card_money": 0.00,
 					"member_card_money":0.00,
 					"coupon_money": 15.00,
-					"integral": 80
+					"integral": 80,
 					"integral_money": 40.00,
 					"total": 65.00
 					},
