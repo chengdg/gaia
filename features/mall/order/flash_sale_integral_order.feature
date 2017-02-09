@@ -127,7 +127,7 @@ Background:
 	Given bill关注zhouxun的公众号::apiserver
 
 
-@gaiax @order
+@gaia @order
 Scenario: 1 管理员支付含有限时抢购和积分商品的订单（多规格商品）
 
 	When bill访问zhouxun的webapp::apiserver
@@ -300,7 +300,7 @@ Scenario: 1 管理员支付含有限时抢购和积分商品的订单（多规�
 	When bill访问zhouxun的webapp::apiserver 
 	Then bill在zhouxun的webapp中拥有20会员积分::apiserver
 
-@gaiax @order
+@gaia @order
 Scenario: 2 管理员退款含有限时抢购和积分商品的订单
 
 	When bill访问zhouxun的webapp::apiserver
@@ -509,7 +509,7 @@ Scenario: 2 管理员退款含有限时抢购和积分商品的订单
 	When bill访问zhouxun的webapp::apiserver
 	Then bill在zhouxun的webapp中拥有20会员积分::apiserver
 
-@gaiax @order
+@gaia @order
 Scenario: 3 管理员退款成功含有限时抢购和积分商品的订单
 
 	When bill访问zhouxun的webapp::apiserver

@@ -120,7 +120,7 @@ Background:
 			"limit_period": 1
 		}]
 		"""
-@gaiax @order
+@gaia @order
 Scenario:1 管理员支付含有限时抢购商品的订单（无规格商品）
 	#订单包含1个无规格的限时抢购商品
 	Given bill关注zhouxun的公众号::apiserver
@@ -374,7 +374,7 @@ Scenario:2 管理员支付含有限时抢购商品的订单（多规格商品）
 		}
 		"""
 
-@gaiax @order
+@gaia @order
 Scenario:3 管理员退款含有限时抢购商品的出货单
 	Given bill关注zhouxun的公众号::apiserver
 	When bill访问zhouxun的webapp::apiserver 
