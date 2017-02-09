@@ -82,3 +82,5 @@ MNS消息使用指南:https://git2.weizzz.com:84/weizoom/new_zeus/wikis/mns-guid
 3. 启动项目，即`sh start_service.sh`
     - card_apiserver
     - gaia
+    
+**注意** ：gaia同级目录下需要存在order_trade_center项目
