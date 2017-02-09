@@ -98,7 +98,7 @@ Background:
 
 	Given bill关注zhouxun的公众号::apiserver
 
-@gaiax @order
+@gaia @order
 Scenario:1 使用全店优惠券的单商品订单（优惠券全额抵扣）
 	#创建通用券
 	Given zhouxun登录系统::weapp
@@ -213,7 +213,7 @@ Scenario:1 使用全店优惠券的单商品订单（优惠券全额抵扣）
 		}
 		"""
 	
-@gaiax @order
+@gaia @order
 Scenario:2 使用全店优惠券的多供货商多规格商品订单（优惠券部分抵扣）
 	#创建通用券
 	Given zhouxun登录系统::weapp
@@ -376,7 +376,7 @@ Scenario:2 使用全店优惠券的多供货商多规格商品订单（优惠券
 		}
 		"""
 
-@gaiax @order
+@gaia @order
 Scenario:3 使用多品券的多规格商品订单
 	#创建多商品券
 	Given zhouxun登录系统::weapp
@@ -506,7 +506,7 @@ Scenario:3 使用多品券的多规格商品订单
 		}
 		"""
 
-@gaiax @order
+@gaia @order
 Scenario:4 使用多品券的多供货商多规格商品订单（优惠券金额超出商品金额）
 	#创建多商品券
 	Given zhouxun登录系统::weapp
@@ -670,7 +670,7 @@ Scenario:4 使用多品券的多供货商多规格商品订单（优惠券金额
 		}
 		"""
 
-@gaiax @order
+@gaia @order
 Scenario:5 管理员退款使用优惠券的订单,优惠券不退回
 	#创建通用券10元
 	Given zhouxun登录系统::weapp
@@ -811,7 +811,7 @@ Scenario:5 管理员退款使用优惠券的订单,优惠券不退回
 		}
 		"""
 
-@gaiax @order
+@gaia @order
 Scenario:6 管理员取消使用了通用券的订单,通用券退回
 	Given zhouxun登录系统::weapp
 	When zhouxun添加优惠券规则::weapp
@@ -921,7 +921,7 @@ Scenario:6 管理员取消使用了通用券的订单,通用券退回
 		}
 		"""
 
-@gaiax @order
+@gaia @order
 Scenario:7 管理员取消使用了多商品券的订单,多商品券退回
 	Given zhouxun登录系统::weapp
 	When zhouxun添加优惠券规则::weapp

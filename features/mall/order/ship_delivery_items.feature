@@ -133,7 +133,7 @@ Background:
 	"""		
 	When bill使用支付方式'微信支付'进行支付订单'003'于2016-10-03 10:01:00::apiserver
 
-@gaiax @order
+@gaia @order
 Scenario: 1 对出货单进行发货，使用物流（非其他）
 	Given zhouxun登录系统
 	When zhouxun对出货单进行发货
@@ -434,7 +434,7 @@ Scenario: 1 对出货单进行发货，使用物流（非其他）
 	}
 	"""
 
-@gaiax @order
+@gaia @order
 Scenario: 2 对出货单进行发货，使用其他物流
 	Given zhouxun登录系统
 	When zhouxun对出货单进行发货
@@ -526,7 +526,7 @@ Scenario: 2 对出货单进行发货，使用其他物流
 	}
 	"""
 
-@gaiax @order
+@gaia @order
 Scenario: 3 对出货单进行发货，不使用物流
 	Given zhouxun登录系统
 	When zhouxun对出货单进行发货
