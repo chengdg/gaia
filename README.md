@@ -86,4 +86,6 @@ MNS消息使用指南:https://git2.weizzz.com:84/weizoom/new_zeus/wikis/mns-guid
 5. gaia同级目录存在项目：
     - gaia同级目录下需要存在order_trade_center项目
     
-**注意** ：可以跑`behave -kt @bdd_test1`测试环境配置是否正常
+**注意** ：
+- 可以跑`behave -kt @bdd_test1`测试环境配置是否正常。
+- 及时更新mns_python_sdk包 https://git2.weizzz.com:84/microservice/mns_python_sdk
