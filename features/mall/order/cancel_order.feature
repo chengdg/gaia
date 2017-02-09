@@ -372,7 +372,7 @@ Scenario: 2 管理员取消多个供货商商品的订单
 		}
 		"""
 
-@gaiax @order
+@gaiax @order @bdd_test1
 Scenario: 3 管理员取消使用了微众卡的订单
 	1.zhouxun取消待支付订单，微众卡退回
 
