@@ -23,7 +23,7 @@ Background:
 		"""
 	Given bill关注zhouxun的公众号::apiserver
 
-@gaiax @order
+@gaia @order
 Scenario: 1 管理员取消使用了订单积分的订单
 	1.zhouxun取消待支付订单，积分退回
 
@@ -198,7 +198,7 @@ Scenario: 1 管理员取消使用了订单积分的订单
 		}]
 		"""
 
-@gaiax @order
+@gaia @order
 Scenario: 2 管理员退款使用订单积分的订单
 
 	Given zhouxun登录系统

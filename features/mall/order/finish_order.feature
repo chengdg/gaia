@@ -122,7 +122,7 @@ Background:
 		"""
 	Given bill关注zhouxun的公众号::apiserver
 
-@gaiax @order
+@gaia @order
 Scenario: 1 管理员标记完成一个供货商的订单
 	1.zhouxun完成一个供货商的订单，查看会员列表
 
@@ -255,7 +255,7 @@ Scenario: 1 管理员标记完成一个供货商的订单
 		}]
 		"""
 
-@gaiax @order
+@gaia @order
 Scenario: 2 管理员标记完成多个供货商的订单
 	1.zhouxun完成多个供货商的1个出货单，查看会员列表(消费总额-客单价-购买次数 不变)
 	2.zhouxun完成多个供货商的订单，查看会员列表(消费总额-客单价-购买次数 增加)
@@ -490,7 +490,7 @@ Scenario: 2 管理员标记完成多个供货商的订单
 		}]
 		"""
 
-@gaiax @order
+@gaia @order
 Scenario: 3 管理员标记完成订单，会员获得购物返积分
 	1.zhouxun完成多个供货商的1个出货单，查看会员积分(不变)
 	2.zhouxun完成多个供货商的订单，查看会员积分(增加)
@@ -583,7 +583,7 @@ Scenario: 3 管理员标记完成订单，会员获得购物返积分
 		}]
 		"""
 
-@gaiax @order
+@gaia @order
 Scenario: 4 管理员标记完成使用微众卡的订单
 	1.zhouxun完成使用微众卡多个供货商的订单，查看会员详情
 	查看会员积分(增加，但是购买商品返积分额外积分奖励-金额计算不包含微众卡的金额)
@@ -740,7 +740,7 @@ Scenario: 4 管理员标记完成使用微众卡的订单
 		}]
 		"""
 
-@gaiax @order
+@gaia @order
 Scenario: 5 管理员标记完成订单，满足一个条件会员等级自动升级
 	1.zhouxun完成使用微众卡多个供货商的订单，查看会员等级
 
@@ -832,7 +832,7 @@ Scenario: 5 管理员标记完成订单，满足一个条件会员等级自动�
 		}]
 		"""
 
-@gaiax @order
+@gaia @order
 Scenario: 6 管理员标记完成订单，必须满足全部条件会员等级自动升级
 	1.zhouxun完成使用微众卡多个供货商的订单，查看会员等级
 
