@@ -67,3 +67,18 @@ server {
   - api层调用静态方法时的字典
   
 MNS消息使用指南:https://git2.weizzz.com:84/weizoom/new_zeus/wikis/mns-guide
+
+## 数据初始化
+
+1. 在weapp执行rebuild重建数据库
+2. 在gaia执行`behave -kt @full_init` 或者`behave -kt @full_init_jobs_self`(如果需要使用jobs账号作为自营)
+
+## BDD
+1. 在weapp执行rebuild重建数据库
+2. 启动bdd_server，即`sh start_bdd_server.sh`：
+    - weapp bdd_server
+    - apiserver bdd_server
+    - weizoom_card bdd_server
+3. 启动项目，即`sh start_service.sh`
+    - card_apiserver
+    - gaia
