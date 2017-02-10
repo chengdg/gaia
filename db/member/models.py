@@ -359,6 +359,13 @@ class MemberBrowseRecord(models.Model):
         verbose_name_plural = '会员浏览记录'
 
 
+class MemberBrowseProductRecord(models.Model):
+
+    class Meta(object):
+        db_table = 'member_browse_product_record'
+        managed = False
+
+
 class MemberCard(models.Model):
     """
 	会员卡
