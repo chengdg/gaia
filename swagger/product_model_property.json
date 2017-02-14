@@ -261,6 +261,51 @@
                     }
                 }
             },
+            "post": {
+                "description": "创建商品规格属性值",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "formData",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "model_property_value_id",
+                        "in": "formData",
+                        "description": "需要更新属性值的id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "name",
+                        "in": "formData",
+                        "description": "商品规格属性为text时，name中为属性值的值",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "pic_url",
+                        "in": "formData",
+                        "description": "商品规格属性为image时，pic_url中为属性值的值",
+                        "required": false,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product",
+                    "product_model"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            },
             "delete": {
                 "description": "删除商品规格属性值",
                 "parameters": [

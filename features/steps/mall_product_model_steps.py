@@ -6,6 +6,23 @@ from features.util import bdd_util
 from db.mall import models as mall_models
 from db.account import models as account_models
 
+
+@then(u"{user}修改商品规格属性'{value}'的值")
+def step_impl(context, user, value):
+   
+    product_property_value = mall_models.ProductModelPropertyValue.select().dj_where(name=value, ).get()
+
+    info = json.loads(context.text)
+    req_data = {
+        'corp_id': context.corp.id,
+        'model_property_value_id': product_property_value.id,
+        'name': info.get('name'),
+        'pic_url': info.get('pic_url')
+    }
+    response = context.client.post('/product/model_property_value/', req_data)
+    bdd_util.assert_api_call_success(response)
+    
+
 @given(u"{user}已添加商品规格")
 def step_add_model_property(context, user):
     product_model_properties = json.loads(context.text)

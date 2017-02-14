@@ -4,6 +4,7 @@ __author__ = 'Eugene'
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
 
+
 class AProductModelPropertyValue(api_resource.ApiResource):
     """
     商品规格的属性
@@ -39,3 +40,16 @@ class AProductModelPropertyValue(api_resource.ApiResource):
         corp.product_model_property_repository.delete_property_value(property_value_id)
         return {}
 
+    @param_required(['corp_id', 'model_property_value_id'])
+    def post(args):
+        """
+		"""
+        corp = args['corp']
+        property_value_id = args['model_property_value_id']
+        product_model_property_value = corp.product_model_property_repository.get_property_value(property_value_id)
+    
+        name = args.get('name', '')
+        pic_url = args.get('pic_url', '')
+        product_model_property_value.update(name, pic_url)
+    
+        return {}

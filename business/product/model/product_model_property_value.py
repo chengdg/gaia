@@ -30,10 +30,10 @@ class ProductModelPropertyValue(business_model.Model):
         product_model_property = ProductModelPropertyValue(model)
         return product_model_property
 
-    def update(self):
-        change_rows = mall_models.ProductModelPropertyValue.update(
-                        name=self.name,
-                        pic_url=self.pic_url
+    def update(self, name , pic_url):
+        mall_models.ProductModelPropertyValue.update(
+                        name=name,
+                        pic_url=pic_url
                     ).dj_where(id=self.id).execute()
 
     def is_used(self):
