@@ -2,7 +2,10 @@
 import json
 
 from business import model as business_model
+from business.member.member_spread import MemberSpread
 from business.order.delivery_item import DeliveryItem
+from business.order.release_order_resource_service import ReleaseOrderResourceService
+from business.product.update_product_service import UpdateProductService
 from db.mall import models as mall_models
 from db.member import models as member_models
 from gaia_conf import TOPIC
@@ -173,7 +176,7 @@ class Order(business_model.Model):
 			order.is_first_order = db_model.is_first_order
 
 			# 临时数据
-			webapp_user_ids.append(db_model.webapp_user_id)
+
 			order.context['db_model'] = db_model
 			order.context['corp'] = corp
 
@@ -196,26 +199,7 @@ class Order(business_model.Model):
 			with_extra_promotion_info = fill_options.get("extra_promotion_info")
 
 			if with_member:
-				webapp_user_id2member, _ = corp.member_repository.get_members_from_webapp_user_ids(webapp_user_ids)
-			else:
-				webapp_user_id2member = {}
-
-			for order in orders:
-
-				if with_member:
-					member = webapp_user_id2member.get(order.webapp_user_id, None)
-					if member:
-						order.member_info = {
-							'name': member.username_for_html,
-							'id': member.id,
-							'is_subscribed': member.is_subscribed
-						}
-					else:
-						order.member_info = {
-							'name': u'未知',
-							'id': 0,
-							'is_subscribed': 0
-						}
+				Order.__fill_member_info(orders, order_ids)
 
 			# 填充出货单
 			if with_delivery_items:
@@ -252,6 +236,33 @@ class Order(business_model.Model):
 				Order.__fill_extra_promotion(orders, order_ids)
 
 		return orders
+
+	@staticmethod
+	def __fill_member_info(orders, order_ids):
+
+		corp = orders[0].context['corp']
+
+		webapp_user_ids = []
+		for order in orders:
+			webapp_user_ids.append(order.webapp_user_id)
+
+		webapp_user_id2member, _ = corp.member_repository.get_members_from_webapp_user_ids(webapp_user_ids)
+
+		for order in orders:
+			member = webapp_user_id2member.get(order.webapp_user_id, None)
+			if member:
+				order.context['member'] = member
+				order.member_info = {
+					'name': member.username_for_html,
+					'id': member.id,
+					'is_subscribed': member.is_subscribed
+				}
+			else:
+				order.member_info = {
+					'name': u'未知',
+					'id': 0,
+					'is_subscribed': 0
+				}
 
 	@staticmethod
 	def __fill_extra_promotion(orders, order_ids):
@@ -543,17 +554,6 @@ class Order(business_model.Model):
 
 	def pay(self, corp):
 		"""
-		影响：
-		- 更新订单状态
-		- 更新支付时间
-		- 更新买家的首单信息
-		- 支付出货单
-		- 记录状态日志
-		- 记录操作日志
-
-		- 更新销量
-		- 发送模板消息
-		- 发送运营邮件通知
 		@param corp:
 		@return:
 		"""
@@ -579,7 +579,16 @@ class Order(business_model.Model):
 		self.__recode_status_log(self.bid, corp.username, from_status, to_status)
 		self.__save()
 
-		Order.__fill_delivery_items([self], None)
+		fill_options = {
+			'with_products': True
+		}
+		Order.__fill_delivery_items([self], fill_options)
+
+		delivery_item_products = self.get_all_products()
+		update_product_service = UpdateProductService.get(corp)
+
+		for product in delivery_item_products:
+			update_product_service.update_product_sale(product.id, product.count)
 
 		for delivery_item in self.delivery_items:
 			delivery_item.pay(payment_time, corp)
@@ -627,7 +636,8 @@ class Order(business_model.Model):
 
 		for delivery_item in self.delivery_items:
 			delivery_item.cancel(corp)
-
+		release_order_resource_service = ReleaseOrderResourceService.get(corp)
+		release_order_resource_service.release(self.id, from_status, to_status)
 		self.__send_msg_to_topic('order_cancelled', from_status, to_status)
 		return True, ''
 
@@ -647,6 +657,15 @@ class Order(business_model.Model):
 			self.__record_operation_log(self.bid, corp.username, action_text)
 			self.__recode_status_log(self.bid, corp.username, from_status, to_status)
 			self.__save()
+
+		Order.__fill_member_info([self], None)
+
+		member = self.context['member']
+
+		member.update_pay_info(self, from_status, to_status)
+		member.auto_update_grade()
+		member.increase_integral_after_finish_order(self)
+		MemberSpread.process_order_from_spread({'order_id': self.id})
 
 		self.__send_msg_to_topic('order_finished', from_status, to_status)
 		return True, ''
@@ -690,6 +709,13 @@ class Order(business_model.Model):
 			self.__recode_status_log(self.bid, corp.username, from_status, to_status)
 			self.__save()
 
+		Order.__fill_member_info([self], None)
+
+		member = self.context['member']
+
+		member.update_pay_info(self, from_status, to_status)
+		member.auto_update_grade()
+
 		self.__send_msg_to_topic('order_applied_for_refunding', from_status, to_status)
 		return True, ''
 
@@ -710,7 +736,12 @@ class Order(business_model.Model):
 			self.__record_operation_log(self.bid, corp.username, action_text)
 			self.__recode_status_log(self.bid, corp.username, from_status, to_status)
 			self.__save()
+		Order.__fill_member_info([self], None)
 
+		member = self.context['member']
+
+		member.update_pay_info(self, from_status, to_status)
+		member.auto_update_grade()
 		self.__send_msg_to_topic('order_refunded', from_status, to_status)
 		return True, ''
 

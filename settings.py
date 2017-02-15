@@ -160,17 +160,8 @@ else:
     MNS_ENDPOINT = 'https://1615750970594173.mns.cn-beijing.aliyuncs.com/'
     MNS_SECURITY_TOKEN = ''
 
-if 'develop' == MODE:
-    MESSAGE_DEBUG_MODE = True
-else:
-    MESSAGE_DEBUG_MODE = False
-
-
-REDIS_QUEUE_DB = 8
-TOPIC2QUEUES = {
-    'test-topic': ['test-order-trade-center'],
-    'test-weixin-topic': ['test-weixin-topic']
-}
+# event service相关设置
+MESSAGE_BROKER = os.environ.get('_MESSAGE_BROKER', 'redis')
 
 # BDD_SERVER相关配置
 BDD_SERVER2PORT = {

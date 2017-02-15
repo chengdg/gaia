@@ -26,4 +26,4 @@ class ADefaultConfigs(api_resource.ApiResource):
         MemberGrade.create_default_member_grade_for_corp(corp)
 
         integral_strategy = corp.mall_config_repository.get_integral_strategy()
-
+        return {}

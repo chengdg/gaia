@@ -23,6 +23,7 @@ def clean():
 	member_models.MemberInfo.delete().execute()
 	member_models.MemberIntegralLog.delete().execute()
 	member_models.MemberBrowseRecord.delete().execute()
+	member_models.MemberBrowseProductRecord.delete().execute()
 	member_models.MemberHasTag.delete().execute()
 	member_models.MemberHasSocialAccount.delete().execute()
 	member_models.WebAppUser.delete().execute()

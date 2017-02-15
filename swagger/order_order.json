@@ -1051,62 +1051,6 @@
 					}
 				}
 			}
-		},
-		"/order/released_order": {
-			"put": {
-				"summary": "释放的订单",
-				"parameters": [
-					{
-						"name": "corp_id",
-						"required": true,
-						"in": "query",
-						"type": "string"
-					},
-					{
-						"name": "order_id",
-						"required": true,
-						"in": "query",
-						"type": "string"
-					},
-					{
-						"name": "from_status",
-						"type": "string",
-						"required": false,
-						"in": "query"
-					},
-					{
-						"name": "to_status",
-						"type": "string",
-						"required": false,
-						"in": "query"
-					}
-				],
-				"tags": [
-					"order"
-				],
-				"responses": {
-					"200": {
-						"description": "Successful response",
-						"schema": {
-							"type": "object",
-							"properties": {
-								"code": {
-									"type": "integer",
-									"format": "int32"
-								},
-								"data": {
-								},
-								"errMsg": {
-									"type": "string"
-								},
-								"innerErrMsg": {
-									"type": "string"
-								}
-							}
-						}
-					}
-				}
-			}
 		}
 	}
 }
