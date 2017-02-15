@@ -8,19 +8,20 @@ from eaglet.decorator import param_required
 from business.member.social_account import SocialAccount
 from business.member.member import Member
 
-class AMemberOpenId(api_resource.ApiResource):
-    """
-    通过会员ID获取openid
-    """
-    app = "member"
-    resource = "member_openid"
 
-    @param_required(['member_id'])
-    def get(args):
+class AMemberOpenId(api_resource.ApiResource):
+	"""
+	通过会员ID获取openid
+	"""
+	app = "member"
+	resource = "member_openid"
+
+	@param_required(['member_id'])
+	def get(args):
 		corp = args['corp']
 		memeber_id = args['member_id']
 		# 获取social_account
 		social_account = corp.social_account_repository.get_social_account(memeber_id)
 		return {
-            'social_account': social_account
-        }
+			'social_account': social_account
+		}
