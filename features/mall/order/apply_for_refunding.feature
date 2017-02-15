@@ -973,7 +973,7 @@ Scenario:3 管理员退款多供货商的订单-带运费-待发货，已完成
 		}
 		"""
 
-@gaia @order
+@gaia @order @ztqb
 Scenario:4 管理员退款使用微众卡全额支付的订单
 	Given 重置'weizoom_card'的bdd环境
 	Given 重置'apiserver'的bdd环境
@@ -1026,7 +1026,8 @@ Scenario:4 管理员退款使用微众卡全额支付的订单
 			}]
 		}]
 		"""
-	And zhouxun开通使用微众卡权限::weapp
+	Given zhouxun登录系统::weapp
+	When zhouxun开通使用微众卡权限::weapp
 	When zhouxun添加支付方式
 		"""
 		[{
