@@ -19,6 +19,13 @@ class ATemplateMessage(api_resource.ApiResource):
 		template_message_detail, template_message = corp.template_message_detail_repository.get_template_message(corp.id, send_point)
 		template_message_detail.attribute = template_message.attribute
 		template_message_detail.title = template_message.title
+		template_dic = {
+			'title':template_message_detail.title,
+			'template_id':template_message_detail.template_id,
+			'attribute':template_message_detail.attribute,
+			'first_text':template_message_detail.first_text,
+			'remark_text':template_message_detail.remark_text
+		}
 		return {
-            'template': template_message_detail
+            'template': template_dic
         }
