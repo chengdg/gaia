@@ -11,6 +11,7 @@ from business.mall.supplier.supplier import Supplier
 from business.mall.supplier.user_supplier import UserSupplier
 from business.order.delivery_item_product_repository import DeliveryItemProductRepository
 from business.order.process_order_after_delivery_item_service import ProcessOrderAfterDeliveryItemService
+from business.order.release_delivery_item_resource import ReleaseDeliveryItemResourceService
 from db.express import models as express_models
 from db.mall import models as mall_models
 from util.send_phone_msg import send_phone_captcha
@@ -391,6 +392,9 @@ class DeliveryItem(business_model.Model):
 			self.__recode_status_log(self.bid, corp.username, from_status, to_status)
 			self.__save()
 
+
+
+
 		self.__send_msg_to_topic('delivery_item_paid', from_status, to_status)
 
 	def cancel(self, corp):
@@ -579,6 +583,10 @@ class DeliveryItem(business_model.Model):
 		#                          member_card_money=mall_models.Order.member_card_money - self.refunding_info[
 		# 	                         'member_card_money']).dj_where(id=self.origin_order_id).execute()
 		self.__save()
+
+		release_delivery_item_service = ReleaseDeliveryItemResourceService.get(corp)
+		release_delivery_item_service.release(self.id, from_status, to_status)
+
 
 		self.__send_msg_to_topic('delivery_item_refunded', from_status, to_status)
 		process_order_after_delivery_item_service = ProcessOrderAfterDeliveryItemService.get(corp)

@@ -18,6 +18,7 @@ from eaglet.core import watchdog
 
 import settings
 from business.account.integral import Integral
+from gaia_conf import TOPIC
 from util import emojicons_util
 from db.member import models as member_models
 from business import model as business_model
@@ -116,7 +117,7 @@ class Member(business_model.Model):
 		openid = member_models.MemberHasSocialAccount.select().dj_where(member_id=self.id).first().account.openid
 		# 先暂时使用mall_config主题，目的是为了省两块钱TODO
 		topic_name = TOPIC['mall_config']
-		msg_name = 'memeber_info_updated'
+		msg_name = 'member_info_updated'
 		data = {
 			"weapp_id": self.webapp_id,
 			"openid": openid
