@@ -144,6 +144,7 @@ class Corporation(business_model.Model):
 			if ':' in field_name:
 				transfer_type = field_name.split(':')[1]
 				field_name = field_name.split(':')[0]
+				field_value = args.get(field_name)
 
 				if transfer_type == 'bool':
 					field_value = field_value in ("True", "true", True)
