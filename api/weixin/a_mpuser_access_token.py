@@ -20,7 +20,10 @@ class AMpuserAccessToken(api_resource.ApiResource):
 		corp = args['corp']
 
 		# 获取mpuser_access_token
-		access_token = corp.mpuser_access_token_repository.get_mpuser_access_token(corp.id)
+		mpuser_access_token = corp.mpuser_access_token_repository.get_mpuser_access_token(corp.id)
+		access_token_dic = {
+			'access_token':mpuser_access_token.access_token
+		}
 		return {
-            'access_token': access_token
+            'access_token': access_token_dic
         }
