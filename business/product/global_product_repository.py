@@ -31,7 +31,7 @@ class GlobalProductRepository(business_model.Service):
 		return params
 
 	def filter_products(self, query_dict, page_info, fill_options=None):
-		db_models = mall_models.Product.select().dj_where(is_deleted=False)
+		db_models = mall_models.Product.select().dj_where(is_deleted=False).order_by('-created_at')
 
 		if query_dict['corp'].is_weizoom_corp():
 			db_models = db_models.where(
