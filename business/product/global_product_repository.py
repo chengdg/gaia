@@ -71,7 +71,7 @@ class GlobalProductRepository(business_model.Service):
 			#TODO
 			pass
 
-		db_models = db_models.order_by(-Product.created_at)
+		db_models = db_models.order_by(-mall_models.Product.created_at)
 		if page_info:
 			pageinfo, db_models = paginator.paginate(db_models, page_info.cur_page, page_info.count_per_page)
 		else:
