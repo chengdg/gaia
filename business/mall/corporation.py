@@ -61,11 +61,8 @@ class Corporation(business_model.Model):
 		'username',
 
 		'company_name',
-		'purchase_method',
-		'points',
-		'rebate_money',
-		'rebate_proport',
-		'default_rebate_proport',
+		'settlement_type',
+		'divide_rebate',
 		'clear_period',
 		'customer_from',
 		'max_product_count',
@@ -122,11 +119,8 @@ class Corporation(business_model.Model):
 		if corp_model:
 			self.name = corp_model.name
 			self.company_name = corp_model.company_name
-			self.purchase_method = corp_model.purchase_method
-			self.points = corp_model.points
-			self.rebate_money = corp_model.rebate_money
-			self.rebate_proport = corp_model.rebate_proport
-			self.default_rebate_proport = corp_model.default_rebate_proport
+			self.settlement_type = corp_model.settlement_type
+			self.divide_rebate = corp_model.divide_rebate
 			self.clear_period = corp_model.clear_period
 			self.customer_from = corp_model.customer_from
 			self.max_product_count = corp_model.max_product_count
@@ -183,8 +177,8 @@ class Corporation(business_model.Model):
 		"""
 		更新商户商城配置
 		"""
-		update_field_list = ['purchase_method', 'points:float', 'clear_period',
-							 'rebate_money:float', 'rebate_proport:float', 'default_rebate_proport:float', 'max_product_count', 'classification_ids']
+		update_field_list = ['settlement_type', 'clear_period',
+							 'divide_rebate:float', 'max_product_count', 'classification_ids']
 		self.__update(args, update_field_list)
 
 	def update_base_info(self, args):
