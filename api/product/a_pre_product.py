@@ -37,7 +37,10 @@ class APreProduct(api_resource.ApiResource):
 			'weight': '0.00' if not pre_product.standard_model else '%.2f' % pre_product.standard_model.weight,
 			'stocks': pre_product.stocks,
 			'detail': pre_product.detail,
-			'models': pre_product.custom_models,
+			'models': {
+				'standard_model': pre_product.standard_model,
+				'custom_models': pre_product.custom_models
+			},
 			'images': pre_product.swipe_images,
 			'limit_zone_type': pre_product.limit_zone_type,
 			'limit_zone': pre_product.limit_zone,

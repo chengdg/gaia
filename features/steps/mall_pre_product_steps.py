@@ -159,7 +159,7 @@ def __format_resp_models_info(models):
 	model_property_value_id2name = {v.id: v.name for v in mall_models.ProductModelPropertyValue.select()}
 	result = dict()
 
-	for model in models:
+	for model in models['custom_models']:
 		if model.get('properties'):
 			property_value_ids = [p['property_value_id'] for p in model['properties']]
 			title = []
@@ -298,7 +298,7 @@ def __format_resp_data(actual, corp_id):
 	actual['limit_zone_type'] = __limit_type_number2name(actual['limit_zone_type'])
 	actual['images'] = __format_resp_image_info(actual['images'])
 	actual['stock'] = actual['stocks'][0] if isinstance(actual['stocks'], list) else actual['stocks']
-	actual['has_product_model'] = bool(actual.get('models', False))
+	actual['has_product_model'] = bool(actual['models']['custom_models'])
 	actual['models'] = __format_resp_models_info(actual.get('models', []))
 
 	return actual

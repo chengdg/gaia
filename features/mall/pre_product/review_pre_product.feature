@@ -58,8 +58,8 @@ Background:
 		"""
 	Then jobs查看待审核商品列表
 		|name|classification|price|stock|created_time|status|operation|
-		|  武汉鸭脖  |分类12--分类24|10.00|200|  创建时间 |   待审核   |编辑|
 		|   ipad     |分类11--分类21|3000.00|200| 创建时间 |   待审核   |编辑|
+		|  武汉鸭脖  |分类12--分类24|10.00|200|  创建时间 |   待审核   |编辑|
 
 	When jobs提交商品审核
 		"""
@@ -68,8 +68,8 @@ Background:
 
 	Then jobs查看待审核商品列表
 		|name|classification|price|stock|created_time|status|operation|
-		|  武汉鸭脖  |分类12--分类24|10.00|200|  创建时间 |   审核中  |编辑|
 		|   ipad     |分类11--分类21|3000.00|200| 创建时间 |   审核中   |编辑|
+		|  武汉鸭脖  |分类12--分类24|10.00|200|  创建时间 |   审核中  |编辑|
 
 
 @gaia @mall @product @pre_product @pending_pre_product @aix
@@ -77,8 +77,8 @@ Scenario:1 运营审核通过客户创建的商品
 	Given weizoom登录系统
 	Then weizoom查看待审核商品列表
 		|name|owner_name|classification|status|    operation   |
-		|  武汉鸭脖  |     jobs    |分类12--分类24| 审核中   |通过 驳回 删除|
 		|   ipad     |     jobs    |分类11--分类21| 审核中   |通过 驳回 删除|
+		|  武汉鸭脖  |     jobs    |分类12--分类24| 审核中   |通过 驳回 删除|
 
 	When weizoom审核通过待审核商品
 		"""
@@ -87,11 +87,11 @@ Scenario:1 运营审核通过客户创建的商品
 
 	Then weizoom查看待审核商品列表
 		|name|owner_name|classification|status|    operation   |
-		|  武汉鸭脖  |     jobs    |分类12--分类24|  审核中   |通过 驳回 删除|
 		|   ipad     |     jobs    |分类11--分类21|  已审核   ||
+		|  武汉鸭脖  |     jobs    |分类12--分类24|  审核中   |通过 驳回 删除|
 
 	Given jobs登录系统
 	Then jobs查看待审核商品列表
 		|name|classification|price|stock|created_time|status|operation|
-		|  武汉鸭脖  |分类12--分类24|10.00|200|  创建时间 |   审核中   |编辑|
 		|   ipad     |分类11--分类21|3000.00|200| 创建时间 |   已审核   |编辑|
+		|  武汉鸭脖  |分类12--分类24|10.00|200|  创建时间 |   审核中   |编辑|

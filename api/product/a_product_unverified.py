@@ -37,7 +37,10 @@ class AProductUnverified(api_resource.ApiResource):
 			'weight': models_info['standard_model']['weight'],
 			'stocks': models_info['standard_model']['stocks'],
 			'detail': base_info['detail'],
-			'models': models_info['custom_models'],
+			'models': {
+				'standard_model': models_info['standard_model'],
+				'custom_models': models_info['custom_models']
+			},
 			'images': image_info['images'],
 			'limit_zone_type': logistics_info['limit_zone_type'],
 			'limit_zone': logistics_info['limit_zone_id'],

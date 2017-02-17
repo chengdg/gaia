@@ -224,9 +224,9 @@ Background:
 		"""
 	Then jobs查看待审核商品列表
 		|name|classification|price|stock|created_time|status|operation|
-		|  武汉鸭脖  |分类12--分类24|10.00|200|  创建时间 |   待审核   |编辑|
-		|   ipad     |分类11--分类21|3000.00|200| 创建时间 |   待审核   |编辑|
 		|多规格商品1|分类11--分类23|3.00~5.00|200~300|  创建时间 |   待审核   |编辑|
+		|   ipad     |分类11--分类21|3000.00|200| 创建时间 |   待审核   |编辑|
+		|  武汉鸭脖  |分类12--分类24|10.00|200|  创建时间 |   待审核   |编辑|
 
 	When jobs提交商品审核
 		"""
@@ -235,14 +235,14 @@ Background:
 
 	Then jobs查看待审核商品列表
 		|name|classification|price|stock|created_time|status|operation|
-		|  武汉鸭脖  |分类12--分类24|10.00|200|  创建时间 |   审核中  |编辑|
-		|   ipad     |分类11--分类21|3000.00|200| 创建时间 |   审核中   |编辑|
 		|多规格商品1|分类11--分类23|3.00~5.00|200~300|  创建时间 |   待审核   |编辑|
+		|   ipad     |分类11--分类21|3000.00|200| 创建时间 |   审核中   |编辑|
+		|  武汉鸭脖  |分类12--分类24|10.00|200|  创建时间 |   审核中  |编辑|
 	Given weizoom登录系统
 	Then weizoom查看待审核商品列表
 		|name|owner_name|classification|status|    operation   |
-		|  武汉鸭脖  |     jobs    |分类12--分类24| 审核中   |通过 驳回 删除|
 		|   ipad     |     jobs    |分类11--分类21| 审核中   |通过 驳回 删除|
+		|  武汉鸭脖  |     jobs    |分类12--分类24| 审核中   |通过 驳回 删除|
 
 	When weizoom审核通过待审核商品
 		"""
@@ -251,15 +251,15 @@ Background:
 
 	Then weizoom查看待审核商品列表
 		|name|owner_name|classification|status|    operation   |
-		|  武汉鸭脖  |     jobs    |分类12--分类24|  审核中   |通过 驳回 删除|
 		|   ipad     |     jobs    |分类11--分类21|  已审核   ||
+		|  武汉鸭脖  |     jobs    |分类12--分类24|  审核中   |通过 驳回 删除|
 
 	Given jobs登录系统
 	Then jobs查看待审核商品列表
 		|name|classification|price|stock|created_time|status|operation|
-		|  武汉鸭脖  |分类12--分类24|10.00|200|  创建时间 |   审核中   |编辑|
-		|   ipad     |分类11--分类21|3000.00|200| 创建时间 |   已审核   |编辑|
 		|多规格商品1|分类11--分类23|3.00~5.00|200~300|  创建时间 |   待审核   |编辑|
+		|   ipad     |分类11--分类21|3000.00|200| 创建时间 |   已审核   |编辑|
+		|  武汉鸭脖  |分类12--分类24|10.00|200|  创建时间 |   审核中   |编辑|
 @gaia @mall @product @pre_product @compare_product @aix
 Scenario:1 客户修改除了库存的其余字段后，运营查看修改记录
 	Given weizoom登录系统
@@ -270,15 +270,15 @@ Scenario:1 客户修改除了库存的其余字段后，运营查看修改记录
 
 	Then weizoom查看待审核商品列表
 		|name|owner_name|classification|status|    operation   |
-		|  武汉鸭脖  |     jobs    |分类12--分类24|  已审核   ||
 		|   ipad     |     jobs    |分类11--分类21|  已审核   ||
+		|  武汉鸭脖  |     jobs    |分类12--分类24|  已审核   ||
 
 	Given jobs登录系统
 	Then jobs查看待审核商品列表
 		|name|classification|price|stock|created_time|status|operation|
-		|  武汉鸭脖  |分类12--分类24|10.00|200|  创建时间 |   已审核   |编辑|
-		|   ipad     |分类11--分类21|3000.00|200| 创建时间 |   已审核   |编辑|
 		|多规格商品1|分类11--分类23|3.00~5.00|200~300|  创建时间 |   待审核   |编辑|
+		|   ipad     |分类11--分类21|3000.00|200| 创建时间 |   已审核   |编辑|
+		|  武汉鸭脖  |分类12--分类24|10.00|200|  创建时间 |   已审核   |编辑|
 	When jobs编辑已审核商品信息
 		"""
 		[{
@@ -400,8 +400,8 @@ Scenario:1 客户修改除了库存的其余字段后，运营查看修改记录
 	Given weizoom登录系统
 	Then weizoom查看待审核商品更新列表
 		|name|classification|owner_name|price|stocks|status|operation|
-		|武汉鸭脖|分类12--分类24|jobs|10.00|200|审核中|商品更新 驳回修改|
 		|ipad|分类11--分类21|jobs|3000.00|200|审核中|商品更新 驳回修改|
+		|武汉鸭脖|分类12--分类24|jobs|10.00|200|审核中|商品更新 驳回修改|
 	Then weizoom查看待更新商品'武汉鸭脖'的对比详情
 		"""
 		{

@@ -101,17 +101,19 @@ CLEAR_PERIOD_MONTH = 1 #自然月
 CLEAR_PERIOD_15TH_DAY = 2 #15天
 CLEAR_PERIOD_WEEK = 3 #自然周
 
+# 固定底价
+CORP_DIVIDE_TYPE_FIXED = 1
+# 零售价返点
+CORP_DIVIDE_TYPE_RETAIL = 2
+
 class CorpInfo(models.Model):
 	"""
 	corp详情
 	"""
 	name = models.CharField(max_length=32, default='')	#公司简称(店铺名)
 	company_name = models.CharField(max_length=32, default='')	#公司全称
-	purchase_method = models.IntegerField(default=1) #采购方式
-	points = models.FloatField(default=0) #零售价返点
-	rebate_money = models.FloatField(default=0) #返点起点金额
-	rebate_proport = models.FloatField(default=0)  # 返点比例%
-	default_rebate_proport = models.FloatField(default=0)  # 默认返点比例%
+	settlement_type = models.IntegerField(default=CORP_DIVIDE_TYPE_FIXED) #采购方式
+	divide_rebate = models.FloatField(default=0) #零售价返点
 	clear_period = models.IntegerField(default=CLEAR_PERIOD_MONTH)
 	customer_from = models.IntegerField(default=1)  # 客户来源 0 PANDA ，1 渠道
 	max_product_count = models.IntegerField(default=10)  # 最多可创建商品个数
