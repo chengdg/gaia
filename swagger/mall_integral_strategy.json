@@ -104,12 +104,6 @@
                         "description": "成为会员增加额度"
                     },
                     {
-                        "name": "click_shared_url_increase_count",
-                        "required": true,
-                        "type": "integer",
-                        "description": "分享链接给好友点击"
-                    },
-                    {
                         "name": "buy_award_count_for_buyer",
                         "required": true,
                         "type": "integer",
@@ -120,12 +114,6 @@
                         "required": true,
                         "type": "string",
                         "description": "每次购物后，额外积分（以订单金额的百分比计算）"
-                    },
-                    {
-                        "name": "buy_via_shared_url_increase_count_for_author",
-                        "required": true,
-                        "type": "integer",
-                        "description": "通过分享链接购买为分享者增加的额度"
                     },
                     {
                         "name": "buy_via_offline_increase_count_for_author",

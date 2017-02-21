@@ -56,10 +56,10 @@ class IntegralStrategy(business_model.Model):
 		member_models.IntegralStrategySettings.update(
 			integral_each_yuan = update_params['integral_each_yuan'],
 			be_member_increase_count = update_params['be_member_increase_count'],
-			click_shared_url_increase_count = update_params['click_shared_url_increase_count'],
+			click_shared_url_increase_count = 0,
 			buy_award_count_for_buyer = update_params['buy_award_count_for_buyer'],
 			order_money_percentage_for_each_buy = update_params['order_money_percentage_for_each_buy'],
-			buy_via_shared_url_increase_count_for_author = update_params['buy_via_shared_url_increase_count_for_author'],
+			buy_via_shared_url_increase_count_for_author = 0,
 			buy_via_offline_increase_count_for_author = update_params['buy_via_offline_increase_count_for_author'],
 			buy_via_offline_increase_count_percentage_for_author = update_params['buy_via_offline_increase_count_percentage_for_author'],
 			use_ceiling = update_params['use_ceiling'],
