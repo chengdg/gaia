@@ -495,7 +495,8 @@ class ProductPool(business_model.Model):
 		mall_models.ProductPool.update(is_cps_promotion_processed=True).dj_where(product_id__in=product_ids,woid=self.corp.id).execute()
 
 	def has_product_with_display_index(self, display_index):
-		return mall_models.ProductPool.select().dj_where(woid=self.corp.id, display_index=display_index).count() > 0
+		return mall_models.ProductPool.select().dj_where(woid=self.corp.id, display_index=display_index,
+														 status=mall_models.PP_STATUS_ON).count() > 0
 
 	def search_products_by_filters(self, **filters):
 		product_models = mall_models.Product.select().dj_where(**filters)
