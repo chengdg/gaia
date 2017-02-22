@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 import json
 
+from eaglet.utils.resource_client import Resource
+
+import settings
 from business import model as business_model
 from business.member.member_spread import MemberSpread
 from business.order.delivery_item import DeliveryItem
@@ -622,6 +625,17 @@ class Order(business_model.Model):
 
 		if self.status != mall_models.ORDER_STATUS_NOT:
 			return False, 'Error Status'
+
+		# 关闭微信交易单
+		if self.pay_interface_type == mall_models.PAY_INTERFACE_WEIXIN_PAY and not settings.IS_UNDER_BDD:
+			resp = Resource.use("pixiu").delete({
+				'order_bids':  json.dumps([self.bid])
+			})
+
+			if resp and resp['code'] == 200 and resp['data']['result'][self.bid]:
+				pass
+			else:
+				return False, 'close weixin pay order fail'
 
 		action_text = u"取消订单"
 		from_status = self.status
