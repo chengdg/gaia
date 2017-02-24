@@ -628,7 +628,7 @@ class Order(business_model.Model):
 
 		# 关闭微信交易单
 		if self.pay_interface_type == mall_models.PAY_INTERFACE_WEIXIN_PAY and not settings.IS_UNDER_BDD:
-			resp = Resource.use("pixiu").delete({
+			resp = Resource.use("pay_misc_tools").delete({
 				'order_bids':  json.dumps([self.bid])
 			})
 
