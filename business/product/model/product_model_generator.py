@@ -92,12 +92,12 @@ class ProductModelGenerator(business_model.Service):
 
 		id2property, id2propertyvalue = self.__get_all_model_property_info(products, is_enable_model_property_info)
 
-		divide_model = account_models.AccountDivideInfo.objects.filter(user_id=self.corp.id).first()
+		divide_model = account_models.AccountDivideInfo.select().dj_where(user_id=self.corp.id).first()
 		if divide_model:
 			settlement_type = divide_model.settlement_type
 			divide_rebate = divide_model.divide_rebate
 			product_model_id2price = {c.product_model_id: c.price for c in
-									  mall_models.ProductCustomizedPrice.objects.filter(product_id__in=product_ids)}
+									  mall_models.ProductCustomizedPrice.select().dj_where(product_id__in=product_ids)}
 
 		# 获取所有models
 		product2models = {}
