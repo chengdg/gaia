@@ -60,9 +60,11 @@ class FillProductDetailService(business_model.Service):
 			#已经完成过填充，再次进入，跳过填充
 			return
 
+		divide_model = account_models.AccountDivideInfo.select().dj_where(user_id=corp.id).first()
+
 		#TODO2: 因为这里是静态方法，所以目前无法使用product.context['corp']，构造基于Object的临时解决方案，需要优化
 		product_model_generator = ProductModelGenerator.get(None)
-		product_model_generator.fill_models_for_products(products, is_enable_model_property_info)
+		product_model_generator.fill_models_for_products(products, is_enable_model_property_info, divide_model)
 
 	def __fill_category_detail(self, corp, product_ids, id2product):
 		"""

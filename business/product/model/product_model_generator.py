@@ -77,7 +77,7 @@ class ProductModelGenerator(business_model.Service):
 
 		return _id2property, _id2propertyvalue
 
-	def fill_models_for_products(self, products, is_enable_model_property_info):
+	def fill_models_for_products(self, products, is_enable_model_property_info, divide_info=None):
 		"""
 		为商品集合填充规格信息
 
@@ -92,10 +92,9 @@ class ProductModelGenerator(business_model.Service):
 
 		id2property, id2propertyvalue = self.__get_all_model_property_info(products, is_enable_model_property_info)
 
-		divide_model = account_models.AccountDivideInfo.select().dj_where(user_id=self.corp.id).first()
-		if divide_model:
-			settlement_type = divide_model.settlement_type
-			divide_rebate = divide_model.divide_rebate
+		if divide_info:
+			settlement_type = divide_info.settlement_type
+			divide_rebate = divide_info.divide_rebate
 			product_model_id2price = {c.product_model_id: c.price for c in
 									  mall_models.ProductCustomizedPrice.select().dj_where(product_id__in=product_ids)}
 
@@ -109,7 +108,7 @@ class ProductModelGenerator(business_model.Service):
 				#product2deleted_models.setdefault(db_model.product_id, []).append(product_model)
 			else:
 				product_model = ProductModel(db_model, id2property, id2propertyvalue)
-				if divide_model:
+				if divide_info:
 					"""
 					社群的毛利、毛利率
 					固定底价: 社群修改价 - 上浮结算价
@@ -152,7 +151,7 @@ class ProductModelGenerator(business_model.Service):
 				product.is_use_custom_model = True
 				product.standard_model = None
 				product.custom_models = [model for model in product_models if not model.is_standard_model()]
-				if divide_model and not divide_model.settlement_type == account_models.ACCOUNT_DIVIDE_TYPE_FIXED:#非固定底价方式，选择毛利率最大的
+				if divide_info and not divide_info.settlement_type == account_models.ACCOUNT_DIVIDE_TYPE_FIXED:#非固定底价方式，选择毛利率最大的
 					product.custom_models = sorted(product.custom_models, key=lambda k: k.gross_profit_rate, reverse=True)
 				product.gross_profit_info = {
 					'gross_profit': product.custom_models[0].gross_profit,
