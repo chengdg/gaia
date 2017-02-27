@@ -55,7 +55,9 @@ class EncodeProductService(business_model.Service):
 				"weight": standard_model.weight,
 				"stock_type": standard_model.stock_type,
 				"stocks": standard_model.stocks,
-				"user_code": standard_model.user_code
+				"user_code": standard_model.user_code,
+				"gross_profit": standard_model.gross_profit,
+				"gross_profit_rate": standard_model.gross_profit_rate
 			}
 		else:
 			models_info['standard_model'] = None
@@ -72,6 +74,8 @@ class EncodeProductService(business_model.Service):
 					"stock_type": custom_model.stock_type,
 					"stocks": custom_model.stocks,
 					"user_code": custom_model.user_code,
+					"gross_profit": standard_model.gross_profit,
+					"gross_profit_rate": standard_model.gross_profit_rate,
 					"property_values": custom_model.property_values,
 					"property2value": custom_model.property2value
 				})
