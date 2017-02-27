@@ -332,7 +332,7 @@ class ProductPool(business_model.Model):
 
 		divide_info = account_models.AccountDivideInfo.select().dj_where(user_id=self.corp_id).first()
 		if divide_info and not divide_info.settlement_type == account_models.ACCOUNT_DIVIDE_TYPE_FIXED:
-			products = sorted(products, key=lambda k: k.gross_profit_rate, reverse=True)
+			products = sorted(products, key=lambda k: k.gross_profit_info['gross_profit_rate'], reverse=True)
 
 		pageinfo, products = paginator.paginate(products, page_info.cur_page, page_info.count_per_page)
 
