@@ -13,6 +13,7 @@ from eaglet.decorator import param_required
 from eaglet.core.cache import utils as cache_util
 from db.mall import models as mall_models
 from db.mall import promotion_models
+from db.account import models as account_models
 from eaglet.core import watchdog
 from business import model as business_model
 import settings
@@ -91,6 +92,13 @@ class ProductModelGenerator(business_model.Service):
 
 		id2property, id2propertyvalue = self.__get_all_model_property_info(products, is_enable_model_property_info)
 
+		divide_model = account_models.AccountDivideInfo.objects.filter(user_id=self.corp.id).first()
+		if divide_model:
+			settlement_type = divide_model.settlement_type
+			divide_rebate = divide_model.divide_rebate
+			product_model_id2price = {c.product_model_id: c.price for c in
+									  mall_models.ProductCustomizedPrice.objects.filter(product_id__in=product_ids)}
+
 		# 获取所有models
 		product2models = {}
 		#product2deleted_models = {}
@@ -101,6 +109,33 @@ class ProductModelGenerator(business_model.Service):
 				#product2deleted_models.setdefault(db_model.product_id, []).append(product_model)
 			else:
 				product_model = ProductModel(db_model, id2property, id2propertyvalue)
+				if divide_model:
+					"""
+					社群的毛利、毛利率
+					固定底价: 社群修改价 - 上浮结算价
+					固定扣点: 商品售价 * 社群扣点
+					毛利分成: {
+						non_cps: (商品售价 - 微众售价) * 社群毛利点  ==> 社群毛利,
+								 (商品售价 - 微众售价)/商品售价 * 社群毛利点 ==>社群毛利率
+					}
+					"""
+					if product_model.price == 0:
+						gross_profit = 0
+						gross_profit_rate = 0
+					else:
+						if settlement_type == account_models.ACCOUNT_DIVIDE_TYPE_FIXED:  # 固定底价
+							customized_price = product_model_id2price.get(product_model.id, product_model.price)
+							gross_profit = customized_price - product_model.price
+							gross_profit_rate = gross_profit / customized_price * 100
+						elif settlement_type == account_models.ACCOUNT_DIVIDE_TYPE_RETAIL:  # 固定扣点
+							gross_profit = product_model.price * divide_rebate / 100
+							gross_profit_rate = divide_rebate
+						elif settlement_type == account_models.ACCOUNT_DIVIDE_TYPE_PROFIT:  # 毛利分成
+							gross_profit = (product_model.price - product_model.purchase_price) * divide_rebate / 100
+							gross_profit_rate = gross_profit / product_model.price * 100
+
+					product_model.gross_profit = '%.2f' % gross_profit
+					product_model.gross_profit_rate = '%.2f' % gross_profit_rate
 				product2models.setdefault(db_model.product_id, []).append(product_model)
 
 		for product_id, product_models in product2models.items():
@@ -109,10 +144,20 @@ class ProductModelGenerator(business_model.Service):
 				product.is_use_custom_model = False
 				product.standard_model = product_models[0]
 				product.custom_models = []
+				product.gross_profit_info = {
+					'gross_profit': product.standard_model.gross_profit,
+					'gross_profit_rate': product.standard_model.gross_profit_rate
+				}
 			else:
 				product.is_use_custom_model = True
 				product.standard_model = None
 				product.custom_models = [model for model in product_models if not model.is_standard_model()]
+				if divide_model and not divide_model.settlement_type == account_models.ACCOUNT_DIVIDE_TYPE_FIXED:#非固定底价方式，选择毛利率最大的
+					product.custom_models = sorted(product.custom_models, key=lambda k: k.gross_profit_rate, reverse=True)
+				product.gross_profit_info = {
+					'gross_profit': product.custom_models[0].gross_profit,
+					'gross_profit_rate': product.custom_models[0].gross_profit_rate
+				}
 
 			#self.__fill_used_product_model_property(product)
 

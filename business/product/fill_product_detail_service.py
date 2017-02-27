@@ -10,6 +10,7 @@ from business.mall.promotion.fill_promotion_detail_service import FillPromotionD
 
 from db.mall import models as mall_models
 from db.mall import promotion_models
+from db.account import models as account_models
 from gaia_conf import TOPIC
 
 import settings
@@ -290,6 +291,7 @@ class FillProductDetailService(business_model.Service):
 	def __fill_cps_promoteion_info(self, corp, products, product_ids, id2product):
 		"""
 		填充商品的cps推广信息
+		毛利分成：社群的毛利、毛利率 ==> 推广费 * 社群毛利点
 		"""
 		if not corp:
 			return
@@ -317,6 +319,26 @@ class FillProductDetailService(business_model.Service):
 				'is_cps_promotion_processed': pool_product_model.is_cps_promotion_processed,
 				'id': promotion.id
 			}
+			if corp.is_self_run_platform() and corp.details.settlement_type == account_models.ACCOUNT_DIVIDE_TYPE_PROFIT:
+				divide_rebate = corp.details.divide_rebate
+				max_cps_profit_rate = 0
+				cps_gross_profit = promotion.promote_money * divide_rebate / 100
+				if product.is_use_custom_model:
+					for model in product.custom_models:
+						cps_gross_profit_rate = cps_gross_profit / model.price * 100
+
+						model.cps_gross_profit = '%.2f' % cps_gross_profit
+						model.cps_gross_profit_rate = '%.2f' % cps_gross_profit_rate
+
+						if cps_gross_profit_rate > max_cps_profit_rate:
+							max_cps_profit_rate = cps_gross_profit_rate
+				else:
+					max_cps_profit_rate = cps_gross_profit / product.standard_model.price * 100
+
+				promotion_info['cps_gross_profit'] = '%.2f' % cps_gross_profit
+				promotion_info['cps_gross_profit_rate'] = '%.2f' % max_cps_profit_rate
+				promotion_info['cps_time_to'] = promotion.promote_time_to.strftime(
+					"%m-%d %H:%M:%S")
 			product.cps_promoted_info = promotion_info
 
 	def fill_detail(self, products, options):

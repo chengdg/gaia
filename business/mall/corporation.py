@@ -114,27 +114,34 @@ class Corporation(business_model.Model):
 	def details(self):
 		"""
 		填充corp详情
+		区分供货商和采购商(社群)
 		"""
-		corp_model = account_model.CorpInfo.select().dj_where(id=self.id).first()
-		if corp_model:
-			self.name = corp_model.name
-			self.company_name = corp_model.company_name
-			self.settlement_type = corp_model.settlement_type
-			self.divide_rebate = corp_model.divide_rebate
-			self.clear_period = corp_model.clear_period
-			self.customer_from = corp_model.customer_from
-			self.max_product_count = corp_model.max_product_count
-			self.classification_ids = corp_model.classification_ids
-			self.contact = corp_model.contact
-			self.contact_phone = corp_model.contact_phone
-			self.note = corp_model.note
-			self.created_at = corp_model.created_at
-			self.status = int(corp_model.status)
-			self.pre_sale_tel = corp_model.pre_sale_tel
-			self.after_sale_tel = corp_model.after_sale_tel
-			self.service_tel = corp_model.service_tel
-			self.service_qq_first = corp_model.service_qq_first
-			self.service_qq_second = corp_model.service_qq_second
+		if self.is_self_run_platform():
+			corp_model = account_model.AccountDivideInfo.select().dj_where(id=self.id).first()
+			if corp_model:
+				self.settlement_type = corp_model.settlement_type
+				self.divide_rebate = corp_model.divide_rebate
+		else:
+			corp_model = account_model.CorpInfo.select().dj_where(id=self.id).first()
+			if corp_model:
+				self.name = corp_model.name
+				self.company_name = corp_model.company_name
+				self.settlement_type = corp_model.settlement_type
+				self.divide_rebate = corp_model.divide_rebate
+				self.clear_period = corp_model.clear_period
+				self.customer_from = corp_model.customer_from
+				self.max_product_count = corp_model.max_product_count
+				self.classification_ids = corp_model.classification_ids
+				self.contact = corp_model.contact
+				self.contact_phone = corp_model.contact_phone
+				self.note = corp_model.note
+				self.created_at = corp_model.created_at
+				self.status = int(corp_model.status)
+				self.pre_sale_tel = corp_model.pre_sale_tel
+				self.after_sale_tel = corp_model.after_sale_tel
+				self.service_tel = corp_model.service_tel
+				self.service_qq_first = corp_model.service_qq_first
+				self.service_qq_second = corp_model.service_qq_second
 
 		return self
 
