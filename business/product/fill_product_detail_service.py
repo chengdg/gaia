@@ -337,8 +337,6 @@ class FillProductDetailService(business_model.Service):
 
 				promotion_info['cps_gross_profit'] = '%.2f' % cps_gross_profit
 				promotion_info['cps_gross_profit_rate'] = '%.2f' % max_cps_profit_rate
-				promotion_info['cps_time_to'] = promotion.promote_time_to.strftime(
-					"%m-%d %H:%M:%S")
 			product.cps_promoted_info = promotion_info
 
 	def fill_detail(self, products, options):
