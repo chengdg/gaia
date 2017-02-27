@@ -202,6 +202,16 @@ class EncodeProductService(business_model.Service):
 			})
 		return datas
 
+	def get_gross_profit_info(self, product):
+		gross_profit_info = product.gross_profit_info
+		if gross_profit_info:
+			return {
+				'gross_profit': gross_profit_info['gross_profit'],
+				'gross_profit_rate': gross_profit_info['gross_profit_rate']
+			}
+		else:
+			return None
+
 	def get_cps_promotion_info(self, product):
 		cps_promotion_info = product.cps_promoted_info
 		if cps_promotion_info:
