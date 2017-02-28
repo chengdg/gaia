@@ -55,7 +55,9 @@ class EncodeProductService(business_model.Service):
 				"weight": standard_model.weight,
 				"stock_type": standard_model.stock_type,
 				"stocks": standard_model.stocks,
-				"user_code": standard_model.user_code
+				"user_code": standard_model.user_code,
+				"gross_profit": standard_model.gross_profit,
+				"gross_profit_rate": standard_model.gross_profit_rate
 			}
 		else:
 			models_info['standard_model'] = None
@@ -72,6 +74,8 @@ class EncodeProductService(business_model.Service):
 					"stock_type": custom_model.stock_type,
 					"stocks": custom_model.stocks,
 					"user_code": custom_model.user_code,
+					"gross_profit": custom_model.gross_profit,
+					"gross_profit_rate": custom_model.gross_profit_rate,
 					"property_values": custom_model.property_values,
 					"property2value": custom_model.property2value
 				})
@@ -202,10 +206,22 @@ class EncodeProductService(business_model.Service):
 			})
 		return datas
 
+	def get_gross_profit_info(self, product):
+		gross_profit_info = product.gross_profit_info
+		if gross_profit_info:
+			return {
+				'gross_profit': gross_profit_info['gross_profit'],
+				'gross_profit_rate': gross_profit_info['gross_profit_rate']
+			}
+		else:
+			return None
+
 	def get_cps_promotion_info(self, product):
 		cps_promotion_info = product.cps_promoted_info
 		if cps_promotion_info:
 			data = {
+				'cps_gross_profit': cps_promotion_info['cps_gross_profit'],
+				'cps_gross_profit_rate': cps_promotion_info['cps_gross_profit_rate'],
 				'money': cps_promotion_info['money'],
 				'time_from': cps_promotion_info['time_from'],
 				'time_to': cps_promotion_info['time_to'],

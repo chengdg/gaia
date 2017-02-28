@@ -387,6 +387,7 @@ def __get_products(context, corp_name, type_name=u'在售'):
         resp_models_info = product['models_info']
         product['is_use_custom_model'] = u'是' if resp_models_info['is_use_custom_model'] else u'否'
         if resp_models_info['is_use_custom_model']:
+            print (resp_models_info['custom_models'])
 
             for model in resp_models_info['custom_models']:
                 model_name_items = []

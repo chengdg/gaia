@@ -33,7 +33,7 @@ def step_impl(context, user):
 		row['customer_from'] = u'渠道'
 		row['created_time'] = u'创建时间'
 		row['operation'] = u'编辑'
-		row['purchase_type'] = __purchase_type_num2str(row['purchase_method'])
+		row['settlement_type'] = __purchase_type_num2str(row['settlement_type'])
 		row['clear_period'] = __clear_period_num2str(row['clear_period'])
 
 		new_rows.append(row)
@@ -55,11 +55,9 @@ def __format_request_data(data):
 	if not is_weizoom_corp:
 		return_data.update({
 			'company_name': data['company_name'],
-			'purchase_method': __format_purchase_type(data['purchase_type']),
+			'settlement_type': __format_settlement_type(data['settlement_type']),
 			'max_product_count': data['max_product_count'],
-			'points': data.get('points', 0.0),
-			'rebate_money': data.get('rebate_money', 0.0),
-			'rebate_proport': data.get('rebate_proport', 0.0),
+			'divide_rebate': data.get('divide_rebate', 0.0),
 			'default_rebate_proport': data.get('default_rebate_proport', 0.0),
 			'clear_period': __format_clear_period(data['clear_period']),
 			'classification_ids': __format_classifications(data['classifications']),
@@ -71,8 +69,8 @@ def __format_request_data(data):
 		})
 	return return_data
 
-def __format_purchase_type(purchase_type):
-	return 1 if purchase_type == u'固定底价' else 2 if purchase_type == u'零售价返点' else 3
+def __format_settlement_type(settlement_type):
+	return 1 if settlement_type == u'固定底价' else 2 if settlement_type == u'零售价返点' else 3
 
 def __purchase_type_num2str(num):
 	return u'固定底价' if num == 1 else u'零售价返点' if num == 2 else u'首月分成'

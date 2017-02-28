@@ -466,6 +466,18 @@ class Product(models.Model):
 	class Meta(object):
 		db_table = 'mall_product'
 
+class ProductCustomizedPrice(models.Model):
+	"""
+	社群采购方式为固定低价的，可以修改商品售价，存储于此
+	"""
+	corp_id = models.IntegerField(default=-1) #corp id
+	product_id = models.IntegerField(default=-1)#product id
+	product_model_id = models.IntegerField(default=-1) #ProductModel id
+	price = models.FloatField(default=0.0)
+
+	class Meta(object):
+		db_table = 'mall_product_customized_price'
+
 class ProductUnverified(models.Model):
 	"""
 	未审核的商品信息

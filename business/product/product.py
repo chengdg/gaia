@@ -99,6 +99,9 @@ class Product(business_model.Model):
 		'is_updated',
 		'is_accepted',
 		'status',
+
+		#毛利信息
+		'gross_profit_info',
 	)
 
 	def __init__(self, model=None):

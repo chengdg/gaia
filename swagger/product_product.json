@@ -1834,6 +1834,14 @@
                     },
                     "minItems": 0,
                     "description": "当规格是标准规格时，properties属性可以不出现"
+                },
+                "gross_profit": {
+                    "type": "number",
+                    "description": "商品毛利(社群)"
+                },
+                "gross_profit_rate": {
+                    "type": "number",
+                    "description": "商品毛利率(社群)"
                 }
             }
         },
@@ -2109,6 +2117,9 @@
                 },
                 "promotions": {
                     "$ref": "#/definitions/ReturnPromotions"
+                },
+                "gross_profit_info": {
+                    "$ref": "#/definitions/GrossProfitInfo"
                 }
             }
         },
@@ -2129,6 +2140,19 @@
                 "label_name": {
                     "type": "string",
                     "description": "商品标签名称"
+                }
+            }
+        },
+        "GrossProfitInfo": {
+            "type": "object",
+            "properties": {
+                "gross_profit": {
+                    "type": "number",
+                    "description": "商品展示毛利(社群)"
+                },
+                "gross_profit_rate": {
+                    "type": "number",
+                    "description": "商品展示毛利率(社群)"
                 }
             }
         },
