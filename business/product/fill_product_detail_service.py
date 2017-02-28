@@ -331,9 +331,6 @@ class FillProductDetailService(business_model.Service):
 					for model in product.custom_models:
 						cps_gross_profit_rate = cps_gross_profit / model.price * 100
 
-						model.cps_gross_profit = '%.2f' % cps_gross_profit
-						model.cps_gross_profit_rate = '%.2f' % cps_gross_profit_rate
-
 						if cps_gross_profit_rate > max_cps_profit_rate:
 							max_cps_profit_rate = cps_gross_profit_rate
 				else:
