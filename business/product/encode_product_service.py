@@ -218,8 +218,6 @@ class EncodeProductService(business_model.Service):
 
 	def get_cps_promotion_info(self, product):
 		cps_promotion_info = product.cps_promoted_info
-		print '=====================cps_promotion_info'
-		print cps_promotion_info
 		if cps_promotion_info:
 			data = {
 				'cps_gross_profit': cps_promotion_info['cps_gross_profit'],

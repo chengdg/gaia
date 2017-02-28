@@ -117,7 +117,7 @@ class Corporation(business_model.Model):
 		区分供货商和采购商(社群)
 		"""
 		if self.is_self_run_platform():
-			corp_model = account_model.AccountDivideInfo.select().dj_where(id=self.id).first()
+			corp_model = account_model.AccountDivideInfo.select().dj_where(user_id=self.id).first()
 			if corp_model:
 				self.settlement_type = corp_model.settlement_type
 				self.divide_rebate = corp_model.divide_rebate
