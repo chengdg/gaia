@@ -60,7 +60,7 @@ class FillProductDetailService(business_model.Service):
 			#已经完成过填充，再次进入，跳过填充
 			return
 
-		divide_model = account_models.AccountDivideInfo.select().dj_where(user_id=corp.id).first()
+		divide_model = None if not corp else account_models.AccountDivideInfo.select().dj_where(user_id=corp.id).first()
 
 		#TODO2: 因为这里是静态方法，所以目前无法使用product.context['corp']，构造基于Object的临时解决方案，需要优化
 		product_model_generator = ProductModelGenerator.get(None)
@@ -319,7 +319,9 @@ class FillProductDetailService(business_model.Service):
 				'total_money': promotion.promote_total_money,
 				'stock': promotion.promote_stock,
 				'is_cps_promotion_processed': pool_product_model.is_cps_promotion_processed,
-				'id': promotion.id
+				'id': promotion.id,
+				'cps_gross_profit': 0,
+				'cps_gross_profit_rate': 0
 			}
 			if corp.is_self_run_platform() and corp.details.settlement_type == account_models.ACCOUNT_DIVIDE_TYPE_PROFIT:
 				divide_rebate = corp.details.divide_rebate

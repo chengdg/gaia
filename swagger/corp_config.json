@@ -57,25 +57,13 @@
                                     "type": "string",
                                     "description": "商品分类集合字符串，','分割"
                                 },
-                                "purchase_method": {
+                                "settlement_type": {
                                     "type": "integer",
                                     "description": "采购方式"
                                 },
-                                "points": {
-                                    "type": "float",
-                                    "description": "零售返点"
-                                },
-                                "rebate_money": {
-                                    "type": "float",
-                                    "description": "分成起价"
-                                },
-                                "rebate_proport": {
+                                "divide_rebate": {
                                     "type": "float",
                                     "description": "分成比例"
-                                },
-                                "default_rebate_proport": {
-                                    "type": "float",
-                                    "description": "默认分成比例"
                                 },
                                 "clear_period": {
                                     "type": "integer",
@@ -218,25 +206,13 @@
                     "type": "string",
                     "description": "商品分类集合字符串，','分割"
                 },
-                "purchase_method": {
+                "settlement_type": {
                     "type": "integer",
                     "description": "采购方式"
                 },
-                "points": {
-                    "type": "float",
-                    "description": "零售返点"
-                },
-                "rebate_money": {
-                    "type": "float",
-                    "description": "分成起价"
-                },
-                "rebate_proport": {
+                "divide_rebate": {
                     "type": "float",
                     "description": "分成比例"
-                },
-                "default_rebate_proport": {
-                    "type": "float",
-                    "description": "默认分成比例"
                 },
                 "clear_period": {
                     "type": "integer",

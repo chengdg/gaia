@@ -327,6 +327,7 @@ class ProductPool(business_model.Model):
 		fill_product_detail_service = FillProductDetailService.get(self.corp)
 		fill_product_detail_service.fill_detail(products, {
 			'with_product_model': True,
+			'with_model_property_info': True,
 			'with_cps_promotion_info': True
 		})
 
@@ -338,6 +339,7 @@ class ProductPool(business_model.Model):
 
 		#填充其他数据
 		fill_options['with_product_model'] = False
+		fill_options['with_model_property_info'] = False
 		fill_options['with_cps_promotion_info'] = False
 		fill_product_detail_service.fill_detail(products, fill_options)
 
