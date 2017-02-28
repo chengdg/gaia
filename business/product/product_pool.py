@@ -312,36 +312,56 @@ class ProductPool(business_model.Model):
 		product_info_filters = type2filters['product_info']
 		if supplier_ids is not None:
 			product_info_filters['supplier_id__in'] = supplier_ids
-		if product_info_filters:
-			product_info_filters['id__in'] = product_ids
-			product_models = mall_models.Product.select().dj_where(**product_info_filters)
-			# mysql使用in查询会将in列表值先排序再二分搜索,固需要再次排序.
-			product_models = sorted(product_models, key=lambda k: copy_product_ids.index(k.id))
+
+		if not options.get('request_source') == 'unshelf_consignment': #商品池中的商品展示不需要按照毛利率排序
+			if product_info_filters:
+				product_info_filters['id__in'] = product_ids
+				product_models = mall_models.Product.select().dj_where(**product_info_filters)
+				# mysql使用in查询会将in列表值先排序再二分搜索,固需要再次排序.
+				product_models = sorted(product_models, key=lambda k: copy_product_ids.index(k.id))
+			else:
+				# 对product_ids 进行内存排序,按照最原始查出来的顺序,并去掉重复数据
+				product_ids = sorted(list(set(product_ids)), key=copy_product_ids.index)
+				product_models = mall_models.Product.select().dj_where(id__in=product_ids)
+				product_models = sorted(product_models, key=lambda k: product_ids.index(k.id))
+			# 为了能够按照毛利率进行排序，首先得填充规格和效果通数据,再分页
+			products = [Product(model) for model in product_models]
+			fill_product_detail_service = FillProductDetailService.get(self.corp)
+			fill_product_detail_service.fill_detail(products, {
+				'with_product_model': True,
+				'with_model_property_info': True,
+				'with_cps_promotion_info': True
+			})
+
+			divide_info = account_models.AccountDivideInfo.select().dj_where(user_id=self.corp_id).first()
+			if divide_info and not divide_info.settlement_type == account_models.ACCOUNT_DIVIDE_TYPE_FIXED:
+				products = sorted(products, key=lambda k: k.gross_profit_info['gross_profit_rate'], reverse=True)
+
+			pageinfo, products = paginator.paginate(products, page_info.cur_page, page_info.count_per_page)
+
+			#填充其他数据
+			fill_options['with_product_model'] = False
+			fill_options['with_model_property_info'] = False
+			fill_options['with_cps_promotion_info'] = False
+			fill_product_detail_service.fill_detail(products, fill_options)
 		else:
-			# 对product_ids 进行内存排序,按照最原始查出来的顺序,并去掉重复数据
-			product_ids = sorted(list(set(product_ids)), key=copy_product_ids.index)
-			product_models = mall_models.Product.select().dj_where(id__in=product_ids)
-			product_models = sorted(product_models, key=lambda k: product_ids.index(k.id))
-		# 为了能够按照毛利率进行排序，首先得填充规格和效果通数据,再分页
-		products = [Product(model) for model in product_models]
-		fill_product_detail_service = FillProductDetailService.get(self.corp)
-		fill_product_detail_service.fill_detail(products, {
-			'with_product_model': True,
-			'with_model_property_info': True,
-			'with_cps_promotion_info': True
-		})
+			if product_info_filters:
+				product_info_filters['id__in'] = product_ids
+				product_models = mall_models.Product.select().dj_where(**product_info_filters)
+				# mysql使用in查询会将in列表值先排序再二分搜索,固需要再次排序.
+				product_models = sorted(product_models, key=lambda k: copy_product_ids.index(k.id))
+				pageinfo, product_models = paginator.paginate(product_models, page_info.cur_page,
+															  page_info.count_per_page)
+			else:
+				# 对product_ids 进行内存排序,按照最原始查出来的顺序,并去掉重复数据
+				product_ids = sorted(list(set(product_ids)), key=copy_product_ids.index)
+				pageinfo, product_ids = paginator.paginate(product_ids, page_info.cur_page, page_info.count_per_page)
+				product_models = mall_models.Product.select().dj_where(id__in=product_ids)
+				product_models = sorted(product_models, key=lambda k: product_ids.index(k.id))
 
-		divide_info = account_models.AccountDivideInfo.select().dj_where(user_id=self.corp_id).first()
-		if divide_info and not divide_info.settlement_type == account_models.ACCOUNT_DIVIDE_TYPE_FIXED:
-			products = sorted(products, key=lambda k: k.gross_profit_info['gross_profit_rate'], reverse=True)
-
-		pageinfo, products = paginator.paginate(products, page_info.cur_page, page_info.count_per_page)
-
-		#填充其他数据
-		fill_options['with_product_model'] = False
-		fill_options['with_model_property_info'] = False
-		fill_options['with_cps_promotion_info'] = False
-		fill_product_detail_service.fill_detail(products, fill_options)
+			products = [Product(model) for model in product_models]
+			fill_product_detail_service = FillProductDetailService.get(self.corp)
+			fill_product_detail_service.fill_detail(products, fill_options)
 
 		result = []
 

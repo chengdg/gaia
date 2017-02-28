@@ -42,7 +42,8 @@ class AUnshelfConsignmentProducts(api_resource.ApiResource):
 		}
 
 		options = {
-			'order_options': ['display_index', '-id']
+			'order_options': ['display_index', '-id'],
+			'request_source': 'unshelf_consignment'
 		}
 
 		products, pageinfo = corp.product_pool.get_products(target_page, fill_options, options, filters)
