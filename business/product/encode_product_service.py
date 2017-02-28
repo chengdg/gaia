@@ -74,8 +74,8 @@ class EncodeProductService(business_model.Service):
 					"stock_type": custom_model.stock_type,
 					"stocks": custom_model.stocks,
 					"user_code": custom_model.user_code,
-					"gross_profit": standard_model.gross_profit,
-					"gross_profit_rate": standard_model.gross_profit_rate,
+					"gross_profit": custom_model.gross_profit,
+					"gross_profit_rate": custom_model.gross_profit_rate,
 					"property_values": custom_model.property_values,
 					"property2value": custom_model.property2value
 				})
