@@ -34,22 +34,22 @@ class ReleaseOrderResourceService(business_model.Service):
 		}
 		corp = self.corp
 		order = corp.order_repository.get_order(order_id, fill_options)
-
-		is_paid = (mall_models.MEANINGFUL_WORD2ORDER_STATUS[from_status] != mall_models.ORDER_STATUS_NOT)  # 已经支付过的订单，已增加过销量
+		print('-----from_status',from_status)
+		is_paid = (from_status != mall_models.ORDER_STATUS_NOT)  # 已经支付过的订单，已增加过销量
 
 		delivery_item_products = order.get_all_products()
-		product_ids = [p.id for p in delivery_item_products]
-		product_id2delivery_item_product = {p.id: p for p in delivery_item_products}
-
-		products = corp.product_pool.get_products_by_ids(product_ids)
+		# product_ids = [p.id for p in delivery_item_products]
+		# product_id2delivery_item_product = {p.id: p for p in delivery_item_products}
+		#
+		# products = corp.product_pool.get_products_by_ids(product_ids)
 		#
 		# for delivery_item_product in delivery_item_products:
 		# 	product = corp.product_pool.get_products_by_ids([delivery_item_product.id])[0]
 		#
 		# 	product.update_sales(delivery_item_product.count)
 
-		for product in products:
-			delivery_item_product = product_id2delivery_item_product[product.id]
+		for delivery_item_product in delivery_item_products:
+			# delivery_item_product = product_id2delivery_item_product[product.id]
 
 			# 更新销量库存
 			# product.update_stock(delivery_item_product.product_model_name, delivery_item_product.count)
@@ -64,8 +64,6 @@ class ReleaseOrderResourceService(business_model.Service):
 			if is_paid and delivery_item_product.promotion_info['type'] != "premium_sale:premium_product":
 				update_product_service.update_product_sale(delivery_item_product.id, 0 - delivery_item_product.count)
 			# product.update_sales(0 - delivery_item_product.count)
-
-		to_status = mall_models.MEANINGFUL_WORD2ORDER_STATUS[to_status]
 
 		if to_status == mall_models.ORDER_STATUS_REFUNDED and order.is_weizoom_order > 0:
 			# 微众订单退款成功时不自动返还资源
@@ -94,6 +92,17 @@ class ReleaseOrderResourceService(business_model.Service):
 					'resource': 'card.trade',
 					'data': data
 				})
+
+				if resp and resp['code'] == 200:
+					log = member_models.MemberCardLog.select().dj_where(order_id=order.bid, reason=u'下单').first()
+					if log:
+						member_models.MemberCardLog.create(
+							member_card=log.member_card_id,
+							trade_id=trade_id,
+							order_id=order.bid,
+							reason=u"取消下单或下单失败",
+							price=log.price
+						)
 
 			# 退还优惠券
 			if order.coupon_id:

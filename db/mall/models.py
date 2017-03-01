@@ -89,6 +89,52 @@ class District(models.Model):
 		verbose_name = '区县列表'
 		verbose_name_plural = '区县列表'
 
+#########################################################################
+# 电子面单账号相关Model
+#########################################################################
+
+class ExpressBillAccount(models.Model):
+	"""	
+	电子面单账号
+	"""
+	owner = models.ForeignKey(User)
+	express_name = models.CharField(max_length=50) #快递公司
+	customer_name = models.CharField(max_length=256) #商户代码/编号/id
+	customer_pwd = models.CharField(max_length=256)  #商户密码/密钥
+	logistics_number = models.CharField(max_length=256) #密码串/月结号
+	sendsite = models.CharField(max_length=256) #网点名称
+	remark = models.TextField(null=True) #备注
+	is_deleted = models.BooleanField(default=False) #是否删除
+	created_at = models.DateTimeField(auto_now_add=True)
+
+	class Meta(object):
+		db_table = 'mall_express_bill_account'
+
+
+#########################################################################
+# 发货人相关Model
+#########################################################################
+
+class Shipper(models.Model):
+	"""	
+	发货人信息
+	"""
+	owner = models.ForeignKey(User)
+	name = models.CharField(max_length=50) #发货人
+	tel_number = models.CharField(max_length=15) #手机号
+	province = models.CharField(max_length=50) #发货地区省
+	city = models.CharField(max_length=50) #市
+	district = models.CharField(max_length=512) #区/县
+	address = models.CharField(max_length=256) #详细地址
+	postcode = models.CharField(max_length=50) #邮政编码
+	company_name = models.CharField(max_length=50) #单位名称
+	remark = models.TextField(null=True) #备注
+	is_active = models.BooleanField(default=False) #是否默认
+	is_deleted = models.BooleanField(default=False) #是否删除
+	created_at = models.DateTimeField(auto_now_add=True)
+
+	class Meta(object):
+		db_table = 'mall_shipper'
 
 
 #########################################################################
@@ -351,6 +397,17 @@ PRODUCT_TYPE2TEXT = {
 }
 MAX_INDEX = 2**16 - 1
 
+
+PRODUCT_ZONE_NO_LIMIT = 0 #不限制
+PRODUCT_ZONE_FORBIDDEN_SALE = 1 #禁售
+PRODUCT_ZONE_ONLY_SALE = 2 #仅售
+
+PRODUCT_STATUS = {
+	'NOT_YET': 0, #尚未提交审核
+	'SUBMIT': 1, #提交审核
+	'REFUSED': 2 #驳回
+}
+
 class Product(models.Model):
 	"""
 	商品
@@ -363,7 +420,7 @@ class Product(models.Model):
 	price = models.FloatField(default=0.0)  # 商品价格
 	introduction = models.CharField(max_length=256, default='')  # 商品简介
 	weight = models.FloatField(default=0.0)  # 重量
-	thumbnails_url = models.CharField(max_length=1024)  # 商品缩略图
+	thumbnails_url = models.CharField(max_length=1024, default='')  # 商品缩略图
 	pic_url = models.CharField(max_length=1024, default='')  # 商品图
 	detail = models.TextField(default='')  # 商品详情
 	remark = models.TextField(default='')  # 备注
@@ -393,61 +450,57 @@ class Product(models.Model):
 	is_member_product = models.BooleanField(default=False)  # 是否参加会员折扣
 	supplier = models.IntegerField(default=0) # 供货商
 	supplier_user_id = models.IntegerField(default=0) # 供货商(非8千)
-	purchase_price = models.FloatField(default=0.0) # 进货价格
+	purchase_price = models.FloatField(default=0.0) # 进货价格(结算价)
 	is_enable_bill = models.BooleanField(default=False)  # 商品是否开具发票
 	is_delivery = models.BooleanField(default=False) # 是否勾选配送时间
 	buy_in_supplier = models.BooleanField(default=False) # 记录下单位置是商城还是供货商，0是商城1是供货商
-	limit_zone_type = models.IntegerField(default=0) # 0不限制 1禁售 2仅售
+	limit_zone_type = models.IntegerField(default=PRODUCT_ZONE_NO_LIMIT) # 0不限制 1禁售 2仅售
 	limit_zone = models.IntegerField(default=0) # 限制地区的模板id
+
+	#待审核商品
+	is_pre_product = models.BooleanField(default=False)  # 是否待审核商品
+	status = models.IntegerField(default=PRODUCT_STATUS['NOT_YET'])  # 审核状态
+	is_updated = models.BooleanField(default=False) #是否已更新
+	is_accepted = models.BooleanField(default=True)  # 审核是否已通过
 
 	class Meta(object):
 		db_table = 'mall_product'
 
-
-NO_LIMIT = 0 #不限制
-FORBIDDEN_SALE_LIMIT = 1 #禁售
-ONLY_SALE_LIMIT = 2 #仅售
-
-PRE_PRODUCT_STATUS = {
-	'NOT_YET': 0, #尚未提交审核
-	'SUBMIT': 1, #提交审核
-	'REFUSED': 2, #驳回
-	'ACCEPT': 3 #审核通过
-}
-
-class PreProduct(models.Model):
+class ProductCustomizedPrice(models.Model):
 	"""
-	待入池商品
+	社群采购方式为固定低价的，可以修改商品售价，存储于此
 	"""
-	owner_id = models.IntegerField(default=0)
-	name = models.CharField(max_length=50, default='')  #商品名称
-	promotion_title = models.CharField(max_length=50, default='')  #促销标题
-	price = models.DecimalField(max_digits=65, decimal_places=2, default=0.00)  #商品价格 (元)
-	settlement_price = models.DecimalField(max_digits=65, decimal_places=2, default=0.00)  #结算价 (元)
-	weight = models.FloatField(default=0)  #商品重量 (kg)
-	stock = models.IntegerField(default=0)  #商品库存 默认-1{大于0: 有限 ,-1:无限}
-	valid_time_from = models.DateTimeField(null=True)  #有效范围开始时间
-	valid_time_to = models.DateTimeField(null=True)  #有效范围结束时间
-	limit_settlement_price = models.DecimalField(max_digits=65, decimal_places=2, default=0.00)  #限时结算价 (元)
-	has_limit_time = models.BooleanField(default=False)  #限时结算价是否需要 有效范期
-	has_product_model = models.BooleanField(default=False) #是否是多规格商品
-	classification_id = models.IntegerField(default=0) #所属分类id(二级分类id)
-	limit_zone_type = models.IntegerField(default=NO_LIMIT)
-	limit_zone = models.IntegerField(default=0)  # 限制地区的模板id
-	has_same_postage = models.BooleanField(default=True) #是否是统一运费{0:统一运费,1:默认模板运费}
-	postage_money = models.DecimalField(max_digits=65, decimal_places=2, default=0.00) #统一运费金额
-	postage_id = models.IntegerField(default=0)# 默认模板运费id
-	remark = models.TextField(default='')  # 备注
-	is_updated = models.BooleanField(default=False)  # 是否更新
-	review_status = models.IntegerField(default=PRE_PRODUCT_STATUS['NOT_YET'])#审核状态
-	refuse_reason = models.TextField(default='')  # 驳回原因
-	is_deleted = models.BooleanField(default=False)
-	created_at = models.DateTimeField(auto_now_add=True)  # 添加时间
-	mall_product_id = models.IntegerField(default=0)  # 审核通过后与mall_product记录关联
+	corp_id = models.IntegerField(default=-1) #corp id
+	product_id = models.IntegerField(default=-1)#product id
+	product_model_id = models.IntegerField(default=-1) #ProductModel id
+	price = models.FloatField(default=0.0)
 
 	class Meta(object):
-		db_table = 'mall_pre_product'
+		db_table = 'mall_product_customized_price'
 
+class ProductUnverified(models.Model):
+	"""
+	未审核的商品信息
+
+	表名：mall_product_unverified
+	"""
+	product_id = models.IntegerField(default=-1) #商品id
+	product_data = models.TextField() #商品信息
+
+	class Meta(object):
+		db_table = 'mall_product_unverified'
+
+
+class ProductRefuseLogs(models.Model):
+	"""
+	审核商品驳回日志
+	"""
+	product_id = models.IntegerField(default=-1) # 商品id
+	refuse_reason = models.CharField(max_length=1024, default='') #驳回原因
+	created_at = models.DateTimeField(auto_now_add=True)
+
+	class Meta(object):
+		db_table = 'mall_product_refuse_logs'
 
 class CategoryHasProduct(models.Model):
 	"""
@@ -1038,7 +1091,11 @@ class OrderHasProduct(models.Model):
 	integral_sale_id = models.IntegerField(default=0) #使用的积分应用的id
 	origin_order_id = models.IntegerField(default=0) # 原始(母)订单id，用于微众精选拆单
 	purchase_price = models.FloatField(default=0)  # 采购单价
-
+	thumbnail_url = models.CharField(max_length=1024, default='')  # 商品图片
+	weight = models.FloatField(default=0)
+	product_model_name_texts = models.CharField(max_length=1024, default='[]')  # 规格名称的值
+	product_model_id = models.IntegerField(default=0) # 规格ID
+	
 	class Meta(object):
 		db_table = 'mall_order_has_product'
 

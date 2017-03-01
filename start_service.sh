@@ -17,9 +17,14 @@ if [ "${CAN_START_SERVICE}" == "false" ]; then
 	exit 2
 fi
 
+if [ "$_PROCESS_COUNT" == "" ]; then
+	_PROCESS_COUNT=10
+fi
+echo "process count: ${_PROCESS_COUNT}"
+
 # start service
 if [ "$_USE_WSGI_PROTOCAL" == "1" ]; then
-	uwsgi --socket 0.0.0.0:${PORT} service.ini
+	uwsgi --processes ${_PROCESS_COUNT} --socket 0.0.0.0:${PORT} service.ini
 else
 	python manage.py runserver 0.0.0.0 $PORT
 fi

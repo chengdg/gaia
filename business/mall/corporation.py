@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+import json
+
+from eaglet.decorator import cached_context_property
 
 from business import model as business_model
 from business.coupon.coupon_repository import CouponRepository
@@ -15,14 +18,16 @@ from db.account import models as account_model
 
 from business.product.product_shelf import ProductShelf
 from business.product.product_pool import ProductPool
+from business.product.global_product_repository import GlobalProductRepository
 from business.product.property_template.property_template_repository import PropertyTemplateRepository
 from business.product.model.product_model_property_repository import ProductModelPropertyRepository
 
-from business.mall.pre_product.pre_product_repository import PreProductRepository
 from business.mall.category.category_repository import CategoryRepository
 from business.mall.image_group.image_group_repository import ImageGroupRepository
 from business.mall.pay.pay_interface_repository import PayInterfaceRepository
 from business.mall.logistics.postage_config_repository import PostageConfigRepository
+from business.mall.logistics.shipper_repository import ShipperRepository
+from business.mall.logistics.express_bill_account_repository import ExpressBillAccountRepository
 from business.mall.logistics.express_delivery_repository import ExpressDeliveryRepository
 from business.mall.logistics.limit_zone_repository import LimitZoneRepository
 from business.mall.logistics.province_city_repository import ProvinceCityRepository
@@ -53,12 +58,37 @@ class Corporation(business_model.Model):
 		'name',
 		'type',
 		'webapp_id',
-		'username'
+		'username',
+
+		'company_name',
+		'settlement_type',
+		'divide_rebate',
+		'clear_period',
+		'customer_from',
+		'max_product_count',
+		'classification_ids',
+
+		'contact',
+		'contact_phone',
+		'valid_time_from',
+		'valid_time_to',
+		'note',
+
+		'created_at',
+		'status',
+
+		'pre_sale_tel',
+		'after_sale_tel',
+		'service_tel',
+		'service_qq_first',
+		'service_qq_second'
 	)
 
 	def __init__(self, owner_id):
+		business_model.Model.__init__(self)
 		self.id = owner_id
-		self.name = 'unknown'
+		self.company_name = ''
+		self.status = 0
 		if owner_id:
 			_account_user_profile = account_model.UserProfile.select().dj_where(user_id=owner_id).first()
 			self.webapp_id = _account_user_profile.webapp_id
@@ -79,6 +109,92 @@ class Corporation(business_model.Model):
 		else:
 			self.webapp_id = 0
 			self.type = 'normal'
+
+	@cached_context_property
+	def details(self):
+		"""
+		填充corp详情
+		区分供货商和采购商(社群)
+		"""
+		if self.is_self_run_platform():
+			corp_model = account_model.AccountDivideInfo.select().dj_where(user_id=self.id).first()
+			if corp_model:
+				self.settlement_type = corp_model.settlement_type
+				self.divide_rebate = corp_model.divide_rebate
+		else:
+			corp_model = account_model.CorpInfo.select().dj_where(id=self.id).first()
+			if corp_model:
+				self.name = corp_model.name
+				self.company_name = corp_model.company_name
+				self.settlement_type = corp_model.settlement_type
+				self.divide_rebate = corp_model.divide_rebate
+				self.clear_period = corp_model.clear_period
+				self.customer_from = corp_model.customer_from
+				self.max_product_count = corp_model.max_product_count
+				self.classification_ids = corp_model.classification_ids
+				self.contact = corp_model.contact
+				self.contact_phone = corp_model.contact_phone
+				self.note = corp_model.note
+				self.created_at = corp_model.created_at
+				self.status = int(corp_model.status)
+				self.pre_sale_tel = corp_model.pre_sale_tel
+				self.after_sale_tel = corp_model.after_sale_tel
+				self.service_tel = corp_model.service_tel
+				self.service_qq_first = corp_model.service_qq_first
+				self.service_qq_second = corp_model.service_qq_second
+
+		return self
+
+	def __update(self, args, update_field_list):
+		update_data = dict()
+		for field_name in update_field_list:
+			if ':' in field_name:
+				transfer_type = field_name.split(':')[1]
+				field_name = field_name.split(':')[0]
+				field_value = args.get(field_name)
+
+				if transfer_type == 'bool':
+					field_value = field_value in ("True", "true", True)
+				elif transfer_type == "float":
+					field_value = float(field_value)
+			else:
+				field_value = args.get(field_name)
+
+			if not field_value == None:
+				update_data[field_name] = field_value
+
+		account_model.CorpInfo.update(**update_data).dj_where(id=self.id).execute()
+
+	def update(self, args):
+		corp_model = account_model.CorpInfo.select().dj_where(id=self.id).first()
+		if not corp_model:
+			account_model.CorpInfo.create(
+				id = self.id,
+				status = True
+			)
+		self.update_base_info(args)
+		if not self.is_weizoom_corp():
+			self.update_mall_info(args)
+			self.update_service_info(args)
+
+	def update_service_info(self, args):
+		update_field_list = ['pre_sale_tel', 'after_sale_tel', 'service_tel', 'service_qq_first', 'service_qq_second']
+		self.__update(args, update_field_list)
+
+	def update_mall_info(self, args):
+		"""
+		更新商户商城配置
+		"""
+		update_field_list = ['settlement_type', 'clear_period',
+							 'divide_rebate:float', 'max_product_count', 'classification_ids']
+		self.__update(args, update_field_list)
+
+	def update_base_info(self, args):
+		"""
+		更新帐号信息
+		"""
+		update_field_list = ['name', 'company_name', 'note', 'contact', 'contact_phone']
+		self.__update(args, update_field_list)
 
 	def is_self_run_platform(self):
 		"""
@@ -123,6 +239,10 @@ class Corporation(business_model.Model):
 		})
 
 	@property
+	def global_product_repository(self):
+		return GlobalProductRepository.get(self)
+
+	@property
 	def category_repository(self):
 		return CategoryRepository.get(self)
 
@@ -133,10 +253,6 @@ class Corporation(business_model.Model):
 	@property
 	def product_property_template_repository(self):
 		return PropertyTemplateRepository.get(self)
-
-	@property
-	def pre_product_repository(self):
-		return PreProductRepository(self)
 
 	@property
 	def product_model_property_repository(self):
@@ -157,6 +273,14 @@ class Corporation(business_model.Model):
 	@property
 	def postage_config_repository(self):
 		return PostageConfigRepository(self)
+
+	@property
+	def shipper_repository(self):
+		return ShipperRepository(self)
+
+	@property
+	def express_bill_account_repository(self):
+		return ExpressBillAccountRepository(self)
 
 	@property
 	def mall_config_repository(self):

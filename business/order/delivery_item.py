@@ -11,6 +11,7 @@ from business.mall.supplier.supplier import Supplier
 from business.mall.supplier.user_supplier import UserSupplier
 from business.order.delivery_item_product_repository import DeliveryItemProductRepository
 from business.order.process_order_after_delivery_item_service import ProcessOrderAfterDeliveryItemService
+from business.order.release_delivery_item_resource import ReleaseDeliveryItemResourceService
 from db.express import models as express_models
 from db.mall import models as mall_models
 from util.send_phone_msg import send_phone_captcha
@@ -171,6 +172,7 @@ class DeliveryItem(business_model.Model):
 					delivery_item_id2details[detail.order_id] = [detail]
 
 			for delivery_item in delivery_items:
+				delivery_item.express_details = []
 				express_details = delivery_item_id2details.get(delivery_item.id)
 				if express_details:
 					for detail in express_details:
@@ -197,7 +199,7 @@ class DeliveryItem(business_model.Model):
 				express_number__in=express_numbers
 			)
 
-			name_number2express_push_id = {str(push.express_company_name + '__' + push.express_number): push.id for push
+			name_number2express_push_id = {(push.express_company_name + '__' + push.express_number): push.id for push
 			                               in express_push_list}
 
 			express_push_ids = []
@@ -390,6 +392,9 @@ class DeliveryItem(business_model.Model):
 			self.__recode_status_log(self.bid, corp.username, from_status, to_status)
 			self.__save()
 
+
+
+
 		self.__send_msg_to_topic('delivery_item_paid', from_status, to_status)
 
 	def cancel(self, corp):
@@ -401,7 +406,7 @@ class DeliveryItem(business_model.Model):
 		from_status = self.status
 		to_status = mall_models.ORDER_STATUS_CANCEL
 		if self.has_db_record:
-			action_text = u"支付"
+			action_text = u"取消订单"
 
 			self.status = to_status
 
@@ -517,7 +522,10 @@ class DeliveryItem(business_model.Model):
 			# 只有自营出货单开启高端退款（然而并不知道用什么词替代"高端"
 			integral_strategy = corp.mall_config_repository.get_integral_strategy()
 			integral_each_yuan = integral_strategy.integral_each_yuan
-			integral_money = round(integral / integral_each_yuan, 2)
+			if integral_each_yuan:
+				integral_money = round(integral / integral_each_yuan, 2)
+			else:
+				integral_money = 0
 
 			total = cash + weizoom_card_money + coupon_money + integral_money + member_card_money
 
@@ -558,11 +566,27 @@ class DeliveryItem(business_model.Model):
 			self.refunding_info['finished'] = True
 
 			# 更新订单的金额信息
-			mall_models.Order.update(final_price=mall_models.Order.final_price - self.refunding_info['cash'],
-			                         weizoom_card_money=mall_models.Order.weizoom_card_money - self.refunding_info[
-				                         'weizoom_card_money']- self.refunding_info[
-				                         'member_card_money']).dj_where(id=self.origin_order_id).execute()
+			current_order = mall_models.Order.select().dj_where(id=self.origin_order_id).first()
+
+			new_final_price = round(current_order.final_price - self.refunding_info['cash'], 2)
+			new_weizoom_card_money = round(current_order.weizoom_card_money - self.refunding_info[
+				'weizoom_card_money'], 2)
+			new_member_card_money = round(current_order.member_card_money - self.refunding_info[
+				'member_card_money'], 2)
+			mall_models.Order.update(final_price=new_final_price,
+			                         weizoom_card_money=new_weizoom_card_money,
+			                         member_card_money=new_member_card_money).dj_where(
+				id=self.origin_order_id).execute()
+		# mall_models.Order.update(final_price=mall_models.Order.final_price - self.refunding_info['cash'],
+		#                          weizoom_card_money=mall_models.Order.weizoom_card_money - self.refunding_info[
+		# 	                         'weizoom_card_money'],
+		#                          member_card_money=mall_models.Order.member_card_money - self.refunding_info[
+		# 	                         'member_card_money']).dj_where(id=self.origin_order_id).execute()
 		self.__save()
+
+		release_delivery_item_service = ReleaseDeliveryItemResourceService.get(corp)
+		release_delivery_item_service.release(self.id, from_status, to_status)
+
 
 		self.__send_msg_to_topic('delivery_item_refunded', from_status, to_status)
 		process_order_after_delivery_item_service = ProcessOrderAfterDeliveryItemService.get(corp)
@@ -625,13 +649,11 @@ class DeliveryItem(business_model.Model):
 		if self.has_db_record:
 			supplier_tel = self.supplier_info['supplier_tel']
 			data = {
-                    "phones": str(supplier_tel),
-                    "content": {
-                        "order_id": self.bid,
-                        "ship_name": self.ship_name
-                    },
-                    "sms_code": "SMS_34465265"
-                }		
+				"phones": str(supplier_tel),
+				"content": {
+					"order_id": self.bid,
+					"ship_name": self.ship_name
+				},
+				"sms_code": "SMS_34465265"
+			}
 			rs = send_phone_captcha(data)
-
-

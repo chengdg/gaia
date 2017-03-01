@@ -5,7 +5,7 @@
         "title": "Hermes Flash Sale Promotion API"
     },
     "paths": {
-        "/promotion/flash_sales/": {
+        "/promotion/flash_sale_promotions/": {
             "get": {
                 "summary": "获取限时抢购促销活动列表",
                 "parameters": [
@@ -94,68 +94,6 @@
             },
             "delete": {
                 "summary": "删除限时抢购",
-                "parameters": [
-                    {
-                        "name": "corp_id",
-                        "in": "query",
-                        "description": "",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "name": "id",
-                        "in": "query",
-                        "description": "",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "tags": [
-                    "promotion"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "success"
-                    }
-                }
-            }
-        },
-        "/promotion/active_promotion/": {
-            "put": {
-                "summary": "开启限时抢购",
-                "parameters": [
-                    {
-                        "name": "corp_id",
-                        "in": "query",
-                        "description": "",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "name": "id",
-                        "in": "query",
-                        "description": "",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "tags": [
-                    "promotion"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "success"
-                    }
-                }
-            },
-            "delete": {
-                "summary": "结束限时抢购",
                 "parameters": [
                     {
                         "name": "corp_id",

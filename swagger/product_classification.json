@@ -68,11 +68,17 @@
                 }
             }
         },
-        "/mall/classification/": {
+        "/mall/product_classification/": {
             "put": {
                 "summary": "创建商品分类",
                 "parameters": [
                     {
+                        "name": "corp_id",
+                        "in": "formData",
+                        "description": "",
+                        "required": true,
+                        "type": "int"
+                    },{
                         "name": "name",
                         "in": "formData",
                         "description": "商品分类名",
@@ -84,6 +90,55 @@
                         "in": "formData",
                         "description": "分类的父分类id, 如果father_id为0，则创建一级分类",
                         "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "note",
+                        "in": "formData",
+                        "description": "备注",
+                        "required": false,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product_classification"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            },"post": {
+                "summary": "修改商品分类",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "formData",
+                        "description": "",
+                        "required": true,
+                        "type": "int"
+                    },{
+                        "name": "name",
+                        "in": "formData",
+                        "description": "商品分类名",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "classification_id",
+                        "in": "formData",
+                        "description": "分类的id",
+                        "required": true,
+                        "type": "int"
+                    },
+                    {
+                        "name": "note",
+                        "in": "formData",
+                        "description": "备注",
+                        "required": false,
                         "type": "string"
                     }
                 ],
@@ -112,6 +167,222 @@
                 ],
                 "tags": [
                     "product_category"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        },
+        "/mall/product_classification_qualification/": {
+            "put": {
+                "summary": "设置商品分类资质",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "formData",
+                        "description": "",
+                        "required": true,
+                        "type": "int"
+                    },{
+                        "name": "classification_id",
+                        "in": "formData",
+                        "description": "商品分类id",
+                        "required": true,
+                        "type": "int"
+                    },{
+                        "name": "qualification_infos",
+                        "in": "formData",
+                        "description": "商品分类id",
+                        "required": true,
+                        "type": "array",
+                        "schema": {
+                            "$ref": "#/definitions/ClassificationQulification"
+                        }
+                    }
+                ],
+                "tags": [
+                    "product_classification"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        },
+        "/mall/product_classification_tree/": {
+            "get": {
+                "summary": "获取商品分类标签",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "formData",
+                        "description": "",
+                        "required": true,
+                        "type": "int"
+                    },
+                    {
+                        "name": "end_id",
+                        "in": "formData",
+                        "description": "商品分类最后一层级id",
+                        "required": true,
+                        "type": "int"
+                    }
+                ],
+                "tags": [
+                    "product_classification"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "product_classifications": {
+                                    "type": "array",
+                                    "description": "商品分类关系",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "id": {
+                                                "type": "int",
+                                                "description": ""
+                                            },
+                                            "name": {
+                                                "type": "string",
+                                                "description": "分类名称"
+                                            },
+                                            "level": {
+                                                "type": "int",
+                                                "description": "分类层级"
+                                            },
+                                            "father_id": {
+                                                "type": "int",
+                                                "description": "父分类名称"
+                                            },
+                                            "product_count": {
+                                                "type": "int",
+                                                "description": "分类拥有的商品数"
+                                            },
+                                            "created_at": {
+                                                "type": "string",
+                                                "description": "分类创建时间"
+                                            },
+                                            "qualification_infos": {
+                                                "type": "array",
+                                                "description": "分类资质",
+                                                "items": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "int",
+                                                            "description": "资质id"
+                                                        },
+                                                        "name": {
+                                                            "type": "string",
+                                                            "description": "资质名称"
+                                                        },
+                                                        "created_at": {
+                                                            "type": "string",
+                                                            "description": "分类创建时间"
+                                                        },
+                                                        "index": {
+                                                            "type": "int",
+                                                            "description": "索引"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/mall/product_classification_label/": {
+            "get": {
+                "summary": "获取商品分类标签",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "formData",
+                        "description": "",
+                        "required": true,
+                        "type": "int"
+                    },{
+                        "name": "classification_id",
+                        "in": "formData",
+                        "description": "商品分类id",
+                        "required": true,
+                        "type": "int"
+                    }
+                ],
+                "tags": [
+                    "product_classification"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "relations": {
+                                    "type": "array",
+                                    "description": "商品分类关系"
+
+                                },
+                                "classification_has_own_label": {
+                                    "type": "object",
+                                    "description": "商品分类是否有xx标签"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "summary": "设置商品分类标签",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "formData",
+                        "description": "",
+                        "required": true,
+                        "type": "int"
+                    },{
+                        "name": "classification_id",
+                        "in": "formData",
+                        "description": "商品分类id",
+                        "required": true,
+                        "type": "int"
+                    },
+                    {
+                        "name": "selected_labels",
+                        "in": "formData",
+                        "description": "商品标签集合",
+                        "required": true,
+                        "type": "json"
+                    }
+                ],
+                "tags": [
+                    "product_classification"
                 ],
                 "produces": [
                     "application/json"
@@ -155,6 +426,24 @@
                 "father_id": {
                     "type": "number",
                     "description": "分类的父id，如果father_id为0，则当前分类为一级分类"
+                }
+            }
+        },
+        "ClassificationQulification": {
+            "type": "array",
+            "description": "",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "int",
+                        "required": false,
+                        "description": "资质id"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "资质名称"
+                    }
                 }
             }
         }

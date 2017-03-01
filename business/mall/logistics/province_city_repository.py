@@ -12,11 +12,21 @@ class ProvinceCityRepository(busniess_model.Service):
 		"""
 		all_cities = mall_models.City.select()
 		all_provinces = mall_models.Province.select()
+		all_districts = mall_models.District.select()
+
+		city_id2districts = {}
+		for district in all_districts:
+			district_info = {
+				'district_id': district.id,
+				'district_name': district.name
+			}
+			city_id2districts.setdefault(district.city_id, []).append(district_info)
 		province_id2cities = {}
 		for city in all_cities:
 			city_info = {
 				'city_id': city.id,
-				'city_name': city.name
+				'city_name': city.name,
+				'districts': city_id2districts[city.id] if city.id in city_id2districts else {}
 			}
 			province_id2cities.setdefault(city.province_id, []).append(city_info)
 		provinces = []

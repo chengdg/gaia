@@ -42,6 +42,7 @@ class AOffshelfProducts(api_resource.ApiResource):
 			classifications = encode_product_service.get_classifications(product)
 			image_info = encode_product_service.get_image_info(product)
 			categories = encode_product_service.get_categories(product)
+			gross_profit_info = encode_product_service.get_gross_profit_info(product)
 			cps_promotion_info = encode_product_service.get_cps_promotion_info(product)
 
 			data = {
@@ -51,9 +52,6 @@ class AOffshelfProducts(api_resource.ApiResource):
 				"image": image_info['thumbnails_url'],
 				"models_info": models_info,
 				"bar_code": base_info['bar_code'],
-				"display_index": base_info['display_index'],
-				'supplier': supplier,
-				'classifications': classifications,
 				"categories": categories,
 				"sales": base_info['sales'],
 				"created_at": base_info['created_at'],
@@ -61,6 +59,7 @@ class AOffshelfProducts(api_resource.ApiResource):
 				"display_index": base_info['display_index'],
 				'supplier': supplier,
 				'classifications': classifications,
+				'gross_profit_info': gross_profit_info,
 				'cps_promotion_info': cps_promotion_info
 			}
 

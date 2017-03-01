@@ -25,12 +25,10 @@ class DeliveryItemProduct(business_model.Model):
 		'name',
 		'origin_price',  # 下单时的原价
 		'sale_price',  # 售价
-		'show_sale_price',  # 商品的显示售价，通常和售价一致，只有赠品时，售价为0，而显示商品价格
 		'count',
 		'weight',
 		'delivery_item_id',
 		'thumbnails_url',
-		'is_deleted',
 		'total_origin_price',
 		'promotion_info',
 		'product_model_name_texts',

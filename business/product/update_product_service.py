@@ -30,11 +30,11 @@ class UpdateProductService(business_model.Service):
 			postage_type=logistics_info['postage_type'],
 			postage_id=logistics_info.get('postage_id', 0),
 			unified_postage_money=logistics_info['unified_postage_money'],
-			stocks=base_info['min_limit'],
-			is_member_product=base_info['is_member_product'],
+			stocks=base_info.get('min_limit', 0),
+			is_member_product=base_info.get('is_member_product', False),
 			supplier=base_info.get('supplier_id', 0),
 			purchase_price=base_info.get('purchase_price', 0.0),
-			is_enable_bill=base_info['is_enable_bill'],
+			is_enable_bill=base_info.get('is_enable_bill', False),
 			is_delivery=base_info.get('is_delivery', 'false') == 'true',
 			limit_zone_type=int(logistics_info.get('limit_zone_type', '0')),
 			limit_zone=int(logistics_info.get('limit_zone_id', '0'))
@@ -80,10 +80,10 @@ class UpdateProductService(business_model.Service):
 			mall_models.ProductModel.update(
 				price=standard_model['price'],
 				weight=standard_model['weight'],
-				stock_type=mall_models.PRODUCT_STOCK_TYPE_UNLIMIT if standard_model['stock_type'] == 'unlimit' else mall_models.PRODUCT_STOCK_TYPE_LIMIT,
+				stock_type=mall_models.PRODUCT_STOCK_TYPE_UNLIMIT if standard_model.get('stock_type', 'limit') == 'unlimit' else mall_models.PRODUCT_STOCK_TYPE_LIMIT,
 				stocks=standard_model['stocks'],
-				user_code=standard_model['user_code'],
-				purchase_price=standard_model['purchase_price'],
+				user_code=standard_model.get('user_code', ''),
+				purchase_price=standard_model.get('purchase_price', 0.0),
 				is_deleted=False
 			).dj_where(owner_id=corp_id, product_id=product_id, name='standard').execute()
 
@@ -100,10 +100,10 @@ class UpdateProductService(business_model.Service):
 				is_standard=False,
 				price=custom_model['price'],
 				weight=custom_model['weight'],
-				stock_type=mall_models.PRODUCT_STOCK_TYPE_UNLIMIT if custom_model['stock_type'] == 'unlimit' else mall_models.PRODUCT_STOCK_TYPE_LIMIT,
+				stock_type=mall_models.PRODUCT_STOCK_TYPE_UNLIMIT if custom_model.get('stock_type', 'limit') == 'unlimit' else mall_models.PRODUCT_STOCK_TYPE_LIMIT,
 				stocks=custom_model['stocks'],
-				user_code=custom_model['user_code'],
-				purchase_price=custom_model['purchase_price']
+				user_code=custom_model.get('user_code', ''),
+				purchase_price=custom_model.get('purchase_price', 0.0)
 			)
 
 			for property in custom_model['properties']:
@@ -121,10 +121,10 @@ class UpdateProductService(business_model.Service):
 			product_model = mall_models.ProductModel.update(
 				price=new_model['price'],
 				weight=new_model['weight'],
-				stock_type=mall_models.PRODUCT_STOCK_TYPE_UNLIMIT if new_model['stock_type'] == 'unlimit' else mall_models.PRODUCT_STOCK_TYPE_LIMIT,
+				stock_type=mall_models.PRODUCT_STOCK_TYPE_UNLIMIT if new_model.get('stock_type', 'limit') == 'unlimit' else mall_models.PRODUCT_STOCK_TYPE_LIMIT,
 				stocks=new_model['stocks'],
-				user_code=new_model['user_code'],
-				purchase_price=new_model['purchase_price']
+				user_code=new_model.get('user_code', ''),
+				purchase_price=new_model.get('purchase_price', 0.0)
 			).dj_where(owner_id=self.corp.id, id=new_model['id']).execute()
 
 	def __delete_custom_models(self, need_delete_ids):
@@ -212,6 +212,17 @@ class UpdateProductService(business_model.Service):
 				value=product_property['value']
 			)
 
+	def __update_product_classifications(self, product_id, base_info):
+		"""
+		更新商品分类
+		"""
+		classification_id = base_info.get('classification_id', 0)
+		if not classification_id:
+			return
+
+		classification = self.corp.product_classification_repository.get_product_classification(classification_id)
+		classification.add_product(product_id)
+
 	def __send_msg_to_topic(self, product_id, msg_name):
 		topic_name = TOPIC['product']
 		data = {
@@ -224,22 +235,25 @@ class UpdateProductService(business_model.Service):
 		"""
 		更新商品
 		"""
-		base_info = json.loads(args['base_info'])
-		models_info = json.loads(args['models_info'])
-		image_info = json.loads(args['image_info'])
-		logistics_info = json.loads(args['logistics_info'])
-		pay_info = json.loads(args['pay_info'])
-		categories = json.loads(args['categories'])
-		properties = json.loads(args['properties'])
+		base_info = args['base_info']
+		models_info = args['models_info']
+		image_info = args['image_info']
+		logistics_info = args['logistics_info']
+		pay_info = args.get('pay_info', {
+			'is_use_online_pay_interface': False,
+			'is_use_cod_pay_interface': False
+		})
+		categories = args.get('categories', [])
+		properties = args.get('properties', [])
 
-		product = self.__update_product(product_id, base_info, image_info, logistics_info, pay_info)
+		self.__update_product(product_id, base_info, image_info, logistics_info, pay_info)
 		self.__update_product_categories(product_id, categories)
 		self.__update_product_images(product_id, image_info)
 		self.__update_product_models(product_id, models_info)
 		self.__update_product_properties(product_id, properties)
+		self.__update_product_classifications(product_id, base_info)
 		# 更新缓存
 		self.__send_msg_to_topic(product_id, "product_updated")
-		return product
 
 	def update_product_price(self, product_id, price_infos):
 		"""
@@ -291,4 +305,4 @@ class UpdateProductService(business_model.Service):
 			mall_models.ProductSales.update(
 				sales=mall_models.ProductSales.sales + changed_count).dj_where(product_id=product_id).execute()
 		else:
-			mall_models.ProductSales.create(product_id=product_id, sales=changed_count)
+			mall_models.ProductSales.create(product=product_id, sales=changed_count)

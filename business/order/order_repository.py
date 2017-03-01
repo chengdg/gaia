@@ -146,15 +146,18 @@ class OrderRepository(business_model.Model):
 
 			# 关联表
 			if '__f-product_name-contain' in filters:
-				order_ids = [db_model.id for db_model in db_models]
 
-				ohs_list = mall_models.OrderHasProduct.select().dj_where(order_id__in=order_ids)
+				# tmp_db_models = db_models.select(mall_models.Order.id)
+				# order_ids = [db_model.id for db_model in tmp_db_models]
 
-				target_page = PageInfo.get_max_page()
-				product_filters = {'__f-name-contain': filters['__f-product_name-contain']}
-				products, pageinfo = self.corp.product_pool.get_products(target_page, filters=product_filters)
-				product_ids = [product.id for product in products]
-				ohs_list = ohs_list.dj_where(product_id__in=product_ids)
+				# ohs_list = mall_models.OrderHasProduct.select().dj_where(order_id__in=order_ids, product_name__icontains=filters['__f-product_name-contain'])
+				ohs_list = mall_models.OrderHasProduct.select().dj_where(product_name__icontains=filters['__f-product_name-contain'])
+
+				# target_page = PageInfo.get_max_page()
+				# product_filters = {'__f-name-contain': filters['__f-product_name-contain']}
+				# products, pageinfo = self.corp.product_pool.get_products(target_page, filters=product_filters)
+				# product_ids = [product.id for product in products]
+				# ohs_list = ohs_list.dj_where(product_id__in=product_ids)
 				# use_should_in_order_ids = True
 				# if should_in_order_ids:
 				# 	should_in_order_ids = list(
@@ -166,7 +169,7 @@ class OrderRepository(business_model.Model):
 
 			if '__f-is_group_buy-equal' in filters:
 				if filters['__f-is_group_buy-equal'] == 'true':
-					use_should_in_order_bids = True
+					# use_should_in_order_bids = True
 					# should_in_order_bids.extend(self.context['valid_group_order_bids'])
 					# should_in_order_bids_by_group_search = self.context['valid_group_order_bids']
 
@@ -252,8 +255,6 @@ class OrderRepository(business_model.Model):
 					'order_id__in': get_intersection_of_some_filters(order_bid_filters)
 				})
 
-
-
 			if order_filter_parse_result:
 				db_models = db_models.dj_where(**order_filter_parse_result)
 
@@ -293,10 +294,10 @@ class OrderRepository(business_model.Model):
 	def __get_db_models_for_corp(self):
 		webapp_id = self.corp.webapp_id
 		user_id = self.corp.id
-		sync_able_status_list = [mall_models.ORDER_STATUS_PAYED_SUCCESSED,
+		sync_able_status_list = (mall_models.ORDER_STATUS_PAYED_SUCCESSED,
 		                         mall_models.ORDER_STATUS_PAYED_NOT_SHIP,
 		                         mall_models.ORDER_STATUS_PAYED_SHIPED,
-		                         mall_models.ORDER_STATUS_SUCCESSED]
+		                         mall_models.ORDER_STATUS_SUCCESSED)
 
 		if self.corp.type != 'normal':
 			db_models = mall_models.Order.select().dj_where(webapp_id=webapp_id, origin_order_id__lte=0,
@@ -336,9 +337,22 @@ class OrderRepository(business_model.Model):
 			self.context['valid_group_order_bids'] = successful_group_order_bids
 
 			# 忽略的团购订单
-			ignored_group_orders = db_models.where(
-				(mall_models.Order.order_id << running_group_order_bids) | (
-					(mall_models.Order.order_id << failed_group_order_bids) & (mall_models.Order.status.not_in(
+			# ignored_group_orders = db_models.select(mall_models.Order.order_id).where(
+			# 	(mall_models.Order.order_id << running_group_order_bids) | (
+			# 		(mall_models.Order.order_id << failed_group_order_bids) & (mall_models.Order.status.not_in(
+			# 			[mall_models.ORDER_STATUS_GROUP_REFUNDING, mall_models.ORDER_STATUS_GROUP_REFUNDED]) & (
+			# 			                                                           mall_models.Order.final_price > 0))))
+
+			# hack peewee in
+			if not running_group_order_bids:
+				running_group_order_bids = ["-running_group_order_bids"]
+
+			if not failed_group_order_bids:
+				failed_group_order_bids = ["-failed_group_order_bids"]
+
+			ignored_group_orders = db_models.select(mall_models.Order.order_id).where(
+				(mall_models.Order.order_id.in_(running_group_order_bids)) | (
+					(mall_models.Order.order_id.in_(failed_group_order_bids)) & (mall_models.Order.status.not_in(
 						[mall_models.ORDER_STATUS_GROUP_REFUNDING, mall_models.ORDER_STATUS_GROUP_REFUNDED]) & (
 						                                                           mall_models.Order.final_price > 0))))
 
@@ -346,8 +360,8 @@ class OrderRepository(business_model.Model):
 
 			self.context['valid_group_order_bids'] = list(
 				set(all_order_bids).difference(set(invalid_group_order_bids)))
-
-			db_models = db_models.dj_where(order_id__notin=invalid_group_order_bids)
+			if invalid_group_order_bids:
+				db_models = db_models.dj_where(order_id__notin=invalid_group_order_bids)
 
 		db_models = db_models.order_by(mall_models.Order.id.desc())
 		return db_models

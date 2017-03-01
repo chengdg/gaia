@@ -4,7 +4,6 @@ import os
 import logging
 
 
-DEBUG = True
 PROJECT_HOME = os.path.dirname(os.path.abspath(__file__))
 
 MODE = os.environ.get('_SERVICE_MODE', 'develop')
@@ -12,8 +11,8 @@ SERVICE_NAME = 'gaia'
 DEV_SERVER_MULTITHREADING = False
 WEAPP_DOMAIN = "weapp.weizoom.com"
 HERMES_DOMAIN = "weapp.weizoom.com"
-# GAIA_DB = os.environ.get('GAIA_DB', None) or '103.29.16.148'
-DB_HOST = os.environ.get('DB_HOST', 'db.dev.com') 
+# DB_HOST = os.environ.get('DB_HOST', None) or '103.29.16.139'
+DB_HOST = os.environ.get('DB_HOST', 'db.dev.com')
 DB_PORT = os.environ.get('DB_PORT', '3306')
 
 DATABASES = {
@@ -46,6 +45,7 @@ EVENT_DISPATCHER = 'redis'
 #信息输出配置
 DUMP_API_CALL_RESULT = True
 DUMP_FORMATTED_INNER_ERROR_MSG = False
+ENABLE_CONSOLE = (os.environ.get('_ENABLE_API_SERVICE_CONSOLE', '0') == '1')
 
 # settings for WAPI Logger
 if 'develop' == MODE:
@@ -78,6 +78,13 @@ else:
     WEAPP_HOST = "http://weapp.weizoom.com/"
     H5_HOST = "http://mall.weizoom.com/"
     ENABLE_SQL_LOG = False #是否dump peewee产生的sql查询
+
+if 'develop' == MODE:
+    DEBUG = True
+elif 'test' == MODE:
+    DEBUG = True
+else:
+    DEBUG = False
 
 #缓存相关配置
 REDIS_HOST = os.environ.get('_REDIS_HOST', 'redis.weapp.com')
@@ -153,17 +160,8 @@ else:
     MNS_ENDPOINT = 'https://1615750970594173.mns.cn-beijing.aliyuncs.com/'
     MNS_SECURITY_TOKEN = ''
 
-if 'develop' == MODE:
-    MESSAGE_DEBUG_MODE = True
-else:
-    MESSAGE_DEBUG_MODE = False
-
-
-REDIS_QUEUE_DB = 8
-TOPIC2QUEUES = {
-    'test-topic': ['test-order-trade-center'],
-    'test-weixin-topic': ['test-weixin-topic']
-}
+# event service相关设置
+MESSAGE_BROKER = os.environ.get('_MESSAGE_BROKER', 'redis')
 
 # BDD_SERVER相关配置
 BDD_SERVER2PORT = {

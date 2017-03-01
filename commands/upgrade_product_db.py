@@ -13,8 +13,9 @@ class Command(BaseCommand):
 
 	def handle(self, **options):
 		pooled_products = set([pooled_product.product_id for pooled_product in mall_models.ProductPool.select()])
-		for product in mall_models.Product.select().dj_where(is_deleted=False):
-			if not product.id in pooled_products:
+		for product in mall_models.Product.select().dj_where(is_deleted=False,
+															 owner_id=216):
+			if product.id not in pooled_products:
 				print 'add %s' % product.name
 				# 0:下架（待售） 1:上架（在售） 2:回收站
 				if product.shelve_type == 0:
@@ -30,7 +31,8 @@ class Command(BaseCommand):
 					product_id=product.id,
 					status=status,
 					display_index=9999999,
-					type=mall_models.PP_TYPE_CREATE
+					type=mall_models.PP_TYPE_CREATE,
+					sync_at=product.created_at
 				)
 
 

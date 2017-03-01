@@ -176,10 +176,6 @@
 																"type": "integer",
 																"description": "数量"
 															},
-															"is_deleted": {
-																"type": "boolean",
-																"description": "是否被删除"
-															},
 															"name": {
 																"type": "string",
 																"description": "商品名"
@@ -226,10 +222,6 @@
 															"sale_price": {
 																"type": "number",
 																"description": "售价"
-															},
-															"show_sale_price": {
-																"type": "number",
-																"description": "商品的显示售价，通常和售价一致，只有赠品时，售价为0，而显示商品价格"
 															},
 															"id": {
 																"type": "integer",

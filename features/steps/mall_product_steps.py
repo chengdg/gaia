@@ -107,7 +107,9 @@ def __format_product_post_data(context, product):
     }
     #基本信息
     if product.get('supplier', None):
-        supplier = mall_models.Supplier.select().dj_where(owner_id=context.corp.id, name=product['supplier']).get()
+        # supplier = mall_models.Supplier.select().dj_where(owner_id=context.corp.id, name=product['supplier']).get()
+
+        supplier = mall_models.Supplier.select().dj_where(name=product['supplier']).get()
         supplier_id = supplier.id
     else:
         supplier_id = 0
@@ -185,7 +187,7 @@ def __format_product_post_data(context, product):
         'logistics_info': json.dumps(logistics_info),
         'image_info': json.dumps(image_info),
         'categories': json.dumps(categories),
-        'properties': json.dumps(product.get('properties', [])),        
+        'properties': json.dumps(product.get('properties', [])),
     }
 
     return data
@@ -324,7 +326,8 @@ def __get_products(context, corp_name, type_name=u'在售'):
       u'待售': '/product/offshelf_products/?corp_id=%d' % context.corp.id,
       u'在售': '/product/onshelf_products/?corp_id=%d' % context.corp.id,
       u'same_corp_tmpl': '/product/unshelf_pooled_products/?corp_id=%d',
-      u'different_corp_tmpl': '/product/pooled_products/?corp_id=%d'
+      u'different_corp_tmpl': '/product/pooled_products/?corp_id=%d',
+      u'待销': '/product/unshelf_consignment_products/?corp_id=%d' % context.corp.id,
     }
 
     if u'商品池' in type_name:
@@ -336,6 +339,7 @@ def __get_products(context, corp_name, type_name=u'在售'):
             url = TYPE2URL['different_corp_tmpl'] % other_corp_id
     else:
         url = TYPE2URL[type_name]
+
     response = context.client.get(url)
     bdd_util.assert_api_call_success(response)
     
@@ -354,26 +358,61 @@ def __get_products(context, corp_name, type_name=u'在售'):
         if 'categories' in product:
             data['categories'] = ','.join([category['name'] for category in product['categories']])
 
-        #规格
-        if 'models_info' in product:
-            models_info = product['models_info']
-            if not models_info['is_use_custom_model']:
-                model = models_info['standard_model']
-                data['price'] = model['price']
-                data['stocks'] = u'无限' if model['stock_type'] == 'unlimit' else model['stocks']
-                data['gross_profit'] = model['price'] - model['purchase_price']
-            else:
-                price_items = []
-                gross_profit_items = []
-                for model in models_info['custom_models']:
-                    price_items.append(model['price'])
-                    gross_profit_items.append(model['price'] - model['purchase_price'])
+        # #规格
+        # if 'models_info' in product:
+        #     models_info = product['models_info']
+        #     if not models_info['is_use_custom_model']:
+        #         model = models_info['standard_model']
+        #         data['price'] = model['price']
+        #         data['stocks'] = u'无限' if model['stock_type'] == 'unlimit' else model['stocks']
+        #         data['gross_profit'] = model['price'] - model['purchase_price']
+        #     else:
+        #         price_items = []
+        #         gross_profit_items = []
+        #         for model in models_info['custom_models']:
+        #             price_items.append(model['price'])
+        #             gross_profit_items.append(model['price'] - model['purchase_price'])
+        #
+        #         price_items.sort()
+        #         gross_profit_items.sort()
+        #         data['price'] = '%.2f~%.2f' % (price_items[0], price_items[-1])
+        #         data['gross_profit'] = '%.2f~%.2f' % (gross_profit_items[0], gross_profit_items[-1])
+        #         data['stocks'] = ""
 
-                price_items.sort()
-                gross_profit_items.sort()
-                data['price'] = '%.2f~%.2f' % (price_items[0], price_items[-1])
-                data['gross_profit'] = '%.2f~%.2f' % (gross_profit_items[0], gross_profit_items[-1])
-                data['stocks'] = ""
+
+        # 处理规格信息
+        product['model'] = {
+            'models': {}
+        }
+        resp_models_info = product['models_info']
+        product['is_use_custom_model'] = u'是' if resp_models_info['is_use_custom_model'] else u'否'
+        if resp_models_info['is_use_custom_model']:
+            print (resp_models_info['custom_models'])
+
+            for model in resp_models_info['custom_models']:
+                model_name_items = []
+                for property_value in model['property_values']:
+                    model_name_items.append(property_value['name'])
+                model_name = ' '.join(model_name_items)
+                product['model']['models'][model_name] = {
+                    "price": model['price'],
+                    "purchase_price": model['purchase_price'],
+                    "weight": model['weight'],
+                    "stock_type": u'无限' if model['stock_type'] == 'unlimit' else u'有限',
+                    "stocks": model['stocks']
+                }
+        else:
+            model = resp_models_info['standard_model']
+            model_name = model['name']
+            product['model']['models'][model_name] = {
+                "price": model['price'],
+                "purchase_price": model['purchase_price'],
+                "weight": model['weight'],
+                "stock_type": u'无限' if model['stock_type'] == 'unlimit' else u'有限',
+                "stocks": model['stocks']
+            }
+
+        data['model'] = product['model']
 
         data['image'] = product['image']
         data['sales'] = product.get('sales', 0)
@@ -407,12 +446,39 @@ def __get_products(context, corp_name, type_name=u'在售'):
     return products
 
 
+def __create_supplier(username):
+    owner_id = bdd_util.get_user_id_for(username)
+    supplier = mall_models.Supplier.create(
+        owner=bdd_util.get_user_id_for(username),
+        name=username,
+        responsible_person=username,
+        supplier_tel='10086',
+        supplier_address=u'火星',
+        remark='aaaaaa'
+
+    )
+    return supplier
+
+
+def __get_supplier_name(username):
+    supplier = mall_models.Supplier.select().dj_where(name=username).first()
+    if supplier:
+        return supplier.name
+    else:
+        supplier = __create_supplier(username)
+        return supplier.name
+
+
 @when(u"{user}添加商品")
 def step_add_property(context, user):
     products = json.loads(context.text)
     if isinstance(products, dict):
         products = [products]
     for product in products:
+
+        if 'supplier' not in product:
+            # 填充默认供货商为自己
+            product['supplier'] = __get_supplier_name(user)
         __create_product(context, product)
 
 
@@ -420,6 +486,9 @@ def step_add_property(context, user):
 def step_add_property(context, user):
     products = json.loads(context.text)
     for product in products:
+        if 'supplier' not in product:
+            # 填充默认供货商为自己
+            product['supplier'] = __get_supplier_name(user)
         __create_product(context, product)
 
 
@@ -469,7 +538,8 @@ def step_impl(context, user, type_name):
 def step_impl(context, user, product_name):
     product = __get_product(context, product_name)
 
-    product['supplier'] = product['supplier'].name if product['supplier'] else None
+    # 所有商品都有supplier
+    # product['supplier'] = product['supplier'].name if product['supplier'] else None
 
     update_data = json.loads(context.text)
     for key, value in update_data.items():
@@ -654,3 +724,27 @@ def step_impl(context, user):
 
     response = context.client.put('/product/unshelf_pooled_products/', data)
     bdd_util.assert_api_call_success(response)
+
+
+@when(u"{user}可以获得代销商品列表")
+def step_impl(context, user):
+    promotes = json.loads(context.text)
+    if isinstance(promotes, dict):
+        promotes = [promotes]
+
+    __create_promote(promotes, context, user)
+
+
+@when(u"{user}设置商品显示顺序")
+def step_impl(context, user):
+
+    products = json.loads(context.text)
+    for product in products:
+
+        product_model = mall_models.Product.select().dj_where(name=product.get('name')).first()
+        data = {
+            'corp_id': bdd_util.get_user_id_for(user),
+            'id': product_model.id,
+            'position': product.get('position')
+        }
+        context.client.post('/product/product_position/', data)

@@ -224,19 +224,19 @@ class Integral(business_model.Model):
 
 			if integral_strategy:
 				#print '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.7:'
-				increase_count = integral_strategy.buy_via_shared_url_increase_count_for_author
+				# increase_count = integral_strategy.buy_via_shared_url_increase_count_for_author
 				#给好友奖励（分享链接购买）
 
-				if increase_count > 0 and followed_member:
-					followed_webapp_user_id = member_models.WebAppUser.get(member_id=followed_member.id).id
+				# if increase_count > 0 and followed_member:
+				# 	followed_webapp_user_id = member_models.WebAppUser.get(member_id=followed_member.id).id
 
-					Integral.increase_member_integral({
-						'integral_increase_count': increase_count,
-						'webapp_user_id': followed_webapp_user_id,
-						'member_id': followed_member.id,
-						'event_type':  member_models.FOLLOWER_BUYED_VIA_SHARED_URL,
-						'corp': corp
-						})
+				# 	Integral.increase_member_integral({
+				# 		'integral_increase_count': increase_count,
+				# 		'webapp_user_id': followed_webapp_user_id,
+				# 		'member_id': followed_member.id,
+				# 		'event_type':  member_models.FOLLOWER_BUYED_VIA_SHARED_URL,
+				# 		'corp': corp
+				# 		})
 
 					#self.increase_member_integral(followed_member, \
 					#		increase_count, FOLLOWER_BUYED_VIA_SHARED_URL, None)

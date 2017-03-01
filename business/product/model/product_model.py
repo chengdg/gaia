@@ -33,6 +33,7 @@ class ProductModel(business_model.Model):
 		'stock_type',
 		'stocks',
 		'gross_profit',
+		'gross_profit_rate',
 
 		'property_values',
 		'property2value'
@@ -45,6 +46,7 @@ class ProductModel(business_model.Model):
 			self._init_slot_from_model(db_model)
 			self.original_price = db_model.price
 			self.gross_profit = -1
+			self.gross_profit_rate = 0
 			self.stock_type = 'unlimit' if db_model.stock_type == mall_models.PRODUCT_STOCK_TYPE_UNLIMIT else 'limit'
 			self.stocks = db_model.stocks if db_model.stock_type == mall_models.PRODUCT_STOCK_TYPE_LIMIT else u'无限'
 

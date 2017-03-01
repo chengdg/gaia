@@ -14,6 +14,10 @@ class ProductClassificationRepository(business_model.Service):
 		model = mall_models.Classification.select().dj_where(id=id).get()
 		return ProductClassification(model)
 
+	def get_product_classification_by_ids(self, classification_ids):
+		models = mall_models.Classification.select().dj_where(id__in=classification_ids)
+		return [ProductClassification(model) for model in models]
+
 	def get_child_product_classifications(self, father_id):
 		"""
 		获得下一级子分类集合

@@ -27,7 +27,7 @@ Background:
 		"""
 
 	
-@gaia @mall @mall.product @mall.product_classification @product_classification_qualification @aix
+@gaia @mall @mall.product @mall.product_classification @product_classification_qualification
 Scenario:1  运营人员为分配配置特殊资质
 	When weizoom为商品分类'平板电脑'配置特殊资质
 		"""

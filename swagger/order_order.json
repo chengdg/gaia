@@ -12,17 +12,20 @@
 					{
 						"name": "corp_id",
 						"in": "query",
-						"required": true
+						"required": true,
+						"type": "string"
 					},
 					{
 						"name": "cur_page",
 						"in": "query",
-						"required": true
+						"required": true,
+						"type": "string"
 					},
 					{
 						"name": "count_per_page",
 						"in": "query",
-						"required": true
+						"required": true,
+						"type": "string"
 					},
 					{
 						"name": "filters",
@@ -157,7 +160,7 @@
 																},
 																"bill_type": {
 																	"type": "integer",
-																	"description": "发票类型"
+																	"description": "发票类型， 0：无发票，1：个人发票，2：公司发票"
 																},
 																"remark": {
 																	"type": "string",
@@ -172,31 +175,31 @@
 																	"properties": {
 																		"weizoom_card_money": {
 																			"type": "number",
-																			"description": "订单已经退款的微众卡金额"
+																			"description": "订单已经退款完成的微众卡金额"
 																		},
 																		"member_card_money": {
 																			"type": "number",
-																			"description": "订单已经退款的会员卡金额"
+																			"description": "订单已经退款完成的会员卡金额"
 																		},
 																		"coupon_money": {
 																			"type": "number",
-																			"description": "订单已经退款的优惠券金额"
+																			"description": "订单已经退款完成的优惠券金额"
 																		},
 																		"integral": {
 																			"type": "number",
-																			"description": "订单已经退款的积分"
+																			"description": "订单已经退款完成的积分"
 																		},
 																		"integral_money": {
 																			"type": "number",
-																			"description": "订单已经退款的积分金额"
+																			"description": "订单已经退款完成的积分金额"
 																		},
 																		"cash": {
 																			"type": "number",
-																			"description": "订单已经退款的现金金额"
+																			"description": "订单已经退款完成的现金金额"
 																		},
 																		"total": {
 																			"type": "number",
-																			"description": "订单已经退款的总金额"
+																			"description": "订单已经退款完成的总金额"
 																		}
 																	}
 																},
@@ -293,7 +296,7 @@
 																						"description": "供货商名称"
 																					},
 																					"supplier_type": {
-																						"type": "类型",
+																						"type": "string",
 																						"description": "supplier/supplier_user/None"
 																					}
 																				}
@@ -302,7 +305,7 @@
 																				"type": "string",
 																				"description": "子订单编号"
 																			},
-																			"express_company_name": {
+																			"express_company_name_test": {
 																				"type": "string",
 																				"description": "快递公司名称"
 																			},
@@ -321,6 +324,10 @@
 																			"with_logistics": {
 																				"type": "boolean",
 																				"description": "是否使用物流"
+																			},
+																			"with_logistics_trace": {
+																				"type": "boolean",
+																				"description": "是否使用物流追踪"
 																			},
 																			"refunding_info": {
 																				"type": "object",
@@ -385,10 +392,6 @@
 																							"type": "integer",
 																							"description": "数量"
 																						},
-																						"is_deleted": {
-																							"type": "boolean",
-																							"description": "是否被删除"
-																						},
 																						"name": {
 																							"type": "string",
 																							"description": "商品名"
@@ -436,10 +439,6 @@
 																							"type": "number",
 																							"description": "售价"
 																						},
-																						"show_sale_price": {
-																							"type": "number",
-																							"description": "商品的显示售价，通常和售价一致，只有赠品时，售价为0，而显示商品价格"
-																						},
 																						"weight": {
 																							"type": "integer",
 																							"description": "重量"
@@ -482,11 +481,15 @@
 				"parameters": [
 					{
 						"name": "corp_id",
-						"required": true
+						"in": "query",
+						"required": true,
+						"type": "string"
 					},
 					{
 						"name": "id",
-						"required": true
+						"in": "query",
+						"required": true,
+						"type": "string"
 					}
 				],
 				"tags": [
@@ -515,7 +518,7 @@
 													"type": "string",
 													"description": "订单编号"
 												},
-												"couponMoney": {
+												"coupon_money": {
 													"type": "number",
 													"description": "优惠券抵扣金额"
 												},
@@ -602,8 +605,8 @@
 														"used_card": {
 															"type": "array",
 															"description": "卡号列表",
-															"items":{
-																"type":"string"
+															"items": {
+																"type": "string"
 															}
 														}
 													}
@@ -622,7 +625,7 @@
 												},
 												"bill_type": {
 													"type": "integer",
-													"description": "发票类型"
+													"description": "发票类型， 0：无发票，1：个人发票，2：公司发票"
 												},
 												"remark": {
 													"type": "string",
@@ -637,31 +640,31 @@
 													"properties": {
 														"weizoom_card_money": {
 															"type": "number",
-															"description": "订单已经退款的微众卡金额"
+															"description": "订单已经退款完成的微众卡金额"
 														},
 														"member_card_money": {
 															"type": "number",
-															"description": "订单已经退款的会员卡金额"
+															"description": "订单已经退款完成的会员卡金额"
 														},
 														"coupon_money": {
 															"type": "number",
-															"description": "订单已经退款的优惠券金额"
+															"description": "订单已经退款完成的优惠券金额"
 														},
 														"integral": {
 															"type": "number",
-															"description": "订单已经退款的积分"
+															"description": "订单已经退款完成的积分"
 														},
 														"integral_money": {
 															"type": "number",
-															"description": "订单已经退款的积分金额"
+															"description": "订单已经退款完成的积分金额"
 														},
 														"cash": {
 															"type": "number",
-															"description": "订单已经退款的现金金额"
+															"description": "订单已经退款完成的现金金额"
 														},
 														"total": {
 															"type": "number",
-															"description": "订单已经退款的总金额"
+															"description": "订单已经退款完成的总金额"
 														}
 													}
 												},
@@ -759,6 +762,20 @@
 														}
 													}
 												},
+												"extra_coupon_info": {
+													"description": "额外的优惠券信息",
+													"type": "object",
+													"properties": {
+														"bid": {
+															"description": "优惠码",
+															"type": "string"
+														},
+														"type": {
+															"description": "优惠券类型,通用券all_products_coupon / 多商品券 multi_products_coupon",
+															"type": "string"
+														}
+													}
+												},
 												"delivery_items": {
 													"description": "出货单列表",
 													"type": "array",
@@ -816,7 +833,7 @@
 																		"description": "供货商名称"
 																	},
 																	"supplier_type": {
-																		"type": "类型",
+																		"type": "string",
 																		"description": "supplier/supplier_user/None"
 																	}
 																}
@@ -825,7 +842,7 @@
 																"type": "string",
 																"description": "子订单编号"
 															},
-															"express_company_name": {
+															"express_company_name_text": {
 																"type": "string",
 																"description": "快递公司名称"
 															},
@@ -844,6 +861,10 @@
 															"with_logistics": {
 																"type": "boolean",
 																"description": "是否使用物流"
+															},
+															"with_logistics_trace": {
+																"type": "boolean",
+																"description": "是否使用物流追踪"
 															},
 															"refunding_info": {
 																"type": "object",
@@ -904,10 +925,6 @@
 																			"type": "integer",
 																			"description": "数量"
 																		},
-																		"is_deleted": {
-																			"type": "boolean",
-																			"description": "是否被删除"
-																		},
 																		"name": {
 																			"type": "string",
 																			"description": "商品名"
@@ -955,10 +972,6 @@
 																			"type": "number",
 																			"description": "售价"
 																		},
-																		"show_sale_price": {
-																			"type": "number",
-																			"description": "商品的显示售价，通常和售价一致，只有赠品时，售价为0，而显示商品价格"
-																		},
 																		"id": {
 																			"type": "integer",
 																			"description": "商品id"
@@ -992,21 +1005,27 @@
 				"parameters": [
 					{
 						"name": "corp_id",
-						"required": true
+						"required": true,
+						"in": "query",
+						"type": "string"
 					},
 					{
 						"name": "id",
-						"required": true
+						"required": true,
+						"in": "query",
+						"type": "string"
 					},
 					{
 						"name": "new_final_price",
-						"type": "number",
-						"required": false
+						"type": "string",
+						"required": false,
+						"in": "query"
 					},
 					{
 						"name": "new_remark",
 						"type": "string",
-						"required": false
+						"required": false,
+						"in": "query"
 					}
 				],
 				"responses": {

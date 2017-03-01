@@ -1,6 +1,8 @@
 # coding=utf-8
 # -*- utf-8 -*-
 
+import copy
+
 from eaglet.decorator import param_required
 from eaglet.core import paginator
 
@@ -8,6 +10,7 @@ from bdem import msgutil
 from business import model as business_model
 from business.product.product import Product
 from db.mall import models as mall_models
+from db.account import models as account_models
 from gaia_conf import TOPIC
 from fill_product_detail_service import FillProductDetailService
 from business.mall.corporation_factory import CorporationFactory
@@ -229,12 +232,16 @@ class ProductPool(business_model.Model):
 		else:
 			pool_product_models = mall_models.ProductPool.select().dj_where(status__not=mall_models.PP_STATUS_DELETE)			
 		if len(order_fields) > 0:
+			# 考虑可以使用内存排序,而不是mysql自己排序
 			pool_product_models = pool_product_models.order_by(*order_fields)
 
 		#获取查询结果
-		product_ids = [pool_product_model.product_id for pool_product_model in pool_product_models]
-		product2poolmodel = dict([(pool_product_model.product_id, pool_product_model) for pool_product_model in pool_product_models])
-
+		product_ids = []
+		product2poolmodel = dict()
+		for pool_product_model in pool_product_models:
+			product_ids.append(pool_product_model.product_id)
+			product2poolmodel[pool_product_model.product_id] = pool_product_model
+		copy_product_ids = copy.copy(product_ids)
 		#在mall_product_model中进行过滤
 		product_model_filters = type2filters['product_model']
 		if product_model_filters:
@@ -245,8 +252,8 @@ class ProductPool(business_model.Model):
 				product_model_filters['stock_type'] = mall_models.PRODUCT_STOCK_TYPE_LIMIT
 
 			product_model_models = mall_models.ProductModel.select().dj_where(**product_model_filters)
-			temp_product_ids = [model.product_id for model in product_model_models]
-			product_ids = sorted(list(set(temp_product_ids)), key=product_ids.index)
+			product_ids = [model.product_id for model in product_model_models]
+			# product_ids = sorted(list(set(temp_product_ids)), key=product_ids.index)
 
 		#在mall_category_has_product中进行过滤
 		product_category_filters = type2filters['product_category']
@@ -305,33 +312,68 @@ class ProductPool(business_model.Model):
 		product_info_filters = type2filters['product_info']
 		if supplier_ids is not None:
 			product_info_filters['supplier_id__in'] = supplier_ids
-		if product_info_filters:
-			product_info_filters['id__in'] = product_ids
-			product_models = mall_models.Product.select().dj_where(**product_info_filters)
-			pageinfo, product_models = paginator.paginate(product_models, page_info.cur_page, page_info.count_per_page)
+
+		if not options.get('request_source') == 'unshelf_consignment': #商品池中的商品展示不需要按照毛利率排序
+			if product_info_filters:
+				product_info_filters['id__in'] = product_ids
+				product_models = mall_models.Product.select().dj_where(**product_info_filters)
+				# mysql使用in查询会将in列表值先排序再二分搜索,固需要再次排序.
+				product_models = sorted(product_models, key=lambda k: copy_product_ids.index(k.id))
+			else:
+				# 对product_ids 进行内存排序,按照最原始查出来的顺序,并去掉重复数据
+				product_ids = sorted(list(set(product_ids)), key=copy_product_ids.index)
+				product_models = mall_models.Product.select().dj_where(id__in=product_ids)
+				product_models = sorted(product_models, key=lambda k: product_ids.index(k.id))
+			# 为了能够按照毛利率进行排序，首先得填充规格和效果通数据,再分页
+			products = [Product(model) for model in product_models]
+			fill_product_detail_service = FillProductDetailService.get(self.corp)
+			fill_product_detail_service.fill_detail(products, {
+				'with_product_model': True,
+				'with_model_property_info': True,
+				'with_cps_promotion_info': True
+			})
+
+			divide_info = account_models.AccountDivideInfo.select().dj_where(user_id=self.corp_id).first()
+			if divide_info and not divide_info.settlement_type == account_models.ACCOUNT_DIVIDE_TYPE_FIXED:
+				products = sorted(products, key=lambda k: k.gross_profit_info['gross_profit_rate'], reverse=True)
+
+			pageinfo, products = paginator.paginate(products, page_info.cur_page, page_info.count_per_page)
+
+			#填充其他数据
+			fill_options['with_product_model'] = False
+			fill_options['with_model_property_info'] = False
+			fill_options['with_cps_promotion_info'] = False
+			fill_product_detail_service.fill_detail(products, fill_options)
 		else:
-			pageinfo, product_ids = paginator.paginate(product_ids, page_info.cur_page, page_info.count_per_page)
-			product_models = mall_models.Product.select().dj_where(id__in=product_ids)
+			if product_info_filters:
+				product_info_filters['id__in'] = product_ids
+				product_models = mall_models.Product.select().dj_where(**product_info_filters)
+				# mysql使用in查询会将in列表值先排序再二分搜索,固需要再次排序.
+				product_models = sorted(product_models, key=lambda k: copy_product_ids.index(k.id))
+				pageinfo, product_models = paginator.paginate(product_models, page_info.cur_page,
+															  page_info.count_per_page)
+			else:
+				# 对product_ids 进行内存排序,按照最原始查出来的顺序,并去掉重复数据
+				product_ids = sorted(list(set(product_ids)), key=copy_product_ids.index)
+				pageinfo, product_ids = paginator.paginate(product_ids, page_info.cur_page, page_info.count_per_page)
+				product_models = mall_models.Product.select().dj_where(id__in=product_ids)
+				product_models = sorted(product_models, key=lambda k: product_ids.index(k.id))
 
-		products = [Product(model) for model in product_models]
-		fill_product_detail_service = FillProductDetailService.get(self.corp)
-		fill_product_detail_service.fill_detail(products, fill_options)
+			products = [Product(model) for model in product_models]
+			fill_product_detail_service = FillProductDetailService.get(self.corp)
+			fill_product_detail_service.fill_detail(products, fill_options)
 
-		#按照product_ids中id的顺序对products进行顺序调整
-		id2product = dict([(product.id, product) for product in products])
 		result = []
-		for product_id in product_ids:
-			product_id = int(product_id)
-			#因为products中的结果是分页后的结果，所以并不是所有的product_id对应的商品都在products中，这里需要判断
-			product = id2product.get(product_id, None)
-			if product:
-				pool_product_model = product2poolmodel[product.id]
-				if pool_product_model.type == mall_models.PP_TYPE_SYNC:
-					product.create_type = 'sync'
-				else:
-					product.create_type = 'create'
-				product.sync_at = pool_product_model.sync_at
-				result.append(product)
+
+		for product in products:
+			pool_product_model = product2poolmodel[product.id]
+			if pool_product_model.type == mall_models.PP_TYPE_SYNC:
+				product.create_type = 'sync'
+			else:
+				product.create_type = 'create'
+			product.sync_at = pool_product_model.sync_at
+			result.append(product)
+
 		return result, pageinfo
 
 	def get_products_by_ids(self, product_ids, fill_options={}):
@@ -349,6 +391,7 @@ class ProductPool(business_model.Model):
 		pool_products = mall_models.ProductPool.select().dj_where(product_id__in=product_ids)
 		id2product = dict([(product.id, product) for product in products])
 		for pool_product in pool_products:
+			product = id2product[pool_product.product_id]
 			if pool_product.type == mall_models.PP_TYPE_SYNC:
 				product.create_type = 'sync'
 				product.sync_at = pool_product.sync_at
@@ -356,7 +399,6 @@ class ProductPool(business_model.Model):
 				product.create_type = 'create'
 
 		#按照product_ids中id的顺序对products进行顺序调整
-		id2product = dict([(product.id, product) for product in products])
 		result = []
 		for product_id in product_ids:
 			product_id = int(product_id)
@@ -375,6 +417,22 @@ class ProductPool(business_model.Model):
 															 owner_id=self.corp.id).execute()
 
 	def delete_products(self, product_ids):
+		"""
+		删除未入商品池的原始商品
+		"""
+		mall_models.Product.update(is_deleted=True).dj_where(id__in=product_ids,
+															 is_accepted=False,
+															 is_pre_product=True).execute()
+		#从商品分类中去除
+		def __handle_classification(product_id):
+			classification_id = self.get_product_by_id(product_id, {'with_classification': True}).classification_id
+			print (classification_id)
+			classification = self.corp.product_classification_repository.get_product_classification(classification_id)
+			classification.delete_product(product_id)
+
+		map(__handle_classification, product_ids)
+
+	def delete_verified_products(self, product_ids):
 		"""
 		从商品池删除商品
 		@param product_ids:
@@ -472,7 +530,8 @@ class ProductPool(business_model.Model):
 		mall_models.ProductPool.update(is_cps_promotion_processed=True).dj_where(product_id__in=product_ids,woid=self.corp.id).execute()
 
 	def has_product_with_display_index(self, display_index):
-		return mall_models.ProductPool.select().dj_where(woid=self.corp.id, display_index=display_index).count() > 0
+		return mall_models.ProductPool.select().dj_where(woid=self.corp.id, display_index=display_index,
+														 status=mall_models.PP_STATUS_ON).count() > 0
 
 	def search_products_by_filters(self, **filters):
 		product_models = mall_models.Product.select().dj_where(**filters)

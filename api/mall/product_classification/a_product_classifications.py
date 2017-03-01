@@ -32,7 +32,7 @@ class AProductClassifications(api_resource.ApiResource):
 				'name': product_classification.name,
 				'level': product_classification.level,
 				'father_id': product_classification.father_id,
-				'product_count': product_classification.product_count,
+				'product_count': product_classification.total_product_count,
 				'note': product_classification.note,
 				'created_at': product_classification.created_at.strftime('%Y-%m-%d %H:%M'),
 				'qualification_infos': [{

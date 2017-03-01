@@ -52,12 +52,16 @@ class ProductClassification(business_model.Model):
 
 	def is_used_by_product(self):
 		"""
-		判断该classification是否已被使用
+		判断该classification是否已被使用,同时检查子类
 		"""
-		return mall_models.ClassificationHasProduct.select().dj_where(classification_id=self.id).count() > 0
+		corp = CorporationFactory.get()
+		all_children = corp.product_classification_repository.get_children_product_classifications(self.id)
+		classification_ids = [c.id for c in all_children]
+		classification_ids.append(self.id)
+
+		return mall_models.ClassificationHasProduct.select().dj_where(classification_id__in=classification_ids).count() > 0
 
 	@staticmethod
-	@param_required(['name', 'father_id', 'note'])
 	def create(args):
 		"""
 		创建商品分类
@@ -193,7 +197,8 @@ class ProductClassification(business_model.Model):
 			label_id2classifi[label_id] = model.classification_id
 
 		corp = CorporationFactory.get()
-		labels, label_id2group_id = corp.product_label_repository.get_labels(all_label_ids)
+		labels = corp.product_label_repository.get_labels(all_label_ids)
+		label_id2group_id = {db_model.id: db_model.label_group_id for db_model in mall_models.ProductLabel.select().dj_where(id__in=all_label_ids, is_deleted=False)}
 
 		label_group_has_label = dict()
 		classification_has_own_label = dict()
@@ -218,3 +223,53 @@ class ProductClassification(business_model.Model):
 			'relations': relations,
 			'classification_has_own_label': classification_has_own_label
 		}
+
+	def add_product(self, product_id):
+		"""
+		增加分类下的商品
+		"""
+		#首先解除该商品和其他分类的关系
+		self.delete_product(product_id)
+
+		#建立关系
+		mall_models.ClassificationHasProduct.create(
+			classification = self.id,
+			product_id = product_id,
+			woid = CorporationFactory.get().id,
+			display_index = 0
+		)
+		mall_models.Classification.update(product_count=mall_models.Classification.product_count + 1).dj_where(
+			id=self.id).execute()
+
+	def delete_product(self, product_id):
+		relation = mall_models.ClassificationHasProduct.select().dj_where(product_id=product_id).first()
+		if relation:
+			classification_id = relation.classification_id
+			relation.delete_instance()
+			mall_models.Classification.update(product_count=mall_models.Classification.product_count - 1).dj_where(
+				id=classification_id).execute()
+
+	@property
+	def total_product_count(self):
+		"""
+		上级分类的商品数等于所有下级分类商品数的总和
+		"""
+		curr_classification_ids = [self.id]
+		product_count = self.product_count
+		while len(curr_classification_ids) > 0:
+			childs = mall_models.Classification.select().dj_where(father_id__in=curr_classification_ids)
+			curr_classification_ids = []
+			if childs.count() > 0:
+				for child in childs:
+					product_count += child.product_count
+					curr_classification_ids.append(child.id)
+
+		return product_count
+
+	def get_nav(self):
+		"""
+		商品分类层级
+		"""
+		corp = CorporationFactory.get()
+		classifications = corp.product_classification_repository.get_product_classification_tree_by_end(self.id)
+		return '--'.join([classification.name for classification in classifications])

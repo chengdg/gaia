@@ -1,21 +1,13 @@
 # coding: utf8
 
-# 缓存key
-CACHE_KEY = {
-
-}
-
+# coding: utf8
+import os
 # 消息队列topic
 TOPIC = {
-	'product': 'test-topic',
-	'order': 'test-topic',
-	'delivery_item': 'test-topic',
-	'mall_config': "test-topic",
-	'base_service': 'test-topic',  # 基础的异步化服务，如邮件，模板消息等
-	'notify': 'test-phone'  # 短信消息
-}
-
-# 消息队列message_name
-MESSAGE_NAME = {
-	'save_product': 'zeus_save_product'
+	'product': os.environ.get('PRODUCT_TOPIC', 'test-topic'),
+	'order': os.environ.get('ORDER_TOPIC', 'test-topic'),
+	'delivery_item':  os.environ.get('DELIVERY_ITEM_TOPIC', 'test-topic'),
+	'mall_config': os.environ.get('MALL_CONFIG_TOPIC', 'test-topic'),
+	'base_service': os.environ.get('BASE_SERVICE_TOPIC', 'test-topic'),  # 基础的异步化服务，如邮件，模板消息等
+	'notify': os.environ.get('NOTIFY_TOPIC', 'test-phone')  # 短信消息
 }

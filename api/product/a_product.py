@@ -35,7 +35,7 @@ class AProduct(api_resource.ApiResource):
 			return {}
 		else:
 			product = products[0]
-			encode_product_service = EncodeProductService.get(corp)
+			encode_product_service = EncodeProductService.get()
 
 			data = {
 				"id": product.id,
@@ -61,11 +61,11 @@ class AProduct(api_resource.ApiResource):
 		"""
 		product_data = args
 		product_factory = ProductFactory.get(args['corp'])
-		product_factory.create_product(product_data)
+		product_factory.create_verified_product(product_data)
 
 		return {}
 
-	@param_required(['corp_id', 'id', 'base_info', 'models_info', 'image_info', 'logistics_info', 'pay_info', 'categories', 'properties'])
+	@param_required(['corp_id', 'id', 'base_info:json', 'models_info:json', 'image_info:json', 'logistics_info:json', 'pay_info:json', 'categories:json', 'properties:json'])
 	def post(args):
 		product_data = args
 		product_id = product_data['id']

@@ -1,8 +1,14 @@
 # -*- coding: utf-8 -*-
 import json
 
+from eaglet.utils.resource_client import Resource
+
+import settings
 from business import model as business_model
+from business.member.member_spread import MemberSpread
 from business.order.delivery_item import DeliveryItem
+from business.order.release_order_resource_service import ReleaseOrderResourceService
+from business.product.update_product_service import UpdateProductService
 from db.mall import models as mall_models
 from db.member import models as member_models
 from gaia_conf import TOPIC
@@ -136,6 +142,7 @@ class Order(business_model.Model):
 
 			# 金额信息
 			order.final_price = db_model.final_price
+
 			order.product_price = db_model.product_price
 			order.edit_money = db_model.edit_money
 			order.coupon_money = db_model.coupon_money
@@ -147,7 +154,7 @@ class Order(business_model.Model):
 			order.promotion_saved_money = db_model.promotion_saved_money
 
 			## 衍生数据
-			order.pay_money = db_model.final_price + db_model.weizoom_card_money
+			order.pay_money = db_model.final_price + db_model.weizoom_card_money + db_model.member_card_money
 
 			# 发票信息
 			order.bill = db_model.bill
@@ -172,7 +179,7 @@ class Order(business_model.Model):
 			order.is_first_order = db_model.is_first_order
 
 			# 临时数据
-			webapp_user_ids.append(db_model.webapp_user_id)
+
 			order.context['db_model'] = db_model
 			order.context['corp'] = corp
 
@@ -195,26 +202,7 @@ class Order(business_model.Model):
 			with_extra_promotion_info = fill_options.get("extra_promotion_info")
 
 			if with_member:
-				webapp_user_id2member, _ = corp.member_repository.get_members_from_webapp_user_ids(webapp_user_ids)
-			else:
-				webapp_user_id2member = {}
-
-			for order in orders:
-
-				if with_member:
-					member = webapp_user_id2member.get(order.webapp_user_id, None)
-					if member:
-						order.member_info = {
-							'name': member.username_for_html,
-							'id': member.id,
-							'is_subscribed': member.is_subscribed
-						}
-					else:
-						order.member_info = {
-							'name': u'未知',
-							'id': 0,
-							'is_subscribed': 0
-						}
+				Order.__fill_member_info(orders, order_ids)
 
 			# 填充出货单
 			if with_delivery_items:
@@ -251,6 +239,33 @@ class Order(business_model.Model):
 				Order.__fill_extra_promotion(orders, order_ids)
 
 		return orders
+
+	@staticmethod
+	def __fill_member_info(orders, order_ids):
+
+		corp = orders[0].context['corp']
+
+		webapp_user_ids = []
+		for order in orders:
+			webapp_user_ids.append(order.webapp_user_id)
+
+		webapp_user_id2member, _ = corp.member_repository.get_members_from_webapp_user_ids(webapp_user_ids)
+
+		for order in orders:
+			member = webapp_user_id2member.get(order.webapp_user_id, None)
+			if member:
+				order.context['member'] = member
+				order.member_info = {
+					'name': member.username_for_html,
+					'id': member.id,
+					'is_subscribed': member.is_subscribed
+				}
+			else:
+				order.member_info = {
+					'name': u'未知',
+					'id': 0,
+					'is_subscribed': 0
+				}
 
 	@staticmethod
 	def __fill_extra_promotion(orders, order_ids):
@@ -312,7 +327,7 @@ class Order(business_model.Model):
 			else:
 				order.weizoom_card_info = {
 					'trade_id': '',
-					'used_card': ''
+					'used_card': []
 				}
 
 	@staticmethod
@@ -391,8 +406,8 @@ class Order(business_model.Model):
 			# 下单时没状态日志
 			order.status_logs.append(
 				{
-					'from_status': None,
-					'from_status_code': None,
+					'from_status': "",
+					'from_status_code': "",
 					'to_status': mall_models.ORDER_STATUS_NOT,
 					'to_status_code': mall_models.ORDER_STATUS2MEANINGFUL_WORD[mall_models.ORDER_STATUS_NOT],
 					'time': order.created_at})
@@ -433,7 +448,7 @@ class Order(business_model.Model):
 						[delivery_item.refunding_info['weizoom_card_money'] for delivery_item in order.delivery_items if
 						 delivery_item.refunding_info['finished']]),
 					'member_card_money': sum(
-						[delivery_item.refunding_info['weizoom_card_money'] for delivery_item in order.delivery_items if
+						[delivery_item.refunding_info['member_card_money'] for delivery_item in order.delivery_items if
 						 delivery_item.refunding_info['finished']]),
 					'integral_money': sum(
 						[delivery_item.refunding_info['integral_money'] for delivery_item in order.delivery_items if
@@ -472,17 +487,17 @@ class Order(business_model.Model):
 	def __fill_full_money_info(orders, order_ids):
 
 		for order in orders:
-			order.origin_weizoom_card_money = order.weizoom_card_money + order.refunding_info[
-				'weizoom_card_money']
-			order.origin_member_card_money = order.weizoom_card_money + order.refunding_info[
-				'member_card_money']
-			order.origin_final_price = order.final_price + order.refunding_info['cash']
+			order.origin_weizoom_card_money = round(order.weizoom_card_money + order.refunding_info[
+				'weizoom_card_money'], 2)
+			order.origin_member_card_money = round(order.member_card_money + order.refunding_info[
+				'member_card_money'], 2)
+			order.origin_final_price = round(order.final_price + order.refunding_info['cash'], 2)
 
 			total_product_origin_price = order.__get_total_origin_product_price()
 			order.save_money = round(
 				(float(total_product_origin_price) + float(order.postage) - float(
-				order.origin_final_price) - float(order.origin_weizoom_card_money)
-			                          - float(order.origin_member_card_money)),2)
+					order.origin_final_price) - float(order.origin_weizoom_card_money) - float(
+					order.origin_member_card_money)), 2)
 
 	@staticmethod
 	def __fill_operation_logs(orders, order_ids):
@@ -542,17 +557,6 @@ class Order(business_model.Model):
 
 	def pay(self, corp):
 		"""
-		影响：
-		- 更新订单状态
-		- 更新支付时间
-		- 更新买家的首单信息
-		- 支付出货单
-		- 记录状态日志
-		- 记录操作日志
-
-		- 更新销量
-		- 发送模板消息
-		- 发送运营邮件通知
 		@param corp:
 		@return:
 		"""
@@ -578,7 +582,16 @@ class Order(business_model.Model):
 		self.__recode_status_log(self.bid, corp.username, from_status, to_status)
 		self.__save()
 
-		Order.__fill_delivery_items([self], None)
+		fill_options = {
+			'with_products': True
+		}
+		Order.__fill_delivery_items([self], fill_options)
+
+		delivery_item_products = self.get_all_products()
+		update_product_service = UpdateProductService.get(corp)
+
+		for product in delivery_item_products:
+			update_product_service.update_product_sale(product.id, product.count)
 
 		for delivery_item in self.delivery_items:
 			delivery_item.pay(payment_time, corp)
@@ -613,6 +626,19 @@ class Order(business_model.Model):
 		if self.status != mall_models.ORDER_STATUS_NOT:
 			return False, 'Error Status'
 
+		# 关闭微信交易单
+		if self.pay_interface_type == mall_models.PAY_INTERFACE_WEIXIN_PAY and not settings.IS_UNDER_BDD:
+			resp = Resource.use("pay_misc_tools").delete({
+				'data': {'order_bids': json.dumps([self.bid])},
+
+				'resource': 'weixin.trade_order'
+			})
+
+			if resp and resp['code'] == 200 and resp['data']['result'][self.bid]:
+				pass
+			else:
+				return False, 'close weixin pay order fail'
+
 		action_text = u"取消订单"
 		from_status = self.status
 		to_status = mall_models.ORDER_STATUS_CANCEL
@@ -626,7 +652,8 @@ class Order(business_model.Model):
 
 		for delivery_item in self.delivery_items:
 			delivery_item.cancel(corp)
-
+		release_order_resource_service = ReleaseOrderResourceService.get(corp)
+		release_order_resource_service.release(self.id, from_status, to_status)
 		self.__send_msg_to_topic('order_cancelled', from_status, to_status)
 		return True, ''
 
@@ -646,6 +673,15 @@ class Order(business_model.Model):
 			self.__record_operation_log(self.bid, corp.username, action_text)
 			self.__recode_status_log(self.bid, corp.username, from_status, to_status)
 			self.__save()
+
+		Order.__fill_member_info([self], None)
+
+		member = self.context['member']
+
+		member.update_pay_info(self, from_status, to_status)
+		member.auto_update_grade()
+		member.increase_integral_after_finish_order(self)
+		MemberSpread.process_order_from_spread({'order_id': self.id})
 
 		self.__send_msg_to_topic('order_finished', from_status, to_status)
 		return True, ''
@@ -689,6 +725,13 @@ class Order(business_model.Model):
 			self.__recode_status_log(self.bid, corp.username, from_status, to_status)
 			self.__save()
 
+		Order.__fill_member_info([self], None)
+
+		member = self.context['member']
+
+		member.update_pay_info(self, from_status, to_status)
+		member.auto_update_grade()
+
 		self.__send_msg_to_topic('order_applied_for_refunding', from_status, to_status)
 		return True, ''
 
@@ -709,7 +752,12 @@ class Order(business_model.Model):
 			self.__record_operation_log(self.bid, corp.username, action_text)
 			self.__recode_status_log(self.bid, corp.username, from_status, to_status)
 			self.__save()
+		Order.__fill_member_info([self], None)
 
+		member = self.context['member']
+
+		member.update_pay_info(self, from_status, to_status)
+		member.auto_update_grade()
 		self.__send_msg_to_topic('order_refunded', from_status, to_status)
 		return True, ''
 

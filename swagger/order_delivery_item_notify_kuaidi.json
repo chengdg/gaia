@@ -1,0 +1,49 @@
+{
+	"swagger": "2.0",
+	"info": {
+		"version": "0.0.1",
+		"title": "zeus API doc"
+	},
+	"paths": {
+		"/delivery_item/notify_kuaidi": {
+			"put": {
+				"summary": "快递订阅",
+				"parameters": [
+					{
+						"name": "corp_id",
+						"required": true
+					},
+					{
+						"name": "delivery_item_id",
+						"required": true
+					}
+				],
+				"tags": [
+					"order"
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"code": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"data": {
+								},
+								"errMsg": {
+									"type": "string"
+								},
+								"innerErrMsg": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
