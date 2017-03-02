@@ -34,7 +34,10 @@ class GlobalProductRepository(business_model.Service):
 		db_models = mall_models.Product.select().dj_where(is_deleted=False)
 
 		if query_dict['corp'].is_weizoom_corp():
-			db_models = db_models.dj_where(status__in=[mall_models.PRODUCT_STATUS['SUBMIT'], mall_models.PRODUCT_STATUS['REFUSED']])
+			db_models = db_models.where(
+				(mall_models.Product.status << [mall_models.PRODUCT_STATUS['SUBMIT'], mall_models.PRODUCT_STATUS['REFUSED']])
+				| (mall_models.Product.is_accepted == True)
+			)
 		else:
 			db_models = db_models.dj_where(owner_id=query_dict['corp'].id)
 
@@ -56,7 +59,7 @@ class GlobalProductRepository(business_model.Service):
 			if status == self.FILTER_CONST['ALL']:
 				pass
 			if status in [self.FILTER_CONST['NOT_YET'], self.FILTER_CONST['SUBMIT']]:
-				db_models = db_models.dj_where(status=status)
+				db_models = db_models.dj_where(status=status, is_accepted=False)
 			elif status == self.FILTER_CONST['POOL_REFUSED']:
 				db_models = db_models.dj_where(status=mall_models.PRODUCT_STATUS['REFUSED'], is_accepted=False)
 			elif status == self.FILTER_CONST['UPDATE_REFUSED']:
