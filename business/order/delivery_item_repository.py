@@ -44,8 +44,7 @@ class DeliveryItemRepository(business_model.Model):
 
 
 	def get_delivery_items(self, filters, page_info, fill_options=None):
-		db_models = self.__get_db_models_for_corp()
-		db_models = db_models.dj_where(supplier=self.corp.id)
+		db_models = mall_models.Order.select().dj_where(supplier=self.corp.id, origin_order_id__gt=0)
 		pageinfo, db_models = paginator.paginate(db_models, page_info.cur_page, page_info.count_per_page)
 		delivery_items = DeliveryItem.from_models(
 			{"models": db_models, 'fill_options': fill_options, 'corp': self.corp})
