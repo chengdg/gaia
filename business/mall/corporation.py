@@ -122,7 +122,7 @@ class Corporation(business_model.Model):
 				self.settlement_type = corp_model.settlement_type
 				self.divide_rebate = corp_model.divide_rebate
 		else:
-			corp_model = account_model.CorpInfo.select().dj_where(id=self.id).first()
+			corp_model = account_model.CorpInfo.select().dj_where(corp_id=self.id).first()
 			if corp_model:
 				self.name = corp_model.name
 				self.company_name = corp_model.company_name
@@ -163,13 +163,13 @@ class Corporation(business_model.Model):
 			if not field_value == None:
 				update_data[field_name] = field_value
 
-		account_model.CorpInfo.update(**update_data).dj_where(id=self.id).execute()
+		account_model.CorpInfo.update(**update_data).dj_where(corp_id=self.id).execute()
 
 	def update(self, args):
-		corp_model = account_model.CorpInfo.select().dj_where(id=self.id).first()
+		corp_model = account_model.CorpInfo.select().dj_where(corp_id=self.id).first()
 		if not corp_model:
 			account_model.CorpInfo.create(
-				id = self.id,
+				corp_id = self.id,
 				status = True
 			)
 		self.update_base_info(args)

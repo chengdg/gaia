@@ -110,6 +110,7 @@ class CorpInfo(models.Model):
 	"""
 	corp详情
 	"""
+	corp_id = models.IntegerField(default=0)
 	name = models.CharField(max_length=32, default='')	#公司简称(店铺名)
 	company_name = models.CharField(max_length=32, default='')	#公司全称
 	settlement_type = models.IntegerField(default=CORP_DIVIDE_TYPE_FIXED) #采购方式
@@ -134,7 +135,6 @@ class CorpInfo(models.Model):
 
 	class Meta(object):
 		db_table = "account_corp_info"
-		auto_increment = False #不使用自动创建的id
 
 class GaiaApp(models.Model):
 	"""

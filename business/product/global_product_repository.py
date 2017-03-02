@@ -34,10 +34,7 @@ class GlobalProductRepository(business_model.Service):
 		db_models = mall_models.Product.select().dj_where(is_deleted=False)
 
 		if query_dict['corp'].is_weizoom_corp():
-			db_models = db_models.where(
-				(mall_models.Product.status << [mall_models.PRODUCT_STATUS['SUBMIT'], mall_models.PRODUCT_STATUS['REFUSED']])
-				| (mall_models.Product.is_accepted == True)
-			)
+			db_models = db_models.dj_where(status__in=[mall_models.PRODUCT_STATUS['SUBMIT'], mall_models.PRODUCT_STATUS['REFUSED']])
 		else:
 			db_models = db_models.dj_where(owner_id=query_dict['corp'].id)
 
