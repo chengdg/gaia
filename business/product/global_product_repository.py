@@ -34,7 +34,7 @@ class GlobalProductRepository(business_model.Service):
 		db_models = mall_models.Product.select().dj_where(is_deleted=False)
 
 		if query_dict['corp'].is_weizoom_corp():
-			if query_dict.get('verified', 'false') == 'true':
+			if query_dict.get('verified'):
 				product_pool_ids = [p.product_id for p in mall_models.ProductPool.select().dj_where(
 					woid=query_dict['corp'].id,
 				  	type=mall_models.PP_TYPE_SYNC,
