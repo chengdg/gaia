@@ -34,10 +34,15 @@ class GlobalProductRepository(business_model.Service):
 		db_models = mall_models.Product.select().dj_where(is_deleted=False)
 
 		if query_dict['corp'].is_weizoom_corp():
-			db_models = db_models.where(
-				(mall_models.Product.status << [mall_models.PRODUCT_STATUS['SUBMIT'], mall_models.PRODUCT_STATUS['REFUSED']])
-				| (mall_models.Product.is_accepted == True)
-			)
+			if query_dict.get('verified', 'false') == 'true':
+				product_pool_ids = [p.product_id for p in mall_models.ProductPool.select().dj_where(
+					woid=query_dict['corp'].id,
+				  	type=mall_models.PP_TYPE_SYNC,
+				  	status__not=mall_models.PP_STATUS_DELETE
+			  	)]
+				db_models = db_models.dj_where(id__in=product_pool_ids, is_accepted=True)
+			else:
+				db_models = db_models.dj_where(status__in = [mall_models.PRODUCT_STATUS['SUBMIT'], mall_models.PRODUCT_STATUS['REFUSED']])
 		else:
 			db_models = db_models.dj_where(owner_id=query_dict['corp'].id)
 
