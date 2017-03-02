@@ -12,6 +12,7 @@ class EncodeDeliveryItemService(business_model.Service):
 			'webapp_user_id': delivery_item.webapp_user_id,
 			'postage': delivery_item.postage,
 			'status_code': delivery_item.status_code,
+			'final_price': delivery_item.final_price,
 			'payment_time': delivery_item.payment_time,
 			'area': delivery_item.area,
 			'ship_name': delivery_item.ship_name,

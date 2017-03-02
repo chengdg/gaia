@@ -379,6 +379,14 @@
 														"type": "integer",
 														"description": "订单主键id"
 													},
+													"final_price": {
+														"type": "float",
+														"description": "实际付款金额"
+													},
+													"payment_time": {
+														"type": "string",
+														"description": "付款时间"
+													},
 													"id": {
 														"type": "integer",
 														"description": "主键id"

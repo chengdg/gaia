@@ -357,6 +357,7 @@ class FillProductDetailService(business_model.Service):
 			with_classification: 填充所有商品分类详情
 			with_sales: 填充商品销售详情
 			with_cps_promotion_info: 填充商品cps推广信息
+			with_product_label: 填充商品标签
 		"""
 		if len(products) == 0:
 			return

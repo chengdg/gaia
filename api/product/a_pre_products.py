@@ -23,6 +23,8 @@ class APreProducts(api_resource.ApiResource):
 			'with_product_model': True,
 			'with_model_property_info': True,
 			'with_classification': True,
+			'with_product_label': True,
+			'with_sales': True
 		}
 		page_info = PageInfo.create({
 			"cur_page": int(args.get('cur_page', 1)),
@@ -44,7 +46,7 @@ class APreProducts(api_resource.ApiResource):
 				'has_multi_models': pre_product.has_multi_models,
 				'name': pre_product.name,
 				'price_info': pre_product.price_info,
-				'total_sales': 0, #TODO 获取已入库商品的销量
+				'total_sales': pre_product.sales,
 				'stocks': pre_product.stocks,
 				'status': pre_product.status,
 				'classification_nav': pre_product.classification_nav,
@@ -54,7 +56,7 @@ class APreProducts(api_resource.ApiResource):
 				'detail': pre_product.detail,
 				'created_at': pre_product.created_at.strftime('%Y-%m-%d %H:%M:%S'),
 				'images': pre_product.swipe_images,
-				'label_names': [] #TODO 商品标签
+				'label_names': [label.name for label in pre_product.labels]
 			})
 		return {
 			'rows': rows,

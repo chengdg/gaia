@@ -34,6 +34,7 @@ class DeliveryItem(business_model.Model):
 		'express_number',
 		'leader_name',
 		'created_at',
+		'final_price',
 		'payment_time',
 		'area',
 		'ship_name',
@@ -80,6 +81,7 @@ class DeliveryItem(business_model.Model):
 		self.status_code = mall_models.ORDER_STATUS2MEANINGFUL_WORD[self.status]
 
 		self.payment_time = db_model.payment_time
+		self.final_price = db_model.final_price
 		self.area = db_model.area
 		self.supplier_id = db_model.supplier
 		self.ship_name = db_model.ship_name
