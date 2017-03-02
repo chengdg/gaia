@@ -17,7 +17,7 @@ class ASupplierDeliveryItems(api_resource.ApiResource):
 	app = 'order'
 	resource = 'supplier_deliver_items'
 
-	@param_required(['corp'])
+	@param_required(['corp_id'])
 	def get(args):
 		filters = json.loads(args.get('filters', '{}'))
 

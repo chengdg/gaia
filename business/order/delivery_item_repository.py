@@ -43,19 +43,19 @@ class DeliveryItemRepository(business_model.Model):
 			return None
 
 
-	def get_delivery_items(self, id, fill_options=None,role_type=''):
+	def get_delivery_items(self, filters, page_info, fill_options=None):
 		db_models = self.__get_db_models_for_corp()
 		db_models = db_models.dj_where(supplier=self.corp.id)
+		pageinfo, db_models = paginator.paginate(db_models, page_info.cur_page, page_info.count_per_page)
 		delivery_items = DeliveryItem.from_models(
 			{"models": db_models, 'fill_options': fill_options, 'corp': self.corp})
 
-		return delivery_items
+		return pageinfo, delivery_items
 
 
 	def get_delivery_item_by_bid(self, bid, fill_options=None):
 		db_models = self.__get_db_models_for_corp()
 		db_models = db_models.dj_where(order_id=bid)
-		print(db_models.count())
 
 		delivery_items = DeliveryItem.from_models(
 			{"models": db_models, 'fill_options': fill_options, 'corp': self.corp})
