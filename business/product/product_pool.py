@@ -2,6 +2,7 @@
 # -*- utf-8 -*-
 
 import copy
+import itertools
 
 from eaglet.decorator import param_required
 from eaglet.core import paginator
@@ -14,6 +15,7 @@ from gaia_conf import TOPIC
 from fill_product_detail_service import FillProductDetailService
 from business.mall.corporation_factory import CorporationFactory
 from business.common.filter_parser import FilterParser
+from eaglet.core.db import models as eaglet_db
 
 NEW_PRODUCT_DISPLAY_INDEX = 9999999
 
@@ -501,3 +503,29 @@ class ProductPool(business_model.Model):
 	def search_products_by_filters(self, **filters):
 		product_models = mall_models.Product.select().dj_where(**filters)
 		return [Product(product_model) for product_model in product_models]
+
+	def get_simple_effective_products(self):
+		"""
+		获取所有有效商品简单信息
+		"""
+		
+		# effective_products = mall_models.Product.select(mall_models.Product.id,
+		# 												mall_models.Product.name)\
+		# 	.where(mall_models.Product.is_deleted==False)
+		
+		raw_sql = """
+			select id, name from mall_product where is_deleted=false
+		"""
+		db = eaglet_db.db
+		cursor = db.execute_sql(raw_sql, ())
+		
+		products = []
+		for index, row in enumerate(cursor.fetchall()):
+			
+			db_product = mall_models.Product()
+			
+			db_product.id = row[0]
+			db_product.name = row[1]
+		
+			products.append(Product(db_product))
+		return products

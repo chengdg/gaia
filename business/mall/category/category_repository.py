@@ -86,3 +86,17 @@ class CategoryRepository(business_model.Service):
 
 		for category_id in category_ids:
 			Category.update_product_count(category_id)
+
+	def get_product_categories(self, product_id):
+		"""
+		商品所在分组
+		"""
+		relations = mall_models.CategoryHasProduct.select().dj_where(product_id=product_id)
+		results = []
+		for relation in relations:
+			db_category = mall_models.ProductCategory()
+			db_category.id = relation.category_id
+			db_category.owner = relation.category.owner_id
+			results.append(Category(db_category))
+		return results
+			

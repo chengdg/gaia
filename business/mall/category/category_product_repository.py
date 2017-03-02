@@ -155,3 +155,17 @@ class CategoryProductRepository(object):
 			category_products.append(category_product)
 
 		return category_products, pageinfo
+	
+	
+	def get_simple_products_for_category(self, category_id):
+		"""
+		获取分组下的所有简单商品数据
+		"""
+		product_relations = mall_models.CategoryHasProduct.select().dj_where(category_id=category_id)
+		results = []
+		for relation in product_relations:
+			product = mall_models.Product()
+			product.id = relation.product_id
+			results.append(Product(product))
+		return results
+		
