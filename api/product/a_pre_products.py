@@ -14,7 +14,7 @@ class APreProducts(api_resource.ApiResource):
 	app = "product"
 	resource = "pre_products"
 
-	@param_required(['corp_id', '?verified:json'])
+	@param_required(['corp_id', '?verified:bool'])
 	def get(args):
 
 		fill_options = {
