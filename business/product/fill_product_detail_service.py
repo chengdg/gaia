@@ -272,6 +272,32 @@ class FillProductDetailService(business_model.Service):
 			for label_id in product_label_ids:
 				product.labels.append(id2label[label_id])
 
+		# 增加分类中的标签
+		product_id2classifications = dict()
+		all_classification_ids = set()
+		for relation in mall_models.ClassificationHasProduct.select().dj_where(product_id__in=product_ids):
+			if not product_id2classifications.has_key(relation.product_id):
+				product_id2classifications[relation.product_id] = [relation.classification_id]
+			else:
+				product_id2classifications[relation.product_id].append(relation.classification_id)
+			all_classification_ids.add(relation.classification_id)
+		classification_id2labels = dict()
+		for relation in mall_models.ClassificationHasLabel.select().dj_where(
+			classification_id__in=list(all_classification_ids)):
+			if not classification_id2labels.has_key(relation.classification_id):
+				classification_id2labels[relation.classification_id] = [relation.label_id]
+			else:
+				classification_id2labels[relation.classification_id].append(relation.label_id)
+
+		for product in products:
+			classification_ids = product_id2classifications[product.id]
+			label_ids = []
+			for classification_id in classification_ids:
+				label_ids += classification_id2labels[classification_id]
+			labels = ProductLabelRepository.get(None).get_labels(label_ids)
+
+			product.labels += labels
+
 	def __fill_sales_detail(slef, corp, products, product_ids, id2product):
 		"""填充商品销售情况相关细节
 		"""

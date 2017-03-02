@@ -7,7 +7,7 @@ from business.mall.product_classification.product_classification import ProductC
 
 class ProductClassificationRepository(business_model.Service):
 	def get_product_classifications(self):
-		models = mall_models.Classification.select().dj_where(status=mall_models.CLASSIFICATION_ONLINE)
+		models = mall_models.Classification.select().dj_where(status=mall_models.CLASSIFICATION_ONLINE).order_by(-mall_models.Classification.created_at)
 		return [ProductClassification(model) for model in models]
 
 	def get_product_classification(self, id):
@@ -23,7 +23,7 @@ class ProductClassificationRepository(business_model.Service):
 		获得下一级子分类集合
 		"""
 		models = mall_models.Classification.select().dj_where(father_id=father_id)\
-			.dj_where(status=mall_models.CLASSIFICATION_ONLINE)
+			.dj_where(status=mall_models.CLASSIFICATION_ONLINE).order_by(-mall_models.Classification.created_at)
 		return [ProductClassification(model) for model in models]
 
 	def check_labels(self, classifications, has_label_dict=None):
