@@ -99,6 +99,11 @@ class DeliveryItem(business_model.Model):
 		self.with_logistics = bool(db_model.express_company_name)
 		self.context['db_model'] = db_model
 
+	@property
+	def area_text(self):
+		from util.regional_util import get_str_value_by_string_ids
+		return get_str_value_by_string_ids(self.area)
+
 	@cached_context_property
 	def product_statistics_info(self):
 		if not self.products:

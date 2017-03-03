@@ -15,6 +15,7 @@ class EncodeDeliveryItemService(business_model.Service):
 			'final_price': delivery_item.final_price,
 			'payment_time': delivery_item.payment_time,
 			'area': delivery_item.area,
+			'area_text': delivery_item.area_text,
 			'ship_tel': delivery_item.ship_tel,
 			'ship_address': delivery_item.ship_address,
 			'ship_name': delivery_item.ship_name,
