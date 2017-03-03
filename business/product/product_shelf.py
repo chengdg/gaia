@@ -195,7 +195,7 @@ class ProductShelf(business_model.Model):
 
 		return products, pageinfo
 
-	def get_simple_products(self):
+	def get_product_pool_entries(self):
 		"""
 		获取货架上所有商品
 		"""
@@ -210,3 +210,19 @@ class ProductShelf(business_model.Model):
 			result.append(ProductPoolEntry(pool))
 		# result.sort(key=lambda k: (k.display_index, k.sync_at, k.id))
 		return result
+		
+	def get_simple_products(self, product_ids):
+		"""
+		
+		"""
+		# options = {
+		# 	'order_options': ['display_index', '-onshelf_time', '-id']
+		# }
+		fill_options = {
+			'with_product_model': True,
+			'with_image': True,
+		}
+		products = self.corp.product_pool.get_products_by_ids(product_ids=product_ids, fill_options=fill_options)
+		return products
+		
+		
