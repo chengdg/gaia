@@ -293,7 +293,7 @@ class FillProductDetailService(business_model.Service):
 			classification_ids = product_id2classifications[product.id]
 			label_ids = []
 			for classification_id in classification_ids:
-				label_ids += classification_id2labels[classification_id]
+				label_ids += classification_id2labels.get(classification_id, [])
 			labels = ProductLabelRepository.get(None).get_labels(label_ids)
 
 			product.labels += labels

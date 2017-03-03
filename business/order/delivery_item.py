@@ -37,6 +37,7 @@ class DeliveryItem(business_model.Model):
 		'final_price',
 		'payment_time',
 		'area',
+		'ship_tel',
 		'ship_name',
 		'supplier_id',
 		'ship_address',
@@ -85,6 +86,7 @@ class DeliveryItem(business_model.Model):
 		self.area = db_model.area
 		self.supplier_id = db_model.supplier
 		self.ship_name = db_model.ship_name
+		self.ship_tel = db_model.ship_tel
 		self.ship_address = db_model.ship_address
 		self.customer_message = db_model.customer_message
 
