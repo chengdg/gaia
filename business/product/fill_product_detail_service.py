@@ -254,49 +254,9 @@ class FillProductDetailService(business_model.Service):
 		"""
 		填充商品标签的信息
 		"""
-		relations = mall_models.ProductHasLabel.select().dj_where(product_id__in=product_ids,
-																  label_id__gt=0)
-		label_ids = []
-		product_id2label_ids = {}
-		for relation in relations:
-			label_ids.append(relation.label_id)
-			product_id2label_ids.setdefault(relation.product_id, []).append(relation.label_id)
-
-		labels = ProductLabelRepository.get(None).get_labels(label_ids)
-		id2label = dict([(label.id, label)for label in labels])
+		relation = ProductLabelRepository.get().get_label_product_relations(product_ids)
 		for product in products:
-			product.labels = []
-			if product.id not in product_id2label_ids:
-				continue
-			product_label_ids = product_id2label_ids[product.id]
-			for label_id in product_label_ids:
-				product.labels.append(id2label[label_id])
-
-		# 增加分类中的标签
-		product_id2classifications = dict()
-		all_classification_ids = set()
-		for relation in mall_models.ClassificationHasProduct.select().dj_where(product_id__in=product_ids):
-			if not product_id2classifications.has_key(relation.product_id):
-				product_id2classifications[relation.product_id] = [relation.classification_id]
-			else:
-				product_id2classifications[relation.product_id].append(relation.classification_id)
-			all_classification_ids.add(relation.classification_id)
-		classification_id2labels = dict()
-		for relation in mall_models.ClassificationHasLabel.select().dj_where(
-			classification_id__in=list(all_classification_ids)):
-			if not classification_id2labels.has_key(relation.classification_id):
-				classification_id2labels[relation.classification_id] = [relation.label_id]
-			else:
-				classification_id2labels[relation.classification_id].append(relation.label_id)
-
-		for product in products:
-			classification_ids = product_id2classifications[product.id]
-			label_ids = []
-			for classification_id in classification_ids:
-				label_ids += classification_id2labels.get(classification_id, [])
-			labels = ProductLabelRepository.get(None).get_labels(label_ids)
-
-			product.labels += labels
+			product.labels = relation.get(product.id, [])
 
 	def __fill_sales_detail(slef, corp, products, product_ids, id2product):
 		"""填充商品销售情况相关细节

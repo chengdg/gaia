@@ -23,7 +23,7 @@ class APreProducts(api_resource.ApiResource):
 			'with_product_model': True,
 			'with_model_property_info': True,
 			'with_classification': True,
-			'with_product_label': True,
+			'with_product_label': True if args['corp'].is_weizoom_corp() else False,
 			'with_sales': True
 		}
 		page_info = PageInfo.create({
