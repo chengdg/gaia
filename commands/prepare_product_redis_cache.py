@@ -99,5 +99,21 @@ class Command(BaseCommand):
 			print '<<', product_id
 		pipeline.execute()
 		print '<-----------prepare product in categories end------------------------!'
-
 		
+		print '<-----------prepare products end------------------------!'
+		
+		# 预热所有商品列表分组信息
+		
+		self_accounts = account_models.UserProfile.select().dj_where(webapp_type=1)
+		print 'starting..... prepare..... category{0}!'
+		pipeline = conn.pipeline()
+		for account in self_accounts:
+			temp_key = '{wo:%s}_{co:%s}_products' % (account.user_id, 0)
+			# 所有上架商品id
+			on_shelf_product_ids = [pool.product_id for pool in mall_models.ProductPool.select().dj_where(woid=account.user_id,
+																			  status=mall_models.PP_STATUS_ON)]
+			if on_shelf_product_ids:
+				pipeline.sadd(temp_key, *on_shelf_product_ids)
+			print '>>%s' % account.id
+		pipeline.execute()
+		print '<-----------prepare categories{0} end------------------------!'
