@@ -433,7 +433,7 @@ Scenario:5 修改商品的定制商品规格
 		"""
 
 
-@gaia @mall @mall.product @mall.product_management @wip
+@gaia @mall @mall.product @mall.product_management
 Scenario:6 修改商品分组信息
 	jobs进行如下操作：
 	1. 对已经有分组的商品，对分组进行删除、新增
