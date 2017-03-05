@@ -13,6 +13,10 @@ class Corporation(object):
 		_account_user_profile = account_models.UserProfile.select().dj_where(user_id=self.id).first()
 		return _account_user_profile.webapp_type == account_models.WEBAPP_TYPE_WEIZOOM
 
+	@property
+	def webapp_id(self):
+		_account_user_profile = account_models.UserProfile.select().dj_where(user_id=self.id).first()
+		return _account_user_profile.webapp_id
 
 @given(u"{user}登录系统")
 def step_impl(context, user):

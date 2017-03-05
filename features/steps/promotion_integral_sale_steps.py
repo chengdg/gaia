@@ -5,6 +5,7 @@ from features.util import bdd_util
 from behave import *
 from db.mall import models as mall_models
 from db.mall import promotion_models
+from db.member import models as member_models
 
 
 def __add_integral_sale_promotion(context, user):
@@ -110,11 +111,21 @@ def step_impl(context, user):
         "end_date": promotion_data.get('end_date', '2017-01-02 00:00')
     }
 
+    #确定积分应用的详情信息
     detail_info = {
         "is_permanant_active": promotion_data.get("is_permanant_active", False),
-        "rule_info": promotion_data.get("rule_info")
     }
+    rule_info = promotion_data.get("rule_info")
+    if rule_info['type'] == 'fixed':
+        #固定的统一折扣
+        pass
+    else:
+        for rule in rule_info['rules']:
+            member_grade = member_models.MemberGrade.select().dj_where(webapp_id=context.corp.webapp_id, name=rule['member_grade']).get()
+            rule['member_grade_id'] = member_grade.id
+    detail_info['rule_info'] = rule_info
 
+    #确定商品信息
     product_ids = []
     for product_name in promotion_data['products']:
         product = mall_models.Product.select().dj_where(name=product_name).get()
@@ -135,16 +146,88 @@ def step_impl(context, user):
     bdd_util.assert_api_call_success(response)
 
 
-@then(u"{user}根据商品名搜索到新创建的买赠活动2")
+@then(u"{user}能获得积分应用活动'{promotion_name}'的详情")
+def step_impl(context, user, promotion_name):
+    promotion_model = promotion_models.Promotion.select().dj_where(name=promotion_name).get()
+
+    url = '/promotion/integral_sale_promotion/?corp_id=%s&id=%s' % (context.corp.id, promotion_model.id)
+    response = context.client.get(url)
+
+    #通用promotion信息
+    promotion_info = response.data['promotion_info']
+    actual = {
+        "name": promotion_info['name'],
+        "promotion_title": promotion_info['promotion_title'],
+        "start_date": promotion_info["start_date"],
+        "end_date": promotion_info["end_date"]
+    }
+
+    #integral sale的detail信息
+    detail = response.data['detail']
+    actual["is_permanant_active"] = detail['is_permanant_active']
+
+    rule_info = {"type": detail["rule_type"]}
+    actual["rule_info"] = rule_info
+    if rule_info['type'] == 'fixed':
+        rule = detail['rules'][0]
+        rule_info['discount'] = rule['discount']
+        rule_info['discount_money'] = rule['discount_money']
+    else:
+        for rule in detail['rules']:
+            member_grade = member_models.MemberGrade.select().dj_where(webapp_id=context.corp.webapp_id, id=rule['member_grade_id']).get()
+            rule['member_grade'] = member_grade.name
+        rule_info['rules'] = detail['rules']
+
+    #商品信息
+    products_info = response.data['products_info']
+    products = [product_info['name'] for product_info in products_info]
+    actual['products'] = products
+
+    expected = json.loads(context.text)
+
+    bdd_util.assert_dict(expected, actual)
+
+@then(u"{user}能获得积分应用活动列表")
 def step_impl(context, user):
-    __search_premium_sale_promotion(context, user)
+    url = '/promotion/integral_sale_promotions/?corp_id=%s' % context.corp.id
+    response = context.client.get(url)
 
+    integral_sales = response.data['integral_sale_promotions']
 
-@when(u"{user}结束买赠活动2")
-def step_impl(context, user):
-    __off_premium_sale_promotion(context, user)
+    actual = []
+    for integral_sale in integral_sales:
+        #通用promotion信息
+        promotion_info = integral_sale['promotion_info']
+        one_actual_data = {
+            "name": promotion_info['name'],
+            "promotion_title": promotion_info['promotion_title'],
+            "start_date": promotion_info["start_date"],
+            "end_date": promotion_info["end_date"]
+        }
 
+        #integral sale的detail信息
+        detail = integral_sale['detail']
+        one_actual_data["is_permanant_active"] = detail['is_permanant_active']
 
-@then(u"{user}查看买赠活动'{promotion_name}'状态2是'{promotion_status}'")
-def step_impl(context, user, promotion_name, promotion_status):
-    __get_promotion_info(context, user, promotion_name, promotion_status)
+        rule_info = {"type": detail["rule_type"]}
+        one_actual_data["rule_info"] = rule_info
+        if rule_info['type'] == 'fixed':
+            rule = detail['rules'][0]
+            rule_info['discount'] = rule['discount']
+            rule_info['discount_money'] = rule['discount_money']
+        else:
+            for rule in detail['rules']:
+                member_grade = member_models.MemberGrade.select().dj_where(webapp_id=context.corp.webapp_id, id=rule['member_grade_id']).get()
+                rule['member_grade'] = member_grade.name
+            rule_info['rules'] = detail['rules']
+
+        #商品信息
+        products_info = integral_sale['products_info']
+        products = [product_info['name'] for product_info in products_info]
+        one_actual_data['products'] = products
+
+        actual.append(one_actual_data)
+
+    expected = json.loads(context.text)
+
+    bdd_util.assert_dict(expected, actual)

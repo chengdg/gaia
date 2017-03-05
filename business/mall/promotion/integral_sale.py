@@ -31,7 +31,14 @@ class IntegralSale(business_model.Model):
 			self.rules = []
 
 		rule = IntegralSaleRule(integral_sale_rule_model)
-		self.rules.append(rule.to_dict())
+		self.rules.append(rule)
+
+	@property
+	def rule_type(self):
+		if len(self.rules) == 1 and self.rules[0].member_grade_id == -1:
+			return 'fixed'
+		else:
+			return 'individual'
 
 	def calculate_discount(self):
 		"""
@@ -42,14 +49,14 @@ class IntegralSale(business_model.Model):
 			discount_money = 0
 		elif len(self.rules) == 1:
 			rule = self.rules[0]
-			discount = str(rule['discount']) + '%'
-			discount_money = "%.2f" % rule['discount_money']
+			discount = str(rule.discount) + '%'
+			discount_money = "%.2f" % rule.discount_money
 		else:
-			discounts = [rule['discount'] for rule in self.rules]
+			discounts = [rule.discount for rule in self.rules]
 			max_discount = max(discounts)
 			min_discount = min(discounts)
 
-			discount_moneys = [rule['discount_money'] for rule in self.rules]
+			discount_moneys = [rule.discount_money for rule in self.rules]
 			max_discount_money = max(discount_moneys)
 			min_discount_money = min(discount_moneys)
 

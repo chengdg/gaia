@@ -11,7 +11,7 @@ from business.member.member import Member
 
 class AMemberGrades(api_resource.ApiResource):
     """
-    获取corp的member grade集合
+    会员等级集合
     """
     app = "member"
     resource = "member_grades"
@@ -29,7 +29,8 @@ class AMemberGrades(api_resource.ApiResource):
                 'is_default_grade': member_grade.is_default_grade,
                 'is_auto_upgrade': member_grade.is_auto_upgrade,
                 'pay_money': member_grade.pay_money,
-                'pay_times': member_grade.pay_times
+                'pay_times': member_grade.pay_times,
+                'shop_discount': member_grade.shop_discount
             })
         
         return {

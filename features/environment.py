@@ -87,6 +87,8 @@ def before_all(context):
 	settings.DUMP_API_CALL_RESULT = False
 	settings.ENABLE_BDD_DUMP_RESPONSE = False
 
+	#设置message broker
+
 	#启动weapp下的bdd server
 	#print u'TODO2: 启动weapp下的bdd server'
 	logging.warning(u'TODO2: 启动weapp下的bdd server')

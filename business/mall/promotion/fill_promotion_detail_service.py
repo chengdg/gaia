@@ -42,11 +42,15 @@ class FillPromotionDetailService(busniess_model.Service):
 			detail_id2promotion[integral_sale_detail_id] = promotion
 
 		integral_sale_models = promotion_models.IntegralSale.select().dj_where(id__in=integral_sale_ids)
-		integral_sale_id2integral_sale_rules = dict([(model.integral_sale_id, model) for model in promotion_models.IntegralSaleRule.select().dj_where(integral_sale_id__in=integral_sale_ids)])
+		integral_sale_id2integral_sale_rules = {}
+		for integral_sale_rule in promotion_models.IntegralSaleRule.select().dj_where(integral_sale_id__in=integral_sale_ids):
+			integral_sale_id = integral_sale_rule.integral_sale_id
+			integral_sale_id2integral_sale_rules.setdefault(integral_sale_id, []).append(integral_sale_rule)
 		for model in integral_sale_models:
 			integral_sale = IntegralSale(model)
 			integral_sale_id = model.id
-			integral_sale.add_rule(integral_sale_id2integral_sale_rules[integral_sale_id])
+			for integral_sale_rule in integral_sale_id2integral_sale_rules[integral_sale_id]:
+				integral_sale.add_rule(integral_sale_rule)
 			integral_sale.calculate_discount()
 			detail_id2promotion[integral_sale_id].detail = integral_sale
 
