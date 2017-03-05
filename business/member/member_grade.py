@@ -9,15 +9,15 @@ import math
 from datetime import datetime
 
 from eaglet.decorator import param_required
-#from wapi import wapi_utils
 from eaglet.core.cache import utils as cache_util
 from db.member import models as member_models
-#import resource
 from eaglet.core import watchdog
 from business import model as business_model
+from business.mall.corporation_factory import CorporationFactory
 import settings
 from eaglet.decorator import cached_context_property
 from util import emojicons_util
+
 
 DEFAULT_GRADE_NAME = u'普通会员'
 
@@ -31,7 +31,8 @@ class MemberGrade(business_model.Model):
         'is_default_grade',
         'is_auto_upgrade',
         'pay_money',
-        'pay_times'
+        'pay_times',
+        'shop_discount'
     )
 
     def __init__(self, db_model):
@@ -65,3 +66,20 @@ class MemberGrade(business_model.Model):
                 is_default_grade = True,
                 is_auto_upgrade = True
             )
+
+    @staticmethod
+    def create(args):
+        """
+        创建会员等级
+        """
+        corp = CorporationFactory.get()
+        model = member_models.MemberGrade.create(
+            webapp_id = corp.webapp_id,
+            name = args['name'],
+            is_auto_upgrade = args['is_auto_upgrade'],
+            pay_money = args.get('pay_money', 0.00),
+            pay_times = args.get('pay_times', 0),
+            shop_discount = args['shop_discount']
+        )
+
+        return MemberGrade(model)

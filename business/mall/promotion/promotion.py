@@ -33,9 +33,9 @@ class Promotion(business_model.Model):
         self._init_slot_from_model(model)
 
         if model:
-            self.start_date = self.start_date.strftime("%Y-%m-%d %H:%M:%S")
-            self.end_date = self.end_date.strftime("%Y-%m-%d %H:%M:%S")
-            self.created_at = self.created_at.strftime("%Y-%m-%d %H:%M:%S")
+            self.start_date = self.start_date.strftime("%Y-%m-%d %H:%M")
+            self.end_date = self.end_date.strftime("%Y-%m-%d %H:%M")
+            self.created_at = self.created_at.strftime("%Y-%m-%d %H:%M")
             self.status = self.status if self.status == promotion_models.PROMOTION_STATUS_FINISHED else self.__get_real_status()
             self.type_name = promotion_models.PROMOTION2TYPE.get(self.type, {'name': u'unknown'})['name']
             self.context['detail_id'] = model.detail_id

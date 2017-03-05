@@ -28,6 +28,15 @@ class MemberGradeRepository(business_model.Service):
 		"""
 		获得corp中的所有MemberGrade对象
 		"""
-		db_models = member_models.MemberGrade.select().dj_where(webapp_id=self.corp.webapp_id,).order_by(-member_models.MemberGrade.id)
+		db_models = member_models.MemberGrade.select().dj_where(webapp_id=self.corp.webapp_id)
 
 		return [MemberGrade(db_model) for db_model in db_models]
+
+	def get_member_grade_by_id(self, id):
+		"""
+		根据id获得member grade对象
+		"""
+		model = member_models.MemberGrade.select().dj_where(id=id).get()
+
+		return MemberGrade(model)
+

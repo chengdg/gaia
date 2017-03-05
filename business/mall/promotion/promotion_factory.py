@@ -39,18 +39,20 @@ class PromotionFactory(business_model.Service):
                 owner = self.corp.id,
                 integral_sale = integral_sale,
                 member_grade_id = -1,
-                discount = rule_info['discount_money'],
+                discount = rule_info['discount'],
                 discount_money = rule_info['discount_money']
             )
-        else:
-            for rule in rules:
+        elif rule_info['type'] == 'individual':
+            for rule in rule_info['rules']:
                 promotion_models.IntegralSaleRule.create(
                     owner = self.corp.id,
                     integral_sale = integral_sale,
                     member_grade_id = rule['member_grade_id'],
-                    discount = rule['discount_money'],
+                    discount = rule['discount'],
                     discount_money = rule['discount_money']
                 )
+        else:
+            pass
 
         return integral_sale
 

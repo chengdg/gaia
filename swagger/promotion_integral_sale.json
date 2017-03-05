@@ -1,0 +1,316 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "Integral Sale Promotion API"
+    },
+    "paths": {
+        "/promotion/integral_sale_promotions/": {
+            "get": {
+                "summary": "获取积分应用促销活动列表",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "promotion"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/IntegralSales"
+                        }
+                    }
+                }
+            }
+        },
+        "/promotion/integral_sale_promotion/": {
+            "get": {
+                "summary": "获取单个限时抢购详细信息",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "promotion"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/IntegralSale"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "summary": "创建限时抢购",
+                "parameters": [
+                    {
+                        "name": "",
+                        "in": "body",
+                        "description": "postage config的name",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/NewIntegralSale"
+                        }
+                    }
+                ],
+                "tags": [
+                    "promotion"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "删除限时抢购",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "promotion"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "NewIntegralSale": {
+            "type": "object",
+            "properties": {
+                "corp_id": {
+                    "type": "number",
+                    "description": ""
+                },
+                "promotion_info": {
+                    "type": "object",
+                    "properties": {
+                        "name": {
+                            "type": "string",
+                            "description": ""
+                        },
+                        "promotion_title": {
+                            "type": "string",
+                            "description": "促销广告语"
+                        },
+                        "type": {
+                            "type": "string",
+                            "description": "促销类型"
+                        },
+                        "member_grade": {
+                            "type": "number",
+                            "description": "可参与活动的会员等级"
+                        },
+                        "start_date": {
+                            "type": "string",
+                            "description": "促销开始时间"
+                        },
+                        "end_date": {
+                            "type": "string",
+                            "description": "促销结束时间"
+                        }
+                    }
+                },
+                "detail_info": {
+                    "type": "object",
+                    "properties": {
+                        "is_permanant_active": {
+                            "type": "boolean",
+                            "description": "是否永久生效"
+                        },
+                        "rule_info": {
+                            "type": "object",
+                            "properties": {
+                                "type": {
+                                    "type": "string",
+                                    "description": "折扣规则的类型",
+                                    "format": "可以为: fixed(统一折扣), individual(按会员等级折扣)"
+                                },
+                                "rules": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/IntegralSaleRule"
+                                    },
+                                    "minItems": 0
+                                }
+                            }
+                        }
+                    }
+                },
+                "product_info": {
+                    "type": "object",
+                    "properties": {
+                        "product_ids": {
+                            "type": "array",
+                            "description": "商品id",
+                            "items": {
+                                "type": "number"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "IntegralSales": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/IntegralSale"
+            }
+        },
+        "IntegralSale": {
+            "type": "object",
+            "properties": {
+                "promotion_info": {
+                    "$ref": "#/definitions/PromotionInfo"
+                },
+                "detail_info": {
+                    "$ref": "#/definitions/DetailInfo"
+                },
+                "product_info": {
+                    "$ref": "#/definitions/ProductInfo"
+                }
+            }
+        },
+        "PromotionInfo": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "number",
+                    "description": ""
+                },
+                "name": {
+                    "type": "string",
+                    "description": ""
+                },
+                "status": {
+                    "type": "string",
+                    "description": "促销状态"
+                },
+                "member_grade": {
+                    "type": "number",
+                    "description": "可参与活动的会员等级"
+                },
+                "type": {
+                    "type": "object",
+                    "properties": {
+                        "display_name": {
+                            "type": "string",
+                            "description": "限时名称"
+                        },
+                        "name": {
+                            "type": "string",
+                            "description": ""
+                        }
+                    }
+                },
+                "promotion_title": {
+                    "type": "string",
+                    "description": "促销广告语"
+                },
+                "start_date": {
+                    "type": "string",
+                    "description": "促销开始时间"
+                },
+                "end_date": {
+                    "type": "string",
+                    "description": "促销结束时间"
+                }
+            }
+        },
+        "DetailInfo": {
+            "type": "object",
+            "properties": {
+                "rule_type": {
+                    "type": "string",
+                    "description": "折扣类型",
+                    "format": "'fixed':统一折扣, 'individual':分会员等级折扣"
+                },
+                "is_permanant_active": {
+                    "type": "boolean",
+                    "description": "是否永久生效"
+                },
+                "rules": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/IntegralSaleRule"
+                    },
+                    "minItems": 0
+                }
+            }
+        },
+        "ProductInfo": {
+            "type": "object",
+            "properties": {
+
+            }
+        },
+        "IntegralSaleRule": {
+            "type": "object",
+            "properties": {
+                "member_grade_id": {
+                    "type": "number",
+                    "description": "会员等级对应的id"
+                },
+                "discount": {
+                    "type": "string",
+                    "description": "折扣比例",
+                    "format": "比如20%, 或31.2%，是去除百分号之后的值"
+                },
+                "discount_money": {
+                    "type": "string",
+                    "description": "折扣金额"
+                }
+            }
+        },
+    }
+}

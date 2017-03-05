@@ -6,3 +6,4 @@ import a_flash_sale_promotions
 import a_premium_sale_promotion
 import a_premium_sale_promotions
 import a_integral_sale_promotion
+import a_integral_sale_promotions

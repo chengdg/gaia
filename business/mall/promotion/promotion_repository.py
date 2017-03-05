@@ -44,10 +44,23 @@ class PromotionRepository(business_model.Service):
 
 	def search_flash_sale_promotions(self, page_info, fill_options=None, filters=None):
 		"""
-		搜索显示抢购的促销活动
+		搜索限时抢购的促销活动
 		"""
 		filters = filters if filters else {}
 		filters['__f-type-equal'] = promotion_models.PROMOTION_TYPE_FLASH_SALE
+		options = {
+			'order_options': ['-start_date']
+		}
+		promotions, pageinfo = self.get_promotions(page_info, fill_options=fill_options, options=options,
+												   filters=filters)
+		return promotions, pageinfo
+
+	def search_integral_sale_promotions(self, page_info, fill_options=None, filters=None):
+		"""
+		搜索积分应用的促销活动
+		"""
+		filters = filters if filters else {}
+		filters['__f-type-equal'] = promotion_models.PROMOTION_TYPE_INTEGRAL_SALE
 		options = {
 			'order_options': ['-start_date']
 		}
