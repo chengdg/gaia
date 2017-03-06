@@ -22,7 +22,7 @@ Background:
 			"分类13": []
 		}]
 		"""
-@gaia1 @account @edit_account
+@gaia @account @edit_account
 Scenario:1 weizoom修改账号信息
 	When weizoom配置'jobs'的账号信息
 		"""
@@ -31,8 +31,8 @@ Scenario:1 weizoom修改账号信息
 			"company_name":"爱昵咖啡有限责任公司",
 			"name":"爱昵咖啡",
 			"max_product_count": 200,
-			"purchase_type":"零售价返点",
-			"points":"5.00",
+			"settlement_type":"零售价返点",
+			"divide_rebate":"5.00",
 			"clear_period":"15天",
 			"classifications":["分类22"],
 			"contact":"aini",
@@ -50,7 +50,7 @@ Scenario:1 weizoom修改账号信息
 			"company_name":"土小宝有限责任公司",
 			"name":"土小宝",
 			"max_product_count": 100,
-			"purchase_type":"固定底价",
+			"settlement_type":"固定底价",
 			"clear_period":"自然月",
 			"classifications":["分类23"],
 			"contact":"aini",
@@ -62,6 +62,6 @@ Scenario:1 weizoom修改账号信息
 		}
 		"""
 	Then weizoom能获取账号配置列表
-		|name|company_name|customer_from|username|created_time|classifications|purchase_type|max_product_count|operation|
+		|name|company_name|customer_from|username|created_time|classifications|settlement_type|max_product_count|operation|
 		|爱昵咖啡|爱昵咖啡有限责任公司|   渠道   |    jobs    |创建时间|分类22|零售价返点|200|编辑|
 		|土小宝  |土小宝有限责任公司  | 渠道     |   bill |创建时间|分类23|固定底价|100|编辑|

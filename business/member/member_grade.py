@@ -27,6 +27,9 @@ class MemberGrade(business_model.Model):
     """
     __slots__ = (
         'id',
+        'name',
+        'is_default_grade',
+        'is_auto_upgrade',
         'pay_money',
         'pay_times'
     )
@@ -37,20 +40,20 @@ class MemberGrade(business_model.Model):
         if db_model:
             self._init_slot_from_model(db_model)
 
-    @staticmethod
-    @param_required(['model'])
-    def from_model(args):
-        """
-        SocialAccount model获取SocialAccount业务对象
+    # @staticmethod
+    # @param_required(['model'])
+    # def from_model(args):
+    #     """
+    #     SocialAccount model获取SocialAccount业务对象
 
-        @param[in] model: SocialAccount model
+    #     @param[in] model: SocialAccount model
 
-        @return SocialAccount业务对象
-        """
-        model = args['model']
+    #     @return SocialAccount业务对象
+    #     """
+    #     model = args['model']
 
-        member_grade = MemberGrade(model)
-        return member_grade
+    #     member_grade = MemberGrade(model)
+    #     return member_grade
 
     @staticmethod
     def create_default_member_grade_for_corp(corp):

@@ -42,7 +42,8 @@ class AUnshelfConsignmentProducts(api_resource.ApiResource):
 		}
 
 		options = {
-			'order_options': ['display_index', '-id']
+			'order_options': ['display_index', '-id'],
+			'request_source': 'unshelf_consignment'
 		}
 
 		products, pageinfo = corp.product_pool.get_products(target_page, fill_options, options, filters)
@@ -57,6 +58,7 @@ class AUnshelfConsignmentProducts(api_resource.ApiResource):
 			image_info = encode_product_service.get_image_info(product)
 			categories = encode_product_service.get_categories(product)
 			labels = encode_product_service.get_labels(product)
+			gross_profit_info = encode_product_service.get_gross_profit_info(product)
 			cps_promotion_info = encode_product_service.get_cps_promotion_info(product)
 
 			data = {
@@ -74,6 +76,7 @@ class AUnshelfConsignmentProducts(api_resource.ApiResource):
 				"created_at": base_info['created_at'],
 				"sync_at": base_info['sync_at'],
 				'labels': labels,
+				'gross_profit_info': gross_profit_info,
 				"cps_promotion_info": cps_promotion_info,
 
 			}

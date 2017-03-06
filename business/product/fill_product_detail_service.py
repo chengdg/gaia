@@ -10,6 +10,7 @@ from business.mall.promotion.fill_promotion_detail_service import FillPromotionD
 
 from db.mall import models as mall_models
 from db.mall import promotion_models
+from db.account import models as account_models
 from gaia_conf import TOPIC
 
 import settings
@@ -59,9 +60,11 @@ class FillProductDetailService(business_model.Service):
 			#已经完成过填充，再次进入，跳过填充
 			return
 
+		divide_model = None if not corp else account_models.AccountDivideInfo.select().dj_where(user_id=corp.id).first()
+
 		#TODO2: 因为这里是静态方法，所以目前无法使用product.context['corp']，构造基于Object的临时解决方案，需要优化
 		product_model_generator = ProductModelGenerator.get(None)
-		product_model_generator.fill_models_for_products(products, is_enable_model_property_info)
+		product_model_generator.fill_models_for_products(products, is_enable_model_property_info, divide_model)
 
 	def __fill_category_detail(self, corp, product_ids, id2product):
 		"""
@@ -290,6 +293,7 @@ class FillProductDetailService(business_model.Service):
 	def __fill_cps_promoteion_info(self, corp, products, product_ids, id2product):
 		"""
 		填充商品的cps推广信息
+		毛利分成：社群的毛利、毛利率 ==> 推广费 * 社群毛利点
 		"""
 		if not corp:
 			return
@@ -315,8 +319,25 @@ class FillProductDetailService(business_model.Service):
 				'total_money': promotion.promote_total_money,
 				'stock': promotion.promote_stock,
 				'is_cps_promotion_processed': pool_product_model.is_cps_promotion_processed,
-				'id': promotion.id
+				'id': promotion.id,
+				'cps_gross_profit': 0,
+				'cps_gross_profit_rate': 0
 			}
+			if corp.is_self_run_platform() and corp.details.settlement_type == account_models.ACCOUNT_DIVIDE_TYPE_PROFIT:
+				divide_rebate = corp.details.divide_rebate
+				max_cps_profit_rate = 0
+				cps_gross_profit = promotion.promote_money * divide_rebate / 100
+				if product.is_use_custom_model:
+					for model in product.custom_models:
+						cps_gross_profit_rate = cps_gross_profit / model.price * 100
+
+						if cps_gross_profit_rate > max_cps_profit_rate:
+							max_cps_profit_rate = cps_gross_profit_rate
+				else:
+					max_cps_profit_rate = cps_gross_profit / product.standard_model.price * 100
+
+				promotion_info['cps_gross_profit'] = '%.2f' % cps_gross_profit
+				promotion_info['cps_gross_profit_rate'] = '%.2f' % max_cps_profit_rate
 			product.cps_promoted_info = promotion_info
 
 	def fill_detail(self, products, options):

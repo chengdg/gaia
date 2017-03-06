@@ -89,3 +89,4 @@ MNS消息使用指南:https://git2.weizzz.com:84/weizoom/new_zeus/wikis/mns-guid
 **注意** ：
 - 可以跑`behave -kt @bdd_test1`测试环境配置是否正常。
 - 及时更新mns_python_sdk包 https://git2.weizzz.com:84/microservice/mns_python_sdk
+- 如果执行@order标签需要启动上述项目，否则不需要

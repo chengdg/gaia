@@ -1,0 +1,81 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "Member API"
+    },
+    "paths": {
+        "/member/member_grades/": {
+            "get": {
+                "summary": "获取corp对应的会员等级信息",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "member"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "member_grades": {
+                                    "$ref": "#/definitions/MemberGradeList"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "MemberGradeList": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/MemberGrade"
+            },
+            "minItems": 1
+        },
+        "MemberGrade": {
+            "type": "object",
+            "description": "会员等级信息",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "description": "会员等级id"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "会员等级名"
+                },
+                "is_default_grade": {
+                    "type": "boolean",
+                    "description": "是否是默认等级（会员创建时的等级）"
+                },
+                "is_auto_upgrade": {
+                    "type": "boolean",
+                    "description": "是否是自动升级的等级"
+                },
+                "pay_money": {
+                    "type": "number",
+                    "description": "自动升级需要满足的消费金额"
+                },
+                "pay_times": {
+                    "type": "number",
+                    "description": "自动升级需要满足的消费次数"
+                }
+            }
+        }
+    }
+}

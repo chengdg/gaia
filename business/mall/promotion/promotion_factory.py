@@ -22,8 +22,37 @@ class PromotionFactory(business_model.Service):
         )
         return flash_sale
 
-    def __create_integral_sale(self):
-        pass
+    def __create_integral_sale(self, promotion_data):
+        integral_sale = promotion_models.IntegralSale.create(
+            owner = self.corp.id,
+            type = promotion_models.INTEGRAL_SALE_TYPE_PARTIAL,
+            discount = 0,
+            discount_money = 0.0,
+            integral_price = 0,
+            is_permanant_active = promotion_data['is_permanant_active']
+        )
+
+        #创建integral rule
+        rule_info = promotion_data['rule_info']
+        if rule_info['type'] == 'fixed':
+            promotion_models.IntegralSaleRule.create(
+                owner = self.corp.id,
+                integral_sale = integral_sale,
+                member_grade_id = -1,
+                discount = rule_info['discount_money'],
+                discount_money = rule_info['discount_money']
+            )
+        else:
+            for rule in rules:
+                promotion_models.IntegralSaleRule.create(
+                    owner = self.corp.id,
+                    integral_sale = integral_sale,
+                    member_grade_id = rule['member_grade_id'],
+                    discount = rule['discount_money'],
+                    discount_money = rule['discount_money']
+                )
+
+        return integral_sale
 
     def __create_premium_sale(self, detail_data):
         is_enable_cycle_mode = True if detail_data['is_enable_cycle'] == 'true' else False
@@ -78,6 +107,10 @@ class PromotionFactory(business_model.Service):
             self.__add_product_to_premium_sale(detail_info, premium_sale)
             promotion_detail = premium_sale
             promotion_info['type'] = promotion_models.PROMOTION_TYPE_PREMIUM_SALE
+        elif promotion_info['type'] == 'integral_sale':
+            integral_sale = self.__create_integral_sale(detail_info)
+            promotion_detail = integral_sale
+            promotion_info['type'] = promotion_models.PROMOTION_TYPE_INTEGRAL_SALE
 
         promotion = self.__create_promotion(promotion_info, promotion_detail.id)
         self.__add_product_to_promotion(product_info['product_ids'], promotion)
