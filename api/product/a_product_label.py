@@ -13,11 +13,12 @@ class AProductLabel(api_resource.ApiResource):
 	app = "product"
 	resource = "product_label"
 
-	@param_required(['corp_id', 'product_id:int'])
+	@param_required(['corp_id', 'product_id:int', 'classification_id:int'])
 	def get(args):
 		product_id = args['product_id']
+		classification_id = args['classification_id']
 		product = GlobalProductRepository.get().get_product(product_id)
-		labels = product.get_labels()
+		labels = product.get_labels(classification_id)
 
 		return [{
 			'label_id': l.id,
