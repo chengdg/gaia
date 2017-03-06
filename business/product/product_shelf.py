@@ -203,7 +203,7 @@ class ProductShelf(business_model.Model):
 		# 	'order_options': ['display_index', '-onshelf_time', '-id']
 		# }
 		pool_models = mall_models.ProductPool.select().dj_where(woid=self.corp.id, status=mall_models.PP_STATUS_ON)\
-			.order_by(mall_models.ProductPool.display_index, mall_models.ProductPool.sync_at, mall_models.ProductPool.product_id)
+			.order_by(mall_models.ProductPool.display_index, mall_models.ProductPool.sync_at.desc (), mall_models.ProductPool.product_id)
 		result = []
 		for pool in pool_models:
 
