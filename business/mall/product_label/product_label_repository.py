@@ -10,6 +10,9 @@ class ProductLabelRepository(business_model.Service):
 	def get_labels_by_product_id(self, product_id):
 		return self.get_labels_by_product_ids([product_id])[0]
 
+	def get_labels_oweto_product_id(self,product_id):
+		return [ProductLabel(model) for model in mall_models.ProductHasLabel.select().dj_where(product_id=product_id, classification_id=-1)]
+
 	def get_labels_by_product_ids(self, product_ids):
 		classifications = ProductClassificationRepository.get().get_classification_by_product_ids(product_ids)
 		return self.get_labels_by_classification_ids([c.id for c in classifications])

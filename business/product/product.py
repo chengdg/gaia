@@ -137,6 +137,17 @@ class Product(business_model.Model):
 		"""
 		return self.total_stocks <= 0
 
+	def manage_label(self, label_ids):
+		"""
+		管理商品标签，注意：不是商品所属分类包含的标签，而是直接属于商品的标签
+		"""
+		mall_models.ProductHasLabel.delete().dj_where(product_id=self.id).execute()
+		for label_id in label_ids:
+			mall_models.ProductHasLabel.create(
+				product_id = self.id,
+				label_id = label_id
+			)
+
 	@is_sellout.setter
 	def is_sellout(self, value):
 		"""
