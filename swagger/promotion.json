@@ -66,6 +66,38 @@
                     }
                 }
             }
+        },
+        "/promotion/active_promotions/": {
+            "delete": {
+                "summary": "批量结束促销活动",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "ids",
+                        "in": "query",
+                        "description": "待结束的促销活动的id集合",
+                        "required": true,
+                        "type": "id集合的json string"
+                    }
+                ],
+                "tags": [
+                    "promotion"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
         }
     },
     "definitions": {
