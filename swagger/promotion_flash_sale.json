@@ -31,6 +31,36 @@
                         }
                     }
                 }
+            },
+            "delete": {
+                "summary": "删除限时抢购集合",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "ids",
+                        "in": "query",
+                        "description": "待删除的限时抢购的id集合",
+                        "required": true,
+                        "type": "id集合的json string"
+                    }
+                ],
+                "tags": [
+                    "promotion"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
             }
         },
         "/promotion/flash_sale_promotion/": {
