@@ -17,6 +17,9 @@ DB_PORT = os.environ.get('DB_PORT', '3306')
 
 SLAVE_DB_HOST = os.environ.get('SLAVE_DB_HOST', DB_HOST)
 SLAVE_DB_PORT = os.environ.get('SLAVE_DB_PORT', DB_PORT)
+
+print("------------SLAVE_DB_HOST",SLAVE_DB_HOST)
+
 DATABASES = {
     'default': {
         'ENGINE': 'mysql+retry',
@@ -37,7 +40,7 @@ DATABASES = {
         'USER': 'weapp',
         'PASSWORD': 'weizoom',
         'HOST': SLAVE_DB_HOST,
-        'PORT': SLAVE_DB_HOST,
+        'PORT': DB_PORT,
         #'HOST': '103.29.16.148',#WEAPP_DB_HOST,
         #'PORT': '33306',
         'CONN_MAX_AGE': 100
