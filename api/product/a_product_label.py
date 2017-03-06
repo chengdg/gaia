@@ -23,7 +23,7 @@ class AProductLabel(api_resource.ApiResource):
 		relation_data = classification.get_label_group_relation()
 
 		#再获取商品直属的标签
-		product_has_labels = corp.product_label_repository.get_labels_by_product_id(args['product_id'])
+		product_has_labels = corp.product_label_repository.get_labels_oweto_product_id(args['product_id'])
 
 		return {
 			'relations': relation_data['relations'],
