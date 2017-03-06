@@ -15,6 +15,8 @@ HERMES_DOMAIN = "weapp.weizoom.com"
 DB_HOST = os.environ.get('DB_HOST', 'db.dev.com')
 DB_PORT = os.environ.get('DB_PORT', '3306')
 
+SLAVE_DB_HOST = os.environ.get('SLAVE_DB_HOST', DB_HOST)
+SLAVE_DB_PORT = os.environ.get('SLAVE_DB_PORT', DB_PORT)
 DATABASES = {
     'default': {
         'ENGINE': 'mysql+retry',
@@ -27,7 +29,19 @@ DATABASES = {
         #'HOST': '103.29.16.148',#WEAPP_DB_HOST,
         #'PORT': '33306',
         'CONN_MAX_AGE': 100
-    }
+    },
+    'slave': {
+        'ENGINE': 'mysql+retry',
+        #'NAME': 'new_zeus',
+        'NAME': 'weapp',
+        'USER': 'weapp',
+        'PASSWORD': 'weizoom',
+        'HOST': SLAVE_DB_HOST,
+        'PORT': SLAVE_DB_HOST,
+        #'HOST': '103.29.16.148',#WEAPP_DB_HOST,
+        #'PORT': '33306',
+        'CONN_MAX_AGE': 100
+    },
 }
 
 
