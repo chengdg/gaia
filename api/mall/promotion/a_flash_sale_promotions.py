@@ -51,3 +51,10 @@ class AFlashSalePromotions(api_resource.ApiResource):
             'flase_sale_promotions': datas
         }
 
+    @param_required(['corp_id', 'ids'])
+    def delete(args):
+        corp = args['corp']
+        promotion_ids = args['ids']
+        corp.promotion_repository.delete_promotions(promotion_ids=json.loads(promotion_ids))
+        return {}
+
