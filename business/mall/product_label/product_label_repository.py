@@ -20,7 +20,7 @@ class ProductLabelRepository(business_model.Service):
 		"""
 		返回商品id对标签ids的映射
 		:return: [{
-			product_id: [label_id1, label_id2]
+			product_id: [lable1, label2]
 		}]
 		"""
 		label_id2model = {l.id: l for l in mall_models.ProductLabel.select().dj_where(is_deleted=False)}
@@ -37,16 +37,27 @@ class ProductLabelRepository(business_model.Service):
 			else:
 				c2ls_relations[cl.classification_id].append(label)
 
+		product_has_labels = mall_models.ProductHasLabel.select().dj_where(product_id__in=product_ids)
+		product_id2labels = dict()
+		for product_has_label in product_has_labels:
+			product_id = product_has_label.product_id
+			label_id = product_has_label.label_id
+			label = label_id2model[label_id]
+			if not product_id2labels.has_key(product_id):
+				product_id2labels[product_id] = [label]
+			else:
+				product_id2labels[product_id].append(label)
+
 		p2ls = dict()
 		for product_id in product_ids:
-			classification_id = p2c_relations[product_id]
-			labels = c2ls_relations.get(classification_id, [])
-			p2ls[product_id] = labels
+			if product_id2labels.get(product_id) and len(product_id2labels[product_id]) > 0:
+				p2ls[product_id] = product_id2labels[product_id]
+			else:
+				classification_id = p2c_relations[product_id]
+				labels = c2ls_relations.get(classification_id, [])
+				p2ls[product_id] = labels
 
 		return p2ls
-
-
-
 
 	def delete_labels(self, label_ids):
 		mall_models.ProductLabel.update(is_deleted=True).dj_where(id__in=label_ids).execute()
