@@ -75,6 +75,8 @@ class PromotionRepository(business_model.Service):
 		product_filter_values = {}
 		filter_parse_result = FilterParser.get().parse(filters)
 
+		should_use_default_status = True
+
 		for filter_field_op, filter_value in filter_parse_result.items():
 			items = filter_field_op.split('__')
 			filter_field = items[0]
@@ -83,7 +85,10 @@ class PromotionRepository(business_model.Service):
 				op = items[1]
 			filter_category = None
 			should_ignore_field = False
-			if filter_field == 'id' or filter_field == 'status' or filter_field == 'type':
+			if filter_field == 'status':
+				should_use_default_status = False
+				filter_category = promotion_filter_values
+			if filter_field == 'id' or filter_field == 'type':
 				filter_category = promotion_filter_values
 			elif filter_field == 'product_name':
 				filter_field = 'name'
@@ -94,11 +99,14 @@ class PromotionRepository(business_model.Service):
 				if op:
 					filter_field_op = '%s__%s' % (filter_field, op)
 				filter_category[filter_field_op] = filter_value
-		# 如果有补充条件,可以手动补充
-		promotion_filter_values['status__in'] = [promotion_models.PROMOTION_STATUS_STARTED,
+		
+		promotion_filter_values['owner_id'] = self.corp.id
+
+		if should_use_default_status:
+			# 如果有补充条件,可以手动补充
+			promotion_filter_values['status__in'] = [promotion_models.PROMOTION_STATUS_STARTED,
 												 promotion_models.PROMOTION_STATUS_NOT_START,
 												 promotion_models.PROMOTION_STATUS_FINISHED,]
-		promotion_filter_values['owner_id'] = self.corp.id
 		return {
 			'product': product_filter_values,
 			'premium_sale': premium_sale_filter_values,
