@@ -18,9 +18,10 @@ class ACategorySimpleProducts(api_resource.ApiResource):
 	def get(args):
 		corp = CorporationFactory.get_weizoom_corporation()
 		category_ids = json.loads(args['category_ids'])
+		corp_id = args['corp_id']
 		results = []
 		for category_id in category_ids:
-			products = CategoryProductRepository.get(corp).get_simple_products_for_category(category_id)
+			products = CategoryProductRepository.get(corp).get_simple_products_for_category(category_id, corp_id)
 			results.append({
 				'category_id': category_id,
 				'product_ids': [p.id for p in products]

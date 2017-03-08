@@ -157,15 +157,19 @@ class CategoryProductRepository(object):
 		return category_products, pageinfo
 	
 	
-	def get_simple_products_for_category(self, category_id):
+	def get_simple_products_for_category(self, category_id, corp_id):
 		"""
 		获取分组下的所有简单商品数据
 		"""
 		product_relations = mall_models.CategoryHasProduct.select().dj_where(category_id=category_id)
+		product_ids = [relation.product_id for relation in product_relations]
+		on_shelf_product_ids = mall_models.ProductPool.select().dj_where(product_id__in=product_ids,
+																		 status=mall_models.PP_STATUS_ON,
+																		 woid=corp_id)
 		results = []
-		for relation in product_relations:
+		for pool in on_shelf_product_ids:
 			product = mall_models.Product()
-			product.id = relation.product_id
+			product.id = pool.product_id
 			results.append(Product(product))
 		return results
 		
