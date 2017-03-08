@@ -5,6 +5,7 @@ from eaglet.decorator import cached_context_property
 
 from business import model as business_model
 from business.coupon.coupon_repository import CouponRepository
+from business.coupon.coupon_factory import CouponFactory
 from business.coupon.coupon_rule_repository import CouponRuleRepository
 from business.deprecated.wepage_project_repository import WepageProjectRepository
 from business.member.member_grade_repository import MemberGradeRepository
@@ -305,6 +306,10 @@ class Corporation(business_model.Model):
 	@property
 	def coupon_repository(self):
 		return CouponRepository(self)
+
+	@property
+	def coupon_factory(self):
+		return CouponFactory(self)
 
 	@property
 	def coupon_rule_repository(self):

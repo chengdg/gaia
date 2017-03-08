@@ -219,40 +219,30 @@ class CouponRule(models.Model):
     limit_product = models.BooleanField(default=False) #限制指定商品
     limit_product_id = models.CharField(max_length=2048,default=0) #限制指定商品ID
     remark = models.TextField(default='') #备注
+    note = models.TextField(default='') #优惠券备注
     get_person_count = models.IntegerField(default=0) #领取人数
     get_count = models.IntegerField(default=0) #领取次数
     use_count = models.IntegerField(default=0) #使用次数
+    receive_rule = models.BooleanField(default=False) #领取规则，仅未下单用户可领取
 
     class Meta(object):
         db_table = 'market_tool_coupon_rule'
 
 
 #优惠券状态
-COUPON_STATUS_UNUSED = 0 #已领取
+COUPON_STATUS_UNUSED = 0 #已领取，未使用
 COUPON_STATUS_USED = 1 #已被使用
 COUPON_STATUS_EXPIRED = 2 #已过期
 COUPON_STATUS_DISCARD = 3 #作废 手机端用户不显示
 COUPON_STATUS_UNGOT = 4 #未领取
-COUPON_STATUS_Expired = 5 #已失效
-COUPONSTATUS = {
-    COUPON_STATUS_UNUSED: {
-        "name": u'未使用'
-    },
-    COUPON_STATUS_USED: {
-        "name": u'已使用'
-    },
-    COUPON_STATUS_EXPIRED: {
-        "name": u'已过期'
-    },
-    COUPON_STATUS_DISCARD: {
-        "name": u'作废'
-    },
-    COUPON_STATUS_UNGOT: {
-        "name": u'未领取'
-    },
-    COUPON_STATUS_Expired: {
-        "name": u'已失效'
-    }
+COUPON_STATUS_DISABLED = 5 #已失效
+COUPONSTATUS2STR = {
+    COUPON_STATUS_UNUSED: 'unused',
+    COUPON_STATUS_USED: 'used',
+    COUPON_STATUS_EXPIRED: 'expired',
+    COUPON_STATUS_DISCARD: 'discard',
+    COUPON_STATUS_UNGOT: 'ungot',
+    COUPON_STATUS_DISABLED: 'disabled'
 }
 class Coupon(models.Model):
     """
