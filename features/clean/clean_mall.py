@@ -87,6 +87,10 @@ def clean():
 	promotion_models.IntegralSale.delete().execute()
 	promotion_models.Promotion.delete().execute()
 
+	#优惠券
+	promotion_models.Coupon.delete().execute()
+	promotion_models.CouponRule.delete().execute()
+
 	# 订单
 	mall_models.OrderHasProduct.delete().execute()
 	mall_models.OrderHasPromotion.delete().execute()

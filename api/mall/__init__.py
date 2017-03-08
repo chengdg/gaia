@@ -19,5 +19,5 @@ import product_label
 
 
 import promotion
-
+import coupon
 
