@@ -56,14 +56,14 @@ class Command(BaseCommand):
 		
 		# 预热分组信息
 		
-		categories = mall_models.ProductCategory.select()
-		print 'starting..... prepare..... category!'
-		for category in categories:
-			temp_key = 'categories_%s' % category.owner_id
-			pipeline.hset(temp_key, category.id, category.name)
-			print '>>%s' % category.id
-		pipeline.execute()
-		print '<-----------prepare categories end------------------------!'
+		# categories = mall_models.ProductCategory.select()
+		# print 'starting..... prepare..... category!'
+		# for category in categories:
+		# 	temp_key = 'categories_%s' % category.owner_id
+		# 	pipeline.hset(temp_key, category.id, category.name)
+		# 	print '>>%s' % category.id
+		# pipeline.execute()
+		# print '<-----------prepare categories end------------------------!'
 		
 		# 预热分组有什么上架商品
 		#
