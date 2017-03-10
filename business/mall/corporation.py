@@ -10,6 +10,7 @@ from business.coupon.coupon_rule_repository import CouponRuleRepository
 from business.deprecated.wepage_project_repository import WepageProjectRepository
 from business.member.member_grade_repository import MemberGradeRepository
 from business.member.member_repository import MemberRepository
+from business.member.member_tag_repository import MemberTagRepository
 from business.order.delivery_item_repository import DeliveryItemRepository
 from business.order.order_export_job_repository import OrderExportJobRepository
 from business.order.order_repository import OrderRepository
@@ -317,7 +318,6 @@ class Corporation(business_model.Model):
 
 	@property
 	def member_repository(self):
-
 		return MemberRepository(self)
 
 	@property
@@ -375,3 +375,7 @@ class Corporation(business_model.Model):
 	@property
 	def member_grade_repository(self):
 		return MemberGradeRepository(self)
+
+	@property
+	def member_tag_repository(self):
+		return MemberTagRepository(self)

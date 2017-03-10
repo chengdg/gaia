@@ -62,9 +62,9 @@ class ACouponRules(api_resource.ApiResource):
             'coupon_rules': datas
         }
 
-    @param_required(['corp_id', 'ids'])
-    def delete(args):
-        corp = args['corp']
-        promotion_ids = json.loads(args['ids'])
-        corp.promotion_repository.disable_promotions(promotion_ids)
-        return {}
+    # @param_required(['corp_id', 'ids'])
+    # def delete(args):
+    #     corp = args['corp']
+    #     promotion_ids = json.loads(args['ids'])
+    #     corp.promotion_repository.disable_promotions(promotion_ids)
+    #     return {}

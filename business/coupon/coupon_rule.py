@@ -93,6 +93,13 @@ class CouponRule(business_model.Model):
 		"""
 		promotion_models.CouponRule.update(is_active=False).dj_where(id=self.id).execute()		
 
+	def add_coupons(self, count):
+		"""
+		向coupon rule的码库中增加count个优惠券
+		"""
+		coupon_rule_model = self.context['db_model']
+		CorporationFactory.get().coupon_factory.create_coupons_for_rule(coupon_rule_model, count)
+
 	@staticmethod
 	def create(args):
 		# 优惠券限制条件
@@ -138,6 +145,6 @@ class CouponRule(business_model.Model):
 		)
 		
 		coupon_rule = CouponRule(coupon_rule_model)
-		CorporationFactory.get().coupon_factory.create_coupons_for_rule(coupon_rule_model, int(args['coupon_count']))
+		coupon_rule.add_coupons(int(args['coupon_count']))
 
 		return coupon_rule
