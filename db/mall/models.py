@@ -1742,12 +1742,14 @@ class ProductHasLabel(models.Model):
 WORD2EXPORT_JOB_TYPE = {
 	'all_orders': 1,
 	'financial_audit_orders': 3,
-	'delivery_orders': 6
+	'delivery_orders': 6,
+	'pre_products': 7
 }
 
 EXPORT_JOB2TASK_NAME = {
 	'all_orders': 'order_export_job_created',
-	'delivery_orders': 'delivery_item_export_job_created'
+	'delivery_orders': 'delivery_item_export_job_created',
+	'pre_products': 'pre_product_export_job_created'
 }
 
 class ExportJob(models.Model):

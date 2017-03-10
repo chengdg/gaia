@@ -60,7 +60,7 @@ class ExportJob(business_model.Model):
 		task_name = mall_models.EXPORT_JOB2TASK_NAME[args['type']]
 		msgutil.send_message(topic_name, task_name, data)
 
-		return OrderExportJob(db_model)
+		return ExportJob(db_model)
 
 	def update(self, args):
 		self.is_download = args["is_download"]

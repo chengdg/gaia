@@ -11,6 +11,7 @@ from business.member.member_grade_repository import MemberGradeRepository
 from business.member.member_repository import MemberRepository
 from business.order.delivery_item_repository import DeliveryItemRepository
 from business.order.order_export_job_repository import OrderExportJobRepository
+from business.export.export_job_repository import ExportJobRepository
 from business.order.order_repository import OrderRepository
 from business.order.config.order_config_repository import OrderConfigRepository
 from db.account import models as account_model
@@ -346,6 +347,10 @@ class Corporation(business_model.Model):
 	@property
 	def order_export_job_repository(self):
 		return OrderExportJobRepository(self)
+
+	@property
+	def export_job_repository(self):
+		return ExportJobRepository(self)
 
 	@property
 	def material_repository(self):

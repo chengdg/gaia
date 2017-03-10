@@ -1,14 +1,9 @@
 # -*- coding: utf-8 -*-
-import json
 
-from bdem import msgutil
 from eaglet.core import api_resource
-from eaglet.core import watchdog
 from eaglet.decorator import param_required
 
-from business.common.page_info import PageInfo
-from business.order.order_export_job import OrderExportJob
-from gaia_conf import TOPIC
+from business.export.export_job import ExportJob
 
 
 class AExportJob(api_resource.ApiResource):
@@ -21,14 +16,14 @@ class AExportJob(api_resource.ApiResource):
 
 		corp = args['corp']
 
-		order_export_job = OrderExportJob.create({
+		export_job = ExportJob.create({
 			'corp_id': corp.id,
 			'type': args['type'],
 			'filters': filters
 		})
 
 		return {
-			"job_id": order_export_job.id
+			"job_id": export_job.id
 		}
 
 	@param_required(['corp', 'type'])
@@ -36,7 +31,7 @@ class AExportJob(api_resource.ApiResource):
 		corp = args['corp']
 		type = args['type']
 
-		job = corp.order_export_job_repository.get_order_export_job_by_type(type)
+		job = corp.export_job_repository.get_export_job_by_type(type)
 
 		if job.is_valid:
 			return {
@@ -59,6 +54,6 @@ class AExportJob(api_resource.ApiResource):
 	def delete(args):
 		corp = args['corp']
 		type = args['type']
-		job = corp.order_export_job_repository.get_order_export_job_by_type(type)
+		job = corp.export_job_repository.get_export_job_by_type(type)
 		job.update({"is_download":True})
 		return {}
