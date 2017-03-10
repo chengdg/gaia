@@ -18,17 +18,17 @@ class Command(BaseCommand):
 		
 		conn = redis.Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=settings.REDIS_CACHES_DB)
 		
-		# pipeline = conn.pipeline()
-		# effective_products = mall_models.Product.select().dj_where(is_deleted=False)
-		# # 预热所有有效简单商品信息
-		# all_effective_simple_products_key = 'all_simple_effective_products'
-		# print 'starting prepare product redis----------------------!'
-		# for product in effective_products:
-		# 	if product.id % 100 == 0:
-		# 		print 'preparing--------------------------->'
-		# 	pipeline.hset(all_effective_simple_products_key, product.id, product.name)
-		# pipeline.execute()
-		# print '<-----------prepare products end------------------------!'
+		pipeline = conn.pipeline()
+		effective_products = mall_models.Product.select().dj_where(is_deleted=False)
+		# 预热所有有效简单商品信息
+		all_effective_simple_products_key = 'all_simple_effective_products'
+		print 'starting prepare product redis----------------------!'
+		for product in effective_products:
+			if product.id % 100 == 0:
+				print 'preparing--------------------------->'
+			pipeline.hset(all_effective_simple_products_key, product.id, product.name)
+		pipeline.execute()
+		print '<-----------prepare products end------------------------!'
 		
 		pipeline = conn.pipeline()
 		# 预热分组信息
@@ -67,16 +67,16 @@ class Command(BaseCommand):
 			category_all_product_ids = [relation.product_id for relation in relations]
 			category_on_shelf_product_ids = set(category_all_product_ids).intersection(set(on_shelf_product_ids))
 			if category_on_shelf_product_ids:
-				pipeline.lpush(temp_key, *list(category_on_shelf_product_ids))
+				pipeline.rpush(temp_key, *list(category_on_shelf_product_ids))
 			else:
-				pipeline.lpush(temp_key, *['NONE'])
+				pipeline.rpush(temp_key, *['NONE'])
 			print 'loading c_p ...%s' % category_id, corp_id
 		# 社群"所有商品"分组
 		for k, v in corp_onshelf_product_ids.items():
 			print 'loading ...00%s' % k
 			temp_key = '{wo:%s}_{co:%s}_pids' % (k, 0)
 			if v:
-				pipeline.lpush(temp_key, *v)
+				pipeline.rpush(temp_key, *v)
 			
 		pipeline.execute()
 		print '<-----------prepare category_products end------------------------!'
