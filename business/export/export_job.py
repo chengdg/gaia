@@ -1,22 +1,21 @@
 # -*- coding: utf-8 -*-
-import json
 
 from business import model as business_model
-from business.order.delivery_item import DeliveryItem
 from db.mall import models as mall_models
 from gaia_conf import TOPIC
 from bdem import msgutil
-from datetime import datetime, timedelta
+from datetime import datetime
 
 
-class OrderExportJob(business_model.Model):
+class ExportJob(business_model.Model):
 	"""
-	订单导出任务
+	导出任务
 	"""
 
 	__slots__ = (
 		'id',
 		'corp_id',
+		'type',
 		'percentage',
 		'is_finished',
 		'is_valid',

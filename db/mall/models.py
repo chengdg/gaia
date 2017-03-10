@@ -1735,13 +1735,19 @@ class ProductHasLabel(models.Model):
 
 
 #status: 0未完成,1完成,2失败
-#type: 0会员,1所有订单 2商品评价导出 3财务审核 4在售商品 5待售商品
+#type: 0会员,1所有订单 2商品评价导出 3财务审核 4在售商品 5待售商品 6出货单
 #########################################################################
 # ExportJob: 导出任务
 #########################################################################
 WORD2EXPORT_JOB_TYPE = {
 	'all_orders': 1,
-	'financial_audit_orders': 3
+	'financial_audit_orders': 3,
+	'delivery_orders': 6
+}
+
+EXPORT_JOB2TASK_NAME = {
+	'all_orders': 'order_export_job_created',
+	'delivery_orders': 'delivery_item_export_job_created'
 }
 
 class ExportJob(models.Model):
