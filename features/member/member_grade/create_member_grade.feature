@@ -4,11 +4,10 @@ Background:
 	Given jobs登录系统
 
 
-@gaia @member
+@gaia @member @member.grade
 Scenario:创建会员等级
 	创建会员等级后
-	1. 会员等级列表中显示会员等级
-	2. 可以查看到会员等级详情，会员等级按创建时间排序
+	1. 会员等级列表中显示会员等级，会员等级按顺序排列
 
 	Given jobs登录系统
 	When jobs创建会员等级

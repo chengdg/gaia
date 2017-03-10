@@ -53,10 +53,10 @@ class SocialAccount(models.Model):
     platform = models.IntegerField(default=SOCIAL_PLATFORM_WEIXIN, verbose_name='社会化平台')
     webapp_id = models.CharField(max_length=16)
     token = models.CharField(max_length=64)
-    access_token = models.CharField(max_length=64)
+    access_token = models.CharField(max_length=64, default='')
     is_for_test = models.BooleanField(default=False)
     openid = models.CharField(max_length=64)
-    uuid = models.CharField(max_length=255)
+    uuid = models.CharField(max_length=255, default='')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='加入日期')
 
 
@@ -115,8 +115,8 @@ class Member(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     grade = models.ForeignKey(MemberGrade)
     experience = models.IntegerField(default=0, verbose_name='经验值')
-    remarks_name = models.CharField(max_length=32, verbose_name='备注名')
-    remarks_extra = models.TextField(verbose_name='备注信息')
+    remarks_name = models.CharField(max_length=32, verbose_name='备注名', default='')
+    remarks_extra = models.TextField(verbose_name='备注信息', default='')
     last_visit_time = models.DateTimeField(auto_now_add=True)
     last_message_id = models.IntegerField(default=-1, verbose_name="最近一条消息id")
     session_id = models.IntegerField(default=-1, verbose_name="会话id")
@@ -138,6 +138,7 @@ class Member(models.Model):
     status = models.IntegerField(default=1)
     purchase_frequency = models.IntegerField(default=0)  # 30天购买次数
     cancel_subscribe_time = models.DateTimeField(blank=True, null=True, default=None, verbose_name="取消关注时间")
+    fans_count = models.IntegerField(default=0) #粉丝数量
 
     class Meta(object):
         db_table = 'member_member'

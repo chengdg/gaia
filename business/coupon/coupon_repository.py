@@ -33,3 +33,10 @@ class CouponRepository(business_model.Service):
 		db_models = promotion_models.Coupon.select().dj_where(id__in=coupon_ids, owner_id=self.corp.id)
 		coupons = Coupon.from_models({"db_models": db_models, 'corp': self.corp})
 		return coupons
+
+	def delete_coupons(self, coupon_ids):
+		"""
+		删除由coupon_ids指定的coupon
+		"""
+		promotion_models.Coupon.delete().dj_where(id__in=coupon_ids, owner_id=self.corp.id).execute()
+		return True

@@ -33,6 +33,8 @@ def clean():
 
 	# 会员等级
 	member_models.MemberGrade.delete().dj_where(name__not=u'普通会员').execute()
+	# 会员标签
+	member_models.MemberTag.delete().dj_where(name__not=u'未分组').execute()
 
 	#支付接口配置
 	mall_models.UserWeixinPayOrderConfig.delete().execute()

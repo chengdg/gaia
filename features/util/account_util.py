@@ -14,7 +14,7 @@ WEIXIN_SITE_DOMAIN = 'm.weizoom.com'
 
 GENERAL_CORP = account_models.WEBAPP_TYPE_MALL
 WEIZOOM_CORP = account_models.WEBAPP_TYPE_WEIZOOM
-SELF_RUN_PLATFORM = account_models.WEBAPP_TYPE_WEIZOOM_MALL
+COMMUNITY_CORP = account_models.WEBAPP_TYPE_WEIZOOM_MALL
 
 
 def __make_password(raw_password):
@@ -150,6 +150,6 @@ def create_weizoom_corp(username, display_name=None):
     return __create_corp(username, display_name, WEIZOOM_CORP)
 
 
-def create_self_run_platform(username, display_name=None):
-    user = __create_corp(username, display_name, SELF_RUN_PLATFORM)
+def create_community(username, display_name=None):
+    user = __create_corp(username, display_name, COMMUNITY_CORP)
     return user

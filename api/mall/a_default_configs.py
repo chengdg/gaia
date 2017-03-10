@@ -9,6 +9,7 @@ from eaglet.decorator import param_required
 
 from business.mall.logistics.postage_config_factory import PostageConfigFactory
 from business.member.member_grade import MemberGrade
+from business.member.member_tag import MemberTag
 
 class ADefaultConfigs(api_resource.ApiResource):
     """
@@ -24,6 +25,7 @@ class ADefaultConfigs(api_resource.ApiResource):
 
         corp = args['corp']
         MemberGrade.create_default_member_grade_for_corp(corp)
+        MemberTag.create_default_member_tag_for_corp(corp)
 
         integral_strategy = corp.mall_config_repository.get_integral_strategy()
         return {}

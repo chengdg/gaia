@@ -15,6 +15,16 @@ class ACoupons(api_resource.ApiResource):
     app = 'coupon'
     resource = 'coupons'
 
+    @param_required(['corp_id', 'coupon_rule_id', 'count:int'])
+    def put(args):
+        corp = args['corp']
+        coupon_rule = corp.coupon_rule_repository.get_coupon_rule_by_id(args['coupon_rule_id'])
+        added_count = coupon_rule.add_coupons(args['count'])
+
+        return {
+            'count': added_count
+        }
+
     @param_required(['corp_id', 'coupon_rule_id', '?filters:json'])
     def get(args):
         target_page = PageInfo.create({
@@ -54,9 +64,8 @@ class ACoupons(api_resource.ApiResource):
             'coupons': datas
         }
 
-    @param_required(['corp_id', 'ids'])
+    @param_required(['corp_id', 'ids:json'])
     def delete(args):
         corp = args['corp']
-        promotion_ids = json.loads(args['ids'])
-        corp.promotion_repository.disable_promotions(promotion_ids)
+        corp.coupon_repository.delete_coupons(args['ids'])
         return {}

@@ -24,6 +24,7 @@ from db.member import models as member_models
 from business import model as business_model
 from business.member.member_has_tag import MemberHasTag
 from db.mall import models as mall_models
+from business.mall.corporation_factory import CorporationFactory
 
 
 class Member(business_model.Model):
@@ -65,31 +66,32 @@ class Member(business_model.Model):
 		'fans_count'
 	)
 
-	@staticmethod
-	@param_required(['models'])
-	def from_models(args):
-		"""
-		工厂对象，根据member model获取Member业务对象
+	# @staticmethod
+	# @param_required(['models'])
+	# def from_models(args):
+	# 	"""
+	# 	工厂对象，根据member model获取Member业务对象
 
-		@param[in] model: member model
+	# 	@param[in] model: member model
 
-		@return Member业务对象
-		"""
-		models = args['models']
-		corp = args['corp']
-		members = []
-		for model in models:
-			member = Member(model)
-			member.context['corp'] = corp
-			member.context['db_model'] = model
-			members.append(member)
-		return members
+	# 	@return Member业务对象
+	# 	"""
+	# 	models = args['models']
+	# 	corp = args['corp']
+	# 	members = []
+	# 	for model in models:
+	# 		member = Member(model)
+	# 		member.context['corp'] = corp
+	# 		member.context['db_model'] = model
+	# 		members.append(member)
+	# 	return members
 
 	def __init__(self, model):
 		business_model.Model.__init__(self)
 
 		# self.context['webapp_owner'] = webapp_owner
 		self.context['db_model'] = model
+		self.context['corp'] = CorporationFactory.get()
 		if model:
 			self._init_slot_from_model(model)
 

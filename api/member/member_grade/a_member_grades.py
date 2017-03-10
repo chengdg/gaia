@@ -30,7 +30,8 @@ class AMemberGrades(api_resource.ApiResource):
                 'is_auto_upgrade': member_grade.is_auto_upgrade,
                 'pay_money': member_grade.pay_money,
                 'pay_times': member_grade.pay_times,
-                'shop_discount': member_grade.shop_discount
+                'shop_discount': member_grade.shop_discount,
+                'upgrade_strategy': corp.member_grade_repository.get_upgrade_strategy()
             })
         
         return {

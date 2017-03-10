@@ -141,6 +141,41 @@ def step_impl(context, user, coupon_rule_name):
     response = context.client.delete('/coupon/coupon_rule/', data)
     bdd_util.assert_api_call_success(response)
 
+@when(u"{user}为优惠券'{coupon_rule_name}'增加'{count}'个库存")
+def step_impl(context, user, coupon_rule_name, count):
+    coupon_rule_model = promotion_models.CouponRule.select().dj_where(name=coupon_rule_name).get()
+    current_coupons = list(promotion_models.Coupon.select().dj_where(coupon_rule_id=coupon_rule_model.id))
+
+    #确认是否有prefix，如果coupon_id最后一个字符是整数，认为有prefix
+    has_prefix = False
+    last_coupon = current_coupons[-1]
+    last_char = last_coupon.coupon_id[-1]
+    try:
+        from_index = int(last_char)
+        coupon_id_prefix = last_coupon.coupon_id[:-1]
+        has_prefix = True
+    except:
+        has_prefix = False
+
+    data = {
+        'corp_id': context.corp.id,
+        'coupon_rule_id': coupon_rule_model.id,
+        'count': count
+    }
+
+    response = context.client.put('/coupon/coupons/', data)
+    bdd_util.assert_api_call_success(response)
+
+    if has_prefix:
+        index = from_index+1
+        for i, coupon in enumerate(list(promotion_models.Coupon.select().dj_where(coupon_rule_id=coupon_rule_model.id))):
+            if i + 1 <= from_index:
+                continue
+
+            coupon_id = "%s%d" % (coupon_id_prefix, index)
+            promotion_models.Coupon.update(coupon_id=coupon_id).dj_where(id=coupon.id).execute()
+            index += 1
+
 
 @then(u"{user}获得优惠券规则'{coupon_rule_name}'")
 def step_impl(context, user, coupon_rule_name):
@@ -187,6 +222,20 @@ def step_impl(context, user, coupon_rule_name):
     expected = json.loads(context.text)
 
     bdd_util.assert_dict(expected, actual)
+
+
+@when(u"{user}批量删除优惠券")
+def step_impl(context, user):
+    coupon_bids = json.loads(context.text)
+    coupon_ids = [coupon.id for coupon in promotion_models.Coupon.select().dj_where(coupon_id__in=coupon_bids)]
+    
+    data = {
+        'corp_id': context.corp.id,
+        'ids': json.dumps(coupon_ids)
+    }
+
+    response = context.client.delete('/coupon/coupons/', data)
+    bdd_util.assert_api_call_success(response)
 
 
 @then(u"{user}能获得优惠券规则列表")

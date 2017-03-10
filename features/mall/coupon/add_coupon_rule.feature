@@ -21,7 +21,7 @@ Background:
 		}]
 		"""
 
-@gaia @promotion @coupon @wip
+@gaia @promotion @coupon
 Scenario:1 添加优惠券规则-添加通用券
 	添加优惠券规则后：
 	1. 能获得优惠券规则详情
