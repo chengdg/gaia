@@ -81,9 +81,9 @@
                     {
                         "name": "ids",
                         "in": "query",
-                        "description": "待结束的促销活动的id集合",
+                        "description": "待结束的促销活动的id数组的json字符串",
                         "required": true,
-                        "type": "id集合的json string"
+                        "type": "string"
                     }
                 ],
                 "tags": [

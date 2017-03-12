@@ -45,9 +45,9 @@
                     {
                         "name": "ids",
                         "in": "query",
-                        "description": "待删除的限时抢购的id集合",
+                        "description": "待删除的限时抢购的id数组的json字符串",
                         "required": true,
-                        "type": "id集合的json string"
+                        "type": "string"
                     }
                 ],
                 "tags": [
