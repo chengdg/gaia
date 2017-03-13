@@ -16,7 +16,7 @@ class AProductLable(api_resource.ApiResource):
 	@param_required(['corp_id'])
 	def get(args):
 		corp = CorporationFactory.get()
-		labels = corp.product_label_group_repository.get_labels()
+		labels = corp.product_label_repository.get_labels()
 		return [{
 			'id': label.id,
 			'name': label.name,

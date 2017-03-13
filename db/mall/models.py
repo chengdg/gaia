@@ -1760,7 +1760,7 @@ class ExportJob(models.Model):
 	count = models.IntegerField()   # 总数量
 	is_download = models.BooleanField(default=False, verbose_name='是否下载')
 	param = models.CharField(max_length=1024)
-	file_path = models.CharField(max_length=256)
+	file_path = models.CharField(max_length=256, default='')
 	update_at = models.DateTimeField(verbose_name='更新时间', auto_now=True)
 	created_at = models.DateTimeField(verbose_name='创建时间')
 
