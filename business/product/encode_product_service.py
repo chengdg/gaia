@@ -220,8 +220,8 @@ class EncodeProductService(business_model.Service):
 		cps_promotion_info = product.cps_promoted_info
 		if cps_promotion_info:
 			data = {
-				'cps_gross_profit': cps_promotion_info['cps_gross_profit'],
-				'cps_gross_profit_rate': cps_promotion_info['cps_gross_profit_rate'],
+				'cps_gross_profit': cps_promotion_info.get('cps_gross_profit', 0),
+				'cps_gross_profit_rate': cps_promotion_info.get('cps_gross_profit_rate', 0),
 				'money': cps_promotion_info['money'],
 				'time_from': cps_promotion_info['time_from'],
 				'time_to': cps_promotion_info['time_to'],

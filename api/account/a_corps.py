@@ -31,9 +31,6 @@ class ACorps(api_resource.ApiResource):
 			'settlement_type': corp.details.settlement_type,
 			'divide_rebate': corp.details.divide_rebate,
 			'clear_period': corp.details.clear_period,
-			'contact': corp.details.contact,
-			'contact_phone': corp.details.contact_phone,
-			'created_at': corp.details.created_at.strftime('%Y-%m-%d %H:%M:%S') if corp.details.created_at else '',
 			'status': corp.details.status
 		} for corp in corps]
 
