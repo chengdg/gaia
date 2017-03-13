@@ -37,6 +37,373 @@
                     }
                 }
             }
+        },
+        "/member/member_grade/": {
+            "get": {
+                "summary": "获取会员等级",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "type": "number",
+                        "in": "query",
+                        "description": "",
+                        "required": true
+                    },
+                    {
+                        "name": "id",
+                        "type": "string",
+                        "in": "query",
+                        "description": "分组等级的id",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "member"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "member_grades": {
+                                    "$ref": "#/definitions/MemberGrade"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "summary": "创建会员等级",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "type": "number",
+                        "in": "formData",
+                        "description": "",
+                        "required": true
+                    },
+                    {
+                        "name": "name",
+                        "type": "string",
+                        "in": "formData",
+                        "description": "分组名",
+                        "required": true
+                    },
+                    {
+                        "name": "is_auto_upgrade",
+                        "type": "boolean",
+                        "in": "formData",
+                        "description": "是否是自动升级的等级",
+                        "required": true
+                    },
+                    {
+                        "name": "pay_money",
+                        "type": "number",
+                        "in": "formData",
+                        "description": "自动升级需要满足的消费金额",
+                        "required": true
+                    },
+                    {
+                        "name": "pay_times",
+                        "type": "number",
+                        "in": "formData",
+                        "description": "自动升级需要满足的消费次数",
+                        "required": true
+                    },
+                    {
+                        "name": "shop_discount",
+                        "type": "number",
+                        "in": "formData",
+                        "description": "购物折扣",
+                        "format": "位于[0, 100]间的整数",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "member"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            },
+            "post": {
+                "summary": "更新会员等级",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "type": "number",
+                        "in": "formData",
+                        "description": "",
+                        "required": true
+                    },
+                    {
+                        "name": "id",
+                        "type": "number",
+                        "in": "formData",
+                        "description": "待修改的会员等级的id",
+                        "required": true
+                    },
+                    {
+                        "name": "name",
+                        "type": "string",
+                        "in": "formData",
+                        "description": "新的会员等级名",
+                        "required": true
+                    },
+                    {
+                        "name": "is_auto_upgrade",
+                        "type": "boolean",
+                        "in": "formData",
+                        "description": "是否是自动升级的等级",
+                        "required": true
+                    },
+                    {
+                        "name": "pay_money",
+                        "type": "number",
+                        "in": "formData",
+                        "description": "自动升级需要满足的消费金额",
+                        "required": true
+                    },
+                    {
+                        "name": "pay_times",
+                        "type": "number",
+                        "in": "formData",
+                        "description": "自动升级需要满足的消费次数",
+                        "required": true
+                    },
+                    {
+                        "name": "shop_discount",
+                        "type": "number",
+                        "in": "formData",
+                        "description": "购物折扣",
+                        "format": "位于[0, 100]间的整数",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "member"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "删除会员等级",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "待删除的会员等级的id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "member"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        },
+        "/member/member_groups/": {
+            "get": {
+                "summary": "获取corp对应的会员分组信息",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "member"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "member_grades": {
+                                    "$ref": "#/definitions/MemberGroupList"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/member/member_group/": {
+            "put": {
+                "summary": "创建会员分组",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "type": "number",
+                        "in": "formData",
+                        "description": "",
+                        "required": true
+                    },
+                    {
+                        "name": "name",
+                        "type": "string",
+                        "in": "formData",
+                        "description": "分组名",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "member"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            },
+            "post": {
+                "summary": "更新会员分组",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "type": "number",
+                        "in": "formData",
+                        "description": "",
+                        "required": true
+                    },
+                    {
+                        "name": "id",
+                        "type": "number",
+                        "in": "formData",
+                        "description": "待修改的分组的id",
+                        "required": true
+                    },
+                    {
+                        "name": "name",
+                        "type": "string",
+                        "in": "formData",
+                        "description": "新的分组名",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "member"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "删除会员分组",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "待删除的分组的id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "member"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        },
+        "/member/group_memberships/": {
+            "put": {
+                "summary": "将会员加入会员分组",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "formData",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "member_id",
+                        "in": "formData",
+                        "description": "会员id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "member_group_ids",
+                        "in": "formData",
+                        "description": "member_id的数组的json字符串",
+                        "required": true,
+                        "type": "string",
+                        "format": "类似[1, 2, 3]的字符串"
+                    }
+                ],
+                "tags": [
+                    "member"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -74,6 +441,32 @@
                 "pay_times": {
                     "type": "number",
                     "description": "自动升级需要满足的消费次数"
+                },
+                "shop_discount": {
+                    "type": "number",
+                    "description": "购物折扣",
+                    "format": "位于[0, 100]区间的整数"
+                }
+            }
+        },
+        "MemberGroupList": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/MemberGroup"
+            },
+            "minItems": 1
+        },
+        "MemberGroup": {
+            "type": "object",
+            "description": "会员分组信息",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "description": "会员分组id"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "会员分组名"
                 }
             }
         }

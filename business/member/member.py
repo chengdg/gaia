@@ -33,7 +33,6 @@ class Member(business_model.Model):
 	"""
 	__slots__ = (
 		'id',
-		'grade_id',
 		'username_hexstr',
 		# 'webapp_user',
 		'is_subscribed',
@@ -169,9 +168,10 @@ class Member(business_model.Model):
 		@return:是否改变了等级
 		"""
 
+		db_model = self.context['db_model']
 		member_grades = self.context['corp'].member_grade_repository.get_auto_upgrade_for_corp()
 
-		member_grades = filter(lambda x: x.id > self.grade_id, member_grades)
+		member_grades = filter(lambda x: x.id > db_model.grade_id, member_grades)
 
 		user_orders = self.context['corp'].order_repository.get_orders_by_webapp_user_id(self.webapp_user_id,
 		                                                                                 mall_models.ORDER_STATUS_SUCCESSED)
@@ -197,18 +197,6 @@ class Member(business_model.Model):
 				member_models.Member.update(grade=new_grade.id).dj_where(id=self.id).execute()
 				break
 
-	@cached_context_property
-	def __grade(self):
-		"""
-		[property] 会员等级信息
-		"""
-		member_model = self.context['db_model']
-
-		if not member_model:
-			return None
-
-		return member_model.grade
-
 	@property
 	def discount(self):
 		"""
@@ -226,12 +214,15 @@ class Member(business_model.Model):
 		else:
 			return member_model.grade_id, 100
 
-	@property
+	@cached_context_property
 	def grade(self):
 		"""
 		[property] 会员等级
 		"""
-		return self.__grade
+		db_model = self.context['db_model']
+		corp = CorporationFactory.get()
+		grade_id = db_model.grade_id
+		return corp.member_grade_repository.get_member_grade_by_id(grade_id)
 
 	@property
 	def grade_name(self):
@@ -241,23 +232,27 @@ class Member(business_model.Model):
 		return self.__grade.name
 
 	@cached_context_property
-	def __tags(self):
-		"""
-		[property] 会员分组信息
-		"""
-		member_model = self.context['db_model']
-
-		if not member_model:
-			return None
-		member_tags = MemberHasTag.get_member_tags({'member_id': member_model.id})
-		return member_tags
-
-	@property
 	def tags(self):
 		"""
 		[property] 会员分组信息列表
 		"""
-		return self.__tags
+		member_model = self.context['db_model']
+		if not member_model:
+			return None
+
+		member_tag_ids = [relation.member_tag_id for relation in member_models.MemberHasTag.select().dj_where(member_id=self.id)]
+		corp = CorporationFactory.get()
+
+		if len(member_tag_ids) == 0:
+			#如果没有标签，默认打上'未分组'标签
+			default_tag = corp.member_tag_repository.get_default_member_tag()
+			member_models.MemberHasTag.create(
+				member = self.id,
+				member_tag = default_tag.id
+			)
+			return [default_tag]
+		else:
+			return corp.member_tag_repository.get_member_tags_by_ids(member_tag_ids)
 
 	@cached_context_property
 	def __info(self):
@@ -416,3 +411,31 @@ class Member(business_model.Model):
 				return u'%s...' % output_str
 		except:
 			return self.username_for_html[:10]
+
+	def join_groups(self, group_ids):
+		"""
+		加入group_id指定的会员分组
+		即
+		将会员打上group_ids指定的member tag
+		"""
+		if len(group_ids) == 0:
+			#退出所有会员分组，回到默认的'未分组'
+			corp = CorporationFactory.get()
+			default_tag = corp.member_tag_repository.get_default_member_tag()
+			member_models.MemberHasTag.create(
+				member = self.id,
+				member_tag = default_tag.id
+			)
+			return 1
+		else:
+			member_models.MemberHasTag.delete().dj_where(member_id=self.id).execute()
+			tag_ids = group_ids
+			count = 1
+			for tag_id in tag_ids:
+				member_models.MemberHasTag.create(
+					member = self.id,
+					member_tag = tag_id
+				)
+				count += 1
+
+			return count
