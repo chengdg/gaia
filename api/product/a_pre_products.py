@@ -39,6 +39,7 @@ class APreProducts(api_resource.ApiResource):
 				'id': pre_product.id,
 				'owner_name': '', #TODO
 				'classification_id': pre_product.classification_id,
+				'promotion_title': pre_product.promotion_title,
 				'models': {
 					'standard_model': pre_product.standard_model,
 					'custom_models': pre_product.custom_models
@@ -49,6 +50,7 @@ class APreProducts(api_resource.ApiResource):
 				'total_sales': pre_product.sales,
 				'stocks': pre_product.stocks,
 				'status': pre_product.status,
+				'shelve_type': pre_product.shelve_type,
 				'classification_nav': pre_product.classification_nav,
 				'is_updated': pre_product.is_updated,
 				'is_accepted': pre_product.is_accepted,

@@ -1393,6 +1393,10 @@
                         "type": "int",
                         "description": "商品分类id"
                     },
+                    "promotion_title": {
+                        "type": "string",
+                        "description": "促销标题"
+                    },
                     "price_info": {
                         "type": "object",
                         "description": "商品价格信息",
@@ -1418,6 +1422,10 @@
                     "status": {
                         "type": "number",
                         "description": "商品状态"
+                    },
+                    "shelve_type": {
+                        "type": "number",
+                        "description": "货架状态"
                     },
                     "label_names": {
                         "type": "array",

@@ -110,6 +110,40 @@
                 }
             }
         },
+        "/mall/product_labels": {
+            "get": {
+                "description": "获取所有商品标签",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "formData",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product_label"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "$ref": "#/definitions/ProductLabel"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/mall/product_label/": {
             "put": {
                 "description": "创建商品标签",

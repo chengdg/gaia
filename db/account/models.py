@@ -52,6 +52,7 @@ WEBAPP_TYPE_MALL = 0 #普通商城
 WEBAPP_TYPE_WEIZOOM_MALL = 1 #微众商城
 WEBAPP_TYPE_WEIZOOM = 2 #微众公司
 WEBAPP_TYPE_MULTI_SHOP = 3 #多门店
+WEBAPP_TYPE_SUPPLIER = 4 #供货商
 
 class UserProfile(models.Model):
 	"""
