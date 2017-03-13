@@ -48,6 +48,11 @@ class ACoupons(api_resource.ApiResource):
                 'start_time': coupon.start_time.strftime('%Y-%m-%d %H:%M'),
                 'expired_time': coupon.expired_time.strftime('%Y-%m-%d %H:%M'),
                 'created_at': coupon.created_at.strftime('%Y-%m-%d %H:%M'),
+                'received_time': coupon.received_time.strftime('%Y-%m-%d %H:%M'),
+                'receive_user': coupon.receive_user_name,
+                'used_time': coupon.used_time.strftime('%Y-%m-%d %H:%M'),
+                'use_user': coupon.use_user_name,
+                'order_bid': coupon.order_bid,
                 'using_limit': {
                     'is_no_order_user_only': using_limit.is_no_order_user_only,
                     'is_for_specific_products': using_limit.is_for_specific_products,

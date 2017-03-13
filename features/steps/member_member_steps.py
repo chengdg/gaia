@@ -17,11 +17,13 @@ def step_impl(context, user, mp_user_name):
     mp_user = User.get(username=mp_user_name)
     mp_user_profile = UserProfile.get(user=mp_user.id)
 
-    member_grade = member_models.MemberGrade.get(webapp_id=mp_user_profile.webapp_id, is_default_grade=True)
 
-    if member_models.Member.select().dj_where(webapp_id=mp_user_profile.webapp_id, username_hexstr=weixin_user_name).count() > 0:
+    if member_models.Member.select().dj_where(webapp_id=mp_user_profile.webapp_id, remarks_name=weixin_user_name).count() > 0:
         print 'member [%s] already exists' % weixin_user_name
         return
+
+    member_grade = member_models.MemberGrade.get(webapp_id=mp_user_profile.webapp_id, is_default_grade=True)
+    member_tag = member_models.MemberTag.get(webapp_id=mp_user_profile.webapp_id, name=u'未分组')
 
     #create new member
     social_account = member_models.SocialAccount.create(
@@ -61,6 +63,11 @@ def step_impl(context, user, mp_user_name):
         webapp_id = mp_user_profile.webapp_id
     )
 
+    member_models.MemberHasTag.create(
+        member = member.id,
+        member_tag = member_tag.id
+    )
+
 
 @Then(u"{user}能获得会员'{member_name}'的信息")
 def step_impl(context, user, member_name):
@@ -73,7 +80,27 @@ def step_impl(context, user, member_name):
     actual = {
         'name': data['name']
     }
+    actual['groups'] = dict([(group['name'], 1) for group in data['groups']]) #转换成dict进行比较，防止顺序问题造成测试失败
 
     expected = json.loads(context.text)
+    expected['groups'] = dict([(group, 1) for group in expected['groups']])
     bdd_util.assert_dict(expected, actual)
 
+
+@When(u"{user}改变会员'{member_name}'的分组为")
+def step_impl(context, user, member_name):
+    member = bdd_util.get_member_for(member_name, context.corp.webapp_id)
+
+    data = {
+        'corp_id': context.corp.id,
+        'member_id': member.id
+    }
+    member_group_ids = []
+    member_tag_names = json.loads(context.text)
+    for tag_name in member_tag_names:
+        member_tag = member_models.MemberTag.select().dj_where(name=tag_name).get()
+        member_group_ids.append(member_tag.id)
+    data['member_group_ids'] = json.dumps(member_group_ids)
+
+    response = context.client.put('/member/group_memberships/', data)
+    bdd_util.assert_api_call_success(response)

@@ -10,6 +10,8 @@ from db.mall import models as mall_models
 from eaglet.decorator import param_required
 from business.mall.corporation_factory import CorporationFactory
 
+DEFAULT_DATETIME = datetime.strptime('2000-01-01', '%Y-%m-%d')
+
 class Coupon(business_model.Model):
 	"""
 	优惠券
@@ -23,9 +25,13 @@ class Coupon(business_model.Model):
 		'start_time',
 		'expired_time',
 		'created_at',
-		'provided_time',
+		'received_time',
+		'used_time',
 		'money',
-		'member'
+		'member',
+		'order_bid', #订单的bid
+		'receive_user_name', #领取人
+		'use_user_name' #使用人
 	)
 
 	def __init__(self, model):
@@ -36,6 +42,12 @@ class Coupon(business_model.Model):
 			self._init_slot_from_model(model)
 			self.bid = model.coupon_id
 			self.display_status = promotion_models.COUPONSTATUS2STR[model.status]
+			self.received_time = model.provided_time
+			self.used_time = DEFAULT_DATETIME
+			self.use_user_name = u'默认使用人'
+			self.receive_user_name = u'默认领取人'
+			self.order_bid = '123321'
+
 
 	@property
 	def rule(self):
@@ -54,7 +66,7 @@ class Coupon(business_model.Model):
 		"""
 		取消、退款订单时返还优惠券
 		"""
-		if self.provided_time == promotion_models.DEFAULT_DATETIME:
+		if self.received_time == promotion_models.DEFAULT_DATETIME:
 			self.status = promotion_models.COUPON_STATUS_UNGOT
 		else:
 			self.status = promotion_models.COUPON_STATUS_UNUSED

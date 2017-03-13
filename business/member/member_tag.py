@@ -37,6 +37,23 @@ class MemberTag(business_model.Model):
 		"""
 		member_models.MemberTag.update(name=args['name']).dj_where(id=self.id).execute()
 
+	def tag_members(self, member_ids):
+		"""
+		为member_ids指定的会员集合打上标签
+		"""
+		member_models.MemberHasTag.delete().dj_where(member_id__in=member_ids).execute()
+		for member_id in member_ids:
+			member_models.MemberHasTag.create(
+				member = member_id,
+				member_tag = self.id
+			)
+
+	def tag_member(self, member_id):
+		"""
+		为member_id指定的会员打上标签
+		"""
+		return self.tag_members([member_id])
+
 	@cached_context_property
 	def member_count(self):
 		return member_models.MemberHasTag.select().dj_where(member_tag_id=self.id).count()

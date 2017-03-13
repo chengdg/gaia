@@ -29,11 +29,28 @@ class MemberTagRepository(business_model.Service):
 
 		return MemberTag(model)
 
+	def get_member_tags_by_ids(self, ids):
+		"""
+		根据ids获得member tag对象集合
+		"""
+		return [MemberTag(model) for model in member_models.MemberTag.select().dj_where(webapp_id=self.corp.webapp_id, id__in=ids)]
+
+	def get_default_member_tag(self):
+		"""
+		获得默认的member tag
+		"""
+		model = member_models.MemberTag.select().dj_where(webapp_id=self.corp.webapp_id, name=u'未分组').get()
+		return MemberTag(model)
+
 	def delete_member_tag(self, id):
 		"""
 		删除id指定的会员标签
+
+		删除算法:
+		1. 先删除与改标签关联的<会员, 标签>关系
+		2. 再删除标签本身
 		"""
-		#TODO: 使用RegradeMemberService进行会员重新分级
+		member_models.MemberHasTag.delete().dj_where(member_tag_id=id).execute()
 		member_models.MemberTag.delete().dj_where(webapp_id=self.corp.webapp_id, id=id).execute()
 
 		return True

@@ -527,6 +527,18 @@
                     "description": "优惠券状态",
                     "format": "unused(已领取，未使用), used(已使用), expired(过期), discard(作废), ungot(未领取), disabled(已失效)"
                 },
+                "receive_user": {
+                    "type": "string",
+                    "description": "领取人姓名"
+                },
+                "use_user": {
+                    "type": "string",
+                    "description": "使用人姓名"
+                },
+                "order_bid": {
+                    "type": "string",
+                    "description": "使用优惠券的订单的bid值"
+                },
                 "using_limit": {
                     "type": "object",
                     "description": "优惠券的使用限制",
@@ -563,6 +575,14 @@
                 "expired_time": {
                     "type": "string",
                     "description": "优惠券过期时间"
+                },
+                "receive_time": {
+                    "type": "string",
+                    "description": "优惠券的领取时间"
+                },
+                "use_time": {
+                    "type": "string",
+                    "description": "优惠券的使用时间"
                 },
                 "created_at": {
                     "type": "string",

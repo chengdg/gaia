@@ -20,7 +20,23 @@ class AMember(api_resource.ApiResource):
         corp = args['corp']
         member = corp.member_repository.get_member_by_id(args['id'])
 
-        return {
+        member_grade = member.grade
+
+        group_datas = []
+        for member_tag in member.tags:
+            group_datas.append({
+                'id': member_tag.id,
+                'name': member_tag.name
+            })
+
+        data = {
             'id': member.id,
-            'name': member.username
+            'name': member.username,
+            'grade': {
+                'id': member_grade.id,
+                'name': member_grade.name
+            },
+            'groups': group_datas
         }
+
+        return data
