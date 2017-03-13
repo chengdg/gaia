@@ -1,14 +1,12 @@
-FROM reg.weizom.com/wzbase/django16:1.0
-MAINTAINER victor "gaoliqi@weizoom.com"
+FROM reg.weizom.com/wzbase/python27:1.0
+
+MAINTAINER gaia-team
 
 RUN pip install -U \
    git+https://git2.weizzz.com:84/microservice/eaglet.git \
    git+https://git2.weizzz.com:84/microservice/mns_python_sdk.git \
+   git+https://git2.weizzz.com:84/microservice/servicecli.git \
    && rm -rf ~/.pip ~/.cache
-
-RUN mkdir -p /service
-ADD . /service
-WORKDIR /service
-#VOLUME ["/service"]
-
-ENTRYPOINT ["/usr/local/bin/dumb-init", "/bin/bash", "/service/start_service.sh"]
+  ADD . /service
+  WORKDIR /service
+ENTRYPOINT ["/usr/local/bin/dumb-init", "/bin/bash", "start_service.sh"]
