@@ -59,6 +59,8 @@ class Command(BaseCommand):
 			if not display_price:
 				continue
 			swipe_images = grouped_images.get(product_id)
+			if not swipe_images:
+				continue
 			images = []
 			for image in swipe_images:
 				data = {
