@@ -22,13 +22,13 @@ class Command(BaseCommand):
 		
 		pipeline = conn.pipeline()
 		print 'start loading....................'
-		pool_products = mall_models.ProductPool.select()
-		product_ids = [pool.product_id for pool in pool_products]
-		product_ids = list(set(product_ids))
-		products = mall_models.Product.select().where(mall_models.Product.id << product_ids)
+		account = account_models.UserProfile.select().dj_where(webapp_type=2).first()
+		
+		products = mall_models.Product.select().dj_where(owner_id=account.user_id)
+		product_ids = [product.id for product in products]
 		
 		# product_id_2_product = dict([(product.id, product) for product in products])
-		account = account_models.UserProfile.select().dj_where(webapp_type=2).first()
+		
 		sql = """
 		 select product_id, min(mall_product_model.price) as display_price
 		 from mall_product_model
@@ -45,7 +45,7 @@ class Command(BaseCommand):
 			product_id = row[0]
 			display_price = row[1]
 			product_2_price[product_id] = display_price
-		print product_2_price
+		# print product_2_price
 		swipe_images = mall_models.ProductSwipeImage.select().dj_where(product_id__in=product_ids)
 		grouped_images = dict(itertools.groupby(swipe_images, key=lambda k: k.product_id))
 		
@@ -55,7 +55,9 @@ class Command(BaseCommand):
 			product_id = product.id
 			product_name = product.name
 			thumbnails_url = product.thumbnails_url
-			display_price = product_2_price[product_id]
+			display_price = product_2_price.get(product_id)
+			if not display_price:
+				continue
 			swipe_images = grouped_images.get(product_id)
 			images = []
 			for image in swipe_images:
