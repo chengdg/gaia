@@ -4,8 +4,6 @@ from eaglet.core import api_resource
 from eaglet.decorator import param_required
 
 from business.common.page_info import PageInfo
-from business.product.global_product_repository import GlobalProductRepository
-
 
 class APreProducts(api_resource.ApiResource):
 	"""
@@ -16,6 +14,7 @@ class APreProducts(api_resource.ApiResource):
 
 	@param_required(['corp_id', '?verified:bool'])
 	def get(args):
+		corp = args['corp']
 
 		fill_options = {
 			'with_price': True,
@@ -30,7 +29,7 @@ class APreProducts(api_resource.ApiResource):
 			"cur_page": int(args.get('cur_page', 1)),
 			"count_per_page": int(args.get('count_per_page', 15))
 		})
-		pageinfo, pre_products = GlobalProductRepository.get().filter_products(args, page_info, fill_options)
+		pageinfo, pre_products = corp.global_product_repository.filter_products(args, page_info, fill_options)
 
 		rows = []
 

@@ -3,8 +3,6 @@
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
 
-from business.product.global_product_repository import GlobalProductRepository
-
 class AVerifiedProduct(api_resource.ApiResource):
 
 	app = "product"
@@ -15,9 +13,10 @@ class AVerifiedProduct(api_resource.ApiResource):
 		"""
 		入库审核
 		"""
+		corp = args['corp']
 		product_ids = args['product_ids']
 
-		products = GlobalProductRepository.get().get_products_by_ids(product_ids)
+		products = corp.global_product_repository.get_products_by_ids(product_ids)
 		for product in products:
 			product.verify(args['corp'])
 
@@ -28,8 +27,9 @@ class AVerifiedProduct(api_resource.ApiResource):
 		"""
 		编辑审核
 		"""
+		corp = args['corp']
 		product_ids = args['product_ids']
-		products = GlobalProductRepository.get().get_products_by_ids(product_ids)
+		products = corp.global_product_repository.get_products_by_ids(product_ids)
 		for product in products:
 			product.verify_modifications()
 

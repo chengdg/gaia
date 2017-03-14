@@ -3,7 +3,6 @@
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
 
-from business.product.global_product_repository import GlobalProductRepository
 from business.product.product_factory import ProductFactory
 from business.product.update_product_service import UpdateProductService
 
@@ -17,6 +16,7 @@ class APreProduct(api_resource.ApiResource):
 
 	@param_required(['corp_id', 'product_id:int'])
 	def get(args):
+		corp = args['corp']
 		product_id = args.get('product_id')
 
 		fill_options = {
@@ -27,7 +27,7 @@ class APreProduct(api_resource.ApiResource):
 			'with_classification': True
 		}
 
-		pre_product = GlobalProductRepository.get().get_product(product_id, fill_options)
+		pre_product = corp.global_product_repository.get_product(product_id, fill_options)
 		
 		return {
 			'id': pre_product.id,

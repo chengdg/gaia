@@ -141,6 +141,7 @@ class Product(business_model.Model):
 		"""
 		只要单独给商品配置过标签，那么就不再获取所属商品分类的标签
 		"""
+		corp = self.get_corp()
 		product_id = self.id
 		classification_id = classification_id if classification_id else mall_models.ClassificationHasProduct.select().dj_where(
 			product_id = product_id
@@ -149,10 +150,10 @@ class Product(business_model.Model):
 		if product_has_labels.count() > 0: #如果单独给商品配置过标签，则从ProductHasLabel中获取
 			from business.mall.product_label.product_label_repository import ProductLabelRepository
 			label_ids = [p.label_id for p in product_has_labels]
-			return ProductLabelRepository.get().get_labels(label_ids)
+			return ProductLabelRepository.get(corp).get_labels(label_ids)
 		else: #没有就获取所属分类的标签
 			from business.mall.product_label.product_label_repository import ProductLabelRepository
-			return ProductLabelRepository.get().get_labels_by_classification_id(classification_id)
+			return ProductLabelRepository.get(corp).get_labels_by_classification_id(classification_id)
 
 	def manage_label(self, label_ids):
 		"""

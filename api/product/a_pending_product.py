@@ -27,8 +27,9 @@ class APendingProduct(api_resource.ApiResource):
 	def delete(args):
 		product_id = args['product_id']
 		reason = args['reason']
+		corp = args['corp']
 
-		product = GlobalProductRepository.get().get_product(product_id)
+		product = corp.global_product_repository.get_product(product_id)
 		product.refuse_verify(reason)
 
 		return {}

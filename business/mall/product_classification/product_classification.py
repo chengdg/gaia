@@ -74,7 +74,7 @@ class ProductClassification(business_model.Model):
 			level = father_model.level + 1
 
 		model = mall_models.Classification.create(
-			owner_id = CorporationFactory.get().id,
+			owner_id = args['corp'].id,
 			name = args['name'],
 			father_id = args['father_id'],
 			note = args['note'],

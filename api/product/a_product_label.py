@@ -3,8 +3,6 @@
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
 
-from business.product.global_product_repository import GlobalProductRepository
-
 
 class AProductLabel(api_resource.ApiResource):
 	"""
@@ -15,9 +13,10 @@ class AProductLabel(api_resource.ApiResource):
 
 	@param_required(['corp_id', 'product_id:int', 'classification_id:int'])
 	def get(args):
+		corp = args['corp']
 		product_id = args['product_id']
 		classification_id = args['classification_id']
-		product = GlobalProductRepository.get().get_product(product_id)
+		product = corp.global_product_repository.get_product(product_id)
 		labels = product.get_labels(classification_id)
 
 		return [{
@@ -28,10 +27,11 @@ class AProductLabel(api_resource.ApiResource):
 
 	@param_required(['corp_id', 'product_id:int', 'label_ids:json'])
 	def put(args):
+		corp = args['corp']
 		product_id = args['product_id']
 		label_ids = args['label_ids']
 
-		product = GlobalProductRepository.get().get_product(product_id)
+		product = corp.global_product_repository.get_product(product_id)
 		product.manage_label(label_ids)
 
 		return {}
