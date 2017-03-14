@@ -49,6 +49,7 @@ class EncodeDeliveryItemService(business_model.Service):
 			                     'thumbnails_url': product.thumbnails_url,
 			                     'model_id': product.model_id,
 			                     'weight': product.weight,
+								 'user_code': product.user_code,
 			                     'total_origin_price': product.total_origin_price,
 			                     'product_model_name_texts': product.product_model_name_texts,
 			                     'promotion_info': {
