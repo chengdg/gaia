@@ -15,7 +15,7 @@ class AIntegralSalePromotions(api_resource.ApiResource):
     app = 'promotion'
     resource = 'integral_sale_promotions'
 
-    @param_required(['corp_id'])
+    @param_required(['corp_id', '?filters:json'])
     def get(args):
         corp = args['corp']
 
@@ -27,7 +27,7 @@ class AIntegralSalePromotions(api_resource.ApiResource):
             'with_detail': True,
             'with_product': True
         }
-        filters = json.loads(args.get('filters', '{}'))
+        filters = args.get('filters', {})
         promotions, page_info = corp.promotion_repository.search_integral_sale_promotions(target_page,
                                                                                  fill_options=fill_options,
                                                                                  filters=filters)
