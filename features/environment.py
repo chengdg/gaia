@@ -75,6 +75,9 @@ def before_all(context):
 
 	account_util.create_community('zhouxun', u'周迅')
 	account_util.create_community('yangmi', u'杨幂')
+	account_util.create_community('yaochen', u'姚晨')
+	account_util.create_community('zhaowei', u'赵薇')
+	account_util.create_community('bigs', u'大S')
 
 
 	#创建test case，使用assert

@@ -251,7 +251,7 @@ class Coupon(models.Model):
     owner = models.ForeignKey(User)
     coupon_rule = models.ForeignKey(CouponRule) #coupon rule
     member_id = models.IntegerField(default=0) #优惠券分配的member的id
-    coupon_record_id = models.IntegerField(default=0) #优惠券记录的id
+    coupon_record_id = models.IntegerField(default=0) #优惠券记录的id(疑似无用)
     status = models.IntegerField(default=COUPON_STATUS_UNUSED) #优惠券状态
     coupon_id = models.CharField(max_length=50) #优惠券号
     provided_time = models.DateTimeField(default=DEFAULT_DATETIME) #领取时间

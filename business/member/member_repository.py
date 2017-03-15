@@ -119,6 +119,14 @@ class MemberRepository(business_model.Service):
 
 		return Member(member_db_model)
 
+	def get_member_by_token(self, member_id):
+		"""
+		根据token获得member对象
+		"""
+		member_db_model = member_models.Member.get(webapp_id=self.corp.webapp_id, token=token)
+
+		return Member(member_db_model)
+
 	def get_members_from_webapp_user_ids(self, webapp_user_ids):
 		"""
 		根据webapp_user_ids获得member集合
@@ -135,3 +143,5 @@ class MemberRepository(business_model.Service):
 			webappuser_id2member[webapp_user_id] = id2member.get(member_id, None)
 
 		return webappuser_id2member, members
+
+	

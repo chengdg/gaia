@@ -100,6 +100,37 @@ class CouponRule(business_model.Model):
 		coupon_rule_model = self.context['db_model']
 		CorporationFactory.get().coupon_factory.create_coupons_for_rule(coupon_rule_model, count)
 
+		self.sync_count()
+
+	def sync_count(self):
+		"""
+		更新库存数量
+		"""
+		count = promotion_models.Coupon.select().dj_where(coupon_rule_id=self.id).count()
+		remained_count = promotion_models.Coupon.select().dj_where(coupon_rule_id=self.id, status=promotion_models.COUPON_STATUS_UNGOT).count()
+
+		promotion_models.CouponRule.update(count=count, remained_count=remained_count).dj_where(id=self.id).execute()
+
+	def provide_to_members(self, member_ids, count_per_member):
+		"""
+		向会员发放优惠券
+		"""
+		if self.receive_limit_count > 0 and count_per_member > self.receive_limit_count:
+			count_per_member = self.receive_limit_count
+
+		if len(member_ids) * count_per_member > self.remained_count:
+			return 0, u'exceed_coupon_remained_count'
+
+		#发放优惠券
+		corp = CorporationFactory.get()
+		provided_count = corp.coupon_repository.provide_coupons_to_members(self.id, member_ids, count_per_member)
+
+		#更新库存信息
+		new_remained_count = self.remained_count - provided_count
+		promotion_models.CouponRule.update(remained_count=new_remained_count).dj_where(id=self.id).execute()		
+
+		return provided_count, ''
+
 	@staticmethod
 	def create(args):
 		# 优惠券限制条件

@@ -11,6 +11,7 @@ from business.deprecated.wepage_project_repository import WepageProjectRepositor
 from business.member.member_grade_repository import MemberGradeRepository
 from business.member.member_repository import MemberRepository
 from business.member.member_tag_repository import MemberTagRepository
+from business.member.modify_member_service import ModifyMemberService
 from business.order.delivery_item_repository import DeliveryItemRepository
 from business.order.order_export_job_repository import OrderExportJobRepository
 from business.order.order_repository import OrderRepository
@@ -379,3 +380,7 @@ class Corporation(business_model.Model):
 	@property
 	def member_tag_repository(self):
 		return MemberTagRepository(self)
+
+	@property
+	def modify_member_service(self):
+		return ModifyMemberService(self)
