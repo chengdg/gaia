@@ -26,11 +26,26 @@ class CouponRuleRepository(business_model.Service):
 				op = items[1]
 			filter_category = None
 			should_ignore_field = False
-			if filter_field == 'status' or filter_field == 'name':
+			if filter_field == 'status':
 				filter_category = promotion_filter_values
 				should_use_default_status = False
-			if filter_field == 'type':
+				if filter_value == 'not_start':
+					filter_value = promotion_models.PROMOTION_STATUS_NOT_START
+				elif filter_value == 'running':
+					filter_value = promotion_models.PROMOTION_STATUS_STARTED
+				elif filter_value == 'finished':
+					filter_value = promotion_models.PROMOTION_STATUS_FINISHED
+				elif filter_value == 'disalbed':
+					filter_value = promotion_models.PROMOTION_STATUS_DISABLE
+			elif filter_field == 'name':
+				filter_category = promotion_filter_values
+			elif filter_field == 'type':
 				filter_category = coupon_rule_filter_values
+				if filter_value == 'general':
+					filter_value = False
+				else:
+					filter_value = True
+				filter_field_op = 'limit_product'
 			elif filter_field == 'promotion_date':
 				filter_category = promotion_filter_values
 				start_date, end_date = filter_value
@@ -39,6 +54,9 @@ class CouponRuleRepository(business_model.Service):
 				if end_date:
 					filter_category['end_date__lte'] = end_date
 				should_ignore_field = True
+			elif filter_field == 'coupon_bid':
+				filter_category = coupon_filter_values
+				filter_field_op = 'coupon_id'
 
 			if not should_ignore_field:
 				if op:
@@ -63,25 +81,33 @@ class CouponRuleRepository(business_model.Service):
 		"""
 		type2fiters = self.__split_filters(filters=filters)
 
-		#获得按promotion过滤后的coupon rule
-		promotion_filters = type2fiters['promotion']
-		coupon_rule_ids = None
-		if promotion_filters:
-			promotions = promotion_models.Promotion.select().dj_where(**promotion_filters)
-
-		coupon_rule_filters = type2fiters['coupon_rule']
-		if len(coupon_rule_filters) == 0:
-			#不用搜索其他属性，直接分页
-			pageinfo, promotions = paginator.paginate(promotions, page_info.cur_page, page_info.count_per_page)
-			coupon_rule_ids = [promotion.detail_id for promotion in promotions]
-			db_models = list(promotion_models.CouponRule.select().dj_where(owner_id=self.corp.id, id__in=coupon_rule_ids))
-		else:
-			#还需搜索coupon rule其他属性
-			coupon_rule_ids = [promotion.detail_id for promotion in promotions]
-			coupon_rule_filters['id__in'] = coupon_rule_ids
-			coupon_rule_filters['owner_id'] = self.corp.id
-			db_models = promotion_models.CouponRule.select().dj_where(**coupon_rule_filters)
+		if type2fiters['coupon']:
+			coupons = promotion_models.Coupon.select().dj_where(**type2fiters['coupon'])
+			coupon_rule_ids = [coupon.coupon_rule_id for coupon in coupons]
+			db_models = promotion_models.CouponRule.select().dj_where(id__in=coupon_rule_ids)
 			pageinfo, db_models = paginator.paginate(db_models, page_info.cur_page, page_info.count_per_page)
+			db_models = list(db_models)
+		else:
+			#获得按promotion过滤后的coupon rule
+			promotion_filters = type2fiters['promotion']
+			coupon_rule_ids = None
+			if promotion_filters:
+				promotions = promotion_models.Promotion.select().dj_where(**promotion_filters)
+
+			coupon_rule_filters = type2fiters['coupon_rule']
+			if len(coupon_rule_filters) == 0:
+				#不用搜索其他属性，直接分页
+				pageinfo, promotions = paginator.paginate(promotions, page_info.cur_page, page_info.count_per_page)
+				coupon_rule_ids = [promotion.detail_id for promotion in promotions]
+				db_models = list(promotion_models.CouponRule.select().dj_where(owner_id=self.corp.id, id__in=coupon_rule_ids))
+			else:
+				#还需搜索coupon rule其他属性
+				coupon_rule_ids = [promotion.detail_id for promotion in promotions]
+				coupon_rule_filters['id__in'] = coupon_rule_ids
+				coupon_rule_filters['owner_id'] = self.corp.id
+				db_models = promotion_models.CouponRule.select().dj_where(**coupon_rule_filters)
+				pageinfo, db_models = paginator.paginate(db_models, page_info.cur_page, page_info.count_per_page)
+				db_models = list(db_models)
 
 		db_models.sort(lambda x,y: cmp(y.id, x.id))
 		coupon_rules = [CouponRule(db_model) for db_model in db_models]

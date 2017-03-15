@@ -240,15 +240,26 @@ def step_impl(context, user):
 
 @when(u"{user}搜索优惠券规则")
 def step_impl(context, user):
-    input_data = json.loads(context.text)
+    search_data = json.loads(context.text)
     
-    search_data = {}
+    filters = {}
     if 'name' in search_data:
-        search_data['__f-name-contains'] = search_data['name']
+        filters['__f-name-contains'] = search_data['name']
+    if 'status' in search_data:
+        filters['__f-status-equal'] = search_data['status']
+    if 'promotion_date' in search_data:
+        filters['__f-promotion_date-range'] = search_data['promotion_date']
+    if 'rule_type' in search_data:
+        filters['__f-type-equal'] = search_data['rule_type']
+    if 'bid' in search_data:
+        filters['__f-coupon_bid-equal'] = search_data['bid']
 
-    url = '/coupon/coupon_rules/?corp_id=%s&filters=%s' % (context.corp.id, json.dumps(search_data))
+    import urllib
+    filters = urllib.quote(json.dumps(filters))
+    url = '/coupon/coupon_rules/?corp_id=%s&filters=%s' % (context.corp.id, filters)
     response = context.client.get(url)
     bdd_util.assert_api_call_success(response)
+    context.response = response
 
 
 @then(u"{user}能获得优惠券规则列表")
@@ -332,7 +343,14 @@ def step_impl(context, user, coupon_rule_name):
 
 @then(u"{user}能获得优惠券规则搜索结果")
 def step_impl(context, user):
+    response = context.response
+
+    actual = []
+    for coupon_rule in response.data['coupon_rules']:
+        actual.append({
+            'name': coupon_rule['name']
+        })
+
     expected = json.loads(context.text)
-    actual = expected
 
     bdd_util.assert_list(expected, actual)
