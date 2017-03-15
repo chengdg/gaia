@@ -163,16 +163,29 @@ class CouponRule(business_model.Model):
 			receive_rule= using_limit['is_no_order_user_only']
 		)
 
+		#确定新建的优惠券规则的状态
+		now = datetime.now().strftime('%Y-%m-%d %H:%M')
+		start_date = args['start_date']
+		end_date = args['end_date']
+		status = None
+		if start_date <= now:
+			if end_date <= now:
+				status = promotion_models.PROMOTION_STATUS_FINISHED
+			else:
+				status = promotion_models.PROMOTION_STATUS_STARTED
+		else:
+			status = promotion_models.PROMOTION_STATUS_NOT_START
+		#创建promotion
 		promotion = promotion_models.Promotion.create(
 			owner= CorporationFactory.get().id,
 			promotion_title = '',
 			name = args['name'],
 			type = promotion_models.PROMOTION_TYPE_COUPON,
 			member_grade_id = 0,
+			status = status,
 			start_date = args['start_date'],
 			end_date = args['end_date'],
-			detail_id= coupon_rule_model.id,
-			status= promotion_models.PROMOTION_STATUS_NOT_START
+			detail_id= coupon_rule_model.id
 		)
 		
 		coupon_rule = CouponRule(coupon_rule_model)

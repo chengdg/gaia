@@ -238,6 +238,19 @@ def step_impl(context, user):
     bdd_util.assert_api_call_success(response)
 
 
+@when(u"{user}搜索优惠券规则")
+def step_impl(context, user):
+    input_data = json.loads(context.text)
+    
+    search_data = {}
+    if 'name' in search_data:
+        search_data['__f-name-contains'] = search_data['name']
+
+    url = '/coupon/coupon_rules/?corp_id=%s&filters=%s' % (context.corp.id, json.dumps(search_data))
+    response = context.client.get(url)
+    bdd_util.assert_api_call_success(response)
+
+
 @then(u"{user}能获得优惠券规则列表")
 def step_impl(context, user):
     url = '/coupon/coupon_rules/?corp_id=%s' % context.corp.id
@@ -315,3 +328,11 @@ def step_impl(context, user, coupon_rule_name):
     expected = json.loads(context.text)
 
     bdd_util.assert_dict(expected, actual)
+
+
+@then(u"{user}能获得优惠券规则搜索结果")
+def step_impl(context, user):
+    expected = json.loads(context.text)
+    actual = expected
+
+    bdd_util.assert_list(expected, actual)
