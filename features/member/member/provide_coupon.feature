@@ -25,7 +25,8 @@ Background:
 Scenario: 为会员发放优惠券
 	向会员发放优惠券后
 	1. 会员信息中携带正确的优惠券列表
-	2. 优惠券的信息发生变化
+	2. 优惠券规则的信息发生变化
+	3. 优惠券的信息发生变化
 
 	Given jobs登录系统
 	When jobs添加优惠券规则
@@ -34,7 +35,8 @@ Scenario: 为会员发放优惠券
 			"name": "多商品券1",
 			"coupon_product": "商品1",
 			"money": 10,
-			"count": 5
+			"count": 5,
+			"coupon_id_prefix": "coupon1_id_"
 		}, {
 			"name": "通用券2",
 			"money": 5,
@@ -57,6 +59,27 @@ Scenario: 为会员发放优惠券
 			"remained_count": 5
 		}]
 		"""
+	Then jobs能获得优惠券'多商品券1'的码库
+		"""
+		{
+			"coupon1_id_1": {
+				"status": "未领取"
+			},
+			"coupon1_id_2": {
+				"status": "未领取"
+			}, 
+			"coupon1_id_3": {
+				"status": "未领取"
+			}, 
+			"coupon1_id_4": {
+				"status": "未领取"
+			}, 
+			"coupon1_id_5": {
+				"status": "未领取"
+			}
+		}
+		"""
+	#发放第一张优惠券
 	When jobs为会员每人发放'1'张优惠券'多商品券1'
 		"""
 		["zhouxun", "yangmi"]
@@ -118,6 +141,28 @@ Scenario: 为会员发放优惠券
 			"count": 5,
 			"remained_count": 3
 		}]
+		"""
+	Then jobs能获得优惠券'多商品券1'的码库
+		"""
+		{
+			"coupon1_id_1": {
+				"status": "未使用",
+				"receiver": "zhouxun"
+			},
+			"coupon1_id_2": {
+				"status": "未使用",
+				"receiver": "yangmi"
+			}, 
+			"coupon1_id_3": {
+				"status": "未领取"
+			}, 
+			"coupon1_id_4": {
+				"status": "未领取"
+			}, 
+			"coupon1_id_5": {
+				"status": "未领取"
+			}
+		}
 		"""
 
 @gaia @member

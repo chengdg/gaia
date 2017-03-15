@@ -35,7 +35,7 @@ class CouponRuleRepository(business_model.Service):
 					filter_value = promotion_models.PROMOTION_STATUS_STARTED
 				elif filter_value == 'finished':
 					filter_value = promotion_models.PROMOTION_STATUS_FINISHED
-				elif filter_value == 'disalbed':
+				elif filter_value == 'disabled':
 					filter_value = promotion_models.PROMOTION_STATUS_DISABLE
 			elif filter_field == 'name':
 				filter_category = promotion_filter_values

@@ -226,7 +226,7 @@ Scenario:1 按优惠券类型搜索
 		}]
 		"""
 
-@gaia @promotion @coupon @wip
+@gaia @promotion @coupon
 Scenario:1 按优惠券码库中的bid搜索
 	Given jobs登录系统
 	When jobs添加优惠券规则
