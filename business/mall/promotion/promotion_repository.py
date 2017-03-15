@@ -93,8 +93,17 @@ class PromotionRepository(business_model.Service):
 			elif filter_field == 'product_name':
 				filter_field = 'name'
 				filter_category = product_filter_values
-			elif filter_field == 'start_date' or filter_field == 'end_date' or filter_field == 'barcode':
+			elif filter_field == 'barcode':
 				filter_category = product_filter_values
+			elif filter_field == 'promotion_date':
+				filter_category = promotion_filter_values
+				start_date, end_date = filter_value
+				if start_date:
+					filter_category['start_date__gte'] = start_date
+				if end_date:
+					filter_category['end_date__lte'] = end_date
+				should_ignore_field = True
+
 			if not should_ignore_field:
 				if op:
 					filter_field_op = '%s__%s' % (filter_field, op)
@@ -136,6 +145,8 @@ class PromotionRepository(business_model.Service):
 
 	def get_promotions(self, page_info, fill_options=None, options=None, filters=None):
 		type2fiters = self.__split_filters(filters=filters)
+		print type2fiters
+		raw_input()
 		order_options = self.__get_promotion_order_options(options=options)
 
 		promotion_filters = type2fiters['promotion']
