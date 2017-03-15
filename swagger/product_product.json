@@ -755,6 +755,61 @@
                 }
             }
         },
+        "/product/specific_id_products/": {
+            "get": {
+                "summary": "获取通过id集合指定的商品集合",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "ids",
+                        "in": "query",
+                        "description": "商品id的array的json字符串",
+                        "required": true,
+                        "format": "[1, 2, 3]",
+                        "type": "string"
+                    },
+                    {
+                        "name": "fill_options",
+                        "in": "query",
+                        "description": "商品信息的填充选项",
+                        "required": true,
+                        "type": "json",
+                        "schema": {
+                            "$ref": "#/definitions/ProductFillOptions"
+                        }
+                    }
+                ],
+                "tags": [
+                    "product"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "products": {
+                                    "$ref": "#/definitions/ProductInProductList"
+                                },
+                                "pageinfo": {
+                                    "type": "object",
+                                    "description": "分页信息"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
 
         "/product/deleted_products/": {
             "put": {
@@ -2209,6 +2264,47 @@
                         "type": "date",
                         "description": "促销创建时间"
                     }
+                }
+            }
+        },
+        "ProductFillOptions": {
+            "type": "object",
+            "properties": {
+                "with_category": {
+                    "type": "boolean",
+                    "description": " 是否填充商品分类信息"
+                },
+                "with_product_model": {
+                    "type": "boolean",
+                    "description": "是否填充商品规格信息"
+                },
+                "with_model_property_info": {
+                    "type": "boolean",
+                    "description": "是否填充商品规格的规格属性信息"
+                },
+                "with_shelve_status": {
+                    "type": "boolean",
+                    "description": "是否填充商品货架状态信息"
+                },
+                "with_supplier_info": {
+                    "type": "boolean",
+                    "description": "是否填充商品供货商信息"
+                },
+                "with_classification": {
+                    "type": "boolean",
+                    "description": "是否填充商品类别信息"
+                },
+                "with_sales": {
+                    "type": "boolean",
+                    "description": "是否填充商品销量信息"
+                },
+                "with_product_promotion": {
+                    "type": "boolean",
+                    "description": "是否填充商品促销信息"
+                },
+                "with_cps_promotion_info": {
+                    "type": "boolean",
+                    "description": "是否填充商品cps信息"
                 }
             }
         }

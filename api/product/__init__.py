@@ -15,6 +15,7 @@ import a_weizoom_pooled_products
 import a_pooled_products
 import a_unshelf_consignment_products
 import a_unshelf_pooled_products
+import a_specific_id_products
 
 import property_template
 import model_property
