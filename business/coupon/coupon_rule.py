@@ -23,6 +23,7 @@ class CouponRule(business_model.Model):
 		'money',
 		'coupon_count', #优惠券数量
 		'receive_limit_count', #每人领取的限额
+		'receive_link', #领取链接
 		'start_date',
 		'end_date',
 		'remark',
@@ -46,6 +47,9 @@ class CouponRule(business_model.Model):
 			self.receive_limit_count = model.limit_counts
 			self.receive_user_count = model.get_person_count
 			self.receive_count = model.get_count
+
+			corp = CorporationFactory.get()
+			self.receive_link = 'http://m.weizoom.com/coupon/coupon_rule/?webapp_owner_id=%s&rule_id=%s' % (corp.id, self.id)
 
 			self.using_limit = CouponUsingLimit(model.valid_restrictions, model.receive_rule, model.limit_product_id)
 			self.status = self.__get_status(model)
