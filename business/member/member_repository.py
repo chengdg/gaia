@@ -119,6 +119,21 @@ class MemberRepository(business_model.Service):
 
 		return Member(member_db_model)
 
+	def get_member_by_name(self, member_name):
+		"""
+		根据name获得member对象
+		"""
+		from eaglet.utils.string_util import hex_to_byte, byte_to_hex
+		username_hexstr = byte_to_hex(member_name)
+
+		member_db_models = list(member_models.Member.select().dj_where(webapp_id=self.corp.webapp_id, username_hexstr=username_hexstr))
+
+		if len(member_db_models) > 0:
+			member_db_model = member_db_models[0]
+			return Member(member_db_model)
+		else:
+			return None
+
 	def get_member_by_token(self, member_id):
 		"""
 		根据token获得member对象

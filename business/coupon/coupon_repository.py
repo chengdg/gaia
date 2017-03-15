@@ -8,14 +8,63 @@ from business import model as business_model
 from business.coupon.coupon import Coupon
 from business import model as business_model
 from business.mall.corporation_factory import CorporationFactory
+from business.common.filter_parser import FilterParser
 
 
 class CouponRepository(business_model.Service):
+	def __split_filters(self, filters):
+		coupon_filter_values = {}
+		filter_parse_result = FilterParser.get().parse(filters)
+
+		for filter_field_op, filter_value in filter_parse_result.items():
+			items = filter_field_op.split('__')
+			filter_field = items[0]
+			op = None
+			if len(items) > 1:
+				op = items[1]
+			filter_category = None
+			should_ignore_field = False
+			if filter_field == 'status':
+				filter_category = coupon_filter_values
+				should_use_default_status = False
+				if filter_value == 'ungot':
+					filter_value = promotion_models.COUPON_STATUS_UNGOT
+				elif filter_value == 'unused':
+					filter_value = promotion_models.COUPON_STATUS_UNUSED
+				elif filter_value == 'used':
+					filter_value = promotion_models.COUPON_STATUS_USED
+			elif filter_field == 'receiver':
+				filter_category = coupon_filter_values
+				filter_field_op = 'member_id'
+				#获取member_id
+				corp = CorporationFactory.get()
+				member = corp.member_repository.get_member_by_name(filter_value)
+				if member:
+					filter_value = member.id
+				else:
+					filter_value = -99999
+			elif filter_field == 'bid':
+				filter_category = coupon_filter_values
+				filter_field_op = 'coupon_id'
+
+			if not should_ignore_field:
+				if op:
+					filter_field_op = '%s__%s' % (filter_field, op)
+				filter_category[filter_field_op] = filter_value
+		
+		return {
+			'coupon': coupon_filter_values,
+		}
+
 	def get_coupons_for_rule(self, coupon_rule_id, filters, page_info):
 		"""
 		获得rule中的coupon的集合
 		"""
-		coupon_models = promotion_models.Coupon.select().dj_where(coupon_rule_id=coupon_rule_id)
+		type2fiters = self.__split_filters(filters=filters)
+		coupon_filters = type2fiters['coupon']
+		coupon_filters['coupon_rule_id'] = coupon_rule_id
+
+		coupon_models = promotion_models.Coupon.select().dj_where(**coupon_filters)
 		pageinfo, coupon_models = paginator.paginate(coupon_models, page_info.cur_page, page_info.count_per_page)
 
 		coupons = [Coupon(coupon_model) for coupon_model in coupon_models]

@@ -4,10 +4,12 @@
 """
 from datetime import datetime
 
+from eaglet.decorator import param_required
+from eaglet.decorator import cached_context_property
+
 from business import model as business_model
 from db.mall import promotion_models
 from db.mall import models as mall_models
-from eaglet.decorator import param_required
 from business.mall.corporation_factory import CorporationFactory
 
 DEFAULT_DATETIME = datetime.strptime('2000-01-01', '%Y-%m-%d')
@@ -28,9 +30,7 @@ class Coupon(business_model.Model):
 		'received_time',
 		'used_time',
 		'money',
-		'member',
 		'order_bid', #订单的bid
-		'receive_user_name', #领取人
 		'use_user_name' #使用人
 	)
 
@@ -45,7 +45,6 @@ class Coupon(business_model.Model):
 			self.received_time = model.provided_time
 			self.used_time = DEFAULT_DATETIME
 			self.use_user_name = u'默认使用人'
-			self.receive_user_name = u'默认领取人'
 			self.order_bid = ''
 
 
@@ -57,6 +56,19 @@ class Coupon(business_model.Model):
 			self.context['_rule'] = corp.coupon_rule_repository.get_coupon_rule_by_id(db_model.coupon_rule_id)
 
 		return self.context['_rule']
+
+	@cached_context_property
+	def receiver(self):
+		"""
+		优惠券的领取人
+		"""
+		db_model = self.context['db_model']
+		if db_model.member_id == 0:
+			return ""
+
+		corp = CorporationFactory.get()		
+		member = corp.member_repository.get_member_by_id(db_model.member_id)
+		return member.username
 
 	@property
 	def using_limit(self):

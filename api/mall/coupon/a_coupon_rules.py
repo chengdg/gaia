@@ -23,8 +23,7 @@ class ACouponRules(api_resource.ApiResource):
 		})
 
 		corp = args['corp']
-		filters = args.get('filters', {
-		})
+		filters = args.get('filters', {})
 		coupon_rules, pageinfo = corp.coupon_rule_repository.get_coupon_rules(filters, target_page)
 
 		datas = []

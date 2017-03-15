@@ -262,6 +262,36 @@ def step_impl(context, user):
     context.response = response
 
 
+@when(u"{user}搜索优惠券规则'{coupon_rule_name}'中的优惠券")
+def step_impl(context, user, coupon_rule_name):
+    coupon_rule_model = promotion_models.CouponRule.select().dj_where(name=coupon_rule_name).get()
+    search_data = json.loads(context.text)
+    
+    filters = {}
+    if 'status' in search_data:
+        filters['__f-status-equal'] = search_data['status']
+    if 'receiver' in search_data:
+        filters['__f-receiver-equal'] = search_data['receiver']
+    if 'bid' in search_data:
+        filters['__f-bid-equal'] = search_data['bid']
+
+    import urllib
+    filters = urllib.quote(json.dumps(filters))
+    url = '/coupon/coupons/?corp_id=%s&coupon_rule_id=%s&filters=%s' % (context.corp.id, coupon_rule_model.id, filters)
+    response = context.client.get(url)
+    bdd_util.assert_api_call_success(response)
+    context.response = response
+
+
+@when(u"{user}使用优惠券'{coupon_rule_name}'")
+def step_impl(context, user, coupon_rule_name):
+    coupon_rule_model = promotion_models.CouponRule.select().dj_where(name=coupon_rule_name).get()
+    coupon_bids = json.loads(context.text)
+
+    for coupon_bid in coupon_bids:
+        promotion_models.Coupon.update(status= promotion_models.COUPON_STATUS_USED).dj_where(coupon_id=coupon_bid).execute()
+    
+
 @then(u"{user}能获得优惠券规则列表")
 def step_impl(context, user):
     url = '/coupon/coupon_rules/?corp_id=%s' % context.corp.id
@@ -332,7 +362,8 @@ def step_impl(context, user, coupon_rule_name):
         data = {
             "money": coupon['money'],
             "status": status2str[coupon['status']],
-            "consumer": ""
+            "consumer": "",
+            "receiver": coupon["receive_user"]
         }
         actual[coupon['bid']] = data
 
@@ -349,6 +380,22 @@ def step_impl(context, user):
     for coupon_rule in response.data['coupon_rules']:
         actual.append({
             'name': coupon_rule['name']
+        })
+
+    expected = json.loads(context.text)
+
+    bdd_util.assert_list(expected, actual)
+
+
+@then(u"{user}能获得优惠券搜索结果")
+def step_impl(context, user):
+    response = context.response
+
+    actual = []
+    for coupon in response.data['coupons']:
+        actual.append({
+            'bid': coupon['bid'],
+            'receiver': coupon['receive_user']
         })
 
     expected = json.loads(context.text)

@@ -34,7 +34,8 @@ class ACoupons(api_resource.ApiResource):
 
         corp = args['corp']
         coupon_rule = corp.coupon_rule_repository.get_coupon_rule_by_id(args['coupon_rule_id'])
-        filters = args.get('filters', {})
+        filters = args.get('filters', {
+        })
         coupons, pageinfo = corp.coupon_repository.get_coupons_for_rule(coupon_rule.id, filters, target_page)
 
         datas = []
@@ -49,7 +50,7 @@ class ACoupons(api_resource.ApiResource):
                 'expired_time': coupon.expired_time.strftime('%Y-%m-%d %H:%M'),
                 'created_at': coupon.created_at.strftime('%Y-%m-%d %H:%M'),
                 'received_time': coupon.received_time.strftime('%Y-%m-%d %H:%M'),
-                'receive_user': coupon.receive_user_name,
+                'receive_user': coupon.receiver,
                 'used_time': coupon.used_time.strftime('%Y-%m-%d %H:%M'),
                 'use_user': coupon.use_user_name,
                 'order_bid': coupon.order_bid,
