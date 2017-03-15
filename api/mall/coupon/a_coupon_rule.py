@@ -34,6 +34,7 @@ class ACouponRule(api_resource.ApiResource):
             'remained_count': coupon_rule.remained_count,
             'receive_user_count': coupon_rule.receive_user_count,
             'receive_count': coupon_rule.receive_count,
+            'receive_link': coupon_rule.receive_link,
             'use_count': coupon_rule.use_count,
             'start_date': coupon_rule.start_date.strftime('%Y-%m-%d %H:%M'),
             'end_date': coupon_rule.end_date.strftime('%Y-%m-%d %H:%M'),
