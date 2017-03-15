@@ -6,6 +6,7 @@ from db.account.models import User, UserProfile
 from behave import *
 from features.util import bdd_util
 from db.mall import models as mall_models
+from db.mall import promotion_models as promotion_models
 from db.account import models as account_models
 from db.member import models as member_models
 from eaglet.utils.string_util import hex_to_byte, byte_to_hex
@@ -69,24 +70,6 @@ def step_impl(context, user, mp_user_name):
     )
 
 
-@Then(u"{user}能获得会员'{member_name}'的信息")
-def step_impl(context, user, member_name):
-    member = bdd_util.get_member_for(member_name, context.corp.webapp_id)
-    url = '/member/member/?corp_id=%s&id=%s' % (context.corp.id, member.id)
-
-
-    response = context.client.get(url)
-    data = response.data
-    actual = {
-        'name': data['name']
-    }
-    actual['groups'] = dict([(group['name'], 1) for group in data['groups']]) #转换成dict进行比较，防止顺序问题造成测试失败
-
-    expected = json.loads(context.text)
-    expected['groups'] = dict([(group, 1) for group in expected['groups']])
-    bdd_util.assert_dict(expected, actual)
-
-
 @When(u"{user}改变会员'{member_name}'的分组为")
 def step_impl(context, user, member_name):
     member = bdd_util.get_member_for(member_name, context.corp.webapp_id)
@@ -104,3 +87,129 @@ def step_impl(context, user, member_name):
 
     response = context.client.put('/member/group_memberships/', data)
     bdd_util.assert_api_call_success(response)
+
+
+@When(u"{user}批量调整会员的等级为'{member_grade_name}'")
+def step_impl(context, user, member_grade_name):
+    member_names = json.loads(context.text)
+    member_ids = []
+    for member_name in member_names:
+        member = bdd_util.get_member_for(member_name, context.corp.webapp_id)
+        member_ids.append(member.id)
+
+    member_grade = member_models.MemberGrade.select().dj_where(name=member_grade_name).get()
+
+    data = {
+        'corp_id': context.corp.id,
+        'member_ids': json.dumps(member_ids),
+        'member_grade_id': member_grade.id
+    }
+
+    response = context.client.post('/member/grade_memberships/', data)
+    bdd_util.assert_api_call_success(response)
+
+
+@When(u"{user}为会员'{member_name}'增加积分'{integral}'")
+def step_impl(context, user, member_name, integral):
+    reason = ''
+    if context.text:
+        reason = json.loads(context.text)['reason']
+
+    member = bdd_util.get_member_for(member_name, context.corp.webapp_id)
+
+    data = {
+        'corp_id': context.corp.id,
+        'member_id': member.id,
+        'integral_increment': integral,
+        'reason': reason
+    }
+
+    response = context.client.put('/member/integral_increment/', data)
+    bdd_util.assert_api_call_success(response)
+
+
+@When(u"{user}为会员每人发放'{count_per_member}'张优惠券'{coupon_rule_name}'")
+def step_impl(context, user, count_per_member, coupon_rule_name):
+    #sleep一会儿，让优惠券发送的时间有差别，保证测试的排序结果
+    import time
+    time.sleep(1)
+    coupon_rule = promotion_models.CouponRule.select().dj_where(name=coupon_rule_name).get()
+
+    member_names = json.loads(context.text)
+    member_ids = []
+    for member_name in member_names:
+        member = bdd_util.get_member_for(member_name, context.corp.webapp_id)
+        member_ids.append(member.id)
+
+    data = {
+        'corp_id': context.corp.id,
+        'member_ids': json.dumps(member_ids),
+        'count_per_member': count_per_member,
+        'coupon_rule_id': coupon_rule.id
+    }
+
+    response = context.client.put('/member/coupons/', data)
+    bdd_util.assert_api_call_success(response)
+
+
+@Then(u"{user}能获得会员'{member_name}'的积分日志")
+def step_impl(context, user, member_name):
+    member = bdd_util.get_member_for(member_name, context.corp.webapp_id)
+    url = '/member/integral_logs/?corp_id=%s&member_id=%s' % (context.corp.id, member.id)
+
+    response = context.client.get(url)
+    data = response.data
+    actual = []
+    for integral_log in data['integral_logs']:
+        actual.append({
+            'id': integral_log['id'],
+            'event': integral_log['event'],
+            'integral_increment': integral_log['integral_increment'],
+            'reason': integral_log['reason'],
+            'actor': integral_log['actor'],
+            'current_integral': integral_log['current_integral']
+        })
+
+    expected = json.loads(context.text)
+    bdd_util.assert_list(expected, actual)
+
+
+@Then(u"{user}能获得会员'{member_name}'的优惠券集合")
+def step_impl(context, user, member_name):
+    member = bdd_util.get_member_for(member_name, context.corp.webapp_id)
+    url = '/member/coupons/?corp_id=%s&member_id=%s' % (context.corp.id, member.id)
+
+    response = context.client.get(url)
+    data = response.data
+    actual = []
+    for coupon in data['coupons']:
+        actual.append({
+            'id': coupon['id'],
+            'money': coupon['money'],
+            'name': coupon['name'],
+            'is_for_specific_products': coupon['using_limit']['is_for_specific_products'],
+            'status': coupon['status']
+        })
+
+    expected = json.loads(context.text)
+    bdd_util.assert_list(expected, actual)
+
+
+@Then(u"{user}能获得会员'{member_name}'的信息")
+def step_impl(context, user, member_name):
+    member = bdd_util.get_member_for(member_name, context.corp.webapp_id)
+    url = '/member/member/?corp_id=%s&id=%s' % (context.corp.id, member.id)
+
+    response = context.client.get(url)
+    data = response.data
+    actual = {
+        'name': data['name'],
+        'grade': data['grade'],
+        'integral': data['integral']
+    }
+    actual['groups'] = dict([(group['name'], 1) for group in data['groups']]) #转换成dict进行比较，防止顺序问题造成测试失败
+
+    expected = json.loads(context.text)
+    if 'groups' in expected:
+        expected['groups'] = dict([(group, 1) for group in expected['groups']])
+    bdd_util.assert_dict(expected, actual)

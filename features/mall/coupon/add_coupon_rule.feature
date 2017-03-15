@@ -195,7 +195,7 @@ Scenario:2 添加优惠券规则-多商品券
 		"""
 
 
-@gaia @promotion @coupon @wip2
+@gaia @promotion @coupon
 Scenario:3 添加优惠券规则后，获得码库
 	添加优惠券规则后，能获得码库
 

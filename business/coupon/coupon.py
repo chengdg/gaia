@@ -46,7 +46,7 @@ class Coupon(business_model.Model):
 			self.used_time = DEFAULT_DATETIME
 			self.use_user_name = u'默认使用人'
 			self.receive_user_name = u'默认领取人'
-			self.order_bid = '123321'
+			self.order_bid = ''
 
 
 	@property

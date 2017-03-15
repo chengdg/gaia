@@ -18,9 +18,10 @@ Background:
 		"""
 
 @gaia @promotion @coupon
-Scenario:1 删除优惠券
-	删除优惠券后:
-	1. 优惠券规则的码库中不再出现此优惠券
+Scenario:1 增加优惠券码库数量
+	增加优惠券码库数量后:
+	1. 优惠券规则的码库中出现增加优惠券
+	2. 优惠券规则的库存信息发生变化
 
 	Given jobs登录系统
 	When jobs添加优惠券规则
@@ -47,6 +48,14 @@ Scenario:1 删除优惠券
 			}
 		}
 		"""
+	Then jobs能获得优惠券规则列表
+		"""
+		[{
+			"name": "单品券",
+			"count": 3,
+			"remained_count": 3
+		}]
+		"""
 	When jobs为优惠券'单品券'增加'2'个库存
 	Then jobs能获得优惠券'单品券'的码库
 		"""
@@ -69,4 +78,12 @@ Scenario:1 删除优惠券
 				"status": "未领取"
 			}
 		}
+		"""
+	Then jobs能获得优惠券规则列表
+		"""
+		[{
+			"name": "单品券",
+			"count": 5,
+			"remained_count": 5
+		}]
 		"""

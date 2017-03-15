@@ -10,6 +10,7 @@ import logging
 from bs4 import BeautifulSoup
 from datetime import datetime
 from bdem import msgutil
+from eaglet.core import paginator
 
 from eaglet.decorator import param_required
 from eaglet.decorator import cached_context_property
@@ -21,10 +22,12 @@ from business.account.integral import Integral
 from gaia_conf import TOPIC
 from util import emojicons_util
 from db.member import models as member_models
+from db.mall import promotion_models as promotion_models
 from business import model as business_model
 from business.member.member_has_tag import MemberHasTag
 from db.mall import models as mall_models
 from business.mall.corporation_factory import CorporationFactory
+from business.member.integral_log import IntegralLog
 
 
 class Member(business_model.Model):
@@ -109,6 +112,23 @@ class Member(business_model.Model):
 			'order': order,
 			'corp': self.context['corp']
 		})
+
+	def get_integral_logs(self, page_info):
+		"""
+		获得会员的积分日志集合
+		"""
+		db_models = member_models.MemberIntegralLog.select().dj_where(member=self.id).order_by(-member_models.MemberIntegralLog.id)
+		pageinfo, db_models = paginator.paginate(db_models, page_info.cur_page, page_info.count_per_page)
+
+		return [IntegralLog(db_model) for db_model in db_models], pageinfo
+
+	def get_coupons(self, page_info):
+		"""
+		获得会员的优惠券集合
+		"""
+		corp = CorporationFactory.get()
+		coupons, pageinfo = corp.coupon_repository.get_coupons_for_member(self, page_info)
+		return coupons, pageinfo
 
 	def cleanup_cache(self):
 		"""

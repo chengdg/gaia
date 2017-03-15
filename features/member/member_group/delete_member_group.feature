@@ -26,7 +26,7 @@ Scenario:删除会员分组影响会员分组列表
 		}]
 		"""
 
-@gaia @member @member.group @wip
+@gaia @member @member.group
 Scenario:删除会员分组影响已分组的会员
 	删除会员分组后
 	1. 如果会员的部分分组被删除，会员分组信息正常改变

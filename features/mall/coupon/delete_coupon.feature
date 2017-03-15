@@ -21,6 +21,7 @@ Background:
 Scenario:1 删除优惠券
 	删除优惠券后:
 	1. 优惠券规则的码库中不再出现此优惠券
+	2. 优惠券规则的库存发生变化
 
 	Given jobs登录系统
 	When jobs添加优惠券规则
@@ -53,6 +54,14 @@ Scenario:1 删除优惠券
 			}
 		}
 		"""
+	Then jobs能获得优惠券规则列表
+		"""
+		[{
+			"name": "单品券",
+			"count": 5,
+			"remained_count": 5
+		}]
+		"""
 	When jobs批量删除优惠券
 		"""
 		["coupon1_id_1", "coupon1_id_3"]
@@ -70,4 +79,12 @@ Scenario:1 删除优惠券
 				"money": 10.00
 			}
 		}
+		"""
+	Then jobs能获得优惠券规则列表
+		"""
+		[{
+			"name": "单品券",
+			"count": 3,
+			"remained_count": 3
+		}]
 		"""

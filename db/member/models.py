@@ -21,7 +21,7 @@ class MemberGrade(models.Model):
     name = models.TextField()
     is_auto_upgrade = models.BooleanField(default=False, verbose_name='是否凭经验值自动升级')
     upgrade_lower_bound = models.IntegerField(default=0, verbose_name='该等级的经验值下限')
-    shop_discount = models.IntegerField(default=0, verbose_name='购物折扣')
+    shop_discount = models.IntegerField(default=100, verbose_name='购物折扣')
     is_default_grade = models.BooleanField(default=False)
     usable_integral_percentage_in_order = models.IntegerField(verbose_name='一笔交易中能使用的多少积分', default=100) # -1 无限制
     pay_money = models.FloatField(default=0.00)
@@ -330,6 +330,25 @@ MANAGER_MODIFY_ADD = '管理员赠送'
 MANAGER_MODIFY_REDUCT = '管理员扣减'
 CHANNEL_QRCODE = u'渠道扫码奖励'
 BUY_INCREST_COUNT_FOR_FATHER = u'推荐关注的好友购买奖励'
+
+INTEGRALLOGTYPE2STR = {
+    u'首次关注': 'first_subscribe',
+    u'系统管理员修改': 'manager_modify',
+    u'管理员赠送': 'manager_modify_increase',
+    u'管理员扣减': 'manager_modify_decrease',
+    u'渠道扫码奖励': 'channel_qrcode',
+    u'推荐关注的好友购买奖励': 'recommend_purchase',
+    u'推荐扫码奖励': 'recommend_follow'
+}
+INTEGRALLOGTYPE2VALUE = {
+    'first_subscribe': u'首次关注',
+    'manager_modify': u'系统管理员修改',
+    'manager_modify_increase': u'管理员赠送',
+    'manager_modify_decrease': u'管理员扣减',
+    'channel_qrcode': u'渠道扫码奖励',
+    'recommend_purchase': u'推荐关注的好友购买奖励',
+    'recommend_follow': u'推荐扫码奖励'
+}
 
 class MemberIntegralLog(models.Model):
     member = models.ForeignKey(Member)

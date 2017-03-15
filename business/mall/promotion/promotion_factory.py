@@ -77,7 +77,7 @@ class PromotionFactory(business_model.Service):
             name=promotion_data['name'],
             promotion_title=promotion_data.get('promotion_title', ''),
             status=promotion_data.get('status', promotion_models.PROMOTION_STATUS_NOT_START),
-            member_grade_id=promotion_data.get('member_grade') if promotion_data.get('member_grade') else 0,
+            member_grade_id=promotion_data.get('member_grade', -1),
             start_date=promotion_data['start_date'],
             end_date=promotion_data['end_date'],
             detail_id=promotion_detail_id

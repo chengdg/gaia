@@ -32,6 +32,7 @@ class AMember(api_resource.ApiResource):
         data = {
             'id': member.id,
             'name': member.username,
+            'integral': member.integral,
             'grade': {
                 'id': member_grade.id,
                 'name': member_grade.name
