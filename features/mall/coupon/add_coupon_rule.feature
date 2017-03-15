@@ -57,6 +57,10 @@ Scenario:1 添加优惠券规则-添加通用券
 			"name": "全店通用券3",
 			"start_date": "昨天",
 			"end_date": "1天后"
+		}, {
+			"name": "全店通用券4",
+			"start_date": "明天",
+			"end_date": "3天后"
 		}]
 		"""
 	Then jobs获得优惠券规则'全店通用券1'
@@ -108,9 +112,19 @@ Scenario:1 添加优惠券规则-添加通用券
 			"status": "active"
 		}
 		"""
+	Then jobs获得优惠券规则'全店通用券4'
+		"""
+		{
+			"name": "全店通用券4",
+			"status": "active"
+		}
+		"""
 	Then jobs能获得优惠券规则列表
 		"""
 		[{
+			"name": "全店通用券4",
+			"status": "active"
+		}, {
 			"name": "全店通用券3",
 			"status": "active"
 		}, {

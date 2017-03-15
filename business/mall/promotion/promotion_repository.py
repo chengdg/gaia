@@ -145,8 +145,6 @@ class PromotionRepository(business_model.Service):
 
 	def get_promotions(self, page_info, fill_options=None, options=None, filters=None):
 		type2fiters = self.__split_filters(filters=filters)
-		print type2fiters
-		raw_input()
 		order_options = self.__get_promotion_order_options(options=options)
 
 		promotion_filters = type2fiters['promotion']

@@ -141,7 +141,7 @@ Scenario:创建多商品的积分应用
 		"""
 
 
-@gaia @promotion @promotion.integral_sale @wip
+@gaia @promotion @promotion.integral_sale
 Scenario:创建多商品的积分应用
 	创建多个积分应用后，查看积分应用列表
 
