@@ -127,7 +127,11 @@ class Corporation(business_model.Model):
 				self.settlement_type = community_info['settlement_type']
 				self.divide_rebate = community_info['divide_rebate']
 				self.risk_money = community_info['risk_money']
-				self.rules = community_info['rules']
+				self.rules = [{
+				  	'config_type': rule['config_type'],
+				  	'config_property': rule['config_property'],
+				  	'config_value': rule['config_value']
+				} for rule in community_info['rules']]
 		elif self.is_supplier():
 			resp = Resource.use('gaia').get({
 				'resource': 'corp.supplier',

@@ -77,13 +77,14 @@ class ProductModelGenerator(business_model.Service):
 
 		return _id2property, _id2propertyvalue
 
-	def fill_models_for_products(self, products, is_enable_model_property_info, divide_info=None):
+	def fill_models_for_products(self, products, is_enable_model_property_info,):
 		"""
 		为商品集合填充规格信息
 
 		@param[in, out] products: 待填充规格信息的商品集合，填充后，product将获得models, used_system_model_properties, is_use_custom_model三个属性
 		@param[in] is_enable_model_property_info: 是否为model填充与model相关的系统商品规格信息
 		"""
+		corp = self.corp
 		id2product = dict()
 		product_ids = list()
 		for product in products:
@@ -92,7 +93,8 @@ class ProductModelGenerator(business_model.Service):
 
 		id2property, id2propertyvalue = self.__get_all_model_property_info(products, is_enable_model_property_info)
 
-		if divide_info:
+		if corp.is_community():
+			divide_info = corp.details
 			settlement_type = divide_info.settlement_type
 			divide_rebate = divide_info.divide_rebate
 			product_model_id2price = {c.product_model_id: c.price for c in
@@ -108,7 +110,8 @@ class ProductModelGenerator(business_model.Service):
 				#product2deleted_models.setdefault(db_model.product_id, []).append(product_model)
 			else:
 				product_model = ProductModel(db_model, id2property, id2propertyvalue)
-				if divide_info:
+				if corp.is_community():
+					divide_info = corp.details
 					"""
 					社群的毛利、毛利率
 					固定扣点+溢价: 商品售价(或者社群修改价) * 社群扣点
