@@ -46,8 +46,12 @@ class Command(BaseCommand):
 			display_price = row[1]
 			product_2_price[product_id] = display_price
 		# print product_2_price
-		swipe_images = mall_models.ProductSwipeImage.select().dj_where(product_id__in=product_ids)
-		grouped_images = dict(itertools.groupby(swipe_images, key=lambda k: k.product_id))
+		swipe_images = list(mall_models.ProductSwipeImage.select().dj_where(product_id__in=product_ids))
+		grouped_images = itertools.groupby(swipe_images, key=lambda k: k.product_id)
+		product_2_images = dict()
+		for product_id, images in grouped_images:
+			
+			product_2_images[product_id] = list(images)
 		
 		for product in products:
 			print 'start load product:%s' % product.id
@@ -58,7 +62,7 @@ class Command(BaseCommand):
 			display_price = product_2_price.get(product_id)
 			if not display_price:
 				continue
-			swipe_images = grouped_images.get(product_id)
+			swipe_images = product_2_images.get(product_id)
 			if not swipe_images:
 				continue
 			images = []
