@@ -49,6 +49,7 @@ class APreProduct(api_resource.ApiResource):
 			'postage_id': pre_product.postage_id,
 			'postage_money': '%.2f' % pre_product.unified_postage_money,
 			'classification_id': pre_product.classification_id,
+			'label_ids': [label.id for label in pre_product.labels],
 			'classification_name_nav': pre_product.classification_nav,
 			'status': pre_product.status,
 			'is_accepted': pre_product.is_accepted,

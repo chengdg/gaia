@@ -63,7 +63,7 @@ class FillProductDetailService(business_model.Service):
 		divide_model = None if not corp else account_models.AccountDivideInfo.select().dj_where(user_id=corp.id).first()
 
 		#TODO2: 因为这里是静态方法，所以目前无法使用product.context['corp']，构造基于Object的临时解决方案，需要优化
-		product_model_generator = ProductModelGenerator.get(None)
+		product_model_generator = ProductModelGenerator.get(corp)
 		product_model_generator.fill_models_for_products(products, is_enable_model_property_info, divide_model)
 
 	def __fill_category_detail(self, corp, product_ids, id2product):

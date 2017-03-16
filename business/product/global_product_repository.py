@@ -19,7 +19,7 @@ class GlobalProductRepository(business_model.Service):
 
 	def __fill_product_details(self, products, fill_options):
 		from business.product.fill_product_detail_service import FillProductDetailService
-		FillProductDetailService.get().fill_detail(products, fill_options)
+		FillProductDetailService.get(self.corp).fill_detail(products, fill_options)
 
 	def __get_filter_params(self, args):
 		params = {}

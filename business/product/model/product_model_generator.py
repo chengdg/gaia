@@ -96,7 +96,7 @@ class ProductModelGenerator(business_model.Service):
 			settlement_type = divide_info.settlement_type
 			divide_rebate = divide_info.divide_rebate
 			product_model_id2price = {c.product_model_id: c.price for c in
-									  mall_models.ProductCustomizedPrice.select().dj_where(product_id__in=product_ids)}
+									  mall_models.ProductCustomizedPrice.select().dj_where(corp_id=self.corp.id, product_id__in=product_ids)}
 
 		# 获取所有models
 		product2models = {}
@@ -111,23 +111,19 @@ class ProductModelGenerator(business_model.Service):
 				if divide_info:
 					"""
 					社群的毛利、毛利率
-					固定底价: 社群修改价 - 上浮结算价
-					固定扣点: 商品售价 * 社群扣点
+					固定扣点+溢价: 商品售价(或者社群修改价) * 社群扣点
 					毛利分成: {
 						non_cps: (商品售价 - 微众售价) * 社群毛利点  ==> 社群毛利,
 								 (商品售价 - 微众售价)/商品售价 * 社群毛利点 ==>社群毛利率
 					}
 					"""
+					customized_price = product_model_id2price.get(product_model.id, product_model.price)
 					if product_model.price == 0:
 						gross_profit = 0
 						gross_profit_rate = 0
 					else:
-						if settlement_type == account_models.ACCOUNT_DIVIDE_TYPE_FIXED:  # 固定底价
-							customized_price = product_model_id2price.get(product_model.id, product_model.price)
-							gross_profit = customized_price - product_model.price
-							gross_profit_rate = gross_profit / customized_price * 100
-						elif settlement_type == account_models.ACCOUNT_DIVIDE_TYPE_RETAIL:  # 固定扣点
-							gross_profit = product_model.price * divide_rebate / 100
+						if settlement_type == account_models.ACCOUNT_DIVIDE_TYPE_FIXED:  # 固定扣点+溢价
+							gross_profit = customized_price * divide_rebate / 100
 							gross_profit_rate = divide_rebate
 						elif settlement_type == account_models.ACCOUNT_DIVIDE_TYPE_PROFIT:  # 毛利分成
 							gross_profit = (product_model.price - product_model.purchase_price) * divide_rebate / 100
@@ -135,6 +131,7 @@ class ProductModelGenerator(business_model.Service):
 
 					product_model.gross_profit = '%.2f' % gross_profit
 					product_model.gross_profit_rate = '%.2f' % gross_profit_rate
+					product_model.customized_price = '%.2f' % customized_price
 				product2models.setdefault(db_model.product_id, []).append(product_model)
 
 		for product_id, product_models in product2models.items():

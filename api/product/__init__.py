@@ -31,3 +31,6 @@ import a_verified_product
 import a_onshelf_simple_products
 import a_product_unverified
 import a_product_label
+
+import a_product_outgiving
+import a_product_customize_price

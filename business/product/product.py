@@ -535,3 +535,16 @@ class Product(business_model.Model):
 		self.cps_promoted_info = cps_promotion_info
 
 		return True
+
+	def customize_price(self, price, product_model_id):
+		"""
+		社群可以修改商品价格
+		"""
+		corp_id = self.get_corp().id
+		mall_models.ProductCustomizedPrice.delete().dj_where(corp_id=corp_id, product_id=self.id, product_model_id=product_model_id).execute()
+		mall_models.ProductCustomizedPrice.create(
+			corp_id = corp_id,
+			product_id = self.id,
+			product_model_id = product_model_id,
+			price = price
+		)
