@@ -16,10 +16,12 @@ class AMemberGrades(api_resource.ApiResource):
     app = "member"
     resource = "member_grades"
 
-    @param_required(['corp_id'])
+    @param_required(['corp_id', '?with_member_count:bool'])
     def get(args):
         corp = args['corp']
         member_grades = corp.member_grade_repository.get_member_grades()
+
+        with_member_count = args.get('with_member_count', False)
 
         datas = []
         for member_grade in member_grades:
@@ -31,7 +33,8 @@ class AMemberGrades(api_resource.ApiResource):
                 'pay_money': member_grade.pay_money,
                 'pay_times': member_grade.pay_times,
                 'shop_discount': member_grade.shop_discount,
-                'upgrade_strategy': corp.member_grade_repository.get_upgrade_strategy()
+                'upgrade_strategy': corp.member_grade_repository.get_upgrade_strategy(),
+                'member_count': member_grade.member_count if with_member_count else 0
             })
         
         return {
