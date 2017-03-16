@@ -53,6 +53,10 @@ class MemberGrade(business_model.Model):
 			shop_discount = args['shop_discount']
 		).dj_where(id=self.id).execute()
 
+	@cached_context_property
+	def member_count(self):
+		return member_models.Member.select().dj_where(grade_id=self.id).count()
+
 	@staticmethod
 	def create_default_member_grade_for_corp(corp):
 		if member_models.MemberGrade.select().dj_where(webapp_id=corp.webapp_id, name=DEFAULT_GRADE_NAME).count() == 0:
