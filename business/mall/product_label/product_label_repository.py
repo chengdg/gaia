@@ -12,6 +12,10 @@ class ProductLabelRepository(business_model.Service):
 		label_ids = [r.label_id for r in relations]
 		return self.get_labels(label_ids)
 
+	def get_labels_by_group_ids(self, label_group_ids):
+		db_models = mall_models.ProductLabel.select().dj_where(label_group_id__in=label_group_ids, is_deleted=False)
+		return [ProductLabel(model) for model in db_models]
+
 	def get_labels(self, label_ids=None):
 		if label_ids:
 			db_models = mall_models.ProductLabel.select().dj_where(id__in=label_ids, is_deleted=False)

@@ -98,45 +98,6 @@ class UserProfile(models.Model):
 	class Meta(object):
 		db_table = 'account_user_profile'
 
-CLEAR_PERIOD_MONTH = 1 #自然月
-CLEAR_PERIOD_15TH_DAY = 2 #15天
-CLEAR_PERIOD_WEEK = 3 #自然周
-
-# 固定底价
-CORP_DIVIDE_TYPE_FIXED = 1
-# 零售价返点
-CORP_DIVIDE_TYPE_RETAIL = 2
-
-class CorpInfo(models.Model):
-	"""
-	corp详情
-	"""
-	corp_id = models.IntegerField(default=0)
-	name = models.CharField(max_length=32, default='')	#公司简称(店铺名)
-	company_name = models.CharField(max_length=32, default='')	#公司全称
-	settlement_type = models.IntegerField(default=CORP_DIVIDE_TYPE_FIXED) #采购方式
-	divide_rebate = models.FloatField(default=0) #零售价返点
-	clear_period = models.IntegerField(default=CLEAR_PERIOD_MONTH)
-	customer_from = models.IntegerField(default=1)  # 客户来源 0 PANDA ，1 渠道
-	max_product_count = models.IntegerField(default=10)  # 最多可创建商品个数
-	classification_ids = models.CharField(max_length=1024, default='')	#分类id集合，如'12,23,45,567'
-
-	contact = models.CharField(max_length=32, default='')  # 联系人
-	contact_phone = models.CharField(max_length=16, default='')  # 手机号
-	note = models.CharField(max_length=1024, default='')  # 备注
-
-	created_at = models.DateTimeField(auto_now_add=True)  # 创建时间
-	status = models.BooleanField(default=False)
-
-	pre_sale_tel = models.CharField(max_length=32, default='')  # 售前电话
-	after_sale_tel = models.CharField(max_length=32, default='')  # 售后电话
-	service_tel = models.CharField(max_length=32, default='') #客服电话
-	service_qq_first = models.CharField(max_length=32, default='') #客服qq-1
-	service_qq_second = models.CharField(max_length=32, default='') #客服qq-2
-
-	class Meta(object):
-		db_table = "account_corp_info"
-
 class GaiaApp(models.Model):
 	"""
 	【Gaia用】GaiaApp
@@ -169,17 +130,3 @@ class AccessToken(models.Model):
 ACCOUNT_DIVIDE_TYPE_FIXED = 1
 # 毛利分成
 ACCOUNT_DIVIDE_TYPE_PROFIT = 2
-
-class AccountDivideInfo(models.Model):
-	"""
-	社群分成信息
-	"""
-	user_id = models.IntegerField(default=0, unique=True)
-	settlement_type = models.IntegerField(default=ACCOUNT_DIVIDE_TYPE_FIXED)  # 结算类型
-	# corp_account = models.CharField(max_length=32)  # 收款账户
-	divide_rebate = models.FloatField(default=0)  # 扣点比例 /分成比例/同时批量加价
-	risk_money = models.FloatField(default=0)  # 风险金额
-	remark = models.TextField(null=True)  # 备注
-
-	class Meta(object):
-		db_table = 'account_divide_rebate_info'
