@@ -314,17 +314,24 @@ class ProductPool(business_model.Model):
 		product_info_filters = type2filters['product_info']
 		if supplier_ids is not None:
 			product_info_filters['supplier_id__in'] = supplier_ids
+		with_base = fill_options.get('with_base', True)
 
 		if not options.get('request_source') == 'unshelf_consignment': #商品池中的商品展示不需要按照毛利率排序
 			if product_info_filters:
 				product_info_filters['id__in'] = product_ids
-				product_models = mall_models.Product.select().dj_where(**product_info_filters)
+				if with_base:
+					product_models = mall_models.Product.select().dj_where(**product_info_filters)
+				else:
+					product_models = [mall_models.Product(id=product_id) for product_id in product_ids]
 				# mysql使用in查询会将in列表值先排序再二分搜索,固需要再次排序.
 				product_models = sorted(product_models, key=lambda k: copy_product_ids.index(k.id))
 			else:
 				# 对product_ids 进行内存排序,按照最原始查出来的顺序,并去掉重复数据
 				product_ids = sorted(list(set(product_ids)), key=copy_product_ids.index)
-				product_models = mall_models.Product.select().dj_where(id__in=product_ids)
+				if with_base:
+					product_models = mall_models.Product.select().dj_where(id__in=product_ids)
+				else:
+					product_models = [mall_models.Product(id=product_id) for product_id in product_ids]
 				product_models = sorted(product_models, key=lambda k: product_ids.index(k.id))
 			# 为了能够按照毛利率进行排序，首先得填充规格和效果通数据,再分页
 			products = [Product(model) for model in product_models]
@@ -347,9 +354,13 @@ class ProductPool(business_model.Model):
 			fill_options['with_cps_promotion_info'] = False
 			fill_product_detail_service.fill_detail(products, fill_options)
 		else:
+			
 			if product_info_filters:
 				product_info_filters['id__in'] = product_ids
-				product_models = mall_models.Product.select().dj_where(**product_info_filters)
+				if with_base:
+					product_models = mall_models.Product.select().dj_where(**product_info_filters)
+				else:
+					product_models = [mall_models.Product(id=product_id) for product_id in product_ids]
 				# mysql使用in查询会将in列表值先排序再二分搜索,固需要再次排序.
 				product_models = sorted(product_models, key=lambda k: copy_product_ids.index(k.id))
 				pageinfo, product_models = paginator.paginate(product_models, page_info.cur_page,
@@ -358,7 +369,10 @@ class ProductPool(business_model.Model):
 				# 对product_ids 进行内存排序,按照最原始查出来的顺序,并去掉重复数据
 				product_ids = sorted(list(set(product_ids)), key=copy_product_ids.index)
 				pageinfo, product_ids = paginator.paginate(product_ids, page_info.cur_page, page_info.count_per_page)
-				product_models = mall_models.Product.select().dj_where(id__in=product_ids)
+				if with_base:
+					product_models = mall_models.Product.select().dj_where(id__in=product_ids)
+				else:
+					product_models = [mall_models.Product(id=product_id) for product_id in product_ids]
 				product_models = sorted(product_models, key=lambda k: product_ids.index(k.id))
 
 			products = [Product(model) for model in product_models]
