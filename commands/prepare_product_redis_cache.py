@@ -22,6 +22,7 @@ class Command(BaseCommand):
 		effective_products = mall_models.Product.select().dj_where(is_deleted=False)
 		# 预热所有有效简单商品信息
 		all_effective_simple_products_key = 'all_simple_effective_products'
+		pipeline.delete(all_effective_simple_products_key)
 		print 'starting prepare product redis----------------------!'
 		for product in effective_products:
 			if product.id % 100 == 0:
@@ -30,17 +31,19 @@ class Command(BaseCommand):
 		pipeline.execute()
 		print '<-----------prepare products end------------------------!'
 		
-		pipeline = conn.pipeline()
-		# 预热分组信息
+		# pipeline = conn.pipeline()
+		# 预热分组信息(暂未用到)
 		categories = mall_models.ProductCategory.select()
-		print 'starting..... prepare..... category!'
-		for category in categories:
-			temp_key = 'categories_%s' % category.owner_id
-			pipeline.hset(temp_key, category.id, category.name)
-			if category.id % 100 == 0:
-				print 'loading category.....'
-		pipeline.execute()
-		print '<-----------prepare categories end------------------------!'
+		# print 'starting..... prepare..... category!'
+		# categories_keys = conn.keys("categories_*")
+		# conn.delete(*categories_keys)
+		# for category in categories:
+		# 	temp_key = 'categories_%s' % category.owner_id
+		# 	pipeline.hset(temp_key, category.id, category.name)
+		# 	if category.id % 100 == 0:
+		# 		print 'loading category.....'
+		# pipeline.execute()
+		# print '<-----------prepare categories end------------------------!'
 		
 		# 预热分组有什么上架商品
 
@@ -53,6 +56,7 @@ class Command(BaseCommand):
 		for category_id, relations in group_relations:
 			corp_id = category_id_2_owner_id.get(category_id)
 			temp_key = '{wo:%s}_{co:%s}_pids' % (corp_id, category_id)
+			pipeline.delete(temp_key)
 			if corp_onshelf_product_ids.get(corp_id) is None:
 				on_shelf_product_ids = [pool.product_id for pool in
 											mall_models.ProductPool.select().dj_where(woid=corp_id,
