@@ -28,7 +28,7 @@ class ProductFactory(business_model.Service):
 			is_use_online_pay_interface=pay_info["is_use_online_pay_interface"],
 			is_use_cod_pay_interface=pay_info["is_use_cod_pay_interface"],
 			postage_type=logistics_info['postage_type'],
-			postage_id=logistics_info.get('postage_id', 0),
+			postage_id=logistics_info['postage_id'] if logistics_info.get('postage_id') else 0,
 			unified_postage_money=logistics_info['unified_postage_money'],
 			stocks=base_info.get('min_limit', 0),
 			is_member_product=base_info.get("is_member_product", False),

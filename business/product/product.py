@@ -10,6 +10,7 @@ from business import model as business_model
 from business.decorator import cached_context_property
 
 import settings
+from util import send_product_message
 
 
 class Product(business_model.Model):
@@ -304,6 +305,15 @@ class Product(business_model.Model):
 		mall_models.Product.update(
 			status=mall_models.PRODUCT_STATUS['REFUSED']
 		).dj_where(id=self.id).execute()
+
+		#发送钉钉消息
+		send_product_message.send_reject_product_ding_message({
+			u'客户来源': 'test',
+			u'商品名称': self.name,
+			u'客户名称': 'test',
+			u'入库状态': 'test',
+			u'驳回原因': reason
+		})
 
 
 	# 如果规格有图片就显示，如果没有，使用缩略图

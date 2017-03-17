@@ -95,7 +95,9 @@ class ProductModel(business_model.Model):
 		for id in ids:
 			# id的格式为${property_id}:${value_id}
 			_property_id, _value_id = id.split(':')
-			_property = id2property[_property_id]
+			_property = id2property.get(_property_id)
+			if not _property: #修复一个未知场景下的问题
+				continue
 			_value = id2propertyvalue[id]
 			property2value[_property['name']] = {
 				'id': _value['id'],

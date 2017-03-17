@@ -93,6 +93,7 @@ class ProductModelGenerator(business_model.Service):
 
 		id2property, id2propertyvalue = self.__get_all_model_property_info(products, is_enable_model_property_info)
 
+		divide_info = None
 		if corp.is_community():
 			divide_info = corp.details
 			settlement_type = divide_info.settlement_type

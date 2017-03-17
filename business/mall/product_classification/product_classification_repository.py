@@ -4,6 +4,7 @@ from db.mall import models as mall_models
 
 from business import model as business_model
 from business.mall.product_classification.product_classification import ProductClassification
+from business.mall.product_classification.product_classification_qualification import ProductClassificationQualification
 
 class ProductClassificationRepository(business_model.Service):
 	def get_product_classifications(self):
@@ -105,3 +106,7 @@ class ProductClassificationRepository(business_model.Service):
 
 		classifications.reverse()
 		return classifications
+
+	def get_qualifications_by_classification_ids(self, classification_ids):
+		models = mall_models.ClassificationQualification.select().dj_where(classification_id__in=classification_ids)
+		return [ProductClassificationQualification(model) for model in models]

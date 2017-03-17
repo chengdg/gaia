@@ -66,6 +66,7 @@ class Corporation(business_model.Model):
 		'company_name',
 		'settlement_type',
 		'divide_rebate',
+		'min_cps_profit',
 		'clear_period',
 		'customer_from',
 		'max_product_count',
@@ -115,7 +116,7 @@ class Corporation(business_model.Model):
 		区分供货商和采购商(社群)
 		"""
 		if self.is_community():
-			resp = Resource.use('gaia').get({
+			resp = Resource.use('wcas').get({
 				'resource': 'corp.community',
 				'data': {
 					'corp_id': self.id
@@ -133,7 +134,7 @@ class Corporation(business_model.Model):
 				  	'config_value': rule['config_value']
 				} for rule in community_info['rules']]
 		elif self.is_supplier():
-			resp = Resource.use('gaia').get({
+			resp = Resource.use('wcas').get({
 				'resource': 'corp.supplier',
 				'data': {
 					'corp_id': self.id
@@ -145,6 +146,7 @@ class Corporation(business_model.Model):
 				self.company_name = supplier_info['company_name']
 				self.settlement_type = supplier_info['settlement_type']
 				self.divide_rebate = supplier_info['divide_rebate']
+				self.min_cps_profit = supplier_info['min_cps_profit']
 				self.clear_period = supplier_info['clear_period']
 				self.customer_from = supplier_info['customer_from']
 				self.max_product_count = int(supplier_info['max_product_count'])
