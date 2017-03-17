@@ -30,7 +30,7 @@ class ASimpleProducts(api_resource.ApiResource):
 		if not fill_options:
 			fill_options = {
 				'with_price': True,
-				'with_category': True,
+				'with_image': True,
 			}
 		products, page_info = corp.insale_shelf.get_simple_products(target_page, filters, fill_options)
 		encode_product_service = EncodeProductService.get(corp)

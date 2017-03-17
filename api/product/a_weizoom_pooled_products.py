@@ -15,9 +15,8 @@ class AWeizoomPooledProducts(api_resource.ApiResource):
 	app = "product"
 	resource = "weizoom_pooled_products"
 
-	@param_required(['corp_id'])
 	def get(args):
-		corp = args['corp']
+		# corp = args['corp']
 		fill_options = json.loads(args.get('fill_options', '{}'))
 		weizoom_corp = CorporationFactory.get_weizoom_corporation()
 
@@ -48,9 +47,9 @@ class AWeizoomPooledProducts(api_resource.ApiResource):
 		filters = json.loads(args.get('filters', '{}'))
 		products, pageinfo = weizoom_corp.product_pool.get_products(target_page, fill_options, options, filters)
 		#恢复当前公司
-		CorporationFactory.set(corp)
+		# CorporationFactory.set(corp)
 
-		encode_product_service = EncodeProductService.get(corp)
+		encode_product_service = EncodeProductService.get(weizoom_corp)
 		datas = []
 		for product in products:
 			base_info = encode_product_service.get_base_info(product)
