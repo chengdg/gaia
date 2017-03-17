@@ -87,10 +87,11 @@ class PostageConfig(business_model.Model):
 		"""
 		将当前postage config设置为"使用"
 		"""
-		mall_models.PostageConfig.update(is_used=False).dj_where(id__not=self.id).execute()
+		corp_id = CorporationFactory.get().id
+		mall_models.PostageConfig.update(is_used=False).dj_where(id__not=self.id, owner_id=corp_id).execute()
 		mall_models.PostageConfig.update(is_used=True).dj_where(id=self.id).execute()
 		msgutil.send_message(
 			TOPIC['product'],
 			'postage_config_set_used',
-			{'corp_id': CorporationFactory.get().id, 'postage_config_id': self.id}
+			{'corp_id': corp_id, 'postage_config_id': self.id}
 		)
