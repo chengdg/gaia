@@ -99,10 +99,20 @@ class WebAppUser(models.Model):
 SOURCE_SELF_SUB = 0  # 直接关注
 SOURCE_MEMBER_QRCODE = 1  # 推广扫码
 SOURCE_BY_URL = 2  # 会员分享
+MEMBERSOURCE2STR = {
+    SOURCE_SELF_SUB: 'self_subscribe',
+    SOURCE_MEMBER_QRCODE: 'member_qrcode',
+    SOURCE_BY_URL: 'share_url'
+}
 #status  会员状态
 CANCEL_SUBSCRIBED = 0  # 取消关注
 SUBSCRIBED = 1 # 关注
 NOT_SUBSCRIBED = 2  #会员从来都没关注
+MEMBERSTATUS2STR = {
+    CANCEL_SUBSCRIBED: 'cancel_subscribed',
+    SUBSCRIBED: 'subscribed',
+    NOT_SUBSCRIBED: 'not_subscribed'
+}
 class Member(models.Model):
     """
     会员
@@ -129,8 +139,8 @@ class Member(models.Model):
     update_time = models.DateTimeField(default=datetime.now())#会员信息更新时间 2014-11-11
     pay_money = models.FloatField(default=0.0)
     pay_times =  models.IntegerField(default=0)
-    last_pay_time = models.DateTimeField(default=None)#会员信息更新时间 2014-11-11
-    unit_price = models.FloatField(default=0.0) #ke dan jia
+    last_pay_time = models.DateTimeField(default=None) #上一次更新时间
+    unit_price = models.FloatField(default=0.0) #客单价
     city = models.CharField(default='', max_length=50)
     province = models.CharField(default='', max_length=50)
     country = models.CharField(default='', max_length=50)

@@ -5,6 +5,9 @@ from business.member.member import Member
 from db.member import models as member_models
 from eaglet.core import paginator
 
+from business.mall.corporation_factory import CorporationFactory
+from business.common.filter_parser import FilterParser
+
 
 class MemberRepository(business_model.Service):
 	def __split_filters(self, filters):

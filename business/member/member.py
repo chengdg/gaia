@@ -36,57 +36,46 @@ class Member(business_model.Model):
 	"""
 	__slots__ = (
 		'id',
-		'username_hexstr',
-		# 'webapp_user',
-		'is_subscribed',
-		'created_at',
 		'token',
 		'webapp_id',
-		'pay_money',
-		'update_time',
-		'status',
-		'experience',
-		'remarks_name',
-		'remarks_extra',
-		'last_visit_time',
-		'session_id',
-		'is_subscribed',
-		'friend_count',
-		'factor',
-		'source',
-		'integral',
-		'update_time',
-		'pay_times',
-		'last_pay_time',
-		'unit_price',
+
+		#一般信息
+		'username_hexstr',
+		# 'webapp_user',
+		'created_at',
 		'city',
 		'province',
 		'country',
 		'sex',
-		'purchase_frequency',
-		'cancel_subscribe_time',
-		'fans_count'
+		'update_time',
+		'experience', #经验值
+		'remarks_name', #备注名
+		'remarks_extra', #备注信息
+
+		#消费信息
+		'pay_money', #消费总金额
+		'pay_times', #购买次数
+		'last_pay_time', #最近一次的购买时间
+		'unit_price', #客单价
+		'pay_times_in_30_days', #近30天购买频次
+		'integral',
+
+		#状态信息
+		'update_time', #最近更新时间
+		'status', #状态
+		'is_subscribed', #是否关注
+		'cancel_subscribe_time', #取消关注时间
+
+		#微信消息信息
+		'last_visit_time',
+		'session_id',
+		
+		#社交关系
+		'factor', #社会因子
+		'source', #会员来源
+		'friend_count', #好友数量
+		'fans_count' #粉丝数量（推荐扫码、分享链接带来的会员数量）
 	)
-
-	# @staticmethod
-	# @param_required(['models'])
-	# def from_models(args):
-	# 	"""
-	# 	工厂对象，根据member model获取Member业务对象
-
-	# 	@param[in] model: member model
-
-	# 	@return Member业务对象
-	# 	"""
-	# 	models = args['models']
-	# 	corp = args['corp']
-	# 	members = []
-	# 	for model in models:
-	# 		member = Member(model)
-	# 		member.context['corp'] = corp
-	# 		member.context['db_model'] = model
-	# 		members.append(member)
-	# 	return members
 
 	def __init__(self, model):
 		business_model.Model.__init__(self)
@@ -96,6 +85,9 @@ class Member(business_model.Model):
 		self.context['corp'] = CorporationFactory.get()
 		if model:
 			self._init_slot_from_model(model)
+			self.pay_times_in_30_days = model.purchase_frequency
+			self.status = member_models.MEMBERSTATUS2STR.get(model.status, 'unknown')
+			self.source = member_models.MEMBERSOURCE2STR.get(model.source, 'unknown')
 
 	@cached_context_property
 	def webapp_user_id(self):

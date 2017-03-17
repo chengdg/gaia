@@ -3,6 +3,12 @@ Feature: 安装完整测试所需的各种数据
 @full_init
 Scenario: 安装完整测试数据
 	Given jobs登录系统
+	#会员
+	Given zhouxun成为'jobs'的会员
+	Given yaochen成为'jobs'的会员
+	Given yangmi成为'jobs'的会员
+	Given bis成为'jobs'的会员
+	Given zhaowei成为'jobs'的会员
 	#商品
 	And jobs已添加商品规格
 		"""

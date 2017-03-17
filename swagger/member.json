@@ -404,6 +404,43 @@
                     }
                 }
             }
+        },
+        "/member/members/": {
+            "put": {
+                "summary": "属于corp的会员集合",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "formData",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "member"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "products": {
+                                    "$ref": "#/definitions/MemberList"
+                                },
+                                "pageinfo": {
+                                    "type": "object",
+                                    "description": "分页信息"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -467,6 +504,141 @@
                 "name": {
                     "type": "string",
                     "description": "会员分组名"
+                }
+            }
+        },
+        "MemberList": {
+            "type": "array",
+            "description": "会员集合",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number",
+                        "description": ""
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "会员名"
+                    },
+                    "grade": {
+                        "$ref": "#/definitions/GradeInfoInMember"
+                    },
+                    "groups": {
+                        "$ref": "#/definitions/GroupsInfoInMember"
+                    },
+                    "consume_info": {
+                        "$ref": "#/definitions/ConsumeInfoInMember"
+                    },
+                    "social_info": {
+                        "$ref": "#/definitions/SocialInfoInMember"
+                    },
+                    "subscribe_info": {
+                        "$ref": "#/definitions/SubscribeInfoInMember"
+                    },
+                }
+            }
+        },
+        "GradeInfoInMember": {
+            "type": "object",
+            "description": "会员等级信息",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "description": "会员等级id"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "会员等级"
+                }
+            }
+        },
+        "GroupsInfoInMember": {
+            "type": "array",
+            "description": "会员分组信息",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number",
+                        "description": "会员分组id"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "分组名"
+                    }
+                }
+            }
+        },
+        "ConsumeInfoInMember": {
+            "type": "object",
+            "description": "会员消费信息",
+            "properties": {
+                "pay_times": {
+                    "type": "integer",
+                    "description": "总的购买次数"
+                },
+                "pay_money": {
+                    "type": "number",
+                    "description": "总的消费金额"
+                },
+                "last_pay_time": {
+                    "type": "string",
+                    "description": "最近一次的消费时间，如果没有，则为null"
+                },
+                "integral": {
+                    "type": "number",
+                    "description": "会员积分"
+                },
+                "pay_times_in_30_days": {
+                    "type": "number",
+                    "description": "近30天的购买频次"
+                },
+                "unit_price": {
+                    "type": "number",
+                    "description": "客单价"
+                }
+            }
+        },
+        "SocialInfoInMember": {
+            "type": "object",
+            "description": "会员的社交关系信息",
+            "properties": {
+                "friend_count": {
+                    "type": "integer",
+                    "description": "好友数"
+                },
+                "fans_count": {
+                    "type": "number",
+                    "description": "粉丝数"
+                },
+                "factor": {
+                    "type": "number",
+                    "description": "社交因子"
+                }
+            }
+        },
+        "SubscribeInfoInMember": {
+            "type": "object",
+            "description": "会员的关注信息",
+            "properties": {
+                "is_subscribed": {
+                    "type": "boolean",
+                    "description": "是否关注"
+                },
+                "subscribe_time": {
+                    "type": "string",
+                    "description": "关注时间"
+                },
+                "status": {
+                    "type": "string",
+                    "description": "关注状态",
+                    "format": "subscribed(已关注), not_subscribed(未关注), cancel_subscribed(取消关注)"
+                },
+                "source": {
+                    "type": "string",
+                    "description": "关注来源",
+                    "format": "self_subscribe(主动关注), member_qrcode(通过其他会员推广码关注), share_url(通过其他会员分享链接关注)"
                 }
             }
         }

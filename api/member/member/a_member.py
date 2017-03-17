@@ -7,6 +7,8 @@ from eaglet.decorator import param_required
 
 from business.member.member import Member
 
+from business.member.encode_member_service import EncodeMemberService
+
 
 class AMember(api_resource.ApiResource):
     """
@@ -20,24 +22,15 @@ class AMember(api_resource.ApiResource):
         corp = args['corp']
         member = corp.member_repository.get_member_by_id(args['id'])
 
-        member_grade = member.grade
-
-        group_datas = []
-        for member_tag in member.tags:
-            group_datas.append({
-                'id': member_tag.id,
-                'name': member_tag.name
-            })
-
+        encode_member_service = EncodeMemberService.get(corp)
         data = {
             'id': member.id,
             'name': member.username,
-            'integral': member.integral,
-            'grade': {
-                'id': member_grade.id,
-                'name': member_grade.name
-            },
-            'groups': group_datas
+            'grade': encode_member_service.get_grade_info(member),
+            'groups': encode_member_service.get_groups_info(member),
+            'social_info': encode_member_service.get_social_info(member),
+            'consume_info': encode_member_service.get_consume_info(member),
+            'subscribe_info': encode_member_service.get_subscribe_info(member),
         }
 
         return data
