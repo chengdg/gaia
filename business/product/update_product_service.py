@@ -223,11 +223,12 @@ class UpdateProductService(business_model.Service):
 		classification = self.corp.product_classification_repository.get_product_classification(classification_id)
 		classification.add_product(product_id)
 
-	def __send_msg_to_topic(self, product_id, msg_name):
+	def __send_msg_to_topic(self, product_id, msg_name, category_id=0):
 		topic_name = TOPIC['product']
 		data = {
 			"product_id": product_id,
-			"corp_id": self.corp.id
+			"corp_id": self.corp.id,
+			"category_id": category_id,
 		}
 		msgutil.send_message(topic_name, msg_name, data)
 
@@ -297,7 +298,8 @@ class UpdateProductService(business_model.Service):
 
 		#设置指定商品的position
 		mall_models.ProductPool.update(display_index=position).dj_where(woid=self.corp.id, product_id=product_id).execute()
-		self.__send_msg_to_topic(product_id, "product_updated")
+		# 设置顺序要处理缓存
+		self.__send_msg_to_topic(product_id, "product_display_index_updated", category_id=0)
 
 
 	def update_product_sale(self,product_id,changed_count):

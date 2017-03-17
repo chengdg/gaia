@@ -2,15 +2,16 @@
 # -*- utf-8 -*-
 from bdem import msgutil
 from datetime import datetime
-from eaglet.utils.resource_client import Resource
+
 from eaglet.decorator import param_required
 
 from db.mall import models as mall_models
 from business import model as business_model
 from gaia_conf import TOPIC
-from product_pool import ProductPool, NEW_PRODUCT_DISPLAY_INDEX
+from business.product.product_pool_entry import ProductPoolEntry
 
 NEW_PRODUCT_DISPLAY_INDEX = 9999999
+
 
 class ProductShelfError(Exception):
 	def __init__(self, err_msg):
@@ -194,22 +195,34 @@ class ProductShelf(business_model.Model):
 
 		return products, pageinfo
 
-	def get_simple_products(self, page_info, filters):
+	def get_product_pool_entries(self):
 		"""
 		获取货架上所有商品
 		"""
-		product_pool = self.corp.product_pool
-		filters['__f-status-equal'] = mall_models.PP_STATUS_ON
+		# options = {
+		# 	'order_options': ['display_index', '-onshelf_time', '-id']
+		# }
+		pool_models = mall_models.ProductPool.select().dj_where(woid=self.corp.id, status=mall_models.PP_STATUS_ON)\
+			.order_by(mall_models.ProductPool.display_index, mall_models.ProductPool.sync_at.desc (), mall_models.ProductPool.product_id)
+		result = []
+		for pool in pool_models:
 
+			result.append(ProductPoolEntry(pool))
+		# result.sort(key=lambda k: (k.display_index, k.sync_at, k.id))
+		return result
+		
+	def get_simple_products(self, product_ids):
+		"""
+		
+		"""
+		# options = {
+		# 	'order_options': ['display_index', '-onshelf_time', '-id']
+		# }
 		fill_options = {
-			'with_price': True,
-			'with_category': True,
+			'with_product_model': True,
+			'with_image': True,
 		}
-
-		options = {
-			'order_options': ['display_index', '-onshelf_time', '-id']
-		}
-
-		products, pageinfo = product_pool.get_products(page_info, fill_options, options, filters)
-
-		return products, pageinfo
+		products = self.corp.product_pool.get_products_by_ids(product_ids=product_ids, fill_options=fill_options)
+		return products
+		
+		

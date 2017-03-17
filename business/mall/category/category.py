@@ -24,6 +24,7 @@ class Category(business_model.Model):
 	__slots__ = (
 		'id',
 		'name',
+		'owner_id',
 		'product_count',
 		'display_index',
 		'created_at',
@@ -62,6 +63,16 @@ class Category(business_model.Model):
 
 		#将目标商品的position置为new_position
 		mall_models.CategoryHasProduct.update(display_index=new_position).dj_where(category_id=self.id, product_id=product_id).execute()
+		# 分组内商品顺序处理
+		msgutil.send_message(
+			TOPIC['product'],
+			'product_display_index_updated',
+			{
+				"product_id": product_id,
+				"corp_id": self.owner_id,
+				"category_id": self.id,
+			}
+		)
 
 	def delete_product(self, product_id):
 		"""
