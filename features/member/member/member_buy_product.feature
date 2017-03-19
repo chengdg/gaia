@@ -129,5 +129,5 @@ Scenario: 购买商品影响会员信息
 
 	When 微信用户批量消费zhouxun的商品
 	| order_id | date      | consumer | product             | payment     |  action      |
-	|   0001   | 2天前      |   mayun  | 无规格商品1-zhouxun,1 | 支付宝,1天前  |  zhouxun,完成 |
-	|   0002   | 3天前      |   leijun | 无规格商品1-zhouxun,2 |             |  zhouxun,完成 |
+	|   0001   | 2天前      |   mayun  | 无规格商品1-zhouxun,1 | 支付宝,1天前  |  mayun,完成   |
+	|   0002   | 3天前      |   leijun | 无规格商品1-zhouxun,2 |             |              |

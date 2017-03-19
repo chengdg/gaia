@@ -101,8 +101,8 @@ def __buy_product_in_apiserver(corp_name, purchase_info, context):
     buy_product_cmd = BUY_PRODUCT_CMD % (webapp_user_name, corp_name, json.dumps(data))
     context.execute_steps(buy_product_cmd)
 
-    #获得最新生成的订单
-    order = mall_models.Order.select().order_by(-mall_models.Order.id).first()
+    #获得最新生成的订单（非出货单）
+    order = mall_models.Order.select().dj_where(origin_order_id=-1).order_by(-mall_models.Order.id).first()
     return order
 
 
@@ -123,7 +123,50 @@ def __pay_order_in_apiserver(order, corp_name, pay_info, context):
 
     webapp_user_name = pay_info['consumer']
     context.execute_steps(u"when %s使用支付方式'%s'进行支付订单'%s'于%s::apiserver" % (webapp_user_name, pay_type, order.order_id, pay_time))
+
+
+def __do_post_action_for_order_in_apiserver(order, corp_name, actor, action, context):
+    """
+    在apiserver中执行针对订单的操作
+    """
+    action2step = {
+        u'完成': u"When %(webapp_user_name)s确认收货订单'%(order_bid)s'::apiserver",
+        u'取消': u"When %(webapp_user_name)s取消订单'%(order_bid)s'::apiserver"
+    }
+
+    if action == u'完成':
+        #apiserver要求订单处于ORDER_STATUS_PAYED_SHIPED才能进行finish操作
+        mall_models.Order.update(status=mall_models.ORDER_STATUS_PAYED_SHIPED).dj_where(order_id=order.order_id).execute()
+
+    step = action2step[action] % {
+        'webapp_user_name': actor,
+        'order_bid': order.order_id
+    }
+    context.execute_steps(step)
+
+
+def __do_post_action_for_order_in_gaia(order, corp_name, actor, action, context):
+    """
+    在gaia中执行针对订单的操作
+    """
+    assert False, 'not implemented'
     
+
+def __do_post_action_for_order(order, corp_name, action_info, context):
+    """
+    执行订单后操作
+
+    action的格式为: ${actor},${action}
+    actor: 操作人员，可以是微信用户，也可以是社群商城
+    action: 操作人员进行的操作
+    """
+    webapp_user_name = action_info['consumer']
+    actor, action = action_info['action'].split(',')
+    if actor == webapp_user_name:
+        __do_post_action_for_order_in_apiserver(order, corp_name, actor, action, context)
+    elif actor == corp_name:
+        __do_post_action_for_order_in_gaia(order, corp_name, actor, action, context)
+
 
 @when(u"微信用户批量消费{corp_name}的商品")
 def step_impl(context, corp_name):
@@ -134,6 +177,11 @@ def step_impl(context, corp_name):
         payment = row.get('payment', '').strip()
         if payment:
             __pay_order_in_apiserver(order, corp_name, row, context)
+
+        #操作订单
+        action = row.get('action', '').strip()
+        if action:
+            __do_post_action_for_order(order, corp_name, row, context)
 
 
 OPERATION2STEPID = {
