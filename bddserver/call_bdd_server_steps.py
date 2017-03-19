@@ -5,6 +5,7 @@
 
 # -*- coding: utf-8 -*-
 import base64
+import sys
 import decimal
 import json
 from datetime import datetime, date
@@ -72,11 +73,12 @@ BDD_SERVER_HOST = '127.0.0.1'
 
 
 def _run_bdd_server_step(step, context, bdd_server_name):
-	port = BDD_SERVER2PORT.get(bdd_server_name)
+	import port_util
+	bdd_server_port = port_util.get_port_for_service(bdd_server_name)
 
-	assert port, "不支持的bdd_server:{}".format(bdd_server_name)
+	assert bdd_server_port != None, u"不支持的bdd_server: {}".format(bdd_server_name)
 
-	url = 'http://%s:%s' % (BDD_SERVER_HOST, port)
+	url = 'http://%s:%s' % (BDD_SERVER_HOST, bdd_server_port)
 	if context:
 		context_text = context.text
 		context_table = context.table

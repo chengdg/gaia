@@ -12,12 +12,35 @@ from db.member import models as member_models
 from eaglet.utils.string_util import hex_to_byte, byte_to_hex
 
 
+NAME2REALNAME = {
+    'zhouxun': u'周迅',
+    'yangmi': u'杨幂',
+    'yaochen': u'姚晨',
+    'bigs': u'大S',
+    'zhaowei': u'赵薇',
+    'mayun': u'马云',
+    'leijun': u'雷军',
+    'liyanhong': u'李彦宏',
+    'dinglei': u'丁磊',
+    'mahuateng': u'马化腾'
+}
+
+
 @Given(u"{user}成为'{mp_user_name}'的会员")
 def step_impl(context, user, mp_user_name):
     weixin_user_name = user
     mp_user = User.get(username=mp_user_name)
     mp_user_profile = UserProfile.get(user=mp_user.id)
 
+    source = u'直接关注'
+    if context.text:
+        source = json.loads(context.text)['source']
+    if source == u'直接关注':
+        source = member_models.SOURCE_SELF_SUB
+    elif source == u'推广扫码':
+        source = member_models.SOURCE_MEMBER_QRCODE
+    elif source == u'会员分享':
+        source = member_models.SOURCE_BY_URL
 
     if member_models.Member.select().dj_where(webapp_id=mp_user_profile.webapp_id, remarks_name=weixin_user_name).count() > 0:
         print 'member [%s] already exists' % weixin_user_name
@@ -42,6 +65,7 @@ def step_impl(context, user, mp_user_name):
         is_subscribed = True,
         username_hexstr = byte_to_hex(weixin_user_name),
         remarks_name = weixin_user_name,
+        source = source,
         user_icon = ''
     )
 
@@ -53,7 +77,7 @@ def step_impl(context, user, mp_user_name):
 
     member_models.MemberInfo.create(
         member = member.id,
-        name = weixin_user_name,
+        name = NAME2REALNAME[weixin_user_name],
         weibo_nickname = '',
         binding_time = datetime.now()
     )
@@ -195,6 +219,31 @@ def step_impl(context, user, member_name):
     bdd_util.assert_list(expected, actual)
 
 
+def __extract_member_info(data):
+    """
+    获取member数据
+    """
+    consume_info = data['consume_info']
+
+    source2str = {
+        'self_subscribe': u'直接关注',
+        'member_qrcode': u'推广扫码',
+        'share_url': u'会员分享'
+    }
+    subscribe_info = data['subscribe_info']
+    source = source2str[subscribe_info['source']]
+
+    result = {
+        'name': data['name'],
+        'grade': data['grade'],
+        'integral': consume_info['integral'],
+        'source': source
+    }
+    result['groups'] = dict([(group['name'], 1) for group in data['groups']])
+
+    return result
+
+
 @Then(u"{user}能获得会员'{member_name}'的信息")
 def step_impl(context, user, member_name):
     member = bdd_util.get_member_for(member_name, context.corp.webapp_id)
@@ -202,14 +251,25 @@ def step_impl(context, user, member_name):
 
     response = context.client.get(url)
     data = response.data
-    actual = {
-        'name': data['name'],
-        'grade': data['grade'],
-        'integral': data['integral']
-    }
-    actual['groups'] = dict([(group['name'], 1) for group in data['groups']]) #转换成dict进行比较，防止顺序问题造成测试失败
+    actual = __extract_member_info(data)
 
     expected = json.loads(context.text)
     if 'groups' in expected:
         expected['groups'] = dict([(group, 1) for group in expected['groups']])
     bdd_util.assert_dict(expected, actual)
+
+
+@When(u"{user}能获得会员列表")
+def step_impl(context, user):
+    url = '/member/members/?corp_id=%s' % context.corp.id
+
+    response = context.client.get(url)
+    actual = []
+    for member_data in response.data['members']:
+        actual.append(__extract_member_info(member_data))
+
+    expected = json.loads(context.text)
+    for item in expected:
+        if 'groups' in item:
+            item['groups'] = dict([(group, 1) for group in item['groups']])
+    bdd_util.assert_list(expected, actual)
