@@ -86,7 +86,7 @@ class ProductFactory(business_model.Service):
 				purchase_price=0.0,
 				weight=0,
 				stock_type=mall_models.PRODUCT_STOCK_TYPE_UNLIMIT,
-				stocks=-1,
+				stocks=0,
 				user_code='',
 				is_deleted=True
 			)
