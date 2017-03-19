@@ -16,7 +16,9 @@ class AChildProductClassifications(api_resource.ApiResource):
     def get(args):
         corp = CorporationFactory.get()
         father_id = int(args['classification_id'])
-        product_classifications = corp.product_classification_repository.get_child_product_classifications(father_id)
+        product_classifications = corp.product_classification_repository.get_children_product_classifications(father_id)
+        print father_id
+        print len(product_classifications)
 
         datas = []
         for product_classification in product_classifications:

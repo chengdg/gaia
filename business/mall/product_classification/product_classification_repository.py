@@ -7,9 +7,24 @@ from business.mall.product_classification.product_classification import ProductC
 from business.mall.product_classification.product_classification_qualification import ProductClassificationQualification
 
 class ProductClassificationRepository(business_model.Service):
-	def get_product_classifications(self):
-		models = mall_models.Classification.select().dj_where(status=mall_models.CLASSIFICATION_ONLINE).order_by(-mall_models.Classification.created_at)
+	def get_root_product_classifications(self):
+		models = mall_models.Classification.select().dj_where(status=mall_models.CLASSIFICATION_ONLINE, father_id=0)
 		return [ProductClassification(model) for model in models]
+
+	def get_product_classifications(self):
+		"""
+		获得所有子分类集合(包括子级和子级的子级)
+		如果是供货商，则获取帐号配置中的分类
+		"""
+		if self.corp.is_supplier():
+			models = mall_models.Classification.select().dj_where(status=mall_models.CLASSIFICATION_ONLINE, id__in=self.corp.details.classification_ids)
+			children = []
+			for father in models:
+				children += self.get_children_product_classifications(father.id)
+			return [ProductClassification(model) for model in children]
+		else:
+			models = mall_models.Classification.select().dj_where(status=mall_models.CLASSIFICATION_ONLINE).order_by(-mall_models.Classification.created_at)
+			return [ProductClassification(model) for model in models]
 
 	def get_product_classification(self, id):
 		model = mall_models.Classification.select().dj_where(id=id).get()
@@ -26,14 +41,6 @@ class ProductClassificationRepository(business_model.Service):
 	def get_classification_by_product_ids(self, product_ids):
 		models = mall_models.ClassificationHasProduct.select().dj_where(product_id__in=product_ids)
 		return [ProductClassification(model.classification) for model in models]
-
-	def get_child_product_classifications(self, father_id):
-		"""
-		获得下一级子分类集合
-		"""
-		models = mall_models.Classification.select().dj_where(father_id=father_id)\
-			.dj_where(status=mall_models.CLASSIFICATION_ONLINE).order_by(-mall_models.Classification.created_at)
-		return [ProductClassification(model) for model in models]
 
 	def check_labels(self, classifications, has_label_dict=None):
 		"""

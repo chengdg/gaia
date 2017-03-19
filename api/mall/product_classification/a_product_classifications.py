@@ -4,6 +4,7 @@ from eaglet.core import api_resource
 from eaglet.decorator import param_required
 
 from business.mall.corporation_factory import CorporationFactory
+from business.mall.product_classification.product_classification import ProductClassification
 
 
 class AProductClassifications(api_resource.ApiResource):
@@ -13,12 +14,17 @@ class AProductClassifications(api_resource.ApiResource):
 	app = "mall"
 	resource = "product_classifications"
 
-	@param_required(['corp_id', '?father_id', '?check_label:bool'])
+	@param_required(['corp_id', '?father_id:int', '?check_label:bool', '?root_only:bool'])
 	def get(args):
-		corp = CorporationFactory.get()
+		"""
+		root_only: 只获取顶级分类
+		"""
+		corp = args['corp']
 		father_id = args.get('father_id', None)
-		if father_id:
-			product_classifications = corp.product_classification_repository.get_child_product_classifications(father_id)
+		if args.get('root_only'):
+			product_classifications = corp.product_classification_repository.get_root_product_classifications()
+		elif father_id:
+			product_classifications = [ProductClassification(model.classification) for model in corp.product_classification_repository.get_children_product_classifications(father_id)]
 		else:
 			product_classifications = corp.product_classification_repository.get_product_classifications()
 

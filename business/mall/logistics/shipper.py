@@ -76,5 +76,6 @@ class Shipper(business_model.Model):
 			"""
 			将当前发货人设置为"使用"
 			"""
-			mall_models.Shipper.update(is_active=False).dj_where(id__not=self.id).execute()
+			corp_id = CorporationFactory.get().id
+			mall_models.Shipper.update(is_active=False).dj_where(id__not=self.id, owner_id=corp_id).execute()
 			mall_models.Shipper.update(is_active=True).dj_where(id=self.id).execute()

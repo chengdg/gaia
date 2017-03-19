@@ -150,7 +150,7 @@ class Corporation(business_model.Model):
 				self.clear_period = supplier_info['clear_period']
 				self.customer_from = supplier_info['customer_from']
 				self.max_product_count = int(supplier_info['max_product_count'])
-				self.classification_ids = json.loads(supplier_info['classification_ids'])
+				self.classification_ids = supplier_info['classification_ids']
 				self.status = supplier_info['status']
 		else:
 			pass
@@ -167,13 +167,13 @@ class Corporation(business_model.Model):
 		"""
 		判断是否供货商
 		"""
-		return self.type == 'multi_shop'
+		return self.corp_type == 'supplier'
 
 	def is_community(self):
 		"""
 		判断是否社群
 		"""
-		return self.type == 'self_run'
+		return self.corp_type == 'community'
 
 	def is_weizoom_corp(self):
 		"""
