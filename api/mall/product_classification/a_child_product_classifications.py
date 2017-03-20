@@ -16,7 +16,7 @@ class AChildProductClassifications(api_resource.ApiResource):
     def get(args):
         corp = CorporationFactory.get()
         father_id = int(args['father_id'])
-        product_classifications = corp.product_classification_repository.get_child_product_classifications(father_id, False)
+        product_classifications = corp.product_classification_repository.get_child_product_classifications(father_id)
 
         if args.get('check_label'):
             classification_id2haslabel = corp.product_classification_repository.check_labels(product_classifications)
