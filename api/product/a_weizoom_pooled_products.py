@@ -28,10 +28,8 @@ class AWeizoomPooledProducts(api_resource.ApiResource):
 		options = {
 			'order_options': ['display_index', '-id']
 		}
-		
-		if fill_options:
-			options['request_source'] = 'unshelf_consignment'
-		else:
+		options['request_source'] = 'unshelf_consignment'
+		if not fill_options:
 			fill_options = {
 				'with_product_model': True,
 				'with_model_property_info': True,

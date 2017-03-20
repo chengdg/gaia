@@ -28,7 +28,5 @@ import a_pre_product
 import a_pre_products
 import a_pending_product
 import a_verified_product
-import a_product_pool_entries
 import a_product_unverified
-import a_simple_effective_products
 import a_simple_products
