@@ -82,6 +82,7 @@ class Corporation(business_model.Model):
 		self.id = owner_id
 		self.company_name = ''
 		self.status = 0
+		print owner_id
 		if owner_id:
 			_account_user_profile = account_model.UserProfile.select().dj_where(user_id=owner_id).first()
 			self.webapp_id = _account_user_profile.webapp_id

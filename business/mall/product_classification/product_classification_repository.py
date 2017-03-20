@@ -21,7 +21,7 @@ class ProductClassificationRepository(business_model.Service):
 			children = []
 			for father in models:
 				children += self.get_children_product_classifications(father.id)
-			return [ProductClassification(model) for model in children]
+			return children
 		else:
 			models = mall_models.Classification.select().dj_where(status=mall_models.CLASSIFICATION_ONLINE).order_by(-mall_models.Classification.created_at)
 			return [ProductClassification(model) for model in models]
@@ -78,22 +78,44 @@ class ProductClassificationRepository(business_model.Service):
 		# 同时删除分类及其子分类
 		mall_models.Classification.update(status=mall_models.CLASSIFICATION_OFFLINE).where((mall_models.Classification.id==classification_id) | (mall_models.Classification.father_id==classification_id)).execute()
 
-	def get_children_product_classifications(self, father_id):
+	def get_children_product_classifications(self, father_id, with_father=True):
 		"""
 		获得所有子分类集合(包括子级和子级的子级)
 		"""
 		father_id = int(father_id)
-		models = list(mall_models.Classification.select().dj_where(status=mall_models.CLASSIFICATION_ONLINE))
+		if self.corp.is_supplier():
+			models = list(mall_models.Classification.select().dj_where(status=mall_models.CLASSIFICATION_ONLINE)
+						  .where((mall_models.Classification.id << self.corp.details.classification_ids) | (
+																  mall_models.Classification.father_id << self.corp.details.classification_ids)))
+		else:
+			models = list(mall_models.Classification.select().dj_where(status=mall_models.CLASSIFICATION_ONLINE))
 		children = []
 		child_ids = set()
 
 		models.sort(lambda x,y: cmp(x.father_id, y.father_id))
+		if father_id == 0:
+			return [ProductClassification(model) for model in models]
+
 		for model in models:
-			if (model.father_id in child_ids) or (model.id == father_id):
-				children.append(model)
+			if (model.father_id in child_ids):
+				children.append(ProductClassification(model))
 				child_ids.add(model.id)
 
+			if model.id == father_id:
+				child_ids.add(model.id)
+				if with_father:
+					children.append(ProductClassification(model))
+
 		return children
+
+	def get_child_product_classifications(self, father_id):
+		"""
+		获得子分类，不包含子分类的子分类
+		"""
+		father_id = int(father_id)
+		models = mall_models.Classification.select().dj_where(father_id=father_id, status=mall_models.CLASSIFICATION_ONLINE)
+
+		return [ProductClassification(model) for model in models]
 
 	def get_product_classification_tree_by_end(self, end_id):
 		"""
