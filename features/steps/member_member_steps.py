@@ -43,7 +43,7 @@ def step_impl(context, user, mp_user_name):
         source = member_models.SOURCE_BY_URL
 
     if member_models.Member.select().dj_where(webapp_id=mp_user_profile.webapp_id, remarks_name=weixin_user_name).count() > 0:
-        print 'member [%s] already exists' % weixin_user_name
+        #print 'member [%s] already exists' % weixin_user_name
         return
 
     member_grade = member_models.MemberGrade.get(webapp_id=mp_user_profile.webapp_id, is_default_grade=True)
