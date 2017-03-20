@@ -7,7 +7,7 @@ Scenario: 安装完整测试数据
 	Given zhouxun成为'jobs'的会员
 	Given yaochen成为'jobs'的会员
 	Given yangmi成为'jobs'的会员
-	Given bis成为'jobs'的会员
+	Given bigs成为'jobs'的会员
 	Given zhaowei成为'jobs'的会员
 	#商品
 	And jobs已添加商品规格
