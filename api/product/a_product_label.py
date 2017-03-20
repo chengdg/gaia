@@ -19,6 +19,8 @@ class AProductLabel(api_resource.ApiResource):
 		product = corp.global_product_repository.get_product(product_id)
 		labels = product.get_labels(classification_id)
 
+		print product_id
+
 		return [{
 			'label_id': l.id,
 			'label_name': l.name,

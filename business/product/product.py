@@ -128,8 +128,8 @@ class Product(business_model.Model):
 			self.sync_at = None
 
 	def get_corp(self):
-		from business.mall.corporation import Corporation
-		return Corporation(self.owner_id)
+		from business.mall.corporation_factory import CorporationFactory
+		return CorporationFactory.get()
 
 	@property
 	def is_sellout(self):
