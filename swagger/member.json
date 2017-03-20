@@ -243,7 +243,13 @@
                         "description": "",
                         "required": true,
                         "type": "string"
-                    }
+                    }, {
+                        "name": "with_member_count",
+                        "in": "query",
+                        "description": "是否获取每个会员分组的会员数量",
+                        "required": true,
+                        "type": "boolean"
+                    }, 
                 ],
                 "tags": [
                     "member"
