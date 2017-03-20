@@ -24,11 +24,11 @@ class APooledProducts(api_resource.ApiResource):
 			"count_per_page": int(args.get('count_per_page', 10))
 		})
 		options = {
-			'order_options': ['display_index', '-onshelf_time', '-id']
+			'order_options': ['display_index', '-onshelf_time', '-id'],
+			'request_source': 'unshelf_consignment'
 		}
-		if fill_options:
-			options['request_source'] = 'unshelf_consignment'
-		else:
+		if not fill_options:
+			
 			fill_options = {
 				'with_product_model': True,
 				'with_model_property_info': True,
