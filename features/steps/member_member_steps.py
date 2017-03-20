@@ -66,7 +66,7 @@ def step_impl(context, user, mp_user_name):
         username_hexstr = byte_to_hex(weixin_user_name),
         remarks_name = weixin_user_name,
         source = source,
-        user_icon = ''
+        user_icon = 'http://weapp.weizoom.com/static/img/user-1.jpg'
     )
 
     member_models.WebAppUser.create(

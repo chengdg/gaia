@@ -521,6 +521,10 @@
                         "type": "string",
                         "description": "会员名"
                     },
+                    "thumbnail": {
+                        "type": "string",
+                        "description": "会员头像"
+                    },
                     "grade": {
                         "$ref": "#/definitions/GradeInfoInMember"
                     },

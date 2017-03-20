@@ -41,6 +41,7 @@ class Member(business_model.Model):
 
 		#一般信息
 		'username_hexstr',
+		'thumbnail', #头像
 		# 'webapp_user',
 		'created_at',
 		'city',
@@ -88,6 +89,7 @@ class Member(business_model.Model):
 			self.pay_times_in_30_days = model.purchase_frequency
 			self.status = member_models.MEMBERSTATUS2STR.get(model.status, 'unknown')
 			self.source = member_models.MEMBERSOURCE2STR.get(model.source, 'unknown')
+			self.thumbnail = model.user_icon
 
 	@cached_context_property
 	def webapp_user_id(self):
@@ -340,13 +342,6 @@ class Member(business_model.Model):
 		[property] 会员是否进行了绑定
 		"""
 		return self.__info.is_binded
-
-	@cached_context_property
-	def user_icon(self):
-		"""
-		[property] 会员头像
-		"""
-		return self.context['db_model'].user_icon
 
 	@cached_context_property
 	def username_for_html(self):

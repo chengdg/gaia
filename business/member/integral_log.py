@@ -49,9 +49,9 @@ class IntegralLog(business_model.Model):
 			if db_model.follower_member_token:
 				member = corp.member_repository.get_member_by_token(db_model.follower_member_token)
 				if member:
-					if member and member.user_icon and member.user_icon != '':
+					if member and member.thumbnail and member.thumbnail != '':
 						return {
-							'pic': member.user_icon,
+							'pic': member.thumbnail,
 							'name': member.username_size_ten
 						}
 					else:
