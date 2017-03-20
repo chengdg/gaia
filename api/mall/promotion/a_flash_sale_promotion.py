@@ -46,11 +46,3 @@ class AFlashSalePromotion(api_resource.ApiResource):
         promotion_factory = PromotionFactory(args['corp'])
         promotion_factory.create_promotion(args)
         return {}
-
-
-    @param_required(['corp_id', 'ids'])
-    def delete(args):
-        corp = args['corp']
-        promotion_ids = args['ids']
-        corp.promotion_repository.delete_promotions(promotion_ids=json.loads(promotion_ids))
-        return {}

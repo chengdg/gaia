@@ -5,10 +5,13 @@ from eaglet.decorator import cached_context_property
 
 from business import model as business_model
 from business.coupon.coupon_repository import CouponRepository
+from business.coupon.coupon_factory import CouponFactory
 from business.coupon.coupon_rule_repository import CouponRuleRepository
 from business.deprecated.wepage_project_repository import WepageProjectRepository
 from business.member.member_grade_repository import MemberGradeRepository
 from business.member.member_repository import MemberRepository
+from business.member.member_tag_repository import MemberTagRepository
+from business.member.modify_member_service import ModifyMemberService
 from business.order.delivery_item_repository import DeliveryItemRepository
 from business.order.order_export_job_repository import OrderExportJobRepository
 from business.order.order_repository import OrderRepository
@@ -307,12 +310,15 @@ class Corporation(business_model.Model):
 		return CouponRepository(self)
 
 	@property
+	def coupon_factory(self):
+		return CouponFactory(self)
+
+	@property
 	def coupon_rule_repository(self):
 		return CouponRuleRepository(self)
 
 	@property
 	def member_repository(self):
-
 		return MemberRepository(self)
 
 	@property
@@ -370,3 +376,11 @@ class Corporation(business_model.Model):
 	@property
 	def member_grade_repository(self):
 		return MemberGradeRepository(self)
+
+	@property
+	def member_tag_repository(self):
+		return MemberTagRepository(self)
+
+	@property
+	def modify_member_service(self):
+		return ModifyMemberService(self)

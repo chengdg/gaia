@@ -73,8 +73,11 @@ def before_all(context):
 
 	account_util.create_weizoom_corp('weizoom')
 
-	account_util.create_self_run_platform('zhouxun', u'周迅')
-	account_util.create_self_run_platform('yangmi', u'杨幂')
+	account_util.create_community('zhouxun', u'周迅')
+	account_util.create_community('yangmi', u'杨幂')
+	account_util.create_community('yaochen', u'姚晨')
+	account_util.create_community('zhaowei', u'赵薇')
+	account_util.create_community('bigs', u'大S')
 
 
 	#创建test case，使用assert
@@ -86,6 +89,9 @@ def before_all(context):
 	settings.DUMP_FORMATTED_INNER_ERROR_MSG = True
 	settings.DUMP_API_CALL_RESULT = False
 	settings.ENABLE_BDD_DUMP_RESPONSE = False
+	settings.EAGLET_DISABLE_DUMP_REQ_PARAMS = False
+
+	#设置message broker
 
 	#启动weapp下的bdd server
 	#print u'TODO2: 启动weapp下的bdd server'

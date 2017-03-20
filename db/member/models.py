@@ -53,10 +53,10 @@ class SocialAccount(models.Model):
     platform = models.IntegerField(default=SOCIAL_PLATFORM_WEIXIN, verbose_name='社会化平台')
     webapp_id = models.CharField(max_length=16)
     token = models.CharField(max_length=64)
-    access_token = models.CharField(max_length=64)
+    access_token = models.CharField(max_length=64, default='')
     is_for_test = models.BooleanField(default=False)
     openid = models.CharField(max_length=64)
-    uuid = models.CharField(max_length=255)
+    uuid = models.CharField(max_length=255, default='')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='加入日期')
 
 
@@ -99,10 +99,20 @@ class WebAppUser(models.Model):
 SOURCE_SELF_SUB = 0  # 直接关注
 SOURCE_MEMBER_QRCODE = 1  # 推广扫码
 SOURCE_BY_URL = 2  # 会员分享
+MEMBERSOURCE2STR = {
+    SOURCE_SELF_SUB: 'self_subscribe',
+    SOURCE_MEMBER_QRCODE: 'member_qrcode',
+    SOURCE_BY_URL: 'share_url'
+}
 #status  会员状态
 CANCEL_SUBSCRIBED = 0  # 取消关注
 SUBSCRIBED = 1 # 关注
 NOT_SUBSCRIBED = 2  #会员从来都没关注
+MEMBERSTATUS2STR = {
+    CANCEL_SUBSCRIBED: 'cancel_subscribed',
+    SUBSCRIBED: 'subscribed',
+    NOT_SUBSCRIBED: 'not_subscribed'
+}
 class Member(models.Model):
     """
     会员
@@ -115,8 +125,8 @@ class Member(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     grade = models.ForeignKey(MemberGrade)
     experience = models.IntegerField(default=0, verbose_name='经验值')
-    remarks_name = models.CharField(max_length=32, verbose_name='备注名')
-    remarks_extra = models.TextField(verbose_name='备注信息')
+    remarks_name = models.CharField(max_length=32, verbose_name='备注名', default='')
+    remarks_extra = models.TextField(verbose_name='备注信息', default='')
     last_visit_time = models.DateTimeField(auto_now_add=True)
     last_message_id = models.IntegerField(default=-1, verbose_name="最近一条消息id")
     session_id = models.IntegerField(default=-1, verbose_name="会话id")
@@ -129,8 +139,8 @@ class Member(models.Model):
     update_time = models.DateTimeField(default=datetime.now())#会员信息更新时间 2014-11-11
     pay_money = models.FloatField(default=0.0)
     pay_times =  models.IntegerField(default=0)
-    last_pay_time = models.DateTimeField(default=None)#会员信息更新时间 2014-11-11
-    unit_price = models.FloatField(default=0.0) #ke dan jia
+    last_pay_time = models.DateTimeField(default=None) #上一次更新时间
+    unit_price = models.FloatField(default=0.0) #客单价
     city = models.CharField(default='', max_length=50)
     province = models.CharField(default='', max_length=50)
     country = models.CharField(default='', max_length=50)
@@ -138,6 +148,7 @@ class Member(models.Model):
     status = models.IntegerField(default=1)
     purchase_frequency = models.IntegerField(default=0)  # 30天购买次数
     cancel_subscribe_time = models.DateTimeField(blank=True, null=True, default=None, verbose_name="取消关注时间")
+    fans_count = models.IntegerField(default=0) #粉丝数量
 
     class Meta(object):
         db_table = 'member_member'
@@ -329,6 +340,25 @@ MANAGER_MODIFY_ADD = '管理员赠送'
 MANAGER_MODIFY_REDUCT = '管理员扣减'
 CHANNEL_QRCODE = u'渠道扫码奖励'
 BUY_INCREST_COUNT_FOR_FATHER = u'推荐关注的好友购买奖励'
+
+INTEGRALLOGTYPE2STR = {
+    u'首次关注': 'first_subscribe',
+    u'系统管理员修改': 'manager_modify',
+    u'管理员赠送': 'manager_modify_increase',
+    u'管理员扣减': 'manager_modify_decrease',
+    u'渠道扫码奖励': 'channel_qrcode',
+    u'推荐关注的好友购买奖励': 'recommend_purchase',
+    u'推荐扫码奖励': 'recommend_follow'
+}
+INTEGRALLOGTYPE2VALUE = {
+    'first_subscribe': u'首次关注',
+    'manager_modify': u'系统管理员修改',
+    'manager_modify_increase': u'管理员赠送',
+    'manager_modify_decrease': u'管理员扣减',
+    'channel_qrcode': u'渠道扫码奖励',
+    'recommend_purchase': u'推荐关注的好友购买奖励',
+    'recommend_follow': u'推荐扫码奖励'
+}
 
 class MemberIntegralLog(models.Model):
     member = models.ForeignKey(Member)

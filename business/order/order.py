@@ -291,7 +291,7 @@ class Order(business_model.Model):
 	def __fill_coupon(orders, order_ids):
 		corp = orders[0].context['corp']
 		coupon_ids = [order.coupon_id for order in orders if order.coupon_id]
-		coupons = corp.coupon_repository.get_coupon_by_ids(coupon_ids)
+		coupons = corp.coupon_repository.get_coupons_by_ids(coupon_ids)
 
 		id2coupon = {coupon.id: coupon for coupon in coupons}
 

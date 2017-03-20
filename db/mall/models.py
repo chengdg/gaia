@@ -1037,7 +1037,7 @@ class Order(models.Model):
 	weizoom_card_money = models.FloatField(default=0.0)  # 微众卡抵扣金额
 	promotion_saved_money = models.FloatField(default=0.0)  # 促销优惠金额（只在含限时抢购商品时产生）
 	edit_money = models.FloatField(default=0.0)  # 商家修改差价：final_price（计算公式得） - final_price（商家修改成的）= edit_money
-	origin_order_id = models.IntegerField(default=0) # 订单的主键id（即母订单主键id
+	origin_order_id = models.IntegerField(default=-1) # 订单的主键id（即母订单主键id
 	# origin_order_id=-1表示有子订单，>0表示有父母订单，=0为默认数据
 	supplier = models.IntegerField(default=0) # 订单供货商，用于微众精选拆单，对应mall_supplier表的主键id
 	is_100 = models.BooleanField(default=True) # 是否是快递100能够查询的快递

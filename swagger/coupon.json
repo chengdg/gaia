@@ -1,0 +1,594 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "Gaia Coupon API"
+    },
+    "paths": {
+        "/coupon/coupon_rules/": {
+            "get": {
+                "summary": "获得优惠券规则集合",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "filters",
+                        "in": "query",
+                        "description": "查询条件(json字符串)",
+                        "required": false,
+                        "type": "string",
+                        "format": "类似{'__f-name-contains':'abc'}这样的查询对象"
+                    }
+                ],
+                "tags": [
+                    "coupon"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/CouponRules"
+                        }
+                    }
+                }
+            }
+        },
+        "/coupon/coupon_rule/": {
+            "get": {
+                "summary": "获得单个优惠券规则",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "promotion"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/CouponRule"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "summary": "创建优惠券规则",
+                "parameters": [
+                    {
+                        "name": "",
+                        "in": "body",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/NewCouponRule"
+                        }
+                    }
+                ],
+                "tags": [
+                    "coupon"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            },
+            "post": {
+                "summary": "更新优惠券规则",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "type": "number",
+                        "in": "formData",
+                        "description": "",
+                        "required": true
+                    },
+                    {
+                        "name": "id",
+                        "type": "number",
+                        "in": "formData",
+                        "description": "待修改的优惠券规则的id",
+                        "required": true
+                    },
+                    {
+                        "name": "name",
+                        "type": "string",
+                        "in": "formData",
+                        "description": "优惠券规则名",
+                        "required": false
+                    },
+                    {
+                        "name": "remark",
+                        "type": "string",
+                        "in": "formData",
+                        "description": "优惠券的使用说明",
+                        "required": false
+                    },
+                    {
+                        "name": "note",
+                        "type": "string",
+                        "in": "formData",
+                        "description": "优惠券的备注",
+                        "required": false
+                    }
+                ],
+                "tags": [
+                    "coupon"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "删除优惠券规则",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "待删除的优惠券规则的id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "coupon"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        },
+        "/coupon/disabled_coupon_rule/": {
+            "put": {
+                "summary": "创建失效的优惠券规则",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "formData",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "id",
+                        "in": "formData",
+                        "description": "待失效的优惠券规则的id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "coupon"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        },
+        "/coupon/coupons/": {
+            "get": {
+                "summary": "获得优惠券集合",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "coupon_rule_id",
+                        "in": "query",
+                        "description": "coupon rule的id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "filters",
+                        "in": "query",
+                        "description": "查询条件(json字符串)",
+                        "required": false,
+                        "type": "string",
+                        "format": "类似{'__f-name-contains':'abc'}这样的查询对象"
+                    }
+                ],
+                "tags": [
+                    "coupon"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/Coupons"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "summary": "创建多张优惠券",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "formData",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "coupon_rule_id",
+                        "in": "formData",
+                        "description": "待添加优惠券的coupon rule的id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "count",
+                        "in": "formData",
+                        "description": "添加的优惠券的数量",
+                        "required": true,
+                        "type": "number"
+                    }
+                ],
+                "tags": [
+                    "coupon"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "删除优惠券集合",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "ids",
+                        "in": "query",
+                        "description": "待删除的优惠券规则的id的数组的json字符串",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "coupon"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "NewCouponRule": {
+            "type": "object",
+            "properties": {
+                "corp_id": {
+                    "type": "number",
+                    "description": ""
+                },
+                "name": {
+                    "type": "string",
+                    "description": "优惠券规则名"
+                },
+                "money": {
+                    "type": "number",
+                    "description": "优惠券的金额"
+                },
+                "coupon_count": {
+                    "type": "number",
+                    "description": "优惠券规则下的优惠券数量"
+                },
+                "receive_limit_count": {
+                    "type": "number",
+                    "description": "用户领取优惠券的限制数量"
+                },
+                "remark": {
+                    "type": "string",
+                    "description": "优惠券详情"
+                },
+                "note": {
+                    "type": "string",
+                    "description": "优惠券备注"
+                },
+                "start_date": {
+                    "type": "string",
+                    "description": "优惠券开始有效的时间"
+                },
+                "end_date": {
+                    "type": "string",
+                    "description": "优惠券过期时间"
+                },
+                "using_limit": {
+                    "type": "object",
+                    "description": "使用限制的json字符串",
+                    "properties": {
+                        "is_no_order_user_only": {
+                            "type": "boolean",
+                            "description": "是否限制为只有未下单用户才能使用"
+                        },
+                        "is_for_specific_products": {
+                            "type": "boolean",
+                            "description": "是否限制未特定商品集合才能使用"
+                        },
+                        "product_ids": {
+                            "type": "array",
+                            "description": "限制使用的商品id集合",
+                            "items": {
+                                "type": "number"
+                            }
+                        },
+                        "has_valid_restriction": {
+                            "type": "boolean",
+                            "description": "是否有优惠券使用的金额限制"
+                        },
+                        "valid_restrictions": {
+                            "type": "boolean",
+                            "description": "可使用优惠券的金额限制"
+                        }                        
+                    }
+                }
+            }
+        },
+        "CouponRules": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/CouponRule"
+            }
+        },
+        "CouponRule": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "number",
+                    "description": ""
+                },
+                "name": {
+                    "type": "string",
+                    "description": "优惠券规则名"
+                },
+                "money": {
+                    "type": "number",
+                    "description": "优惠券的金额"
+                },
+                "coupon_count": {
+                    "type": "number",
+                    "description": "优惠券规则下的优惠券数量"
+                },
+                "receive_limit_count": {
+                    "type": "number",
+                    "description": "用户领取优惠券的数量限制"
+                },
+                "receive_count": {
+                    "type": "number",
+                    "description": "已经被领取了的优惠券的数量"
+                },
+                "remained_count": {
+                    "type": "number",
+                    "description": "优惠券规则中剩余的优惠券数量"
+                },
+                "receive_user_count": {
+                    "type": "number",
+                    "description": "领取了优惠券的用户的数量"
+                },
+                "use_count": {
+                    "type": "number",
+                    "description": "已经被使用了的优惠券的数量"
+                },
+                "remark": {
+                    "type": "string",
+                    "description": "优惠券详情"
+                },
+                "note": {
+                    "type": "string",
+                    "description": "优惠券备注"
+                },
+                "valid_days": {
+                    "type": "number",
+                    "description": "优惠券有效的天数"
+                },
+                "status": {
+                    "type": "string",
+                    "description": "优惠券规则状态",
+                    "format": "active(可用), diabled(失效), expired(过期)"
+                },
+                "using_limit": {
+                    "type": "object",
+                    "description": "优惠券的使用限制",
+                    "properties": {
+                        "is_no_order_user_only": {
+                            "type": "boolean",
+                            "description": "是否限制为只有未下单用户才能使用"
+                        },
+                        "is_for_specific_products": {
+                            "type": "boolean",
+                            "description": "是否限制未特定商品集合才能使用"
+                        },
+                        "product_ids": {
+                            "type": "array",
+                            "description": "限制使用的商品id集合",
+                            "items": {
+                                "type": "number"
+                            }
+                        },
+                        "has_valid_restriction": {
+                            "type": "boolean",
+                            "description": "是否有优惠券使用的金额限制"
+                        },
+                        "valid_restrictions": {
+                            "type": "boolean",
+                            "description": "可使用优惠券的金额限制"
+                        }                        
+                    }
+                },
+                "start_date": {
+                    "type": "string",
+                    "description": "优惠券开始有效的时间"
+                },
+                "end_date": {
+                    "type": "string",
+                    "description": "优惠券过期时间"
+                },
+                "created_at": {
+                    "type": "string",
+                    "description": "优惠券规则创建时间"
+                }
+            }
+        },
+        "Coupons": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/Coupon"
+            }
+        },
+        "Coupon": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "number",
+                    "description": ""
+                },
+                "bid": {
+                    "type": "string",
+                    "description": "优惠券的bid值（业务id）"
+                },
+                "money": {
+                    "type": "number",
+                    "description": "优惠券的金额"
+                },
+                "status": {
+                    "type": "string",
+                    "description": "优惠券状态",
+                    "format": "unused(已领取，未使用), used(已使用), expired(过期), discard(作废), ungot(未领取), disabled(已失效)"
+                },
+                "receive_user": {
+                    "type": "string",
+                    "description": "领取人姓名"
+                },
+                "use_user": {
+                    "type": "string",
+                    "description": "使用人姓名"
+                },
+                "order_bid": {
+                    "type": "string",
+                    "description": "使用优惠券的订单的bid值"
+                },
+                "using_limit": {
+                    "type": "object",
+                    "description": "优惠券的使用限制",
+                    "properties": {
+                        "is_no_order_user_only": {
+                            "type": "boolean",
+                            "description": "是否限制为只有未下单用户才能使用"
+                        },
+                        "is_for_specific_products": {
+                            "type": "boolean",
+                            "description": "是否限制未特定商品集合才能使用"
+                        },
+                        "product_ids": {
+                            "type": "array",
+                            "description": "限制使用的商品id集合",
+                            "items": {
+                                "type": "number"
+                            }
+                        },
+                        "has_valid_restriction": {
+                            "type": "boolean",
+                            "description": "是否有优惠券使用的金额限制"
+                        },
+                        "valid_restrictions": {
+                            "type": "boolean",
+                            "description": "可使用优惠券的金额限制"
+                        }                        
+                    }
+                },
+                "start_time": {
+                    "type": "string",
+                    "description": "优惠券开始有效的时间"
+                },
+                "expired_time": {
+                    "type": "string",
+                    "description": "优惠券过期时间"
+                },
+                "receive_time": {
+                    "type": "string",
+                    "description": "优惠券的领取时间"
+                },
+                "use_time": {
+                    "type": "string",
+                    "description": "优惠券的使用时间"
+                },
+                "created_at": {
+                    "type": "string",
+                    "description": "优惠券规则创建时间"
+                }
+            }
+        }
+    }
+}

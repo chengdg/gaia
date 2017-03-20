@@ -44,10 +44,23 @@ class PromotionRepository(business_model.Service):
 
 	def search_flash_sale_promotions(self, page_info, fill_options=None, filters=None):
 		"""
-		搜索显示抢购的促销活动
+		搜索限时抢购的促销活动
 		"""
 		filters = filters if filters else {}
 		filters['__f-type-equal'] = promotion_models.PROMOTION_TYPE_FLASH_SALE
+		options = {
+			'order_options': ['-start_date']
+		}
+		promotions, pageinfo = self.get_promotions(page_info, fill_options=fill_options, options=options,
+												   filters=filters)
+		return promotions, pageinfo
+
+	def search_integral_sale_promotions(self, page_info, fill_options=None, filters=None):
+		"""
+		搜索积分应用的促销活动
+		"""
+		filters = filters if filters else {}
+		filters['__f-type-equal'] = promotion_models.PROMOTION_TYPE_INTEGRAL_SALE
 		options = {
 			'order_options': ['-start_date']
 		}
@@ -62,6 +75,8 @@ class PromotionRepository(business_model.Service):
 		product_filter_values = {}
 		filter_parse_result = FilterParser.get().parse(filters)
 
+		should_use_default_status = True
+
 		for filter_field_op, filter_value in filter_parse_result.items():
 			items = filter_field_op.split('__')
 			filter_field = items[0]
@@ -70,22 +85,37 @@ class PromotionRepository(business_model.Service):
 				op = items[1]
 			filter_category = None
 			should_ignore_field = False
-			if filter_field == 'id' or filter_field == 'status' or filter_field == 'type':
+			if filter_field == 'status':
+				should_use_default_status = False
+				filter_category = promotion_filter_values
+			if filter_field == 'id' or filter_field == 'type':
 				filter_category = promotion_filter_values
 			elif filter_field == 'product_name':
 				filter_field = 'name'
 				filter_category = product_filter_values
-			elif filter_field == 'start_date' or filter_field == 'end_date' or filter_field == 'barcode':
+			elif filter_field == 'barcode':
 				filter_category = product_filter_values
+			elif filter_field == 'promotion_date':
+				filter_category = promotion_filter_values
+				start_date, end_date = filter_value
+				if start_date:
+					filter_category['start_date__gte'] = start_date
+				if end_date:
+					filter_category['end_date__lte'] = end_date
+				should_ignore_field = True
+
 			if not should_ignore_field:
 				if op:
 					filter_field_op = '%s__%s' % (filter_field, op)
 				filter_category[filter_field_op] = filter_value
-		# 如果有补充条件,可以手动补充
-		promotion_filter_values['status__in'] = [promotion_models.PROMOTION_STATUS_STARTED,
+		
+		promotion_filter_values['owner_id'] = self.corp.id
+
+		if should_use_default_status:
+			# 如果有补充条件,可以手动补充
+			promotion_filter_values['status__in'] = [promotion_models.PROMOTION_STATUS_STARTED,
 												 promotion_models.PROMOTION_STATUS_NOT_START,
 												 promotion_models.PROMOTION_STATUS_FINISHED,]
-		promotion_filter_values['owner_id'] = self.corp.id
 		return {
 			'product': product_filter_values,
 			'premium_sale': premium_sale_filter_values,
@@ -157,9 +187,9 @@ class PromotionRepository(business_model.Service):
 
 	def enable_promotion(self, promotion_id):
 		"""
-        开启促销活动
-        promotion_ids: [promotion_id,...]
-        """
+		开启促销活动
+		promotion_ids: [promotion_id,...]
+		"""
 		promotion_models.Promotion.update(
 			status=promotion_models.PROMOTION_STATUS_STARTED
 		).dj_where(id=promotion_id,
@@ -169,10 +199,16 @@ class PromotionRepository(business_model.Service):
 
 	def disable_promotion(self, promotion_id):
 		"""
-        关闭撤销活动
-        """
+		结束促销活动
+		"""
+		return this.disable_promotions([promotion_id])
+
+	def disable_promotions(self, promotion_ids):
+		"""
+		批量结束促销活动
+		"""
 		promotion_models.Promotion.update(
 			status=promotion_models.PROMOTION_STATUS_FINISHED
-		).dj_where(id=promotion_id,
+		).dj_where(id__in=promotion_ids,
 				   status=promotion_models.PROMOTION_STATUS_STARTED).execute()
 		return True

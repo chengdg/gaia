@@ -19,6 +19,7 @@ def clean():
 	mall_models.OrderCardInfo.delete().execute()
 	mall_models.Order.delete().execute()
 
+	#会员
 	account_models.AccessToken.delete().execute()
 	member_models.MemberInfo.delete().execute()
 	member_models.MemberIntegralLog.delete().execute()
@@ -29,6 +30,11 @@ def clean():
 	member_models.WebAppUser.delete().execute()
 	member_models.Member.delete().execute()
 	member_models.SocialAccount.delete().execute()
+
+	# 会员等级
+	member_models.MemberGrade.delete().dj_where(name__not=u'普通会员').execute()
+	# 会员标签
+	member_models.MemberTag.delete().dj_where(name__not=u'未分组').execute()
 
 	#支付接口配置
 	mall_models.UserWeixinPayOrderConfig.delete().execute()
@@ -79,6 +85,13 @@ def clean():
 	#促销
 	promotion_models.ProductHasPromotion.delete().execute()
 	promotion_models.PremiumSaleProduct.delete().execute()
+	promotion_models.IntegralSaleRule.delete().execute()
+	promotion_models.IntegralSale.delete().execute()
+	promotion_models.Promotion.delete().execute()
+
+	#优惠券
+	promotion_models.Coupon.delete().execute()
+	promotion_models.CouponRule.delete().execute()
 
 	# 订单
 	mall_models.OrderHasProduct.delete().execute()

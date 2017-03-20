@@ -11,15 +11,17 @@ from business.member.member import Member
 
 class AMemberGrades(api_resource.ApiResource):
     """
-    获取corp的member grade集合
+    会员等级集合
     """
     app = "member"
     resource = "member_grades"
 
-    @param_required(['corp_id'])
+    @param_required(['corp_id', '?with_member_count:bool'])
     def get(args):
         corp = args['corp']
         member_grades = corp.member_grade_repository.get_member_grades()
+
+        with_member_count = args.get('with_member_count', False)
 
         datas = []
         for member_grade in member_grades:
@@ -29,7 +31,10 @@ class AMemberGrades(api_resource.ApiResource):
                 'is_default_grade': member_grade.is_default_grade,
                 'is_auto_upgrade': member_grade.is_auto_upgrade,
                 'pay_money': member_grade.pay_money,
-                'pay_times': member_grade.pay_times
+                'pay_times': member_grade.pay_times,
+                'shop_discount': member_grade.shop_discount,
+                'upgrade_strategy': corp.member_grade_repository.get_upgrade_strategy(),
+                'member_count': member_grade.member_count if with_member_count else 0
             })
         
         return {

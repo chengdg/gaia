@@ -90,6 +90,9 @@ def __format_product_models_info(context, product):
             "stocks": -1,
             "user_code": 'user_code'
         }
+        if 'price' in product:
+            models_info['standard_model']['price'] = product['price']
+            
     if len(models_info['custom_models']) > 0:
         models_info['is_use_custom_model'] = True
 

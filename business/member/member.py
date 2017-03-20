@@ -10,6 +10,7 @@ import logging
 from bs4 import BeautifulSoup
 from datetime import datetime
 from bdem import msgutil
+from eaglet.core import paginator
 
 from eaglet.decorator import param_required
 from eaglet.decorator import cached_context_property
@@ -21,9 +22,12 @@ from business.account.integral import Integral
 from gaia_conf import TOPIC
 from util import emojicons_util
 from db.member import models as member_models
+from db.mall import promotion_models as promotion_models
 from business import model as business_model
 from business.member.member_has_tag import MemberHasTag
 from db.mall import models as mall_models
+from business.mall.corporation_factory import CorporationFactory
+from business.member.integral_log import IntegralLog
 
 
 class Member(business_model.Model):
@@ -32,66 +36,60 @@ class Member(business_model.Model):
 	"""
 	__slots__ = (
 		'id',
-		'grade_id',
-		'username_hexstr',
-		# 'webapp_user',
-		'is_subscribed',
-		'created_at',
 		'token',
 		'webapp_id',
-		'pay_money',
-		'update_time',
-		'status',
-		'experience',
-		'remarks_name',
-		'remarks_extra',
-		'last_visit_time',
-		'session_id',
-		'is_subscribed',
-		'friend_count',
-		'factor',
-		'source',
-		'integral',
-		'update_time',
-		'pay_times',
-		'last_pay_time',
-		'unit_price',
+
+		#一般信息
+		'username_hexstr',
+		'thumbnail', #头像
+		# 'webapp_user',
+		'created_at',
 		'city',
 		'province',
 		'country',
 		'sex',
-		'purchase_frequency',
-		'cancel_subscribe_time',
-		'fans_count'
+		'update_time',
+		'experience', #经验值
+		'remarks_name', #备注名
+		'remarks_extra', #备注信息
+
+		#消费信息
+		'pay_money', #消费总金额
+		'pay_times', #购买次数
+		'last_pay_time', #最近一次的购买时间
+		'unit_price', #客单价
+		'pay_times_in_30_days', #近30天购买频次
+		'integral',
+
+		#状态信息
+		'update_time', #最近更新时间
+		'status', #状态
+		'is_subscribed', #是否关注
+		'cancel_subscribe_time', #取消关注时间
+
+		#微信消息信息
+		'last_visit_time',
+		'session_id',
+		
+		#社交关系
+		'factor', #社会因子
+		'source', #会员来源
+		'friend_count', #好友数量
+		'fans_count' #粉丝数量（推荐扫码、分享链接带来的会员数量）
 	)
-
-	@staticmethod
-	@param_required(['models'])
-	def from_models(args):
-		"""
-		工厂对象，根据member model获取Member业务对象
-
-		@param[in] model: member model
-
-		@return Member业务对象
-		"""
-		models = args['models']
-		corp = args['corp']
-		members = []
-		for model in models:
-			member = Member(model)
-			member.context['corp'] = corp
-			member.context['db_model'] = model
-			members.append(member)
-		return members
 
 	def __init__(self, model):
 		business_model.Model.__init__(self)
 
 		# self.context['webapp_owner'] = webapp_owner
 		self.context['db_model'] = model
+		self.context['corp'] = CorporationFactory.get()
 		if model:
 			self._init_slot_from_model(model)
+			self.pay_times_in_30_days = model.purchase_frequency
+			self.status = member_models.MEMBERSTATUS2STR.get(model.status, 'unknown')
+			self.source = member_models.MEMBERSOURCE2STR.get(model.source, 'unknown')
+			self.thumbnail = model.user_icon
 
 	@cached_context_property
 	def webapp_user_id(self):
@@ -108,6 +106,23 @@ class Member(business_model.Model):
 			'order': order,
 			'corp': self.context['corp']
 		})
+
+	def get_integral_logs(self, page_info):
+		"""
+		获得会员的积分日志集合
+		"""
+		db_models = member_models.MemberIntegralLog.select().dj_where(member=self.id).order_by(-member_models.MemberIntegralLog.id)
+		pageinfo, db_models = paginator.paginate(db_models, page_info.cur_page, page_info.count_per_page)
+
+		return [IntegralLog(db_model) for db_model in db_models], pageinfo
+
+	def get_coupons(self, page_info):
+		"""
+		获得会员的优惠券集合
+		"""
+		corp = CorporationFactory.get()
+		coupons, pageinfo = corp.coupon_repository.get_coupons_for_member(self, page_info)
+		return coupons, pageinfo
 
 	def cleanup_cache(self):
 		"""
@@ -167,9 +182,10 @@ class Member(business_model.Model):
 		@return:是否改变了等级
 		"""
 
+		db_model = self.context['db_model']
 		member_grades = self.context['corp'].member_grade_repository.get_auto_upgrade_for_corp()
 
-		member_grades = filter(lambda x: x.id > self.grade_id, member_grades)
+		member_grades = filter(lambda x: x.id > db_model.grade_id, member_grades)
 
 		user_orders = self.context['corp'].order_repository.get_orders_by_webapp_user_id(self.webapp_user_id,
 		                                                                                 mall_models.ORDER_STATUS_SUCCESSED)
@@ -195,18 +211,6 @@ class Member(business_model.Model):
 				member_models.Member.update(grade=new_grade.id).dj_where(id=self.id).execute()
 				break
 
-	@cached_context_property
-	def __grade(self):
-		"""
-		[property] 会员等级信息
-		"""
-		member_model = self.context['db_model']
-
-		if not member_model:
-			return None
-
-		return member_model.grade
-
 	@property
 	def discount(self):
 		"""
@@ -224,12 +228,15 @@ class Member(business_model.Model):
 		else:
 			return member_model.grade_id, 100
 
-	@property
+	@cached_context_property
 	def grade(self):
 		"""
 		[property] 会员等级
 		"""
-		return self.__grade
+		db_model = self.context['db_model']
+		corp = CorporationFactory.get()
+		grade_id = db_model.grade_id
+		return corp.member_grade_repository.get_member_grade_by_id(grade_id)
 
 	@property
 	def grade_name(self):
@@ -239,23 +246,27 @@ class Member(business_model.Model):
 		return self.__grade.name
 
 	@cached_context_property
-	def __tags(self):
-		"""
-		[property] 会员分组信息
-		"""
-		member_model = self.context['db_model']
-
-		if not member_model:
-			return None
-		member_tags = MemberHasTag.get_member_tags({'member_id': member_model.id})
-		return member_tags
-
-	@property
 	def tags(self):
 		"""
 		[property] 会员分组信息列表
 		"""
-		return self.__tags
+		member_model = self.context['db_model']
+		if not member_model:
+			return None
+
+		member_tag_ids = [relation.member_tag_id for relation in member_models.MemberHasTag.select().dj_where(member_id=self.id)]
+		corp = CorporationFactory.get()
+
+		if len(member_tag_ids) == 0:
+			#如果没有标签，默认打上'未分组'标签
+			default_tag = corp.member_tag_repository.get_default_member_tag()
+			member_models.MemberHasTag.create(
+				member = self.id,
+				member_tag = default_tag.id
+			)
+			return [default_tag]
+		else:
+			return corp.member_tag_repository.get_member_tags_by_ids(member_tag_ids)
 
 	@cached_context_property
 	def __info(self):
@@ -333,13 +344,6 @@ class Member(business_model.Model):
 		return self.__info.is_binded
 
 	@cached_context_property
-	def user_icon(self):
-		"""
-		[property] 会员头像
-		"""
-		return self.context['db_model'].user_icon
-
-	@cached_context_property
 	def username_for_html(self):
 		"""
 		[property] 兼容html显示的会员名
@@ -414,3 +418,31 @@ class Member(business_model.Model):
 				return u'%s...' % output_str
 		except:
 			return self.username_for_html[:10]
+
+	def join_groups(self, group_ids):
+		"""
+		加入group_id指定的会员分组
+		即
+		将会员打上group_ids指定的member tag
+		"""
+		if len(group_ids) == 0:
+			#退出所有会员分组，回到默认的'未分组'
+			corp = CorporationFactory.get()
+			default_tag = corp.member_tag_repository.get_default_member_tag()
+			member_models.MemberHasTag.create(
+				member = self.id,
+				member_tag = default_tag.id
+			)
+			return 1
+		else:
+			member_models.MemberHasTag.delete().dj_where(member_id=self.id).execute()
+			tag_ids = group_ids
+			count = 1
+			for tag_id in tag_ids:
+				member_models.MemberHasTag.create(
+					member = self.id,
+					member_tag = tag_id
+				)
+				count += 1
+
+			return count

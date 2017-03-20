@@ -283,6 +283,20 @@ class OrderRepository(business_model.Model):
 		else:
 			return None
 
+	def get_orders_for_member(self, member):
+		"""
+		获得member的订单列表
+		"""
+		statuses = (
+			mall_models.ORDER_STATUS_NOT,
+			mall_models.ORDER_STATUS_PAYED_SUCCESSED,
+			mall_models.ORDER_STATUS_PAYED_NOT_SHIP,
+			mall_models.ORDER_STATUS_PAYED_SHIPED,
+			mall_models.ORDER_STATUS_SUCCESSED
+		)
+		db_models = mall_models.Order.select().dj_where(origin_order_id__lte=0, webapp_user_id=member.webapp_user_id, status__in=statuses)
+		return Order.from_models({"db_models": db_models, 'fill_options': '', 'corp': self.corp})
+
 	def get_orders_by_webapp_user_id(self, webapp_user_id, status=None):
 		db_models = self.__get_db_models_for_corp().dj_where(webapp_user_id=webapp_user_id)
 		if status:

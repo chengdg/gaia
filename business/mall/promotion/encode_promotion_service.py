@@ -75,17 +75,8 @@ class EncodePromotionService(business_model.Service):
 			return self.__get_flash_sale_info(promotion)
 		elif promotion.type == promotion_models.PROMOTION_TYPE_PREMIUM_SALE:
 			return self.__get_premium_sale_info(promotion)
-
-	def __get_premium_sale_info(self, promotion):
-		"""
-		获取买赠促销的详细信息
-		"""
-		if promotion.detail:
-			return {
-				'count': promotion.detail.count,
-				'is_enable_cycle_mode': promotion.detail.is_enable_cycle_mode,
-				'premium_products': self.__get_premium_product_info(promotion)
-			}
+		elif promotion.type == promotion_models.PROMOTION_TYPE_INTEGRAL_SALE:
+			return self.__get_integral_sale_info(promotion)
 
 	def __get_flash_sale_info(self, promotion):
 		"""
@@ -97,6 +88,39 @@ class EncodePromotionService(business_model.Service):
 				'promotion_price': promotion.detail.promotion_price,
 				'count_per_purchase': promotion.detail.count_per_purchase,
 				'count_per_period': promotion.detail.count_per_period
+			}
+
+	def __get_integral_sale_info(self, promotion):
+		"""
+		获取积分应用促销的详细信息.
+		"""
+		if promotion.detail:
+			detail = promotion.detail
+			data = {
+				'is_permanant_active': detail.is_permanant_active,
+				'rule_type': detail.rule_type,
+				'rules': []
+			}
+
+			for rule in detail.rules:
+				data['rules'].append({
+					'id': rule.id,
+					'member_grade_id': rule.member_grade_id,
+					'discount': '%.2f' % rule.discount,
+					'discount_money': '%.2f' % rule.discount_money
+				})
+
+			return data
+
+	def __get_premium_sale_info(self, promotion):
+		"""
+		获取买赠促销的详细信息
+		"""
+		if promotion.detail:
+			return {
+				'count': promotion.detail.count,
+				'is_enable_cycle_mode': promotion.detail.is_enable_cycle_mode,
+				'premium_products': self.__get_premium_product_info(promotion)
 			}
 
 	def __get_premium_product_info(self, promotion):

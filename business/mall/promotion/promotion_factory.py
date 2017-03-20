@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import json
+from datetime import datetime
+
 from business import model as business_model
 from db.mall import promotion_models
 
@@ -39,18 +41,20 @@ class PromotionFactory(business_model.Service):
                 owner = self.corp.id,
                 integral_sale = integral_sale,
                 member_grade_id = -1,
-                discount = rule_info['discount_money'],
+                discount = rule_info['discount'],
                 discount_money = rule_info['discount_money']
             )
-        else:
-            for rule in rules:
+        elif rule_info['type'] == 'individual':
+            for rule in rule_info['rules']:
                 promotion_models.IntegralSaleRule.create(
                     owner = self.corp.id,
                     integral_sale = integral_sale,
                     member_grade_id = rule['member_grade_id'],
-                    discount = rule['discount_money'],
+                    discount = rule['discount'],
                     discount_money = rule['discount_money']
                 )
+        else:
+            pass
 
         return integral_sale
 
@@ -69,15 +73,28 @@ class PromotionFactory(business_model.Service):
             )
 
     def __create_promotion(self, promotion_data, promotion_detail_id):
+        #确定新建的优惠券规则的状态
+        now = datetime.now().strftime('%Y-%m-%d %H:%M')
+        start_date = promotion_data['start_date']
+        end_date = promotion_data['end_date']
+        status = None
+        if start_date <= now:
+            if end_date <= now:
+                status = promotion_models.PROMOTION_STATUS_FINISHED
+            else:
+                status = promotion_models.PROMOTION_STATUS_STARTED
+        else:
+            status = promotion_models.PROMOTION_STATUS_NOT_START
+
         promotion = promotion_models.Promotion.create(
             owner=self.corp.id,
             type=promotion_data['type'],
             name=promotion_data['name'],
             promotion_title=promotion_data.get('promotion_title', ''),
-            status=promotion_data.get('status', promotion_models.PROMOTION_STATUS_NOT_START),
-            member_grade_id=promotion_data.get('member_grade') if promotion_data.get('member_grade') else 0,
-            start_date=promotion_data['start_date'],
-            end_date=promotion_data['end_date'],
+            status=status,
+            member_grade_id=promotion_data.get('member_grade', -1),
+            start_date=start_date,
+            end_date=end_date,
             detail_id=promotion_detail_id
         )
         return promotion
