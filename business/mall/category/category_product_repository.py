@@ -177,7 +177,7 @@ class CategoryProductRepository(object):
 				product = mall_models.Product()
 				product.id = pool.product_id
 				products.append(Product(product))
-			products = sorted(products, key=lambda k: product_ids.index(k.product_id))
+			products = sorted(products, key=lambda k: product_ids.index(k.id))
 			page_info, products = paginator.paginate(products, target_page.cur_page, target_page.count_per_page)
 			return products, page_info
 		else:
