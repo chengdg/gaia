@@ -22,7 +22,7 @@ Background:
 			"分类13": []
 		}]
 		"""
-@gaia @account @edit_account
+#@gaia @account @edit_account
 Scenario:1 weizoom修改账号信息
 	When weizoom配置'jobs'的账号信息
 		"""
