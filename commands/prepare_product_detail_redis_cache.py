@@ -24,7 +24,7 @@ class Command(BaseCommand):
 		print 'start loading....................'
 		account = account_models.UserProfile.select().dj_where(webapp_type=2).first()
 		
-		products = mall_models.Product.select().dj_where(owner_id=account.user_id)
+		products = mall_models.Product.select().dj_where(is_deleted=False)
 		product_ids = [product.id for product in products]
 		
 		# product_id_2_product = dict([(product.id, product) for product in products])
