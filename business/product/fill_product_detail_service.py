@@ -230,7 +230,9 @@ class FillProductDetailService(business_model.Service):
 			classification_list = []
 			classification_nav_list = []
 			product = id2product[relation.product_id]
-			classification = id2classification[relation.classification_id]
+			classification = id2classification.get(relation.classification_id)
+			if not classification:
+				continue
 			classification_list.append(classification)
 			classification_nav_list.append(classification.name)
 			product.classification_id = relation.classification_id

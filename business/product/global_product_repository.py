@@ -37,7 +37,6 @@ class GlobalProductRepository(business_model.Service):
 			if query_dict.get('verified'):
 				product_pool_ids = [p.product_id for p in mall_models.ProductPool.select().dj_where(
 					woid=query_dict['corp'].id,
-				  	type=mall_models.PP_TYPE_SYNC,
 				  	status__not=mall_models.PP_STATUS_DELETE
 			  	)]
 				db_models = db_models.dj_where(id__in=product_pool_ids, is_accepted=True)
