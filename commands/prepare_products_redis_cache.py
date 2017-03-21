@@ -52,7 +52,7 @@ class Command(BaseCommand):
 		# 社群所有上架商品id
 		corp_onshelf_product_ids = {}
 		for category in categories:
-			relations = mall_models.CategoryHasProduct.select(mall_models.CategoryHasProduct.display_index,
+			relations = mall_models.CategoryHasProduct.select().dj_where(mall_models.CategoryHasProduct.display_index,
 															  mall_models.CategoryHasProduct.created_at.desc())
 			corp_id = category.owner_id
 			
