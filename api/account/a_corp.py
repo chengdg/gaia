@@ -31,6 +31,6 @@ class ACorp(api_resource.ApiResource):
 			'settlement_type': corp.details.settlement_type,
 		   	'divide_rebate': corp.details.divide_rebate,
 			'clear_period': corp.details.clear_period,
-			'customer_from': corp.details.customer_from,
+			'axe_sales_name': corp.details.axe_sales_name,
 			'status': corp.details.status
 		}

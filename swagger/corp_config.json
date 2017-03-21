@@ -81,7 +81,7 @@
                                     "type": "string",
                                     "description": "备注"
                                 },
-                                "customer_from": {
+                                "axe_sales_name": {
                                     "type": "string",
                                     "description": "商户来源"
                                 },
@@ -230,7 +230,7 @@
                     "type": "string",
                     "description": "备注"
                 },
-                "customer_from": {
+                "axe_sales_name": {
                     "type": "string",
                     "description": "商户来源"
                 },

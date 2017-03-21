@@ -4,6 +4,7 @@ from eaglet.core import api_resource
 from eaglet.decorator import param_required
 
 from business.common.page_info import PageInfo
+from business.mall.corporation import Corporation
 
 class APreProducts(api_resource.ApiResource):
 	"""
@@ -34,9 +35,11 @@ class APreProducts(api_resource.ApiResource):
 		rows = []
 
 		for pre_product in pre_products:
+			owner_corp_info = Corporation(pre_product.owner_id).details
 			rows.append({
 				'id': pre_product.id,
-				'owner_name': '', #TODO
+				'owner_name': owner_corp_info.company_name,
+				'axe_sales_name': owner_corp_info.axe_sales_name,
 				'classification_id': pre_product.classification_id,
 				'promotion_title': pre_product.promotion_title,
 				'models': {

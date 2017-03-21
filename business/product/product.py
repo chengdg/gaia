@@ -275,6 +275,8 @@ class Product(business_model.Model):
 			status=mall_models.PRODUCT_STATUS['SUBMIT']
 		).dj_where(id=self.id).execute()
 
+		send_product_message.send_product_change(self.get_corp().id, self.id)
+
 	def verify_modifications(self):
 		"""
 		审核通过商品的编辑内容
@@ -307,13 +309,7 @@ class Product(business_model.Model):
 		).dj_where(id=self.id).execute()
 
 		#发送钉钉消息
-		send_product_message.send_reject_product_ding_message({
-			u'客户来源': 'test',
-			u'商品名称': self.name,
-			u'客户名称': 'test',
-			u'入库状态': 'test',
-			u'驳回原因': reason
-		})
+		send_product_message.send_reject_product_ding_message(self.owner_id, self.id, reason)
 
 
 	# 如果规格有图片就显示，如果没有，使用缩略图

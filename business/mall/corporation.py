@@ -68,7 +68,7 @@ class Corporation(business_model.Model):
 		'divide_rebate',
 		'min_cps_profit',
 		'clear_period',
-		'customer_from',
+		'axe_sales_name',
 		'max_product_count',
 		'classification_ids',
 		'risk_money',
@@ -149,7 +149,7 @@ class Corporation(business_model.Model):
 				self.divide_rebate = supplier_info['divide_rebate']
 				self.min_cps_profit = supplier_info['min_cps_profit']
 				self.clear_period = supplier_info['clear_period']
-				self.customer_from = supplier_info['customer_from']
+				self.axe_sales_name = supplier_info['axe_sales_name']
 				self.max_product_count = int(supplier_info['max_product_count'])
 				self.classification_ids = supplier_info['classification_ids']
 				self.status = supplier_info['status']

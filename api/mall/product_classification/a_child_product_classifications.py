@@ -39,7 +39,7 @@ class AChildProductClassifications(api_resource.ApiResource):
                 'level': product_classification.level,
                 'father_id': product_classification.father_id,
                 'note': product_classification.note,
-                'product_count': product_classification.total_product_count,
+                'product_count': product_classification.product_count,
                 'created_at': product_classification.created_at.strftime('%Y-%m-%d %H:%M'),
                 'has_label': classification_id2haslabel[product_classification.id] if args.get('check_label') else False,
                 'qualification_infos': [{

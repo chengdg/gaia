@@ -30,7 +30,7 @@ def step_impl(context, user):
 		if row['name'] not in expected_corp_names:
 			continue
 		row['classifications'] = __classification_ids2names(row['classification_ids'])
-		row['customer_from'] = u'渠道'
+		row['axe_sales_name'] = u'渠道'
 		row['created_time'] = u'创建时间'
 		row['operation'] = u'编辑'
 		row['settlement_type'] = __purchase_type_num2str(row['settlement_type'])

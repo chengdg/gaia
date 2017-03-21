@@ -32,6 +32,8 @@ class APreProduct(api_resource.ApiResource):
 		return {
 			'id': pre_product.id,
 			'name': pre_product.name,
+			'company_name': corp.details.company_name,
+			'axe_sales_name': corp.details.axe_sales_name,
 			'promotion_title': pre_product.promotion_title,
 			'price_info': pre_product.price_info,
 			'weight': '0.00' if not pre_product.standard_model else '%.2f' % pre_product.standard_model.weight,

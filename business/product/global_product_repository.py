@@ -56,7 +56,9 @@ class GlobalProductRepository(business_model.Service):
 		if product_name:
 			db_models = db_models.dj_where(name__icontains=product_name)
 		if classification_name:
-			classification_models = mall_models.Classification.select().dj_where(name__icontains=classification_name)
+			classification_models = list(mall_models.Classification.select().dj_where(name__icontains=classification_name))
+			#能够查询出子分类的数据(默认二级)
+			classification_models += list(mall_models.Classification.select().dj_where(father_id__in=[c.id for c in classification_models]))
 			relation_models = mall_models.ClassificationHasProduct.select().dj_where(classification_id__in=[c.id for c in classification_models])
 			db_models = db_models.dj_where(id__in=[r.product_id for r in relation_models])
 		if not status == None:

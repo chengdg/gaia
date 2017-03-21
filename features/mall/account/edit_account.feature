@@ -62,6 +62,6 @@ Scenario:1 weizoom修改账号信息
 		}
 		"""
 	Then weizoom能获取账号配置列表
-		|name|company_name|customer_from|username|created_time|classifications|settlement_type|max_product_count|operation|
+		|name|company_name|axe_sales_name|username|created_time|classifications|settlement_type|max_product_count|operation|
 		|爱昵咖啡|爱昵咖啡有限责任公司|   渠道   |    jobs    |创建时间|分类22|零售价返点|200|编辑|
 		|土小宝  |土小宝有限责任公司  | 渠道     |   bill |创建时间|分类23|固定底价|100|编辑|
