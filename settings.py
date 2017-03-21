@@ -23,6 +23,8 @@ DATABASES = {
         'USER': 'weapp',
         'PASSWORD': 'weizoom',
         'HOST': DB_HOST,
+# 'PASSWORD': 'Weizoom@',
+#         'HOST': "rm-bp18wbhgz1493ad8to.mysql.rds.aliyuncs.com",
         'PORT': DB_PORT,
         #'HOST': '103.29.16.148',#WEAPP_DB_HOST,
         #'PORT': '33306',

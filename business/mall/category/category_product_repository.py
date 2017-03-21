@@ -155,3 +155,39 @@ class CategoryProductRepository(object):
 			category_products.append(category_product)
 
 		return category_products, pageinfo
+	
+	
+	def get_on_shelf_products_for_category(self, category_id, corp_id, fill_options=None, target_page=None):
+		"""
+		获取分组下的上架商品集合
+		"""
+		product_relations = mall_models.CategoryHasProduct.select().dj_where(category_id=category_id)\
+			.order_by(mall_models.CategoryHasProduct.display_index, mall_models.CategoryHasProduct.created_at.desc())
+		
+		product_ids = [relation.product_id for relation in product_relations]
+		on_shelf_products = mall_models.ProductPool.select().dj_where(product_id__in=product_ids,
+																		 status=mall_models.PP_STATUS_ON,
+																		 woid=corp_id)
+		on_shelf_product_ids = []
+		if not fill_options:
+			
+			products = []
+			for pool in on_shelf_products:
+				on_shelf_product_ids.append(pool.product_id)
+				product = mall_models.Product()
+				product.id = pool.product_id
+				products.append(Product(product))
+			products = sorted(products, key=lambda k: product_ids.index(k.id))
+			page_info, products = paginator.paginate(products, target_page.cur_page, target_page.count_per_page)
+			return products, page_info
+		else:
+			options = {
+				'order_options': ['-status', '-id']
+			}
+			filters = {
+				'__f-id-in': on_shelf_product_ids
+			}
+			products, pageinfo = CorporationFactory().get().product_pool.get_products(target_page, fill_options,
+																					  filters=filters,
+																					  options=options,)
+			return products, pageinfo

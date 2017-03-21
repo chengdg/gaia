@@ -95,6 +95,7 @@ class UserProfile(models.Model):
 	#结算账期
 	settlement_period = models.IntegerField(default=1)
 	is_formal = models.BooleanField(default=True) #账户类型是否是正式账号
+	kefu_url = models.CharField(max_length=256, default="") #客服url
 	class Meta(object):
 		db_table = 'account_user_profile'
 

@@ -391,6 +391,118 @@
                         "description": "success"
                     }
                 }
+            },
+            "get": {
+                "summary": "商品分组中商品",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "formData",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "category_id",
+                        "in": "formData",
+                        "description": "商品分组的id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "fill_options",
+                        "in": "formData",
+                        "description": "填充项,注意with_base:true/false可以标识是否填充基础信息",
+                        "format": "{}",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "cur_page",
+                        "in": "formData",
+                        "description": "访问的页码",
+                        "format": "{}",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "count_per_page",
+                        "in": "formData",
+                        "description": "一页多少数据",
+                        "format": "{}",
+                        "required": false,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product_category"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                              "page_info": {
+                                "type": "object",
+                                "description": "分页信息"
+                              },
+                              "products": {
+                                "type": "array",
+                                "items": {
+                                  "$ref": "#/definitions/CategoryCandidateProduct"
+                                }
+                              }
+                            }
+
+                        }
+                    }
+                }
+            }
+        },
+        "/mall/product_categories/": {
+            "get": {
+                "summary": "商品所在的分组集合",
+                "parameters": [
+                    {
+                        "name": "product_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "cur_page",
+                        "in": "query",
+                        "description": "页码",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "count_per_page",
+                        "in": "query",
+                        "description": "一页多少条数据",
+                        "required": false,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product_category"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/CategoryList"
+                        }
+                    }
+                }
             }
         }
     },

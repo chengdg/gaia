@@ -86,3 +86,17 @@ class CategoryRepository(business_model.Service):
 
 		for category_id in category_ids:
 			Category.update_product_count(category_id)
+
+	def get_product_categories(self, product_id, target_page=None):
+		"""
+		商品所在分组
+		"""
+		relations = mall_models.CategoryHasProduct.select(mall_models.CategoryHasProduct, mall_models.ProductCategory)\
+			.join(mall_models.ProductCategory).dj_where(product_id=product_id)
+		# paginator.paginate(relations, target_page.cur_page, target_page.count_per_page)
+		categories = []
+		for relation in relations:
+			categories.append(Category(relation.category))
+		page_info, categories = paginator.paginate(categories, target_page.cur_page, target_page.count_per_page)
+		return categories, page_info
+			
