@@ -514,15 +514,43 @@
                 }
             }
         },
-        "/product/onshelf_simple_products/": {
+        "/product/simple_products/": {
             "get": {
-                "summary": "获取在售简单商品集合",
+                "summary": "获取简单商品集合",
                 "parameters": [
                     {
                         "name": "corp_id",
                         "in": "query",
                         "description": "",
                         "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "filters",
+                        "in": "query",
+                        "description": "搜索条件",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "fill_options",
+                        "in": "query",
+                        "description": "填充项,注意with_base:true/false可以标识是否填充基础信息",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "cur_page",
+                        "in": "query",
+                        "description": "当前页",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "count_per_page",
+                        "in": "query",
+                        "description": "一页多少数据",
+                        "required": false,
                         "type": "string"
                     }
                 ],

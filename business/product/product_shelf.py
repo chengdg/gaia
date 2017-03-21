@@ -211,18 +211,19 @@ class ProductShelf(business_model.Model):
 		# result.sort(key=lambda k: (k.display_index, k.sync_at, k.id))
 		return result
 		
-	def get_simple_products(self, product_ids):
+	def get_simple_products(self, page_info, filters, fill_options):
 		"""
 		
 		"""
-		# options = {
-		# 	'order_options': ['display_index', '-onshelf_time', '-id']
-		# }
-		fill_options = {
-			'with_product_model': True,
-			'with_image': True,
+		
+		product_pool = self.corp.product_pool
+		
+		options = {
+			'order_options': ['display_index', '-onshelf_time', '-id']
 		}
-		products = self.corp.product_pool.get_products_by_ids(product_ids=product_ids, fill_options=fill_options)
-		return products
+		
+		products, pageinfo = product_pool.get_products(page_info, fill_options, options, filters)
+		
+		return products, pageinfo
 		
 		

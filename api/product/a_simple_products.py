@@ -17,13 +17,22 @@ class ASimpleProducts(api_resource.ApiResource):
 	app = "product"
 	resource = "simple_products"
 
-	@param_required(['corp_id', 'product_ids'])
+	@param_required(['corp_id'])
 	def get(args):
 		corp = args['corp']
-		product_ids = args.get('product_ids', '[]')
-		product_ids = json.loads(product_ids)
-			
-		products = corp.insale_shelf.get_simple_products(product_ids)
+		filters = json.loads(args.get('filters', '{}'))
+		fill_options = json.loads(args.get('fill_options', '{}'))
+		
+		target_page = PageInfo.create({
+			"cur_page": int(args.get('cur_page', 1)),
+			"count_per_page": int(args.get('count_per_page', 15))
+		})
+		if not fill_options:
+			fill_options = {
+				'with_price': True,
+				'with_image': True,
+			}
+		products, page_info = corp.insale_shelf.get_simple_products(target_page, filters, fill_options)
 		encode_product_service = EncodeProductService.get(corp)
 		data = []
 		for product in products:
@@ -38,5 +47,6 @@ class ASimpleProducts(api_resource.ApiResource):
 			})
 
 		return {
-			'products': data
+			'products': data,
+			'page_info': page_info.to_dict()
 		}
