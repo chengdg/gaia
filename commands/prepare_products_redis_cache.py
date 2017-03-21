@@ -31,9 +31,10 @@ class Command(BaseCommand):
 		pipeline.execute()
 		print '<-----------prepare products end------------------------!'
 		
-		pipeline = conn.pipeline()
 		# 预热分组信息
-		categories = mall_models.ProductCategory.select()
+		self_accounts = account_models.UserProfile.select().dj_where(webapp_type=1)
+		self_account_ids = [account.user_id for account in self_accounts]
+		categories = mall_models.ProductCategory.select().dj_where(owner_id__in=self_account_ids)
 		# print 'starting..... prepare..... category!'
 		# for category in categories:
 		# 	temp_key = 'categories_%s' % category.owner_id
@@ -47,14 +48,15 @@ class Command(BaseCommand):
 		
 		pipeline = conn.pipeline()
 		print '<-----------prepare category_products start------------------------!'
-		relations = mall_models.CategoryHasProduct.select().order_by(mall_models.CategoryHasProduct.display_index)
-		category_id_2_owner_id = dict([(category.id, category.owner_id) for category in categories])
-		group_relations = itertools.groupby(relations, key=lambda k: k.category_id)
+		
 		# 社群所有上架商品id
 		corp_onshelf_product_ids = {}
-		for category_id, relations in group_relations:
-			corp_id = category_id_2_owner_id.get(category_id)
-			temp_key = '{wo:%s}_{co:%s}_pids' % (corp_id, category_id)
+		for category in categories:
+			relations = mall_models.CategoryHasProduct.select(mall_models.CategoryHasProduct.display_index,
+															  mall_models.CategoryHasProduct.created_at.desc())
+			corp_id = category.owner_id
+			
+			temp_key = '{wo:%s}_{co:%s}_pids' % (corp_id, category.id)
 			pipeline.delete(temp_key)
 			# 该社群所有上架商品id
 			if corp_onshelf_product_ids.get(corp_id) is None:
