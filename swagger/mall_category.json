@@ -462,6 +462,48 @@
                     }
                 }
             }
+        },
+        "/mall/product_categories/": {
+            "get": {
+                "summary": "商品所在的分组集合",
+                "parameters": [
+                    {
+                        "name": "product_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "cur_page",
+                        "in": "query",
+                        "description": "页码",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "count_per_page",
+                        "in": "query",
+                        "description": "一页多少条数据",
+                        "required": false,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "product_category"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/CategoryList"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
