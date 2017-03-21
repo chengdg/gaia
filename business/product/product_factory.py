@@ -194,9 +194,10 @@ class ProductFactory(business_model.Service):
 	def outgiving_products(self, product_ids):
 		# 将商品放入product pool
 		corp = self.corp
-		corp.product_pool.add_products(product_ids)
+		valid_product_ids = corp.product_pool.outgiving_pre_check(product_ids)
+		corp.product_pool.add_products(valid_product_ids)
 		# 将商品放入待售shelf
-		corp.forsale_shelf.add_products(product_ids)
+		corp.forsale_shelf.add_products(valid_product_ids)
 
 	def create_consignment_product(self, args):
 		"""

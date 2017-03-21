@@ -56,6 +56,16 @@ class ProductPool(business_model.Model):
 			)
 		return True
 
+	def outgiving_pre_check(self, product_ids):
+		"""
+		分发商品前检查是否社群已有该商品
+		"""
+		valid_product_ids = []
+		for product_id in product_ids:
+			if mall_models.ProductPool.select().dj_where(woid=self.corp_id,product_id=product_id).count() <= 0:
+				valid_product_ids.append(product_id)
+		return valid_product_ids
+
 	def add_consignment_products(self, product_ids):
 		"""
 		添加代售商品到商品池
