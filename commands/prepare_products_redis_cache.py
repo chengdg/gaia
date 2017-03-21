@@ -74,7 +74,7 @@ class Command(BaseCommand):
 				pipeline.rpush(temp_key, *list(category_on_shelf_product_ids))
 			else:
 				pipeline.rpush(temp_key, *['NONE'])
-			print 'loading c_p ...%s' % category_id, corp_id
+			print 'loading c_p ...%s' % category.id, corp_id
 		# 社群"所有商品"分组
 		for k, v in corp_onshelf_product_ids.items():
 			print 'loading ...00%s' % k
