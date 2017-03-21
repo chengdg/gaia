@@ -123,7 +123,7 @@ Background:
 		"""
 
 
-@gaia @member @cross_service @wip
+@gaia @member @cross_service
 Scenario: 购买商品影响会员信息
 	会员购买商品后：
 

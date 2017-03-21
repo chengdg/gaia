@@ -14,10 +14,12 @@ class AGroupMemberships(api_resource.ApiResource):
     app = "member"
     resource = "group_memberships"
 
-    @param_required(['corp_id', 'member_group_ids:json', 'member_id'])
+    @param_required(['corp_id', 'member_group_ids:json', 'member_ids:json'])
     def put(args):
         corp = args['corp']
-        member = corp.member_repository.get_member_by_id(args['member_id'])
-        member.join_groups(args['member_group_ids'])
+
+        members = corp.member_repository.get_members_by_ids(args['member_ids'])
+        for member in members:
+            member.join_groups(args['member_group_ids'])
         
         return {}

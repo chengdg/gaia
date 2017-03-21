@@ -17,7 +17,7 @@ Background:
 	Given zhouxun成为'jobs'的会员
 
 
-@gaia @member @member.group
+@gaia @member @member.group @wip
 Scenario: 将会员加入会员分组
 	将会员加入分组后
 	1. 会员信息中携带分组信息

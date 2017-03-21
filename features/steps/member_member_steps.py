@@ -100,7 +100,7 @@ def step_impl(context, user, member_name):
 
     data = {
         'corp_id': context.corp.id,
-        'member_id': member.id
+        'member_ids': json.dumps([member.id])
     }
     member_group_ids = []
     member_tag_names = json.loads(context.text)

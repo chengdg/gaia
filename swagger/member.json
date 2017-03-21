@@ -383,16 +383,17 @@
                         "type": "string"
                     },
                     {
-                        "name": "member_id",
+                        "name": "member_ids",
                         "in": "formData",
-                        "description": "会员id",
+                        "description": "member_id的数组的json字符串",
                         "required": true,
-                        "type": "string"
+                        "type": "string",
+                        "format": "类似[1, 2, 3]的字符串"
                     },
                     {
                         "name": "member_group_ids",
                         "in": "formData",
-                        "description": "member_id的数组的json字符串",
+                        "description": "member_group_id的数组的json字符串",
                         "required": true,
                         "type": "string",
                         "format": "类似[1, 2, 3]的字符串"
@@ -411,13 +412,53 @@
                 }
             }
         },
-        "/member/members/": {
-            "put": {
-                "summary": "属于corp的会员集合",
+        "/member/grade_memberships/": {
+            "post": {
+                "summary": "修改会员的等级",
                 "parameters": [
                     {
                         "name": "corp_id",
                         "in": "formData",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "member_ids",
+                        "in": "formData",
+                        "description": "member_id的数组的json字符串",
+                        "required": true,
+                        "type": "string",
+                        "format": "类似[1, 2, 3]的字符串"
+                    },
+                    {
+                        "name": "member_grade_id",
+                        "in": "formData",
+                        "description": "会员等级的id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "member"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        },
+        "/member/members/": {
+            "get": {
+                "summary": "获得属于corp的会员集合",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
                         "description": "",
                         "required": true,
                         "type": "string"
@@ -443,6 +484,40 @@
                                     "description": "分页信息"
                                 }
                             }
+                        }
+                    }
+                }
+            }
+        },
+        "/member/member/": {
+            "get": {
+                "summary": "获得指定的会员的详情",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    }, {
+                        "name": "id",
+                        "in": "query",
+                        "description": "会员id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "member"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/Member"
                         }
                     }
                 }
@@ -516,37 +591,39 @@
         "MemberList": {
             "type": "array",
             "description": "会员集合",
-            "items": {
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "type": "number",
-                        "description": ""
-                    },
-                    "name": {
-                        "type": "string",
-                        "description": "会员名"
-                    },
-                    "thumbnail": {
-                        "type": "string",
-                        "description": "会员头像"
-                    },
-                    "grade": {
-                        "$ref": "#/definitions/GradeInfoInMember"
-                    },
-                    "groups": {
-                        "$ref": "#/definitions/GroupsInfoInMember"
-                    },
-                    "consume_info": {
-                        "$ref": "#/definitions/ConsumeInfoInMember"
-                    },
-                    "social_info": {
-                        "$ref": "#/definitions/SocialInfoInMember"
-                    },
-                    "subscribe_info": {
-                        "$ref": "#/definitions/SubscribeInfoInMember"
-                    },
-                }
+            "$ref": "#definitions/Member"
+        },
+        "Member": {
+            "type": "object",
+            "description": "会员信息",
+            "properties": {
+                "id": {
+                    "type": "number",
+                    "description": ""
+                },
+                "name": {
+                    "type": "string",
+                    "description": "会员名"
+                },
+                "thumbnail": {
+                    "type": "string",
+                    "description": "会员头像"
+                },
+                "grade": {
+                    "$ref": "#/definitions/GradeInfoInMember"
+                },
+                "groups": {
+                    "$ref": "#/definitions/GroupsInfoInMember"
+                },
+                "consume_info": {
+                    "$ref": "#/definitions/ConsumeInfoInMember"
+                },
+                "social_info": {
+                    "$ref": "#/definitions/SocialInfoInMember"
+                },
+                "subscribe_info": {
+                    "$ref": "#/definitions/SubscribeInfoInMember"
+                },
             }
         },
         "GradeInfoInMember": {

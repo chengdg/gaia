@@ -122,6 +122,14 @@ class MemberRepository(business_model.Service):
 
 		return Member(member_db_model)
 
+	def get_members_by_ids(self, member_ids):
+		"""
+		根据ids获得member对象集合
+		"""
+		member_db_models = list(member_models.Member.select().dj_where(webapp_id=self.corp.webapp_id, id__in=member_ids))
+
+		return [Member(member_db_model) for member_db_model in member_db_models]
+
 	def get_member_by_name(self, member_name):
 		"""
 		根据name获得member对象
