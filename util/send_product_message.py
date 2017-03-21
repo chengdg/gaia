@@ -9,7 +9,7 @@ if MODE == 'deploy1':
 	PRODUCT_OUTGIVING_TOPIC = 'test_topic'
 else:
 	UUID = 80035247 #钉钉发消息测试群
-	DING_TOPIC = 'test-topic'
+	DING_TOPIC = 'test-phone'
 	PRODUCT_OUTGIVING_TOPIC = 'test_topic'
 
 def send_product_change(supplier_id, product_id):
