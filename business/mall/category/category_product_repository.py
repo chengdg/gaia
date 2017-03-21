@@ -161,7 +161,9 @@ class CategoryProductRepository(object):
 		"""
 		获取分组下的上架商品集合
 		"""
-		product_relations = mall_models.CategoryHasProduct.select().dj_where(category_id=category_id)
+		product_relations = mall_models.CategoryHasProduct.select().dj_where(category_id=category_id)\
+			.order_by(mall_models.CategoryHasProduct.display_index, mall_models.CategoryHasProduct.created_at.desc())
+		
 		product_ids = [relation.product_id for relation in product_relations]
 		on_shelf_products = mall_models.ProductPool.select().dj_where(product_id__in=product_ids,
 																		 status=mall_models.PP_STATUS_ON,
@@ -175,6 +177,7 @@ class CategoryProductRepository(object):
 				product = mall_models.Product()
 				product.id = pool.product_id
 				products.append(Product(product))
+			products = sorted(products, key=lambda k: product_ids.index(k.product_id))
 			page_info, products = paginator.paginate(products, target_page.cur_page, target_page.count_per_page)
 			return products, page_info
 		else:
