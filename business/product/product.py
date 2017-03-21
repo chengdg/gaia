@@ -245,6 +245,8 @@ class Product(business_model.Model):
 			is_accepted=True
 		).dj_where(id=product_id).execute()
 
+		send_product_message.send_product_outgiving_message(corp.id, self.id)
+
 	def update_product_unverified(self, args):
 		"""
 		编辑商品信息(未审核)
