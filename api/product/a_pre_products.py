@@ -4,7 +4,6 @@ from eaglet.core import api_resource
 from eaglet.decorator import param_required
 
 from business.common.page_info import PageInfo
-from business.mall.corporation import Corporation
 
 class APreProducts(api_resource.ApiResource):
 	"""
@@ -24,7 +23,8 @@ class APreProducts(api_resource.ApiResource):
 			'with_model_property_info': True,
 			'with_classification': True,
 			'with_product_label': True if args['corp'].is_weizoom_corp() else False,
-			'with_sales': True
+			'with_sales': True,
+			'with_supplier_info': True
 		}
 		page_info = PageInfo.create({
 			"cur_page": int(args.get('cur_page', 1)),
@@ -33,13 +33,13 @@ class APreProducts(api_resource.ApiResource):
 		pageinfo, pre_products = corp.global_product_repository.filter_products(args, page_info, fill_options)
 
 		rows = []
-
 		for pre_product in pre_products:
-			owner_corp_info = Corporation(pre_product.owner_id).details
+			owner_corp_info = pre_product.supplier_info
+
 			rows.append({
 				'id': pre_product.id,
-				'owner_name': owner_corp_info.company_name,
-				'axe_sales_name': owner_corp_info.axe_sales_name,
+				'owner_name': owner_corp_info['company_name'] if owner_corp_info else '',
+				'axe_sales_name': owner_corp_info['axe_sales_name'] if owner_corp_info else '',
 				'classification_id': pre_product.classification_id,
 				'promotion_title': pre_product.promotion_title,
 				'models': {

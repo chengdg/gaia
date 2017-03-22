@@ -73,20 +73,33 @@ class GlobalProductRepository(business_model.Service):
 			elif status == self.FILTER_CONST['PASSED']:
 				db_models = db_models.dj_where(status=mall_models.PRODUCT_STATUS['NOT_YET'], is_accepted=True)
 
-		if owner_name:
-			#TODO
-			pass
-
-		db_models = db_models.order_by(-mall_models.Product.id)
-		if page_info:
-			pageinfo, db_models = paginator.paginate(db_models, page_info.cur_page, page_info.count_per_page)
-		else:
-			pageinfo = None
-
 		products = []
-		for model in db_models:
-			pre_product = Product(model)
-			products.append(pre_product)
+		if owner_name:
+			products = [Product(model) for model in db_models]
+			self.__fill_product_details(products, {
+				'with_supplier_info': True
+			})
+			fill_options['with_supplier_info'] = False
+
+			tmp_products = []
+			for product in products:
+				if product.supplier_info and owner_name == product.supplier_info['company_name']:
+					tmp_products.append(product)
+
+			if page_info:
+				pageinfo, products = paginator.paginate(tmp_products, page_info.cur_page, page_info.count_per_page)
+			else:
+				pageinfo = None
+		else:
+			db_models = db_models.order_by(-mall_models.Product.id)
+			if page_info:
+				pageinfo, db_models = paginator.paginate(db_models, page_info.cur_page, page_info.count_per_page)
+			else:
+				pageinfo = None
+
+			for model in db_models:
+				pre_product = Product(model)
+				products.append(pre_product)
 
 		fill_options = fill_options if fill_options else {}
 		self.__fill_product_details(products, fill_options)

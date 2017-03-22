@@ -58,15 +58,17 @@ class ProductLabelRepository(business_model.Service):
 				product_id2labels[product_id].append(label)
 
 		p2ls = dict()
+		#需要查询到分类中的标签和商品自己的标签
 		for product_id in product_ids:
+			relation_lebels = []
 			if product_id2labels.get(product_id) and len(product_id2labels[product_id]) > 0:
-				p2ls[product_id] = product_id2labels[product_id]
-			else:
-				classification_id = p2c_relations.get(product_id)
-				if not classification_id:
-					continue
-				labels = c2ls_relations.get(classification_id, [])
-				p2ls[product_id] = labels
+				relation_lebels = product_id2labels[product_id]
+			classification_id = p2c_relations.get(product_id)
+			if not classification_id:
+				continue
+			classification_labels = c2ls_relations.get(classification_id, [])
+
+			p2ls[product_id] = list(set(relation_lebels + classification_labels))
 
 		return p2ls
 

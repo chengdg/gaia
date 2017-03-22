@@ -170,7 +170,7 @@ class ProductClassification(business_model.Model):
 		if self.father_id > 0:
 			corp = CorporationFactory.get()
 			father_model = corp.product_classification_repository.get_product_classification(self.father_id)
-			father_model.get_labels(classification_ids)
+			return father_model.get_labels(classification_ids)
 		models = mall_models.ClassificationHasLabel.select().dj_where(classification_id__in=classification_ids)
 		return [ProductClassificationLabel(model) for model in models]
 

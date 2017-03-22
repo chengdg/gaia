@@ -112,7 +112,6 @@ class ProductModelGenerator(business_model.Service):
 			else:
 				product_model = ProductModel(db_model, id2property, id2propertyvalue)
 				if corp.is_community():
-					divide_info = corp.details
 					"""
 					社群的毛利、毛利率
 					固定扣点+溢价: 商品售价(或者社群修改价) * 社群扣点

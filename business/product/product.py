@@ -103,6 +103,9 @@ class Product(business_model.Model):
 
 		#毛利信息
 		'gross_profit_info',
+
+		#供货商信息
+		'supplier_info',
 	)
 
 	def __init__(self, model=None):
@@ -126,6 +129,7 @@ class Product(business_model.Model):
 			self.promotions = []
 			self.create_type = None
 			self.sync_at = None
+			self.supplier_info = dict()
 
 	def get_corp(self):
 		from business.mall.corporation_factory import CorporationFactory
@@ -151,7 +155,11 @@ class Product(business_model.Model):
 		if product_has_labels.count() > 0: #如果单独给商品配置过标签，则从ProductHasLabel中获取
 			from business.mall.product_label.product_label_repository import ProductLabelRepository
 			label_ids = [p.label_id for p in product_has_labels]
-			return ProductLabelRepository.get(corp).get_labels(label_ids)
+			#再获取商品所属分类所拥有的标签
+			classification = corp.product_classification_repository.get_classification_by_product_id(classification_id)
+			classification_labels = classification.get_labels()
+			label_ids += [c.label_id for c in classification_labels]
+			return ProductLabelRepository.get(corp).get_labels(set(label_ids))
 		else: #没有就获取所属分类的标签
 			from business.mall.product_label.product_label_repository import ProductLabelRepository
 			return ProductLabelRepository.get(corp).get_labels_by_classification_id(classification_id)

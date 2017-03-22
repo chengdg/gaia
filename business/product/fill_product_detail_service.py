@@ -326,6 +326,29 @@ class FillProductDetailService(business_model.Service):
 				promotion_info['cps_gross_profit_rate'] = '%.2f' % max_cps_profit_rate
 			product.cps_promoted_info = promotion_info
 
+	def __fill_supplier_info(self, corp, products):
+		"""
+		填充供货商信息
+		"""
+		from eaglet.utils.resource_client import Resource
+		resp = Resource.use('wcas').get({
+			'resource': 'corp.suppliers',
+			'data': {
+				'corp_id': 1127,  # todo 上线多平台后需要更改
+			}
+		})
+
+		suppliers = resp['data']
+		supplier_corp_id2info = {s['corp_id']: s for s in suppliers}
+
+		for product in products:
+			supplier_data = supplier_corp_id2info.get(product.owner_id)
+			product.supplier_info = {
+				'supplier_name': supplier_data['name'],
+				'company_name': supplier_data['company_name'],
+				'axe_sales_name': supplier_data['axe_sales_name']
+			} if supplier_data else None
+
 	def fill_detail(self, products, options):
 		"""填充各种细节信息
 
@@ -344,6 +367,7 @@ class FillProductDetailService(business_model.Service):
 			with_sales: 填充商品销售详情
 			with_cps_promotion_info: 填充商品cps推广信息
 			with_product_label: 填充商品标签
+			with_supplier_info: 填充供货商信息
 		"""
 		if len(products) == 0:
 			return
@@ -395,3 +419,6 @@ class FillProductDetailService(business_model.Service):
 
 		if options.get('with_cps_promotion_info', False):
 			self.__fill_cps_promoteion_info(self.corp, products, product_ids, id2product)
+
+		if options.get('with_supplier_info', False):
+			self.__fill_supplier_info(self.corp, products)
