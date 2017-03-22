@@ -73,6 +73,9 @@ class DeliveryItemRepository(business_model.Model):
 				filters['__f-created_at-range'] = json.loads(filters['__f-created_at-range'])
 				db_models = db_models.dj_where(created_at__range=filters['__f-created_at-range'])
 
+		#倒序
+		db_models = db_models.order_by(mall_models.Order.id.desc())
+
 		return db_models
 
 	def get_delivery_items(self, filters, page_info, fill_options=None):

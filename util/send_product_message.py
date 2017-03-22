@@ -6,11 +6,11 @@ from settings import MODE
 if MODE == 'deploy1':
 	UUID = 317014264
 	DING_TOPIC = 'notify'
-	PRODUCT_OUTGIVING_TOPIC = 'test_topic'
+	PRODUCT_OUTGIVING_TOPIC = 'test-topic'
 else:
 	UUID = 80035247 #钉钉发消息测试群
 	DING_TOPIC = 'test-phone'
-	PRODUCT_OUTGIVING_TOPIC = 'test_topic'
+	PRODUCT_OUTGIVING_TOPIC = 'test-topic'
 
 def send_product_change(supplier_id, product_id):
 	"""

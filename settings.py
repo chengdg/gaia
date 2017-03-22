@@ -159,7 +159,7 @@ if 'deploy' == MODE:
 else:
     MNS_ACCESS_KEY_ID = 'LTAICKQ4rQBofAhF'
     MNS_ACCESS_KEY_SECRET = 'bPKU71c0cfrui4bWgGPO96tLiOJ0PZ'
-    MNS_ENDPOINT = 'https://1615750970594173.mns.cn-beijing.aliyuncs.com/'
+    MNS_ENDPOINT = 'http://1615750970594173.mns.cn-beijing.aliyuncs.com/'
     MNS_SECURITY_TOKEN = ''
 
 # event service相关设置
