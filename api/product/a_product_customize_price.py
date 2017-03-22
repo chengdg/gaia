@@ -16,6 +16,7 @@ class AProductCustomizePrice(api_resource.ApiResource):
 	def post(args):
 		corp = args['corp']
 		product = corp.product_pool.get_product_by_id(args['product_id'])
+		print args['customized_models']
 		for product_model_id, price in args['customized_models'].items():
 			product.customize_price(float(price), int(product_model_id))
 
