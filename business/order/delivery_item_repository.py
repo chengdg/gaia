@@ -99,9 +99,7 @@ class DeliveryItemRepository(business_model.Model):
 			return None
 
 	def get_delivery_items_by_order_id(self, order_id):
-		db_models = self.__get_db_models_for_corp()
-
-		db_models = db_models.dj_where(origin_order_id=order_id)
+		db_models = mall_models.Order.select().dj_where(origin_order_id=order_id)
 		delivery_items = DeliveryItem.from_models(
 			{"models": db_models, 'fill_options': {}, 'corp': self.corp})
 

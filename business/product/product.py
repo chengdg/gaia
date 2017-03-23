@@ -256,6 +256,7 @@ class Product(business_model.Model):
 		).dj_where(id=product_id).execute()
 
 		send_product_message.send_product_outgiving_message(corp.id, self.id)
+		send_product_message.send_product_created_cache(self.id, self.name)
 
 	def update_product_unverified(self, args):
 		"""
@@ -288,7 +289,6 @@ class Product(business_model.Model):
 		).dj_where(id=self.id).execute()
 
 		send_product_message.send_product_change(self.get_owner_corp().id, self.id)
-		send_product_message.send_product_created_cache(self.id, self.name)
 
 	def verify_modifications(self):
 		"""
