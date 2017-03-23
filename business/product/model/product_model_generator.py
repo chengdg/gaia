@@ -121,10 +121,9 @@ class ProductModelGenerator(business_model.Service):
 					}
 					"""
 					customized_price = product_model_id2price.get(product_model.id, product_model.price)
-					if product_model.price == 0:
-						gross_profit = 0
-						gross_profit_rate = 0
-					else:
+					gross_profit = 0
+					gross_profit_rate = 0
+					if product_model.price != 0:
 						if settlement_type == account_models.ACCOUNT_DIVIDE_TYPE_FIXED:  # 固定扣点+溢价
 							gross_profit = customized_price * divide_rebate / 100
 							gross_profit_rate = divide_rebate
