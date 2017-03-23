@@ -288,6 +288,7 @@ class Product(business_model.Model):
 		).dj_where(id=self.id).execute()
 
 		send_product_message.send_product_change(self.get_owner_corp().id, self.id)
+		send_product_message.send_product_created_cache(self.id, self.name)
 
 	def verify_modifications(self):
 		"""
@@ -306,6 +307,8 @@ class Product(business_model.Model):
 			'logistics_info': product_data['logistics_info'],
 			'image_info': product_data['image_info']
 		})
+
+		send_product_message.send_product_update_cache(product_id)
 
 	def refuse_verify(self, reason):
 		"""
