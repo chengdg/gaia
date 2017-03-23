@@ -3,7 +3,6 @@
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
 
-from business.product.global_product_repository import GlobalProductRepository
 from business.product.product_factory import ProductFactory
 from business.product.update_product_service import UpdateProductService
 
@@ -17,6 +16,7 @@ class APreProduct(api_resource.ApiResource):
 
 	@param_required(['corp_id', 'product_id:int'])
 	def get(args):
+		corp = args['corp']
 		product_id = args.get('product_id')
 
 		fill_options = {
@@ -27,11 +27,13 @@ class APreProduct(api_resource.ApiResource):
 			'with_classification': True
 		}
 
-		pre_product = GlobalProductRepository.get().get_product(product_id, fill_options)
+		pre_product = corp.global_product_repository.get_product(product_id, fill_options)
 		
 		return {
 			'id': pre_product.id,
 			'name': pre_product.name,
+			'company_name': corp.details.company_name,
+			'axe_sales_name': corp.details.axe_sales_name,
 			'promotion_title': pre_product.promotion_title,
 			'price_info': pre_product.price_info,
 			'weight': '0.00' if not pre_product.standard_model else '%.2f' % pre_product.standard_model.weight,
@@ -49,6 +51,7 @@ class APreProduct(api_resource.ApiResource):
 			'postage_id': pre_product.postage_id,
 			'postage_money': '%.2f' % pre_product.unified_postage_money,
 			'classification_id': pre_product.classification_id,
+			'label_ids': [label.id for label in pre_product.labels],
 			'classification_name_nav': pre_product.classification_nav,
 			'status': pre_product.status,
 			'is_accepted': pre_product.is_accepted,

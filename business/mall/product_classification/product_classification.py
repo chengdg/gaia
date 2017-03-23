@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
-from eaglet.decorator import param_required
 
 from business.mall.product_classification.product_classification_label import ProductClassificationLabel
 from db.mall import models as mall_models
-from db.account import models as account_models
 from business import model as business_model
 
 from business.mall.corporation_factory import CorporationFactory
@@ -74,7 +72,7 @@ class ProductClassification(business_model.Model):
 			level = father_model.level + 1
 
 		model = mall_models.Classification.create(
-			owner_id = CorporationFactory.get().id,
+			owner_id = args['corp'].id,
 			name = args['name'],
 			father_id = args['father_id'],
 			note = args['note'],
@@ -172,7 +170,7 @@ class ProductClassification(business_model.Model):
 		if self.father_id > 0:
 			corp = CorporationFactory.get()
 			father_model = corp.product_classification_repository.get_product_classification(self.father_id)
-			father_model.get_labels(classification_ids)
+			return father_model.get_labels(classification_ids)
 		models = mall_models.ClassificationHasLabel.select().dj_where(classification_id__in=classification_ids)
 		return [ProductClassificationLabel(model) for model in models]
 
@@ -249,22 +247,22 @@ class ProductClassification(business_model.Model):
 			mall_models.Classification.update(product_count=mall_models.Classification.product_count - 1).dj_where(
 				id=classification_id).execute()
 
-	@property
-	def total_product_count(self):
-		"""
-		上级分类的商品数等于所有下级分类商品数的总和
-		"""
-		curr_classification_ids = [self.id]
-		product_count = self.product_count
-		while len(curr_classification_ids) > 0:
-			childs = mall_models.Classification.select().dj_where(father_id__in=curr_classification_ids)
-			curr_classification_ids = []
-			if childs.count() > 0:
-				for child in childs:
-					product_count += child.product_count
-					curr_classification_ids.append(child.id)
-
-		return product_count
+	# @property
+	# def total_product_count(self):
+	# 	"""
+	# 	上级分类的商品数等于所有下级分类商品数的总和
+	# 	"""
+		# curr_classification_ids = [self.id]
+		# product_count = self.product_count
+		# while len(curr_classification_ids) > 0:
+		# 	childs = mall_models.Classification.select().dj_where(father_id__in=curr_classification_ids)
+		# 	curr_classification_ids = []
+		# 	if childs.count() > 0:
+		# 		for child in childs:
+		# 			product_count += child.product_count
+		# 			curr_classification_ids.append(child.id)
+		#
+		# return product_count
 
 	def get_nav(self):
 		"""

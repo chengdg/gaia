@@ -7,8 +7,8 @@ from eaglet.decorator import cached_context_property
 from eaglet.decorator import param_required
 
 from business import model as business_model
-from business.mall.supplier.supplier import Supplier
-from business.mall.supplier.user_supplier import UserSupplier
+from business.supplier.supplier import Supplier
+from business.supplier.user_supplier import UserSupplier
 from business.order.delivery_item_product_repository import DeliveryItemProductRepository
 from business.order.process_order_after_delivery_item_service import ProcessOrderAfterDeliveryItemService
 from business.order.release_delivery_item_resource import ReleaseDeliveryItemResourceService
@@ -34,9 +34,12 @@ class DeliveryItem(business_model.Model):
 		'express_number',
 		'leader_name',
 		'created_at',
+		'final_price',
 		'payment_time',
 		'area',
+		'ship_tel',
 		'ship_name',
+		'delivery_time',
 		'supplier_id',
 		'ship_address',
 
@@ -80,9 +83,12 @@ class DeliveryItem(business_model.Model):
 		self.status_code = mall_models.ORDER_STATUS2MEANINGFUL_WORD[self.status]
 
 		self.payment_time = db_model.payment_time
+		self.delivery_time = db_model.delivery_time
+		self.final_price = db_model.final_price
 		self.area = db_model.area
 		self.supplier_id = db_model.supplier
 		self.ship_name = db_model.ship_name
+		self.ship_tel = db_model.ship_tel
 		self.ship_address = db_model.ship_address
 		self.customer_message = db_model.customer_message
 
@@ -94,6 +100,11 @@ class DeliveryItem(business_model.Model):
 		self.with_logistics_trace = db_model.is_100
 		self.with_logistics = bool(db_model.express_company_name)
 		self.context['db_model'] = db_model
+
+	@property
+	def area_text(self):
+		from util.regional_util import get_str_value_by_string_ids
+		return get_str_value_by_string_ids(self.area)
 
 	@cached_context_property
 	def product_statistics_info(self):

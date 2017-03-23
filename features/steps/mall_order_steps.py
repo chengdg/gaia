@@ -8,6 +8,7 @@ from behave import *
 from business.mall.logistics.express_delivery_repository import COMPANIES
 from features.util import bdd_util
 from db.mall import models as mall_models
+from db.account import models as account_models
 
 
 def get_id_by_bid(bid):
@@ -17,13 +18,13 @@ def get_id_by_bid(bid):
 def get_delivery_item_bid(bid):
 	if "^" in bid:
 		supplier_name = bid.split("^")[1]
-		supplier_id = mall_models.Supplier.select().dj_where(name=supplier_name).first().id
+		supplier_id = account_models.User.select().dj_where(username=supplier_name).first().id
 
 		return bid.split("^")[0] + "^" + str(supplier_id) + "s"
 
 	elif "-" in bid:
 		supplier_name = bid.split("-")[1]
-		supplier_id = mall_models.Supplier.select().dj_where(name=supplier_name).first().id
+		supplier_id = account_models.User.select().dj_where(username=supplier_name).first().id
 
 		return bid.split("-")[0] + "^" + str(supplier_id) + "s"
 	else:
@@ -31,7 +32,7 @@ def get_delivery_item_bid(bid):
 
 
 def get_supplier_name_by_id(id):
-	return mall_models.Supplier.select().dj_where(id=id).first().name
+	return account_models.User.select().dj_where(id=id).first().username
 
 
 @then(u"{user}获得订单列表")
@@ -40,6 +41,8 @@ def step_impl(context, user):
 	response = context.client.get(url)
 	bdd_util.assert_api_call_success(response)
 	actual = response.data["orders"]
+
+	print (actual)
 
 	# for o in actual:
 	# 	o['order_no'] = o['bid']
@@ -216,6 +219,7 @@ def step_impl(context, user, bid):
 	@type context: behave.runner.Context
 	"""
 	bid = get_delivery_item_bid(bid)
+	print (bid, '=============')
 	delivery_item_id = get_id_by_bid(bid)
 
 	data = json.loads(context.text)

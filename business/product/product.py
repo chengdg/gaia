@@ -3,13 +3,13 @@
 import json
 
 from eaglet.core import watchdog
-from eaglet.core.exceptionutil import unicode_full_stack
 
 from db.mall import models as mall_models
 from business import model as business_model
 from business.decorator import cached_context_property
 
 import settings
+from util import send_product_message
 
 
 class Product(business_model.Model):
@@ -102,6 +102,9 @@ class Product(business_model.Model):
 
 		#毛利信息
 		'gross_profit_info',
+
+		#供货商信息
+		'supplier_info',
 	)
 
 	def __init__(self, model=None):
@@ -125,17 +128,54 @@ class Product(business_model.Model):
 			self.promotions = []
 			self.create_type = None
 			self.sync_at = None
+			self.supplier_info = dict()
 
-	def get_corp(self):
+	def get_owner_corp(self):
 		from business.mall.corporation import Corporation
 		return Corporation(self.owner_id)
 
+	def get_cur_corp(self):
+		from business.mall.corporation_factory import CorporationFactory
+		return CorporationFactory.get()
 	@property
 	def is_sellout(self):
 		"""
 		[property] 是否卖光
 		"""
 		return self.total_stocks <= 0
+
+	def get_labels(self, classification_id=None):
+		"""
+		只要单独给商品配置过标签，那么就不再获取所属商品分类的标签
+		"""
+		corp = self.get_owner_corp()
+		product_id = self.id
+		classification_id = classification_id if classification_id else mall_models.ClassificationHasProduct.select().dj_where(
+			product_id = product_id
+		).first().classification_id
+		product_has_labels = mall_models.ProductHasLabel.select().dj_where(product_id=product_id, classification_id=-1)
+		if product_has_labels.count() > 0: #如果单独给商品配置过标签，则从ProductHasLabel中获取
+			from business.mall.product_label.product_label_repository import ProductLabelRepository
+			label_ids = [p.label_id for p in product_has_labels]
+			#再获取商品所属分类所拥有的标签
+			classification = corp.product_classification_repository.get_classification_by_product_id(classification_id)
+			classification_labels = classification.get_labels()
+			label_ids += [c.label_id for c in classification_labels]
+			return ProductLabelRepository.get(corp).get_labels(set(label_ids))
+		else: #没有就获取所属分类的标签
+			from business.mall.product_label.product_label_repository import ProductLabelRepository
+			return ProductLabelRepository.get(corp).get_labels_by_classification_id(classification_id)
+
+	def manage_label(self, label_ids):
+		"""
+		管理商品标签，注意：不是商品所属分类包含的标签，而是直接属于商品的标签
+		"""
+		mall_models.ProductHasLabel.delete().dj_where(product_id=self.id).execute()
+		for label_id in label_ids:
+			mall_models.ProductHasLabel.create(
+				product_id = self.id,
+				label_id = label_id
+			)
 
 	@is_sellout.setter
 	def is_sellout(self, value):
@@ -215,6 +255,8 @@ class Product(business_model.Model):
 			is_accepted=True
 		).dj_where(id=product_id).execute()
 
+		send_product_message.send_product_outgiving_message(corp.id, self.id)
+
 	def update_product_unverified(self, args):
 		"""
 		编辑商品信息(未审核)
@@ -245,6 +287,8 @@ class Product(business_model.Model):
 			status=mall_models.PRODUCT_STATUS['SUBMIT']
 		).dj_where(id=self.id).execute()
 
+		send_product_message.send_product_change(self.get_owner_corp().id, self.id)
+
 	def verify_modifications(self):
 		"""
 		审核通过商品的编辑内容
@@ -253,7 +297,7 @@ class Product(business_model.Model):
 		product_data = json.loads(mall_models.ProductUnverified.select().dj_where(product_id=product_id).get().product_data)
 		mall_models.Product.update(is_updated=False, status=mall_models.PRODUCT_STATUS['NOT_YET']).dj_where(id=self.id).execute()
 		from business.product.update_product_service import UpdateProductService
-		corp = self.get_corp()
+		corp = self.get_owner_corp()
 		update_product_service = UpdateProductService.get(corp)
 		update_product_service.update_product(self.id, {
 			'corp': corp,
@@ -275,6 +319,9 @@ class Product(business_model.Model):
 		mall_models.Product.update(
 			status=mall_models.PRODUCT_STATUS['REFUSED']
 		).dj_where(id=self.id).execute()
+
+		#发送钉钉消息
+		send_product_message.send_reject_product_ding_message(self.owner_id, self.id, reason)
 
 
 	# 如果规格有图片就显示，如果没有，使用缩略图
@@ -302,19 +349,19 @@ class Product(business_model.Model):
 		# self.context['order_thumbnails_url'] = url
 		self.thumbnails_url = url
 
-	@property
-	def hint(self):
-		"""
-		[property] 判断商品是否被禁止使用全场优惠券
-		"""
-		corp = self.context['corp']
-		forbidden_coupon_product_ids = ForbiddenCouponProductIds.get_for_corp({
-			'corp': corp
-		}).ids
-		if self.id in forbidden_coupon_product_ids:
-			return u'该商品不参与全场优惠券使用！'
-		else:
-			return u''
+	# @property
+	# def hint(self):
+	# 	"""
+	# 	[property] 判断商品是否被禁止使用全场优惠券
+	# 	"""
+	# 	corp = self.context['corp']
+	# 	forbidden_coupon_product_ids = ForbiddenCouponProductIds.get_for_corp({
+	# 		'corp': corp
+	# 	}).ids
+	# 	if self.id in forbidden_coupon_product_ids:
+	# 		return u'该商品不参与全场优惠券使用！'
+	# 	else:
+	# 		return u''
 
 	def is_on_shelve(self):
 		"""
@@ -400,26 +447,26 @@ class Product(business_model.Model):
 	# 		if not self.integral_sale.is_active():
 	# 			self.integral_sale = None
 
-	@cached_context_property
-	def supplier_name(self):
-		try:
-			# 非微众系列商家
-			if not self.context['corp'].user_profile.webapp_type:
-				return ''
-			# 手动添加的供货商
-			if self.supplier:
-				return Supplier.get_supplier_name(self.supplier)
-			# 同步的供货商
-			relation = mall_models.WeizoomHasMallProductRelation.select().dj_where(weizoom_product_id=self.id).first()
-			if relation:
-				supplier_name = account_model.UserProfile.select().dj_where(user_id=relation.mall_id).first().store_name
-			else:
-				supplier_name = ''
-
-			return supplier_name
-		except:
-			watchdog.alert(unicode_full_stack())
-			return ''
+	# @cached_context_property
+	# def supplier_name(self):
+	# 	try:
+	# 		# 非微众系列商家
+	# 		if not self.context['corp'].user_profile.webapp_type:
+	# 			return ''
+	# 		# 手动添加的供货商
+	# 		if self.supplier:
+	# 			return Supplier.get_supplier_name(self.supplier)
+	# 		# 同步的供货商
+	# 		relation = mall_models.WeizoomHasMallProductRelation.select().dj_where(weizoom_product_id=self.id).first()
+	# 		if relation:
+	# 			supplier_name = account_model.UserProfile.select().dj_where(user_id=relation.mall_id).first().store_name
+	# 		else:
+	# 			supplier_name = ''
+	#
+	# 		return supplier_name
+	# 	except:
+	# 		watchdog.alert(unicode_full_stack())
+	# 		return ''
 
 	@cached_context_property
 	def supplier_postage_config(self):
@@ -439,16 +486,16 @@ class Product(business_model.Model):
 		else:
 			return {}
 
-	@cached_context_property
-	def use_supplier_postage(self):
-		if not self.supplier:
-			return False
-		supplier_model = mall_models.Supplier.select().dj_where(id=self.supplier).first()
-		user_profile = account_model.UserProfile.select().dj_where(user_id=supplier_model.owner_id).first()
-		if supplier_model.name == u'自营' and user_profile.webapp_type == 3:
-			return False
-		else:
-			return True
+	# @cached_context_property
+	# def use_supplier_postage(self):
+	# 	if not self.supplier:
+	# 		return False
+	# 	supplier_model = mall_models.Supplier.select().dj_where(id=self.supplier).first()
+	# 	user_profile = account_model.UserProfile.select().dj_where(user_id=supplier_model.owner_id).first()
+	# 	if supplier_model.name == u'自营' and user_profile.webapp_type == 3:
+	# 		return False
+	# 	else:
+	# 		return True
 
 
 	def is_supplied_by_supplier(self):
@@ -506,3 +553,16 @@ class Product(business_model.Model):
 		self.cps_promoted_info = cps_promotion_info
 
 		return True
+
+	def customize_price(self, price, product_model_id):
+		"""
+		社群可以修改商品价格
+		"""
+		corp_id = self.get_cur_corp().id
+		mall_models.ProductCustomizedPrice.delete().dj_where(corp_id=corp_id, product_id=self.id, product_model_id=product_model_id).execute()
+		mall_models.ProductCustomizedPrice.create(
+			corp_id = corp_id,
+			product_id = self.id,
+			product_model_id = product_model_id,
+			price = price
+		)

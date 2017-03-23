@@ -19,7 +19,7 @@ class GlobalProductRepository(business_model.Service):
 
 	def __fill_product_details(self, products, fill_options):
 		from business.product.fill_product_detail_service import FillProductDetailService
-		FillProductDetailService.get().fill_detail(products, fill_options)
+		FillProductDetailService.get(self.corp).fill_detail(products, fill_options)
 
 	def __get_filter_params(self, args):
 		params = {}
@@ -33,11 +33,15 @@ class GlobalProductRepository(business_model.Service):
 	def filter_products(self, query_dict, page_info, fill_options=None):
 		db_models = mall_models.Product.select().dj_where(is_deleted=False)
 
-		if query_dict['corp'].is_weizoom_corp():
-			db_models = db_models.where(
-				(mall_models.Product.status << [mall_models.PRODUCT_STATUS['SUBMIT'], mall_models.PRODUCT_STATUS['REFUSED']])
-				| (mall_models.Product.is_accepted == True)
-			)
+		if self.corp.is_weizoom_corp():
+			if query_dict.get('verified'):
+				product_pool_ids = [p.product_id for p in mall_models.ProductPool.select().dj_where(
+					woid=query_dict['corp'].id,
+				  	status__not=mall_models.PP_STATUS_DELETE
+			  	)]
+				db_models = db_models.dj_where(id__in=product_pool_ids, is_accepted=True)
+			else:
+				db_models = db_models.dj_where(status__in = [mall_models.PRODUCT_STATUS['SUBMIT'], mall_models.PRODUCT_STATUS['REFUSED']])
 		else:
 			db_models = db_models.dj_where(owner_id=query_dict['corp'].id)
 
@@ -51,7 +55,9 @@ class GlobalProductRepository(business_model.Service):
 		if product_name:
 			db_models = db_models.dj_where(name__icontains=product_name)
 		if classification_name:
-			classification_models = mall_models.Classification.select().dj_where(name__icontains=classification_name)
+			classification_models = list(mall_models.Classification.select().dj_where(name__icontains=classification_name))
+			#能够查询出子分类的数据(默认二级)
+			classification_models += list(mall_models.Classification.select().dj_where(father_id__in=[c.id for c in classification_models]))
 			relation_models = mall_models.ClassificationHasProduct.select().dj_where(classification_id__in=[c.id for c in classification_models])
 			db_models = db_models.dj_where(id__in=[r.product_id for r in relation_models])
 		if not status == None:
@@ -59,7 +65,7 @@ class GlobalProductRepository(business_model.Service):
 			if status == self.FILTER_CONST['ALL']:
 				pass
 			if status in [self.FILTER_CONST['NOT_YET'], self.FILTER_CONST['SUBMIT']]:
-				db_models = db_models.dj_where(status=status)
+				db_models = db_models.dj_where(status=status, is_accepted=False)
 			elif status == self.FILTER_CONST['POOL_REFUSED']:
 				db_models = db_models.dj_where(status=mall_models.PRODUCT_STATUS['REFUSED'], is_accepted=False)
 			elif status == self.FILTER_CONST['UPDATE_REFUSED']:
@@ -67,20 +73,33 @@ class GlobalProductRepository(business_model.Service):
 			elif status == self.FILTER_CONST['PASSED']:
 				db_models = db_models.dj_where(status=mall_models.PRODUCT_STATUS['NOT_YET'], is_accepted=True)
 
-		if owner_name:
-			#TODO
-			pass
-
-		db_models = db_models.order_by(-mall_models.Product.id)
-		if page_info:
-			pageinfo, db_models = paginator.paginate(db_models, page_info.cur_page, page_info.count_per_page)
-		else:
-			pageinfo = None
-
 		products = []
-		for model in db_models:
-			pre_product = Product(model)
-			products.append(pre_product)
+		if owner_name:
+			products = [Product(model) for model in db_models]
+			self.__fill_product_details(products, {
+				'with_supplier_info': True
+			})
+			fill_options['with_supplier_info'] = False
+
+			tmp_products = []
+			for product in products:
+				if product.supplier_info and owner_name == product.supplier_info['company_name']:
+					tmp_products.append(product)
+
+			if page_info:
+				pageinfo, products = paginator.paginate(tmp_products, page_info.cur_page, page_info.count_per_page)
+			else:
+				pageinfo = None
+		else:
+			db_models = db_models.order_by(-mall_models.Product.id)
+			if page_info:
+				pageinfo, db_models = paginator.paginate(db_models, page_info.cur_page, page_info.count_per_page)
+			else:
+				pageinfo = None
+
+			for model in db_models:
+				pre_product = Product(model)
+				products.append(pre_product)
 
 		fill_options = fill_options if fill_options else {}
 		self.__fill_product_details(products, fill_options)

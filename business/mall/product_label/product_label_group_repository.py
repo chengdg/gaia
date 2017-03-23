@@ -7,7 +7,7 @@ from business.mall.product_label.product_label_group import ProductLabelGroup
 
 class ProductLabelGroupRepositroy(business_model.Service):
 	def get_label_groups(self):
-		models = mall_models.ProductLabelGroup.select().dj_where(is_deleted=False)
+		models = mall_models.ProductLabelGroup.select().dj_where(is_deleted=False).order_by(-mall_models.ProductLabelGroup.created_at)
 		product_label_groups = [ProductLabelGroup(model) for model in models]
 		return product_label_groups
 

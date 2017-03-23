@@ -77,13 +77,14 @@ class ProductModelGenerator(business_model.Service):
 
 		return _id2property, _id2propertyvalue
 
-	def fill_models_for_products(self, products, is_enable_model_property_info, divide_info=None):
+	def fill_models_for_products(self, products, is_enable_model_property_info,):
 		"""
 		为商品集合填充规格信息
 
 		@param[in, out] products: 待填充规格信息的商品集合，填充后，product将获得models, used_system_model_properties, is_use_custom_model三个属性
 		@param[in] is_enable_model_property_info: 是否为model填充与model相关的系统商品规格信息
 		"""
+		corp = self.corp
 		id2product = dict()
 		product_ids = list()
 		for product in products:
@@ -92,11 +93,13 @@ class ProductModelGenerator(business_model.Service):
 
 		id2property, id2propertyvalue = self.__get_all_model_property_info(products, is_enable_model_property_info)
 
-		if divide_info:
+		divide_info = None
+		if corp.is_community():
+			divide_info = corp.details
 			settlement_type = divide_info.settlement_type
 			divide_rebate = divide_info.divide_rebate
 			product_model_id2price = {c.product_model_id: c.price for c in
-									  mall_models.ProductCustomizedPrice.select().dj_where(product_id__in=product_ids)}
+									  mall_models.ProductCustomizedPrice.select().dj_where(corp_id=self.corp.id, product_id__in=product_ids)}
 
 		# 获取所有models
 		product2models = {}
@@ -108,26 +111,21 @@ class ProductModelGenerator(business_model.Service):
 				#product2deleted_models.setdefault(db_model.product_id, []).append(product_model)
 			else:
 				product_model = ProductModel(db_model, id2property, id2propertyvalue)
-				if divide_info:
+				if corp.is_community():
 					"""
 					社群的毛利、毛利率
-					固定底价: 社群修改价 - 上浮结算价
-					固定扣点: 商品售价 * 社群扣点
+					固定扣点+溢价: 商品售价(或者社群修改价) * 社群扣点
 					毛利分成: {
 						non_cps: (商品售价 - 微众售价) * 社群毛利点  ==> 社群毛利,
 								 (商品售价 - 微众售价)/商品售价 * 社群毛利点 ==>社群毛利率
 					}
 					"""
-					if product_model.price == 0:
-						gross_profit = 0
-						gross_profit_rate = 0
-					else:
-						if settlement_type == account_models.ACCOUNT_DIVIDE_TYPE_FIXED:  # 固定底价
-							customized_price = product_model_id2price.get(product_model.id, product_model.price)
-							gross_profit = customized_price - product_model.price
-							gross_profit_rate = gross_profit / customized_price * 100
-						elif settlement_type == account_models.ACCOUNT_DIVIDE_TYPE_RETAIL:  # 固定扣点
-							gross_profit = product_model.price * divide_rebate / 100
+					customized_price = product_model_id2price.get(product_model.id, product_model.price)
+					gross_profit = 0
+					gross_profit_rate = 0
+					if product_model.price != 0:
+						if settlement_type == account_models.ACCOUNT_DIVIDE_TYPE_FIXED:  # 固定扣点+溢价
+							gross_profit = customized_price * divide_rebate / 100
 							gross_profit_rate = divide_rebate
 						elif settlement_type == account_models.ACCOUNT_DIVIDE_TYPE_PROFIT:  # 毛利分成
 							gross_profit = (product_model.price - product_model.purchase_price) * divide_rebate / 100
@@ -135,6 +133,7 @@ class ProductModelGenerator(business_model.Service):
 
 					product_model.gross_profit = '%.2f' % gross_profit
 					product_model.gross_profit_rate = '%.2f' % gross_profit_rate
+					product_model.customized_price = '%.2f' % customized_price
 				product2models.setdefault(db_model.product_id, []).append(product_model)
 
 		for product_id, product_models in product2models.items():

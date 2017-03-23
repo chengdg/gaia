@@ -29,4 +29,8 @@ import a_pre_products
 import a_pending_product
 import a_verified_product
 import a_product_unverified
+import a_product_label
+
+import a_product_outgiving
+import a_product_customize_price
 import a_simple_products

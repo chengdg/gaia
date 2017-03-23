@@ -124,8 +124,8 @@ Scenario:1 管理员退款单供货商的订单-待发货
 					"total": 50.11
 					},
 				"supplier_info": {
-					"supplier_type": "supplier",
-					"name": "zhouxun"
+					"supplier_type": "None",
+					"name": ""
 				},
 				"products": [{
 					"name": "无规格商品1",
@@ -215,8 +215,8 @@ Scenario:1 管理员退款单供货商的订单-待发货
 					"total": 50.11
 					},
 				"supplier_info": {
-					"supplier_type": "supplier",
-					"name": "zhouxun"
+					"supplier_type": "None",
+					"name": ""
 				},
 				"products": [{
 					"name": "无规格商品1",
@@ -229,7 +229,7 @@ Scenario:1 管理员退款单供货商的订单-待发货
 		}
 		"""
 
-@gaia @order
+@gaia @order @fx
 Scenario:2 管理员退款多供货商的订单-已发货
 	Given 重置'apiserver'的bdd环境
 	Given 重置'weapp'的bdd环境
@@ -418,8 +418,8 @@ Scenario:2 管理员退款多供货商的订单-已发货
 				"bid": "002-yangmi",
 				"status_code": "paid",
 				"supplier_info": {
-					"supplier_type": "supplier",
-					"name": "yangmi"
+					"supplier_type": "None",
+					"name": ""
 				},
 				"products": [{
 					"name": "无规格商品1-yangmi",
@@ -440,8 +440,8 @@ Scenario:2 管理员退款多供货商的订单-已发货
 					"total": 51.55
 					},
 				"supplier_info": {
-					"supplier_type": "supplier",
-					"name": "zhouxun"
+					"supplier_type": "None",
+					"name": ""
 				},
 				"products": [{
 					"name": "无规格商品1-zhouxun",
@@ -514,8 +514,8 @@ Scenario:2 管理员退款多供货商的订单-已发货
 				}],
 				"postage": 0.00,
 				"supplier_info": {
-					"supplier_type": "supplier",
-					"name": "yangmi"
+					"supplier_type": "None",
+					"name": ""
 				},
 				"products": [{
 					"name": "无规格商品1-yangmi",
@@ -553,8 +553,8 @@ Scenario:2 管理员退款多供货商的订单-已发货
 					"total": 51.55
 					},
 				"supplier_info": {
-					"supplier_type": "supplier",
-					"name": "zhouxun"
+					"supplier_type": "None",
+					"name": ""
 				},
 				"products": [{
 					"name": "无规格商品1-zhouxun",
@@ -572,7 +572,7 @@ Scenario:2 管理员退款多供货商的订单-已发货
 		}
 		"""
 
-@gaia @order
+@gaia @order @fx
 Scenario:3 管理员退款多供货商的订单-带运费-待发货，已完成
 	Given 重置'apiserver'的bdd环境
 	Given 重置'weapp'的bdd环境
@@ -793,8 +793,8 @@ Scenario:3 管理员退款多供货商的订单-带运费-待发货，已完成
 					"total": 20.00
 					},
 				"supplier_info": {
-					"supplier_type": "supplier",
-					"name": "yangmi"
+					"supplier_type": "None",
+					"name": ""
 				},
 				"products": [{
 					"name": "无规格商品1-yangmi",
@@ -815,8 +815,8 @@ Scenario:3 管理员退款多供货商的订单-带运费-待发货，已完成
 					"total": 61.55
 					},
 				"supplier_info": {
-					"supplier_type": "supplier",
-					"name": "zhouxun"
+					"supplier_type": "None",
+					"name": ""
 				},
 				"products": [{
 					"name": "无规格商品1-zhouxun",
@@ -911,8 +911,8 @@ Scenario:3 管理员退款多供货商的订单-带运费-待发货，已完成
 				}],
 				"postage": 10.00,
 				"supplier_info": {
-					"supplier_type": "supplier",
-					"name": "yangmi"
+					"supplier_type": "None",
+					"name": ""
 				},
 				"products": [{
 					"name": "无规格商品1-yangmi",
@@ -954,8 +954,8 @@ Scenario:3 管理员退款多供货商的订单-带运费-待发货，已完成
 					"total": 61.55
 					},
 				"supplier_info": {
-					"supplier_type": "supplier",
-					"name": "zhouxun"
+					"supplier_type": "None",
+					"name": ""
 				},
 				"products": [{
 					"name": "无规格商品1-zhouxun",
@@ -973,7 +973,7 @@ Scenario:3 管理员退款多供货商的订单-带运费-待发货，已完成
 		}
 		"""
 
-@gaia @order @ztqb
+@gaia @order @ztqb @fx
 Scenario:4 管理员退款使用微众卡全额支付的订单
 	Given 重置'weizoom_card'的bdd环境
 	Given 重置'apiserver'的bdd环境
@@ -1282,8 +1282,8 @@ Scenario:4 管理员退款使用微众卡全额支付的订单
 				"bid": "004-yangmi",
 				"status_code": "finished",
 				"supplier_info": {
-					"supplier_type": "supplier",
-					"name": "yangmi"
+					"supplier_type": "None",
+					"name": ""
 				},
 				"products": [{
 					"name": "无规格商品1-yangmi",
@@ -1304,8 +1304,8 @@ Scenario:4 管理员退款使用微众卡全额支付的订单
 					"total": 51.55
 					},
 				"supplier_info": {
-					"supplier_type": "supplier",
-					"name": "zhouxun"
+					"supplier_type": "None",
+					"name": ""
 				},
 				"products": [{
 					"name": "无规格商品1-zhouxun",
@@ -1412,8 +1412,8 @@ Scenario:4 管理员退款使用微众卡全额支付的订单
 				}],
 				"postage": 0.00,
 				"supplier_info": {
-					"supplier_type": "supplier",
-					"name": "yangmi"
+					"supplier_type": "None",
+					"name": ""
 				},
 				"products": [{
 					"name": "无规格商品1-yangmi",
@@ -1455,8 +1455,8 @@ Scenario:4 管理员退款使用微众卡全额支付的订单
 					"total": 51.55
 					},
 				"supplier_info": {
-					"supplier_type": "supplier",
-					"name": "zhouxun"
+					"supplier_type": "None",
+					"name": ""
 				},
 				"products": [{
 					"name": "无规格商品1-zhouxun",
@@ -1474,7 +1474,7 @@ Scenario:4 管理员退款使用微众卡全额支付的订单
 		}
 		"""
 
-@gaia @order
+@gaia @order @fx
 Scenario:5 管理员退款出货单，商品销量和库存
 	Given 重置'apiserver'的bdd环境
 	Given 重置'weapp'的bdd环境
@@ -1797,7 +1797,7 @@ Scenario:5 管理员退款出货单，商品销量和库存
 		}]
 		"""
 
-@gaia @order
+@gaia @order @fx
 Scenario:6 管理员退款出货单，会员信息
 	Given 重置'apiserver'的bdd环境
 	Given 重置'weapp'的bdd环境
@@ -2157,8 +2157,8 @@ Scenario:7 管理员退款出货单，积分设置为1元=0积分
 					"total": 50.11
 					},
 				"supplier_info": {
-					"supplier_type": "supplier",
-					"name": "zhouxun"
+					"supplier_type": "None",
+					"name": ""
 				},
 				"products": [{
 					"name": "无规格商品1",
@@ -2254,8 +2254,8 @@ Scenario:7 管理员退款出货单，积分设置为1元=0积分
 					"total": 50.11
 					},
 				"supplier_info": {
-					"supplier_type": "supplier",
-					"name": "zhouxun"
+					"supplier_type": "None",
+					"name": ""
 				},
 				"products": [{
 					"name": "无规格商品1",

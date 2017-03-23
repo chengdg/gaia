@@ -142,6 +142,7 @@ class DeliveryItemProductRepository(business_model.Model):
 			delivery_item_product.weight = r.weight
 
 			delivery_item_product.thumbnails_url = r.thumbnail_url
+			delivery_item_product.user_code = r.product.user_code
 
 			promotions = promotion_id2order_has_promotion.get(str(r.promotion_id) + str(r.origin_order_id), [])
 

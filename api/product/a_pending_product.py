@@ -23,12 +23,14 @@ class APendingProduct(api_resource.ApiResource):
 
 		return {}
 
-	@param_required(['corp_id', 'product_id:int', 'reason'])
+	@param_required(['corp_id', 'product_ids:json', 'reason'])
 	def delete(args):
-		product_id = args['product_id']
+		product_ids = args['product_ids']
 		reason = args['reason']
-
-		product = GlobalProductRepository.get().get_product(product_id)
-		product.refuse_verify(reason)
+		corp = args['corp']
+		
+		for product_id in product_ids:
+			product = corp.global_product_repository.get_product(product_id)
+			product.refuse_verify(reason)
 
 		return {}

@@ -21,6 +21,7 @@ class AProductClassification(api_resource.ApiResource):
         note = args.get('note', '')
 
         product_classification = ProductClassification.create({
+            'corp': args['corp'],
             'name': name,
             'father_id': father_id,
             'note': note

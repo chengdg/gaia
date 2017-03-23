@@ -20,6 +20,7 @@ class ProductClassificationQualification(business_model.Model):
 	"""
 	__slots__ = (
 		'id',
+		'classification_id',
 		'name',
 		'created_at',
 	)

@@ -56,6 +56,16 @@ class ProductPool(business_model.Model):
 			)
 		return True
 
+	def outgiving_pre_check(self, product_ids):
+		"""
+		分发商品前检查是否社群已有该商品
+		"""
+		valid_product_ids = []
+		for product_id in product_ids:
+			if mall_models.ProductPool.select().dj_where(woid=self.corp_id,product_id=product_id).count() <= 0:
+				valid_product_ids.append(product_id)
+		return valid_product_ids
+
 	def add_consignment_products(self, product_ids):
 		"""
 		添加代售商品到商品池
@@ -284,11 +294,15 @@ class ProductPool(business_model.Model):
 			if temp_product_ids:
 				product_ids += temp_product_ids
 
-		#根据供应商进行过滤
-		product_supplier_filters = type2filters['product_supplier']
+		#todo 根据供应商进行过滤
 		supplier_ids = None
-		if product_supplier_filters:
-			supplier_ids = [supplier.id for supplier in mall_models.Supplier.select().dj_where(**product_supplier_filters)]
+		# product_supplier_filters = type2filters['product_supplier']
+		# supplier_ids = None
+		# if product_supplier_filters:
+		# 	from business.supplier.supplier_repository import SupplierRepository
+		# 	suppliers = SupplierRepository.get(self.corp).get_suppliers()
+		#
+		# 	supplier_ids = [supplier.id for supplier in suppliers]
 
 		#根据商品分类进行过滤
 		product_classification_filters = type2filters['product_classification']
@@ -342,8 +356,7 @@ class ProductPool(business_model.Model):
 				'with_cps_promotion_info': True
 			})
 
-			divide_info = account_models.AccountDivideInfo.select().dj_where(user_id=self.corp_id).first()
-			if divide_info and not divide_info.settlement_type == account_models.ACCOUNT_DIVIDE_TYPE_FIXED:
+			if self.corp.is_community() and not self.corp.details.settlement_type == account_models.ACCOUNT_DIVIDE_TYPE_FIXED:
 				products = sorted(products, key=lambda k: k.gross_profit_info['gross_profit_rate'], reverse=True)
 
 			pageinfo, products = paginator.paginate(products, page_info.cur_page, page_info.count_per_page)

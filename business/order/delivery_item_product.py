@@ -27,6 +27,7 @@ class DeliveryItemProduct(business_model.Model):
 		'sale_price',  # 售价
 		'count',
 		'weight',
+		'user_code',
 		'delivery_item_id',
 		'thumbnails_url',
 		'total_origin_price',

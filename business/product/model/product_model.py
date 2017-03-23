@@ -27,6 +27,7 @@ class ProductModel(business_model.Model):
 		'weight',
 		'price',
 		'purchase_price',
+		'customized_price', #社群修改价
 		'original_price',
 		'market_price',
 		'user_code',
@@ -45,6 +46,7 @@ class ProductModel(business_model.Model):
 		if db_model:
 			self._init_slot_from_model(db_model)
 			self.original_price = db_model.price
+			self.customized_price = 0
 			self.gross_profit = -1
 			self.gross_profit_rate = 0
 			self.stock_type = 'unlimit' if db_model.stock_type == mall_models.PRODUCT_STOCK_TYPE_UNLIMIT else 'limit'
@@ -93,7 +95,9 @@ class ProductModel(business_model.Model):
 		for id in ids:
 			# id的格式为${property_id}:${value_id}
 			_property_id, _value_id = id.split(':')
-			_property = id2property[_property_id]
+			_property = id2property.get(_property_id)
+			if not _property: #修复一个未知场景下的问题
+				continue
 			_value = id2propertyvalue[id]
 			property2value[_property['name']] = {
 				'id': _value['id'],

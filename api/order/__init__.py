@@ -14,4 +14,5 @@ import a_order_export_result
 import a_delivery_item_kuaidi_notification
 import a_delivery_item_phone_message_notification
 import a_unshipped_orders_count
+import a_supplier_delivery_items
 

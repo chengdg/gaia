@@ -98,7 +98,7 @@ Background:
 
 	Given bill关注zhouxun的公众号::apiserver
 
-@gaia @order
+@up @order
 Scenario:1 使用全店优惠券的单商品订单（优惠券全额抵扣）
 	#创建通用券
 	Given zhouxun登录系统::weapp
@@ -213,7 +213,7 @@ Scenario:1 使用全店优惠券的单商品订单（优惠券全额抵扣）
 		}
 		"""
 	
-@gaia @order
+@up @order
 Scenario:2 使用全店优惠券的多供货商多规格商品订单（优惠券部分抵扣）
 	#创建通用券
 	Given zhouxun登录系统::weapp
@@ -376,7 +376,7 @@ Scenario:2 使用全店优惠券的多供货商多规格商品订单（优惠券
 		}
 		"""
 
-@gaia @order
+@up @order
 Scenario:3 使用多品券的多规格商品订单
 	#创建多商品券
 	Given zhouxun登录系统::weapp
@@ -506,7 +506,7 @@ Scenario:3 使用多品券的多规格商品订单
 		}
 		"""
 
-@gaia @order
+@up @order
 Scenario:4 使用多品券的多供货商多规格商品订单（优惠券金额超出商品金额）
 	#创建多商品券
 	Given zhouxun登录系统::weapp

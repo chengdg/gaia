@@ -2,8 +2,6 @@
 
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
-from eaglet.core import watchdog
-from eaglet.core.exceptionutil import unicode_full_stack
 
 
 class ASuppliers(api_resource.ApiResource):
@@ -33,15 +31,7 @@ class ASuppliers(api_resource.ApiResource):
                 'retail_type_info': None
             }
 
-            if supplier.is_divide_type():
-                divide_info = supplier.get_divide_info()
-                data['divide_type_info'] = {
-                    "id": divide_info.id,
-                    "divide_money": divide_info.divide_money,
-                    "basic_rebate": divide_info.basic_rebate,
-                    "rebate": divide_info.rebate
-                }
-            elif supplier.is_retail_type():
+            if supplier.is_retail_type():
                 retail_info = supplier.get_retail_info()
                 data['retail_type_info'] = {
                     "id": retail_info.id,
