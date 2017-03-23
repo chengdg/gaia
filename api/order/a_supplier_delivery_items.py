@@ -2,7 +2,6 @@
 import json
 
 from eaglet.core import api_resource
-from eaglet.core import watchdog
 from eaglet.decorator import param_required
 
 from business.common.page_info import PageInfo

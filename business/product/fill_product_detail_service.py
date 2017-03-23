@@ -3,7 +3,7 @@
 from business import model as business_model
 from business.mall.product_classification.product_classification_repository import ProductClassificationRepository
 from business.mall.product_label.product_label_repository import ProductLabelRepository
-from business.mall.supplier.supplier_repository import SupplierRepository
+from business.supplier.supplier_repository import SupplierRepository
 from business.product.product import Product
 from business.product.model.product_model_generator import ProductModelGenerator
 from business.mall.promotion.fill_promotion_detail_service import FillPromotionDetailService
@@ -211,7 +211,7 @@ class FillProductDetailService(business_model.Service):
 		for product in products:
 			supplier2products.setdefault(product.supplier_id, []).append(product)
 		
-		suppliers = SupplierRepository.get(None).get_suppliers_by_ids(supplier_ids)
+		suppliers = SupplierRepository.get(corp).get_suppliers_by_ids(supplier_ids)
 		for supplier in suppliers:
 			for product in supplier2products[supplier.id]:
 				product.supplier = supplier

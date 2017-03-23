@@ -294,11 +294,15 @@ class ProductPool(business_model.Model):
 			if temp_product_ids:
 				product_ids += temp_product_ids
 
-		#根据供应商进行过滤
-		product_supplier_filters = type2filters['product_supplier']
+		#todo 根据供应商进行过滤
 		supplier_ids = None
-		if product_supplier_filters:
-			supplier_ids = [supplier.id for supplier in mall_models.Supplier.select().dj_where(**product_supplier_filters)]
+		# product_supplier_filters = type2filters['product_supplier']
+		# supplier_ids = None
+		# if product_supplier_filters:
+		# 	from business.supplier.supplier_repository import SupplierRepository
+		# 	suppliers = SupplierRepository.get(self.corp).get_suppliers()
+		#
+		# 	supplier_ids = [supplier.id for supplier in suppliers]
 
 		#根据商品分类进行过滤
 		product_classification_filters = type2filters['product_classification']

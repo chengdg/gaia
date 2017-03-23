@@ -117,7 +117,7 @@ Background:
 		"""
 	Given bill关注zhouxun的公众号::apiserver
 
-@gaia @order
+@up @order
 Scenario: 1 管理员取消多规格商品的订单
 	1.zhouxun取消待支付订单，多规格商品的库存退回
 
@@ -242,7 +242,7 @@ Scenario: 1 管理员取消多规格商品的订单
 		}
 		"""
 
-@gaia @order
+@up @order
 Scenario: 2 管理员取消多个供货商商品的订单
 	1.zhouxun取消待支付订单，供货商的商品库存退回
 
@@ -372,7 +372,7 @@ Scenario: 2 管理员取消多个供货商商品的订单
 		}
 		"""
 
-@gaia @order @bdd_test1
+@up @order @bdd_test1
 Scenario: 3 管理员取消使用了微众卡的订单
 	1.zhouxun取消待支付订单，微众卡退回
 

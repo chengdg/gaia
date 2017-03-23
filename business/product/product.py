@@ -3,7 +3,6 @@
 import json
 
 from eaglet.core import watchdog
-from eaglet.core.exceptionutil import unicode_full_stack
 
 from db.mall import models as mall_models
 from business import model as business_model
@@ -350,19 +349,19 @@ class Product(business_model.Model):
 		# self.context['order_thumbnails_url'] = url
 		self.thumbnails_url = url
 
-	@property
-	def hint(self):
-		"""
-		[property] 判断商品是否被禁止使用全场优惠券
-		"""
-		corp = self.context['corp']
-		forbidden_coupon_product_ids = ForbiddenCouponProductIds.get_for_corp({
-			'corp': corp
-		}).ids
-		if self.id in forbidden_coupon_product_ids:
-			return u'该商品不参与全场优惠券使用！'
-		else:
-			return u''
+	# @property
+	# def hint(self):
+	# 	"""
+	# 	[property] 判断商品是否被禁止使用全场优惠券
+	# 	"""
+	# 	corp = self.context['corp']
+	# 	forbidden_coupon_product_ids = ForbiddenCouponProductIds.get_for_corp({
+	# 		'corp': corp
+	# 	}).ids
+	# 	if self.id in forbidden_coupon_product_ids:
+	# 		return u'该商品不参与全场优惠券使用！'
+	# 	else:
+	# 		return u''
 
 	def is_on_shelve(self):
 		"""
@@ -448,26 +447,26 @@ class Product(business_model.Model):
 	# 		if not self.integral_sale.is_active():
 	# 			self.integral_sale = None
 
-	@cached_context_property
-	def supplier_name(self):
-		try:
-			# 非微众系列商家
-			if not self.context['corp'].user_profile.webapp_type:
-				return ''
-			# 手动添加的供货商
-			if self.supplier:
-				return Supplier.get_supplier_name(self.supplier)
-			# 同步的供货商
-			relation = mall_models.WeizoomHasMallProductRelation.select().dj_where(weizoom_product_id=self.id).first()
-			if relation:
-				supplier_name = account_model.UserProfile.select().dj_where(user_id=relation.mall_id).first().store_name
-			else:
-				supplier_name = ''
-
-			return supplier_name
-		except:
-			watchdog.alert(unicode_full_stack())
-			return ''
+	# @cached_context_property
+	# def supplier_name(self):
+	# 	try:
+	# 		# 非微众系列商家
+	# 		if not self.context['corp'].user_profile.webapp_type:
+	# 			return ''
+	# 		# 手动添加的供货商
+	# 		if self.supplier:
+	# 			return Supplier.get_supplier_name(self.supplier)
+	# 		# 同步的供货商
+	# 		relation = mall_models.WeizoomHasMallProductRelation.select().dj_where(weizoom_product_id=self.id).first()
+	# 		if relation:
+	# 			supplier_name = account_model.UserProfile.select().dj_where(user_id=relation.mall_id).first().store_name
+	# 		else:
+	# 			supplier_name = ''
+	#
+	# 		return supplier_name
+	# 	except:
+	# 		watchdog.alert(unicode_full_stack())
+	# 		return ''
 
 	@cached_context_property
 	def supplier_postage_config(self):
@@ -487,16 +486,16 @@ class Product(business_model.Model):
 		else:
 			return {}
 
-	@cached_context_property
-	def use_supplier_postage(self):
-		if not self.supplier:
-			return False
-		supplier_model = mall_models.Supplier.select().dj_where(id=self.supplier).first()
-		user_profile = account_model.UserProfile.select().dj_where(user_id=supplier_model.owner_id).first()
-		if supplier_model.name == u'自营' and user_profile.webapp_type == 3:
-			return False
-		else:
-			return True
+	# @cached_context_property
+	# def use_supplier_postage(self):
+	# 	if not self.supplier:
+	# 		return False
+	# 	supplier_model = mall_models.Supplier.select().dj_where(id=self.supplier).first()
+	# 	user_profile = account_model.UserProfile.select().dj_where(user_id=supplier_model.owner_id).first()
+	# 	if supplier_model.name == u'自营' and user_profile.webapp_type == 3:
+	# 		return False
+	# 	else:
+	# 		return True
 
 
 	def is_supplied_by_supplier(self):

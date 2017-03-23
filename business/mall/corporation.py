@@ -35,7 +35,7 @@ from business.mall.logistics.limit_zone_repository import LimitZoneRepository
 from business.mall.logistics.province_city_repository import ProvinceCityRepository
 from business.mall.config.mall_config_repository import MallConfigRepository
 from business.mall.notify.notification_repository import NotificationRepository
-from business.mall.supplier.supplier_repository import SupplierRepository
+from business.supplier.supplier_repository import SupplierRepository
 
 from business.mall.product_classification.product_classification_repository import ProductClassificationRepository
 from business.mall.product_label.product_label_repository import ProductLabelRepository
