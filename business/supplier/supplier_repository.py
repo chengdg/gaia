@@ -31,7 +31,7 @@ class SupplierRepository(business_model.Service):
 			}
 		})
 		suppliers_data = resp['data']
-		if ids:
+		if not ids:
 			return [Supplier(data) for data in suppliers_data]
 		else:
 			return [Supplier(data) for data in suppliers_data if data['corp_id'] in ids]

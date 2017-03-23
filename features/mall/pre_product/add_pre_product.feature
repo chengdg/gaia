@@ -129,7 +129,7 @@ Background:
 		"""
 	When jobs选择'EMS'运费配置
 
-@gaia @mall @product @pre_product @add_pre_product @aix
+@gaia @mall @product @pre_product @add_pre_product @aix @fx
 Scenario:1 客户添加无规格商品
 	Given jobs登录系统
 	When jobs创建商品分类为'分类24'的待审核商品
