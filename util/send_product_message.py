@@ -6,12 +6,13 @@ from settings import MODE
 from db.mall import models as mall_models
 
 if MODE == 'deploy':
-	UUID = 317014264
+	REJECT_UUID = 317014264
+	UPDATE_UUID = 199597313
 	DING_TOPIC = 'notify'
 	PRODUCT_OUTGIVING_TOPIC = 'notify'
-	PRODUCT_CACHE_TOPIC = 'gaia-product'
+	PRODUCT_CACHE_TOPIC = 'product'
 else:
-	UUID = 80035247 #钉钉发消息测试群
+	UPDATE_UUID = REJECT_UUID = 80035247 #钉钉发消息测试群
 	DING_TOPIC = 'test-phone'
 	PRODUCT_OUTGIVING_TOPIC = 'test-topic'
 	PRODUCT_CACHE_TOPIC = 'test-topic'
@@ -21,7 +22,7 @@ def send_product_change(supplier_id, product_id):
 	商品创建、更新
 	"""
 	msgutil.send_message(DING_TOPIC, 'pre_product_update_ding', {
-		'uuid': UUID,
+		'uuid': UPDATE_UUID,
 		'supplier_id': supplier_id,
 		'product_id': product_id
 	})
@@ -32,7 +33,7 @@ def send_reject_product_ding_message(supplier_id, product_id, reason):
 	发送商品驳回的ding talk 消息
 	"""
 	msgutil.send_message(DING_TOPIC, 'pre_product_reject_ding', {
-		'uuid': UUID,
+		'uuid': REJECT_UUID,
 		'supplier_id': supplier_id,
 		'product_id': product_id,
 		'reason': reason
