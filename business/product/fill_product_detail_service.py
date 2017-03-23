@@ -213,9 +213,8 @@ class FillProductDetailService(business_model.Service):
 		
 		suppliers = SupplierRepository.get(corp).get_suppliers_by_ids(supplier_ids)
 		for supplier in suppliers:
-			for product in supplier2products.get(supplier.id):
-				if product:
-					product.supplier = supplier
+			for product in supplier2products.get(supplier.id, []):
+				product.supplier = supplier
 
 	def __fill_classification_detail(self, corp, products, product_ids, id2product):
 		"""
