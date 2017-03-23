@@ -131,10 +131,13 @@ class Product(business_model.Model):
 			self.sync_at = None
 			self.supplier_info = dict()
 
-	def get_corp(self):
+	def get_owner_corp(self):
+		from business.mall.corporation import Corporation
+		return Corporation(self.owner_id)
+
+	def get_cur_corp(self):
 		from business.mall.corporation_factory import CorporationFactory
 		return CorporationFactory.get()
-
 	@property
 	def is_sellout(self):
 		"""
@@ -146,7 +149,7 @@ class Product(business_model.Model):
 		"""
 		只要单独给商品配置过标签，那么就不再获取所属商品分类的标签
 		"""
-		corp = self.get_corp()
+		corp = self.get_owner_corp()
 		product_id = self.id
 		classification_id = classification_id if classification_id else mall_models.ClassificationHasProduct.select().dj_where(
 			product_id = product_id
@@ -285,7 +288,7 @@ class Product(business_model.Model):
 			status=mall_models.PRODUCT_STATUS['SUBMIT']
 		).dj_where(id=self.id).execute()
 
-		send_product_message.send_product_change(self.get_corp().id, self.id)
+		send_product_message.send_product_change(self.get_owner_corp().id, self.id)
 
 	def verify_modifications(self):
 		"""
@@ -295,7 +298,7 @@ class Product(business_model.Model):
 		product_data = json.loads(mall_models.ProductUnverified.select().dj_where(product_id=product_id).get().product_data)
 		mall_models.Product.update(is_updated=False, status=mall_models.PRODUCT_STATUS['NOT_YET']).dj_where(id=self.id).execute()
 		from business.product.update_product_service import UpdateProductService
-		corp = self.get_corp()
+		corp = self.get_owner_corp()
 		update_product_service = UpdateProductService.get(corp)
 		update_product_service.update_product(self.id, {
 			'corp': corp,
@@ -556,7 +559,7 @@ class Product(business_model.Model):
 		"""
 		社群可以修改商品价格
 		"""
-		corp_id = self.get_corp().id
+		corp_id = self.get_cur_corp().id
 		mall_models.ProductCustomizedPrice.delete().dj_where(corp_id=corp_id, product_id=self.id, product_model_id=product_model_id).execute()
 		mall_models.ProductCustomizedPrice.create(
 			corp_id = corp_id,
