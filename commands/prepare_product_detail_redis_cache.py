@@ -22,9 +22,12 @@ class Command(BaseCommand):
 		
 		pipeline = conn.pipeline()
 		print 'start loading....................'
-		account = account_models.UserProfile.select().dj_where(webapp_type=2).first()
+		# account = account_models.UserProfile.select().dj_where(webapp_type=2).first()
 		
-		products = mall_models.Product.select().dj_where(owner_id=account.user_id)
+		products = mall_models.Product.select(mall_models.Product.id,
+											  mall_models.Product.name,
+											  mall_models.Product.thumbnails_url,
+											  mall_models.Product.supplier).dj_where(is_deleted=False)
 		product_ids = [product.id for product in products]
 		
 		# product_id_2_product = dict([(product.id, product) for product in products])
@@ -35,9 +38,8 @@ class Command(BaseCommand):
 		 join mall_product on mall_product.id = mall_product_model.product_id
 		 where mall_product_model.is_deleted=false
 		 and mall_product.is_deleted=false
-		 and mall_product.owner_id = %s
 		 group by product_id
-		""" % account.user_id
+		"""
 		db = eaglet_db.db
 		cursor = db.execute_sql(sql, ())
 		product_2_price = dict()
@@ -82,7 +84,7 @@ class Command(BaseCommand):
 						 is_member_product=False,
 						 promotion_js='',
 						 categories=[],
-						 supplier=0,
+						 supplier=product.supplier,
 						 display_price=display_price,
 						 thumbnails_url=thumbnails_url)
 			pipeline.set(temp_key, pickle.dumps(value))

@@ -1,8 +1,8 @@
 ﻿# -*- coding: utf-8 -*-
 import redis
-import json
 from util.command import BaseCommand
-import itertools
+
+from eaglet.core.db import models as eaglet_db
 
 from db.mall import models as mall_models
 from db.account import models as account_models
@@ -31,9 +31,10 @@ class Command(BaseCommand):
 		pipeline.execute()
 		print '<-----------prepare products end------------------------!'
 		
-		pipeline = conn.pipeline()
 		# 预热分组信息
-		categories = mall_models.ProductCategory.select()
+		self_accounts = account_models.UserProfile.select().dj_where(webapp_type=1)
+		self_account_ids = [account.user_id for account in self_accounts]
+		categories = mall_models.ProductCategory.select().dj_where(owner_id__in=self_account_ids)
 		# print 'starting..... prepare..... category!'
 		# for category in categories:
 		# 	temp_key = 'categories_%s' % category.owner_id
@@ -47,38 +48,47 @@ class Command(BaseCommand):
 		
 		pipeline = conn.pipeline()
 		print '<-----------prepare category_products start------------------------!'
-		relations = mall_models.CategoryHasProduct.select().order_by(mall_models.CategoryHasProduct.display_index)
-		category_id_2_owner_id = dict([(category.id, category.owner_id) for category in categories])
-		group_relations = itertools.groupby(relations, key=lambda k: k.category_id)
+		sql = """
+			select p.category_id as category_id, p.product_id as product_id, a.user_id from mall_category_has_product   p
+			join mall_product_category as c on c.id = p.category_id
+			join account_user_profile as a on a.user_id = c.owner_id
+			join product_pool as pool on pool.product_id = p.product_id and pool.woid = c.owner_id
+			where a.webapp_type = 1
+			and pool.status =1
+			order by p.category_id, p.display_index, p.created_at desc
+		"""
+		db = eaglet_db.db
+		cursor = db.execute_sql(sql, ())
+		category_id_2_product_ids = {}
+		category_id_2_owner_id = {}
+		for index, row in enumerate(cursor.fetchall()):
+			category_id_2_product_ids.setdefault(row[0], []).append(row[1])
+			category_id_2_owner_id[row[0]] = row[2]
 		# 社群所有上架商品id
-		corp_onshelf_product_ids = {}
-		for category_id, relations in group_relations:
+		for category_id, product_ids in category_id_2_product_ids.items():
+			
 			corp_id = category_id_2_owner_id.get(category_id)
+			
 			temp_key = '{wo:%s}_{co:%s}_pids' % (corp_id, category_id)
 			pipeline.delete(temp_key)
 			# 该社群所有上架商品id
-			if corp_onshelf_product_ids.get(corp_id) is None:
-				pool_models = mall_models.ProductPool.select().dj_where(woid=corp_id,
-																		status=mall_models.PP_STATUS_ON) \
-					.order_by(mall_models.ProductPool.display_index, mall_models.ProductPool.sync_at.desc(),
-							  mall_models.ProductPool.product_id)
-				on_shelf_product_ids = [pool.product_id for pool in pool_models]
-				corp_onshelf_product_ids[corp_id] = on_shelf_product_ids
-			else:
-				on_shelf_product_ids = corp_onshelf_product_ids[corp_id]
-			category_all_product_ids = [relation.product_id for relation in relations]
-			category_on_shelf_product_ids = set(category_all_product_ids).intersection(set(on_shelf_product_ids))
-			if category_on_shelf_product_ids:
-				pipeline.rpush(temp_key, *list(category_on_shelf_product_ids))
-			else:
+			if not product_ids:
 				pipeline.rpush(temp_key, *['NONE'])
+			else:
+				pipeline.rpush(temp_key, *product_ids)
 			print 'loading c_p ...%s' % category_id, corp_id
 		# 社群"所有商品"分组
-		for k, v in corp_onshelf_product_ids.items():
-			print 'loading ...00%s' % k
-			temp_key = '{wo:%s}_{co:%s}_pids' % (k, 0)
-			if v:
-				pipeline.rpush(temp_key, *v)
+		for self_account_id in self_account_ids:
+			print 'loading ...00%s' % self_account_id
+			pools = mall_models.ProductPool.select().dj_where(status=1,
+															  woid=self_account_id)\
+				.order_by(mall_models.ProductPool.display_index,
+						  mall_models.ProductPool.sync_at.desc(),
+						  mall_models.ProductPool.id)
+			temp_key = '{wo:%s}_{co:%s}_pids' % (self_account_id, 0)
+			product_ids = [pool.product_id for pool in pools]
+			if product_ids:
+				pipeline.rpush(temp_key, *product_ids)
 		
 		pipeline.execute()
 		print '<-----------prepare category_products end------------------------!'
