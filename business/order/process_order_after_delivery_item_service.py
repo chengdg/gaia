@@ -26,6 +26,7 @@ class ProcessOrderAfterDeliveryItemService(business_model.Service):
 		"""
 
 		if delivery_item.has_db_record:
+			print 'is_delivery....heeeeeeeeeeeeeeeee', delivery_item.origin_order_id
 			only_send_message = False
 			order_id = delivery_item.origin_order_id
 
@@ -41,9 +42,11 @@ class ProcessOrderAfterDeliveryItemService(business_model.Service):
 
 			order = self.corp.order_repository.get_order(order_id)
 		else:
+			print 'eeeeeeeeleeeeeeeeeees', delivery_item.origin_order_id
 			only_send_message = True
 			to_status = delivery_item.status
 			order = self.corp.order_repository.get_order(delivery_item.origin_order_id)
+		print order.status, '=========to===status::::', to_status
 		if order.status != to_status:
 			if to_status == mall_models.ORDER_STATUS_SUCCESSED:
 				order.finish(self.corp, only_send_message)
