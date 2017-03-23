@@ -93,7 +93,7 @@ REDIS_HOST = os.environ.get('_REDIS_HOST', 'redis.weapp.com')
 REDIS_PORT = 6379
 REDIS_CACHES_DB = 1
 REDIS_CACHE_KEY = ':1:api'
-MESSAGE_DEBUG_MODE = True if 'develop' == MODE else False
+MESSAGE_DEBUG_MODE = False
 
 #BDD相关配置
 WEAPP_DIR = '../weapp'
@@ -153,7 +153,7 @@ else:
 if 'deploy' == MODE:
     MNS_ACCESS_KEY_ID = 'LTAICKQ4rQBofAhF'
     MNS_ACCESS_KEY_SECRET = 'bPKU71c0cfrui4bWgGPO96tLiOJ0PZ'
-    MNS_ENDPOINT = 'http://1615750970594173.mns.cn-beijing.aliyuncs.com/'
+    MNS_ENDPOINT = 'http://1615750970594173.mns.cn-hangzhou.aliyuncs.com/'
     MNS_SECURITY_TOKEN = ''
 
 else:

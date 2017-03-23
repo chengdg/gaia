@@ -3,10 +3,10 @@
 from bdem import msgutil
 from settings import MODE
 
-if MODE == 'deploy1':
+if MODE == 'deploy':
 	UUID = 317014264
 	DING_TOPIC = 'notify'
-	PRODUCT_OUTGIVING_TOPIC = 'test-topic'
+	PRODUCT_OUTGIVING_TOPIC = 'notify'
 else:
 	UUID = 80035247 #钉钉发消息测试群
 	DING_TOPIC = 'test-phone'

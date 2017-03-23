@@ -34,11 +34,16 @@ class ProcessOrderAfterDeliveryItemService(business_model.Service):
 			delivery_items = delivery_item_repository.get_delivery_items_by_order_id(order_id)
 			delivery_items_status_list = [o.status for o in delivery_items]
 
+			print 'status-----list------'
+			print delivery_items_status_list
+
 			# 获取出货单权重集合
 			delivery_item_weights = [mall_models.ORDER_STATUS2DELIVERY_ITEM_WEIGHT[status] for status in
 			                         delivery_items_status_list]
 
 			to_status = mall_models.DELIVERY_ITEM_WEIGHT2ORDER_STATUS[min(delivery_item_weights)]
+
+			print 'tototototo-----status', to_status
 
 			order = self.corp.order_repository.get_order(order_id)
 		else:
