@@ -3,14 +3,18 @@
 from bdem import msgutil
 from settings import MODE
 
+from db.mall import models as mall_models
+
 if MODE == 'deploy':
 	UUID = 317014264
 	DING_TOPIC = 'notify'
 	PRODUCT_OUTGIVING_TOPIC = 'notify'
+	PRODUCT_CACHE_TOPIC = 'gaia-product'
 else:
 	UUID = 80035247 #钉钉发消息测试群
 	DING_TOPIC = 'test-phone'
 	PRODUCT_OUTGIVING_TOPIC = 'test-topic'
+	PRODUCT_CACHE_TOPIC = 'test-topic'
 
 def send_product_change(supplier_id, product_id):
 	"""
@@ -43,3 +47,31 @@ def send_product_outgiving_message(corp_id, product_id):
 	})
 
 	print corp_id, 'send_outgiving_product_message...', product_id
+
+
+###############################
+#更新缓存消息
+###############################
+def send_product_created_cache(product_id, product_name):
+	"""
+	新增商品
+	"""
+	msgutil.send_message(PRODUCT_CACHE_TOPIC, 'new_product_enter_pool', {
+		"product_id": product_id,
+		'name': product_name
+	})
+
+	print 'send_sync_product_updated_message...', product_id
+
+def send_product_update_cache(product_id):
+	"""
+	商品更新
+	"""
+	corp_ids = [p.woid for p in mall_models.ProductPool.select().dj_where(product_id=product_id,
+                                                                 status=mall_models.PP_STATUS_ON)]
+	msgutil.send_message(PRODUCT_CACHE_TOPIC, 'sync_product_updated', {
+		'corp_ids': corp_ids,
+		'product_id': product_id
+	})
+
+	print 'send_sync_product_updated_message...', product_id
