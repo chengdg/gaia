@@ -35,6 +35,7 @@ class APreProducts(api_resource.ApiResource):
 		rows = []
 		for pre_product in pre_products:
 			owner_corp_info = pre_product.supplier_info
+			labels = sorted(pre_product.labels, lambda x,y: cmp(x.id, y.id))
 
 			rows.append({
 				'id': pre_product.id,
@@ -60,7 +61,7 @@ class APreProducts(api_resource.ApiResource):
 				'detail': pre_product.detail,
 				'created_at': pre_product.created_at.strftime('%Y-%m-%d %H:%M:%S'),
 				'images': pre_product.swipe_images,
-				'label_names': [label.name for label in pre_product.labels]
+				'label_names': [label.name for label in labels]
 			})
 		return {
 			'rows': rows,
