@@ -133,7 +133,7 @@ class ProductModelGenerator(business_model.Service):
 
 					product_model.gross_profit = '%.2f' % gross_profit
 					product_model.gross_profit_rate = '%.2f' % gross_profit_rate
-					product_model.customized_price = '%.2f' % customized_price
+					product_model.customized_price = customized_price
 				product2models.setdefault(db_model.product_id, []).append(product_model)
 
 		for product_id, product_models in product2models.items():
