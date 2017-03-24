@@ -94,6 +94,8 @@ class ProductModel(business_model.Model):
 		property2value = {}
 		for id in ids:
 			# id的格式为${property_id}:${value_id}
+			if not ':' in id: #处理异常数据
+				continue
 			_property_id, _value_id = id.split(':')
 			_property = id2property.get(_property_id)
 			if not _property: #修复一个未知场景下的问题
