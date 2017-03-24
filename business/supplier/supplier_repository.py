@@ -34,7 +34,8 @@ class SupplierRepository(business_model.Service):
 		if not ids:
 			return [Supplier(data) for data in suppliers_data]
 		else:
-			return [Supplier(data) for data in suppliers_data if data['corp_id'] in ids]
+			print ids
+			return [Supplier(data) for data in suppliers_data if int(data['corp_id']) in ids]
 
 	def get_suppliers_by_ids(self, ids):
 		"""

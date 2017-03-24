@@ -40,6 +40,7 @@ class APreProducts(api_resource.ApiResource):
 			rows.append({
 				'id': pre_product.id,
 				'owner_name': owner_corp_info['company_name'] if owner_corp_info else '',
+				'company_name': owner_corp_info['company_name'] if owner_corp_info else '',
 				'axe_sales_name': owner_corp_info['axe_sales_name'] if owner_corp_info else '',
 				'classification_id': pre_product.classification_id,
 				'promotion_title': pre_product.promotion_title,

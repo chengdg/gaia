@@ -44,7 +44,7 @@ class Supplier(business_model.Model):
 		business_model.Model.__init__(self)
 
 		if data:
-			self.id = data['corp_id']
+			self.id = int(data['corp_id'])
 			self.name = data['name']
 			self.responsible_person = data['axe_sales_name']
 			self.type = int(data['settlement_type'])
