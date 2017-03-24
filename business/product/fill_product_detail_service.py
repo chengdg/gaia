@@ -339,11 +339,9 @@ class FillProductDetailService(business_model.Service):
 		})
 
 		suppliers = resp['data']
-		supplier_corp_id2info = {s['corp_id']: s for s in suppliers}
-		print supplier_corp_id2info
+		supplier_corp_id2info = {int(s['corp_id']): s for s in suppliers}
 
 		for product in products:
-			print product.owner_id, type(product.owner_id)
 			supplier_data = supplier_corp_id2info.get(product.owner_id)
 			product.supplier_info = {
 				'supplier_name': supplier_data['name'],
