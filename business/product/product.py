@@ -3,6 +3,7 @@
 import json
 
 from eaglet.core import watchdog
+from bdem import msgutil
 
 from db.mall import models as mall_models
 from business import model as business_model
@@ -10,6 +11,7 @@ from business.decorator import cached_context_property
 
 import settings
 from util import send_product_message
+from gaia_conf import TOPIC
 
 
 class Product(business_model.Model):
@@ -569,3 +571,9 @@ class Product(business_model.Model):
 			product_model_id = product_model_id,
 			price = price
 		)
+		topic_name = TOPIC['product']
+		data = {
+			"product_id": self.id,
+			"corp_id": corp_id,
+		}
+		msgutil.send_message(topic_name, "product_updated", data)
