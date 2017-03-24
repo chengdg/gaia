@@ -44,7 +44,7 @@ class DeliveryItemRepository(business_model.Model):
 			return None
 
 	def __get_db_models_for_corp(self):
-		return mall_models.Order.select().dj_where(supplier=self.corp.id, origin_order_id__gt=0)
+		return mall_models.Order.select().dj_where(supplier=self.corp.id, origin_order_id__gt=0, status__gt=mall_models.ORDER_STATUS_CANCEL)
 
 	def __search(self, filters):
 		db_models = self.__get_db_models_for_corp()
