@@ -39,7 +39,15 @@ class ADeliveryItem(api_resource.ApiResource):
 		data.update(encode_delivery_item_service.get_refunding_info(delivery_item))
 		data.update(encode_delivery_item_service.get_express_details(delivery_item))
 		data.update(encode_delivery_item_service.get_supplier(delivery_item))
-		data.update(encode_delivery_item_service.get_products(delivery_item))
+		delivery_has_products_data = encode_delivery_item_service.get_products(delivery_item)
+		data.update(delivery_has_products_data)
+
+		delivery_price = 0
+		for product in delivery_has_products_data['products']:
+			delivery_price += product['total_origin_price']
+
+		data.update({'delivery_total_price': delivery_price})
+
 		data.update(encode_delivery_item_service.get_operation_logs(delivery_item))
 
 		if delivery_item:
