@@ -45,6 +45,14 @@ class APostageConfigs(api_resource.ApiResource):
                     "added_weight_price": special_config.added_weight_price
                 })
 
+            for free_config in postage_config.free_configs:
+                data['free_configs'].append({
+                    "id": free_config.id,
+                    "destinations": free_config.destinations,
+                    "condition": free_config.condition,
+                    "value": free_config.condition_value
+                })
+
             datas.append(data)
 
         return {
