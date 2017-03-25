@@ -274,8 +274,8 @@ class OrderRepository(business_model.Model):
 		return pageinfo, orders
 
 	def get_order(self, id, fill_options=None):
-		db_models = self.__get_db_models_for_corp()
-		db_model = db_models.dj_where(id=id)
+		# db_models = self.__get_db_models_for_corp()
+		db_model = mall_models.Order.select().dj_where(id=id)
 		orders = Order.from_models({"db_models": db_model, 'fill_options': fill_options, 'corp': self.corp})
 
 		if orders:
