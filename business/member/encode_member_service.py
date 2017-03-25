@@ -9,11 +9,16 @@ class EncodeMemberService(business_model.Service):
 	"""
 	将Member对象转换为可输出dict的服务
 	"""
-	def get_base_info(self, product):
+	def get_basic_info(self, member):
 		"""
 		获得会员的基础信息
 		"""
-		pass
+		return {
+			"phone_number": member.phone_number,
+			"remark_name": member.remark_name,
+			"remark": member.remark,
+			"sex": member.sex
+		}
 
 	def get_groups_info(self, member):
 		"""

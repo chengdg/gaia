@@ -50,8 +50,8 @@ class Member(business_model.Model):
 		'sex',
 		'update_time',
 		'experience', #经验值
-		'remarks_name', #备注名
-		'remarks_extra', #备注信息
+		'remark_name', #备注名
+		'remark', #备注信息
 
 		#消费信息
 		'pay_money', #消费总金额
@@ -90,6 +90,14 @@ class Member(business_model.Model):
 			self.status = member_models.MEMBERSTATUS2STR.get(model.status, 'unknown')
 			self.source = member_models.MEMBERSOURCE2STR.get(model.source, 'unknown')
 			self.thumbnail = model.user_icon
+			self.remark_name = model.remarks_name
+			self.remark = model.remarks_extra
+			if model.sex == member_models.SEX_TYPE_MEN:
+				self.sex = 'male'
+			elif model.sex == member_models.SEX_TYPE_WOMEN:
+				self.sex = 'female'
+			else:
+				self.sex = 'unknown'
 
 	@cached_context_property
 	def webapp_user_id(self):
@@ -138,6 +146,7 @@ class Member(business_model.Model):
 			"openid": openid
 		}
 		msgutil.send_message(topic_name, msg_name, data)
+
 
 	def update_pay_info(self, order, from_status, to_status):
 		"""
@@ -288,25 +297,24 @@ class Member(business_model.Model):
 			member_info.sex = member_models.SEX_TYPE_UNKOWN
 			member_info.is_binded = False
 			member_info.weibo_nickname = ''
-			member_info.phone_number = ''
 			member_info.save()
 
 		if member_info.phone_number and len(member_info.phone_number) > 10:
-			member_info.phone = '%s****%s' % (member_info.phone_number[:3], member_info.phone_number[-4:])
+			member_info.encrypted_phone_number = '%s****%s' % (member_info.phone_number[:3], member_info.phone_number[-4:])
 		else:
-			member_info.phone = ''
+			member_info.encrypted_phone_number = ''
 
 		return member_info
 
 	@property
-	def phone(self):
+	def encrypted_phone_number(self):
 		"""
 		[property] 会员绑定的手机号码加密
 		"""
 
-		return self.__info.phone
+		return self.__info.encrypted_phone_number
 
-	@cached_context_property
+	@property
 	def phone_number(self):
 		"""
 		[property] 会员绑定的手机号码

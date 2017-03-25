@@ -233,6 +233,72 @@
                 }
             }
         },
+        "/member/member_upgrade_strategy/": {
+            "get": {
+                "summary": "获取会员升级策略",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "type": "number",
+                        "in": "query",
+                        "description": "",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "member"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "strategy": {
+                                    "type": "string",
+                                    "description": "会员的升级策略",
+                                    "format": "match_all(匹配全部条件), match_any(匹配任一条件)"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "更新会员等级策略",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "type": "number",
+                        "in": "formData",
+                        "description": "",
+                        "required": true
+                    },
+                    {
+                        "name": "strategy",
+                        "type": "string",
+                        "in": "formData",
+                        "description": "会员的升级策略",
+                        "format": "match_all(匹配全部条件), match_any(匹配任一条件)",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "member"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        },
         "/member/member_groups/": {
             "get": {
                 "summary": "获取corp对应的会员分组信息",
@@ -521,6 +587,213 @@
                         }
                     }
                 }
+            },
+            "post": {
+                "summary": "修改会员信息",
+                "parameters": [
+                    {
+                        "name": "",
+                        "in": "body",
+                        "description": "会员信息的更新数据",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/MemberUpdateData"
+                        }
+                    }
+                ],
+                "tags": [
+                    "member"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/Member"
+                        }
+                    }
+                }
+            }
+        },
+        "/member/member_coupons/": {
+            "get": {
+                "summary": "获得会员的优惠券集合",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "member_id",
+                        "in": "query",
+                        "description": "会员id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "member"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "products": {
+                                    "$ref": "#/definitions/MemberCoupons"
+                                },
+                                "pageinfo": {
+                                    "type": "object",
+                                    "description": "分页信息"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "summary": "为会员发放优惠券",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "type": "number",
+                        "in": "formData",
+                        "description": "",
+                        "required": true
+                    },
+                    {
+                        "name": "member_ids",
+                        "type": "string",
+                        "in": "formData",
+                        "description": "会员id数组的json字符串",
+                        "format": "类似[1, 2, 3]的字符串",
+                        "required": true
+                    },
+                    {
+                        "name": "coupon_rule_id",
+                        "type": "number",
+                        "in": "formData",
+                        "description": "优惠券规则的id",
+                        "required": true
+                    },
+                    {
+                        "name": "count_per_member",
+                        "type": "number",
+                        "in": "formData",
+                        "description": "每个会员发放的优惠券的数量",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "member"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        },
+        "/member/integral_increment/": {
+            "put": {
+                "summary": "创建一个会员的积分变更",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "type": "number",
+                        "in": "formData",
+                        "description": "",
+                        "required": true
+                    },
+                    {
+                        "name": "member_id",
+                        "type": "string",
+                        "in": "formData",
+                        "description": "会员id",
+                        "required": true
+                    },
+                    {
+                        "name": "integral_increment",
+                        "type": "number",
+                        "in": "formData",
+                        "description": "积分增加值，可以为负数",
+                        "required": true
+                    },
+                    {
+                        "name": "reason",
+                        "type": "string",
+                        "in": "formData",
+                        "description": "积分变更的原因",
+                        "required": true
+                    }
+                ],
+                "tags": [
+                    "member"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success"
+                    }
+                }
+            }
+        },
+        "/member/integral_logs/": {
+            "get": {
+                "summary": "获得会员的积分日志",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "member_id",
+                        "in": "query",
+                        "description": "会员id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "member"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "products": {
+                                    "$ref": "#/definitions/MemberIntegralLogs"
+                                },
+                                "pageinfo": {
+                                    "type": "object",
+                                    "description": "分页信息"
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     },
@@ -588,10 +861,125 @@
                 }
             }
         },
+        "MemberCoupons": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/MemberCoupon"
+            },
+            "minItems": 1
+        },
+        "MemberCoupon": {
+            "type": "object",
+            "description": "会员的优惠券信息",
+            "properties": {
+                "id": {
+                    "type": "number",
+                    "description": "优惠券在db中的id"
+                },
+                "bid": {
+                    "type": "number",
+                    "description": "优惠券的business id，针对优惠券的操作都应该使用bid"
+                },
+                "money": {
+                    "type": "number",
+                    "description": "优惠券金额"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "优惠券名"
+                },
+                "order_bid": {
+                    "type": "string",
+                    "description": "使用优惠券的订单的bid值"
+                },
+                "using_limit": {
+                    "type": "object",
+                    "description": "优惠券的使用限制",
+                    "properties": {
+                        "is_no_order_user_only": {
+                            "type": "boolean",
+                            "description": "是否限制为只有未下单用户才能使用"
+                        },
+                        "is_for_specific_products": {
+                            "type": "boolean",
+                            "description": "是否限制未特定商品集合才能使用"
+                        },
+                        "product_ids": {
+                            "type": "array",
+                            "description": "限制使用的商品id集合",
+                            "items": {
+                                "type": "number"
+                            }
+                        },
+                        "has_valid_restriction": {
+                            "type": "boolean",
+                            "description": "是否有优惠券使用的金额限制"
+                        },
+                        "valid_restrictions": {
+                            "type": "boolean",
+                            "description": "可使用优惠券的金额限制"
+                        }                        
+                    }
+                },
+                "status": {
+                    "type": "string",
+                    "description": "优惠券状态",
+                    "format": "unused(已领取，未使用), used(已使用), expired(过期), discard(作废), ungot(未领取), disabled(已失效)"
+                },
+                "received_time": {
+                    "type": "string",
+                    "description": "优惠券的领取时间"
+                }
+            }
+        },
+        "MemberIntegralLogs": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/MemberIntegralLog"
+            },
+            "minItems": 1
+        },
+        "MemberIntegralLog": {
+            "type": "object",
+            "description": "会员的积分日志",
+            "properties": {
+                "id": {
+                    "type": "number",
+                    "description": "优惠券在db中的id"
+                },
+                "event": {
+                    "type": "string",
+                    "description": "日志对应的积分事件名"
+                },
+                "reason": {
+                    "type": "string",
+                    "description": "积分变更的原因"
+                },
+                "actor": {
+                    "type": "string",
+                    "description": "操作人"
+                },
+                "integral_increment": {
+                    "type": "number",
+                    "description": "积分变更的数量"
+                },
+                "current_integral": {
+                    "type": "string",
+                    "description": "积分变更后的积分数值"
+                },
+                "created_at": {
+                    "type": "string",
+                    "description": "积分日志产生的时间"
+                }
+            }
+        },
         "MemberList": {
             "type": "array",
             "description": "会员集合",
-            "$ref": "#definitions/Member"
+            "items": {
+                "$ref": "#/definitions/Member"
+            },
+            "minItems": 1
         },
         "Member": {
             "type": "object",
@@ -609,6 +997,9 @@
                     "type": "string",
                     "description": "会员头像"
                 },
+                "basic_info": {
+                    "$ref": "#/definitions/BasicInfoInMember"
+                },
                 "grade": {
                     "$ref": "#/definitions/GradeInfoInMember"
                 },
@@ -624,6 +1015,29 @@
                 "subscribe_info": {
                     "$ref": "#/definitions/SubscribeInfoInMember"
                 },
+            }
+        },
+        "BasicInfoInMember": {
+            "type": "object",
+            "description": "会员基本信息",
+            "properties": {
+                "sex": {
+                    "type": "string",
+                    "description": "性别",
+                    "format": "male(男), female(女), unknwon(未知)"
+                },
+                "remark_name": {
+                    "type": "string",
+                    "description": "备注名"
+                },
+                "remark": {
+                    "type": "string",
+                    "description": "备注信息"
+                },
+                "phone_number": {
+                    "type": "string",
+                    "description": "绑定手机号"
+                }
             }
         },
         "GradeInfoInMember": {
@@ -726,6 +1140,71 @@
                     "type": "string",
                     "description": "关注来源",
                     "format": "self_subscribe(主动关注), member_qrcode(通过其他会员推广码关注), share_url(通过其他会员分享链接关注)"
+                }
+            }
+        },
+        "MemberUpdateData": {
+            "type": "object",
+            "properties": {
+                "corp_id": {
+                    "type": "string",
+                    "description": ""
+                },
+                "id": {
+                    "description": "会员id",
+                    "type": "string"
+                },
+                "member_grade_id": {
+                    "description": "会员等级id",
+                    "type": "string"
+                },
+                "group_ids": {
+                    "description": "会员分组id的数组的json字符串",
+                    "format": "形如[1, 2, 3]的字符串",
+                    "type": "string"
+                },
+                "integral_increment(json字符串)": {
+                    "$ref": "#/definitions/IntegralIncrement"
+                },
+                "basic_info(json字符串)": {
+                    "$ref": "#/definitions/MemberUpdateBasicInfo"
+                }
+            }
+        },
+        "IntegralIncrement": {
+            "type": "object",
+            "description": "积分调整",
+            "properties": {
+                "integral_increment": {
+                    "type": "number",
+                    "description": "积分增加值，可以为负数"
+                }, 
+                "reason": {
+                    "type": "string",
+                    "description": "积分变更的原因"
+                }
+            }
+        },
+        "MemberUpdateBasicInfo": {
+            "type": "object",
+            "description": "会员的更新数据",
+            "properties": {
+                "phone_number": {
+                    "type": "string",
+                    "description": "会员手机号"
+                }, 
+                "remark": {
+                    "type": "string",
+                    "description": "会员备注信息"
+                }, 
+                "remark_name": {
+                    "type": "string",
+                    "description": "会员备注名"
+                }, 
+                "sex": {
+                    "type": "string",
+                    "description": "会员性别",
+                    "format": "male(男), female(女), unknwon(未知)"
                 }
             }
         }

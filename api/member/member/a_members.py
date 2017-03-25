@@ -37,6 +37,7 @@ class AMembers(api_resource.ApiResource):
                 'id': member.id,
                 'name': member.username,
                 'thumbnail': member.thumbnail,
+                'basic_info': encode_member_service.get_basic_info(member),
                 'grade': encode_member_service.get_grade_info(member),
                 'groups': encode_member_service.get_groups_info(member),
                 'social_info': encode_member_service.get_social_info(member),

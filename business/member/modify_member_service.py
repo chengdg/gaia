@@ -41,3 +41,34 @@ class ModifyMemberService(business_model.Service):
 		else:
 			event = 'manager_modify_decrease'
 		IntegralLog.create(self.corp, event, member, integral_increment, new_integral, reason)
+
+	def update_basic_member_info(self, member_id, basic_member_info):
+		"""
+		更新会员的基本信息
+		"""
+		member_options = {}
+		member_info_options = {}
+		if 'phone_number' in basic_member_info:
+			member_info_options['phone_number'] = basic_member_info['phone_number']
+
+		sex2value = {
+			'male': member_models.SEX_TYPE_MEN,
+			'female': member_models.SEX_TYPE_WOMEN,
+			'unknown': member_models.SEX_TYPE_UNKOWN
+		}
+		if 'sex' in basic_member_info:
+			sex_value = sex2value[basic_member_info['sex']]
+			member_options['sex'] = sex_value
+			member_info_options['sex'] = sex_value
+
+		if 'remark' in basic_member_info:
+			member_options['remarks_extra'] = basic_member_info['remark']
+
+		if 'remark_name' in basic_member_info:
+			member_options['remarks_name'] = basic_member_info['remark_name']
+
+		if member_options:
+			member_models.Member.update(**member_options).dj_where(webapp_id=self.corp.webapp_id, id=member_id).execute()
+
+		if member_info_options:
+			member_models.MemberInfo.update(**member_info_options).dj_where(member_id=member_id).execute()	

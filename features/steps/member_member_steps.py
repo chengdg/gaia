@@ -176,6 +176,38 @@ def step_impl(context, user, count_per_member, coupon_rule_name):
     bdd_util.assert_api_call_success(response)
 
 
+@When(u"{user}更新会员'{member_name}'的信息")
+def step_impl(context, user, member_name):
+    member = bdd_util.get_member_for(member_name, context.corp.webapp_id)
+
+    input_data = json.loads(context.text)
+    data = {
+        'corp_id': context.corp.id,
+        'id': member.id
+    }
+
+    if 'integral_increment' in input_data:
+        data['integral_increment'] = json.dumps(input_data['integral_increment'])
+
+    if 'grade' in input_data:
+        member_grade_name = input_data['grade']
+        member_grade = member_models.MemberGrade.select().dj_where(name=member_grade_name).get()
+        data['member_grade_id'] = member_grade.id
+
+    if 'groups' in input_data:
+        member_group_ids = []
+        member_tag_names = input_data['groups']
+        for tag_name in member_tag_names:
+            member_tag = member_models.MemberTag.select().dj_where(name=tag_name).get()
+            member_group_ids.append(member_tag.id)
+        data['group_ids'] = json.dumps(member_group_ids)
+
+    data['basic_info'] = json.dumps(input_data)
+
+    response = context.client.post('/member/member/', data)
+    bdd_util.assert_api_call_success(response)
+
+
 @Then(u"{user}能获得会员'{member_name}'的积分日志")
 def step_impl(context, user, member_name):
     member = bdd_util.get_member_for(member_name, context.corp.webapp_id)
@@ -224,6 +256,7 @@ def __extract_member_info(data):
     获取member数据
     """
     consume_info = data['consume_info']
+    basic_info = data['basic_info']
 
     source2str = {
         'self_subscribe': u'直接关注',
@@ -235,6 +268,10 @@ def __extract_member_info(data):
 
     result = {
         'name': data['name'],
+        'remark_name': basic_info['remark_name'],
+        'remark': basic_info['remark'],
+        'sex': basic_info['sex'],
+        'phone_number': basic_info['phone_number'],
         'grade': data['grade'],
         'integral': consume_info['integral'],
         'source': source
