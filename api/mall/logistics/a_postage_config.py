@@ -53,6 +53,7 @@ class APostageConfig(api_resource.ApiResource):
 				"id": free_config.id,
 				"destinations": free_config.destinations,
 				"condition": free_config.condition,
+				"condition_value": free_config.condition_value,
 				"value": free_config.condition_value
 			})
 
