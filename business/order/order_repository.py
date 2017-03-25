@@ -309,6 +309,9 @@ class OrderRepository(business_model.Model):
 					(mall_models.Order.supplier_user_id == user_id) & (mall_models.Order.origin_order_id > 0) & (
 						mall_models.Order.status << sync_able_status_list)))
 
+		if self.corp.is_supplier():
+			db_models = mall_models.Order.select().dj_where(origin_order_id__gt=0, webapp_user_id__gt=0, supplier=self.corp.id)
+
 		# 过滤团购订单，团购订单只显示团购成功和团购退款中、团购退款成功的订单
 		group_order_relations = mall_models.OrderHasGroup.select().dj_where(webapp_id=webapp_id)
 
