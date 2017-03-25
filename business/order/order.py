@@ -296,8 +296,8 @@ class Order(business_model.Model):
 		id2coupon = {coupon.id: coupon for coupon in coupons}
 
 		for order in orders:
-			if order.coupon_id:
-				coupon = id2coupon[order.coupon_id]
+			coupon = id2coupon.get(order.coupon_id)
+			if order.coupon_id and coupon:
 				order.extra_coupon_info = {
 					'bid': coupon.bid,
 					'type': coupon.rule.type,
