@@ -32,7 +32,8 @@ class APostageConfigs(api_resource.ApiResource):
                     "added_weight": default_config.added_weight,
                     "added_weight_price": default_config.added_weight_price
                 },
-                "special_configs": []
+                "special_configs": [],
+                "free_configs": []
             }
 
             for special_config in postage_config.special_configs:
