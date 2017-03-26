@@ -293,13 +293,13 @@ def __extract_member_info(data):
     """
     consume_info = data['consume_info']
     basic_info = data['basic_info']
+    subscribe_info = data['subscribe_info']
 
     source2str = {
         'self_subscribe': u'直接关注',
         'member_qrcode': u'推广扫码',
         'share_url': u'会员分享'
     }
-    subscribe_info = data['subscribe_info']
     source = source2str[subscribe_info['source']]
 
     result = {
@@ -311,7 +311,10 @@ def __extract_member_info(data):
         'grade': data['grade'],
         'integral': consume_info['integral'],
         'source': source,
-        'ship_infos': data['ship_infos']
+        'ship_infos': data['ship_infos'],
+        'pay_times': consume_info['pay_times'],
+        'pay_money': consume_info['pay_money'],
+        'unit_price': consume_info['unit_price']
     }
     result['groups'] = dict([(group['name'], 1) for group in data['groups']])
 

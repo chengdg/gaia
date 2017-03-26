@@ -58,7 +58,6 @@ Background:
 			"is_active": "启用"
 		}]
 		"""
-
 	When zhouxun添加商品
 		"""
 		[{
@@ -91,6 +90,18 @@ Background:
 					}
 				}
 			}
+		},{
+			"name": "无规格商品3-zhouxun",
+			"model":{
+				"models":{
+					"standard":{
+						"price": 6,
+						"purchase_price": 3.00,
+						"stock_type": "有限",
+						"stocks": 100
+					}
+				}
+			}
 		}]
 		"""
 	When zhouxun添加代销商品
@@ -99,7 +110,7 @@ Background:
 		"""
 	When zhouxun将商品移动到'在售'货架
 		"""
-		["无规格商品1-zhouxun", "多规格商品2-zhouxun","无规格商品1-yangmi"]
+		["无规格商品1-zhouxun", "多规格商品2-zhouxun","无规格商品1-yangmi","无规格商品3-zhouxun"]
 		"""
 	Given mayun成为'zhouxun'的会员
 	Given liyanhong成为'zhouxun'的会员
@@ -123,11 +134,30 @@ Background:
 		"""
 
 
-@gaia @member @cross_service
+@gaia @member @cross_service @wip
 Scenario: 购买商品影响会员信息
 	会员购买商品后：
 
 	When 微信用户批量消费zhouxun的商品
-	| order_id | date      | consumer | product             | payment     |  action      |
-	|   0001   | 2天前      |   mayun  | 无规格商品1-zhouxun,1 | 支付宝,1天前  |  mayun,完成   |
-	|   0002   | 3天前      |   leijun | 无规格商品1-zhouxun,2 |             |              |
+	| order_id | date      | consumer | product             | payment       |  action      |
+	|   0001   | 2天前      |   mayun  | 无规格商品1-zhouxun,1 | 支付宝,1天前    |  mayun,完成   |
+	|   0002   | 2天前      |   mayun  | 无规格商品3-zhouxun,3 | 微信支付,1天前   |  mayun,完成   |
+	|   0003   | 3天前      |   leijun | 无规格商品1-zhouxun,2 |               |              |
+	|   0004   | 1天前      |   leijun | 无规格商品1-zhouxun,2 | 微信支付,1天前   | leijun,完成   |
+	
+	Then zhouxun能获得会员'mayun'的信息
+		"""
+		{
+			"pay_times": 2,
+			"pay_money": 28.0,
+			"unit_price": 14.0
+		}
+		"""
+	Then zhouxun能获得会员'leijun'的信息
+		"""
+		{
+			"pay_times": 1,
+			"pay_money": 20.0,
+			"unit_price": 20.0
+		}
+		"""

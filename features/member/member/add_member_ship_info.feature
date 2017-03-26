@@ -6,7 +6,7 @@ Background:
 	Given yangmi成为'jobs'的会员
 
 
-@gaia @member @wip
+@gaia @member
 Scenario: 添加会员收货地址
 	添加会员收货地址后
 	1. 能获得收货地址列表
