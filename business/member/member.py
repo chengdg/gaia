@@ -28,6 +28,7 @@ from business.member.member_has_tag import MemberHasTag
 from db.mall import models as mall_models
 from business.mall.corporation_factory import CorporationFactory
 from business.member.integral_log import IntegralLog
+from business.member.member_ship_info import MemberShipInfo
 
 
 class Member(business_model.Model):
@@ -376,6 +377,11 @@ class Member(business_model.Model):
 		# TODO2: 实现营销工具集合
 		print u'TODO2: 实现营销工具集合'
 		return []
+
+	@cached_context_property
+	def ship_infos(self):
+		ship_info_db_models = member_models.ShipInfo.select().dj_where(webapp_user_id=self.webapp_user_id, is_deleted=False)
+		return [MemberShipInfo(db_model) for db_model in ship_info_db_models]
 
 	@staticmethod
 	def empty_member():

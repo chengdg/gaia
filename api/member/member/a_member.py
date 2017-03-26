@@ -17,7 +17,7 @@ class AMember(api_resource.ApiResource):
     app = "member"
     resource = "member"
 
-    @param_required(['corp_id', 'id'])
+    @param_required(['corp_id', 'id', '?fill_options:json'])
     def get(args):
         corp = args['corp']
         member = corp.member_repository.get_member_by_id(args['id'])
@@ -32,8 +32,12 @@ class AMember(api_resource.ApiResource):
             'groups': encode_member_service.get_groups_info(member),
             'social_info': encode_member_service.get_social_info(member),
             'consume_info': encode_member_service.get_consume_info(member),
-            'subscribe_info': encode_member_service.get_subscribe_info(member),
+            'subscribe_info': encode_member_service.get_subscribe_info(member)
         }
+
+        fill_options = args.get('fill_options', {})
+        if 'with_ship_info' in fill_options:
+            data['ship_infos'] = encode_member_service.get_ship_infos(member)
 
         return data
 

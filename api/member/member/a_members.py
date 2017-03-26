@@ -16,7 +16,7 @@ class AMembers(api_resource.ApiResource):
     app = "member"
     resource = "members"
 
-    @param_required(['corp_id', '?filters:json'])
+    @param_required(['corp_id', '?filters:json', '?fill_options:json'])
     def get(args):
         corp = args['corp']
 
@@ -43,6 +43,7 @@ class AMembers(api_resource.ApiResource):
                 'social_info': encode_member_service.get_social_info(member),
                 'consume_info': encode_member_service.get_consume_info(member),
                 'subscribe_info': encode_member_service.get_subscribe_info(member),
+                'ship_infos': None
             }
 
             datas.append(data)

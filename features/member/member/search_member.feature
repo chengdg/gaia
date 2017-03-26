@@ -37,7 +37,7 @@ Background:
 		"""
 
 
-@gaia @member @wip
+@gaia @member
 Scenario: 无搜索条件，获得全部会员
 	获得会员列表时：
 	1. 会员按id倒序排列

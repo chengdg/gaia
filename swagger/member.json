@@ -754,7 +754,7 @@
         },
         "/member/integral_logs/": {
             "get": {
-                "summary": "获得会员的积分日志",
+                "summary": "获得会员的积分日志集合",
                 "parameters": [
                     {
                         "name": "corp_id",
@@ -795,7 +795,124 @@
                     }
                 }
             }
-        }
+        },
+        "/member/ship_info/": {
+            "put": {
+                "summary": "为会员添加收货地址",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "formData",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "member_id",
+                        "in": "formData",
+                        "description": "会员的id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "receiver_name",
+                        "in": "formData",
+                        "description": "收货人姓名",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "phone",
+                        "in": "formData",
+                        "description": "收货人联系电话",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "area",
+                        "in": "formData",
+                        "description": "收货人住址的行政区域",
+                        "required": true,
+                        "type": "string",
+                        "format": "类似'江苏省 南京市 秦淮区'的字符串，以空格分割"
+                    },
+                    {
+                        "name": "address",
+                        "in": "formData",
+                        "description": "收货人住址详细地址（不包含行政区域）",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "is_selected",
+                        "in": "formData",
+                        "description": "是否成为默认地址",
+                        "required": true,
+                        "type": "boolean"
+                    }
+                ],
+                "tags": [
+                    "member"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "number",
+                                    "description": "新创建的收货地址的id"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/member/ship_infos/": {
+            "get": {
+                "summary": "获得会员的收货地址集合",
+                "parameters": [
+                    {
+                        "name": "corp_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "member_id",
+                        "in": "query",
+                        "description": "会员id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "member"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "ship_infos": {
+                                    "$ref": "#/definitions/MemberShipInfos"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
     },
     "definitions": {
         "MemberGradeList": {
@@ -970,6 +1087,48 @@
                 "created_at": {
                     "type": "string",
                     "description": "积分日志产生的时间"
+                }
+            }
+        },
+        "MemberShipInfos": {
+            "type": "array",
+            "description": "会员的收货地址集合",
+            "items": {
+                "$ref": "#/definitions/MemberShipInfo"
+            },
+            "minItems": 0
+        },
+        "MemberShipInfo": {
+            "type": "object",
+            "description": "会员的收货地址",
+            "properties": {
+                "id": {
+                    "type": "number",
+                    "description": "优惠券在db中的id"
+                },
+                "receiver_name": {
+                    "type": "string",
+                    "description": "收货人姓名"
+                },
+                "phone": {
+                    "type": "string",
+                    "description": "收货人联系电话"
+                },
+                "area_code": {
+                    "type": "string",
+                    "description": "收货人住址行政区域的编码，如1_1_8"
+                },
+                "area": {
+                    "type": "number",
+                    "description": "收货人住址行政区域，如'江苏省 南京市 秦淮区'"
+                },
+                "address": {
+                    "type": "string",
+                    "description": "收货人住址详细地址（不包含行政区域）"
+                },
+                "is_selected": {
+                    "type": "boolean",
+                    "description": "是否是默认收货地址"
                 }
             }
         },

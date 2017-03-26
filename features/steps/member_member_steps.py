@@ -208,6 +208,29 @@ def step_impl(context, user, member_name):
     bdd_util.assert_api_call_success(response)
 
 
+@When(u"{user}为会员'{member_name}'添加收货地址")
+def step_impl(context, user, member_name):
+    member = bdd_util.get_member_for(member_name, context.corp.webapp_id)
+
+    input_datas = json.loads(context.text)
+    if not type(input_datas) == list:
+        input_datas = [input_datas]
+
+    for input_data in input_datas:
+        data = {
+            'corp_id': context.corp.id,
+            'member_id': member.id,
+            'receiver_name': input_data['receiver_name'],
+            'phone': input_data['phone'],
+            'area': input_data['area'],
+            'address': input_data['address'],
+            'is_selected': input_data['is_selected']
+        }
+
+        response = context.client.put('/member/ship_info/', data)
+        bdd_util.assert_api_call_success(response)
+
+
 @Then(u"{user}能获得会员'{member_name}'的积分日志")
 def step_impl(context, user, member_name):
     member = bdd_util.get_member_for(member_name, context.corp.webapp_id)
@@ -251,6 +274,19 @@ def step_impl(context, user, member_name):
     bdd_util.assert_list(expected, actual)
 
 
+@Then(u"{user}能获得会员'{member_name}'的收货地址列表")
+def step_impl(context, user, member_name):
+    member = bdd_util.get_member_for(member_name, context.corp.webapp_id)
+    url = '/member/ship_infos/?corp_id=%s&member_id=%s' % (context.corp.id, member.id)
+
+    response = context.client.get(url)
+    data = response.data
+    actual = data['ship_infos']
+
+    expected = json.loads(context.text)
+    bdd_util.assert_list(expected, actual)
+
+
 def __extract_member_info(data):
     """
     获取member数据
@@ -274,7 +310,8 @@ def __extract_member_info(data):
         'phone_number': basic_info['phone_number'],
         'grade': data['grade'],
         'integral': consume_info['integral'],
-        'source': source
+        'source': source,
+        'ship_infos': data['ship_infos']
     }
     result['groups'] = dict([(group['name'], 1) for group in data['groups']])
 
@@ -284,7 +321,10 @@ def __extract_member_info(data):
 @Then(u"{user}能获得会员'{member_name}'的信息")
 def step_impl(context, user, member_name):
     member = bdd_util.get_member_for(member_name, context.corp.webapp_id)
-    url = '/member/member/?corp_id=%s&id=%s' % (context.corp.id, member.id)
+    fill_options = {
+        "with_ship_info": True
+    }
+    url = '/member/member/?corp_id=%s&id=%s&fill_options=%s' % (context.corp.id, member.id, json.dumps(fill_options))
 
     response = context.client.get(url)
     data = response.data

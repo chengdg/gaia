@@ -7,6 +7,8 @@ from db.account import models as account_models
 from business import model as business_model
 from business.member.member import Member
 from business.member.integral_log import IntegralLog
+from business.member.member_ship_info import MemberShipInfo
+from business.common.encode_district_service import EncodeDistrictService
 
 
 class ModifyMemberService(business_model.Service):
@@ -72,3 +74,26 @@ class ModifyMemberService(business_model.Service):
 
 		if member_info_options:
 			member_models.MemberInfo.update(**member_info_options).dj_where(member_id=member_id).execute()	
+
+	def add_ship_info(self, member_id, data):
+		"""
+		为member增加发货信息
+		"""
+		member = self.corp.member_repository.get_member_by_id(member_id)
+		area = data.get('area', None)
+		area_code = EncodeDistrictService.get().encode(area)
+
+		is_selected = data.get('is_selected', False)
+		if is_selected:
+			member_models.ShipInfo.update(is_selected=0).dj_where(webapp_user_id=member.webapp_user_id).execute()
+
+		db_model = member_models.ShipInfo.create(
+			webapp_user_id = member.webapp_user_id,
+			ship_tel = data.get('phone', ''),
+			ship_address = data.get('address', ''),
+			ship_name = data.get('receiver_name', ''),
+			area = area_code,
+			is_selected = is_selected
+		)
+
+		return MemberShipInfo(db_model)

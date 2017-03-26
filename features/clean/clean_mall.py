@@ -30,6 +30,7 @@ def clean():
 	member_models.WebAppUser.delete().execute()
 	member_models.Member.delete().execute()
 	member_models.SocialAccount.delete().execute()
+	member_models.ShipInfo.delete().execute()
 
 	# 会员等级
 	member_models.MemberGrade.delete().dj_where(name__not=u'普通会员').execute()

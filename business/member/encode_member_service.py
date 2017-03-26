@@ -79,3 +79,20 @@ class EncodeMemberService(business_model.Service):
 
 	def encode(self, member):
 		pass
+
+	def get_ship_infos(self, member):
+		"""
+		获得会员的收货地址信息
+		"""
+		datas = []
+		for ship_info in member.ship_infos:
+			datas.append({
+				'id': ship_info.id,
+				'receiver_name': ship_info.receiver_name,
+				'phone': ship_info.phone,
+				'area_code': ship_info.area_code,
+				'area': ship_info.area,
+				'address': ship_info.address,
+				'is_selected': ship_info.is_selected
+			})
+		return datas
