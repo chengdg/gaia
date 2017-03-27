@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from bdem import msgutil
+
+from gaia_conf import TOPIC
 from settings import MODE
 
 from db.mall import models as mall_models
@@ -10,12 +12,10 @@ if MODE == 'deploy':
 	UPDATE_UUID = 199597313
 	DING_TOPIC = 'notify'
 	PRODUCT_OUTGIVING_TOPIC = 'product'
-	PRODUCT_CACHE_TOPIC = 'product'
 else:
 	UPDATE_UUID = REJECT_UUID = 80035247 #钉钉发消息测试群
 	DING_TOPIC = 'test-phone'
 	PRODUCT_OUTGIVING_TOPIC = 'test-topic'
-	PRODUCT_CACHE_TOPIC = 'test-topic'
 
 def send_product_change(supplier_id, product_id):
 	"""
@@ -57,7 +57,7 @@ def send_product_created_cache(product_id, product_name):
 	"""
 	新增商品
 	"""
-	msgutil.send_message(PRODUCT_CACHE_TOPIC, 'new_product_enter_pool', {
+	msgutil.send_message(TOPIC['product'], 'new_product_enter_pool', {
 		"product_id": product_id,
 		'name': product_name
 	})
@@ -70,7 +70,7 @@ def send_product_update_cache(product_id):
 	"""
 	corp_ids = [p.woid for p in mall_models.ProductPool.select().dj_where(product_id=product_id,
                                                                  status=mall_models.PP_STATUS_ON)]
-	msgutil.send_message(PRODUCT_CACHE_TOPIC, 'sync_product_updated', {
+	msgutil.send_message(TOPIC['product'], 'sync_product_updated', {
 		'corp_ids': corp_ids,
 		'product_id': product_id
 	})
