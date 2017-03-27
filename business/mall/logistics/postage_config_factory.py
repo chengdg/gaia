@@ -34,6 +34,7 @@ class PostageConfigFactory(object):
 
 		postage_config = mall_models.PostageConfig.create(
 			owner=corp_id,
+			supplier_id=corp_id,
 			name=name,
 			first_weight=round(float(default_config.get('first_weight', 0.0)), 1),
 			first_weight_price=round(float(default_config.get('first_weight_price', 0.0)), 2),
