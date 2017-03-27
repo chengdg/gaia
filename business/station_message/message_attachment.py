@@ -12,7 +12,7 @@ from db.station_message import models as message_models
 class MessageAttachment(business_model.Model):
 	__slots__ = (
 		'id',
-		'message'
+		'message',
 		'file_name',
 		'file_type',
 		'path',

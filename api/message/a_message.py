@@ -23,6 +23,7 @@ class AMessage(api_resource.ApiResource):
 		message = msgrepo.get_message(args['id'])
 		msg_att_repo = MessageAttachmentRepository()
 		db_attachments = msg_att_repo.get_message_attachments(args['id'])
+
 		data = {
 			'id': message.id,
 			'title': message.title,
