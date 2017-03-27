@@ -37,7 +37,7 @@ class UpdateProductService(business_model.Service):
 			is_delivery=base_info.get('is_delivery', 'false') == 'true',
 			limit_zone_type=int(logistics_info.get('limit_zone_type', '0')),
 			limit_zone=int(logistics_info.get('limit_zone_id', '0'))
-		).dj_where(owner_id=self.corp.id, id=product_id).execute()
+		).dj_where(id=product_id).execute()
 		
 		return product
 
@@ -73,7 +73,7 @@ class UpdateProductService(business_model.Service):
 				user_code='',
 				purchase_price=0,
 				is_deleted=True
-			).dj_where(owner_id=corp_id, product_id=product_id, name='standard').execute()
+			).dj_where(product_id=product_id, name='standard').execute()
 		else:
 			standard_model = models_info['standard_model']
 			mall_models.ProductModel.update(
@@ -84,7 +84,7 @@ class UpdateProductService(business_model.Service):
 				user_code=standard_model.get('user_code', ''),
 				purchase_price=standard_model.get('purchase_price', 0.0),
 				is_deleted=False
-			).dj_where(owner_id=corp_id, product_id=product_id, name='standard').execute()
+			).dj_where(product_id=product_id, name='standard').execute()
 
 
 	def __add_custom_models(self, product_id, models):
@@ -124,7 +124,7 @@ class UpdateProductService(business_model.Service):
 				stocks=new_model['stocks'],
 				user_code=new_model.get('user_code', ''),
 				purchase_price=new_model.get('purchase_price', 0.0)
-			).dj_where(owner_id=self.corp.id, id=new_model['id']).execute()
+			).dj_where(id=new_model['id']).execute()
 
 	def __delete_custom_models(self, need_delete_ids):
 		"""
@@ -262,7 +262,7 @@ class UpdateProductService(business_model.Service):
 		for price_info in price_infos:
 			model_id = price_info['model_id']
 			price = price_info['price']
-			mall_models.ProductModel.update(price=price).dj_where(owner_id=self.corp.id, id=model_id).execute()
+			mall_models.ProductModel.update(price=price).dj_where(id=model_id).execute()
 		# 发送更新缓存的消息
 		self.__send_msg_to_topic(product_id, "product_updated")
 
@@ -274,7 +274,7 @@ class UpdateProductService(business_model.Service):
 			model_id = stock_info['model_id']
 			stock_type = mall_models.PRODUCT_STOCK_TYPE_UNLIMIT if stock_info['stock_type'] == 'unlimit' else mall_models.PRODUCT_STOCK_TYPE_LIMIT
 			stocks = stock_info['stocks']
-			mall_models.ProductModel.update(stock_type=stock_type, stocks=stocks).dj_where(owner_id=self.corp.id, id=model_id).execute()
+			mall_models.ProductModel.update(stock_type=stock_type, stocks=stocks).dj_where(id=model_id).execute()
 
 	def add_product_stock(self, product_id, stock_infos):
 		for stock_info in stock_infos:
