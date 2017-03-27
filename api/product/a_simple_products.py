@@ -42,6 +42,7 @@ class ASimpleProducts(api_resource.ApiResource):
 			data.append({
 				"id": product.id,
 				"name": base_info['name'],
+				"created_at": product.created_at.strftime("%Y-%m-%d %H:%M"),
 				"models_info": models_info,
 				'image_info': image_info,
 			})
