@@ -39,17 +39,45 @@ class FillProductDetailService(business_model.Service):
 
 		product_ids = [product.id for product in products]
 		id2product = dict([(product.id, product) for product in products])
-		for p in mall_models.ProductPool.select().dj_where(product_id__in=product_ids, woid=self.corp.id):
-			product = id2product[p.product_id]
-			if p.status == mall_models.PP_STATUS_ON:
-				product.set_shelve_type('on_shelf')
-			elif p.status == mall_models.PP_STATUS_OFF:
-				product.set_shelve_type('off_shelf')
-			elif p.status == mall_models.PP_STATUS_ON_POOL:
-				product.set_shelve_type('in_pool')
-			else:
-				product.set_shelve_type('deleted')
-			product.display_index = p.display_index
+
+		if corp.is_supplier():
+			"""
+			供货商帐号获取商品的销售状态规则:
+				-只要商品在一个社群中上架，则商品状态为上架
+				-只有商品在所有社群中下架，商品状态才是下架
+				-商品还没有通过审核的，为未上架
+			"""
+			product_id2status = dict()
+			all_pool_product_ids = []
+			for pool in mall_models.ProductPool.select().dj_where(product_id__in=product_ids, woid__not=1127): #todo 多平台支持需要修改
+				all_pool_product_ids.append(pool.product_id)
+				product = id2product[pool.product_id]
+				if pool.status == mall_models.PP_STATUS_ON:
+					product.set_shelve_type('on_shelf')
+					product_id2status.setdefault(pool.product_id, []).append('on_shelf')
+				if pool.status == mall_models.PP_STATUS_OFF:
+					product_id2status.setdefault(pool.product_id, []).append('off_shelf')
+
+			for product in products:
+				if not product_id2status.get(product.id):
+					product.set_shelve_type('not_accepted')
+					continue
+				if 'on_shelf' in product_id2status[product.id]:
+					product.set_shelve_type('on_shelf')
+				else:
+					product.set_shelve_type('off_shelf')
+		else:
+			for p in mall_models.ProductPool.select().dj_where(product_id__in=product_ids, woid=self.corp.id):
+				product = id2product[p.product_id]
+				if p.status == mall_models.PP_STATUS_ON:
+					product.set_shelve_type('on_shelf')
+				elif p.status == mall_models.PP_STATUS_OFF:
+					product.set_shelve_type('off_shelf')
+				elif p.status == mall_models.PP_STATUS_ON_POOL:
+					product.set_shelve_type('in_pool')
+				else:
+					product.set_shelve_type('deleted')
+				product.display_index = p.display_index
 
 	def __fill_model_detail(self, corp, products, is_enable_model_property_info=False):
 		"""填充商品规格相关细节

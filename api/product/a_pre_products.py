@@ -25,7 +25,7 @@ class APreProducts(api_resource.ApiResource):
 			'with_product_label': True if args['corp'].is_weizoom_corp() else False,
 			'with_sales': True,
 			'with_supplier_info': True,
-			'with_shelve_status': True
+			'with_shelve_status': False
 		}
 		page_info = PageInfo.create({
 			"cur_page": int(args.get('cur_page', 1)),

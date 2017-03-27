@@ -22,8 +22,7 @@ class LimitZoneRepository(busniess_model.Service):
 		"""
 		获取指定的limit zone
 		"""
-		limit_zone_model = mall_models.ProductLimitZoneTemplate.select().dj_where(id=limit_zone_id,
-																				  owner_id=self.corp.id).get()
+		limit_zone_model = mall_models.ProductLimitZoneTemplate.select().dj_where(id=limit_zone_id).get()
 		limit_zone = LimitZone(limit_zone_model)
 		return limit_zone
 
@@ -31,4 +30,4 @@ class LimitZoneRepository(busniess_model.Service):
 		"""
 		删除指定的limit zone
 		"""
-		mall_models.ProductLimitZoneTemplate.delete().dj_where(owner_id=self.corp.id, id=limit_zone_id).execute()
+		mall_models.ProductLimitZoneTemplate.delete().dj_where(id=limit_zone_id).execute()
