@@ -81,6 +81,7 @@ class PostageConfigFactory(object):
 			#创建默认的“免运费”配置
 			mall_models.PostageConfig.create(
 				owner = self.corp.id,
+				supplier_id = self.corp.id,
 				name = u'免运费',
 				added_weight = "0.0",
 				is_enable_added_weight = False,
