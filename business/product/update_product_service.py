@@ -32,7 +32,6 @@ class UpdateProductService(business_model.Service):
 			unified_postage_money=logistics_info['unified_postage_money'],
 			stocks=base_info.get('min_limit', 0),
 			is_member_product=base_info.get('is_member_product', False),
-			supplier=base_info.get('supplier_id', 0),
 			purchase_price=base_info.get('purchase_price', 0.0),
 			is_enable_bill=base_info.get('is_enable_bill', False),
 			is_delivery=base_info.get('is_delivery', 'false') == 'true',
