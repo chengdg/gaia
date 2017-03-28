@@ -31,6 +31,7 @@ class ProductModel(business_model.Model):
 		'user_code',
 		'stock_type',
 		'stocks',
+		'customized_price',
 
 		#new price info used
 		'price',
@@ -52,6 +53,7 @@ class ProductModel(business_model.Model):
 			self.original_price = db_model.price
 			self.weizoom_purchase_price = db_model.purchase_price
 			self.community_customized_price = 0
+			self.customized_price = 0
 			self.community_purchase_price = 0
 			self.gross_profit = -1
 			self.gross_profit_rate = 0

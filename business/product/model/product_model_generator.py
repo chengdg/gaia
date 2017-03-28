@@ -134,6 +134,7 @@ class ProductModelGenerator(business_model.Service):
 			product_model.gross_profit_rate = '%.2f' % gross_profit_rate
 			product_model.community_purchase_price = '%.2f' % community_purchase_price
 			product_model.community_customized_price = '%.2f' % community_customized_price
+			product_model.customized_price = '%.2f' % community_customized_price
 
 		# 获取所有models
 		product2models = {}
