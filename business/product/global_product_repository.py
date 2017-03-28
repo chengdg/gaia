@@ -38,7 +38,7 @@ class GlobalProductRepository(business_model.Service):
 				woid=query_dict['corp'].id,
 				status__not=mall_models.PP_STATUS_DELETE
 			)]
-			db_models = db_models.dj_where(id__in=product_pool_ids, is_accepted=True)
+			db_models = db_models.dj_where(id__in=product_pool_ids, is_accepted=True, is_updated=False)
 		elif query_dict.get('status') == 'unverified':
 			db_models = db_models.dj_where(is_accepted=False)
 		elif query_dict.get('status') == 'updated':
