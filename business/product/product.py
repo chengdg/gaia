@@ -577,3 +577,7 @@ class Product(business_model.Model):
 			"corp_id": corp_id,
 		}
 		msgutil.send_message(topic_name, "product_updated", data)
+
+	def get_customized_price(self):
+		# corp_id = self.get_cur_corp().id
+		return mall_models.ProductCustomizedPrice.select().dj_where(product_id=self.id)

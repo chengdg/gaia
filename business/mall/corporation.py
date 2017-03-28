@@ -126,9 +126,9 @@ class Corporation(business_model.Model):
 			community_info = resp['data']
 			if community_info:
 				self.name = community_info['name']
-				self.settlement_type = community_info['settlement_type']
-				self.divide_rebate = community_info['divide_rebate']
-				self.risk_money = community_info['risk_money']
+				self.settlement_type = int(community_info['settlement_type'])
+				self.divide_rebate = float(community_info['divide_rebate'])
+				self.risk_money = float(community_info['risk_money'])
 				self.rules = [{
 				  	'config_type': rule['config_type'],
 				  	'config_property': rule['config_property'],
@@ -145,9 +145,9 @@ class Corporation(business_model.Model):
 			if supplier_info:
 				self.name = supplier_info['name']
 				self.company_name = supplier_info['company_name']
-				self.settlement_type = supplier_info['settlement_type']
-				self.divide_rebate = supplier_info['divide_rebate']
-				self.min_cps_profit = supplier_info['min_cps_profit']
+				self.settlement_type = int(supplier_info['settlement_type'])
+				self.divide_rebate = float(supplier_info['divide_rebate'])
+				self.min_cps_profit = float(supplier_info['min_cps_profit'])
 				self.clear_period = supplier_info['clear_period']
 				self.axe_sales_name = supplier_info['axe_sales_name']
 				self.max_product_count = int(supplier_info['max_product_count'])

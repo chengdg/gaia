@@ -96,44 +96,53 @@ class ProductModelGenerator(business_model.Service):
 		divide_info = None
 		if corp.is_community():
 			divide_info = corp.details
-			settlement_type = divide_info.settlement_type
-			divide_rebate = divide_info.divide_rebate
+			community_settlement_type = divide_info.settlement_type
+			community_divide_rebate = divide_info.divide_rebate
 			product_model_id2price = {c.product_model_id: c.price for c in
 									  mall_models.ProductCustomizedPrice.select().dj_where(corp_id=self.corp.id, product_id__in=product_ids)}
 
+		def set_community_price_info(product_model):
+			"""
+			社群结算价：
+				固定扣点+溢价: 供货商供货价 * (1-社群扣点)
+				毛利分成: 供货商供货价 * (1-社群毛利点)
+
+			社群的毛利、毛利率：
+				固定扣点+溢价: (供货商供货价(或者社群修改价) - 社群结算价) / 供货商供货价(或者社群修改价)
+				毛利分成: {
+					non_cps: (供货商供货价 - 供货商&微众结算价) * 社群毛利点  ==> 社群毛利,
+							 社群毛利/供货商供货价 ==>社群毛利率
+				}
+			"""
+			community_purchase_price = 0
+			weizoom_purchase_price = product_model.weizoom_purchase_price
+			community_customized_price = product_model_id2price.get(product_model.id, product_model.price)
+			gross_profit = 0
+			gross_profit_rate = 0
+
+			if community_settlement_type == account_models.ACCOUNT_DIVIDE_TYPE_FIXED:  # 固定扣点+溢价
+				community_purchase_price = product_model.price * (1 - community_divide_rebate / 100)
+				gross_profit = community_customized_price - community_purchase_price
+				gross_profit_rate = gross_profit / community_customized_price * 100
+			elif community_settlement_type == account_models.ACCOUNT_DIVIDE_TYPE_PROFIT:  # 毛利分成
+				community_purchase_price = product_model.price * (1 - community_divide_rebate / 100)
+				gross_profit = (product_model.price - weizoom_purchase_price) * community_divide_rebate / 100
+				gross_profit_rate = gross_profit / product_model.price * 100
+
+			product_model.gross_profit = '%.2f' % gross_profit
+			product_model.gross_profit_rate = '%.2f' % gross_profit_rate
+			product_model.community_purchase_price = '%.2f' % community_purchase_price
+			product_model.community_customized_price = '%.2f' % community_customized_price
+
 		# 获取所有models
 		product2models = {}
-		#product2deleted_models = {}
 		for db_model in mall_models.ProductModel.select().dj_where(product_id__in=product_ids, is_deleted=False):
 			if db_model.is_deleted:
 				pass
-				#product_model = ProductModel(db_model, id2property, id2propertyvalue)
-				#product2deleted_models.setdefault(db_model.product_id, []).append(product_model)
 			else:
 				product_model = ProductModel(db_model, id2property, id2propertyvalue)
 				if corp.is_community():
-					"""
-					社群的毛利、毛利率
-					固定扣点+溢价: 商品售价(或者社群修改价) * 社群扣点
-					毛利分成: {
-						non_cps: (商品售价 - 微众售价) * 社群毛利点  ==> 社群毛利,
-								 (商品售价 - 微众售价)/商品售价 * 社群毛利点 ==>社群毛利率
-					}
-					"""
-					customized_price = product_model_id2price.get(product_model.id, product_model.price)
-					gross_profit = 0
-					gross_profit_rate = 0
-					if product_model.price != 0:
-						if settlement_type == account_models.ACCOUNT_DIVIDE_TYPE_FIXED:  # 固定扣点+溢价
-							gross_profit = customized_price * divide_rebate / 100
-							gross_profit_rate = divide_rebate
-						elif settlement_type == account_models.ACCOUNT_DIVIDE_TYPE_PROFIT:  # 毛利分成
-							gross_profit = (product_model.price - product_model.purchase_price) * divide_rebate / 100
-							gross_profit_rate = gross_profit / product_model.price * 100
-
-					product_model.gross_profit = '%.2f' % gross_profit
-					product_model.gross_profit_rate = '%.2f' % gross_profit_rate
-					product_model.customized_price = customized_price
+					set_community_price_info(product_model)
 				product2models.setdefault(db_model.product_id, []).append(product_model)
 
 		for product_id, product_models in product2models.items():

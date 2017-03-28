@@ -25,14 +25,18 @@ class ProductModel(business_model.Model):
 		'is_deleted',
 		'name',
 		'weight',
-		'price',
 		'purchase_price',
-		'customized_price', #社群修改价
 		'original_price',
 		'market_price',
 		'user_code',
 		'stock_type',
 		'stocks',
+
+		#new price info used
+		'price',
+		'weizoom_purchase_price', #供货商-微众结算价
+		'community_purchase_price', #微众-社群结算价
+		'community_customized_price',  # 社群修改价
 		'gross_profit',
 		'gross_profit_rate',
 
@@ -46,7 +50,9 @@ class ProductModel(business_model.Model):
 		if db_model:
 			self._init_slot_from_model(db_model)
 			self.original_price = db_model.price
-			self.customized_price = 0
+			self.weizoom_purchase_price = db_model.purchase_price
+			self.community_customized_price = 0
+			self.community_purchase_price = 0
 			self.gross_profit = -1
 			self.gross_profit_rate = 0
 			self.stock_type = 'unlimit' if db_model.stock_type == mall_models.PRODUCT_STOCK_TYPE_UNLIMIT else 'limit'

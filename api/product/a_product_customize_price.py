@@ -12,6 +12,23 @@ class AProductCustomizePrice(api_resource.ApiResource):
 	app = "product"
 	resource = "product_customize_price"
 
+	@param_required(['corp_id', 'product_id:int'])
+	def get(args):
+		corp = args['corp']
+		product_id = args['product_id']
+		product = corp.product_pool.get_product_by_id(product_id)
+		if not product:
+			return []
+		else:
+			customized_price_models = product.get_customized_price()
+			return [{
+				'corp_id': model.corp_id,
+				'product_id': model.product_id,
+				'product_model_id': model.product_model_id,
+				'price': model.price
+			} for model in customized_price_models]
+
+
 	@param_required(['corp_id', 'product_id:int', 'customized_models:json'])
 	def post(args):
 		corp = args['corp']

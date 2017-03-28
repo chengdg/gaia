@@ -57,6 +57,9 @@ class EncodeProductService(business_model.Service):
 				"stock_type": standard_model.stock_type,
 				"stocks": standard_model.stocks,
 				"user_code": standard_model.user_code,
+				"community_purchase_price": standard_model.community_purchase_price,
+				"community_customized_price": standard_model.community_customized_price,
+				"weizoom_purchase_price": standard_model.weizoom_purchase_price,
 				"gross_profit": standard_model.gross_profit,
 				"gross_profit_rate": standard_model.gross_profit_rate
 			}
@@ -76,6 +79,9 @@ class EncodeProductService(business_model.Service):
 					"stock_type": custom_model.stock_type,
 					"stocks": custom_model.stocks,
 					"user_code": custom_model.user_code,
+					"community_purchase_price": custom_model.community_purchase_price,
+					"community_customized_price": custom_model.community_customized_price,
+					"weizoom_purchase_price": custom_model.weizoom_purchase_price,
 					"gross_profit": custom_model.gross_profit,
 					"gross_profit_rate": custom_model.gross_profit_rate,
 					"property_values": custom_model.property_values,
