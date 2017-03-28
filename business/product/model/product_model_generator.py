@@ -121,7 +121,7 @@ class ProductModelGenerator(business_model.Service):
 			gross_profit_rate = 0
 			if product_model.price == 0:
 				pass
-			if community_settlement_type == account_models.ACCOUNT_DIVIDE_TYPE_FIXED:  # 固定扣点+溢价
+			elif community_settlement_type == account_models.ACCOUNT_DIVIDE_TYPE_FIXED:  # 固定扣点+溢价
 				community_purchase_price = product_model.price * (1 - community_divide_rebate / 100)
 				gross_profit = community_customized_price - community_purchase_price
 				gross_profit_rate = gross_profit / community_customized_price * 100
