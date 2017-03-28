@@ -38,7 +38,7 @@ class GlobalProductRepository(business_model.Service):
 				woid=query_dict['corp'].id,
 				status__not=mall_models.PP_STATUS_DELETE
 			)]
-			db_models = db_models.dj_where(id__in=product_pool_ids, is_accepted=True, is_updated=False)
+			db_models = db_models.dj_where(id__in=product_pool_ids, is_accepted=True)
 		elif query_dict.get('status') == 'unverified':
 			db_models = db_models.dj_where(is_accepted=False)
 		elif query_dict.get('status') == 'updated':
@@ -48,6 +48,8 @@ class GlobalProductRepository(business_model.Service):
 		if self.corp.is_weizoom_corp():
 			if query_dict.get('status') != 'verified':
 				db_models = db_models.dj_where(status__in = [mall_models.PRODUCT_STATUS['SUBMIT'], mall_models.PRODUCT_STATUS['REFUSED']])
+			else:
+				db_models = db_models.dj_where(is_updated=False)
 		else:
 			db_models = db_models.dj_where(owner_id=query_dict['corp'].id)
 

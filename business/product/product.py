@@ -212,6 +212,9 @@ class Product(business_model.Model):
 					stocks.add(product_model.stocks)
 		else:
 			product_model = product_models.first()
+			if not product_model:
+				print 'product({}) modle do not have a default record!!!!'.format(self.id)
+				return [0]
 			if product_model.stock_type == mall_models.PRODUCT_STOCK_TYPE_UNLIMIT:
 				unlimit = u'无限'
 			else:
