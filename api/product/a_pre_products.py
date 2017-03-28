@@ -12,7 +12,7 @@ class APreProducts(api_resource.ApiResource):
 	app = "product"
 	resource = "pre_products"
 
-	@param_required(['corp_id', '?verified:bool'])
+	@param_required(['corp_id', '?status'])
 	def get(args):
 		corp = args['corp']
 

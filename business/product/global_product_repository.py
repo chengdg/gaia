@@ -33,15 +33,20 @@ class GlobalProductRepository(business_model.Service):
 	def filter_products(self, query_dict, page_info, fill_options=None):
 		db_models = mall_models.Product.select().dj_where(is_deleted=False)
 
+		if query_dict.get('status') == 'verified':
+			product_pool_ids = [p.product_id for p in mall_models.ProductPool.select().dj_where(
+				woid=query_dict['corp'].id,
+				status__not=mall_models.PP_STATUS_DELETE
+			)]
+			db_models = db_models.dj_where(id__in=product_pool_ids, is_accepted=True)
+		elif query_dict.get('status') == 'unverified':
+			db_models = db_models.dj_where(is_accepted=False)
+		elif query_dict.get('status') == 'updated':
+			db_models = db_models.dj_where(is_accepted=True, status=mall_models.PRODUCT_STATUS['SUBMIT'], is_updated=True)
+
+
 		if self.corp.is_weizoom_corp():
-			if query_dict.get('verified'):
-				product_pool_ids = [p.product_id for p in mall_models.ProductPool.select().dj_where(
-					woid=query_dict['corp'].id,
-				  	status__not=mall_models.PP_STATUS_DELETE
-			  	)]
-				db_models = db_models.dj_where(id__in=product_pool_ids, is_accepted=True)
-			else:
-				db_models = db_models.dj_where(status__in = [mall_models.PRODUCT_STATUS['SUBMIT'], mall_models.PRODUCT_STATUS['REFUSED']])
+			db_models = db_models.dj_where(status__in = [mall_models.PRODUCT_STATUS['SUBMIT'], mall_models.PRODUCT_STATUS['REFUSED']])
 		else:
 			db_models = db_models.dj_where(owner_id=query_dict['corp'].id)
 
