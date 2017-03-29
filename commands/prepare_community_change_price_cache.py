@@ -27,7 +27,7 @@ class Command(BaseCommand):
 		cus_models = mall_models.ProductCustomizedPrice.select()
 		for model in cus_models:
 			tmp_key = ":1:apicustomized_price_{wo:%s}_{pid:%s}" % (model.corp_id, model.product_id)
-			pipeline.set(tmp_key, model.price)
+			pipeline.set(tmp_key, pickle.dumps(model.price))
 			print 'loading%s' % model.product_id
 		pipeline.execute()
 		print 'finished!'
