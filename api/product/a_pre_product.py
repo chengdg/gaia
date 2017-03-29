@@ -24,7 +24,8 @@ class APreProduct(api_resource.ApiResource):
 			'with_image': True,
 			'with_product_model': True,
 			'with_model_property_info': True,
-			'with_classification': True
+			'with_classification': True,
+			'with_product_label': True
 		}
 
 		pre_product = corp.global_product_repository.get_product(product_id, fill_options)
