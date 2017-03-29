@@ -2,27 +2,17 @@
 
 from bdem import msgutil
 
-from gaia_conf import TOPIC
-from settings import MODE
+from gaia_conf import TOPIC, DING_UUID
 
 from db.mall import models as mall_models
 
-if MODE == 'deploy':
-	REJECT_UUID = 317014264
-	UPDATE_UUID = 199597313
-	DING_TOPIC = 'notify'
-	PRODUCT_OUTGIVING_TOPIC = 'product'
-else:
-	UPDATE_UUID = REJECT_UUID = 80035247 #钉钉发消息测试群
-	DING_TOPIC = 'test-phone'
-	PRODUCT_OUTGIVING_TOPIC = 'test-topic'
 
 def send_product_change(supplier_id, product_id):
 	"""
 	商品创建、更新
 	"""
-	msgutil.send_message(DING_TOPIC, 'pre_product_update_ding', {
-		'uuid': UPDATE_UUID,
+	msgutil.send_message(TOPIC['notify'], 'pre_product_update_ding', {
+		'uuid': DING_UUID['update_product'],
 		'supplier_id': supplier_id,
 		'product_id': product_id
 	})
@@ -32,8 +22,8 @@ def send_reject_product_ding_message(supplier_id, product_id, reason):
 	"""
 	发送商品驳回的ding talk 消息
 	"""
-	msgutil.send_message(DING_TOPIC, 'pre_product_reject_ding', {
-		'uuid': REJECT_UUID,
+	msgutil.send_message(TOPIC['notify'], 'pre_product_reject_ding', {
+		'uuid': DING_UUID['reject_product'],
 		'supplier_id': supplier_id,
 		'product_id': product_id,
 		'reason': reason
@@ -42,7 +32,7 @@ def send_reject_product_ding_message(supplier_id, product_id, reason):
 	print supplier_id, 'send_reject_product_ding_message...', product_id
 
 def send_product_outgiving_message(corp_id, product_id):
-	msgutil.send_message(PRODUCT_OUTGIVING_TOPIC, 'outgiving_product', {
+	msgutil.send_message(TOPIC['product'], 'outgiving_product', {
 		'corp_id': corp_id,
 		'product_id': product_id
 	})

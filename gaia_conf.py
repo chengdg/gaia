@@ -11,3 +11,8 @@ TOPIC = {
 	'base_service': os.environ.get('BASE_SERVICE_TOPIC', 'test-topic'),  # 基础的异步化服务，如邮件，模板消息等
 	'notify': os.environ.get('NOTIFY_TOPIC', 'test-phone')  # 短信消息
 }
+
+DING_UUID = {
+	'update_product': os.environ.get('UPDATE_PRODUCT_DING_UUID', 80035247),
+	'reject_product': os.environ.get('REJECT_PRODUCT_DING_UUID', 80035247)
+}

@@ -32,6 +32,7 @@ class APreProduct(api_resource.ApiResource):
 		
 		return {
 			'id': pre_product.id,
+			'owner_id': pre_product.owner_id,
 			'name': pre_product.name,
 			'owner_name': corp.details.company_name,
 			'company_name': corp.details.company_name,
