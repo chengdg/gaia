@@ -91,7 +91,7 @@ class GlobalProductRepository(business_model.Service):
 
 			tmp_products = []
 			for product in products:
-				if product.supplier_info and owner_name == product.supplier_info['company_name']:
+				if product.supplier_info and owner_name in product.supplier_info['company_name']:
 					tmp_products.append(product)
 
 			if page_info:
