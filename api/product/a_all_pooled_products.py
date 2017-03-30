@@ -38,11 +38,8 @@ class AAllPooledProducts(api_resource.ApiResource):
 			data = {
 				"id": product.id,
 				"name": base_info['name'],
-				"create_type": base_info['create_type'],
-				"is_member_product": base_info['is_member_product'],
 				"models_info": models_info,
 				"created_at": base_info['created_at'],
-				"sync_at": base_info['sync_at'],
 				'gross_profit_info': gross_profit_info,
 				"cps_promotion_info": cps_promotion_info
 			}

@@ -51,6 +51,7 @@ class AOnshelfProducts(api_resource.ApiResource):
 				"create_type": base_info['create_type'],
 				"is_member_product": base_info['is_member_product'],
 				"image": image_info['thumbnails_url'],
+				"swipe_images": image_info['images'],
 				"models_info": models_info,
 				"bar_code": base_info['bar_code'],
 				"display_index": base_info['display_index'],
