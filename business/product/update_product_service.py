@@ -187,13 +187,13 @@ class UpdateProductService(business_model.Service):
 
 		mall_models.ProductSwipeImage.delete().dj_where(product=product_id).execute()
 		for swipe_image in images:
-			if swipe_image['width'] and swipe_image['height']:
-				mall_models.ProductSwipeImage.create(
-					product=product_id,
-					url=swipe_image['url'],
-					width=swipe_image['width'],
-					height=swipe_image['height']
-				)
+			# if swipe_image['width'] and swipe_image['height']:
+			mall_models.ProductSwipeImage.create(
+				product=product_id,
+				url=swipe_image['url'],
+				width=swipe_image.get('width', 480),
+				height=swipe_image.get('height', 480)
+			)
 
 	def __update_product_properties(self, product_id, properties):
 		"""

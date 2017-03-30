@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
+import json
 
-
+from bdem import msgutil
 from eaglet.core import api_resource
 from eaglet.decorator import param_required
+
+from gaia_conf import TOPIC
 
 
 class AProductCustomizePrice(api_resource.ApiResource):
@@ -33,8 +36,16 @@ class AProductCustomizePrice(api_resource.ApiResource):
 	def post(args):
 		corp = args['corp']
 		product = corp.product_pool.get_product_by_id(args['product_id'])
-		print args['customized_models']
+		price_info = []
 		for product_model_id, price in args['customized_models'].items():
+			price_info.append(float(price))
 			product.customize_price(float(price), int(product_model_id))
 
+		topic_name = TOPIC['product']
+		data = {
+			"product_id": args['product_id'],
+			"corp_id": corp.id,
+			"price_info": json.dumps(price_info)
+		}
+		msgutil.send_message(topic_name, "community_changed_price", data)
 		return {}

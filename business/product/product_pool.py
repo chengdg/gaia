@@ -591,3 +591,22 @@ class ProductPool(business_model.Model):
 		
 			products.append(Product(db_product))
 		return products
+
+	def get_all_products(self, fill_options, product_ids):
+		"""
+		获取corp的商品池中的所有商品
+		"""
+		filter = {
+			'woid': self.corp_id,
+			'status__not': mall_models.PP_STATUS_DELETE
+		}
+		if product_ids:
+			filter['product_id__in'] = product_ids
+
+		db_models = mall_models.ProductPool.select().dj_where(**filter).execute()
+		products = [Product(model) for model in db_models]
+		fill_product_detail_service = FillProductDetailService.get(self.corp)
+		fill_product_detail_service.fill_detail(products, fill_options)
+
+		return products
+

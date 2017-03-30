@@ -574,12 +574,6 @@ class Product(business_model.Model):
 			product_model_id = product_model_id,
 			price = price
 		)
-		topic_name = TOPIC['product']
-		data = {
-			"product_id": self.id,
-			"corp_id": corp_id,
-		}
-		msgutil.send_message(topic_name, "product_updated", data)
 
 	def get_customized_price(self):
 		# corp_id = self.get_cur_corp().id

@@ -34,3 +34,4 @@ import a_product_label
 import a_product_outgiving
 import a_product_customize_price
 import a_simple_products
+import a_all_pooled_products
