@@ -46,6 +46,7 @@ class FillProductDetailService(business_model.Service):
 				-只要商品在一个社群中上架，则商品状态为上架
 				-只有商品在所有社群中下架，商品状态才是下架
 				-商品还没有通过审核的，为未上架
+			需要收集上架的社群信息
 			"""
 			product_id2status = dict()
 			all_pool_product_ids = []

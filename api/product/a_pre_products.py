@@ -25,7 +25,7 @@ class APreProducts(api_resource.ApiResource):
 			'with_product_label': True if args['corp'].is_weizoom_corp() else False,
 			'with_sales': True,
 			'with_supplier_info': True,
-			'with_shelve_status': False
+			'with_shelve_status': True
 		}
 		page_info = PageInfo.create({
 			"cur_page": int(args.get('cur_page', 1)),
@@ -44,6 +44,7 @@ class APreProducts(api_resource.ApiResource):
 				'owner_name': owner_corp_info['company_name'] if owner_corp_info else '',
 				'company_name': owner_corp_info['company_name'] if owner_corp_info else '',
 				'axe_sales_name': owner_corp_info['axe_sales_name'] if owner_corp_info else '',
+				'supplier_settlement_type': owner_corp_info['settlement_type'] if owner_corp_info else 0,
 				'classification_id': pre_product.classification_id,
 				'promotion_title': pre_product.promotion_title,
 				'models': {
