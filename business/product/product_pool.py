@@ -603,8 +603,9 @@ class ProductPool(business_model.Model):
 		if product_ids:
 			filter['product_id__in'] = product_ids
 
-		db_models = mall_models.ProductPool.select().dj_where(**filter).execute()
-		products = [Product(model) for model in db_models]
+		db_models = mall_models.ProductPool.select().dj_where(**filter)
+		product_pool_ids = [p.product_id for p in db_models]
+		products = [Product(model) for model in mall_models.Product.select().dj_where(id__in=product_pool_ids)]
 		fill_product_detail_service = FillProductDetailService.get(self.corp)
 		fill_product_detail_service.fill_detail(products, fill_options)
 

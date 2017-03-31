@@ -25,7 +25,7 @@ class AAllPooledProducts(api_resource.ApiResource):
 			'with_cps_promotion_info': True
 		} if not args.get('fill_options') else args['fill_options']
 
-		products, pageinfo = corp.product_pool.get_all_products(fill_options, args.get('product_ids'))
+		products = corp.product_pool.get_all_products(fill_options, args.get('product_ids'))
 
 		encode_product_service = EncodeProductService.get(corp)
 		datas = []
