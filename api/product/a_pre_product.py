@@ -66,7 +66,7 @@ class APreProduct(api_resource.ApiResource):
 	def put(args):
 
 		product_factory = ProductFactory.get(args['corp'])
-		product_factory.create_product({
+		result = product_factory.create_product({
 			'corp': args['corp'],
 			'base_info': args['base_info'],
 			'models_info': args['models_info'],
@@ -74,7 +74,10 @@ class APreProduct(api_resource.ApiResource):
 			'image_info': args['image_info']
 		})
 
-		return {}
+		if result:
+			return {}
+		else:
+			return 500, u'商品名已存在'
 
 	@param_required(['corp_id', 'product_id', 'base_info:json', 'models_info:json', 'image_info:json', 'logistics_info:json'])
 	def post(args):

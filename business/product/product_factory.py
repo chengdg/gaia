@@ -175,6 +175,10 @@ class ProductFactory(business_model.Service):
 		categories = args.get('categories', [])
 		properties = args.get('properties', [])
 
+		# 首先检查是否存在同名商品
+		if mall_models.Product.select().dj_where(name=base_info.get('name', '').strip()).count() > 0:
+			return None
+
 		product = self.__create_product(base_info, image_info, logistics_info, pay_info)
 		self.__add_product_to_categories(product, categories)
 		self.__add_product_to_classification(product, base_info)
@@ -189,7 +193,8 @@ class ProductFactory(business_model.Service):
 		创建已审核(自营)商品
 		"""
 		product = self.create_product(args)
-		product.verify(self.corp)
+		if product:
+			product.verify(self.corp)
 
 	def outgiving_products(self, product_ids):
 		# 将商品放入product pool
