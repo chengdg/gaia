@@ -77,7 +77,7 @@ class APreProduct(api_resource.ApiResource):
 		if result:
 			return {}
 		else:
-			return 500, u'商品名已存在'
+			return 500, 'existed'
 
 	@param_required(['corp_id', 'product_id', 'base_info:json', 'models_info:json', 'image_info:json', 'logistics_info:json'])
 	def post(args):
@@ -95,7 +95,7 @@ class APreProduct(api_resource.ApiResource):
 		if result:
 			return {}
 		else:
-			return 500, u'商品名已存在'
+			return 500, 'existed'
 
 	@param_required(['corp_id', 'product_id:int'])
 	def delete(args):

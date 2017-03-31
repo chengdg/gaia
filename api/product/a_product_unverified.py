@@ -61,4 +61,4 @@ class AProductUnverified(api_resource.ApiResource):
 		if result:
 			return {}
 		else:
-			return 500, u'商品名已存在'
+			return 500, 'existed'
