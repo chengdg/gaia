@@ -247,7 +247,7 @@ class UpdateProductService(business_model.Service):
 		properties = args.get('properties', [])
 
 		# 首先检查是否存在同名商品
-		if mall_models.Product.select().dj_where(name=base_info.get('name', '').strip()).count() > 0:
+		if mall_models.Product.select().dj_where(name=base_info.get('name', '').strip(), id__not=product_id).count() > 0:
 			return None
 
 		self.__update_product(product_id, base_info, image_info, logistics_info, pay_info)

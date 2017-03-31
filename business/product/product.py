@@ -267,10 +267,10 @@ class Product(business_model.Model):
 		"""
 		编辑商品信息(未审核)
 		"""
-		# 首先检查是否存在同名商品
-		if mall_models.Product.select().dj_where(name=args['base_info'].get('name', '').strip()).count() > 0:
-			return None
 		product_id = self.id
+		# 首先检查是否存在同名商品
+		if mall_models.Product.select().dj_where(name=args['base_info'].get('name', '').strip(), id__not=product_id).count() > 0:
+			return None
 		product_data = json.dumps({
 			'base_info': args['base_info'],
 			'models_info': args['models_info'],
