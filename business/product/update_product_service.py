@@ -246,6 +246,10 @@ class UpdateProductService(business_model.Service):
 		categories = args.get('categories', [])
 		properties = args.get('properties', [])
 
+		# 首先检查是否存在同名商品
+		if mall_models.Product.select().dj_where(name=base_info.get('name', '').strip()).count() > 0:
+			return None
+
 		self.__update_product(product_id, base_info, image_info, logistics_info, pay_info)
 		self.__update_product_categories(product_id, categories)
 		self.__update_product_images(product_id, image_info)
@@ -254,6 +258,8 @@ class UpdateProductService(business_model.Service):
 		self.__update_product_classifications(product_id, base_info)
 		# 更新缓存
 		self.__send_msg_to_topic(product_id, "product_updated")
+
+		return True
 
 	def update_product_price(self, product_id, price_infos):
 		"""

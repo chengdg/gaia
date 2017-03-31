@@ -267,6 +267,9 @@ class Product(business_model.Model):
 		"""
 		编辑商品信息(未审核)
 		"""
+		# 首先检查是否存在同名商品
+		if mall_models.Product.select().dj_where(name=args['base_info'].get('name', '').strip()).count() > 0:
+			return None
 		product_id = self.id
 		product_data = json.dumps({
 			'base_info': args['base_info'],
@@ -284,6 +287,7 @@ class Product(business_model.Model):
 			)
 
 		mall_models.Product.update(is_updated=True).dj_where(id=self.id).execute()
+		return  True
 
 	def submit_verify(self):
 		"""

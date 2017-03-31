@@ -56,6 +56,9 @@ class AProductUnverified(api_resource.ApiResource):
 
 		product = corp.global_product_repository.get_product(product_id)
 
-		product.update_product_unverified(args)
+		result = product.update_product_unverified(args)
 
-		return {}
+		if result:
+			return {}
+		else:
+			return 500, u'商品名已存在'
