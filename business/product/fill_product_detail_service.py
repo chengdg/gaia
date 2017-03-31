@@ -375,7 +375,8 @@ class FillProductDetailService(business_model.Service):
 			product.supplier_info = {
 				'supplier_name': supplier_data['name'],
 				'company_name': supplier_data['company_name'],
-				'axe_sales_name': supplier_data['axe_sales_name']
+				'axe_sales_name': supplier_data['axe_sales_name'],
+				'settlement_type': supplier_data['settlement_type']
 			} if supplier_data else None
 
 	def fill_detail(self, products, options):
