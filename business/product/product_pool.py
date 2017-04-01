@@ -600,8 +600,10 @@ class ProductPool(business_model.Model):
 			'woid': self.corp_id,
 			'status__not': mall_models.PP_STATUS_DELETE
 		}
-		if product_ids:
+		if len(product_ids) > 0:
 			filter['product_id__in'] = product_ids
+		else:
+			return []
 
 		db_models = mall_models.ProductPool.select().dj_where(**filter)
 		product_pool_ids = [p.product_id for p in db_models]

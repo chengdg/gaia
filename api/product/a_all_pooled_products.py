@@ -15,7 +15,7 @@ class AAllPooledProducts(api_resource.ApiResource):
 	app = "product"
 	resource = "all_pooled_products"
 
-	@param_required(['corp_id', '?fill_options:json', '?product_ids:json'])
+	@param_required(['corp_id', '?fill_options:json', 'product_ids:json'])
 	def get(args):
 		corp = args['corp']
 
