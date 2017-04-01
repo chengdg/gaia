@@ -107,6 +107,9 @@ class Product(business_model.Model):
 
 		#供货商信息
 		'supplier_info',
+
+		#上架信息，包含在哪些社群上架
+		'shelve_info'
 	)
 
 	def __init__(self, model=None):
@@ -131,6 +134,7 @@ class Product(business_model.Model):
 			self.create_type = None
 			self.sync_at = None
 			self.supplier_info = dict()
+			self.shelve_info = dict()
 
 	def get_owner_corp(self):
 		from business.mall.corporation import Corporation

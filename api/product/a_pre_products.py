@@ -45,6 +45,7 @@ class APreProducts(api_resource.ApiResource):
 				'company_name': owner_corp_info['company_name'] if owner_corp_info else '',
 				'axe_sales_name': owner_corp_info['axe_sales_name'] if owner_corp_info else '',
 				'supplier_settlement_type': owner_corp_info['settlement_type'] if owner_corp_info else 0,
+				'supplier_info': pre_product.supplier_info,
 				'classification_id': pre_product.classification_id,
 				'promotion_title': pre_product.promotion_title,
 				'models': {
