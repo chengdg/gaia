@@ -14,7 +14,7 @@ click==6.6
 configobj==5.0.6
 cssselect==0.9.2
 diff-match-patch==20121119
-Django==1.6.4
+Django==2.2.24
 django-appconf==1.0.1
 django-excel-response==1.0
 django-filebrowser==3.7.1
